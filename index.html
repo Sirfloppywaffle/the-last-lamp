@@ -568,14 +568,34 @@ function relicOpts(n){return shuffle(relicPool(false)).slice(0,n);}
 function addRelic(k){
   if(!k||run.relics.includes(k))return;
   run.relics.push(k);
-  if(k==='reserve'){run.oilMax+=4; run.oil=Math.min(run.oilMax,run.oil+6);}
-  if(k==='glass'){run.oilMax=Math.max(6,run.oilMax-6); run.oil=Math.min(run.oil,run.oilMax);}
-  if(k==='hollow'){run.oilMax=Math.max(6,run.oilMax-4); run.oil=Math.min(run.oil,run.oilMax);}
+  if(!run.relicDeltas)run.relicDeltas={};
+  if(k==='reserve'){
+    run.relicDeltas[k]=4;
+    run.oilMax+=4; run.oil=Math.min(run.oilMax,run.oil+6);
+  }
+  if(k==='glass'){
+    const n=Math.max(6,run.oilMax-6);
+    run.relicDeltas[k]=n-run.oilMax;
+    run.oilMax=n; run.oil=Math.min(run.oil,run.oilMax);
+  }
+  if(k==='hollow'){
+    const n=Math.max(6,run.oilMax-4);
+    run.relicDeltas[k]=n-run.oilMax;
+    run.oilMax=n; run.oil=Math.min(run.oil,run.oilMax);
+  }
 }
 function removeRelic(k){
   run.relics=run.relics.filter(x=>x!==k);
-  if(k==='glass')run.oilMax+=6;
-  if(k==='hollow')run.oilMax+=4;
+  if(run.relicDeltas&&run.relicDeltas[k]!=null){
+    run.oilMax-=run.relicDeltas[k];
+    delete run.relicDeltas[k];
+  }else{
+    if(k==='reserve')run.oilMax-=4;
+    if(k==='glass')run.oilMax+=6;
+    if(k==='hollow')run.oilMax+=4;
+  }
+  run.oilMax=Math.max(1,run.oilMax);
+  run.oil=Math.min(run.oil,run.oilMax);
 }
 function addOil(n){run.oil=Math.min(run.oilMax,run.oil+n);}
 function loseOil(n){run.oil=Math.max(1,run.oil-n);}
@@ -982,7 +1002,7 @@ function checkpoint(){
   store.set(SAVEKEY,lastSave);
 }
 function clearSave(){lastSave=null; store.set(SAVEKEY,null);}
-function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; beginFloor(s);}
+function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; run.relicDeltas=run.relicDeltas||{}; beginFloor(s);}
 
 /* ---------------- dev mode ----------------
    Hidden: tap the "The Last Lamp" heading on the title screen 7 times quickly to switch it on or off.
@@ -1041,7 +1061,7 @@ function openDevMode(msg){
 /* ---------------- run & floors ---------------- */
 function newRun(k,depth){
   k=KITS[k]?k:'lamplighter'; const K=KITS[k];
-  run={floor:0,oil:20,oilMax:20,ess:0,kit:k,depth:depth||0,wards:K.wards.slice(),rites:K.rites.slice(),relics:[],roster:Object.assign({},K.roster),
+  run={floor:0,oil:20,oilMax:20,ess:0,kit:k,depth:depth||0,wards:K.wards.slice(),rites:K.rites.slice(),relics:[],relicDeltas:{},roster:Object.assign({},K.roster),
     bound:0,kills:0,peakMad:0,omen:null,elite:false,next:null,bosses:0,elites:0,seenEvents:[],madPen:0,lampBonus:0,bonusStipend:0};
   if(run.depth>=5){run.oilMax-=5; run.oil=run.oilMax;}
   beginFloor(null);
