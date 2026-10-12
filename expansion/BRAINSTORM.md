@@ -110,3 +110,44 @@ Gemini accepted all four pushbacks. Added constraints: forks diverge at least 1.
 **Later: The Unlit.** Play as the dark against an AI lamp-keeper. Built on top of the core once it exists.
 
 **Cut:** the dimmer, digging and collapsing tiles, wave wagers, the floor editor (unless Criss wants to make floors himself).
+
+---
+
+## 8. Criss's answers (round 3)
+
+- **Woven into the base game.** No separate mode, so forks reach floors 1–5 too. That overrides §7's "new floors only".
+- **He wants ways to influence the path during runs. Open to anything.**
+- **File:** Claude's call. Everything stays in `index.html` (`AGENTS.md` §8). Previews and the artifact mirror only publish that file.
+
+**A rule to protect his v10 tuning:** every floor keeps its current route as the *main* path. Forks only add branches that are **as long or longer** than the stretch they replace. A player who ignores forks faces the same walk as today; steering can only buy time, never cost it. (Exception: anything sold as a gamble or a curse.)
+
+## 9. Ways to influence the path (Claude, round 3)
+
+**Steering at forks** (cheap, since they build on braided paths)
+1. **Darkness pull.** Creatures take the darker branch (agreed).
+2. **Sluice Gate** (ward, placed on a fork). One tap flips which branch is open, even mid-wave. A railway switch in the drowned stair. Short cooldown, a loud clank.
+3. **Carrion Lure** (ward). Rotting bait beside a branch. Creatures at the fork go toward it, overriding the darkness pull. A Whaler-flavoured counter to light steering.
+4. **Seal a branch.** Tap a fork mouth to salt it shut for a wave (agreed).
+
+**Every creature has its own instinct** (pathing as a puzzle)
+5. Shades and Stalkers take the **darkest** branch. Gnashers take the **shortest**. Watchers **fly and ignore forks**. Wretches **split down both**. Behemoths take the **widest** route. No single candle layout handles a mixed wave.
+
+**They learn** (the dark adapts, which counters any one dominant layout, pillar 5)
+6. **Scent of the dead.** Each branch keeps a tally of kills on it. Past a threshold, creatures start to avoid that branch: your killzone goes cold, and you have to move or re-bait it. Shown as a dark stain that grows on the branch.
+
+**Holding them on the path**
+7. **Bulwark horror.** A bound thing placed **on** the path. Creatures stop and claw at it until it breaks. This is the classic TD body-block, priced in madness. Bosses trample it.
+8. **Undertow** (rite or ward). Drags everything on one stretch back along the path. A bigger, aimable version of the Shrieker's push.
+
+**Changing the shape**
+9. **Switchback Chalk** (once per floor). Tap a straight stretch to bend it into a prebaked detour, so the path gets longer. Detours are authored per floor, so the art can be repainted once, not dug freehand.
+10. **Close a rift** (rite). Seal one spawn for a wave. Its creatures re-route through the others, which concentrates the pressure. Floor 3 and floor 5 have more than one rift.
+11. **Open a rift** (gamble or pact). A new rift opens for the rest of the floor: more creatures and more essence. Pairs with the Knucklebones as a prize or a bust.
+
+**Before the floor**
+12. **Doors show the stair's shape.** At the landing, each door shows a thumbnail of the next floor's path variant. Choosing a door is choosing your battlefield.
+
+**Relics** (bend the rules)
+13. **Lodestone:** creatures take the *lit* branch instead (inverts steering). **Wandering Stair** (cursed): forks reshuffle every wave. **Pilgrim's Chalk:** Switchback Chalk twice per floor.
+
+**Claude's pick for a first prototype:** forks on floors 2–5 with the main-path rule, plus the **darkness pull**, the **Sluice Gate**, **creature instincts** and **scent of the dead**. That set makes the path a living opponent with only one new ward and no new gestures.
