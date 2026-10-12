@@ -105,12 +105,13 @@ function castLight(fk,k,lamp){
   for(let i=0;i<s.length;i+=2){for(const L of F.L){if((lamp||!L.lamp)&&dst(s[i],s[i+1],L.x,L.y)<=L.r){n++; break;}}}
   return n;
 }
-function weirAt(fk){const t=towerAt(fk.c,fk.r); return t&&t.type==='weir'&&!t.dead&&!t.dark?t:null;}
+function weirAt(fk){const t=towerAt(fk.c,fk.r); return t&&t.type==='weir'&&!t.dead&&!t.dark&&!t.smashed?t:null;}
 /* which way a creature goes at a fork: the weir, then its instinct, then the dark. Ties take the main way (0). */
 function forkPick(fk,e){
   const w=weirAt(fk);
   if(w&&!(e&&(e.def.fly||e.def.boss))){
-    if(e&&e.def.heavy){removeTower(w); F.fx.push({k:'ring',x:w.x,y:w.y,r0:.1,r1:.9,t:0,dur:.5,col:'139,146,148'}); F.shake=Math.max(F.shake,.25); hint('A Behemoth smashes the weir.'); return 0;}
+    /* smashed now, cleared after the creature loop (update) so no tower is removed mid-iteration */
+    if(e&&e.def.heavy){w.smashed=true; F.fx.push({k:'ring',x:w.x,y:w.y,r0:.1,r1:.9,t:0,dur:.5,col:'139,146,148'}); F.shake=Math.max(F.shake,.25); hint('A Behemoth smashes the weir.'); return 0;}
     return w.open||0;
   }
   if(e){
@@ -157,6 +158,12 @@ sub("""    e.d+=sp*dt;
       if(e.d>=fk.d&&!((e.fk||0)&(1<<fi))&&fk.opts.includes(e.gate)){e.fk=(e.fk||0)|(1<<fi); e.gate=fk.opts[forkPick(fk,e)];}
     }
     const P=F.paths[e.gate], p=posAt(P,e.d);""")
+
+# the smashed weir is removed once every creature has moved
+sub("""  updateFoes(dt);
+  """, """  updateFoes(dt);
+  for(let i=F.towers.length-1;i>=0;i--)if(F.towers[i].smashed)removeTower(F.towers[i]);
+  """)
 
 # a Wretch that bursts before a fork sends its Skitterlings down different ways
 sub("if(e.def.split)for(let i=0;i<e.def.split;i++)spawnFoe('skitter',e.gate,Math.max(0,e.d-.25-i*.3));",
