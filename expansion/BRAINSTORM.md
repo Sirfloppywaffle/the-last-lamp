@@ -174,7 +174,7 @@ Gemini accepted all four pushbacks. Added constraints: forks diverge at least 1.
 `forks.py` builds `forks.html` from the current `index.html`, so the real game is never edited. `test.sh` runs the whole suite plus `forks.test.js` against it in a throwaway copy: **19/19 pass**.
 
 What's in it:
-- **Forks on floor 2** (the upper gallery, a long dark loop) and **floor 3** (the lower vein swings wide along the east wall). Each branch is a full path sharing its root's prefix; at the fork the creature switches `e.gate` and keeps `e.d`.
+- **Forks on floor 2** (the upper gallery, a long dark loop along the top wall; moved up a row after Gemini's review so one candle can't light both ways) and **floor 3** (the lower vein swings wide along the east wall). Each branch is a full path sharing its root's prefix; at the fork the creature switches `e.gate` and keeps `e.d`.
 - **Darkness pull**, counting only your light; ties go to the main way. Untouched floors play as before (tested).
 - **Instincts:** Gnashers and bosses keep the main way; **Shades and Stalkers hunt your light** (the opposite of the crowd, so no single layout handles a mixed wave); Watchers fly over the Weir; a Behemoth smashes it.
 - **The Weir** (45, tray-only on forked floors, never a gift): built on the fork tile, flipped from its panel between waves, locked during a wave.

@@ -31,7 +31,7 @@ sub("""  {name:'The Ossuary',hue:36,mark:'bone',lamp:[6,7],stipend:110,
 """  {name:'The Ossuary',hue:36,mark:'bone',lamp:[6,7],stipend:110,
    paths:[[[11,0],[11,3],[1,3],[1,12],[10,12],[10,7],[6,7]]],
    /* the upper gallery: a long, dark loop far from the lamp */
-   forks:[{gate:0,from:[8,3],via:[[8,1],[3,1]],to:[3,3]}],""")
+   forks:[{gate:0,from:[8,3],via:[[8,0],[3,0]],to:[3,3]}],""")
 sub("""   paths:[[[0,0],[9,0],[9,2],[3,2],[3,5],[6,5],[6,7]],[[11,13],[2,13],[2,11],[9,11],[9,7],[6,7]]],""",
 """   paths:[[[0,0],[9,0],[9,2],[3,2],[3,5],[6,5],[6,7]],[[11,13],[2,13],[2,11],[9,11],[9,7],[6,7]]],
    /* the flooded aisle: the lower vein can swing wide along the east wall */
