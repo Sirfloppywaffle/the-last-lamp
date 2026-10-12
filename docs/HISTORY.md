@@ -11,7 +11,6 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
   - playable preview links for every PR, plus the live site (`site`);
   - the Gemini reviewer (`gemini-review`). (Claude)
 - The game reads `window.LL_STORE_NS` so PR previews keep their own save. No gameplay changes.
-- The title screen shows the version (`GAME_VERSION`, now 15.1), and "preview build" on PR previews, so it's always clear which build is being played. (Claude)
 
 ---
 
