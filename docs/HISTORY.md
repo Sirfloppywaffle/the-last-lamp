@@ -4,6 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- Added double-tap protection on landing choices and modals (`showModal` / `#modal`). Taps that start before or within 150ms of a modal or landing step appearing are blocked from picking choices on the new screen, preventing fast double-taps from blindly choosing stair doors or options. Added `tests/t/double-tap.test.js` using CDP touch events. (Gemini)
 - Moved the project to GitHub, with:
   - `AGENTS.md`, the shared brief;
   - design docs;
