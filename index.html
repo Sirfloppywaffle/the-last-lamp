@@ -173,6 +173,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .contbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left}
 .contbtn small{font-family:var(--f-num);font-size:.7rem;color:var(--ink-on-tallow);opacity:.75}
 .best{margin:0;font-family:var(--f-num);font-size:.78rem;color:var(--ash)}
+.ver{margin:8px 0 0;font-family:var(--f-num);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ash);opacity:.7}
 .rules{border-top:1px solid var(--seam);padding-top:12px}
 .rules h2{margin:0 0 6px;font-family:var(--f-display);font-weight:500;font-size:1.35rem;color:var(--bone)}
 .rules ul,.box ul{margin:0;padding-left:18px;display:grid;gap:7px;color:var(--ash);max-width:62ch}
@@ -325,6 +326,7 @@ input[type=range]::-moz-range-track {
       <button class="btn" id="settingsBtn">Settings</button>
     </div>
     <p class="best" id="bestLine"></p>
+    <p class="ver" id="verLine"></p>
     <div class="rules" id="rules" hidden>
       <h2>How the dark works</h2>
       <ul id="rulesList">
@@ -380,6 +382,8 @@ const rnd=(a,b)=>a+Math.random()*(b-a);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
+/* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
+const GAME_VERSION='15.1';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -4038,6 +4042,7 @@ $('#mapOverlay').addEventListener('click', ev => {
 });
 
 /* ---------------- wiring ---------------- */
+$('#verLine').textContent='Version '+GAME_VERSION+(window.LL_STORE_NS?' · preview build':'');
 $('#callBtn').onclick=callWave;
 $('#speedBtn').onclick=toggleSpeed;
 $('#pauseBtn').onclick=openPause;
