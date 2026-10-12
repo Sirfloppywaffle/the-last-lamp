@@ -151,3 +151,20 @@ Gemini accepted all four pushbacks. Added constraints: forks diverge at least 1.
 13. **Lodestone:** creatures take the *lit* branch instead (inverts steering). **Wandering Stair** (cursed): forks reshuffle every wave. **Pilgrim's Chalk:** Switchback Chalk twice per floor.
 
 **Claude's pick for a first prototype:** forks on floors 2–5 with the main-path rule, plus the **darkness pull**, the **Sluice Gate**, **creature instincts** and **scent of the dead**. That set makes the path a living opponent with only one new ward and no new gestures.
+
+## 10. Round 3 with Gemini: where it landed
+
+**Gemini was right:**
+- **The main-path rule leaks.** A longer branch is free slow time, and a wave split across two branches thins every choke point. **Patch:** alternate branches carry a structural deficit, such as less buildable ground, so you can't line both sides with wards.
+- **Mid-wave taps on a 1×1 gate are a mis-tap trap.** The Sluice Gate becomes the **Weir**: flipped during the build phase, then it locks when you call the wave.
+- **Scent of the dead is invisible punishment.** Cut. Its inverted version, **Carrion Feasting** (Skitterlings that cross a heavy kill tile frenzy), is optional.
+- **Floor 1 stays pure.** It's where you learn candle chains. Forks start on floor 2.
+- **Wretch splits at a fork** send one Skitterling down each branch: a breach that punishes over-investing in one branch.
+- **Cut:** Carrion Lure, Bulwark, Undertow, Switchback Chalk, Close a rift.
+
+**Claude's corrections (round 4):**
+- **Lamp light can't count in the darkness pull.** If the long branch runs far from the lamp, it's naturally dark, so creatures would take it by default, and the game gets *easier* untouched. Rule: the pull counts only light you cast (candles, Watchers, the Flare), and a tie goes to the main path. Steering then always costs a ward, and the branch you push them down is dark, where your wards go dark too.
+- **The Weir must cost something**, or it makes steering free and redundant. It's a ward you build at a fork (one per fork), flipped free between waves. Watchers fly over it; Behemoths smash it.
+- **Keep one mid-wave tool, as a rite, not a tile tap.** **Will-o'-Wisp**: tap a branch, and for 10s everything reaching that fork follows the wisp. It uses the same board-tap targeting as Pillar of Salt, so the gesture already exists.
+
+**Prototype slice:** forks on floors 2–5 + darkness pull (cast light only, ties to main) + creature instincts + the Weir + Wretch split at forks. Will-o'-Wisp and the door previews come next.
