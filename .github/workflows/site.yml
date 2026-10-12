@@ -1,0 +1,85 @@
+# Publishes the game with GitHub Pages from the gh-pages branch:
+#   main            -> https://<owner>.github.io/<repo>/          (the real game)
+#   pull request N  -> https://<owner>.github.io/<repo>/pr-N/     (a playable preview, with its own save,
+#                                                                  removed when the PR closes)
+# Pages must be set to "Deploy from a branch: gh-pages / (root)" once, in Settings → Pages.
+name: site
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    # previews only for branches in this repo (forks can't write here)
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Update gh-pages
+        env:
+          EVENT: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          git config user.name "last-lamp-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp index.html /tmp/game.html
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null; then
+            git fetch -q origin gh-pages
+            git worktree add -q ../site origin/gh-pages
+            cd ../site && git checkout -q -B gh-pages
+          else
+            git worktree add -q --detach ../site
+            cd ../site && git checkout -q --orphan gh-pages && { git rm -rqf . >/dev/null 2>&1 || true; }
+          fi
+          touch .nojekyll
+          if [ "$EVENT" = "push" ]; then
+            cp /tmp/game.html index.html
+            MSG="Publish main @ ${GITHUB_SHA::7}"
+          elif [ "$ACTION" = "closed" ]; then
+            rm -rf "pr-$PR"
+            MSG="Remove preview for PR #$PR"
+          else
+            mkdir -p "pr-$PR"
+            # its own save space, and a badge so it can't be mistaken for the real game
+            python3 - "$PR" <<'PY'
+          import sys,re
+          pr=sys.argv[1]; s=open('/tmp/game.html',encoding='utf-8').read()
+          ns="<script>window.LL_STORE_NS='pr%s:';</script>"%pr
+          badge=('<div style="position:fixed;left:50%%;top:max(2px,env(safe-area-inset-top));transform:translateX(-50%%);z-index:9999;'
+                 'background:#6a1010;color:#fff;font:600 10px/1.5 system-ui,sans-serif;letter-spacing:.08em;padding:1px 8px;border-radius:4px;'
+                 'pointer-events:none;opacity:.88">PREVIEW · PR #%s</div>')%pr
+          s=re.sub(r'<head>',lambda m:m.group(0)+'\n'+ns,s,count=1)
+          s=s.replace('</body>',badge+'\n</body>',1)
+          open('pr-%s/index.html'%pr,'w',encoding='utf-8').write(s)
+          PY
+            MSG="Preview for PR #$PR @ ${GITHUB_SHA::7}"
+          fi
+          git add -A
+          git diff --cached --quiet && { echo "nothing to publish"; exit 0; }
+          git commit -qm "$MSG"
+          git push -q origin gh-pages
+      - name: Link the preview on the PR
+        if: github.event_name == 'pull_request' && github.event.action != 'closed'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const n = context.payload.pull_request.number;
+            const owner = context.repo.owner.toLowerCase(), repo = context.repo.repo;
+            const url = `https://${owner}.github.io/${repo}/pr-${n}/`;
+            const marker = '<!-- preview-link -->';
+            const body = `${marker}\n▶ **Play this version:** ${url}\n\nIt has its own save, so your real run isn't touched. The link updates with every push, usually within a minute or two.`;
+            const comments = await github.paginate(github.rest.issues.listComments, {...context.repo, issue_number: n});
+            if (!comments.some(c => c.body && c.body.includes(marker)))
+              await github.rest.issues.createComment({...context.repo, issue_number: n, body});

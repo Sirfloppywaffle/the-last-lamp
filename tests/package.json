@@ -1,0 +1,14 @@
+{
+  "name": "the-last-lamp-tests",
+  "private": true,
+  "description": "Headless browser tests for The Last Lamp. See AGENTS.md section 7.",
+  "scripts": {
+    "test": "node run.js",
+    "check": "node check.js",
+    "shots": "node run.js --only devices",
+    "design": "node gen-design.js"
+  },
+  "devDependencies": {
+    "playwright": "1.56.0"
+  }
+}

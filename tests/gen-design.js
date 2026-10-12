@@ -1,0 +1,19 @@
+// Regenerates docs/DESIGN.md from the live data tables in index.html.
+// Step 1 (here): load the game in a headless browser and dump its data tables to .build/data.json.
+// Step 2: tools/gen_design.py turns that JSON into docs/DESIGN.md.   Run both with: npm run design
+const {chromium}=require('playwright'), fs=require('fs'), path=require('path'), {spawnSync}=require('child_process');
+const NAMES='FOES SPAWNABLE WARDS BASE_WARDS GIFT_WARDS HORRORS TREES TARGETS RITES RELICS KITS OMENS ROOMS PACTS HALL DEPTHS EVENTS FLOORS COUNT_MUL GAP_MUL DELAY_MUL TIERNAMES BOSS_INTRO BIG_INTRO'.split(' ');
+(async()=>{
+  let s=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
+  const dump='window.__d={};'+NAMES.map(n=>`try{window.__d.${n}=${n}}catch(e){}`).join('');
+  const i=s.lastIndexOf('})();'); s=s.slice(0,i)+dump+s.slice(i);
+  const dir=path.join(__dirname,'.build'); fs.mkdirSync(dir,{recursive:true});
+  fs.writeFileSync(path.join(dir,'dump.html'),s);
+  const b=await chromium.launch(); const p=await b.newPage();
+  await p.goto('file://'+path.join(dir,'dump.html')); await p.waitForTimeout(300);
+  const json=await p.evaluate(()=>JSON.stringify({d:window.__d},(k,v)=>typeof v==='function'?'fn:'+v.toString().slice(0,400):v));
+  await b.close();
+  fs.writeFileSync(path.join(dir,'data.json'),json);
+  const r=spawnSync('python3',[path.join(__dirname,'..','tools','gen_design.py'),path.join(dir,'data.json'),path.join(__dirname,'..','docs','DESIGN.md')],{stdio:'inherit'});
+  process.exit(r.status||0);
+})();

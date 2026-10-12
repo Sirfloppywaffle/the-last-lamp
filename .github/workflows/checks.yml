@@ -1,0 +1,35 @@
+# Runs the whole test suite (tests/) on every pull request and on main. A red check blocks the merge.
+name: checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install test tools
+        working-directory: tests
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Run the suite
+        working-directory: tests
+        run: npm test
+      - name: Keep screenshots (devices, map, flare, boss)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: screenshots
+          path: tests/.build/shots
+          retention-days: 14
