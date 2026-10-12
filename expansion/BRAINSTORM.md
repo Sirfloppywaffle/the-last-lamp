@@ -94,3 +94,19 @@ There are two readings. They could be one feature or two.
 - **D2 The Unlit** stays parked as the later big mode. Gemini's AI keeper sketch (keep the candle chain, answer the threat, upgrade the cheapest) is enough for an opponent.
 
 **Still open (Claude's pushback, round 2):** see the PR thread.
+
+## 7. Round 2: converged shortlist for Criss
+
+Gemini accepted all four pushbacks. Added constraints: forks diverge at least 1.5 tiles so ward ranges stay readable; Knucklebones stays two buttons ("Roll again" / "Walk away") in the existing modal.
+
+**The core: the dark steers.** New expansion floors only (floors 1–5 stay as tuned).
+1. **Forked stairs on the board.** Paths split; creatures take the darker branch. Your candles decide where they walk.
+2. **Seal a branch.** Tap a fork's mouth to salt it shut for one wave.
+3. **Snuff the Wick** (rite). Put the lamp out for a few seconds. Wards sleep, horrors frenzy, kills drop sigils. The price: in the dark, every branch is the same, so your steering is gone.
+4. **One umbral ward** (gift). Works only on unlit tiles, and everywhere during a Snuff. The non-horror reason to go dark.
+
+**Gambling: the Knucklebones.** A landing room. Each roll grows the prize and carves another eye onto the bones (worse odds), and costs +1 permanent madness. Walk away any time; bust and you lose it all plus your stake.
+
+**Later: The Unlit.** Play as the dark against an AI lamp-keeper. Built on top of the core once it exists.
+
+**Cut:** the dimmer, digging and collapsing tiles, wave wagers, the floor editor (unless Criss wants to make floors himself).
