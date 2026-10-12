@@ -3864,6 +3864,20 @@ function tickUI(){if(!F||!run)return; renderHUD(); renderPreview(); renderTray()
 function forceUI(){trayKey=''; sheetKey=''; modeKey=''; previewKey=''; tickUI();}
 
 /* ---------------- settings, modal, pause & title ---------------- */
+let modalShownAt = 0;
+let lastInputStart = 0;
+['pointerdown', 'touchstart'].forEach(type => {
+  window.addEventListener(type, () => { lastInputStart = performance.now(); }, { passive: true, capture: true });
+});
+window.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') lastInputStart = performance.now();
+}, { passive: true, capture: true });
+
+function allowModalInput(e) {
+  if (!e || !e.isTrusted || !lastInputStart || e.detail === 0) return true;
+  return (lastInputStart >= modalShownAt + 150);
+}
+
 function openSettings(fromPause){
   paused=true;
   const row=(id,lbl,val)=>`<label style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;color:var(--bone);font-weight:500;">${lbl} <input type="range" id="${id}" min="0" max="1" step="0.05" value="${val}"></label>`;
@@ -3890,6 +3904,7 @@ function openSettings(fromPause){
 }
 
 function showModal(o){
+  modalShownAt = performance.now();
   $('#modal .box').classList.toggle('wide',!!o.wide);
   $('#mTitle').textContent=o.title;
   $('#mTitle').className=o.bad?'bad':'';
@@ -4072,6 +4087,13 @@ $('#mapOverlay').addEventListener('click', ev => {
   MAP_SYS.active = false; $('#mapOverlay').hidden = true;
   if (F && !F.blocking) { if (canPause()) openPause(); else paused = false; }
 });
+
+$('#modal').addEventListener('click', ev => {
+  if (!allowModalInput(ev)) {
+    ev.stopPropagation();
+    ev.preventDefault();
+  }
+}, true);
 
 /* ---------------- wiring ---------------- */
 $('#verLine').textContent='Version '+GAME_VERSION+(window.LL_STORE_NS?' · preview build':'');
