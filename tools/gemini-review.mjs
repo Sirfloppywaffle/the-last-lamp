@@ -17,6 +17,7 @@ const REPO = env.GITHUB_REPOSITORY;
 const MARK = '<!-- gemini-review -->';
 const MAX_COMMENT = 60000;          // GitHub's limit is 65,536 characters
 const BUDGET = 900_000;             // characters of context we're willing to send
+const MODEL_TIMEOUT = +(env.GEMINI_TIMEOUT_MS || 120_000);   // a slow model shouldn't stall the review: move on to the next
 
 const log = (...a) => console.log(...a);
 const summary = (t) => { log(t); if (env.GITHUB_STEP_SUMMARY) fs.appendFileSync(env.GITHUB_STEP_SUMMARY, t + '\n'); };
@@ -24,6 +25,7 @@ const summary = (t) => { log(t); if (env.GITHUB_STEP_SUMMARY) fs.appendFileSync(
 async function gh(path, { method = 'GET', body, accept, raw } = {}) {
   const r = await fetch(GH + path, {
     method,
+    signal: AbortSignal.timeout(30_000),
     headers: {
       authorization: `Bearer ${env.GITHUB_TOKEN}`,
       accept: accept || 'application/vnd.github+json',
@@ -39,7 +41,7 @@ async function gh(path, { method = 'GET', body, accept, raw } = {}) {
 // ---- which Gemini model: a pinned one, or the best this key can use (pro before flash, newest first) ----
 async function candidateModels() {
   if (env.GEMINI_MODEL) return [env.GEMINI_MODEL.replace(/^models\//, '')];
-  const r = await fetch(`${GEM}/models?pageSize=200`, { headers: { 'x-goog-api-key': env.GEMINI_API_KEY } });
+  const r = await fetch(`${GEM}/models?pageSize=200`, { headers: { 'x-goog-api-key': env.GEMINI_API_KEY }, signal: AbortSignal.timeout(30_000) });
   if (!r.ok) throw new Error(`Gemini model list failed: ${r.status} ${(await r.text()).slice(0, 200)}`);
   const all = ((await r.json()).models || [])
     .filter((m) => (m.supportedGenerationMethods || []).includes('generateContent'))
@@ -57,18 +59,26 @@ async function candidateModels() {
 async function askGemini(system, user) {
   const tried = [];
   for (const model of await candidateModels()) {
-    const r = await fetch(`${GEM}/models/${model}:generateContent`, {
+    let r;
+    try {
+      r = await fetch(`${GEM}/models/${model}:generateContent`, {
       method: 'POST',
+      signal: AbortSignal.timeout(MODEL_TIMEOUT),
       headers: { 'x-goog-api-key': env.GEMINI_API_KEY, 'content-type': 'application/json' },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: system }] },
         contents: [{ role: 'user', parts: [{ text: user }] }],
         generationConfig: { temperature: 0.4, maxOutputTokens: 16384 },
       }),
-    });
+      });
+    } catch (e) {   // timeout or network error: try the next model
+      tried.push(`${model}: ${e.name === 'TimeoutError' ? `no answer within ${Math.round(MODEL_TIMEOUT / 1000)}s` : e.message}`);
+      log(`model ${model} failed: ${e.message}`); continue;
+    }
     if (!r.ok) {
       const why = (await r.text()).replace(/\s+/g, ' ');
-      const msg = (why.match(/"message":\s*"([^"]{0,160})/) || [0, why.slice(0, 160)])[1];
+      let msg = why.slice(0, 160);   // Gemini's own suggestion: parse the JSON so quoted names inside the message survive
+      try { const j = JSON.parse(why); if (j.error?.message) msg = j.error.message.slice(0, 160); } catch (_) {}
       tried.push(`${model}: ${r.status} ${msg}`); log(`model ${model} failed: ${r.status} ${why.slice(0, 300)}`); continue;
     }
     const j = await r.json();
