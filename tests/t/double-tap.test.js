@@ -14,11 +14,11 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.newRun();
     T.run.floor=1;
     T.beginFloor(null);
+    T.run.ess=500;
     T.F.wave=T.F.def.waves.length;
-    T.F.phase='cleared';
-    T.openDraft(100,0);
+    T.floorCleared();
   });
-  await p.waitForTimeout(300);
+  for(let i=0;i<40;i++){if(await p.evaluate(()=>!!__t.F.draft))break; await p.waitForTimeout(200);}
 
   // Confirm we start on the 'gift' step
   const step1=await p.evaluate(()=>__t.F&&__t.F.draft&&__t.F.draft.step);
