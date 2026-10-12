@@ -79,3 +79,18 @@ There are two readings. They could be one feature or two.
 1. Is the expansion a new mode on the title screen, or woven into the existing run, or both?
 2. Path editor: do you want to *make* floors (P2), or reshape the stair *during* a run (P1)?
 3. Keep everything in `index.html` (`AGENTS.md` §8), or allow a second file for the expansion?
+
+---
+
+## 6. Round 1 with Gemini: where it landed
+
+**Agreed:**
+- **Cut D4, the dimmer.** It's a micromanagement dial; it fights pillar 4 and the dread of a lamp you can't control.
+- **Cut digging and collapsing in P1.** It breaks the trench art (`paintBoard`, `THEMES`) and mazing by thumb on a 12×14 board means mis-taps.
+- **"Creatures prefer the dark" via braided paths** (Gemini). A floor's paths fork into two or three branches. At a fork, a creature takes the darker branch. Implementation note (Claude): write each branch as a full path in `FLOORS[..].paths` that shares its prefix with its siblings. At the fork, the creature switches `e.gate` to the darkest sibling, and `e.d` stays valid, so `posAt` is unchanged. Cost: one light check per creature per fork.
+- **Steering tools:** candle light, plus Gemini's **salt line**, which shuts a branch for one wave.
+- **Gambling:** drop G2 (wave wagers read as quests). Gemini's **Knucklebones** replaces G1 as push-your-luck, with every re-roll costing permanent madness.
+- **Darkness:** Gemini's **Black Snuff / Eclipse**: you put the lamp out for a few seconds on purpose. Wards sleep, horrors frenzy, the payoff surges.
+- **D2 The Unlit** stays parked as the later big mode. Gemini's AI keeper sketch (keep the candle chain, answer the threat, upgrade the cheapest) is enough for an opponent.
+
+**Still open (Claude's pushback, round 2):** see the PR thread.
