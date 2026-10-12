@@ -158,7 +158,7 @@ main().catch(async (e) => {
   if (currentPR) {
     try {
       await gh(`/repos/${REPO}/issues/${currentPR}/comments`, { method: 'POST', body: { body:
-        `### ⚠️ Gemini couldn't review this\n\n\`${msg}\`\n\nCommon causes: the \`GEMINI_API_KEY\` secret is wrong or expired, or the free tier's limit was hit (try again later, or pin a model with the \`GEMINI_MODEL\` repository variable). Comment \`/gemini re-review\` to retry.\n${MARK}` } });
+        `### ⚠️ Gemini couldn't review this\n\n\`${msg}\`\n\nCommon causes: the \`GEMINI_API_KEY\` secret is wrong or expired (it must be a Gemini API key from aistudio.google.com/apikey, usually starting with \`AIza\`; a Jules API key won't work), or the free tier's limit was hit (try again later, or pin a model with the \`GEMINI_MODEL\` repository variable). Comment \`/gemini re-review\` to retry.\n${MARK}` } });
     } catch (e2) { console.error('could not post the failure note:', e2.message); }
   }
   process.exitCode = 1;

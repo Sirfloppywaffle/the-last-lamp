@@ -1,7 +1,8 @@
 # Gemini reviews Claude's pull requests, and answers on any PR when someone trusted comments "/gemini …".
 #   /gemini re-review        → a fresh full review of the current diff
 #   /gemini <anything else>  → a reply in the conversation
-# Needs the repository secret GEMINI_API_KEY (from Google AI Studio). Without it, this does nothing.
+# Needs the repository secret GEMINI_API_KEY: a Gemini API key from https://aistudio.google.com/apikey
+# (usually starts with "AIza"). A Jules API key is a different thing and won't work. Without a key, this does nothing.
 # Optional repository variables: GEMINI_MODEL (pin a model), GEMINI_TRUSTED (extra logins allowed to use /gemini).
 name: gemini-review
 on:
