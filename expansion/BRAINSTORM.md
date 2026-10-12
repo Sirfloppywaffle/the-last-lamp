@@ -168,3 +168,19 @@ Gemini accepted all four pushbacks. Added constraints: forks diverge at least 1.
 - **Keep one mid-wave tool, as a rite, not a tile tap.** **Will-o'-Wisp**: tap a branch, and for 10s everything reaching that fork follows the wisp. It uses the same board-tap targeting as Pillar of Salt, so the gesture already exists.
 
 **Prototype slice:** forks on floors 2–5 + darkness pull (cast light only, ties to main) + creature instincts + the Weir + Wretch split at forks. Will-o'-Wisp and the door previews come next.
+
+## 11. Prototype 1: forked stairs (`expansion/proto/`)
+
+`forks.py` builds `forks.html` from the current `index.html`, so the real game is never edited. `test.sh` runs the whole suite plus `forks.test.js` against it in a throwaway copy: **19/19 pass**.
+
+What's in it:
+- **Forks on floor 2** (the upper gallery, a long dark loop) and **floor 3** (the lower vein swings wide along the east wall). Each branch is a full path sharing its root's prefix; at the fork the creature switches `e.gate` and keeps `e.d`.
+- **Darkness pull**, counting only your light; ties go to the main way. Untouched floors play as before (tested).
+- **Instincts:** Gnashers and bosses keep the main way; **Shades and Stalkers hunt your light** (the opposite of the crowd, so no single layout handles a mixed wave); Watchers fly over the Weir; a Behemoth smashes it.
+- **The Weir** (45, tray-only on forked floors, never a gift): built on the fork tile, flipped from its panel between waves, locked during a wave.
+- **Wretch Skitterlings** born before a fork split one each way.
+- A **chevron** at every fork shows where the crowd will go right now. A hint explains forks on first sight.
+
+**Floors 1, 4, 5 have no forks**, on purpose: floor 1 is where you learn (Gemini); floor 4 is a spiral with no room for a branch at least 1.5 tiles clear of the trench, and it is the Keeper's floor; floor 5 already has three rifts and no clear ground. Worth a second look once Criss has played this.
+
+**New number:** Weir cost 45. No other balance changes.
