@@ -21,7 +21,7 @@ def sub(find, repl):
 # (test.sh passes --bare: the suite runs in a fresh browser and checks the stock save keys and version line)
 if '--bare' not in sys.argv:
     sub('<script>', "<script>window.LL_STORE_NS=window.LL_STORE_NS||'exp-forks:';</script>\n<script>")
-    sub("const GAME_VERSION='15.1';", "const GAME_VERSION='15.1 · forks prototype';")
+    sub("const GAME_VERSION='15.2';", "const GAME_VERSION='15.2 · forks prototype';")
 
 # --- data: forks on the Ossuary and the Drowned Nave (canonical portrait coordinates) ---
 # A fork leaves a root path at `from`, runs through `via`, and rejoins it at `to`.

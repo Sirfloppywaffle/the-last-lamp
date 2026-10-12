@@ -5,16 +5,18 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 ## Unreleased
 
 - "How the dark works" on the title screen now opens the rules on top, where they can be seen, instead of unfolding below the fold. Any pop-up with more to scroll shows a "More below" cue that goes away at the bottom. Found by Criss (#11). (Claude)
-- Fixed relic removal so each relic's oil capacity effect is independent regardless of acquisition or removal order, added an ownership check to `removeRelic`, and enforced the capacity floor of 6 across all relic combinations. (Gemini)
-- Added double-tap protection on landing choices and modals (`showModal` / `#modal`). Taps that start before or within 150ms of a modal or landing step appearing are blocked from picking choices on the new screen, preventing fast double-taps from blindly choosing stair doors or options. Added `tests/t/double-tap.test.js` using CDP touch events. (Gemini)
-- Moved the project to GitHub, with:
-  - `AGENTS.md`, the shared brief;
-  - design docs;
-  - a 16-part test suite, run on every PR (`checks`);
-  - playable preview links for every PR, plus the live site (`site`);
-  - the Gemini reviewer (`gemini-review`). (Claude)
-- The game reads `window.LL_STORE_NS` so PR previews keep their own save. No gameplay changes.
-- The title screen shows the version (`GAME_VERSION`, now 15.1), and "preview build" on PR previews, so it's always clear which build is being played. (Claude)
+
+---
+
+## v15.2 — Moved to GitHub, steadier taps, relic fix
+- **Gemini:**
+  - Relic removal is now exact: removing any relic undoes only its own effect on oil capacity, whatever order relics came and went in. `removeRelic` checks you actually hold the relic, and the capacity floor of 6 holds for every combination. Old saves migrate.
+  - Double-tap protection: a tap that starts before, or within 150ms of, a modal or landing step appearing can't pick a choice on the new screen. Fast double-taps no longer blindly choose a stair door. Tested with real touch events (`double-tap.test.js`).
+- **Claude:**
+  - Moved the project to GitHub: `AGENTS.md` as the shared brief, design docs, a test suite on every PR (`checks`), playable preview links for every PR plus the live site (`site`), and the Gemini reviewer (`gemini-review`).
+  - PR previews keep their own save (`window.LL_STORE_NS`), so Criss's real run is never touched.
+  - The title screen shows the version, and "preview build" on previews.
+- **Expansion (design only, nothing in the game yet):** Claude and Gemini brainstormed path influence, gambling and darkness mechanics in `expansion/`, and built a sandbox prototype of forked stairs. See `expansion/BRAINSTORM.md`.
 
 ---
 
