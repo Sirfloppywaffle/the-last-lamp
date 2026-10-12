@@ -203,6 +203,10 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .choice b{font-family:var(--f-display);font-weight:500;font-size:1.25rem;line-height:1.05}
 .choice span{font-size:.86rem;color:var(--ash)}
 .mactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+/* "more below": a box with more to scroll fades at the bottom and says so. The cue is 0px tall, so showing it moves nothing */
+.mmore{position:sticky;bottom:0;height:0;pointer-events:none}
+.mmore::before{content:"";position:absolute;left:-20px;right:-20px;bottom:-20px;height:84px;background:linear-gradient(rgba(18,22,24,0),var(--stone) 70%)}
+.mmore span{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);padding:4px 12px;border-radius:999px;background:var(--slab);border:1px solid var(--tallow);color:var(--tallow);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 .mactions.stack{flex-direction:column;align-items:stretch;max-width:340px}
 
 /* Map Overlay */
@@ -321,7 +325,7 @@ input[type=range]::-moz-range-track {
     <div class="title-actions">
       <button class="btn call big contbtn" id="continueBtn" hidden>Continue<small id="contSub"></small></button>
       <button class="btn call big" id="descendBtn">Descend</button>
-      <button class="btn" id="rulesBtn" aria-expanded="false">How the dark works</button>
+      <button class="btn" id="rulesBtn">How the dark works</button>
       <button class="btn" id="hallBtn">Ember Hall</button>
       <button class="btn" id="settingsBtn">Settings</button>
     </div>
@@ -366,6 +370,7 @@ input[type=range]::-moz-range-track {
     <p id="mBody"></p>
     <div class="choices" id="mChoices"></div>
     <div class="mactions" id="mActions"></div>
+    <div class="mmore" id="mMore" hidden><span>More below ↓</span></div>
   </div>
 </div>
 
@@ -3924,7 +3929,14 @@ function showModal(o){
   $('#modal').hidden=false;
   pauseOpen=o.kind==='pause';
   const first=ac.querySelector('button.call')||ac.querySelector('button')||ch.querySelector('button'); if(first)first.focus({preventScroll:true});
+  moreCue();
 }
+/* when a box holds more than the screen shows, say so (Criss tapped the rules, saw nothing new, and thought it was broken) */
+function moreCue(){
+  const b=$('#modal .box'), more=!$('#modal').hidden&&b.scrollHeight-b.scrollTop-b.clientHeight>8;
+  $('#mMore').hidden=!more;
+}
+$('#modal .box').addEventListener('scroll',moreCue,{passive:true});
 function closeModal(){$('#modal').hidden=true; pauseOpen=false;}
 function canPause(){return !!(F&&run&&$('#title').hidden&&(F.phase==='build'||F.phase==='wave'||F.phase==='draft'));}
 function isFull(){return !!(document.fullscreenElement||document.webkitFullscreenElement);}
@@ -3972,6 +3984,7 @@ function resumeGame(){
 }
 function showRules(fromPause){
   paused=true;
+  $('#modal .box').scrollTop=0;
   showModal({title:'How the dark works',html:'<ul>'+$('#rulesList').innerHTML+'</ul>',
     actions:[{label:fromPause?'Back':'Close',primary:true,fn:()=>{if(fromPause)openPause(); else closeModal();}}]});
 }
@@ -4110,7 +4123,8 @@ $('#descendBtn').onclick=()=>{
 };
 $('#hallBtn').onclick=()=>{AUDIO.init(); openHall();};
 $('#continueBtn').onclick=()=>{AUDIO.init(); if(lastSave&&lastSave.run)resumeFrom(lastSave);};
-$('#rulesBtn').onclick=()=>{const r=$('#rules'); r.hidden=!r.hidden; $('#rulesBtn').setAttribute('aria-expanded',String(!r.hidden));};
+/* the rules open on top, where they can be seen, instead of unfolding below the fold of the title screen */
+$('#rulesBtn').onclick=()=>showRules(false);
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'||e.key==='p'||e.key==='P'){
     if(pauseOpen){resumeGame(); return;}
@@ -4126,7 +4140,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('pagehide',()=>{try{if(AUDIO.ctx&&AUDIO.ctx.state==='running')AUDIO.ctx.suspend();}catch(e){}});
 let rzPending=false;
-function queueLayout(){if(rzPending)return; rzPending=true; requestAnimationFrame(()=>{rzPending=false; layout(); if(F)forceUI();});}
+function queueLayout(){if(rzPending)return; rzPending=true; requestAnimationFrame(()=>{rzPending=false; layout(); if(F)forceUI(); moreCue();});}
 window.addEventListener('resize',queueLayout);
 document.addEventListener('fullscreenchange',queueLayout);
 if(window.ResizeObserver){try{new ResizeObserver(queueLayout).observe($('#stage'));}catch(e){}}

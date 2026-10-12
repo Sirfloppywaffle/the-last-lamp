@@ -4,6 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- "How the dark works" on the title screen now opens the rules on top, where they can be seen, instead of unfolding below the fold. Any pop-up with more to scroll shows a "More below" cue that goes away at the bottom. Found by Criss (#11). (Claude)
 - Fixed relic removal so each relic's oil capacity effect is independent regardless of acquisition or removal order, added an ownership check to `removeRelic`, and enforced the capacity floor of 6 across all relic combinations. (Gemini)
 - Added double-tap protection on landing choices and modals (`showModal` / `#modal`). Taps that start before or within 150ms of a modal or landing step appearing are blocked from picking choices on the new screen, preventing fast double-taps from blindly choosing stair doors or options. Added `tests/t/double-tap.test.js` using CDP touch events. (Gemini)
 - Moved the project to GitHub, with:
