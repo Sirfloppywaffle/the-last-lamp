@@ -3,6 +3,9 @@ const {chromium}=require('playwright');
 (async()=>{
   const b=await chromium.launch(); const p=await b.newPage({viewport:{width:412,height:860}});
   await p.goto('file://'+process.env.LL_RAW); await p.waitForTimeout(500);
+  const ver=await p.evaluate(()=>document.querySelector('#verLine').textContent);
+  console.log('title shows:',ver);
+  if(!/^Version \d+(\.\d+)*$/.test(ver)){console.log('FAIL the title screen should show the version'); process.exitCode=1;}
   await p.click('#descendBtn'); await p.waitForTimeout(300);
   await p.evaluate(()=>document.querySelectorAll('#mChoices .choice')[0].click()); await p.waitForTimeout(600);
   const fl=await p.evaluate(()=>document.querySelector('#floorNo').textContent);
