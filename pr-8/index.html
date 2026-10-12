@@ -591,6 +591,7 @@ function updateOilMax(){
 }
 function addRelic(k){
   if(!k||run.relics.includes(k))return;
+  updateOilMax();
   if(run.relics.length===0)run.baseOilMax=run.oilMax;
   run.relics.push(k);
   updateOilMax();
@@ -598,6 +599,7 @@ function addRelic(k){
 }
 function removeRelic(k){
   if(!k||!run.relics.includes(k))return;
+  updateOilMax();
   run.relics=run.relics.filter(x=>x!==k);
   updateOilMax();
 }
