@@ -1,0 +1,9 @@
+# expansion/ — the sandbox
+
+This folder is where we design and prototype the expansion. **Nothing here is part of the game.**
+
+Rules (on top of `AGENTS.md`):
+- **No changes to `index.html`, `tests/`, `tools/` or `.github/`** in expansion work until Criss says an idea graduates. Graduating means a normal feature PR against `index.html`, reviewed as usual.
+- **Prototypes are copies.** Copy `index.html` to `expansion/proto/<idea>.html` (or write a small standalone page), and set `window.LL_STORE_NS='exp-<idea>:'` at the top so a prototype can never touch Criss's real save.
+- PR previews only publish `index.html`, so prototypes won't show up on the preview link. Claude can publish a prototype as a claude.ai artifact for Criss to play on his phone.
+- Design talk happens on the brainstorm PR and in `BRAINSTORM.md`. Edit the doc when the thread settles something.
