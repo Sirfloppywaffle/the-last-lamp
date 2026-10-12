@@ -4,6 +4,8 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- "How the dark works" on the title screen now opens the rules on top, where they can be seen, instead of unfolding below the fold. Any pop-up with more to scroll shows a "More below" cue that goes away at the bottom. Found by Criss (#11). (Claude)
+
 ---
 
 ## v15.2 — Moved to GitHub, steadier taps, relic fix
