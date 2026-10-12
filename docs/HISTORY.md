@@ -4,6 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- Fixed relic removal so each relic's oil capacity effect is independent regardless of acquisition or removal order, added an ownership check to `removeRelic`, and enforced the capacity floor of 6 across all relic combinations. (Gemini)
 - Moved the project to GitHub, with:
   - `AGENTS.md`, the shared brief;
   - design docs;

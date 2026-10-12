@@ -565,37 +565,40 @@ function relicPool(curses){
   return Object.keys(RELICS).filter(k=>!run.relics.includes(k)&&(!RELICS[k].pack||m.unlocked.includes(RELICS[k].pack))&&(curses===undefined||!!RELICS[k].curse===curses));
 }
 function relicOpts(n){return shuffle(relicPool(false)).slice(0,n);}
+function relicOilMod(relics){
+  if(!relics)return 0;
+  let m=0;
+  if(relics.includes('reserve'))m+=4;
+  if(relics.includes('glass'))m-=6;
+  if(relics.includes('hollow'))m-=4;
+  return m;
+}
+function updateOilMax(){
+  if(!run)return;
+  if(run.baseOilMax==null){
+    if(run.relicDeltas){
+      const sum=Object.values(run.relicDeltas).reduce((a,b)=>a+b,0);
+      run.baseOilMax=run.oilMax-sum;
+      delete run.relicDeltas;
+    }else{
+      run.baseOilMax=run.oilMax-relicOilMod(run.relics);
+    }
+  }
+  const mod=relicOilMod(run.relics);
+  run.oilMax=Math.max(6,run.baseOilMax+mod);
+  run.oil=Math.min(run.oil,run.oilMax);
+}
 function addRelic(k){
   if(!k||run.relics.includes(k))return;
+  if(run.relics.length===0)run.baseOilMax=run.oilMax;
   run.relics.push(k);
-  if(!run.relicDeltas)run.relicDeltas={};
-  if(k==='reserve'){
-    run.relicDeltas[k]=4;
-    run.oilMax+=4; run.oil=Math.min(run.oilMax,run.oil+6);
-  }
-  if(k==='glass'){
-    const n=Math.max(6,run.oilMax-6);
-    run.relicDeltas[k]=n-run.oilMax;
-    run.oilMax=n; run.oil=Math.min(run.oil,run.oilMax);
-  }
-  if(k==='hollow'){
-    const n=Math.max(6,run.oilMax-4);
-    run.relicDeltas[k]=n-run.oilMax;
-    run.oilMax=n; run.oil=Math.min(run.oil,run.oilMax);
-  }
+  updateOilMax();
+  if(k==='reserve')run.oil=Math.min(run.oilMax,run.oil+6);
 }
 function removeRelic(k){
+  if(!k||!run.relics.includes(k))return;
   run.relics=run.relics.filter(x=>x!==k);
-  if(run.relicDeltas&&run.relicDeltas[k]!=null){
-    run.oilMax-=run.relicDeltas[k];
-    delete run.relicDeltas[k];
-  }else{
-    if(k==='reserve')run.oilMax-=4;
-    if(k==='glass')run.oilMax+=6;
-    if(k==='hollow')run.oilMax+=4;
-  }
-  run.oilMax=Math.max(1,run.oilMax);
-  run.oil=Math.min(run.oil,run.oilMax);
+  updateOilMax();
 }
 function addOil(n){run.oil=Math.min(run.oilMax,run.oil+n);}
 function loseOil(n){run.oil=Math.max(1,run.oil-n);}
@@ -614,17 +617,17 @@ const EVENTS={
     {l:'Bury them',d:'The next floor starts with 60 more essence.',fn:()=>{run.bonusStipend=(run.bonusStipend||0)+60; return {text:'You do it properly. Something in the dark seems to approve.'};}}]},
   grave:{n:'An Open Grave',body:'It is freshly dug and exactly your size. Something at the bottom glints.',opts:[
     {l:'Climb in',d:'Take a cursed relic, then choose a relic.',fn:()=>{const c=pick(relicPool(true)); addRelic(c); return {text:c?'You climb out holding '+RELICS[c].n+'. It is warm.':'The grave is empty after all.',pick:1};}},
-    {l:'Fill it in',d:'The lamp holds 2 more oil.',fn:()=>{run.oilMax+=2; addOil(2); return {text:'Whatever it was for, it will not be you. The lamp steadies. +2 capacity.'};}},
+    {l:'Fill it in',d:'The lamp holds 2 more oil.',fn:()=>{run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+2; updateOilMax(); addOil(2); return {text:'Whatever it was for, it will not be you. The lamp steadies. +2 capacity.'};}},
     {l:'Walk on',d:'Nothing happens.',fn:()=>({text:'You do not look back. You hear dirt moving.'})}]},
   altar:{n:'A Salt-crusted Altar',body:'An old altar furred white with salt. Something was sacrificed here, and the salt kept it.',opts:[
     {l:'Pray',d:'Gain Salt Flats, or Witch Salt if you have it.',fn:()=>{const k=!has('saltflats')?'saltflats':(!has('witchsalt')?'witchsalt':null); if(k){addRelic(k); if(!run.wards.includes('salt'))run.wards.push('salt'); return {text:'The salt answers. You carry '+RELICS[k].n+'.'};} run.ess+=60; return {text:'The salt has nothing more for you. +60 essence.'};}},
     {l:'Pocket the salt',d:'+70 essence.',fn:()=>{run.ess+=70; return {text:'It sells. +70 essence.'};}},
-    {l:'Smash it',d:'The lamp holds 3 more oil, but you lose 2 oil now.',fn:()=>{run.oilMax+=3; loseOil(2); return {text:'Brine pours out and runs toward the lamp. +3 capacity, −2 oil.'};}}]},
+    {l:'Smash it',d:'The lamp holds 3 more oil, but you lose 2 oil now.',fn:()=>{run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+3; updateOilMax(); loseOil(2); return {text:'Brine pours out and runs toward the lamp. +3 capacity, −2 oil.'};}}]},
   door:{n:'A Door That Was Not There',pack:'events_more',body:'Set into the wall of the stair. The hinges are still wet.',opts:[
     {l:'Open it',d:'Half the time a merchant. Half the time the next floor turns elite.',fn:()=>{if(Math.random()<.5)return {text:'Behind it, something with too many hands is selling things.',room:'merchant'}; if(run.next)run.next.elite=true; return {text:'Behind it, the stair goes down steeper. The next floor is elite.'};}},
     {l:'Leave it shut',d:'Nothing happens.',fn:()=>({text:'You leave it. When you look back, there is no door.'})}]},
   mirror:{n:'The Black Mirror',pack:'events_more',body:'Your reflection is carrying a lamp too. Its flame is brighter than yours.',opts:[
-    {l:'Trade lamps',d:'The lamp holds 5 less oil, but burns half a tile wider for the rest of the run.',fn:()=>{run.oilMax=Math.max(6,run.oilMax-5); run.oil=Math.min(run.oil,run.oilMax); run.lampBonus=(run.lampBonus||0)+.5; return {text:'Your hand comes away holding the brighter lamp. It is lighter than it should be.'};}},
+    {l:'Trade lamps',d:'The lamp holds 5 less oil, but burns half a tile wider for the rest of the run.',fn:()=>{const b=run.baseOilMax!=null?run.baseOilMax:run.oilMax; run.baseOilMax=Math.max(6,b-5); updateOilMax(); run.lampBonus=(run.lampBonus||0)+.5; return {text:'Your hand comes away holding the brighter lamp. It is lighter than it should be.'};}},
     {l:'Break it',d:'Bind a Watcher from the shards.',fn:()=>{run.roster.watcher=(run.roster.watcher||0)+1; run.bound++; return {text:'One shard keeps looking at you. It is bound to you now.'};}},
     {l:'Look away',d:'Nothing happens.',fn:()=>({text:'You do not meet its eyes. It does not meet yours.'})}]},
   teeth:{n:'The Toothmonger',pack:'events_more',body:'A thing with too many hands offers to buy whatever you no longer need.',opts:[
@@ -1002,7 +1005,7 @@ function checkpoint(){
   store.set(SAVEKEY,lastSave);
 }
 function clearSave(){lastSave=null; store.set(SAVEKEY,null);}
-function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; run.relicDeltas=run.relicDeltas||{}; beginFloor(s);}
+function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; updateOilMax(); beginFloor(s);}
 
 /* ---------------- dev mode ----------------
    Hidden: tap the "The Last Lamp" heading on the title screen 7 times quickly to switch it on or off.
@@ -1010,7 +1013,7 @@ function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(!run.kit){run.w
 let devOn=!!store.get('ll-dev',false);
 const DEV_ACTS={
   dark(){window.devNoDark=!window.devNoDark; F.L=lightsNow(); forceUI(); return window.devNoDark?'Darkness off':'Darkness on';},
-  cheat(){run.ess+=2000; run.oilMax=Math.max(run.oilMax,99); run.oil=run.oilMax; forceUI(); return '+2000 essence, oil full';},
+  cheat(){run.ess+=2000; run.baseOilMax=Math.max(run.baseOilMax||run.oilMax,99); updateOilMax(); run.oil=run.oilMax; forceUI(); return '+2000 essence, oil full';},
   unlock(){
     Object.keys(HORRORS).forEach(k=>run.roster[k]=Math.max(run.roster[k]||0,5));
     Object.keys(RELICS).forEach(k=>{if(!RELICS[k].curse)addRelic(k);});
@@ -1061,9 +1064,9 @@ function openDevMode(msg){
 /* ---------------- run & floors ---------------- */
 function newRun(k,depth){
   k=KITS[k]?k:'lamplighter'; const K=KITS[k];
-  run={floor:0,oil:20,oilMax:20,ess:0,kit:k,depth:depth||0,wards:K.wards.slice(),rites:K.rites.slice(),relics:[],relicDeltas:{},roster:Object.assign({},K.roster),
+  run={floor:0,oil:20,oilMax:20,baseOilMax:20,ess:0,kit:k,depth:depth||0,wards:K.wards.slice(),rites:K.rites.slice(),relics:[],roster:Object.assign({},K.roster),
     bound:0,kills:0,peakMad:0,omen:null,elite:false,next:null,bosses:0,elites:0,seenEvents:[],madPen:0,lampBonus:0,bonusStipend:0};
-  if(run.depth>=5){run.oilMax-=5; run.oil=run.oilMax;}
+  if(run.depth>=5){run.baseOilMax-=5; updateOilMax(); run.oil=run.oilMax;}
   beginFloor(null);
 }
 function openKitPicker(note){
@@ -1384,12 +1387,12 @@ function takePick(d,k){
 }
 function doPact(d,k){
   const r=d.room; r.done=k;
-  if(k==='flame'){run.oilMax=Math.max(6,run.oilMax-4); run.oil=Math.min(run.oil,run.oilMax); startPick(d,1,'Feed the flame','The flame takes its share. Choose what it gives back.');}
+  if(k==='flame'){const b=run.baseOilMax!=null?run.baseOilMax:run.oilMax; run.baseOilMax=Math.max(6,b-4); updateOilMax(); startPick(d,1,'Feed the flame','The flame takes its share. Choose what it gives back.');}
   else if(k==='blood'){loseOil(5); run.ess+=150;}
   else if(k==='curse'){const c=pick(relicPool(true)); addRelic(c); startPick(d,1,'Embrace the curse',c?'You carry '+RELICS[c].n+' now. Choose what comes with it.':'Choose a relic.');}
   else if(k==='name'){run.roster.elite=(run.roster.elite||0)+1; run.bound++; run.madPen=(run.madPen||0)+2;}
   else if(k==='forget'){const ws=run.wards.filter(w=>w!=='candle'&&w!=='harpoon'); const w=pick(ws); if(w)run.wards=run.wards.filter(x=>x!==w); startPick(d,2,'Forget a ward',w?'You no longer remember how to build a '+WARDS[w].n+'. Choose two relics.':'Choose two relics.');}
-  else if(k==='burn'){run.ess=0; run.oilMax+=6; addOil(6);}
+  else if(k==='burn'){run.ess=0; run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+6; updateOilMax(); addOil(6);}
   const said={flame:'The lamp gutters, then steadies smaller.',blood:'You bleed the lamp. 150 essence pools on the altar.',curse:'The curse settles on you like wet cloth.',name:'You whisper it. Something answers, and follows you down. A Drowned Choir is bound to you.',forget:'You forget. It is surprisingly easy.',burn:'Your essence burns on the altar, and the flame drinks it. The lamp holds 6 more oil.'};
   r.res=said[k]; showLanding();
 }
@@ -1463,7 +1466,7 @@ function landingModal(){
     const curse=run.relics.filter(k=>RELICS[k].curse);
     const ch=[
       {cls:'',tag:'Rest',title:'Tend the lamp',sub:'Restore 8 oil.',fn:step('room',()=>{addOil(8); descend();})},
-      {cls:'',tag:'Rest',title:'Deepen the reservoir',sub:'The lamp holds 3 more oil, and you restore 1.',fn:step('room',()=>{run.oilMax+=3; addOil(1); descend();})}];
+      {cls:'',tag:'Rest',title:'Deepen the reservoir',sub:'The lamp holds 3 more oil, and you restore 1.',fn:step('room',()=>{run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+3; updateOilMax(); addOil(1); descend();})}];
     if(curse.length)ch.push({cls:'curse',tag:'Rest',title:'Cleanse',sub:'Lay down '+RELICS[curse[0]].n+' and leave it here.',fn:step('room',()=>{removeRelic(curse[0]); descend();})});
     return {kind:'draft',wide:true,title:'A Quiet Landing',body:'Nothing is moving here. Lamp oil <b>'+Math.ceil(run.oil)+'/'+run.oilMax+'</b>.',choices:ch,actions:[pause]};
   }

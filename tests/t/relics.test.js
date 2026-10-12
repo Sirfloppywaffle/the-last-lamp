@@ -1,5 +1,5 @@
-// Test relic add/remove symmetry for Oil Reserve, Glass Lantern, and Hollow Crown,
-// including clamped oilMax capacity cases and legacy saves without recorded deltas.
+// Test relic add/remove symmetry, double-curse independence in both orders,
+// ownership guard, and legacy saves.
 const {chromium}=require('playwright');
 const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==undefined?' '+JSON.stringify(detail):''));};
 (async()=>{
@@ -9,35 +9,48 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   const r=await p.evaluate(()=>{
     const T=__t, out={};
 
-    // 1. Oil Reserve (reserve) test: adding adds 4 capacity, removing takes back exactly 4
+    // 1. Oil Reserve test: adding adds 4 capacity, removing takes back 4
     T.newRun('lamplighter', 0);
-    const origReserveOilMax=T.run.oilMax; // 20
     T.addRelic('reserve');
-    out.reserveAdded={oilMax:T.run.oilMax, deltaRecorded:T.run.relicDeltas['reserve']};
+    out.reserveAdded={oilMax:T.run.oilMax};
     T.removeRelic('reserve');
     out.reserveRemoved={oilMax:T.run.oilMax};
 
-    // 2. Glass Lantern (glass) clamped test: oilMax starts at 10 -> add glass (clamped to Math.max(6, 10-6) = 6, delta -4) -> remove glass -> restores to 10
+    // 2. Double-curse order 1 (glass then hollow): oilMax 10 -> add glass (6) -> add hollow (6) -> remove glass (6) -> remove hollow (10)
     T.newRun('lamplighter', 0);
     T.run.oilMax=10; T.run.oil=10;
     T.addRelic('glass');
-    out.glassClampedAdded={oilMax:T.run.oilMax, deltaRecorded:T.run.relicDeltas['glass']};
-    T.removeRelic('glass');
-    out.glassClampedRemoved={oilMax:T.run.oilMax};
-
-    // 3. Hollow Crown (hollow) clamped test: oilMax starts at 8 -> add hollow (clamped to Math.max(6, 8-4) = 6, delta -2) -> remove hollow -> restores to 8
-    T.newRun('lamplighter', 0);
-    T.run.oilMax=8; T.run.oil=8;
+    out.doubleGlassFirstAddedGlass={oilMax:T.run.oilMax};
     T.addRelic('hollow');
-    out.hollowClampedAdded={oilMax:T.run.oilMax, deltaRecorded:T.run.relicDeltas['hollow']};
+    out.doubleGlassFirstAddedHollow={oilMax:T.run.oilMax};
+    T.removeRelic('glass');
+    out.doubleGlassFirstRemovedGlass={oilMax:T.run.oilMax};
     T.removeRelic('hollow');
-    out.hollowClampedRemoved={oilMax:T.run.oilMax};
+    out.doubleGlassFirstRemovedHollow={oilMax:T.run.oilMax};
 
-    // 4. Legacy save test: old save without relicDeltas object removes default amounts safely
+    // 3. Double-curse order 2 (hollow then glass): oilMax 10 -> add hollow (6) -> add glass (6) -> remove hollow (6) -> remove glass (10)
+    T.newRun('lamplighter', 0);
+    T.run.oilMax=10; T.run.oil=10;
+    T.addRelic('hollow');
+    out.doubleHollowFirstAddedHollow={oilMax:T.run.oilMax};
+    T.addRelic('glass');
+    out.doubleHollowFirstAddedGlass={oilMax:T.run.oilMax};
+    T.removeRelic('hollow');
+    out.doubleHollowFirstRemovedHollow={oilMax:T.run.oilMax};
+    T.removeRelic('glass');
+    out.doubleHollowFirstRemovedGlass={oilMax:T.run.oilMax};
+
+    // 4. Ownership guard: removing a relic not held does nothing
+    T.newRun('lamplighter', 0);
+    T.removeRelic('glass');
+    out.unheldRemoved={oilMax:T.run.oilMax};
+
+    // 5. Legacy save test: old save without relicDeltas object removes default amounts safely
     T.newRun('lamplighter', 0);
     T.run.relics=['reserve', 'glass', 'hollow'];
-    T.run.oilMax=22; // 20 + 4 - 6 - 4 = 14 in standard scenario, let's say oilMax is 22
-    delete T.run.relicDeltas; // simulate old save format
+    T.run.oilMax=22;
+    delete T.run.relicDeltas;
+    delete T.run.baseOilMax;
     T.removeRelic('reserve');
     out.legacyReserveRemoved={oilMax:T.run.oilMax};
     T.removeRelic('glass');
@@ -47,14 +60,18 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   });
 
   console.log(JSON.stringify(r));
-  ok(r.reserveAdded.oilMax===24&&r.reserveAdded.deltaRecorded===4,'Oil Reserve adds +4 oilMax',r.reserveAdded);
+  ok(r.reserveAdded.oilMax===24,'Oil Reserve adds +4 oilMax',r.reserveAdded);
   ok(r.reserveRemoved.oilMax===20,'Oil Reserve removal restores oilMax to 20',r.reserveRemoved);
 
-  ok(r.glassClampedAdded.oilMax===6&&r.glassClampedAdded.deltaRecorded===-4,'Glass Lantern clamps oilMax from 10 to 6 (delta -4)',r.glassClampedAdded);
-  ok(r.glassClampedRemoved.oilMax===10,'Glass Lantern removal restores oilMax back to 10 exactly',r.glassClampedRemoved);
+  ok(r.doubleGlassFirstAddedGlass.oilMax===6&&r.doubleGlassFirstAddedHollow.oilMax===6,'Double curse order 1: glass and hollow both clamp oilMax to 6',r.doubleGlassFirstAddedHollow);
+  ok(r.doubleGlassFirstRemovedGlass.oilMax===6,'Double curse order 1: removing glass keeps oilMax at 6 while hollow is held',r.doubleGlassFirstRemovedGlass);
+  ok(r.doubleGlassFirstRemovedHollow.oilMax===10,'Double curse order 1: removing hollow restores oilMax to 10',r.doubleGlassFirstRemovedHollow);
 
-  ok(r.hollowClampedAdded.oilMax===6&&r.hollowClampedAdded.deltaRecorded===-2,'Hollow Crown clamps oilMax from 8 to 6 (delta -2)',r.hollowClampedAdded);
-  ok(r.hollowClampedRemoved.oilMax===8,'Hollow Crown removal restores oilMax back to 8 exactly',r.hollowClampedRemoved);
+  ok(r.doubleHollowFirstAddedHollow.oilMax===6&&r.doubleHollowFirstAddedGlass.oilMax===6,'Double curse order 2: hollow and glass both clamp oilMax to 6',r.doubleHollowFirstAddedGlass);
+  ok(r.doubleHollowFirstRemovedHollow.oilMax===6,'Double curse order 2: removing hollow keeps oilMax at 6 while glass is held',r.doubleHollowFirstRemovedHollow);
+  ok(r.doubleHollowFirstRemovedGlass.oilMax===10,'Double curse order 2: removing glass restores oilMax to 10',r.doubleHollowFirstRemovedGlass);
+
+  ok(r.unheldRemoved.oilMax===20,'Removing a relic not held does nothing',r.unheldRemoved);
 
   ok(r.legacyReserveRemoved.oilMax===18,'Legacy save without deltas subtracts default 4 for reserve',r.legacyReserveRemoved);
   ok(r.legacyGlassRemoved.oilMax===24,'Legacy save without deltas adds default 6 for glass',r.legacyGlassRemoved);
