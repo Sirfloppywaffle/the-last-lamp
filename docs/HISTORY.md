@@ -4,6 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **The Knucklebones**, a new room behind the stair doors, the gambling idea from the expansion brainstorm. Stake essence the stair would burn (40 + 20 per floor). Each clean throw doubles the pot, and then another eye is carved into the bones: 69%, then 44%, then 25% to land clean. Every throw after the first costs 1 madness for the rest of the run. Walk away any time; what you win joins your salvage, safe from the toll. An eye takes everything. Three clean throws pay the pot and a relic. (Claude, designed with Gemini)
 - Developer mode can jump to any floor (keeping the run: relics, wards, essence) and clear the floor you are on straight to the landing, so Criss can test floors 2–5 without playing up to them. (Claude)
 
 ---
