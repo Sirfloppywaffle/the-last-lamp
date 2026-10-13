@@ -2,7 +2,9 @@
 const {chromium}=require('playwright');
 (async()=>{
   const b=await chromium.launch(); let fails=0; const fail=m=>{console.log('FAIL '+m); fails++;};
+  // the rules run with reduced motion (no throw animation); the table's animation is checked at the end
   const p=await b.newPage({viewport:{width:412,height:860},hasTouch:true});
+  await p.emulateMedia({reducedMotion:'reduce'});
   await p.goto('file://'+process.argv[2]); await p.waitForTimeout(300);
   // a landing with the Knucklebones behind the door; dice are forced: 0.99 lands bare bone, 0 lands an eye
   const room=(ess,roll)=>p.evaluate(([ess,roll])=>{const T=__t; T.newRun(); T.run.floor=1; T.beginFloor(null); T.setP(true);
@@ -54,6 +56,39 @@ const {chromium}=require('playwright');
   // F: the room can come up behind a door
   const seen=await p.evaluate(()=>{let n=0; for(let i=0;i<300;i++)if(__t.makeDoors().some(d=>d.room==='bones'))n++; return n;});
   if(seen<20)fail('the Knucklebones should turn up behind doors, seen '+seen+'/300');
+  // G: with motion, the table plays the throw out: no text or choices until the bones land, then the result
+  for(const [w,h,tag] of [[412,860,'folded'],[915,356,'side']]){
+    const q=await b.newPage({viewport:{width:w,height:h},hasTouch:true});
+    await q.goto('file://'+process.argv[2]); await q.waitForTimeout(300);
+    await q.evaluate(()=>{const T=__t; T.newRun(); T.run.floor=1; T.beginFloor(null); T.setP(true); Math.random=()=>.99;
+      T.run.ess=400; T.F.phase='draft'; T.F.draft={step:'room',salvage:50,healed:0,opts:[],relics:0}; T.F.draft.room=T.makeRoom('bones'); T.showLanding();});
+    await q.waitForTimeout(300);
+    const painted=()=>q.evaluate(()=>{const cv=document.getElementById('bonesCv'); if(!cv||!cv.width)return 0; const d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data; let n=0; for(let i=0;i<d.length;i+=40)if(d[i]+d[i+1]+d[i+2]>60)n++; return n;});
+    if(await painted()<50)fail(tag+': the table should be painted before the throw');
+    await q.evaluate(()=>{[...document.querySelectorAll('#mChoices .choice')].find(c=>c.querySelector('b').textContent==='Throw the bones').click();});
+    await q.waitForTimeout(500);
+    let m=await q.evaluate(()=>({cards:document.querySelectorAll('#mChoices .choice').length,wait:!!document.querySelector('.bones-wait'),pot:__t.F.draft.room.pot}));
+    if(m.cards||!m.wait||m.pot!==120)fail(tag+': mid-throw shows only the tumbling bones (the result is already decided) '+JSON.stringify(m));
+    await q.screenshot({path:(process.argv[3]||'.')+'/bones-throw-'+tag+'.png'});
+    await q.waitForTimeout(1300);
+    m=await q.evaluate(()=>({cards:[...document.querySelectorAll('#mChoices .choice b')].map(x=>x.textContent),wait:!!document.querySelector('.bones-wait')}));
+    if(m.wait||m.cards.join()!=='Throw again,Take the pot')fail(tag+': after landing, the result and choices return '+JSON.stringify(m));
+    if(await painted()<50)fail(tag+': the table should still be painted after the throw');
+    await q.screenshot({path:(process.argv[3]||'.')+'/bones-landed-'+tag+'.png'});
+    // the table's loop is one loop, and it stops once you leave the room (Gemini's review asked)
+    const loops=await q.evaluate(async()=>{
+      let n=0; const raf=window.requestAnimationFrame;
+      window.requestAnimationFrame=cb=>{if(cb&&cb.name==='bonesFrame')n++; return raf(cb);};
+      await new Promise(r=>setTimeout(r,500)); const open=n;
+      __t.descend(); document.querySelector('#mapOverlay').hidden=true;
+      await new Promise(r=>setTimeout(r,200)); n=0;
+      await new Promise(r=>setTimeout(r,700)); window.requestAnimationFrame=raf; return {open,after:n};
+    });
+    console.log(tag+' table loop frames',JSON.stringify(loops));
+    if(loops.open<10||loops.open>60)fail(tag+': one table loop while the room is open (frames in 0.5s) '+JSON.stringify(loops));
+    if(loops.after!==0)fail(tag+': the table loop must stop after you leave '+JSON.stringify(loops));
+    await q.close();
+  }
   await b.close();
   if(fails)process.exitCode=1;
 })();

@@ -203,6 +203,10 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .choice b{font-family:var(--f-display);font-weight:500;font-size:1.25rem;line-height:1.05}
 .choice span{font-size:.86rem;color:var(--ash)}
 .mactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+/* the Knucklebones table, painted on a canvas inside the landing box */
+.bones-cv{display:block;width:100%;height:clamp(150px,30vh,230px);margin:2px 0 12px;border-radius:8px;box-shadow:0 0 0 1px var(--seam)}
+.bones-wait{display:block;color:var(--ash);font-style:italic}
+@media (max-height:500px){.bones-cv{height:120px;margin-bottom:8px}}
 /* "more below": a box with more to scroll fades at the bottom and says so. The cue is 0px tall, so showing it moves nothing */
 .mmore{position:sticky;bottom:0;height:0;pointer-events:none}
 .mmore::before{content:"";position:absolute;left:-20px;right:-20px;bottom:-20px;height:84px;background:linear-gradient(rgba(18,22,24,0),var(--stone) 70%)}
@@ -1472,19 +1476,31 @@ function makeRoom(type){
    toll (it joins your salvage). Three clean throws end the game: the pot, and a relic. */
 const BONES_MAX=3;
 function bonesClean(wins){const f=(6-(wins+1))/6; return f*f;}
+/* the throw is decided at once (and saved); the table then plays it out. BONES_ANIM is visual only, never saved */
+let BONES_ANIM=null, bonesRaf=0;
+const BONES_THROW=1.35, BONES_CASH=.9;
+function bonesAnim(kind,from,to,after){
+  if(reduceMotion){if(after)after(); return;}
+  BONES_ANIM={kind,t0:performance.now(),dur:kind==='cash'?BONES_CASH:BONES_THROW,from,to,after,shown:false};
+}
 function throwBones(d){
   const r=d.room;
   if(!r.pot){run.ess-=r.stake; r.pot=r.stake;}
   else run.madPen=(run.madPen||0)+1;
-  const eyes=r.wins+1, e1=Math.random()*6<eyes, e2=Math.random()*6<eyes;
-  if(e1||e2){
+  const eyes=r.wins+1, from=r.pot, roll=()=>{const eye=Math.random()*6<eyes; return {eye,pip:1+Math.floor(Math.random()*6)};};
+  const b1=roll(), b2=roll(); r.last=[b1,b2];
+  if(b1.eye||b2.eye){
     r.done='bust';
-    r.res=(e1&&e2?'Both bones land eye up.':'One bone lands eye up, and the eye is looking at you.')+' The hooded thing sweeps the '+r.pot+' essence into its sleeve.';
-    r.pot=0; AUDIO.slip(); showLanding(); return;
+    r.res=(b1.eye&&b2.eye?'Both bones land eye up.':'One bone lands eye up, and the eye is looking at you.')+' The hooded thing sweeps the '+r.pot+' essence into its sleeve.';
+    r.pot=0; AUDIO.slip(); bonesAnim('bust',from,0); showLanding(); return;
   }
   r.wins++; r.pot*=2; AUDIO.coin();
   r.res='Bare bone, both of them. The pot doubles to <b>'+r.pot+'</b>. It takes a knife and carves another eye into each.';
-  if(r.wins>=BONES_MAX){bonesCash(d); r.res='Bare bone a third time. It stops smiling. It pushes the pot across the step, '+r.pot+' essence, and something it was keeping for itself.'; startPick(d,1,'What it was keeping','Choose a relic.');}
+  if(r.wins>=BONES_MAX){
+    bonesCash(d); r.res='Bare bone a third time. It stops smiling. It pushes the pot across the step, '+r.pot+' essence, and something it was keeping for itself.';
+    /* the relic comes after the bones have landed, so the throw is seen first */
+    bonesAnim('win',from,r.pot,()=>{if(F&&F.draft===d){startPick(d,1,'What it was keeping','Choose a relic.'); showLanding();}});
+  }else bonesAnim('win',from,r.pot);
   showLanding();
 }
 function bonesCash(d){
@@ -1494,21 +1510,137 @@ function bonesCash(d){
 }
 function bonesModal(d,take,pause){
   const r=d.room, pct=w=>Math.round(bonesClean(w)*100)+'%';
-  if(r.done)return {kind:'draft',wide:true,title:r.done==='bust'?'The bones take it':'The Knucklebones',body:r.res,note:tollNote(d),actions:[take,pause]};
+  if(!bonesRaf)bonesRaf=requestAnimationFrame(bonesFrame);
+  const table='<canvas class="bones-cv" id="bonesCv" aria-label="The bones table"></canvas>';
+  /* while the bones are in the air: no text, no choices, only the throw */
+  if(BONES_ANIM&&!BONES_ANIM.shown)return {kind:'draft',wide:true,title:'The Knucklebones',body:table+'<span class="bones-wait">'+(BONES_ANIM.kind==='cash'?'It counts the essence into your hand…':'The bones tumble…')+'</span>',actions:[]};
+  if(r.done)return {kind:'draft',wide:true,title:r.done==='bust'?'The bones take it':'The Knucklebones',body:table+r.res,note:tollNote(d),actions:[take,pause]};
   if(!r.pot){
     const can=r.stake>=20;
     return {kind:'draft',wide:true,title:'The Knucklebones',
-      body:'A hooded thing crouches on the step, rolling two carved bones in its palm. One face of each is carved into an eye. Land bare bone and it doubles what you put down. After every throw it carves another eye.'+(can?'':' It looks at your purse, and looks away. You have nothing it wants.'),
+      body:table+'A hooded thing crouches on the step, rolling two carved bones in its palm. One face of each is carved into an eye. Land bare bone and it doubles what you put down. After every throw it carves another eye.'+(can?'':' It looks at your purse, and looks away. You have nothing it wants.'),
       note:tollNote(d),
       choices:can?[{cls:'curse',tag:'Stake '+r.stake+' essence',title:'Throw the bones',sub:pct(0)+' to land clean. A clean throw doubles your stake to '+(r.stake*2)+'. An eye takes it.',fn:step('room',throwBones)}]:[],
       actions:[{label:'Walk past',primary:true,fn:step('room',()=>descend())},pause]};
   }
   const last=r.wins===BONES_MAX-1;
-  return {kind:'draft',wide:true,title:'The Knucklebones',body:r.res,note:'The pot holds <b>'+r.pot+'</b>. Walk away with it and the stair cannot burn it.',
+  return {kind:'draft',wide:true,title:'The Knucklebones',body:table+r.res,note:'The pot holds <b>'+r.pot+'</b>. Walk away with it and the stair cannot burn it.',
     choices:[
       {cls:'curse',tag:'Throw again · +1 madness for the rest of the run',title:'Throw again',sub:pct(r.wins)+' to land clean. A clean throw makes the pot '+(r.pot*2)+(last?', and it gives you a relic':'')+'. An eye takes everything.',fn:step('room',throwBones)},
-      {cls:'relic',tag:'Walk away',title:'Take the pot',sub:'Keep '+r.pot+' essence, safe from the toll.',fn:step('room',dd=>{bonesCash(dd); showLanding();})}],
+      {cls:'relic',tag:'Walk away',title:'Take the pot',sub:'Keep '+r.pot+' essence, safe from the toll.',fn:step('room',dd=>{const p0=dd.room.pot; bonesCash(dd); bonesAnim('cash',p0,0); showLanding();})}],
     actions:[pause]};
+}
+/* ---- the bones table: a candle-lit slab, the hooded thing across it, the pot, and two bones ---- */
+function bonesFrame(now){
+  const cv=document.getElementById('bonesCv'), d=F&&F.draft, r=d&&d.room;
+  if(!cv||$('#modal').hidden||!r||r.type!=='bones'){bonesRaf=0; return;}
+  bonesRaf=requestAnimationFrame(bonesFrame);
+  const A=BONES_ANIM, at=A?(now-A.t0)/1000:99;
+  if(A&&!A.shown&&at>=A.dur){A.shown=true; const f=A.after; A.after=null; if(f)f(); else showLanding(); return;}
+  const W=cv.clientWidth, H=cv.clientHeight, dpr=Math.min(2,window.devicePixelRatio||1);
+  if(!W||!H)return;
+  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);}
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  drawBonesTable(c,W,H,reduceMotion?0:now/1000,r,A,at);
+}
+function bonePips(c,x,y,s,n){
+  const P={1:[[0,0]],2:[[-1,-1],[1,1]],3:[[-1,-1],[0,0],[1,1]],4:[[-1,-1],[1,-1],[-1,1],[1,1]],5:[[-1,-1],[1,-1],[0,0],[-1,1],[1,1]],6:[[-1,-1],[1,-1],[-1,0],[1,0],[-1,1],[1,1]]}[n]||[[0,0]];
+  c.fillStyle='#3a2a1c';
+  for(const q of P){c.beginPath(); c.arc(x+q[0]*s*.28,y+q[1]*s*.28,s*.09,0,TAU); c.fill();}
+}
+/* one bone: a rounded block, its top face (pips or an eye) and the eyes carved so far along its front */
+function drawBone(c,x,y,s,rot,face,eyes,glow){
+  c.save(); c.translate(x,y); c.rotate(rot);
+  const h=s*.32;
+  c.fillStyle='rgba(0,0,0,.45)'; c.beginPath(); c.ellipse(s*.08,s*.5+h*.6,s*.62,s*.18,0,0,TAU); c.fill();
+  const rr=(x0,y0,w,hh,rad)=>{c.beginPath(); c.moveTo(x0+rad,y0); c.arcTo(x0+w,y0,x0+w,y0+hh,rad); c.arcTo(x0+w,y0+hh,x0,y0+hh,rad); c.arcTo(x0,y0+hh,x0,y0,rad); c.arcTo(x0,y0,x0+w,y0,rad); c.closePath();};
+  let g=c.createLinearGradient(0,s*.4,0,s*.5+h); g.addColorStop(0,'#b8a684'); g.addColorStop(1,'#6e5f48');
+  c.fillStyle=g; rr(-s*.5,s*.1,s,s*.4+h,s*.16); c.fill();
+  g=c.createLinearGradient(-s*.5,-s*.5,s*.5,s*.5); g.addColorStop(0,'#f4ead2'); g.addColorStop(.6,'#ddcfae'); g.addColorStop(1,'#b9a782');
+  c.fillStyle=g; rr(-s*.5,-s*.5,s,s,s*.18); c.fill();
+  c.strokeStyle='rgba(90,70,50,.45)'; c.lineWidth=s*.03; c.stroke();
+  for(let i=0;i<eyes;i++){const ex=(i-(eyes-1)/2)*s*.26; c.strokeStyle='rgba(60,30,20,.8)'; c.lineWidth=s*.03; c.beginPath(); c.ellipse(ex,s*.5+h*.45,s*.08,s*.04,0,0,TAU); c.stroke(); c.fillStyle='#5a1a14'; c.beginPath(); c.arc(ex,s*.5+h*.45,s*.02,0,TAU); c.fill();}
+  if(face&&face.eye){
+    if(glow>0){c.save(); c.globalCompositeOperation='lighter'; const gg=c.createRadialGradient(0,0,0,0,0,s*1.2); gg.addColorStop(0,'rgba(255,60,40,'+(.55*glow)+')'); gg.addColorStop(1,'rgba(255,40,30,0)'); c.fillStyle=gg; c.beginPath(); c.arc(0,0,s*1.2,0,TAU); c.fill(); c.restore();}
+    eyeG(c,{sil:false},0,0,s*.3,{sclera:[236,226,200],iris:[200,40,30],irisR:.55,pupil:'slit',veins:true});
+  }else bonePips(c,0,0,s,face?face.pip:1);
+  c.restore();
+}
+function drawBonesTable(c,W,H,tm,r,A,at){
+  const M={sil:false}, cx=W/2, s=Math.min(W*.085,H*.15), breathe=Math.sin(tm*1.6)*H*.008;
+  const kind=A&&at<A.dur+1.2?A.kind:null, landT=A?clamp((at-BONES_THROW*.7)/(BONES_THROW*.3),0,1):1;
+  c.fillStyle='#07080a'; c.fillRect(0,0,W,H);
+  /* candlelight */
+  const fl=1+Math.sin(tm*11)*.05+Math.sin(tm*17)*.03, kx=W*.13, ky=H*.5;
+  let g=c.createRadialGradient(kx,ky,0,kx,ky,W*.7*fl); g.addColorStop(0,'rgba(255,170,80,.28)'); g.addColorStop(.5,'rgba(200,110,50,.08)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  c.fillStyle=g; c.fillRect(0,0,W,H);
+  /* the hooded thing */
+  const hx=cx, hy=H*.3+breathe, hs=H*.36;
+  c.fillStyle='#120d16'; c.beginPath(); c.moveTo(hx-hs*.95,H*.62); c.quadraticCurveTo(hx-hs*.9,hy-hs*.2,hx,hy-hs*.75); c.quadraticCurveTo(hx+hs*.9,hy-hs*.2,hx+hs*.95,H*.62); c.closePath(); c.fill();
+  g=c.createRadialGradient(hx-hs*.3,hy-hs*.4,0,hx,hy,hs); g.addColorStop(0,'rgba(120,90,70,.25)'); g.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=g; c.fill();
+  c.fillStyle='#020103'; c.beginPath(); c.ellipse(hx,hy,hs*.34,hs*.4,0,0,TAU); c.fill();
+  const narrow=kind==='win'&&at>BONES_THROW?.45:1, angry=kind==='bust'&&at>BONES_THROW?1:0, er=hs*.06;
+  for(const sx of [-1,1]){c.save(); c.translate(hx+sx*hs*.13,hy-hs*.04); c.scale(1,narrow); eyeG(c,M,0,0,er*(1+angry*.4),{emissive:true,glow:angry?[255,60,40]:[255,180,90]}); c.restore();}
+  /* the slab */
+  const ty=H*.74, trx=W*.47, try_=H*.3;
+  c.fillStyle='rgba(0,0,0,.6)'; c.beginPath(); c.ellipse(cx,ty+H*.05,trx,try_,0,0,TAU); c.fill();
+  g=c.createRadialGradient(cx-trx*.4,ty-try_*.6,0,cx,ty,trx); g.addColorStop(0,'#5d544b'); g.addColorStop(.7,'#38312b'); g.addColorStop(1,'#1d1916');
+  c.fillStyle=g; c.beginPath(); c.ellipse(cx,ty,trx,try_,0,0,TAU); c.fill();
+  c.strokeStyle='rgba(150,40,30,.35)'; c.lineWidth=1.5; c.beginPath(); c.ellipse(cx,ty,trx*.42,try_*.42,0,0,TAU); c.stroke();
+  /* its hands rest on the far edge; on a bust the right one sweeps the pot away */
+  const sweep=kind==='bust'?clamp((at-BONES_THROW)/.5,0,1):0;
+  for(const sx of [-1,1]){
+    const bx=cx+sx*W*.27-(sx>0?sweep*W*.25:0), by=ty-try_*.78+(sx>0?sweep*try_*.55:0);
+    /* a long pale palm, four jointed fingers spread on the stone, and a thumb turned in */
+    const k=s*1.7;
+    const SK=[206,194,170];
+    c.fillStyle='rgba(0,0,0,.4)'; c.beginPath(); c.ellipse(bx,by+k*.42,k*.42,k*.12,0,0,TAU); c.fill();
+    for(let f=0;f<4;f++){const fx=bx+(f-1.5)*k*.15, sp=(f-1.5)*.18*sx;
+      tendril(c,M,[[fx,by+k*.05],[fx+sp*k*.6,by+k*.32],[fx+sp*k*.9,by+k*.5],[fx+sp*k*1.05,by+k*.6]],k*.1,k*.045,SK,{base:-.12,ridge:.3});}
+    tendril(c,M,[[bx-sx*k*.22,by+k*.02],[bx-sx*k*.42,by+k*.2],[bx-sx*k*.46,by+k*.34]],k*.1,k*.05,SK,{base:-.12,ridge:.3});
+    blob(c,M,SK,bx,by,k*.3,k*.16,{hi:.4});
+    for(let f=0;f<4;f++){c.fillStyle='rgba(90,70,50,.5)'; c.beginPath(); c.arc(bx+(f-1.5)*k*.15,by+k*.07,k*.025,0,TAU); c.fill();}
+  }
+  /* the candle */
+  c.fillStyle='#e6d8b5'; c.fillRect(kx-s*.14,ky-s*.2,s*.28,s*.75); c.fillStyle='#bfae86'; c.fillRect(kx+s*.04,ky-s*.2,s*.1,s*.75);
+  g=c.createRadialGradient(kx,ky-s*.38,0,kx,ky-s*.32,s*.3*fl); g.addColorStop(0,'#fffbe8'); g.addColorStop(.4,'#ffd27a'); g.addColorStop(1,'rgba(240,120,40,0)');
+  c.fillStyle=g; c.beginPath(); c.ellipse(kx,ky-s*.36,s*.12,s*.3*fl,0,0,TAU); c.fill();
+  /* the pot: motes of essence, more of them as it grows */
+  let pot=r.pot, potX=cx, potY=ty-try_*.15, drift=0, dir=0;
+  if(A){
+    if(A.kind==='win')pot=at<BONES_THROW?A.from:A.to;
+    else if(A.kind==='bust'){pot=A.from; drift=clamp((at-BONES_THROW-.15)/.45,0,1); dir=-1;}
+    else if(A.kind==='cash'){pot=A.from; drift=clamp(at/BONES_CASH,0,1); dir=1;}
+  }
+  const n=pot>0?Math.min(46,Math.round(5+Math.log2(pot/Math.max(1,r.stake)+1)*12)):0, pop=kind==='win'&&at>BONES_THROW?1+.25*Math.max(0,1-(at-BONES_THROW)/.4):1;
+  c.save(); c.globalCompositeOperation='lighter';
+  for(let i=0;i<n;i++){
+    const a=srand(i,3)*TAU, d=Math.sqrt(srand(i,7))*s*1.1*pop, wob=Math.sin(tm*2+i)*1.5;
+    let x=potX+Math.cos(a)*d*1.4+wob, y=potY+Math.sin(a)*d*.6;
+    if(drift>0){const k=clamp(drift*1.3-srand(i,9)*.3,0,1); y+=(dir<0?(hy-y):(H+20-y))*k*k; x+=(dir<0?(hx+W*.05-x):0)*k*k;}
+    const rad=s*(.07+srand(i,5)*.05);
+    const mg=c.createRadialGradient(x,y,0,x,y,rad*3); mg.addColorStop(0,'rgba(255,215,140,.9)'); mg.addColorStop(.3,'rgba(237,170,80,.45)'); mg.addColorStop(1,'rgba(237,150,60,0)');
+    c.fillStyle=mg; c.beginPath(); c.arc(x,y,rad*3,0,TAU); c.fill();
+  }
+  c.restore();
+  /* the bones: resting before the first throw, tumbling across the slab, then where they landed */
+  /* eyes carved so far: the throw is made with wins+1; after a clean throw lands, the knife adds one */
+  const eyesNow=r.done==='bust'?r.wins+1:r.done==='cash'?r.wins:(A&&A.kind==='win'&&at<BONES_THROW+.3?r.wins:r.wins+1);
+  const rest=[[cx-s*.75,H*.93],[cx+s*.75,H*.93]], land=[[cx-W*.2,ty+try_*.1],[cx+W*.19,ty-try_*.05]];
+  for(let i=0;i<2;i++){
+    let x,y,rot,face;
+    if(A&&A.kind!=='cash'&&at<BONES_THROW){
+      const u=clamp(at/(BONES_THROW*.7),0,1), e=1-Math.pow(1-u,2);
+      x=rest[i][0]+(land[i][0]-rest[i][0])*e; y=rest[i][1]+(land[i][1]-rest[i][1])*e-Math.sin(u*Math.PI)*H*.35;
+      if(u>=1){const b=(at-BONES_THROW*.7)/(BONES_THROW*.3); x=land[i][0]; y=land[i][1]-Math.abs(Math.sin(b*Math.PI*2))*H*.05*(1-b);}
+      rot=(1-landT)*(i?-1:1)*(at*9+i); face=landT<1?{eye:false,pip:1+Math.floor((at*14+i*3)%6)}:r.last&&r.last[i];
+    }else if(r.last){x=land[i][0]; y=land[i][1]; rot=(i?.12:-.18); face=r.last[i];}
+    else{x=rest[i][0]; y=rest[i][1]; rot=(i?.1:-.08); face={eye:false,pip:i?2:5};}
+    const glow=face&&face.eye&&kind==='bust'?Math.max(0,1-Math.abs(at-BONES_THROW-.2)*2):0;
+    drawBone(c,x,y,s,rot,face,Math.max(0,eyesNow),glow);
+  }
+  /* a bust bleeds red at the edges */
+  if(kind==='bust'&&at>BONES_THROW){const k=Math.max(0,1-(at-BONES_THROW)/1);g=c.createRadialGradient(cx,H/2,Math.min(W,H)*.3,cx,H/2,Math.max(W,H)*.7); g.addColorStop(0,'rgba(140,10,10,0)'); g.addColorStop(1,'rgba(160,20,20,'+(.5*k)+')'); c.fillStyle=g; c.fillRect(0,0,W,H);}
 }
 function makeStock(){
   const st=[], m=meta();
