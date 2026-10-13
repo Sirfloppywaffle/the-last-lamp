@@ -75,6 +75,18 @@ const {chromium}=require('playwright');
     if(m.wait||m.cards.join()!=='Throw again,Take the pot')fail(tag+': after landing, the result and choices return '+JSON.stringify(m));
     if(await painted()<50)fail(tag+': the table should still be painted after the throw');
     await q.screenshot({path:(process.argv[3]||'.')+'/bones-landed-'+tag+'.png'});
+    // the table's loop is one loop, and it stops once you leave the room (Gemini's review asked)
+    const loops=await q.evaluate(async()=>{
+      let n=0; const raf=window.requestAnimationFrame;
+      window.requestAnimationFrame=cb=>{if(cb&&cb.name==='bonesFrame')n++; return raf(cb);};
+      await new Promise(r=>setTimeout(r,500)); const open=n;
+      __t.descend(); document.querySelector('#mapOverlay').hidden=true;
+      await new Promise(r=>setTimeout(r,200)); n=0;
+      await new Promise(r=>setTimeout(r,700)); window.requestAnimationFrame=raf; return {open,after:n};
+    });
+    console.log(tag+' table loop frames',JSON.stringify(loops));
+    if(loops.open<10||loops.open>60)fail(tag+': one table loop while the room is open (frames in 0.5s) '+JSON.stringify(loops));
+    if(loops.after!==0)fail(tag+': the table loop must stop after you leave '+JSON.stringify(loops));
     await q.close();
   }
   await b.close();
