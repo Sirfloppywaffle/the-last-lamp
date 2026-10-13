@@ -102,6 +102,7 @@ You tend **the last lamp** at the bottom of a drowned stair. Things climb out of
 - **Essence** is the currency: you start each floor with a stipend, and earn more from kills, early wave calls, the tithe and rooms. **The stair takes a toll:** when you descend, everything except your salvage is cut to 30%.
 - **Wards** (10 kinds) are built on tiles and upgraded along **branch trees**: each has three branches of three tiers, but only **one** branch can reach its capstone (tier 3).
 - **Horrors** are bound creatures you field like towers. They're strong, but every one fielded raises **madness**. Madness tiers (Calm → Whispers → Slipping → Leaning) flicker the lamp, shrink it, and make the dark worse.
+- **Forks** (floors 2 and 3): the stair splits. Creatures take the darker way, counting only the light you cast; Shades and Stalkers hunt it instead; Gnashers and bosses keep the main way. The **Weir** (built on a fork) shuts one way between waves.
 - **Rites** are cooldown spells (Flare, Pillar of Salt, Drowning Bell, Name the Thing).
 - **Five floors:** the Cistern, the Ossuary, the Drowned Nave, the Throat (the Keeper Below), the Abyssal Heart (the Primordial).
 - **Roguelike layer:**
@@ -132,7 +133,7 @@ Everything lives in one file: CSS, then markup, then one big script inside an II
 | `sound` | `AUDIO` (synthesized SFX), `BGM` (procedural music). |
 | `state` | Globals: `run` (the whole run, saved), `F` (the current floor, rebuilt each floor), `sel` (selected tray item), `selTower`, `mode` (rite targeting), `paused`, `speed`, `uid`. |
 | `stats from branches` | `wstat(t)` (a ward's live stats from its branch levels), `lstat()` (the lamp's), madness: `tiers()`, `horrorMad()`, `madness()`, `madTier()`, `wardCost()`. |
-| `orientation` / `paths` | Board is 14×12 (`land`) or 12×14 (`port`), picked by `bestOrient()`. `buildGeometry()`, `posAt(path,d)`. |
+| `orientation` / `paths` | Board is 14×12 (`land`) or 12×14 (`port`), picked by `bestOrient()`. `buildGeometry()`, `posAt(path,d)`. Forks: each branch is a whole extra path sharing its root's prefix (`F.paths` beyond `F.nRoots`); at the fork a creature switches `e.gate` via `forkPick()` and keeps `e.d`. Spawns and rifts use roots only. |
 | `light` | `lampBase()`, `lampRadius()`, `lightsNow()`, `canSee(e)`, light connectivity (wards go `dark`). |
 | `saving` | `store` (all localStorage goes through it; prefixed by `window.LL_STORE_NS` in PR previews), `SAVEKEY='ll-save-v2'`, `checkpoint()`, `resumeFrom()` (migrates old saves; keep it backward compatible). |
 | `dev mode` | Hidden. Tap the title heading 7 times within 3s. `DEV_ACTS`. |

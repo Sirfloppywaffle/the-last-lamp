@@ -1,4 +1,4 @@
-// Forked stairs prototype: who goes where at a fork. Run by expansion/proto/test.sh against forks.html.
+// Forked stairs (floors 2 and 3): who goes where at a fork, the Weir, and Wretch splits.
 const {chromium}=require('playwright');
 const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==undefined?' '+JSON.stringify(detail):''));};
 (async()=>{
@@ -50,6 +50,15 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
         const sk=T.F.foes.filter(f=>f.type==='skitter'); sk.forEach(s=>s.hp=s.max=1e6);
         for(let k=0;k<120;k++)T.update(1/30);
         o.split=sk.map(s=>fk.opts.indexOf(s.gate)).sort().join(',');
+        // a Wretch that bursts past the fork, on either way: its Skitterlings stay on that way and don't jump
+        o.late=[];
+        for(const k of [0,1]){
+          T.F.foes.forEach(f=>f.dead=true); T.update(1/30);
+          const w=T.spawnFoe('wretch',fk.opts[k],fk.d+2.5); T.update(1/30); const wx=w.x, wy=w.y; T.killFoe(w);
+          const kids=T.F.foes.filter(f=>f.type==='skitter'&&!f.dead); kids.forEach(s=>s.hp=s.max=1e6);
+          T.update(1/30);
+          o.late.push({way:k,gates:kids.map(s=>fk.opts.indexOf(s.gate)),jump:Math.max(...kids.map(s=>Math.hypot(s.x-wx,s.y-wy)))});
+        }
         T.render();
       }
       setup(0); out.floor0=T.F.forks.length;
@@ -72,6 +81,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       ok(o.weir.behemoth===0&&o.weir.smashed,t+'a Behemoth smashes the weir',o.weir);
       ok(/fork/.test(o.placeOff||''),t+'a weir only fits on a fork',o.placeOff);
       ok(o.split==='0,1',t+'Wretch Skitterlings split down both ways',o.split);
+      for(const l of o.late)ok(l.gates.every(g=>g===l.way)&&l.jump<1,t+'Skitterlings born past the fork stay on their way, no jump',l);
     }
     await p.close();
   }

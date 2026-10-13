@@ -1,6 +1,6 @@
 # The Last Lamp — Design Reference
 
-Every table below is generated from the live code (`index.html`) by `tools/gen-design.mjs`, so the numbers are exact as of the last regeneration. If you change a data table in the code, regenerate this file in the same PR (`cd tests && npm run design`). Hand-written sections are marked ✍️.
+Every table below is generated from the live code (`index.html`) by `tests/gen-design.js` + `tools/gen_design.py`, so the numbers are exact as of the last regeneration. If you change a data table in the code, regenerate this file in the same PR (`cd tests && npm run design`). Hand-written sections are marked ✍️.
 
 **Global wave pacing:** wave group counts × `COUNT_MUL` = **1.35**, spawn gaps × `GAP_MUL` = **1.3**, group delays × `DELAY_MUL` = **1.25** (groups of 1, such as bosses and elites, are not multiplied).
 
@@ -15,6 +15,7 @@ Every table below is generated from the live code (`index.html`) by `tools/gen-d
 - **Starting oil:** 20 (15 at depth 5). Each creature that reaches the lamp drains its `oil` value. **Bosses drain 99: all-or-nothing.**
 - **Embers per run:** `round((5 + flr² × 6 + 15 × bosses + 8 × elites + (won ? 30 : 0)) × (1 + 0.25 × depth))`, where `flr = floor reached (+1 if won)`.
 - **Heavy creatures:** no stun; total slow capped at 15%.
+- **Forks (floors 2 and 3):** a creature chooses only as it walks across a fork (anything born past one keeps its way), taking, in order: the way a working Weir leaves open (Watchers and bosses ignore it; a Behemoth smashes it and keeps the main way); the main way if it is a Gnasher or a boss; its side if it is a Wretch's Skitterling born before the fork (one each way); otherwise the way with fewer path points inside **your** light (candles, Watchers; the lamp never counts), or, for Shades and Stalkers, the way with more. Ties, and anything under a Flare, keep the main way. Every branch is longer than the stretch of main way it replaces.
 - **Horror stats** are fixed (no upgrade trees). Wards upgrade along branches: 3 branches × 3 tiers, and **only one branch per ward may reach tier 3** (the capstone).
 
 ## Creatures
@@ -53,6 +54,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `censer` | Tar Censer | 70 | beside path | Lobs burning pitch that splashes a cluster. It hits whatever it lands on, lit or not. *(aimed: First/Last/Strongest)* |
 | `coil` | Galvanic Coil | 75 | beside path | Throws lightning that leaps from creature to creature. Brine conducts: anything standing in salt takes double. *(aimed: First/Last/Strongest)* |
 | `lance` | Whaling Gun | 90 | beside path | A slow, enormous harpoon. Double damage to heavy creatures, elites and bosses. *(aimed: First/Last/Strongest)* |
+| `weir` | Weir | 45 | path | A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it. |
 
 ### Upgrade trees (cost per tier; tier 3 is the capstone)
 
@@ -304,7 +306,7 @@ Stipend **130** essence · 1 gate · hue 188
 
 ### 2. The Ossuary
 
-Stipend **110** essence · 1 gate · hue 36
+Stipend **110** essence · 1 gate · 1 fork · hue 36
 
 - Wave 1: 10× Crawler + 3× Shade
 - Wave 2: 14× Skitterling + 3× Watcher
@@ -314,7 +316,7 @@ Stipend **110** essence · 1 gate · hue 36
 
 ### 3. The Drowned Nave
 
-Stipend **120** essence · 2 gates · hue 205
+Stipend **120** essence · 2 gates · 1 fork · hue 205
 
 - Wave 1: 9× Crawler + 9× Crawler
 - Wave 2: 12× Skitterling + 6× Shade + 3× Watcher
