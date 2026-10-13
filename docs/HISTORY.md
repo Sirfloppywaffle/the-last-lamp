@@ -4,6 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **The Knucklebones table**: the room is now played out on a candle-lit slab (Criss: "visually playing the game", after Cult of the Lamb). The hooded thing sits across from you, breathing, eyes glowing; your stake is a pile of essence motes. The bones arc across the table, tumble, bounce and land showing their faces (bare pips, or an eye), with the eyes carved so far along their sides. A win swells the pot as its eyes narrow; a bust flares the eye red and its hand sweeps the pot into its sleeve; taking the pot streams the motes down to you. The result and the next choice appear only after the bones land. Reduced motion skips the throw. (Claude)
 - **The Knucklebones**, a new room behind the stair doors, the gambling idea from the expansion brainstorm. Stake essence the stair would burn (40 + 20 per floor). Each clean throw doubles the pot, and then another eye is carved into the bones: 69%, then 44%, then 25% to land clean. Every throw after the first costs 1 madness for the rest of the run. Walk away any time; what you win joins your salvage, safe from the toll. An eye takes everything. Three clean throws pay the pot and a relic. (Claude, designed with Gemini)
 - Developer mode can jump to any floor (keeping the run: relics, wards, essence) and clear the floor you are on straight to the landing, so Criss can test floors 2–5 without playing up to them. (Claude)
 
