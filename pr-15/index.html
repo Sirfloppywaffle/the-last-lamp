@@ -344,7 +344,7 @@ input[type=range]::-moz-range-track {
         <li><b>Free undo.</b> Anything you place or upgrade between waves refunds in full if you dismantle it before calling the dark.</li>
         <li><b>Call early.</b> Once a wave has finished arriving, you can call the next one while stragglers still walk, for bonus essence.</li>
         <li><b>Binding.</b> Some creatures leave a violet sigil when they die. Tap it before it fades and that creature joins your roster. Bound horrors are placed like wards and hit far harder. Slay the Keeper Below and its soul lingers longer than most. Bind it and it fights for you on the last floor.</li>
-        <li><b>Forks.</b> On some floors the stair splits. They take the darker way, and only light you cast counts, never the lamp's. A gold chevron at the fork shows where they will go. Shades and Stalkers do the opposite and hunt your light. Gnashers and bosses keep the main way. A Weir built on the fork shuts one way; flip it between waves. Watchers fly over it, and a Behemoth breaks it.</li>
+        <li><b>Forks.</b> On some floors the stair splits. They take the darker way, and only light you cast counts, never the lamp's. A gold chevron at the fork shows where they will go. Shades and Stalkers do the opposite and hunt your light. Gnashers and bosses keep the main way. A Weir built on the fork shuts one way; flip it between waves. Watchers fly over it, and a Behemoth breaks it. On these floors you also hold the Will-o’-Wisp: tap a way at a fork and, for eight seconds, everything but a boss follows it there.</li>
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
@@ -492,6 +492,7 @@ const RITES={
   flare:{n:'Flare',cd:28,d:'Everything on the floor is lit and unveiled for 5 seconds.'},
   pillar:{n:'Pillar of Salt',cd:22,d:'Tap the board. Everything nearby freezes for 2.5 seconds and takes 10 damage.'},
   bell:{n:'Drowning Bell',cd:34,d:'Every creature on the floor takes 25 damage, lit or not.'},
+  wisp:{n:'Will-o’-Wisp',cd:30,fork:true,d:'Tap a way at a fork. For 8 seconds, everything that reaches the fork follows the wisp, whatever it wants. Bosses ignore it.'},
   name:{n:'Name the Thing',cd:0,d:'Once per floor. Tap a visible creature and its whole kind takes 60% more damage until the floor ends.'}
 };
 const RELICS={
@@ -989,6 +990,8 @@ function forkPick(fk,e){
     if(e&&e.def.heavy){w.smashed=true; F.fx.push({k:'ring',x:w.x,y:w.y,r0:.1,r1:.9,t:0,dur:.5,col:'139,146,148'}); F.shake=Math.max(F.shake,.25); hint('A Behemoth smashes the weir.'); return 0;}
     return w.open||0;
   }
+  /* the wisp outranks every instinct, but not a shut gate, and not a boss */
+  if(F.wisp&&F.forks[F.wisp.fi]===fk&&!(e&&e.def.boss))return F.wisp.k;
   if(e){
     if(e.def.boss||e.type==='gnasher')return 0;
     if(e.forkPref!=null)return e.forkPref%fk.opts.length;
@@ -1383,7 +1386,7 @@ function draftOptions(n,elite){
   n=n||3;
   const pool=[];
   Object.keys(WARDS).forEach(w=>{if(!run.wards.includes(w)&&!WARDS[w].fork)pool.push({kind:'ward',key:w});});
-  if(run.rites.length<4)Object.keys(RITES).forEach(k=>{if(!run.rites.includes(k))pool.push({kind:'rite',key:k});});
+  if(run.rites.length<4)Object.keys(RITES).forEach(k=>{if(!run.rites.includes(k)&&!RITES[k].fork)pool.push({kind:'rite',key:k});});
   relicPool(false).forEach(k=>pool.push({kind:'relic',key:k}));
   pool.push({kind:'bind',key:pick(bindable())});
   shuffle(pool);
@@ -1835,6 +1838,16 @@ function castPillar(x,y){
   F.fx.push({k:'ring',x,y,r0:.2,r1:1.6,t:0,dur:.5,col:'236,232,222'});
   F.cd.pillar=RITES.pillar.cd; mode=null; AUDIO.pillar(); forceUI();
 }
+/* the wisp: the tap picks the fork and the way whose path lies nearest it */
+function castWisp(x,y){
+  let best=null, bd=1.6;
+  F.forks.forEach((fk,fi)=>fk.samples.forEach((sm,k)=>{for(let i=0;i<sm.length;i+=2){const d=dst(x,y,sm[i],sm[i+1]); if(d<bd){bd=d; best={fi,k};}}}));
+  if(!best){hint('Tap one of the ways at a fork.'); return;}
+  F.wisp={fi:best.fi,k:best.k,t:8};
+  F.cd.wisp=RITES.wisp.cd; mode=null; AUDIO.bind();
+  banner('Will-o’-Wisp','rite','They follow it, for a while');
+  forceUI();
+}
 function castName(e){
   F.named=e.type; F.nameUsed=true; mode=null;
   AUDIO.bind();
@@ -1865,6 +1878,7 @@ function update(dt){
   run.peakMad=Math.max(run.peakMad,madness());
   for(const k in F.cd)F.cd[k]=Math.max(0,F.cd[k]-dt);
   if(F.flareT>0)F.flareT-=dt;
+  if(F.wisp){F.wisp.t-=dt; if(F.wisp.t<=0)F.wisp=null;}
   if(F.hurtFlash>0)F.hurtFlash-=dt;
   if(F.shake>0)F.shake-=dt;
   F.L=lightsNow();
@@ -3638,6 +3652,13 @@ function render(){
     }
     g.restore();
   }
+  if(F.wisp){
+    const fk=F.forks[F.wisp.fi], dv=fk.dirs[F.wisp.k], fade=Math.min(1,F.wisp.t/1.2), bob=reduceMotion?0:Math.sin(tm*4)*.06;
+    const wx=fk.x+dv[0]*1.35, wy=fk.y+dv[1]*1.35-.15+bob, fl=1+(reduceMotion?0:Math.sin(tm*17)*.12);
+    g.save(); g.globalCompositeOperation='lighter';
+    const wg=g.createRadialGradient(wx,wy,0,wx,wy,.7*fl); wg.addColorStop(0,'rgba(220,255,240,'+(.9*fade)+')'); wg.addColorStop(.25,'rgba(120,230,200,'+(.45*fade)+')'); wg.addColorStop(1,'rgba(60,160,140,0)');
+    g.fillStyle=wg; g.beginPath(); g.arc(wx,wy,.7*fl,0,TAU); g.fill(); g.restore();
+  }
   /* the rifts */
   for(let pi=0;pi<F.nRoots;pi++){const P=F.paths[pi];
     const [x,y]=P.start;
@@ -3732,6 +3753,7 @@ cv.addEventListener('pointerdown',ev=>{
   const rect=cv.getBoundingClientRect();
   const x=(ev.clientX-rect.left)/rect.width*COLS, y=(ev.clientY-rect.top)/rect.height*ROWS;
   if(mode==='pillar'){castPillar(x,y); return;}
+  if(mode==='wisp'){castWisp(x,y); return;}
   if(mode==='name'){
     let best=null, bd=.75;
     for(const e of F.foes){if(!canSee(e))continue; const d=dst(e.x,e.y,x,y); if(d<bd){bd=d; best=e;}}
@@ -3894,6 +3916,7 @@ function renderModebar(){
   const el=$('#modebar');
   let title='', sub='';
   if(mode==='pillar'){title='Pillar of Salt'; sub='Tap the board where the salt should fall.';}
+  else if(mode==='wisp'){title='Will-o’-Wisp'; sub='Tap one of the ways at a fork. For 8 seconds, everything that reaches it goes that way.';}
   else if(mode==='name'){title='Name the Thing'; sub='Tap a creature you can see. Its kind takes 60% more damage for the rest of the floor.';}
   else if(sel&&sel.kind==='ward'){const W=WARDS[sel.type]; title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(W.path?' Tap a lit path tile.':' Tap a lit tile beside the path.');}
   else if(sel&&sel.kind==='horror'){const H=HORRORS[sel.type]; title=H.n+' · <i>'+H.cost+'</i> · <em>+'+horrorMad(sel.type)+' madness</em>'; sub=avail(sel.type)+' ready. '+H.d;}
@@ -3929,13 +3952,15 @@ function renderPreview(){
   el.innerHTML='<span class="pl">'+label+'</span>'+Object.keys(groups).map(k=>'<span class="chip" title="'+FOES[k].n+'"><canvas width="44" height="44" data-f="'+k+'"></canvas>×'+groups[k]+'</span>').join('');
   el.querySelectorAll('canvas').forEach(c=>drawIcon(c,{kind:'foe',type:c.dataset.f}));
 }
+/* the rites you hold, plus the wisp on floors that fork (it is never a gift) */
+function ritesNow(){return F&&F.forks&&F.forks.length?run.rites.concat(['wisp']):run.rites;}
 let ritesKey='';
 function renderRites(){
   const el=$('#rites');
-  const key=run.rites.join(',');
+  const rs=ritesNow(), key=rs.join(',');
   if(key!==ritesKey){
     ritesKey=key;
-    el.innerHTML=run.rites.map(k=>'<button class="rite" data-r="'+k+'" title="'+RITES[k].d.replace(/"/g,'')+'"><b>'+RITES[k].n+'</b><span></span></button>').join('');
+    el.innerHTML=rs.map(k=>'<button class="rite" data-r="'+k+'" title="'+RITES[k].d.replace(/"/g,'')+'"><b>'+RITES[k].n+'</b><span></span></button>').join('');
     el.querySelectorAll('.rite').forEach(b=>b.onclick=()=>castRite(b.dataset.r));
   }
   el.querySelectorAll('.rite').forEach(b=>{
