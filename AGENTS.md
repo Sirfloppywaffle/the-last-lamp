@@ -107,7 +107,7 @@ You tend **the last lamp** at the bottom of a drowned stair. Things climb out of
 - **Five floors:** the Cistern, the Ossuary, the Drowned Nave, the Throat (the Keeper Below), the Abyssal Heart (the Primordial).
 - **Roguelike layer:**
   - **Kits** choose your starting arsenal.
-  - After each floor comes **the landing**: a gift, then a relic if earned, then **forked stairs** with an **omen** on some doors, then the room behind the chosen door. Rooms can be a merchant, shrine, event, rest, reliquary, or the **deep stair**, which makes the next floor elite.
+  - After each floor comes **the landing**: a gift, then a relic if earned, then **forked stairs** with an **omen** on some doors, then the room behind the chosen door. Rooms can be a merchant, shrine, event, rest, reliquary, the **Knucklebones** (push-your-luck with essence the stair would burn), or the **deep stair**, which makes the next floor elite.
   - **Relics** bend the rules; some are cursed.
   - **Embers**, earned on every run, unlock kits, relic packs and events in the **Ember Hall**.
   - Winning opens **the Deeper Dark**: depths 1–5, each adding a new cruelty.

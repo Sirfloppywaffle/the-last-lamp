@@ -349,7 +349,7 @@ input[type=range]::-moz-range-track {
         <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit: its own wards, rites and a passive gift. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
-        <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, or the Deep Stair straight down to an elite floor that pays a relic.</li>
+        <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (stake essence the stair would burn, double it or lose it, and stop while you can), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Embers.</b> Every descent, won or lost, leaves embers behind. Spend them in the Ember Hall on new kits, relics and stories. Carry the lamp to morning to open the Deeper Dark, where each depth adds a new cruelty.</li>
@@ -543,6 +543,7 @@ const ROOMS={
   event:{n:'Something in the Dark',tag:'Unknown',d:'You hear something off the stair. You could go and look.'},
   rest:{n:'A Quiet Landing',tag:'Rest',d:'Tend the lamp. Restore oil, or deepen its reservoir.'},
   reliquary:{n:'A Forgotten Reliquary',tag:'Reliquary',d:'Another gift lies here, waiting to be taken.'},
+  bones:{n:'The Knucklebones',tag:'Gamble',d:'Something hooded throws bones on the step. It will play for the essence the stair would burn.'},
   deep:{n:'The Deep Stair',tag:'Elite',d:'No landing. The next floor is fiercer, with tougher creatures and more of them. Clear it and take a relic.'}
 };
 const PACTS={
@@ -1440,7 +1441,7 @@ function toFork(d){d.step='fork'; d.doors=makeDoors(); showLanding();}
 function afterGift(d){if(d.relics>0){d.step='relic'; d.ropts=relicOpts(3); if(!d.ropts.length){d.relics=0; toFork(d); return;} showLanding();} else toFork(d);}
 function makeDoors(){
   const n=has('compass')?4:3;
-  const w={merchant:3,event:3,shrine:2,rest:run.oil<run.oilMax*.6?3:2,reliquary:2,deep:2};
+  const w={merchant:3,event:3,shrine:2,rest:run.oil<run.oilMax*.6?3:2,reliquary:2,deep:2,bones:2};
   const pool=Object.keys(w), out=[];
   while(out.length<n&&pool.length){
     let tot=0; for(const k of pool)tot+=w[k];
@@ -1461,7 +1462,53 @@ function makeRoom(type){
     return {type,ev,res:null};
   }
   if(type==='reliquary')return {type,opts:draftOptions(3,false)};
+  if(type==='bones')return {type,stake:Math.min(run.ess,40+run.floor*20),pot:0,wins:0,done:null,res:''};
   return {type};
+}
+/* ---- the Knucklebones: push your luck ----
+   Two bones, six faces each. Before throw n, n faces of each bone are carved into eyes, so a clean throw is
+   (5/6)², then (4/6)², then (3/6)²: 69%, 44%, 25%. A clean throw doubles the pot; an eye on either bone takes it all.
+   Every throw after the first costs 1 madness for the rest of the run. What you walk away with is safe from the
+   toll (it joins your salvage). Three clean throws end the game: the pot, and a relic. */
+const BONES_MAX=3;
+function bonesClean(wins){const f=(6-(wins+1))/6; return f*f;}
+function throwBones(d){
+  const r=d.room;
+  if(!r.pot){run.ess-=r.stake; r.pot=r.stake;}
+  else run.madPen=(run.madPen||0)+1;
+  const eyes=r.wins+1, e1=Math.random()*6<eyes, e2=Math.random()*6<eyes;
+  if(e1||e2){
+    r.done='bust';
+    r.res=(e1&&e2?'Both bones land eye up.':'One bone lands eye up, and the eye is looking at you.')+' The hooded thing sweeps the '+r.pot+' essence into its sleeve.';
+    r.pot=0; AUDIO.slip(); showLanding(); return;
+  }
+  r.wins++; r.pot*=2; AUDIO.coin();
+  r.res='Bare bone, both of them. The pot doubles to <b>'+r.pot+'</b>. It takes a knife and carves another eye into each.';
+  if(r.wins>=BONES_MAX){bonesCash(d); r.res='Bare bone a third time. It stops smiling. It pushes the pot across the step, '+r.pot+' essence, and something it was keeping for itself.'; startPick(d,1,'What it was keeping','Choose a relic.');}
+  showLanding();
+}
+function bonesCash(d){
+  const r=d.room;
+  run.ess+=r.pot; d.salvage=(d.salvage||0)+r.pot; r.done='cash';
+  r.res='You stop. It counts '+r.pot+' essence into your hand. The stair cannot burn what was won here.';
+}
+function bonesModal(d,take,pause){
+  const r=d.room, pct=w=>Math.round(bonesClean(w)*100)+'%';
+  if(r.done)return {kind:'draft',wide:true,title:r.done==='bust'?'The bones take it':'The Knucklebones',body:r.res,note:tollNote(d),actions:[take,pause]};
+  if(!r.pot){
+    const can=r.stake>=20;
+    return {kind:'draft',wide:true,title:'The Knucklebones',
+      body:'A hooded thing crouches on the step, rolling two carved bones in its palm. One face of each is carved into an eye. Land bare bone and it doubles what you put down. After every throw it carves another eye.'+(can?'':' It looks at your purse, and looks away. You have nothing it wants.'),
+      note:tollNote(d),
+      choices:can?[{cls:'curse',tag:'Stake '+r.stake+' essence',title:'Throw the bones',sub:pct(0)+' to land clean. A clean throw doubles your stake to '+(r.stake*2)+'. An eye takes it.',fn:step('room',throwBones)}]:[],
+      actions:[{label:'Walk past',primary:true,fn:step('room',()=>descend())},pause]};
+  }
+  const last=r.wins===BONES_MAX-1;
+  return {kind:'draft',wide:true,title:'The Knucklebones',body:r.res,note:'The pot holds <b>'+r.pot+'</b>. Walk away with it and the stair cannot burn it.',
+    choices:[
+      {cls:'curse',tag:'Throw again · +1 madness for the rest of the run',title:'Throw again',sub:pct(r.wins)+' to land clean. A clean throw makes the pot '+(r.pot*2)+(last?', and it gives you a relic':'')+'. An eye takes everything.',fn:step('room',throwBones)},
+      {cls:'relic',tag:'Walk away',title:'Take the pot',sub:'Keep '+r.pot+' essence, safe from the toll.',fn:step('room',dd=>{bonesCash(dd); showLanding();})}],
+    actions:[pause]};
 }
 function makeStock(){
   const st=[], m=meta();
@@ -1570,6 +1617,7 @@ function landingModal(){
     if(curse.length)ch.push({cls:'curse',tag:'Rest',title:'Cleanse',sub:'Lay down '+RELICS[curse[0]].n+' and leave it here.',fn:step('room',()=>{removeRelic(curse[0]); descend();})});
     return {kind:'draft',wide:true,title:'A Quiet Landing',body:'Nothing is moving here. Lamp oil <b>'+Math.ceil(run.oil)+'/'+run.oilMax+'</b>.',choices:ch,actions:[pause]};
   }
+  if(r.type==='bones')return bonesModal(d,take,pause);
   if(r.type==='reliquary'){
     return {kind:'draft',wide:true,title:'A Forgotten Reliquary',body:'Another gift, left by someone who did not come back for it.',
       choices:r.opts.map(o=>giftChoice(o,step('room',()=>{applyGift(o); descend();}))),actions:[pause]};
