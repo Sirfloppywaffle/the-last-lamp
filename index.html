@@ -1106,6 +1106,20 @@ const DEV_ACTS={
   },
   kill(){F.foes.slice().forEach(e=>{if(!e.dead)hurt(e,99999);}); return 'Board cleared of creatures';},
   clear(){F.towers=[]; F.salt.clear(); F.L=lightsNow(); selTower=null; forceUI(); return 'All wards removed';},
+  /* jump straight to a floor, keeping the run (relics, wards, essence); no landing, no toll. Returns null: the menu stays shut */
+  floor(n){
+    n=clamp(+n|0,0,FLOORS.length-1);
+    run.floor=n; run.omen=null; run.elite=false; run.next=null;
+    MAP_SYS.active=false; $('#mapOverlay').hidden=true;
+    beginFloor(null); return null;
+  },
+  /* win the floor you are on and go to the landing, as if the last wave had broken */
+  skip(){
+    if(F.phase!=='build'&&F.phase!=='wave')return 'Only while a floor is being fought';
+    F.foes.forEach(e=>e.dead=true); F.queue=[]; F.intro=null; $('#bossCard').hidden=true;
+    F.wave=F.def.waves.length;
+    closeModal(); paused=false; floorCleared(); return null;
+  },
   spawn(k){
     if(F.phase==='build'){hint('Call the wave first, then spawn.',2200); return 'Spawns only during a wave';}
     spawnFoe(k,Math.floor(Math.random()*F.nRoots),0); return FOES[k].n+' spawned';
@@ -1117,14 +1131,16 @@ function openDevMode(msg){
   const btn=(act,label,arg,cls)=>'<button class="btn'+(cls?' '+cls:'')+'" data-dev="'+act+'"'+(arg?' data-arg="'+arg+'"':'')+' style="padding:6px 10px;font-size:.8rem">'+label+'</button>';
   const html='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">'
     +btn('dark',window.devNoDark?'Darkness: off':'Darkness: on')+btn('cheat','Max essence & oil')+btn('unlock','Unlock everything')+btn('kill','Kill all creatures')+btn('clear','Clear wards')+'</div>'
+    +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Floors</h3>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+FLOORS.map((f,i)=>btn('floor',(i===run.floor?'● ':'')+(i+1)+' · '+f.name,String(i))).join('')+btn('skip','Clear this floor →')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Spawn on a random path</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px">'+SPAWNABLE.map(k=>btn('spawn',FOES[k].n,k)).join('')+'</div>';
   showModal({kind:'dev',title:'Developer',body:msg?'<span class="note">'+msg+'</span>':'Test tools. Nothing here is saved as a normal run would be.',html,
     actions:[{label:'Resume',primary:true,fn:resumeGame},{label:'Back',fn:openPause}]});
   $('#mChoices').querySelectorAll('[data-dev]').forEach(b=>b.onclick=()=>{
     let m='';
-    try{m=DEV_ACTS[b.dataset.dev](b.dataset.arg)||'';}catch(err){reportError(err); return;}
-    openDevMode(m);
+    try{m=DEV_ACTS[b.dataset.dev](b.dataset.arg);}catch(err){reportError(err); return;}
+    if(m!==null)openDevMode(m||'');
   });
 }
 (()=>{
