@@ -1,4 +1,4 @@
-// Forked stairs prototype: who goes where at a fork. Run by expansion/proto/test.sh against forks.html.
+// Forked stairs (floors 2 and 3): who goes where at a fork, the Weir, and Wretch splits.
 const {chromium}=require('playwright');
 const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==undefined?' '+JSON.stringify(detail):''));};
 (async()=>{

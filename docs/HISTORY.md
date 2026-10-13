@@ -4,6 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **Forked stairs** (from the expansion sandbox; Criss playtested it: "made the game feel more interesting… try different strategies"). Floors 2 and 3 fork. Creatures take the darker way, counting only the light you cast; a gold chevron shows where they will go. Shades and Stalkers hunt your light, Gnashers and bosses keep the main way, and a Wretch bursting before a fork sends a Skitterling down each side. New path ward, the **Weir** (45), appears in the tray on forked floors: build it on the fork and flip it between waves. Watchers fly over it; a Behemoth breaks it. Untouched, both floors play as before. Designed by Claude and Gemini in `expansion/BRAINSTORM.md`. (Claude, Gemini)
 - "How the dark works" on the title screen now opens the rules on top, where they can be seen, instead of unfolding below the fold. Any pop-up with more to scroll shows a "More below" cue that goes away at the bottom. Found by Criss (#11). (Claude)
 
 ---

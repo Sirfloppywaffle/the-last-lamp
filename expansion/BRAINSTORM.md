@@ -184,3 +184,9 @@ What's in it:
 **Floors 1, 4, 5 have no forks**, on purpose: floor 1 is where you learn (Gemini); floor 4 is a spiral with no room for a branch at least 1.5 tiles clear of the trench, and it is the Keeper's floor; floor 5 already has three rifts and no clear ground. Worth a second look once Criss has played this.
 
 **New number:** Weir cost 45. No other balance changes.
+
+## 12. Criss played prototype 1
+
+> "The path was working as intended with the abilities to swap the accessible pathways. It made the game feel more interesting allowing the user to try different strategies and keep them more engaged."
+
+Forked stairs graduate into the game (floors 2 and 3, the Weir, instincts, Wretch splits). Still open from §10: **Will-o'-Wisp** (mid-wave rite), **door previews** of the stair's shape, and the gambling pick, **Knucklebones**.

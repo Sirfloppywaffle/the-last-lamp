@@ -343,6 +343,7 @@ input[type=range]::-moz-range-track {
         <li><b>Free undo.</b> Anything you place or upgrade between waves refunds in full if you dismantle it before calling the dark.</li>
         <li><b>Call early.</b> Once a wave has finished arriving, you can call the next one while stragglers still walk, for bonus essence.</li>
         <li><b>Binding.</b> Some creatures leave a violet sigil when they die. Tap it before it fades and that creature joins your roster. Bound horrors are placed like wards and hit far harder. Slay the Keeper Below and its soul lingers longer than most. Bind it and it fights for you on the last floor.</li>
+        <li><b>Forks.</b> On some floors the stair splits. They take the darker way, and only light you cast counts, never the lamp's. A gold chevron at the fork shows where they will go. Shades and Stalkers do the opposite and hunt your light. Gnashers and bosses keep the main way. A Weir built on the fork shuts one way; flip it between waves. Watchers fly over it, and a Behemoth breaks it.</li>
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
@@ -428,7 +429,8 @@ const WARDS={
   effigy:{n:'Hex Effigy',short:'Effigy',cost:40,d:'A pinned doll. Everything that passes near it is hexed for a while and takes 40% more damage from every source.'},
   censer:{n:'Tar Censer',short:'Censer',cost:70,aim:true,d:'Lobs burning pitch that splashes a cluster. It hits whatever it lands on, lit or not.'},
   coil:{n:'Galvanic Coil',short:'Coil',cost:75,aim:true,d:'Throws lightning that leaps from creature to creature. Brine conducts: anything standing in salt takes double.'},
-  lance:{n:'Whaling Gun',short:'Whaler',cost:90,aim:true,d:'A slow, enormous harpoon. Double damage to heavy creatures, elites and bosses.'}
+  lance:{n:'Whaling Gun',short:'Whaler',cost:90,aim:true,d:'A slow, enormous harpoon. Double damage to heavy creatures, elites and bosses.'},
+  weir:{n:'Weir',short:'Weir',cost:45,path:true,fork:true,d:'A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it.'}
 };
 const BASE_WARDS=['candle','harpoon','salt','chime','trap','tithe','effigy'];
 const GIFT_WARDS=['censer','coil','lance'];
@@ -627,7 +629,7 @@ const EVENTS={
     {l:'Walk past',d:'Nothing happens.',fn:()=>({text:'You keep your head down. The singing follows you a long way.'})}]},
   corpse:{n:'A Lantern-bearer’s Corpse',body:'Someone made it this far. Their lamp is cracked and dry, but their pack is still full.',opts:[
     {l:'Take their oil',d:'+5 oil.',fn:()=>{addOil(5); return {text:'There is a little left in the bottom of the reservoir. +5 oil.'};}},
-    {l:'Search the pack',d:'Learn a ward you do not have.',fn:()=>{const w=pick(Object.keys(WARDS).filter(x=>!run.wards.includes(x))||[]); if(w){run.wards.push(w); return {text:'Drawings of a '+WARDS[w].n+', and how to build one. You can build it now.'};} run.ess+=80; return {text:'Nothing you do not already know. You take 80 essence instead.'};}},
+    {l:'Search the pack',d:'Learn a ward you do not have.',fn:()=>{const w=pick(Object.keys(WARDS).filter(x=>!run.wards.includes(x)&&!WARDS[x].fork)||[]); if(w){run.wards.push(w); return {text:'Drawings of a '+WARDS[w].n+', and how to build one. You can build it now.'};} run.ess+=80; return {text:'Nothing you do not already know. You take 80 essence instead.'};}},
     {l:'Bury them',d:'The next floor starts with 60 more essence.',fn:()=>{run.bonusStipend=(run.bonusStipend||0)+60; return {text:'You do it properly. Something in the dark seems to approve.'};}}]},
   grave:{n:'An Open Grave',body:'It is freshly dug and exactly your size. Something at the bottom glints.',opts:[
     {l:'Climb in',d:'Take a cursed relic, then choose a relic.',fn:()=>{const c=pick(relicPool(true)); addRelic(c); return {text:c?'You climb out holding '+RELICS[c].n+'. It is warm.':'The grave is empty after all.',pick:1};}},
@@ -662,6 +664,8 @@ const FLOORS=[
    ]},
   {name:'The Ossuary',hue:36,mark:'bone',lamp:[6,7],stipend:110,
    paths:[[[11,0],[11,3],[1,3],[1,12],[10,12],[10,7],[6,7]]],
+   /* the upper gallery: a long, dark loop far from the lamp */
+   forks:[{gate:0,from:[8,3],via:[[8,0],[3,0]],to:[3,3]}],
    waves:[
      [['crawler',10,1.2,0],['shade',3,2.5,6]],
      [['skitter',14,.55,0],['watcher',3,3,5]],
@@ -671,6 +675,8 @@ const FLOORS=[
    ]},
   {name:'The Drowned Nave',hue:205,mark:'ripple',lamp:[6,7],stipend:120,
    paths:[[[0,0],[9,0],[9,2],[3,2],[3,5],[6,5],[6,7]],[[11,13],[2,13],[2,11],[9,11],[9,7],[6,7]]],
+   /* the flooded aisle: the lower vein can swing wide along the east wall */
+   forks:[{gate:1,from:[9,11],via:[[11,11],[11,5],[8,5]],to:[8,7]}],
    waves:[
      [['crawler',9,1.1,0,0],['crawler',9,1.1,.5,1]],
      [['skitter',12,.5,0,1],['shade',6,1.5,2,0],['watcher',3,3,6,1]],
@@ -904,6 +910,27 @@ function buildGeometry(){
   F.lamp.x=F.lx; F.lamp.y=F.ly;
   const flipped=def.paths.map(pts=>pts.map(flipPt));
   F.paths=flipped.map(buildPath);
+  F.nRoots=F.paths.length;
+  F.forks=[];
+  /* each branch is a whole path: the root up to the fork, the detour, then the root again.
+     The prefix is identical, so a creature can switch e.gate at the fork and keep its e.d. */
+  for(const fd of def.forks||[]){
+    const root=flipped[fd.gate], from=flipPt(fd.from), to=flipPt(fd.to), via=fd.via.map(flipPt);
+    const i=segIndex(root,from), j=segIndex(root,to);
+    const pts=dedupe(root.slice(0,i+1).concat([from],via,[to],root.slice(j+1)));
+    flipped.push(pts);
+    const P=buildPath(pts), M=F.paths[fd.gate], d=distAlong(root,from);
+    F.paths.push(P);
+    const ends=[distAlong(root,to),distAlong(pts,to)], opts=[fd.gate,F.paths.length-1];
+    const fk={c:from[0],r:from[1],x:from[0]+.5,y:from[1]+.5,d,opts,dirs:[],samples:[]};
+    opts.forEach((pi,k)=>{
+      const Q=F.paths[pi], a=posAt(Q,d+.6), s=[];
+      fk.dirs.push([Math.sign(Math.round(a[0]-fk.x)),Math.sign(Math.round(a[1]-fk.y))]);
+      for(let dd=d+.5;dd<ends[k]-.25;dd+=.5){const q=posAt(Q,dd); s.push(q[0],q[1]);}
+      fk.samples.push(s);
+    });
+    F.forks.push(fk);
+  }
   F.pathTiles=new Set();
   flipped.forEach(pts=>{
     for(let i=0;i<pts.length-1;i++){
@@ -933,6 +960,45 @@ function setOrient(o){
 }
 
 /* ---------------- paths ---------------- */
+function segIndex(pts,q){
+  for(let i=0;i<pts.length-1;i++){const a=pts[i], b=pts[i+1];
+    if(Math.min(a[0],b[0])<=q[0]&&q[0]<=Math.max(a[0],b[0])&&Math.min(a[1],b[1])<=q[1]&&q[1]<=Math.max(a[1],b[1]))return i;}
+  throw new Error('fork point '+q+' is not on its path');
+}
+function distAlong(pts,q){
+  let s=0;
+  for(let i=0;i<pts.length-1;i++){const a=pts[i], b=pts[i+1];
+    if(Math.min(a[0],b[0])<=q[0]&&q[0]<=Math.max(a[0],b[0])&&Math.min(a[1],b[1])<=q[1]&&q[1]<=Math.max(a[1],b[1]))return s+Math.abs(q[0]-a[0])+Math.abs(q[1]-a[1]);
+    s+=Math.abs(b[0]-a[0])+Math.abs(b[1]-a[1]);}
+  return s;
+}
+function dedupe(pts){return pts.filter((p,i)=>!i||p[0]!==pts[i-1][0]||p[1]!==pts[i-1][1]);}
+/* how much of a branch your own light covers (the lamp's light never counts, so an untouched floor plays as before) */
+function castLight(fk,k,lamp){
+  const s=fk.samples[k]; let n=0;
+  for(let i=0;i<s.length;i+=2){for(const L of F.L){if((lamp||!L.lamp)&&dst(s[i],s[i+1],L.x,L.y)<=L.r){n++; break;}}}
+  return n;
+}
+function weirAt(fk){const t=towerAt(fk.c,fk.r); return t&&t.type==='weir'&&!t.dead&&!t.dark&&!t.smashed?t:null;}
+/* which way a creature goes at a fork: the weir, then its instinct, then the dark. Ties take the main way (0). */
+function forkPick(fk,e){
+  const w=weirAt(fk);
+  if(w&&!(e&&(e.def.fly||e.def.boss))){
+    /* smashed now, cleared after the creature loop (update) so no tower is removed mid-iteration */
+    if(e&&e.def.heavy){w.smashed=true; F.fx.push({k:'ring',x:w.x,y:w.y,r0:.1,r1:.9,t:0,dur:.5,col:'139,146,148'}); F.shake=Math.max(F.shake,.25); hint('A Behemoth smashes the weir.'); return 0;}
+    return w.open||0;
+  }
+  if(e){
+    if(e.def.boss||e.type==='gnasher')return 0;
+    if(e.forkPref!=null)return e.forkPref%fk.opts.length;
+  }
+  if(F.flareT>0)return 0;
+  /* Shades and Stalkers hunt your light; everything else shies from it */
+  const toward=!!(e&&e.def.veiled);
+  let best=0, bv=castLight(fk,0);
+  for(let k=1;k<fk.opts.length;k++){const v=castLight(fk,k); if(toward?v>bv:v<bv){bv=v; best=k;}}
+  return best;
+}
 function buildPath(pts){
   const segs=[]; let len=0;
   for(let i=0;i<pts.length-1;i++){
@@ -1039,7 +1105,7 @@ const DEV_ACTS={
   clear(){F.towers=[]; F.salt.clear(); F.L=lightsNow(); selTower=null; forceUI(); return 'All wards removed';},
   spawn(k){
     if(F.phase==='build'){hint('Call the wave first, then spawn.',2200); return 'Spawns only during a wave';}
-    spawnFoe(k,Math.floor(Math.random()*F.paths.length),0); return FOES[k].n+' spawned';
+    spawnFoe(k,Math.floor(Math.random()*F.nRoots),0); return FOES[k].n+' spawned';
   }
 };
 function openDevMode(msg){
@@ -1165,6 +1231,7 @@ function beginFloor(snap){
     if(F.omen&&!(snap&&F.wave))setTimeout(()=>{if(F&&F.omen)hint('Omen: '+OMENS[F.omen].n+'. '+OMENS[F.omen].d+(F.elite?' This floor is elite, too.':''),5000);},1600);
     else if(F.elite&&!(snap&&F.wave))setTimeout(()=>hint('An elite floor: tougher creatures, and more of them. A relic waits at the end.',4200),1600);
     if(run.floor===0&&!snap)setTimeout(()=>hint('Pick a ward below, then tap a lit tile. Tap the lamp or any ward to upgrade it.',5200),2500);
+    if(F.forks.length&&!(snap&&F.wave))setTimeout(()=>{if(F&&F.forks.length)hint('The stair forks here. They take the darker way, and only your own light counts. The chevron shows where they will go.',6000);},F.omen?6800:2600);
     /* REVIEW(Claude) 3: copy the message first; the timer used to read it after the next line had cleared it */
     const tollMsg = MAP_SYS.pendingMsg;
     if(tollMsg)setTimeout(()=>hint(tollMsg, 4600), F.omen?5200:1400);
@@ -1191,11 +1258,11 @@ function callWave(){
 function startWave(sub){
   F.wave++; F.phase='wave'; F.waveT=0; F.queue=[];
   const groups=F.def.waves[F.wave-1].slice();
-  if(F.omen==='swarm')groups.push(['skitter',8,.35,2.5,Math.floor(Math.random()*F.paths.length)]);
+  if(F.omen==='swarm')groups.push(['skitter',8,.35,2.5,Math.floor(Math.random()*F.nRoots)]);
   for(const raw of groups){
     const g=scaledGroup(raw);
     const n=F.elite&&g.count>1?Math.round(g.count*1.25):g.count;
-    for(let i=0;i<n;i++)F.queue.push({t:g.delay+i*g.intv,type:g.type,gate:Math.min(g.gate,F.paths.length-1)});
+    for(let i=0;i<n;i++)F.queue.push({t:g.delay+i*g.intv,type:g.type,gate:Math.min(g.gate,F.nRoots-1)});
   }
   if(has('blackwick')){run.oil-=1; F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'−1 oil',col:PAL.wound,t:0,dur:1,size:.3}); if(run.oil<=0){run.oil=0; defeat();}}
   F.queue.sort((a,b)=>a.t-b.t);
@@ -1314,7 +1381,7 @@ function floorCleared(){
 function draftOptions(n,elite){
   n=n||3;
   const pool=[];
-  Object.keys(WARDS).forEach(w=>{if(!run.wards.includes(w))pool.push({kind:'ward',key:w});});
+  Object.keys(WARDS).forEach(w=>{if(!run.wards.includes(w)&&!WARDS[w].fork)pool.push({kind:'ward',key:w});});
   if(run.rites.length<4)Object.keys(RITES).forEach(k=>{if(!run.rites.includes(k))pool.push({kind:'rite',key:k});});
   relicPool(false).forEach(k=>pool.push({kind:'relic',key:k}));
   pool.push({kind:'bind',key:pick(bindable())});
@@ -1381,7 +1448,7 @@ function makeStock(){
   const st=[], m=meta();
   const nr=3+(m.unlocked.includes('merchant_plus')?1:0);
   shuffle(relicPool(false)).slice(0,nr).forEach((k,i)=>st.push({kind:'relic',key:k,cost:price(120+i*25+run.floor*12)}));
-  shuffle(Object.keys(WARDS).filter(w=>!run.wards.includes(w))).slice(0,2).forEach(w=>st.push({kind:'ward',key:w,cost:price(90+run.floor*12)}));
+  shuffle(Object.keys(WARDS).filter(w=>!run.wards.includes(w)&&!WARDS[w].fork)).slice(0,2).forEach(w=>st.push({kind:'ward',key:w,cost:price(90+run.floor*12)}));
   st.push({kind:'bind',key:pick(bindable()),cost:price(80)});
   st.push({kind:'oil',key:'oil',cost:price(60)});
   if(run.relics.some(k=>RELICS[k].curse))st.push({kind:'cleanse',key:'cleanse',cost:price(110)});
@@ -1558,6 +1625,7 @@ function placeProblem(item,c,r){
   if(c===F.lampC&&r===F.lampR)return 'lamp';
   if(towerAt(c,r))return 'taken';
   const onPath=F.pathTiles.has(c+','+r);
+  if(item.kind==='ward'&&item.type==='weir'&&!F.forks.some(f=>f.c===c&&f.r===r))return 'A weir only fits where the stair forks.';
   if(item.kind==='ward'&&WARDS[item.type].path){if(!onPath)return item.type==='salt'?'Salt has to be poured on the path.':'Traps are set on the path.';}
   else if(onPath)return 'Nothing can stand on the path.';
   if(!buildLit(c,r))return 'Too dark to build there. Bring light first.';
@@ -1711,7 +1779,7 @@ function killFoe(e){
   AUDIO.kill();
   F.fx.push({k:'burst',x:e.x,y:e.y,col:e.def.col,r:e.def.r,t:0,dur:.45});
   if(!gfxLite)stainFloor(e.x,e.y,e.def.col,e.def.r);
-  if(e.def.split)for(let i=0;i<e.def.split;i++)spawnFoe('skitter',e.gate,Math.max(0,e.d-.25-i*.3));
+  if(e.def.split)for(let i=0;i<e.def.split;i++){const s=spawnFoe('skitter',e.gate,Math.max(0,e.d-.25-i*.3)); s.forkPref=i;}
   
   const key=e.def.elite?'elite':(e.def.bind?e.type:null);
   if(key){
@@ -1813,6 +1881,7 @@ function update(dt){
     while(F.queue.length&&F.queue[0].t<=F.waveT){const q=F.queue.shift(); spawnFoe(q.type,q.gate,0);}
   }
   updateFoes(dt);
+  for(let i=F.towers.length-1;i>=0;i--)if(F.towers[i].smashed)removeTower(F.towers[i]);
   
   const ls=lstat();
   if(ls.fire){for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(!e.dead&&dst(e.x,e.y,F.lx,F.ly)<=ls.fire.r) hurt(e,ls.fire.dps*dt);}}
@@ -1892,6 +1961,10 @@ function updateFoes(dt){
     for(const a of auras){if(a!==e&&!a.dead&&dst(a.x,a.y,e.x,e.y)<=1.6){sp*=1.3; break;}}
     if(leaning)sp*=1.2;
     e.d+=sp*dt;
+    for(let fi=0;fi<F.forks.length;fi++){
+      const fk=F.forks[fi];
+      if(e.d>=fk.d&&!((e.fk||0)&(1<<fi))&&fk.opts.includes(e.gate)){e.fk=(e.fk||0)|(1<<fi); e.gate=fk.opts[forkPick(fk,e)];}
+    }
     const P=F.paths[e.gate], p=posAt(P,e.d);
     e.x=p[0]; e.y=p[1];
     const key=Math.floor(e.x)+','+Math.floor(e.y);
@@ -1926,7 +1999,7 @@ function updateTowers(dt){
   for(const t of F.towers.slice()){
     if(t.dead||t.dark)continue;
     if(t.kind==='ward'){
-      if(t.type==='candle'||t.type==='salt'||t.type==='tithe'||t.type==='effigy')continue;
+      if(t.type==='candle'||t.type==='salt'||t.type==='tithe'||t.type==='effigy'||t.type==='weir')continue;
       const st=wstat(t);
       if(t.type==='harpoon'){
         t.cd-=dt;
@@ -2925,8 +2998,25 @@ function plinth(c,x,y,rx){
   g.addColorStop(0,rgba(lit(top,.25))); g.addColorStop(1,rgba(lit(top,-.3)));
   c.fillStyle=g; c.beginPath(); c.ellipse(x,y+.13,rx,rx*.5,0,0,TAU2); c.fill();
 }
+function drawWeir(c,t,icon){
+  const x=t.x, y=t.y;
+  let dx=1, dy=0;
+  if(!icon){const fk=F.forks.find(f=>f.c===t.c&&f.r===t.r); if(fk){const dv=fk.dirs[t.open?0:1]; dx=dv[0]; dy=dv[1];}}
+  /* planks across the mouth of the closed way */
+  const cx=x+dx*(icon?0:.34), cy=y+dy*(icon?0:.34), px=-dy, py=dx, out=!icon&&t.dark;
+  c.lineCap='round';
+  c.strokeStyle='rgba(8,6,4,.75)'; c.lineWidth=.3;
+  c.beginPath(); c.moveTo(cx-px*.44,cy-py*.44); c.lineTo(cx+px*.44,cy+py*.44); c.stroke();
+  c.strokeStyle=out?'#4a4038':'#8a6440'; c.lineWidth=.22;
+  c.beginPath(); c.moveTo(cx-px*.42,cy-py*.42); c.lineTo(cx+px*.42,cy+py*.42); c.stroke();
+  c.strokeStyle=out?'#5a5048':'#b98a58'; c.lineWidth=.05;
+  for(const o of [-.06,.06]){c.beginPath(); c.moveTo(cx-px*.4+dx*o,cy-py*.4+dy*o); c.lineTo(cx+px*.4+dx*o,cy+py*.4+dy*o); c.stroke();}
+  c.fillStyle='#1d1612';
+  for(const s of [-1,1]){c.beginPath(); c.arc(cx+px*.46*s,cy+py*.46*s,.09,0,TAU2); c.fill();}
+}
 function drawWard(c,t,tm,icon){
   const x=t.x,y=t.y;
+  if(t.type==='weir'){drawWeir(c,t,icon); return;}
   if(!icon&&hasCap(t)){c.strokeStyle='rgba(237,180,90,.55)'; c.lineWidth=.035; c.beginPath(); c.ellipse(x,y+.12,.46,.3,0,0,TAU2); c.stroke();}
   if(t.type!=='salt'&&t.type!=='trap'&&!icon)wardShadow(c,x,y,t.type==='lance'?.38:.3);
   if(t.type==='candle'){
@@ -3157,7 +3247,7 @@ function paintFloor(){
   paintBoard(fg,o);
   /* the rifts they crawl out of are holes in the floor */
   fg.setTransform(s,0,0,s,0,0);
-  for(const P of F.paths){const [x,y]=P.start; const pg=fg.createRadialGradient(x,y,0,x,y,.5); pg.addColorStop(0,'rgba(0,0,0,1)'); pg.addColorStop(.6,'rgba(6,3,10,.9)'); pg.addColorStop(1,'rgba(0,0,0,0)'); fg.fillStyle=pg; fg.beginPath(); fg.ellipse(x,y,.5,.4,0,0,TAU2); fg.fill();}
+  for(let pi=0;pi<F.nRoots;pi++){const P=F.paths[pi]; const [x,y]=P.start; const pg=fg.createRadialGradient(x,y,0,x,y,.5); pg.addColorStop(0,'rgba(0,0,0,1)'); pg.addColorStop(.6,'rgba(6,3,10,.9)'); pg.addColorStop(1,'rgba(0,0,0,0)'); fg.fillStyle=pg; fg.beginPath(); fg.ellipse(x,y,.5,.4,0,0,TAU2); fg.fill();}
   fg.setTransform(1,0,0,1,0,0);
   if(glow.length){if(!glowCv)glowCv=document.createElement('canvas'); glowCv.width=floorCv.width; glowCv.height=floorCv.height; paintGlow(glowCv.getContext('2d'),o,glow); glowCv.getContext('2d').setTransform(1,0,0,1,0,0);}
   else glowCv=null;
@@ -3533,8 +3623,19 @@ function render(){
     g.beginPath(); g.arc(t.x,t.y,.38,0,TAU); g.stroke(); g.setLineDash([]);
     g.beginPath(); g.moveTo(t.x-.12,t.y-.12); g.lineTo(t.x+.12,t.y+.12); g.stroke();
   }
+  /* the forks: a chevron shows which way the crowd will go */
+  for(const fk of F.forks){
+    const k=forkPick(fk,null), dv=fk.dirs[k], cx=fk.x+dv[0]*.75, cy=fk.y+dv[1]*.75, a=Math.atan2(dv[1],dv[0]);
+    g.save(); g.translate(cx,cy); g.rotate(a);
+    g.lineCap='round'; g.lineJoin='round';
+    for(const o of [0,.2]){
+      g.strokeStyle='rgba(8,6,4,.7)'; g.lineWidth=.16; g.beginPath(); g.moveTo(o-.16,-.22); g.lineTo(o+.08,0); g.lineTo(o-.16,.22); g.stroke();
+      g.strokeStyle='rgba(237,180,90,'+(.6+.3*Math.sin(tm*3-o*8))+')'; g.lineWidth=.08; g.beginPath(); g.moveTo(o-.16,-.22); g.lineTo(o+.08,0); g.lineTo(o-.16,.22); g.stroke();
+    }
+    g.restore();
+  }
   /* the rifts */
-  for(const P of F.paths){
+  for(let pi=0;pi<F.nRoots;pi++){const P=F.paths[pi];
     const [x,y]=P.start;
     g.save(); g.translate(x,y); g.scale(1,.78);
     const vg=g.createRadialGradient(0,0,0,0,0,.48);
@@ -3657,6 +3758,7 @@ function hint(txt,ms){
 function trayItems(){
   const it=[];
   run.wards.forEach(w=>it.push({kind:'ward',type:w}));
+  if(F&&F.forks&&F.forks.length&&!run.wards.includes('weir'))it.push({kind:'ward',type:'weir'});
   Object.keys(HORRORS).forEach(h=>{if((run.roster[h]||0)>0)it.push({kind:'horror',type:h});});
   it.push({kind:'lamp',type:'lamp'});
   return it;
@@ -3718,6 +3820,7 @@ function statLine(o){
   if(o.type==='trap')return 'Damage <b>'+st.dmg+'</b> · Holds <b>'+st.hold.toFixed(1)+'s</b> · Resets <b>'+st.reset.toFixed(1)+'s</b> · Catches unseen things, never fliers';
   if(o.type==='tithe')return '<b>+'+st.per+'</b> essence per death within <b>'+st.range.toFixed(1)+'</b> · Tithe <b>+'+st.tithe+'</b> each break'+(st.oilEvery?' · 1 oil per <b>'+st.oilEvery+'</b> deaths':'');
   if(o.type==='effigy')return 'Hexed take <b>+'+Math.round((st.mul-1)*100)+'%</b> damage · Range <b>'+st.range.toFixed(1)+'</b>'+(st.bleed?' · Bleed <b>'+st.bleed+'/s</b>':'')+(st.slow?' · Slow <b>'+Math.round(st.slow*100)+'%</b>':'')+(st.unmask?' · Unmasks':'');
+  if(o.type==='weir')return 'Open: <b>'+(o.open?'the long way':'the main stair')+'</b> · Watchers fly over · A Behemoth breaks it';
   if(o.type==='coil')return 'Damage <b>'+st.dmg+'</b> · Leaps <b>'+st.jumps+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s · Double on salt';
   if(o.type==='lance')return 'Damage <b>'+st.dmg+'</b> (<b>×2</b> on heavy, elite, boss) · Range <b>'+st.range.toFixed(1)+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s';
   return 'Slows <b>50%</b> · Holds <b>'+(o.dur!=null?o.dur:14*(has('saltflats')?2:1))+'</b> crossings';
@@ -3764,6 +3867,7 @@ function renderSheet(){
     if(TREES[t.type])html+=treeHTML(t,B);
     html+='<div class="ibtns">';
     if(t.type==='salt')html+=B('Refill · '+refillCost(),()=>refillSalt(t),{cls:'call',disabled:t.dur>=t.max||run.ess<refillCost()});
+    if(t.type==='weir')html+=B(F.phase==='wave'?'Locked until the wave ends':'Flip the weir',()=>{t.open=t.open?0:1; forceUI();},{cls:'call',disabled:F.phase==='wave'});
     html+=B('Dismantle · +'+back+(full?' (full refund)':'')+(cut?' · cuts light to '+cut:''),()=>sellTower(t))+'</div>';
   }else{
     const H=HORRORS[t.type], back=refund(t), full=t.fresh>0&&t.fresh>=t.invested, cut=cutVictims(t).length;
