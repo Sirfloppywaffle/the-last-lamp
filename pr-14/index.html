@@ -1961,10 +1961,13 @@ function updateFoes(dt){
     let sp=e.def.spd*(1-slow)*(F.omen==='flooded'?.9:1)*(F.omen==='frenzied'?1.15:1);
     for(const a of auras){if(a!==e&&!a.dead&&dst(a.x,a.y,e.x,e.y)<=1.6){sp*=1.3; break;}}
     if(leaning)sp*=1.2;
+    const d0=e.d;
     e.d+=sp*dt;
+    /* choose only when walking across the fork. Anything born or dropped past it (a Wretch's brood, a horror broken loose)
+       keeps the way it is on: the two ways differ past the fork, so switching there would teleport it */
     for(let fi=0;fi<F.forks.length;fi++){
       const fk=F.forks[fi];
-      if(e.d>=fk.d&&!((e.fk||0)&(1<<fi))&&fk.opts.includes(e.gate)){e.fk=(e.fk||0)|(1<<fi); e.gate=fk.opts[forkPick(fk,e)];}
+      if(d0<fk.d&&e.d>=fk.d&&fk.opts.includes(e.gate))e.gate=fk.opts[forkPick(fk,e)];
     }
     const P=F.paths[e.gate], p=posAt(P,e.d);
     e.x=p[0]; e.y=p[1];
