@@ -4,6 +4,8 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- Developer mode can jump to any floor (keeping the run: relics, wards, essence) and clear the floor you are on straight to the landing, so Criss can test floors 2–5 without playing up to them. (Claude)
+
 ---
 
 ## v15.3 — Forked stairs
