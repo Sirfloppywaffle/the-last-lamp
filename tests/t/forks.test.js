@@ -83,6 +83,28 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       ok(o.split==='0,1',t+'Wretch Skitterlings split down both ways',o.split);
       for(const l of o.late)ok(l.gates.every(g=>g===l.way)&&l.jump<1,t+'Skitterlings born past the fork stay on their way, no jump',l);
     }
+    // the Will-o'-Wisp, cast through the real buttons: tap the rite, then tap the branch
+    const ws=await p.evaluate(async()=>{
+      const T=__t, o={};
+      T.newRun(); T.run.floor=1; T.beginFloor(null); T.run.oil=T.run.oilMax=999; T.run.lampBonus=30; T.setP(false); T.forceUI();
+      o.inBar=!!document.querySelector('.rite[data-r="wisp"]');
+      T.F.phase='wave'; T.F.queue=[{t:1e9,type:'crawler',gate:0}];
+      document.querySelector('.rite[data-r="wisp"]').click();
+      const fk=T.F.forks[0], sm=fk.samples[1], i=2*Math.floor(sm.length/4), cv=document.querySelector('#board'), r=cv.getBoundingClientRect();
+      cv.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,clientX:r.left+sm[i]/T.COLS*r.width,clientY:r.top+sm[i+1]/T.ROWS*r.height}));
+      o.wisp=T.F.wisp&&{k:T.F.wisp.k,t:T.F.wisp.t};
+      const through=(type)=>{const e=T.spawnFoe(type,fk.opts[0],Math.max(0,fk.d-.4)); e.hp=e.max=1e6; for(let k=0;k<60&&e.d<fk.d+.5;k++)T.update(1/30); const g=fk.opts.indexOf(e.gate); e.dead=true; T.update(1/30); return g;};
+      o.crawler=through('crawler'); o.gnasher=through('gnasher'); o.boss=through('boss');
+      for(let k=0;k<300;k++)T.update(1/30);
+      o.after=T.F.wisp; o.crawlerAfter=through('crawler');
+      T.render();
+      T.newRun(); T.run.floor=0; T.beginFloor(null); T.forceUI(); o.floor1=!!document.querySelector('.rite[data-r="wisp"]');
+      return o;
+    });
+    ok(ws.inBar&&!ws.floor1,tag+'the wisp is in the rites bar on forked floors only',ws);
+    ok(ws.wisp&&ws.wisp.k===1,tag+'tapping the branch sets the wisp on it',ws);
+    ok(ws.crawler===1&&ws.gnasher===1&&ws.boss===0,tag+'everything but a boss follows the wisp',ws);
+    ok(ws.after===null&&ws.crawlerAfter===0,tag+'after 8 seconds the wisp is gone and the dark decides again',ws);
     await p.close();
   }
   await b.close();

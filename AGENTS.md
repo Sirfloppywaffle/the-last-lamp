@@ -102,7 +102,7 @@ You tend **the last lamp** at the bottom of a drowned stair. Things climb out of
 - **Essence** is the currency: you start each floor with a stipend, and earn more from kills, early wave calls, the tithe and rooms. **The stair takes a toll:** when you descend, everything except your salvage is cut to 30%.
 - **Wards** (10 kinds) are built on tiles and upgraded along **branch trees**: each has three branches of three tiers, but only **one** branch can reach its capstone (tier 3).
 - **Horrors** are bound creatures you field like towers. They're strong, but every one fielded raises **madness**. Madness tiers (Calm → Whispers → Slipping → Leaning) flicker the lamp, shrink it, and make the dark worse.
-- **Forks** (floors 2 and 3): the stair splits. Creatures take the darker way, counting only the light you cast; Shades and Stalkers hunt it instead; Gnashers and bosses keep the main way. The **Weir** (built on a fork) shuts one way between waves.
+- **Forks** (floors 2 and 3): the stair splits. Creatures take the darker way, counting only the light you cast; Shades and Stalkers hunt it instead; Gnashers and bosses keep the main way. The **Weir** (built on a fork) shuts one way between waves, and the **Will-o’-Wisp** rite (on forked floors only) lures everything but bosses down a chosen way for 8 seconds, mid-wave.
 - **Rites** are cooldown spells (Flare, Pillar of Salt, Drowning Bell, Name the Thing).
 - **Five floors:** the Cistern, the Ossuary, the Drowned Nave, the Throat (the Keeper Below), the Abyssal Heart (the Primordial).
 - **Roguelike layer:**
