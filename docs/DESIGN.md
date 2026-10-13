@@ -219,7 +219,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `event` | Something in the Dark | Unknown | You hear something off the stair. You could go and look. |
 | `rest` | A Quiet Landing | Rest | Tend the lamp. Restore oil, or deepen its reservoir. |
 | `reliquary` | A Forgotten Reliquary | Reliquary | Another gift lies here, waiting to be taken. |
-| `bones` | The Knucklebones | Gamble | Something hooded throws bones on the step. It will play for the essence the stair would burn. |
+| `bones` | The Knucklebones | Gamble | Something hooded waits at a stone table. It will play knucklebones for the essence the stair would burn. |
 | `deep` | The Deep Stair | Elite | No landing. The next floor is fiercer, with tougher creatures and more of them. Clear it and take a relic. |
 
 ## Shrine pacts
