@@ -15,7 +15,7 @@ Every table below is generated from the live code (`index.html`) by `tests/gen-d
 - **Starting oil:** 20 (15 at depth 5). Each creature that reaches the lamp drains its `oil` value. **Bosses drain 99: all-or-nothing.**
 - **Embers per run:** `round((5 + flr² × 6 + 15 × bosses + 8 × elites + (won ? 30 : 0)) × (1 + 0.25 × depth))`, where `flr = floor reached (+1 if won)`.
 - **Heavy creatures:** no stun; total slow capped at 15%.
-- **Forks (floors 2 and 3):** a creature chooses only as it walks across a fork (anything born past one keeps its way), taking, in order: the way a working Weir leaves open (Watchers and bosses ignore it; a Behemoth smashes it and keeps the main way); the main way if it is a Gnasher or a boss; its side if it is a Wretch's Skitterling born before the fork (one each way); otherwise the way with fewer path points inside **your** light (candles, Watchers; the lamp never counts), or, for Shades and Stalkers, the way with more. Ties, and anything under a Flare, keep the main way. Every branch is longer than the stretch of main way it replaces.
+- **Forks (floors 2 and 3):** a creature chooses only as it walks across a fork (anything born past one keeps its way), taking, in order: the way a working Weir leaves open (Watchers and bosses ignore it; a Behemoth smashes it and keeps the main way); the way a live Will-o’-Wisp marks (bosses ignore it); the main way if it is a Gnasher or a boss; its side if it is a Wretch's Skitterling born before the fork (one each way); otherwise the way with fewer path points inside **your** light (candles, Watchers; the lamp never counts), or, for Shades and Stalkers, the way with more. Ties, and anything under a Flare, keep the main way. Every branch is longer than the stretch of main way it replaces.
 - **Horror stats** are fixed (no upgrade trees). Wards upgrade along branches: 3 branches × 3 tiers, and **only one branch per ward may reach tier 3** (the capstone).
 
 ## Creatures
@@ -156,6 +156,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `flare` | Flare | 28s | Everything on the floor is lit and unveiled for 5 seconds. |
 | `pillar` | Pillar of Salt | 22s | Tap the board. Everything nearby freezes for 2.5 seconds and takes 10 damage. |
 | `bell` | Drowning Bell | 34s | Every creature on the floor takes 25 damage, lit or not. |
+| `wisp` | Will-o’-Wisp | 30s | Tap a way at a fork. For 8 seconds, everything that reaches the fork follows the wisp, whatever it wants. Bosses ignore it. |
 | `name` | Name the Thing | once per floor | Once per floor. Tap a visible creature and its whole kind takes 60% more damage until the floor ends. |
 
 ## Kits
