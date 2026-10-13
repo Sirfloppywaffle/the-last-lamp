@@ -56,8 +56,19 @@ async function candidateModels() {
   return [...by(0).slice(0, 3), ...by(1).slice(0, 3), ...by(2).slice(0, 2)];
 }
 
-async function askGemini(system, user) {
+// An answer only counts if it finished. Gemini stops at maxOutputTokens (thinking shares that budget) and still returns
+// the text so far; posting that once produced reviews that started and ended mid-sentence, with no verdict (#14).
+// A review must also carry its verdict line. Anything else is skipped and the next model is tried; if none finishes,
+// the longest partial answer is posted, clearly marked, so the run never ends in silence.
+function finished(text, reason, mode) {
+  if (reason && reason !== 'STOP') return `stopped early (${reason})`;
+  if (mode === 'review' && !/Verdict\W{0,4}\s*(Approve|Request)/i.test(text)) return 'no verdict line';
+  return '';
+}
+
+async function askGemini(system, user, mode) {
   const tried = [];
+  let partial = null;
   for (const model of await candidateModels()) {
     let r;
     try {
@@ -68,7 +79,7 @@ async function askGemini(system, user) {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: system }] },
         contents: [{ role: 'user', parts: [{ text: user }] }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 16384 },
+        generationConfig: { temperature: 0.4, maxOutputTokens: 32768 },
       }),
       });
     } catch (e) {   // timeout or network error: try the next model
@@ -82,10 +93,17 @@ async function askGemini(system, user) {
       tried.push(`${model}: ${r.status} ${msg}`); log(`model ${model} failed: ${r.status} ${why.slice(0, 300)}`); continue;
     }
     const j = await r.json();
-    const text = (j.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('').trim();
-    if (text) return { model, text };
-    tried.push(`${model}: empty (${j.candidates?.[0]?.finishReason || j.promptFeedback?.blockReason || 'no text'})`);
+    const c = j.candidates?.[0], reason = c?.finishReason;
+    // thought parts are the model's scratch work, not its answer
+    const text = (c?.content?.parts || []).filter((p) => !p.thought).map((p) => p.text || '').join('').trim();
+    if (!text) { tried.push(`${model}: empty (${reason || j.promptFeedback?.blockReason || 'no text'})`); continue; }
+    const why = finished(text, reason, mode);
+    log(`model ${model}: ${text.length} chars, finishReason ${reason || '?'}${why ? ` — rejected: ${why}` : ''}`);
+    if (!why) return { model, text };
+    tried.push(`${model}: ${why}`);
+    if (!partial || text.length > partial.text.length) partial = { model, text, why };
   }
+  if (partial) return { model: partial.model, text: `> ⚠️ Every model stopped before finishing (${tried.join('; ')}). This is the longest partial answer; comment \`/gemini re-review\` to try again.\n\n${partial.text}`, partial: true };
   throw new Error('no Gemini model answered: ' + tried.join('; '));
 }
 
@@ -149,7 +167,7 @@ async function main() {
   else if (game) parts.push('# (Full index.html omitted: too large for this request. Review the diff and ask for specific code if needed.)');
   parts.push(mode === 'review' ? '# Your task\nWrite your review now, in the required shape.' : `# Your task\nReply to this message: "${ask}"`);
 
-  const { model, text } = await askGemini(mode === 'review' ? SYSTEM_REVIEW : SYSTEM_REPLY, parts.join('\n\n'));
+  const { model, text } = await askGemini(mode === 'review' ? SYSTEM_REVIEW : SYSTEM_REPLY, parts.join('\n\n'), mode);
   const head = mode === 'review' ? `### 🔍 Gemini review${ask ? ' (re-review)' : ''}` : '### 💬 Gemini';
   const foot = `\n\n<sub>Gemini (${model}) via the gemini-review workflow · reply with \`/gemini …\` to continue · \`/gemini re-review\` after new commits</sub>\n${MARK}`;
   let body = `${head}\n\n${text}`;
