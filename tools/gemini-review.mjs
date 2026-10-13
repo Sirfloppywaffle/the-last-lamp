@@ -62,7 +62,7 @@ async function candidateModels() {
 // the longest partial answer is posted, clearly marked, so the run never ends in silence.
 function finished(text, reason, mode) {
   if (reason && reason !== 'STOP') return `stopped early (${reason})`;
-  if (mode === 'review' && !/Verdict\W{0,4}\s*(Approve|Request)/i.test(text)) return 'no verdict line';
+  if (mode === 'review' && !/Verdict\W+(Approve|Request)/i.test(text)) return 'no verdict line';
   return '';
 }
 
