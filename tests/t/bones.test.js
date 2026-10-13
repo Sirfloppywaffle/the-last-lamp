@@ -70,7 +70,7 @@ const {chromium}=require('playwright');
     let m=await q.evaluate(()=>({cards:document.querySelectorAll('#mChoices .choice').length,wait:!!document.querySelector('.bones-wait'),pot:__t.F.draft.room.pot}));
     if(m.cards||!m.wait||m.pot!==120)fail(tag+': mid-throw shows only the tumbling bones (the result is already decided) '+JSON.stringify(m));
     await q.screenshot({path:(process.argv[3]||'.')+'/bones-throw-'+tag+'.png'});
-    await q.waitForTimeout(1300);
+    await q.waitForTimeout(1600);
     m=await q.evaluate(()=>({cards:[...document.querySelectorAll('#mChoices .choice b')].map(x=>x.textContent),wait:!!document.querySelector('.bones-wait')}));
     if(m.wait||m.cards.join()!=='Throw again,Take the pot')fail(tag+': after landing, the result and choices return '+JSON.stringify(m));
     if(await painted()<50)fail(tag+': the table should still be painted after the throw');
