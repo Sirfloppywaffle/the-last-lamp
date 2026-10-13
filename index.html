@@ -204,9 +204,14 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .choice span{font-size:.86rem;color:var(--ash)}
 .mactions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 /* the Knucklebones table, painted on a canvas inside the landing box */
-.bones-cv{display:block;width:100%;height:clamp(170px,34vh,270px);margin:2px 0 12px;border-radius:8px;box-shadow:0 0 0 1px var(--seam);background:#09090b}
+.bones-cv{display:block;width:100%;height:clamp(210px,40vh,330px);touch-action:manipulation;cursor:pointer;margin:2px 0 12px;border-radius:8px;box-shadow:0 0 0 1px var(--seam);background:#09090b}
 .bones-wait{display:block;color:var(--ash);font-style:italic}
-@media (max-height:500px){.bones-cv{height:128px;margin-bottom:8px}}
+@media (max-height:500px){.bones-cv{height:150px;margin-bottom:8px}}
+.box > p:has(.bones-cv){max-width:none}
+.bones-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bones-cols .choice{padding:9px 10px;gap:3px}
+.bones-cols .choice:disabled{opacity:.45;cursor:default}
+@media (max-height:500px){.bones-cols .choice{padding:6px 8px;gap:1px}.bones-cols .choice .tg{display:none}}
 /* "more below": a box with more to scroll fades at the bottom and says so. The cue is 0px tall, so showing it moves nothing */
 .mmore{position:sticky;bottom:0;height:0;pointer-events:none}
 .mmore::before{content:"";position:absolute;left:-20px;right:-20px;bottom:-20px;height:84px;background:linear-gradient(rgba(18,22,24,0),var(--stone) 70%)}
@@ -547,7 +552,7 @@ const ROOMS={
   event:{n:'Something in the Dark',tag:'Unknown',d:'You hear something off the stair. You could go and look.'},
   rest:{n:'A Quiet Landing',tag:'Rest',d:'Tend the lamp. Restore oil, or deepen its reservoir.'},
   reliquary:{n:'A Forgotten Reliquary',tag:'Reliquary',d:'Another gift lies here, waiting to be taken.'},
-  bones:{n:'The Knucklebones',tag:'Gamble',d:'Something hooded throws bones on the step. It will play for the essence the stair would burn.'},
+  bones:{n:'The Knucklebones',tag:'Gamble',d:'Something hooded waits at a stone table. It will play knucklebones for the essence the stair would burn.'},
   deep:{n:'The Deep Stair',tag:'Elite',d:'No landing. The next floor is fiercer, with tougher creatures and more of them. Clear it and take a relic.'}
 };
 const PACTS={
@@ -1466,70 +1471,116 @@ function makeRoom(type){
     return {type,ev,res:null};
   }
   if(type==='reliquary')return {type,opts:draftOptions(3,false)};
-  if(type==='bones')return {type,stake:Math.min(run.ess,40+run.floor*20),pot:0,wins:0,done:null,res:''};
+  if(type==='bones')return {type,stake:Math.min(run.ess,40+run.floor*20),you:[[],[],[]],them:[[],[],[]],die:0,started:false,done:null,res:''};
   return {type};
 }
-/* ---- the Knucklebones: push your luck ----
-   Two bones, six faces each. Before throw n, n faces of each bone are carved into eyes, so a clean throw is
-   (5/6)², then (4/6)², then (3/6)²: 69%, 44%, 25%. A clean throw doubles the pot; an eye on either bone takes it all.
-   Every throw after the first costs 1 madness for the rest of the run. What you walk away with is safe from the
-   toll (it joins your salvage). Three clean throws end the game: the pot, and a relic. */
-const BONES_MAX=3;
-function bonesClean(wins){const f=(6-(wins+1))/6; return f*f;}
-/* the throw is decided at once (and saved); the table then plays it out. BONES_ANIM is visual only, never saved */
-let BONES_ANIM=null, bonesRaf=0;
-const BONES_THROW=1.75, BONES_CASH=.9;
-function bonesAnim(kind,from,to,after){
-  if(reduceMotion){if(after)after(); return;}
-  BONES_ANIM={kind,t0:performance.now(),dur:kind==='cash'?BONES_CASH:BONES_THROW,from,to,after,shown:false};
-}
-function throwBones(d){
-  const r=d.room;
-  if(!r.pot){run.ess-=r.stake; r.pot=r.stake;}
-  else run.madPen=(run.madPen||0)+1;
-  const eyes=r.wins+1, from=r.pot, roll=()=>{const eye=Math.random()*6<eyes; return {eye,pip:1+Math.floor(Math.random()*6)};};
-  const b1=roll(), b2=roll(); r.last=[b1,b2];
-  if(b1.eye||b2.eye){
-    r.done='bust';
-    r.res=(b1.eye&&b2.eye?'Both bones land eye up.':'One bone lands eye up, and the eye is looking at you.')+' The hooded thing sweeps the '+r.pot+' essence into its sleeve.';
-    r.pot=0; AUDIO.slip(); bonesAnim('bust',from,0); showLanding(); return;
+/* ---- the Knucklebones, by Cult of the Lamb's rules ----
+   You and the hooded thing each have three columns of three. On your turn you roll one bone and set it in one of
+   your columns with room. A column scores the sum of its bones, but matching bones multiply: two 4s score 4×2×2,
+   three score 4×3×3. Setting a bone knocks every bone of the same number out of the facing column across the table.
+   When either side fills all nine places the game ends, and the higher total wins.
+   You stake essence the stair would burn. A win pays double, safe from the toll (it joins your salvage); a win by
+   BONES_RELIC or more also gives up a relic. A draw hands your stake back. It keeps the stake if it wins. */
+const BONES_RELIC=20;
+function bonesCol(col){let s=0; for(const v of col){let n=0; for(const w of col)if(w===v)n++; s+=v*n;} return s;}
+function bonesTotal(b){return bonesCol(b[0])+bonesCol(b[1])+bonesCol(b[2]);}
+function bonesFull(b){return b[0].length>=3&&b[1].length>=3&&b[2].length>=3;}
+function bonesRoll(){return 1+Math.floor(Math.random()*6);}
+function bonesCopy(r){return {you:r.you.map(c=>c.slice()),them:r.them.map(c=>c.slice())};}
+/* it plays greedily: what the bone adds to its column, plus what it knocks off yours. On the shallow floors it sometimes doesn't look */
+function bonesAI(r,v){
+  const open=[0,1,2].filter(c=>r.them[c].length<3);
+  if(Math.random()<Math.max(0,.45-run.floor*.12))return open[Math.floor(Math.random()*open.length)];
+  let best=open[0], bs=-1e9;
+  for(const c of open){
+    const gain=bonesCol(r.them[c].concat(v))-bonesCol(r.them[c]), hurt=bonesCol(r.you[c])-bonesCol(r.you[c].filter(w=>w!==v));
+    const sc=gain+hurt*1.1+Math.random()*.5; if(sc>bs){bs=sc; best=c;}
   }
-  r.wins++; r.pot*=2; AUDIO.coin();
-  r.res='Bare bone, both of them. The pot doubles to <b>'+r.pot+'</b>. It takes a knife and carves another eye into each.';
-  if(r.wins>=BONES_MAX){
-    bonesCash(d); r.res='Bare bone a third time. It stops smiling. It pushes the pot across the step, '+r.pot+' essence, and something it was keeping for itself.';
-    /* the relic comes after the bones have landed, so the throw is seen first */
-    bonesAnim('win',from,r.pot,()=>{if(F&&F.draft===d){startPick(d,1,'What it was keeping','Choose a relic.'); showLanding();}});
-  }else bonesAnim('win',from,r.pot);
+  return best;
+}
+/* each move is decided at once (and saved); the table then plays it out. BONES_ANIM is visual only, never saved */
+let BONES_ANIM=null, bonesRaf=0;
+function bonesAnim(o){
+  if(reduceMotion){if(o.after)o.after(); return;}
+  o.t0=performance.now(); o.shown=false; BONES_ANIM=o;
+}
+function bonesBusy(){return !!(BONES_ANIM&&!BONES_ANIM.shown);}
+function bonesStart(d){
+  const r=d.room;
+  run.ess-=r.stake; r.started=true; r.die=bonesRoll(); AUDIO.coin();
+  bonesAnim({kind:'start',seg:{yourThrow:[0,.6]},dur:.6,mv:{next:r.die}});
   showLanding();
 }
-function bonesCash(d){
+function bonesMove(d,col){
   const r=d.room;
-  run.ess+=r.pot; d.salvage=(d.salvage||0)+r.pot; r.done='cash';
-  r.res='You stop. It counts '+r.pot+' essence into your hand. The stair cannot burn what was won here.';
+  if(r.done||!r.die||r.you[col].length>=3||bonesBusy())return;
+  const s0=bonesCopy(r), v=r.die, seg={}; let t=0;
+  const add=(k,dur)=>{seg[k]=[t,t+dur]; t+=dur;};
+  const mv={you:{col,v,row:r.you[col].length,knock:r.them[col].filter(w=>w===v).length}};
+  r.you[col].push(v); r.them[col]=r.them[col].filter(w=>w!==v); r.die=0;
+  add('yourPlace',.32); if(mv.you.knock)add('knockThem',.34);
+  const s1=bonesCopy(r);
+  if(!bonesFull(r.you)){
+    const tv=bonesRoll(), tc=bonesAI(r,tv);
+    mv.them={col:tc,v:tv,row:r.them[tc].length,knock:r.you[tc].filter(w=>w===tv).length};
+    r.them[tc].push(tv); r.you[tc]=r.you[tc].filter(w=>w!==tv);
+    add('theirThrow',.62); add('theirPlace',.28); if(mv.them.knock)add('knockYou',.34);
+  }
+  if(bonesFull(r.you)||bonesFull(r.them)){bonesEnd(d); add('end',.8);}
+  else{r.die=bonesRoll(); mv.next=r.die; add('yourThrow',.55);}
+  if(mv.you.knock)AUDIO.coin(); else AUDIO.place();
+  const after=r.relic?()=>{if(F&&F.draft===d){startPick(d,1,'What it was keeping','Choose a relic.'); showLanding();}}:null;
+  bonesAnim({kind:'turn',seg,dur:t,s0,s1,mv,after});
+  showLanding();
+}
+function bonesEnd(d){
+  const r=d.room, a=bonesTotal(r.you), b=bonesTotal(r.them);
+  r.score=[a,b];
+  if(a>b){
+    const pay=r.stake*2; run.ess+=pay; d.salvage=(d.salvage||0)+pay; r.done='win'; r.relic=a-b>=BONES_RELIC;
+    r.res='<b>'+a+'</b> to <b>'+b+'</b>. It pushes '+pay+' essence across the stone'+(r.relic?', and then, slowly, something it was keeping for itself.':'.')+' The stair cannot burn what was won here.';
+  }else if(a<b){
+    r.done='lose'; r.res='<b>'+a+'</b> to <b>'+b+'</b>. It sweeps your '+r.stake+' essence into its sleeve.'; AUDIO.slip();
+  }else{
+    run.ess+=r.stake; r.done='draw'; r.res='<b>'+a+'</b> to <b>'+b+'</b>. A draw. It slides your '+r.stake+' essence back across the stone.';
+  }
+}
+/* a tap on the table: during a move it hurries the move along; on your turn it sets the bone in the column you tapped */
+function bonesTap(ev){
+  const d=F&&F.draft, r=d&&d.room; if(!r||r.type!=='bones')return;
+  if(bonesBusy()){BONES_ANIM.t0=performance.now()-BONES_ANIM.dur*1000; return;}
+  if(r.done||!r.die)return;
+  const cv=ev.target, b=cv.getBoundingClientRect(), L=btLayout(b.width,b.height), X=(ev.clientX-b.left-L.cx)/L.S;
+  step('room',dd=>bonesMove(dd,X<-.13?0:X>.13?2:1))();
 }
 function bonesModal(d,take,pause){
-  const r=d.room, pct=w=>Math.round(bonesClean(w)*100)+'%';
+  const r=d.room;
+  /* a save from the push-your-luck version: pay out any pot still on the step, and set the table up fresh */
+  if(!r.you){if(r.pot&&!r.done){run.ess+=r.pot; d.salvage=(d.salvage||0)+r.pot;} Object.assign(r,{you:[[],[],[]],them:[[],[],[]],die:0,started:!!r.done,done:r.done==='cash'?'win':r.done==='bust'?'lose':null,res:r.res||''}); delete r.pot; delete r.wins; delete r.last;}
+  const busy=bonesBusy();
   if(!bonesRaf)bonesRaf=requestAnimationFrame(bonesFrame);
-  const table='<canvas class="bones-cv" id="bonesCv" aria-label="The bones table"></canvas>';
-  /* while the bones are in the air: no text, no choices, only the throw */
-  if(BONES_ANIM&&!BONES_ANIM.shown)return {kind:'draft',wide:true,title:'The Knucklebones',body:table+'<span class="bones-wait">'+(BONES_ANIM.kind==='cash'?'It counts the essence into your hand…':'The bones tumble…')+'</span>',actions:[]};
-  if(r.done)return {kind:'draft',wide:true,title:r.done==='bust'?'The bones take it':'The Knucklebones',body:table+r.res,note:tollNote(d),actions:[take,pause]};
-  if(!r.pot){
+  const table='<canvas class="bones-cv" id="bonesCv" aria-label="The bones table: your three columns are nearest you, its three are across the table"></canvas>';
+  if(r.done&&!busy)return {kind:'draft',wide:true,title:r.done==='win'?'You beat it':r.done==='lose'?'It beats you':'A draw',bad:r.done==='lose',body:table+r.res,note:tollNote(d),actions:[take,pause]};
+  if(!r.started){
     const can=r.stake>=20;
     return {kind:'draft',wide:true,title:'The Knucklebones',
-      body:table+'A hooded thing crouches on the step, rolling two carved bones in its palm. One face of each is carved into an eye. Land bare bone and it doubles what you put down. After every throw it carves another eye.'+(can?'':' It looks at your purse, and looks away. You have nothing it wants.'),
+      body:table+'A hooded thing sits at a stone table with three columns carved on each side. Take turns rolling one bone and setting it in one of your columns. Matching bones in a column multiply. Set a bone and every bone of that number in its column across the table is knocked off. When either side fills all nine, the higher total wins.'+(can?'':' It looks at your purse, and looks away. You have nothing it wants.'),
       note:tollNote(d),
-      choices:can?[{cls:'curse',tag:'Stake '+r.stake+' essence',title:'Throw the bones',sub:pct(0)+' to land clean. A clean throw doubles your stake to '+(r.stake*2)+'. An eye takes it.',fn:step('room',throwBones)}]:[],
+      choices:can?[{cls:'curse',tag:'Stake '+r.stake+' essence',title:'Sit down and play',sub:'Win and it pays '+(r.stake*2)+', safe from the toll, and a relic if you win by '+BONES_RELIC+' or more. A draw hands it back. Lose and it keeps it.',fn:step('room',bonesStart)}]:[],
       actions:[{label:'Walk past',primary:true,fn:step('room',()=>descend())},pause]};
   }
-  const last=r.wins===BONES_MAX-1;
-  return {kind:'draft',wide:true,title:'The Knucklebones',body:table+r.res,note:'The pot holds <b>'+r.pot+'</b>. Walk away with it and the stair cannot burn it.',
-    choices:[
-      {cls:'curse',tag:'Throw again · +1 madness for the rest of the run',title:'Throw again',sub:pct(r.wins)+' to land clean. A clean throw makes the pot '+(r.pot*2)+(last?', and it gives you a relic':'')+'. An eye takes everything.',fn:step('room',throwBones)},
-      {cls:'relic',tag:'Walk away',title:'Take the pot',sub:'Keep '+r.pot+' essence, safe from the toll.',fn:step('room',dd=>{const p0=dd.room.pot; bonesCash(dd); bonesAnim('cash',p0,0); showLanding();})}],
-    actions:[pause]};
+  const die=busy?0:r.die;
+  const cols='<div class="bones-cols">'+[0,1,2].map(c=>{
+    const full=r.you[c].length>=3, k=die?r.them[c].filter(w=>w===die).length:0, off=!die||full;
+    return '<button class="choice'+(k&&!off?' curse':'')+'" data-bcol="'+c+'"'+(off?' disabled':'')+'><span class="tg">Column '+(c+1)+'</span><b>'+(full?'Full':bonesCol(r.you[c])+(die?' → '+bonesCol(r.you[c].concat(die)):''))+'</b><span>'+(k&&!off?'Knocks off '+k:full?'No room':'&nbsp;')+'</span></button>';
+  }).join('')+'</div>';
+  return {kind:'draft',wide:true,title:'The Knucklebones',
+    body:table+(busy?'<span class="bones-wait">'+(BONES_ANIM.kind==='start'?'You throw the first bone…':'It takes its turn…')+'</span>':'You rolled a <b>'+die+'</b>. Tap a column to set it.'),
+    note:'You <b>'+bonesTotal(r.you)+'</b> · It <b>'+bonesTotal(r.them)+'</b>. Win and it pays <b>'+(r.stake*2)+'</b>.',
+    html:cols,actions:[pause]};
 }
+$('#mChoices').addEventListener('click',ev=>{const b=ev.target.closest('[data-bcol]'); if(!b||b.disabled)return; step('room',dd=>bonesMove(dd,+b.dataset.bcol))();});
+$('#mBody').addEventListener('click',ev=>{if(ev.target&&ev.target.id==='bonesCv')bonesTap(ev);});
 /* ---- the bones table ----
    A candle-lit stone table seen from your seat, the hooded thing across it, fog drifting over the stone.
    The bones are real cubes: each frame they are turned in 3D and projected, so they tumble, bounce and settle on
@@ -1551,16 +1602,14 @@ function bonesFrame(now){
   const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
   drawBonesTable(c,W,H,dpr,reduceMotion?0:now/1000,r,A,at);
 }
-/* the view: looking down at the table at about 27 degrees. World X runs right, Y away from you, Z up; the table is 1 wide */
-const BT_SIN=.45, BT_COS=.893, BT_H=.062, BT_LAND=1.3;
+/* the view: looking down at the table at about 33 degrees. World X runs right, Y away from you, Z up; the table is 1 wide */
+const BT_SIN=.55, BT_COS=.835, BT_H=.068, BT_TY=.66;
 const BT_LIGHT=(()=>{const v=[-.55,-.42,.72], n=Math.hypot(v[0],v[1],v[2]); return v.map(x=>x/n);})();
 /* faces: pips 1,6,2,5,3,4 (opposites add to 7); a and b span the face so that a x b is its normal */
 const BT_FACES=[
   {pip:1,n:[0,0,1],a:[1,0,0],b:[0,1,0]},{pip:6,n:[0,0,-1],a:[1,0,0],b:[0,-1,0]},
   {pip:2,n:[1,0,0],a:[0,1,0],b:[0,0,1]},{pip:5,n:[-1,0,0],a:[0,-1,0],b:[0,0,1]},
   {pip:3,n:[0,1,0],a:[-1,0,0],b:[0,0,1]},{pip:4,n:[0,-1,0],a:[1,0,0],b:[0,0,1]}];
-/* the knife carves the 6 first, then the 5, then the 4, so a clean throw always has a bare face to show */
-const BT_CARVE=[1,3,5];
 function m3(a,b){const o=[0,0,0,0,0,0,0,0,0]; for(let i=0;i<3;i++)for(let j=0;j<3;j++)o[i*3+j]=a[i*3]*b[j]+a[i*3+1]*b[3+j]+a[i*3+2]*b[6+j]; return o;}
 function mv3(m,v){return [m[0]*v[0]+m[1]*v[1]+m[2]*v[2],m[3]*v[0]+m[4]*v[1]+m[5]*v[2],m[6]*v[0]+m[7]*v[1]+m[8]*v[2]];}
 function rotX(t){const c=Math.cos(t),s=Math.sin(t); return [1,0,0,0,c,-s,0,s,c];}
@@ -1570,15 +1619,9 @@ function rotAxis(v,t){const n=Math.hypot(v[0],v[1],v[2])||1, x=v[0]/n,y=v[1]/n,z
   return [c+x*x*k,x*y*k-z*s,x*z*k+y*s, y*x*k+z*s,c+y*y*k,y*z*k-x*s, z*x*k-y*s,z*y*k+x*s,c+z*z*k];}
 /* the turn that puts face fi on top */
 const BT_UP=[rotX(0),rotX(Math.PI),rotY(-Math.PI/2),rotY(Math.PI/2),rotX(Math.PI/2),rotX(-Math.PI/2)];
-/* which face a throw landed on: an eye is one of the faces carved when it was thrown, bare bone one of the others */
-function btTop(res,te){
-  if(res.eye)return BT_CARVE[res.pip%te];
-  const av=[0,2,4,5,3,1].filter(fi=>{const k=BT_CARVE.indexOf(fi); return k<0||k>te;});
-  return av[res.pip%av.length];
-}
 function btLayout(W,H){
-  const S=Math.min(W*.46,H*.64), hs=S*.29, top=Math.max(3,(H-S*1.5)*.42+H*.02);
-  const hy=top+hs*1.5, ty=hy+hs*1.55+.279*S;
+  const S=Math.min(W*.48,H/1.85), hs=S*.29, top=Math.max(3,(H-S*1.8)*.4+H*.02);
+  const hy=top+hs*1.5, ty=hy+hs*1.55+BT_TY*BT_SIN*S;
   return {S,hs,cx:W/2,hy,ty,P:(X,Y,Z)=>[W/2+X*S,ty-(Y*BT_SIN+Z*BT_COS)*S]};
 }
 /* sprites that don't depend on the canvas size, made once */
@@ -1645,7 +1688,7 @@ function btBuild(W,H,dpr){
   c.strokeStyle=g; c.lineWidth=.06*u; c.stroke(mouth);
   /* the table: a rough round slab, lit from the candle, a carved ring in the middle */
   const [tab,t]=mk(W,H), TH=.075*BT_COS*S;
-  const edge=[]; for(let i=0;i<64;i++){const a=i/64*TAU, j=1+(srand(i,11)-.5)*.045+(srand(i>>2,12)-.5)*.03; edge.push([Math.cos(a)*j,Math.sin(a)*.62*j]);}
+  const edge=[]; for(let i=0;i<64;i++){const a=i/64*TAU, j=1+(srand(i,11)-.5)*.045+(srand(i>>2,12)-.5)*.03; edge.push([Math.cos(a)*j,Math.sin(a)*BT_TY*j]);}
   const top=new Path2D(); edge.forEach((e,i)=>{const p=P(e[0],e[1],0); i?top.lineTo(p[0],p[1]):top.moveTo(p[0],p[1]);}); top.closePath();
   t.globalAlpha=.75; t.drawImage(spr.shade,cx-S*1.25,ty-S*.2,S*2.5,S*.75); t.globalAlpha=1;
   const front=new Path2D(); const fr=edge.slice(32).concat([edge[0]]);
@@ -1666,18 +1709,20 @@ function btBuild(W,H,dpr){
   for(let i=0;i<5;i++){let X=Math.cos(i*1.37+.4)*.95, Y=Math.sin(i*1.37+.4)*.58; t.beginPath(); let p=P(X,Y,0); t.moveTo(p[0],p[1]);
     for(let s=0;s<5;s++){X*=.86; Y*=.86; X+=(srand(i*7+s,31)-.5)*.08; Y+=(srand(i*7+s,32)-.5)*.05; p=P(X,Y,0); t.lineTo(p[0],p[1]);}
     t.strokeStyle='rgba(8,6,5,.75)'; t.lineWidth=1.1; t.stroke(); t.save(); t.translate(.6,.9); t.strokeStyle='rgba(170,150,125,.12)'; t.stroke(); t.restore();}
-  const ring=(rr,col,lw,dy)=>{t.strokeStyle=col; t.lineWidth=lw; t.beginPath(); const p=P(0,.08,0); t.ellipse(p[0],p[1]+dy,rr*S,rr*S*BT_SIN,0,0,TAU); t.stroke();};
-  ring(.4,'rgba(165,140,115,.13)',1.6,1); ring(.4,'rgba(10,7,6,.8)',1.8,0); ring(.33,'rgba(165,140,115,.1)',1.2,1); ring(.33,'rgba(10,7,6,.7)',1.4,0);
-  for(let i=0;i<18;i++){const a=i/18*TAU+.1, q=P(Math.cos(a)*.365,.08+Math.sin(a)*.365,0), k=S*.018, v=i%3;
-    t.strokeStyle='rgba(10,7,6,.75)'; t.lineWidth=1.1; t.beginPath();
-    if(v===0){t.moveTo(q[0]-k,q[1]+k*.4); t.lineTo(q[0],q[1]-k*.4); t.lineTo(q[0]+k,q[1]+k*.4);}
-    else if(v===1){t.moveTo(q[0],q[1]-k*.45); t.lineTo(q[0],q[1]+k*.45); t.moveTo(q[0]-k*.6,q[1]); t.lineTo(q[0]+k*.6,q[1]-k*.2);}
-    else{t.arc(q[0],q[1],k*.4,0,TAU);}
-    t.stroke();}
+  /* nine shallow places carved on each side, and a small ring between them for the stake */
+  for(const side of [0,1])for(let col=0;col<3;col++)for(let row=0;row<3;row++){
+    const q=btSlot(side,col,row), hw=BT_H*1.35, cs=[[-hw,-hw],[hw,-hw],[hw,hw],[-hw,hw]].map(o=>P(q[0]+o[0],q[1]+o[1],0));
+    t.beginPath(); cs.forEach((p,i)=>i?t.lineTo(p[0],p[1]):t.moveTo(p[0],p[1])); t.closePath();
+    t.fillStyle='rgba(8,6,5,.28)'; t.fill(); t.strokeStyle='rgba(8,6,5,.65)'; t.lineWidth=1.1; t.stroke();
+    t.save(); t.translate(.5,.8); t.strokeStyle='rgba(170,150,125,.12)'; t.stroke(); t.restore();
+  }
+  const ring=(rr,col,lw,dy)=>{t.strokeStyle=col; t.lineWidth=lw; t.beginPath(); const p=P(0,0,0); t.ellipse(p[0],p[1]+dy,rr*S,rr*S*BT_SIN,0,0,TAU); t.stroke();};
+  ring(.12,'rgba(165,140,115,.13)',1.4,1); ring(.12,'rgba(10,7,6,.8)',1.5,0);
+  for(let i=0;i<10;i++){const a=i/10*TAU+.1, q=P(Math.cos(a)*.15,Math.sin(a)*.15,0), k=S*.012; t.strokeStyle='rgba(10,7,6,.7)'; t.lineWidth=1; t.beginPath(); t.moveTo(q[0]-k,q[1]); t.lineTo(q[0]+k,q[1]-k*.5); t.stroke();}
   t.restore();
   t.strokeStyle='rgba(210,180,140,.2)'; t.lineWidth=1.1; t.beginPath(); edge.slice(32).concat([edge[0]]).forEach((e,i)=>{const p=P(e[0],e[1],0); i?t.lineTo(p[0],p[1]):t.moveTo(p[0],p[1]);}); t.stroke();
   /* chips of old bone, and a small skull by the far candle */
-  for(let i=0;i<7;i++){const a=srand(i,51)*TAU, rr=.62+srand(i,52)*.3, p=P(Math.cos(a)*rr*.95,Math.sin(a)*rr*.55,0), k=S*(.012+srand(i,53)*.012);
+  for(let i=0;i<7;i++){const a=(srand(i,50)<.5?0:Math.PI)+(srand(i,51)-.5)*1.1, rr=.62+srand(i,52)*.3, p=P(Math.cos(a)*rr*.95,Math.sin(a)*rr*.6,0), k=S*(.012+srand(i,53)*.012);
     t.fillStyle='rgba(0,0,0,.45)'; t.beginPath(); t.ellipse(p[0]+k*.4,p[1]+k*.35,k*1.3,k*.6,0,0,TAU); t.fill();
     t.fillStyle='#bfb093'; t.beginPath(); t.ellipse(p[0],p[1],k*1.2,k*.55,srand(i,54)*3,0,TAU); t.fill();}
   const sk=P(.8,.16,0), K=S*.075;
@@ -1695,14 +1740,14 @@ function btBuild(W,H,dpr){
   BT_BG={key,L,wall,robe,RW,RH,ox,oy,table:tab,vig};
   return BT_BG;
 }
-/* one bone face, drawn in its own unit square: pips drilled into old bone, or a carved eye */
-function btFace(c,eye,pip,col,glow){
+/* one bone face, drawn in its own unit square: pips drilled into old bone; on its bones the one is an eye */
+function btFace(c,eye,pip,col,them){
   c.beginPath(); c.moveTo(.27,.06); c.arcTo(.94,.06,.94,.94,.22); c.arcTo(.94,.94,.06,.94,.22); c.arcTo(.06,.94,.06,.06,.22); c.arcTo(.06,.06,.94,.06,.22); c.closePath();
   c.fillStyle=col; c.fill();
   if(eye){
     c.beginPath(); c.moveTo(.14,.5); c.quadraticCurveTo(.5,.16,.86,.5); c.quadraticCurveTo(.5,.84,.14,.5); c.closePath();
     c.fillStyle='#2b0f0b'; c.fill(); c.strokeStyle='rgba(20,8,5,.9)'; c.lineWidth=.05; c.stroke();
-    c.fillStyle=glow>0?'rgb(255,'+(70+glow*60|0)+','+(40+glow*40|0)+')':'#9a2a1e'; c.beginPath(); c.arc(.5,.5,.16,0,TAU); c.fill();
+    c.fillStyle='#a32c1f'; c.beginPath(); c.arc(.5,.5,.16,0,TAU); c.fill();
     c.fillStyle='#070202'; c.beginPath(); c.ellipse(.5,.5,.035,.13,0,0,TAU); c.fill();
     c.fillStyle='rgba(255,235,210,.5)'; c.beginPath(); c.arc(.45,.44,.03,0,TAU); c.fill();
     return;
@@ -1710,39 +1755,89 @@ function btFace(c,eye,pip,col,glow){
   const Q={1:[[0,0]],2:[[-1,-1],[1,1]],3:[[-1,-1],[0,0],[1,1]],4:[[-1,-1],[1,-1],[-1,1],[1,1]],5:[[-1,-1],[1,-1],[0,0],[-1,1],[1,1]],6:[[-1,-1],[1,-1],[-1,0],[1,0],[-1,1],[1,1]]}[pip];
   for(const q of Q){const x=.5+q[0]*.24, y=.5+q[1]*.24;
     c.fillStyle='rgba(255,245,225,.18)'; c.beginPath(); c.arc(x+.012,y+.016,.085,0,TAU); c.fill();
-    c.fillStyle='#2c1d12'; c.beginPath(); c.arc(x,y,.08,0,TAU); c.fill();
-    c.fillStyle='#120a05'; c.beginPath(); c.arc(x-.01,y-.012,.05,0,TAU); c.fill();}
+    c.fillStyle=them?'#3d120c':'#2c1d12'; c.beginPath(); c.arc(x,y,.08,0,TAU); c.fill();
+    c.fillStyle=them?'#1c0604':'#120a05'; c.beginPath(); c.arc(x-.01,y-.012,.05,0,TAU); c.fill();}
 }
-/* one bone: centre (X,Y,Z above the stone), turned by R; eyes = faces carved so far */
-function btBone(c,L,X,Y,Z,R,eyes,glow,spr){
+/* one bone: centre (X,Y, Z above the stone), turned by R. o.them: its bones, darker, with an eye for a one; o.a fades it; o.glow lights it red */
+function btBone(c,L,X,Y,Z,R,o,spr){
   const {S,P}=L, h=BT_H;
   /* rest it on its lowest corner, so a tilted bone never sinks into the stone */
   let lo=0; for(const sx of [-1,1])for(const sy of [-1,1])for(const sz of [-1,1]){const v=mv3(R,[sx*h,sy*h,sz*h]); lo=Math.min(lo,v[2]);}
-  const cz=Z-lo, ctr=P(X,Y,cz), pv=v=>[v[0]*S,-(v[1]*BT_SIN+v[2]*BT_COS)*S];
+  const cz=Z-lo, ctr=P(X,Y,cz), pv=v=>[v[0]*S,-(v[1]*BT_SIN+v[2]*BT_COS)*S], base=o.them?[200,184,152]:[236,222,190];
+  if(o.glow>0){c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=Math.min(1,o.glow); const rr=h*S*4; c.drawImage(spr.red,ctr[0]-rr,ctr[1]-rr,rr*2,rr*2); c.restore();}
+  c.save(); if(o.a!=null)c.globalAlpha=Math.max(0,o.a);
   const vis=[];
   for(let fi=0;fi<6;fi++){const f=BT_FACES[fi], n=mv3(R,f.n); if(n[1]*BT_COS-n[2]*BT_SIN<-.02)vis.push([fi,n]);}
   /* the body behind the faces gives the rounded, darker edges */
   c.lineJoin='round'; c.lineWidth=h*S*.32;
   for(const [fi,n] of vis){const f=BT_FACES[fi], a=mv3(R,f.a), b=mv3(R,f.b), br=.3+.55*Math.max(0,n[0]*BT_LIGHT[0]+n[1]*BT_LIGHT[1]+n[2]*BT_LIGHT[2]);
-    c.fillStyle=c.strokeStyle='rgb('+(150*br|0)+','+(134*br|0)+','+(104*br|0)+')'; c.beginPath();
+    c.fillStyle=c.strokeStyle='rgb('+(base[0]*.64*br|0)+','+(base[1]*.6*br|0)+','+(base[2]*.55*br|0)+')'; c.beginPath();
     for(const [sa,sb] of [[-1,-1],[1,-1],[1,1],[-1,1]]){const q=pv([(n[0]+a[0]*sa+b[0]*sb)*h,(n[1]+a[1]*sa+b[1]*sb)*h,(n[2]+a[2]*sa+b[2]*sb)*h]); c.lineTo(ctr[0]+q[0],ctr[1]+q[1]);}
     c.closePath(); c.fill(); c.stroke();}
   for(const [fi,n] of vis){
-    const f=BT_FACES[fi], a=mv3(R,f.a), b=mv3(R,f.b), k=BT_CARVE.indexOf(fi), eye=k>=0&&k<eyes;
+    const f=BT_FACES[fi], a=mv3(R,f.a), b=mv3(R,f.b);
     const br=.36+.72*Math.max(0,n[0]*BT_LIGHT[0]+n[1]*BT_LIGHT[1]+n[2]*BT_LIGHT[2]);
-    const ua=pv([a[0]*2*h,a[1]*2*h,a[2]*2*h]), vb=pv([b[0]*2*h,b[1]*2*h,b[2]*2*h]), o=pv([(n[0]-a[0]-b[0])*h,(n[1]-a[1]-b[1])*h,(n[2]-a[2]-b[2])*h]);
+    const ua=pv([a[0]*2*h,a[1]*2*h,a[2]*2*h]), vb=pv([b[0]*2*h,b[1]*2*h,b[2]*2*h]), q=pv([(n[0]-a[0]-b[0])*h,(n[1]-a[1]-b[1])*h,(n[2]-a[2]-b[2])*h]);
     if(Math.abs(ua[0]*vb[1]-ua[1]*vb[0])<.5)continue;
-    const fg=eye&&glow>0&&n[2]>.7?glow:0;
-    if(fg>0){c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=Math.min(1,fg); const q=pv([n[0]*h,n[1]*h,n[2]*h]), rr=h*S*4; c.drawImage(spr.red,ctr[0]+q[0]-rr,ctr[1]+q[1]-rr,rr*2,rr*2); c.restore();}
-    c.save(); c.transform(ua[0],ua[1],vb[0],vb[1],ctr[0]+o[0],ctr[1]+o[1]);
-    btFace(c,eye,f.pip,'rgb('+Math.min(255,232*br|0)+','+Math.min(255,216*br|0)+','+Math.min(255,182*br|0)+')',fg);
+    c.save(); c.transform(ua[0],ua[1],vb[0],vb[1],ctr[0]+q[0],ctr[1]+q[1]);
+    btFace(c,o.them&&f.pip===1,f.pip,'rgb('+Math.min(255,base[0]*br|0)+','+Math.min(255,base[1]*br|0)+','+Math.min(255,base[2]*br|0)+')',o.them);
     c.restore();
   }
+  c.restore();
 }
 function btEase(u){return u<0?0:u>1?1:u*u*(3-2*u);}
+/* where things sit on the table (world X,Y): the carved places, where your bone lands, where its bone lands */
+const BT_PIPFACE={1:0,6:1,2:2,5:3,3:4,4:5}, BT_ROLL=[[.52,-.36],[.5,.06]];
+function btSlot(side,col,row){return [(col-1)*.26,side?.24+row*.15:-(.24+row*.15)];}
+function btYaw(side,col,row,v){return (srand(col*7+row*3+side*31,v)-.5)*.35;}
+function btRest(v,yaw){return m3(rotZ(yaw),BT_UP[BT_PIPFACE[v]]);}
+/* a thrown bone: an arc, three bounces and a short roll, turning all the way and settling on face v */
+function btToss(from,to,u,v,seed){
+  const p=Math.min(1,u/.85), e=1-Math.pow(1-p,2.3);
+  let Z=0; for(const [a0,a1,pk] of [[0,.55,.4],[.55,.8,.08],[.8,.92,.022],[.92,.97,.005]])if(p>=a0&&p<a1){const s=(p-a0)/(a1-a0); Z=(a0===0?(from[2]||0)*(1-s):0)+4*pk*s*(1-s);}
+  const ax=[1+(srand(seed,7)-.5)*.6,(srand(seed,9)-.5)*.9,(srand(seed,11)-.5)*1.2];
+  return {X:from[0]+(to[0]-from[0])*e+Math.sin(e*Math.PI)*.04,Y:from[1]+(to[1]-from[1])*e,Z,
+    R:m3(btRest(v,(srand(seed,5)-.5)*.8),rotAxis(ax,-(8+srand(seed,13)*4)*Math.pow(1-p,2)))};
+}
+/* a bone pushed from one place to another, lifted a little on the way */
+function btSlide(from,to,u,v,y0,y1){const e=btEase(u); return {X:from[0]+(to[0]-from[0])*e,Y:from[1]+(to[1]-from[1])*e,Z:Math.sin(Math.PI*e)*.07,R:btRest(v,y0+(y1-y0)*e)};}
+function btSeg(A,at,k){const s=A&&A.seg[k]; if(!s)return -1; return at<s[0]?-1:at>=s[1]?2:(at-s[0])/Math.max(1e-3,s[1]-s[0]);}
+/* what the table shows at one moment of a move: both boards, the bones in motion, the bones being knocked off, its mood */
+function btView(r,A,at){
+  const V={you:r.you,them:r.them,fly:[],fadeYou:null,fadeThem:null,rolled:r.started&&!r.done?r.die:0,narrow:r.done==='lose'?1:0,angry:r.done==='win'?.5:0,motes:r.started&&!r.done?1:0,drift:0,dir:0,sweep:0,red:0,look:null};
+  if(!A)return V;
+  const mv=A.mv, yt=btSeg(A,at,'yourThrow');
+  if(mv.next)V.rolled=yt===2?mv.next:0;
+  if(yt>=0&&yt<=1){V.fly.push({side:0,...btToss([.3,-.95,.25],BT_ROLL[0],yt,mv.next,(r.you.flat().length+1)*17)}); V.look=V.fly[V.fly.length-1];}
+  if(A.kind==='start'){V.motes=1; V.drift=yt<0?1:1-Math.min(1,Math.max(0,yt)); V.dir=1; return V;}
+  const S0=A.s0, S1=A.s1, yp=btSeg(A,at,'yourPlace'), kt=btSeg(A,at,'knockThem'), tt=btSeg(A,at,'theirThrow'), tp=btSeg(A,at,'theirPlace'), ky=btSeg(A,at,'knockYou'), en=btSeg(A,at,'end');
+  /* your board: your bone slides into its place, then any of yours it knocks off fade */
+  if(yp<2){V.you=S0.you; const m=mv.you, f=btSlide(BT_ROLL[0],btSlot(0,m.col,m.row),Math.max(0,yp),m.v,.2,btYaw(0,m.col,m.row,m.v)); V.fly.push({side:0,...f}); V.look=f;}
+  else if(A.seg.knockYou&&ky<2){V.you=S1.you; if(ky>=0)V.fadeYou={col:mv.them.col,v:mv.them.v,u:ky};}
+  else V.you=mv.them?r.you:S1.you;
+  /* its board: yours knock its bones off; then its bone is thrown, and pushed into its place */
+  const knocked=A.seg.knockThem?kt===2:yp===2;
+  V.them=tp===2?r.them:knocked?S1.them:S0.them;
+  if(kt>=0&&kt<=1)V.fadeThem={col:mv.you.col,v:mv.you.v,u:kt};
+  if(mv.them){
+    const m=mv.them, seed=(r.them.flat().length+3)*29;
+    if(tt>=0&&tt<=1){const f=btToss([.5,.32,.18],BT_ROLL[1],tt,m.v,seed); V.fly.push({side:1,...f}); V.look=f;}
+    else if(tt===2&&tp<2){const f=btSlide(BT_ROLL[1],btSlot(1,m.col,m.row),Math.max(0,tp),m.v,(srand(seed,5)-.5)*.8,btYaw(1,m.col,m.row,m.v)); V.fly.push({side:1,...f}); V.look=f;}
+  }
+  /* its mood: a flare when you knock its bones off, a narrowing when it knocks off yours; the result shows only once the game is played out */
+  if(r.done&&en<0){V.narrow=0; V.angry=0;}
+  if(kt>=0)V.angry=Math.max(V.angry,Math.max(0,1-(at-A.seg.knockThem[0])/1.4));
+  if(ky>=0)V.narrow=Math.max(V.narrow,Math.max(0,1-(at-A.seg.knockYou[0])/1.6));
+  /* the end: the pot streams to you, or its hand sweeps it into its sleeve */
+  if(r.done){
+    V.motes=en<2?1:0; V.rolled=0;
+    if(r.done==='lose'){const s=Math.max(0,en); V.sweep=en<0?0:Math.sin(Math.min(1,s)*Math.PI); V.drift=btEase((s-.35)/.6); V.dir=-1; V.red=en>=0?Math.max(0,1-Math.abs(s-.4)*1.6):0;}
+    else{V.drift=btEase(en<0?0:en); V.dir=1;}
+  }
+  return V;
+}
 function drawBonesTable(c,W,H,dpr,tm,r,A,at){
-  const B=btBuild(W,H,dpr), L=B.L, {S,hs,cx,P}=L, spr=btSprites(), u=hs;
-  const kind=A&&at<A.dur+1.4?A.kind:null, landed=!A||A.kind==='cash'||at>=BT_LAND;
+  const B=btBuild(W,H,dpr), L=B.L, {S,hs,cx,P}=L, spr=btSprites(), u=hs, V=btView(r,A,at);
   const fl=1+Math.sin(tm*11.3)*.05+Math.sin(tm*17.9+1)*.035+Math.sin(tm*5.1)*.03;
   const breathe=Math.sin(tm*1.25), hy=L.hy+breathe*u*.025;
   c.clearRect(0,0,W,H); c.drawImage(B.wall,0,0,W,H);
@@ -1750,16 +1845,15 @@ function drawBonesTable(c,W,H,dpr,tm,r,A,at){
   const fogs=(list)=>{for(const f of list){const fw=S*f.w, fh=fw*.33, span=W+fw, x=((tm*S*f.v+f.o*span)%span+span)%span-fw, y=f.y-fh/2+Math.sin(tm*.31+f.o*6)*fh*.08;
     c.globalAlpha=f.a; c.drawImage(spr.fog[f.s],x,y,fw,fh);} c.globalAlpha=1;};
   fogs([{y:L.hy+u*.9,w:2.6,v:.022,o:.1,a:.8,s:0},{y:L.hy-u*.2,w:2.2,v:.016,o:.62,a:.5,s:1}]);
-  /* the hooded thing breathes; its eyes are two dim embers deep in the hood */
+  /* the hooded thing breathes; its eyes are two dim embers deep in the hood, and they follow the bone in play */
   c.drawImage(B.robe,cx-B.ox,hy-B.oy,B.RW,B.RH*(1+breathe*.006));
-  const gaze=[0,0];
-  if(A&&A.kind!=='cash'&&at<BT_LAND+.8){gaze[0]=-.15*Math.sin(at*2.2); gaze[1]=.6;}
-  const narrow=kind==='win'&&at>BT_LAND?.38:1, angry=kind==='bust'&&at>BT_LAND+.1?Math.min(1,(at-BT_LAND-.1)*4):0;
+  const gaze=V.look?[clamp(V.look.X*1.4,-1,1),clamp(.3-V.look.Y,-1,1)]:[Math.sin(tm*.23)*.3,.5];
+  const narrow=1-V.narrow*.62, angry=Math.min(1,V.angry);
   const ph=(tm+1.3)%5.3, lid=ph<.18?Math.abs(ph/.09-1):1, pulse=.85+.15*Math.sin(tm*.9);
-  const eyeC=angry?[255,60+80*(1-angry)|0,30]:[255,165,85], ea=(.42+angry*.4)*pulse;
+  const eyeC=angry?[255,60+100*(1-angry)|0,30]:[255,165,85], ea=(.42+angry*.4)*pulse;
   for(const sx of [-1,1]){
     const ex=cx+sx*u*.2+gaze[0]*u*.08, ey=hy-u*.02+gaze[1]*u*.05;
-    c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=(.16+angry*.3)*pulse; const gr=u*(.32+angry*.2); c.drawImage(angry?spr.red:spr.warm,ex-gr,ey-gr,gr*2,gr*2); c.restore();
+    c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=(.16+angry*.3)*pulse; const gr=u*(.32+angry*.2); c.drawImage(angry>.3?spr.red:spr.warm,ex-gr,ey-gr,gr*2,gr*2); c.restore();
     c.save(); c.translate(ex,ey); c.scale(1,Math.max(.06,lid*narrow));
     c.fillStyle='rgba('+eyeC[0]+','+eyeC[1]+','+eyeC[2]+','+ea+')'; c.beginPath(); c.ellipse(0,0,u*.058,u*.034,sx*.12,0,TAU); c.fill();
     c.fillStyle='rgba(255,235,200,'+(ea*.55)+')'; c.beginPath(); c.ellipse(0,0,u*.022,u*.014,0,0,TAU); c.fill();
@@ -1767,16 +1861,19 @@ function drawBonesTable(c,W,H,dpr,tm,r,A,at){
   }
   c.drawImage(B.table,0,0,W,H);
   fogs([{y:L.ty-S*.12,w:2.0,v:.03,o:.35,a:1,s:1},{y:L.ty+S*.04,w:2.8,v:.024,o:.8,a:.9,s:0},{y:L.ty-S*.02,w:2.3,v:.019,o:.1,a:.7,s:1}]);
-  /* its hands rest on the far side; on a bust the right one sweeps the pot away */
-  const potW=[0,.1];
-  const hands=[[-.52,.3],[.52,.3]];
-  if(kind==='bust'){const u1=btEase((at-BT_LAND-.12)/.33), u2=btEase((at-BT_LAND-.55)/.5), h0=hands[1];
-    hands[1]=[h0[0]+(potW[0]+.1-h0[0])*u1*(1-u2),h0[1]+(potW[1]-.04-h0[1])*u1*(1-u2)];}
+  /* on your turn: the columns with room glow faintly, and its bones your roll would knock off pulse red */
+  const yourTurn=V.rolled&&!(A&&!A.shown), pul=.5+.5*Math.sin(tm*4);
+  if(yourTurn){c.save(); c.globalCompositeOperation='lighter';
+    for(let col=0;col<3;col++)if(V.you[col].length<3){const p=P((col-1)*.26,-.39,0); c.globalAlpha=.1+.06*pul; c.drawImage(spr.warm,p[0]-S*.15,p[1]-S*.17,S*.3,S*.34);}
+    c.restore();}
+  /* its hands rest on the far side; when it wins the right one sweeps the pot away */
+  const potW=[0,0];
+  const hands=[[-.55,.3],[.55,.3]];
+  if(V.sweep>0){const h0=hands[1]; hands[1]=[h0[0]+(potW[0]+.1-h0[0])*V.sweep,h0[1]+(potW[1]-.02-h0[1])*V.sweep];}
   const SK=[176,166,146], M={sil:false};
   for(let i=0;i<2;i++){
-    const sx=i?1:-1, reach=Math.hypot(hands[i][0]-sx*.52,hands[i][1]-.3), E=P(sx*.6+(hands[i][0]-sx*.52)*.45,.72+(hands[i][1]-.3)*.45,.12+reach*.15), Wr=P(hands[i][0],hands[i][1],.02), k=S*.25;
+    const sx=i?1:-1, reach=Math.hypot(hands[i][0]-sx*.55,hands[i][1]-.3), E=P(sx*.62+(hands[i][0]-sx*.55)*.45,.74+(hands[i][1]-.3)*.45,.12+reach*.15), Wr=P(hands[i][0],hands[i][1],.02), k=S*.25;
     let dx=Wr[0]-E[0], dy=Wr[1]-E[1]; const dl=Math.hypot(dx,dy)||1; dx/=dl; dy/=dl; const px=-dy, py=dx;
-    /* the forearm in its sleeve, lying on the stone, lit along the candle side */
     c.globalAlpha=.55; c.drawImage(spr.shade,Wr[0]-k*.9,Wr[1]-k*.25,k*1.8,k*.7); c.globalAlpha=1;
     /* a loose sleeve: it billows over the forearm and flares at the cuff */
     const sw0=u*.4, sw1=u*.36, mx=(E[0]+Wr[0])/2, my=(E[1]+Wr[1])/2-u*.06, bw=u*.48;
@@ -1803,21 +1900,15 @@ function drawBonesTable(c,W,H,dpr,tm,r,A,at){
     const inx=Math.sign(cx-Wr[0])||1;
     tendril(c,M,[[hx+dx*k*.14+inx*k*.12,hy2+dy*k*.14],[hx+dx*k*.22+inx*k*.26,hy2+dy*k*.22+k*.04],[hx+dx*k*.28+inx*k*.33,hy2+dy*k*.28+k*.09]],k*.1,k*.05,SK,{base:-.32,ridge:.15});
   }
-  /* the pot: motes of essence hovering over the ring */
-  let pot=r.pot, drift=0, dir=0;
-  if(A){
-    if(A.kind==='win')pot=at<BT_LAND?A.from:A.to;
-    else if(A.kind==='bust'){pot=A.from; drift=btEase((at-BT_LAND-.35)/.75); dir=-1;}
-    else if(A.kind==='cash'){pot=A.from; drift=btEase(at/BONES_CASH); dir=1;}
-  }
-  const n=pot>0?Math.min(46,Math.round(5+Math.log2(pot/Math.max(1,r.stake)+1)*12)):0, pop=kind==='win'&&at>BT_LAND?1+.3*Math.max(0,1-(at-BT_LAND)/.45):1;
-  if(n){
-    const pc=P(potW[0],potW[1],0), gr=S*(.18+n*.004)*pop*(1-drift*.8);
+  /* the stake: motes of essence hovering over the small ring between the boards */
+  if(V.motes){
+    const drift=V.drift, dir=V.dir, n=Math.min(40,Math.round(10+Math.log2(r.stake/20+1)*7));
+    const pc=P(potW[0],potW[1],0), gr=S*(.14+n*.003)*(1-drift*.8);
     c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=.2*(1-drift); c.drawImage(spr.warm,pc[0]-gr*1.6,pc[1]-gr*.6,gr*3.2,gr*1.2);
     const hp=P(hands[1][0],hands[1][1],0);
     for(let i=0;i<n;i++){
-      const a=srand(i,3)*TAU, d=Math.sqrt(srand(i,7))*pop, bob=Math.sin(tm*1.7+i*1.3);
-      let q=P(potW[0]+Math.cos(a)*d*.2,potW[1]+Math.sin(a)*d*.15,.025+.02*bob+srand(i,8)*.04);
+      const a=srand(i,3)*TAU, d=Math.sqrt(srand(i,7)), bob=Math.sin(tm*1.7+i*1.3);
+      let q=P(potW[0]+Math.cos(a)*d*.11,potW[1]+Math.sin(a)*d*.06,.025+.02*bob+srand(i,8)*.04);
       if(drift>0){const k=clamp(drift*1.3-srand(i,9)*.3,0,1), tx=dir<0?hp[0]:q[0], ty2=dir<0?hp[1]-S*.05:H+20; q=[q[0]+(tx-q[0])*k*k,q[1]+(ty2-q[1])*k*k];}
       const rad=S*(.008+srand(i,5)*.007)*(1+.15*bob);
       c.globalAlpha=(.75+.25*Math.sin(tm*3+i))*(dir<0?1-drift*.7:1);
@@ -1826,7 +1917,7 @@ function drawBonesTable(c,W,H,dpr,tm,r,A,at){
     c.restore();
   }
   /* candles: a cluster on the left, a stub on the right; far ones first */
-  const cand=[[-.88,.34,.2,.04],[-.8,.22,.36,.05],[-.68,.3,.24,.038],[-.9,.08,.14,.044],[.9,.3,.12,.04]];
+  const cand=[[-.88,.34,.2,.04],[-.8,.22,.36,.05],[-.68,.36,.24,.038],[-.92,.08,.14,.044],[.9,.3,.12,.04]];
   for(let i=0;i<cand.length;i++){
     const [X,Y,ch,cr]=cand[i], b=P(X,Y,0), tp=P(X,Y,ch), rw=cr*S, ry=rw*BT_SIN;
     c.fillStyle='rgba(225,210,175,.85)'; c.beginPath(); c.ellipse(b[0],b[1],rw*1.7,ry*1.7,0,0,TAU); c.fill();
@@ -1842,39 +1933,36 @@ function drawBonesTable(c,W,H,dpr,tm,r,A,at){
     c.fillStyle=fg; c.beginPath(); c.moveTo(fx,fyb-fhh); c.quadraticCurveTo(fx+rw*.55,fyb-fhh*.35,fx,fyb); c.quadraticCurveTo(fx-rw*.55,fyb-fhh*.35,fx,fyb-fhh); c.fill();
     c.fillStyle='rgba(90,130,255,.5)'; c.beginPath(); c.ellipse(fx,fyb-rw*.15,rw*.12,rw*.2,0,0,TAU); c.fill();
   }
-  /* the bones: resting at your edge, thrown across the stone, or lying where they landed */
-  const te=r.done==='bust'?r.wins+1:r.wins;
-  const eyesNow=r.done==='bust'?r.wins+1:(A&&A.kind==='win'&&at<BT_LAND+.4?r.wins:Math.min(BONES_MAX,r.wins+1));
-  const q=r.last?r.wins*13+r.last[0].pip*3+r.last[1].pip+(r.done==='bust'?7:0):0;
-  const rest=[[-.15,-.5],[.13,-.55]], land=[[-.3+srand(q,1)*.12,-.26+srand(q,2)*.2],[.14+srand(q,3)*.14,-.3+srand(q,4)*.2]];
-  const bones=[];
-  for(let i=0;i<2;i++){
-    let X,Y,Z=0,R;
-    if(!r.last){X=rest[i][0]; Y=rest[i][1]; R=m3(rotZ(i?-.3:.4),BT_UP[i?2:4]);}
-    else{
-      const Rf=m3(rotZ((srand(q,5+i)-.5)*1.3),BT_UP[btTop(r.last[i],te)]);
-      if(A&&A.kind!=='cash'&&at<BT_LAND){
-        const p=1-Math.pow(1-at/BT_LAND,2.3), side=Math.sin(p*Math.PI)*.05*(i?1:-1);
-        X=rest[i][0]+(land[i][0]-rest[i][0])*p+side; Y=rest[i][1]+(land[i][1]-rest[i][1])*p;
-        for(const [a0,a1,pk] of [[0,.58,.5],[.58,.88,.1],[.88,1.04,.028],[1.04,1.12,.006]])if(at>=a0&&at<a1){const s=(at-a0)/(a1-a0); Z=4*pk*s*(1-s);}
-        const ax=[1+(srand(q,7+i)-.5)*.6,(srand(q,9+i)-.5)*.9,(srand(q,11+i)-.5)*1.2];
-        R=m3(Rf,rotAxis(ax,-(9+srand(q,13+i)*5)*Math.pow(1-at/BT_LAND,2)));
-      }else{X=land[i][0]; Y=land[i][1]; R=Rf;}
+  /* the bones: both boards, any being knocked off, any in motion, and your roll waiting by your hand */
+  const list=[];
+  const board=(side,b,fade)=>{for(let col=0;col<3;col++)b[col].forEach((v,row)=>{const s=btSlot(side,col,row), o={them:!!side};
+    if(fade&&fade.col===col&&fade.v===v){o.a=1-fade.u; o.glow=Math.min(1,fade.u*3)*(1-fade.u); list.push({X:s[0],Y:s[1],Z:fade.u*.25,R:m3(rotAxis([1,.3,0],fade.u*1.5),btRest(v,btYaw(side,col,row,v))),o}); return;}
+    if(side&&yourTurn&&v===V.rolled)o.glow=.2+.35*pul;
+    list.push({X:s[0],Y:s[1],Z:0,R:btRest(v,btYaw(side,col,row,v)),o});});};
+  board(0,V.you,V.fadeYou); board(1,V.them,V.fadeThem);
+  for(const f of V.fly)list.push({X:f.X,Y:f.Y,Z:f.Z,R:f.R,o:{them:!!f.side}});
+  if(V.rolled)list.push({X:BT_ROLL[0][0],Y:BT_ROLL[0][1],Z:0,R:btRest(V.rolled,.2),o:{}});
+  else if(!r.started){list.push({X:BT_ROLL[0][0],Y:BT_ROLL[0][1],Z:0,R:btRest(6,.2),o:{}});}
+  list.sort((a,b)=>b.Y-a.Y);
+  for(const b of list)if((b.X*b.X)+(b.Y/BT_TY)*(b.Y/BT_TY)<1){const s=P(b.X+.03+b.Z*.2,b.Y-.02,0), w=BT_H*S*(2.9+b.Z*5), a=.65/(1+b.Z*7)*(b.o.a!=null?b.o.a:1); c.globalAlpha=a; c.drawImage(spr.shade,s[0]-w/2,s[1]-w*.22,w,w*.44); c.globalAlpha=1;}
+  for(const b of list)btBone(c,L,b.X,b.Y,b.Z,b.R,b.o,spr);
+  /* each column's score, under yours and above its */
+  if(r.started){
+    c.font='600 '+Math.max(10,Math.round(S*.075))+'px '+getComputedStyle(document.body).fontFamily; c.textAlign='center'; c.textBaseline='middle';
+    for(let col=0;col<3;col++)for(const side of [0,1]){
+      const b=side?V.them:V.you, sc=bonesCol(b[col]); if(!sc)continue;
+      const p=P((col-1)*.26,side?.65:-.66,0);
+      const dy=side?-S*.1:S*.045;
+      c.fillStyle='rgba(0,0,0,.6)'; c.fillText(sc,p[0]+1,p[1]+dy+1);
+      c.fillStyle=side?'rgba(230,150,120,.85)':'rgba(240,222,180,.92)'; c.fillText(sc,p[0],p[1]+dy);
     }
-    bones.push([Y,X,Z,R,i]);
-  }
-  bones.sort((a,b)=>b[0]-a[0]);
-  for(const [Y,X,Z] of bones)if((X*X)+(Y/.62)*(Y/.62)<1){const s=P(X+.03+Z*.2,Y-.02,0), w=BT_H*S*(2.9+Z*5), a=.65/(1+Z*7); c.globalAlpha=a; c.drawImage(spr.shade,s[0]-w/2,s[1]-w*.22,w,w*.44); c.globalAlpha=1;}
-  for(const [Y,X,Z,R,i] of bones){
-    const glow=kind==='bust'&&r.last&&r.last[i].eye?Math.max(0,1-Math.abs(at-BT_LAND-.3)*1.6)*.9+.25:0;
-    btBone(c,L,X,Y,Z,R,eyesNow,glow,spr);
   }
   /* low fog over everything, the candle's breath, the vignette */
-  fogs([{y:L.ty+S*.22,w:3,v:.04,o:.5,a:.35,s:1}]);
+  fogs([{y:L.ty+S*.22,w:3,v:.04,o:.5,a:.3,s:1}]);
   const fp=P(-.8,.22,.45); c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=.07*fl; c.drawImage(spr.warm,fp[0]-S*1.3*fl,fp[1]-S*1.3*fl,S*2.6*fl,S*2.6*fl); c.restore();
   c.drawImage(B.vig,0,0,W,H);
-  /* a bust bleeds red at the edges */
-  if(kind==='bust'&&at>BT_LAND){const k=Math.max(0,1-(at-BT_LAND-.2)/1.2)*Math.min(1,(at-BT_LAND)*5), g=c.createRadialGradient(cx,H/2,Math.min(W,H)*.3,cx,H/2,Math.max(W,H)*.7); g.addColorStop(0,'rgba(140,10,10,0)'); g.addColorStop(1,'rgba(150,15,15,'+(.5*k)+')'); c.fillStyle=g; c.fillRect(0,0,W,H);}
+  /* losing bleeds red at the edges */
+  if(V.red>0){const g=c.createRadialGradient(cx,H/2,Math.min(W,H)*.3,cx,H/2,Math.max(W,H)*.7); g.addColorStop(0,'rgba(140,10,10,0)'); g.addColorStop(1,'rgba(150,15,15,'+(.5*V.red)+')'); c.fillStyle=g; c.fillRect(0,0,W,H);}
 }
 function makeStock(){
   const st=[], m=meta();
