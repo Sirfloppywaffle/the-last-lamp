@@ -1487,14 +1487,15 @@ function bonesTotal(b){return bonesCol(b[0])+bonesCol(b[1])+bonesCol(b[2]);}
 function bonesFull(b){return b[0].length>=3&&b[1].length>=3&&b[2].length>=3;}
 function bonesRoll(){return 1+Math.floor(Math.random()*6);}
 function bonesCopy(r){return {you:r.you.map(c=>c.slice()),them:r.them.map(c=>c.slice())};}
-/* it plays greedily: what the bone adds to its column, plus what it knocks off yours. On the shallow floors it sometimes doesn't look */
+/* it plays greedily: what the bone adds to its column, plus what it knocks off yours (scores move in steps of at least 0.1, so the
+   tie-break below never overturns a better move). On the shallow floors it sometimes doesn't look */
 function bonesAI(r,v){
   const open=[0,1,2].filter(c=>r.them[c].length<3);
   if(Math.random()<Math.max(0,.45-run.floor*.12))return open[Math.floor(Math.random()*open.length)];
   let best=open[0], bs=-1e9;
   for(const c of open){
     const gain=bonesCol(r.them[c].concat(v))-bonesCol(r.them[c]), hurt=bonesCol(r.you[c])-bonesCol(r.you[c].filter(w=>w!==v));
-    const sc=gain+hurt*1.1+Math.random()*.5; if(sc>bs){bs=sc; best=c;}
+    const sc=gain+hurt*1.1+Math.random()*.01; if(sc>bs){bs=sc; best=c;}
   }
   return best;
 }
