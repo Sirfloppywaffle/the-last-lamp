@@ -4399,9 +4399,11 @@ let CODEX=null;
 function codex(){
   if(CODEX)return CODEX;
   const s=store.get('ll-codex',null);
-  CODEX={foes:new Set(s&&s.foes||[]),relics:new Set(s&&s.relics||[])};
+  /* whatever was stored, only arrays of known keys are kept, so a damaged ll-codex can't break the book */
+  const list=(v,T)=>Array.isArray(v)?v.filter(k=>typeof k==='string'&&T[k]):[];
+  CODEX={foes:new Set(list(s&&s.foes,FOES)),relics:new Set(list(s&&s.relics,RELICS))};
   /* someone who played before the Grimoire existed has met everything on the floors they reached */
-  if(!s){const b=store.get('ll-best',null), reached=b&&b.floor?Math.min(FLOORS.length,b.floor):0;
+  if(!s||typeof s!=='object'){const b=store.get('ll-best',null), reached=b&&b.floor?Math.min(FLOORS.length,b.floor):0;
     for(let i=0;i<reached;i++)FLOORS[i].waves.forEach(w=>w.forEach(g=>{if(FOES[g[0]])CODEX.foes.add(g[0]);}));
     if(reached)codexSave();}
   return CODEX;
