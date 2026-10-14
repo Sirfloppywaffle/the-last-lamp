@@ -23,6 +23,13 @@ const {chromium}=require('playwright');
     const board=await p.evaluate(()=>{const r=document.getElementById('board').getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height*.75};});
     await p.touchscreen.tap(board.x,board.y); await p.waitForTimeout(250);
     if(await p.evaluate(()=>!document.getElementById('relTip').hidden))fail(tag+': the next tap puts the relic card away');
+    // and with the card up, a button still does its job: Pause opens the pause menu
+    if(tag==='folded'){
+      await p.touchscreen.tap(at.x,at.y); await p.waitForTimeout(250);
+      await p.tap('#pauseBtn'); await p.waitForTimeout(250);
+      const m=await p.evaluate(()=>({title:document.querySelector('#mTitle').textContent,open:!document.querySelector('#modal').hidden,tip:!document.getElementById('relTip').hidden}));
+      if(!m.open||m.title!=='Paused'||m.tip)fail('with a relic card up, Pause still opens the pause menu (and the card goes) '+JSON.stringify(m));
+    }
     await p.close();
   }
 
@@ -65,6 +72,19 @@ const {chromium}=require('playwright');
     await p.evaluate(()=>[...document.querySelectorAll('#mActions button')].find(x=>x.textContent==='The Grimoire').click()); await p.waitForTimeout(200);
     await p.evaluate(()=>[...document.querySelectorAll('#mActions button')].find(x=>x.textContent==='Back').click()); await p.waitForTimeout(200);
     if(await p.evaluate(()=>document.querySelector('#mTitle').textContent)!=='Paused')fail('from the pause menu, Back goes back to it');
+    await p.close();
+  }
+
+  // D: a damaged ll-codex is tolerated: wrong types are dropped, unknown keys ignored
+  {
+    const p=await b.newPage({viewport:{width:412,height:860}});
+    await p.goto('file://'+process.argv[2]); await p.waitForTimeout(300);
+    for(const bad of ['{"foes":5,"relics":"glass"}','{"foes":["shade","nonsense",7],"relics":null}','"just a string"','[1,2,3]']){
+      await p.evaluate(v=>localStorage.setItem('ll-codex',v),bad); await p.reload(); await p.waitForTimeout(250);
+      const r=await p.evaluate(()=>{try{__t.openBook('title'); const n=document.querySelectorAll('.book-e').length; return {ok:true,n,foes:[...__t.codex().foes]};}catch(e){return {ok:false,err:e.message};}});
+      if(!r.ok||!(r.n>0)||r.foes.some(k=>k!=='shade'&&typeof k!=='string'))fail('a damaged codex ('+bad+') still opens the book '+JSON.stringify(r));
+      if(bad.includes('nonsense')&&r.foes.join()!=='shade')fail('unknown and non-string entries are dropped '+JSON.stringify(r));
+    }
     await p.close();
   }
 
