@@ -78,6 +78,31 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .banner.is-rite b{color:var(--brine)}
 .hint{position:absolute;left:50%;bottom:70px;z-index:5;transform:translateX(-50%);max-width:90%;width:max-content;padding:7px 12px;border-radius:6px;background:var(--veil);font-size:.86rem;color:var(--bone);opacity:0;transition:opacity .25s;pointer-events:none;text-align:center}
 .hint.show{opacity:1}
+.relbar{display:flex;align-items:center;gap:6px;flex:1 1 150px;min-width:0;height:36px;justify-content:flex-end}
+.relchips{display:flex;align-items:center;gap:5px;overflow-x:auto;scrollbar-width:none;min-width:0;height:36px;padding:0 1px}
+.relchips::-webkit-scrollbar{display:none}
+.relchip{flex:0 0 auto;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid var(--tallow);background:radial-gradient(circle at 35% 30%,#3d3224,#15110c 70%);color:var(--tallow);font-family:var(--f-display);font-size:1.05rem;line-height:1;display:grid;place-items:center}
+.relchip.is-curse{border-color:var(--wound);color:var(--wound);background:radial-gradient(circle at 35% 30%,#3a1f1c,#140b0a 70%)}
+.relbook{flex:0 0 auto;width:36px;height:36px;padding:0;border-radius:8px;border:1px solid var(--seam);background:var(--slab);color:var(--bone);display:grid;place-items:center}
+.reltip{position:fixed;z-index:31;width:max-content;max-width:min(300px,calc(100vw - 16px));padding:9px 12px 10px;border-radius:8px;background:var(--stone);border:1px solid var(--tallow);box-shadow:0 8px 24px var(--shadow);pointer-events:none;font-size:.85rem;line-height:1.35;color:var(--bone)}
+.reltip b{display:block;margin:1px 0 3px;font-family:var(--f-display);font-size:1.08rem;font-weight:400}
+.reltag{display:block;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tallow)}
+.reltip.is-curse{border-color:var(--wound)}
+.reltip.is-curse .reltag{color:var(--wound)}
+.book-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.book-tabs .btn{padding:7px 12px;font-size:.84rem}
+.book-intro{margin:0 0 10px;font-size:.84rem;color:var(--ash)}
+.book-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.book-e{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:8px;border:1px solid var(--seam);background:var(--slab)}
+.book-e canvas,.book-seal{flex:0 0 auto;width:46px;height:46px}
+.book-seal{display:grid;place-items:center;border-radius:50%;border:1px solid var(--tallow);background:radial-gradient(circle at 35% 30%,#3d3224,#15110c 70%);color:var(--tallow);font-family:var(--f-display);font-size:1.4rem}
+.book-seal.is-curse{border-color:var(--wound);color:var(--wound)}
+.book-t{display:flex;flex-direction:column;gap:2px;min-width:0;font-size:.84rem;line-height:1.35;color:var(--bone)}
+.book-t b{font-family:var(--f-display);font-size:1.08rem;font-weight:400;color:var(--bone)}
+.book-st{font-family:var(--f-num);font-size:.7rem;color:var(--ash)}
+.book-e.is-locked{opacity:.55}
+.book-e.is-locked .book-seal{border-color:var(--seam);color:var(--ash)}
+.book-e.is-held{border-color:var(--tallow)}
 .coach{position:fixed;z-index:30;padding:10px 12px 10px;border-radius:10px;background:var(--stone);border:1px solid var(--tallow);box-shadow:0 8px 26px var(--shadow);pointer-events:none;color:var(--bone)}
 .coach-step{margin:0 0 2px;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tallow)}
 .coach b{display:block;font-family:var(--f-display);font-size:1.12rem;font-weight:400;color:var(--bone)}
@@ -277,7 +302,8 @@ input[type=range]::-moz-range-track {
 .side .where{margin-right:0}
 .side .where span{font-size:1.12rem}
 .side .meter,.side .meter.madm{width:100%}
-.side .pausebtn{margin-top:auto;justify-content:center}
+.side .pausebtn{margin-top:auto;justify-content:center;order:2}
+.side .relbar{order:1;flex:0 0 auto;justify-content:flex-start}
 .side .pausebtn .pl{display:inline}
 .side .stage{min-height:0}
 .side .cmdbar{flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:6px;min-height:0;border-top:0;border-left:1px solid var(--seam);padding:2px 0 2px 10px}
@@ -313,6 +339,10 @@ input[type=range]::-moz-range-track {
     <div class="stat"><span class="lbl">Essence</span><span class="val ess" id="essV">0</span></div>
     <div class="stat"><span class="lbl">Madness <em id="madTier">Calm</em></span><span class="val" id="madV">0</span><span class="meter madm"><i id="madBar"></i><s id="t1"></s><s id="t2"></s><s id="t3"></s></span></div>
     <button class="pausebtn" id="pauseBtn" aria-label="Pause"><span class="bars"></span><span class="pl">Pause</span></button>
+    <div class="relbar" id="relBar">
+      <button class="relbook" id="bookBtn" aria-label="The Grimoire"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v15H5.5C4.7 19 4 18.3 4 17.5zM13 4h5.5c.8 0 1.5.7 1.5 1.5v12c0 .8-.7 1.5-1.5 1.5H13z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 8h2.5M6.5 11h2.5M15.5 8h2M15.5 11h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
+      <div class="relchips" id="relChips" aria-label="Relics you carry"></div>
+    </div>
   </header>
   <main class="stage" id="stage">
     <canvas id="board" aria-label="The floor. Tap lit tiles to build, tap a ward or the lamp to upgrade it."></canvas>
@@ -344,6 +374,7 @@ input[type=range]::-moz-range-track {
       <button class="btn call big contbtn" id="continueBtn" hidden>Continue<small id="contSub"></small></button>
       <button class="btn call big" id="descendBtn">Descend</button>
       <button class="btn" id="rulesBtn">How the dark works</button>
+      <button class="btn" id="bookTitleBtn">The Grimoire</button>
       <button class="btn" id="hallBtn">Ember Hall</button>
       <button class="btn" id="bonesBtn" hidden>Knucklebones</button>
       <button class="btn" id="settingsBtn">Settings</button>
@@ -372,6 +403,7 @@ input[type=range]::-moz-range-track {
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Embers.</b> Every descent, won or lost, leaves embers behind. Spend them in the Ember Hall on new kits, relics and stories. Carry the lamp to morning to open the Deeper Dark, where each depth adds a new cruelty.</li>
+        <li><b>The Grimoire.</b> The book in the HUD holds every creature you have met, every ward and rite, and every relic you have found. The relics you carry sit beside it: tap one to read what it does.</li>
         <li><b>Saving.</b> The run saves at every break between waves. Save and quit from the pause menu, then Continue from the title.</li>
         <li><b>The board turns.</b> On a wide screen the map lies sideways so it can fill more of it. Rotate your device and it follows.</li>
       </ul>
@@ -384,6 +416,7 @@ input[type=range]::-moz-range-track {
   <div class="map-skip" id="mapSkip">Tap to skip</div>
 </div>
 
+<div class="reltip" id="relTip" hidden></div>
 <div class="coach-ring" id="coachRing" hidden></div>
 <div class="coach" id="coach" hidden role="status" aria-live="polite">
   <p class="coach-step" id="coachStep"></p><b id="coachTitle"></b>
@@ -625,6 +658,7 @@ function updateOilMax(){
 }
 function addRelic(k){
   if(!k||run.relics.includes(k))return;
+  codexSee('relics',k);
   if(run.relics.length===0)run.baseOilMax=run.oilMax;
   run.relics.push(k);
   updateOilMax();
@@ -1379,6 +1413,7 @@ function spawnFoe(type,gate,d,hpMul){
   const e={id:++uid,type,def,gate,d:d||0,hp,max:hp,stunT:0,poisonT:0,poisonDps:0,spawnT:4,hitT:0,x:0,y:0,tile:'',wob:Math.random()*6};
   const p=posAt(F.paths[gate],e.d); e.x=p[0]; e.y=p[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y);
   F.foes.push(e);
+  codexSee('foes',type);
   if(!(d>0)&&F.phase==='wave'){
     if(BOSS_INTRO[type]&&!F.intro)startIntro(e);
     else if(BIG_INTRO[type]){F.seenBig=F.seenBig||{}; if(!F.seenBig[type]){F.seenBig[type]=1; bigEntrance(type,e);}}
@@ -4354,6 +4389,124 @@ function hint(txt,ms){
   const h=$('#hint'); h.textContent=txt; h.classList.add('show');
   clearTimeout(hintTimer); hintTimer=setTimeout(()=>h.classList.remove('show'),ms||1800);
 }
+/* ---------------- relics in the HUD, and the Grimoire ----------------
+   The relic bar holds a seal for every relic you carry; tap one and a card says what it does (it takes no taps
+   itself, and the next tap anywhere puts it away). The bar keeps one size whatever it holds, so nothing shifts
+   (rule 2). The Grimoire is the book of everything met so far: creatures stay "???" until one has climbed the
+   stair at you, relics until you have carried one. What has been met lives in ll-codex, across runs. */
+let CODEX=null;
+function codex(){
+  if(CODEX)return CODEX;
+  const s=store.get('ll-codex',null);
+  /* whatever was stored, only arrays of known keys are kept, so a damaged ll-codex can't break the book */
+  const list=(v,T)=>Array.isArray(v)?v.filter(k=>typeof k==='string'&&T[k]):[];
+  CODEX={foes:new Set(list(s&&s.foes,FOES)),relics:new Set(list(s&&s.relics,RELICS))};
+  /* someone who played before the Grimoire existed has met everything on the floors they reached */
+  if(!s||typeof s!=='object'){const b=store.get('ll-best',null), reached=b&&b.floor?Math.min(FLOORS.length,b.floor):0;
+    for(let i=0;i<reached;i++)FLOORS[i].waves.forEach(w=>w.forEach(g=>{if(FOES[g[0]])CODEX.foes.add(g[0]);}));
+    if(reached)codexSave();}
+  return CODEX;
+}
+function codexSave(){store.set('ll-codex',{foes:[...CODEX.foes],relics:[...CODEX.relics]});}
+function codexSee(kind,k){const C=codex(); if(C[kind].has(k))return; C[kind].add(k); codexSave();}
+function relicGlyph(k){return RELICS[k].n.replace(/^(The|A) /,'').charAt(0);}
+let relKey='', relTipT=0, relTipK='';
+function renderRelics(){
+  const key=run.relics.join(',');
+  if(key===relKey)return; relKey=key;
+  $('#relChips').innerHTML=run.relics.map(k=>'<button class="relchip'+(RELICS[k].curse?' is-curse':'')+'" data-rel="'+k+'" aria-label="'+RELICS[k].n.replace(/"/g,'')+'">'+relicGlyph(k)+'</button>').join('');
+}
+function relicTip(k,btn){
+  const tip=$('#relTip');
+  if(relTipK===k&&!tip.hidden){relicTipHide(); return;}
+  const R=RELICS[k]; relTipK=k;
+  tip.classList.toggle('is-curse',!!R.curse);
+  tip.innerHTML=(R.curse?'<span class="reltag">Cursed relic</span>':'<span class="reltag">Relic</span>')+'<b>'+R.n+'</b><span>'+R.d+'</span>';
+  tip.hidden=false;
+  const r=btn.getBoundingClientRect(), w=tip.offsetWidth, h=tip.offsetHeight;
+  tip.style.left=clamp(r.left+r.width/2-w/2,8,innerWidth-w-8)+'px';
+  tip.style.top=(r.bottom+h+12<innerHeight?r.bottom+8:Math.max(8,r.top-h-8))+'px';
+  clearTimeout(relTipT); relTipT=setTimeout(relicTipHide,6000);
+}
+function relicTipHide(){$('#relTip').hidden=true; relTipK=''; clearTimeout(relTipT);}
+$('#relChips').addEventListener('click',ev=>{const b=ev.target.closest('[data-rel]'); if(b&&RELICS[b.dataset.rel])relicTip(b.dataset.rel,b);});
+/* the card takes no taps; the next tap anywhere else puts it away (on click, rule 5) */
+document.addEventListener('click',ev=>{if(!$('#relTip').hidden&&!ev.target.closest('[data-rel]'))relicTipHide();},true);
+
+/* what the Grimoire says about each creature, beyond its numbers */
+const LORE={
+  crawler:'The most common thing on the stair. Slow and soft, and never alone.',
+  skitter:'Small and quick. They come in swarms and slip past slow wards.',
+  gnasher:'Slow and hard to kill, and it drains 2 oil if it arrives. At a fork it never leaves the main way.',
+  watcher:'It flies, so a Weir cannot stop it. Bound, it unveils what the dark hides.',
+  shade:'Veiled: it cannot be seen or hit, even in lamplight, until a Candle, a Flare or a bound Watcher unveils it. At a fork it hunts your light.',
+  wretch:'When it dies it bursts into two Skitterlings.',
+  shrieker:'Its cry hastens everything near it by 30%. Kill it first.',
+  elite:'An elite of the deep floors. Its hymn hastens everything near it, and it drains 6 oil if it arrives.',
+  boss:'The boss of the fourth floor. It calls things up out of the dark. If it reaches the lamp, the run is over. Slain, its soul lingers: bind it and it fights for you on the last floor.',
+  stalker:'Veiled and fast, and it drains 2 oil. At a fork it hunts your light.',
+  behemoth:'Heavy: it cannot be stunned or pushed back, and nothing slows it by more than 15%. It drains 6 oil and breaks a Weir. Whaling Guns do double damage to it.',
+  boss2:'The heart of the dark, on the last floor. It hastens what walks with it and calls more. If it reaches the lamp, the run is over.'
+};
+const BOOK={tab:'foes',from:''};
+function openBook(from,tab){
+  BOOK.from=from||''; if(tab)BOOK.tab=tab;
+  relicTipHide();
+  if(from!=='title')paused=true;
+  $('#modal .box').scrollTop=0;
+  showBook();
+}
+function closeBook(){if(BOOK.from==='pause')openPause(); else if(BOOK.from==='title')closeModal(); else resumeGame();}
+function bookEntry(icon,title,sub,text,cls){
+  return '<div class="book-e'+(cls?' '+cls:'')+'">'+icon+'<div class="book-t"><b>'+title+'</b>'+(sub?'<span class="book-st">'+sub+'</span>':'')+'<span>'+text+'</span></div></div>';
+}
+function bookSeal(ch,curse){return '<span class="book-seal'+(curse?' is-curse':'')+'">'+ch+'</span>';}
+function showBook(){
+  const C=codex(), t=BOOK.tab, held=run?run.relics:[];
+  if(run)held.forEach(k=>C.relics.add(k));
+  const foes=Object.keys(FOES).filter(k=>!FOES[k].bound), relics=Object.keys(RELICS);
+  const tabs=[['foes','Creatures'],['wards','Wards'],['rites','Rites'],['relics','Relics']];
+  let list='', intro='';
+  if(t==='foes'){
+    const seen=foes.filter(k=>C.foes.has(k)).length;
+    intro='Creatures met: <b>'+seen+' of '+foes.length+'</b>. The rest are still in the dark.';
+    list=foes.map(k=>{const f=FOES[k];
+      if(!C.foes.has(k))return bookEntry('<canvas width="72" height="72" data-icon="foe:'+k+':1"></canvas>','???','','Not yet met.','is-locked');
+      const tags=[f.boss?'Boss':'',f.elite?'Elite':'',f.veiled?'Veiled':'',f.fly?'Flies':'',f.heavy?'Heavy':'',f.bind?'Can be bound':''].filter(Boolean).join(' · ');
+      const H=HORRORS[k];
+      return bookEntry('<canvas width="72" height="72" data-icon="foe:'+k+':0"></canvas>',f.n,'Life '+f.hp+' · Speed '+f.spd+' · Oil '+(f.oil>=99?'all':f.oil)+(f.ess?' · Essence '+f.ess:'')+(tags?' · '+tags:''),
+        (LORE[k]||'')+(H&&f.bind?' <i>Bound:</i> '+H.d:''));}).join('');
+  }else if(t==='wards'){
+    intro='Everything you can build. Each has three branches; it can take two, and only one reaches its capstone.';
+    const br=k=>(TREES[k]||[]).map(b=>b.n+' (capstone: '+b.t[b.t.length-1][1].split(':')[0]+')').join(' · ');
+    list=bookEntry('<canvas width="72" height="72" data-icon="lamp:lamp:0"></canvas>','The Lamp','Tap it on the board to upgrade it','Everything climbs toward it. Each creature that arrives drains its oil. '+(TREES.lamp?'Branches: '+br('lamp')+'.':''))
+      +Object.keys(WARDS).map(k=>{const W=WARDS[k], where=GIFT_WARDS.includes(k)?'Won as a gift':W.fork?'On forked floors':'';
+        return bookEntry('<canvas width="72" height="72" data-icon="ward:'+k+':0"></canvas>',W.n,'Costs '+W.cost+(where?' · '+where:''),W.d+(TREES[k]?' <i>Branches:</i> '+br(k)+'.':''));}).join('');
+  }else if(t==='rites'){
+    intro='Spells on a cooldown. Your kit decides which you start with.';
+    list=Object.keys(RITES).map(k=>{const R=RITES[k];
+      return bookEntry(bookSeal(R.n.replace(/^(The|A) /,'').charAt(0)),R.n,R.cd?'Cooldown '+R.cd+'s'+(R.fork?' · Forked floors only':''):'Once per floor',R.d);}).join('');
+  }else{
+    const seen=relics.filter(k=>C.relics.has(k)).length;
+    intro='Relics found: <b>'+seen+' of '+relics.length+'</b>.'+(held.length?' The ones you carry now are marked.':'');
+    list=relics.map(k=>{const R=RELICS[k];
+      if(!C.relics.has(k))return bookEntry(bookSeal('?'),'???','','Not yet found.','is-locked');
+      const now=held.includes(k);
+      return bookEntry(bookSeal(relicGlyph(k),R.curse),R.n,(R.curse?'Cursed':'Relic')+(now?' · Carried now':''),R.d,now?'is-held':'');}).join('');
+  }
+  const html='<div class="book-tabs">'+tabs.map(([k,n])=>'<button class="btn'+(k===t?' call':'')+'" data-book="'+k+'" aria-pressed="'+(k===t)+'">'+n+'</button>').join('')+'</div>'
+    +'<p class="book-intro">'+intro+'</p><div class="book-list">'+list+'</div>';
+  showModal({kind:'book',wide:true,title:'The Grimoire',body:'',html,actions:[{label:BOOK.from==='pause'?'Back':'Close',primary:true,fn:closeBook}]});
+  $('#mChoices').querySelectorAll('canvas[data-icon]').forEach(cv=>{const p=cv.dataset.icon.split(':'); bookIcon(cv,p[0],p[1],p[2]==='1');});
+}
+function bookIcon(cvs,kind,type,sil){
+  if(!sil){drawIcon(cvs,{kind,type}); return;}
+  const c=cvs.getContext('2d'); c.setTransform(cvs.width,0,0,cvs.height,0,0);
+  c.fillStyle='#0c0f11'; c.beginPath(); c.arc(.5,.5,.48,0,TAU); c.fill();
+  foeShape(c,type,.5,.5,Math.min(.33,FOES[type].r*1.05),.4,true);
+}
+$('#mChoices').addEventListener('click',ev=>{const b=ev.target.closest('[data-book]'); if(!b)return; BOOK.tab=b.dataset.book; $('#modal .box').scrollTop=0; showBook();});
+$('#bookBtn').onclick=()=>{if(F&&run&&!F.blocking&&canPause())openBook('hud');};
 /* ---------------- the walkthrough and first-time tips ----------------
    A coach bubble, and a ring around whatever it talks about. The bubble docks over the HUD (or over the command
    bar when the HUD is what it explains), and only its buttons take taps, so the board under it still works (rule 1).
@@ -4384,7 +4537,7 @@ function coachWalkSteps(){
     {title:'Branches',text:'Each ward has three branches. It can take two of them, and only one reaches its capstone. Everything is stripped when the floor ends, and half of it comes back.',target:()=>coachEl('#sheet'),next:true},
     {title:'Rites',text:'Rites are spells on a cooldown. Some, like Flare, strike the moment you tap them. Others, like the Pillar of Salt, then wait for you to tap where they fall.',enter:()=>{selTower=null; forceUI();},target:()=>coachEl('#rites'),next:true,skip:()=>!ritesNow().length},
     {title:'Call the dark',text:'When you are ready, call the dark. Once a wave has finished arriving, you can call the next one early for more essence.',enter:()=>{selTower=null; sel=null; forceUI();},target:()=>coachEl('#callBtn'),until:()=>F.phase!=='build'},
-    {title:'Speed and pause',text:'Speed the dark up here, and pause from the top whenever you need. New things get a tip the first time you meet them. Everything else is in How the dark works.',target:()=>coachEl('#speedBtn'),next:true}
+    {title:'Speed and pause',text:'Speed the dark up here, and pause from the top whenever you need. New things get a tip the first time you meet them. The book at the top is the Grimoire: everything you have met, and every ward and rite.',target:()=>coachEl('#speedBtn'),next:true}
   ];
 }
 /* first-time tips: when each turns up, and what it says */
@@ -4695,6 +4848,7 @@ function renderRites(){
   });
 }
 function renderHUD(){
+  renderRelics();
   $('#floorNo').textContent='Floor '+(run.floor+1)+' of '+FLOORS.length+(F.elite?' · Elite':'')+(F.omen?' · '+OMENS[F.omen].n:'')+(depthLvl()?' · Depth '+depthLvl():'');
   $('#floorName').textContent=F.def.name;
   $('#waveV').textContent=F.wave+' / '+F.def.waves.length;
@@ -4826,6 +4980,7 @@ function openPause(){
       {label:'Settings',fn:()=>openSettings(true)},
       {label:'Speed: '+speed+'×',fn:()=>{toggleSpeed(); openPause();}},
       {label:'Rules',fn:()=>showRules(true)},
+      {label:'The Grimoire',fn:()=>openBook('pause')},
       {label:'View map',fn:()=>{closeModal(); showMap(false, run.floor, run.floor, '');}},
       ...(devOn?[{label:'Developer',fn:()=>openDevMode('')}]:[]),
       {label:'Save and quit to title',fn:()=>{closeModal(); showTitle();}}
@@ -4966,6 +5121,7 @@ $('#modal').addEventListener('click', ev => {
 /* ---------------- wiring ---------------- */
 $('#verLine').textContent='Version '+GAME_VERSION+(window.LL_STORE_NS?' · preview build':'');
 $('#callBtn').onclick=callWave;
+$('#bookTitleBtn').onclick=()=>openBook('title');
 $('#bonesBtn').onclick=()=>{AUDIO.init(); bonesPractice();};
 $('#speedBtn').onclick=toggleSpeed;
 $('#pauseBtn').onclick=openPause;
