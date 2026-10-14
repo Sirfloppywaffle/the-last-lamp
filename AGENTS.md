@@ -146,13 +146,14 @@ Everything lives in one file: CSS, then markup, then one big script inside an II
 | `update` | `update(dt)` → `updateFoes()`, `updateTowers()`, `updateShots()`. Dead foes are compacted once at the end of `update()`. |
 | art | `drawCreature()` (procedural creatures in unit space, cached as sprites in `SPRITES`; bosses paint live), `ART`, `THEMES` (per-floor props), `paintBoard()`, `paintFloor()`, `stainFloor()`, `drawWard()`, `drawLamp(c,x,y,tm,k)` (unit space: the lamp is ~0.75 units tall). |
 | `render` | `render()`: y-sorted draw list, shadows away from the lamp, rim light, darkness, fog, fx, boss intro, floats. |
+| `relics in the HUD, and the Grimoire` | `#relBar` in the HUD: the book button and a seal per relic (`renderRelics()`, one fixed size so nothing shifts); a tap shows `#relTip`, which takes no taps. `codex()`/`codexSee()` record creatures met (in `spawnFoe`) and relics found (in `addRelic`). `openBook(from,tab)` / `showBook()`: tabs Creatures, Wards, Rites, Relics; unmet creatures and unfound relics show as ???. `LORE` holds each creature's how-it-works line. |
 | `walkthrough and tips` | `COACH`, `coachWalkSteps()` (the first-descent walkthrough), `TIPS` (first-time tips: each a `foe` match or a `when()` test), `coachPoll()` (from the frame loop, 5×/s), `coachPlace()` (the bubble docks over the HUD, or over the command bar when the HUD is the subject; only its buttons take taps). Tests run with it off; `tutorial.test.js` turns it on. |
 | `UI` | `renderHUD()`, `renderPreview()`, `renderTray()`, `renderSheet()` (upgrade panel), `renderModebar()` (placement card), `renderRites()`; `tickUI()` runs every 0.2s, `forceUI()` runs now. `banner()`, `hint()`. |
 | `settings, modal, pause & title` | `showModal(o)`, `closeModal()`, `openPause()`, `openSettings()`, `showRules()`, `showTitle()`, `drawTitle()`. |
 | `loop` | `watchPerf()` (auto-Lite if frames stay slow), `frame()` (sim in steps ≤ 50ms; `speed` 1/2/3; the map overlay runs on real time). |
 | `wiring` | Button handlers, `layout()` (calls `applyShape()` first), resize handling. |
 
-**Storage keys:** `ll-save-v2` (the run), `ll-meta` (embers/unlocks), `ll-best`, `ll-vol`, `ll-dev`, `ll-gfx-lite`, `ll-gfx-auto`, `ll-tut` (walkthrough and tips: `{walk, seen, off}`). Changing a stored shape needs a migration in `resumeFrom()` or `meta()`.
+**Storage keys:** `ll-save-v2` (the run), `ll-meta` (embers/unlocks), `ll-best`, `ll-vol`, `ll-dev`, `ll-gfx-lite`, `ll-gfx-auto`, `ll-tut` (walkthrough and tips: `{walk, seen, off}`), `ll-codex` (the Grimoire: creatures met and relics found, `{foes, relics}`). Changing a stored shape needs a migration in `resumeFrom()` or `meta()`.
 
 ---
 

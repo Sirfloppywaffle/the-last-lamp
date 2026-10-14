@@ -4,6 +4,14 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **Relics in the HUD.** Criss found the Glass Lantern's cost only by watching his oil. Every relic you carry now sits as a seal beside the HUD (cursed ones in red). Tap one and a card says what it does; the next tap anywhere puts it away. The bar keeps one size, so gaining a relic never moves the board. (Claude)
+- **The Grimoire**, after Enter the Gungeon's Ammonomicon. It opens from the book in the HUD, the pause menu or the title, and has four tabs:
+  - **Creatures**: portrait, life, speed, oil, essence, traits and how each one works. Creatures you haven't met yet are a dark shape and "???".
+  - **Wards**: every ward and the lamp, with cost, branches and capstones, and which are gifts.
+  - **Rites**: each rite and its cooldown.
+  - **Relics**: every relic found, with the ones you carry marked.
+
+  What you've met is remembered across runs. A player from before this version starts with every creature from the floors they reached. (Claude)
 ---
 
 ## v15.5 — The walkthrough
