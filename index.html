@@ -78,6 +78,15 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .banner.is-rite b{color:var(--brine)}
 .hint{position:absolute;left:50%;bottom:70px;z-index:5;transform:translateX(-50%);max-width:90%;width:max-content;padding:7px 12px;border-radius:6px;background:var(--veil);font-size:.86rem;color:var(--bone);opacity:0;transition:opacity .25s;pointer-events:none;text-align:center}
 .hint.show{opacity:1}
+.coach{position:fixed;z-index:30;padding:10px 12px 10px;border-radius:10px;background:var(--stone);border:1px solid var(--tallow);box-shadow:0 8px 26px var(--shadow);pointer-events:none;color:var(--bone)}
+.coach-step{margin:0 0 2px;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tallow)}
+.coach b{display:block;font-family:var(--f-display);font-size:1.12rem;font-weight:400;color:var(--bone)}
+.coach-text{margin:3px 0 8px;font-size:.86rem;line-height:1.35;color:var(--bone)}
+.coach-acts{display:flex;flex-wrap:wrap;gap:8px;pointer-events:auto}
+.coach-acts .btn{padding:6px 12px;font-size:.82rem;min-height:34px}
+.coach-ring{position:fixed;z-index:29;pointer-events:none;border:2px solid var(--tallow);box-shadow:0 0 0 3px rgba(0,0,0,.35),0 0 18px var(--tallow);animation:coachPulse 1.4s ease-in-out infinite}
+@keyframes coachPulse{50%{box-shadow:0 0 0 3px rgba(0,0,0,.35),0 0 4px var(--tallow);opacity:.75}}
+@media (prefers-reduced-motion:reduce){.coach-ring{animation:none}}
 .bosscard{position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:22%!important;pointer-events:none;text-align:center;padding:0 16px}
 .bosscard b{display:block;font-family:var(--f-display);font-weight:700;font-size:clamp(2.2rem,7vw,4.4rem);line-height:1;color:var(--bc,#e0604e);text-shadow:0 2px 0 #000,0 0 28px rgba(0,0,0,.95),0 0 64px var(--bcg,rgba(224,96,78,.55));opacity:0}
 .bosscard span{display:block;margin-top:12px;font-size:.8rem;letter-spacing:.26em;text-transform:uppercase;color:var(--bone);text-shadow:0 0 12px #000,0 0 4px #000;opacity:0}
@@ -336,6 +345,7 @@ input[type=range]::-moz-range-track {
       <button class="btn call big" id="descendBtn">Descend</button>
       <button class="btn" id="rulesBtn">How the dark works</button>
       <button class="btn" id="hallBtn">Ember Hall</button>
+      <button class="btn" id="bonesBtn" hidden>Knucklebones</button>
       <button class="btn" id="settingsBtn">Settings</button>
     </div>
     <p class="best" id="bestLine"></p>
@@ -358,7 +368,7 @@ input[type=range]::-moz-range-track {
         <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit: its own wards, rites and a passive gift. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
-        <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (stake essence the stair would burn, double it or lose it, and stop while you can), or the Deep Stair straight down to an elite floor that pays a relic.</li>
+        <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Embers.</b> Every descent, won or lost, leaves embers behind. Spend them in the Ember Hall on new kits, relics and stories. Carry the lamp to morning to open the Deeper Dark, where each depth adds a new cruelty.</li>
@@ -372,6 +382,13 @@ input[type=range]::-moz-range-track {
 <div id="mapOverlay" hidden>
   <canvas id="mapCv"></canvas>
   <div class="map-skip" id="mapSkip">Tap to skip</div>
+</div>
+
+<div class="coach-ring" id="coachRing" hidden></div>
+<div class="coach" id="coach" hidden role="status" aria-live="polite">
+  <p class="coach-step" id="coachStep"></p><b id="coachTitle"></b>
+  <p class="coach-text" id="coachText"></p>
+  <div class="coach-acts" id="coachActs"></div>
 </div>
 
 <div class="modal" id="modal" hidden>
@@ -1161,7 +1178,7 @@ function openDevMode(msg){
     const now=performance.now();
     taps=taps.filter(t=>now-t<3000); taps.push(now);
     if(taps.length>=7){
-      taps=[]; devOn=!devOn; store.set('ll-dev',devOn);
+      taps=[]; devOn=!devOn; store.set('ll-dev',devOn); $('#bonesBtn').hidden=!devOn;
       if(!devOn)window.devNoDark=false;
       const b=$('#bestLine'), keep=b.textContent;
       b.textContent=devOn?'Developer tools on. Find them in the pause menu.':'Developer tools off.';
@@ -1227,6 +1244,7 @@ function beginFloor(snap){
   setDims(bestOrient());
   F={def,time:0,towers:[],salt:new Map(),foes:[],shots:[],fx:[],souls:[],pools:[],cands:[],knell:false,wave:0,phase:'build',queue:[],waveT:0,
      flareT:0,cd:{},nameUsed:false,named:null,hurtFlash:0,shake:0,flickT:0,flickNext:6,lastTier:0,omen:run.omen||null,elite:!!run.elite};
+  F.born=performance.now();
   F.lamp={isLamp:true,type:'lamp',x:0,y:0,br:newBranches('lamp'),invested:0,fresh:0};
   buildGeometry();
   if(snap){
@@ -1259,8 +1277,12 @@ function beginFloor(snap){
     banner(def.name,F.omen||F.elite?'mad':'',snap&&F.wave?'Wave '+F.wave+' of '+def.waves.length+' held':'Floor '+(run.floor+1)+' of '+FLOORS.length+(F.elite?' · Elite':'')+(F.omen?' · '+OMENS[F.omen].n:''));
     if(F.omen&&!(snap&&F.wave))setTimeout(()=>{if(F&&F.omen)hint('Omen: '+OMENS[F.omen].n+'. '+OMENS[F.omen].d+(F.elite?' This floor is elite, too.':''),5000);},1600);
     else if(F.elite&&!(snap&&F.wave))setTimeout(()=>hint('An elite floor: tougher creatures, and more of them. A relic waits at the end.',4200),1600);
-    if(run.floor===0&&!snap)setTimeout(()=>hint('Pick a ward below, then tap a lit tile. Tap the lamp or any ward to upgrade it.',5200),2500);
-    if(F.forks.length&&!(snap&&F.wave))setTimeout(()=>{if(F&&F.forks.length)hint('The stair forks here. They take the darker way, and only your own light counts. The chevron shows where they will go.',6000);},F.omen?6800:2600);
+    if(run.floor===0&&!snap){
+      /* the first descent offers the walkthrough; afterwards (or skipped) the old one-line hint does */
+      const walk=tut().walk;
+      setTimeout(()=>{if(!F||run.floor!==0||F.phase!=='build'||F.wave||COACH.on)return; if(!walk&&coachFree())coachOffer(); else if(walk!=='done')hint('Pick a ward below, then tap a lit tile. Tap the lamp or any ward to upgrade it.',5200);},walk?2500:2000);
+    }
+    if(F.forks.length&&!(snap&&F.wave)&&(tut().off||tut().seen.includes('fork')))setTimeout(()=>{if(F&&F.forks.length)hint('The stair forks here. They take the darker way, and only your own light counts. The chevron shows where they will go.',6000);},F.omen?6800:2600);
     /* REVIEW(Claude) 3: copy the message first; the timer used to read it after the next line had cleared it */
     const tollMsg = MAP_SYS.pendingMsg;
     if(tollMsg)setTimeout(()=>hint(tollMsg, 4600), F.omen?5200:1400);
@@ -1489,9 +1511,10 @@ function bonesRoll(){return 1+Math.floor(Math.random()*6);}
 function bonesCopy(r){return {you:r.you.map(c=>c.slice()),them:r.them.map(c=>c.slice())};}
 /* it plays greedily: what the bone adds to its column, plus what it knocks off yours (scores move in steps of at least 0.1, so the
    tie-break below never overturns a better move). On the shallow floors it sometimes doesn't look */
-function bonesAI(r,v){
+function bonesAI(r,v,floor){
+  if(floor==null)floor=run.floor;
   const open=[0,1,2].filter(c=>r.them[c].length<3);
-  if(Math.random()<Math.max(0,.45-run.floor*.12))return open[Math.floor(Math.random()*open.length)];
+  if(Math.random()<Math.max(0,.45-floor*.12))return open[Math.floor(Math.random()*open.length)];
   let best=open[0], bs=-1e9;
   for(const c of open){
     const gain=bonesCol(r.them[c].concat(v))-bonesCol(r.them[c]), hurt=bonesCol(r.you[c])-bonesCol(r.you[c].filter(w=>w!==v));
@@ -1506,11 +1529,16 @@ function bonesAnim(o){
   o.t0=performance.now(); o.shown=false; BONES_ANIM=o;
 }
 function bonesBusy(){return !!(BONES_ANIM&&!BONES_ANIM.shown);}
+/* the table being played: the practice table from the title (developer mode), or the room on the landing */
+let bonesPrac=null;
+function bonesCur(){return bonesPrac||(F&&F.draft);}
+function bonesShow(d){if(d.practice)showModal(bonesPracModal(d)); else showLanding();}
 function bonesStart(d){
-  const r=d.room;
-  run.ess-=r.stake; r.started=true; r.die=bonesRoll(); AUDIO.coin();
+  const r=d.room; if(r.started)return;
+  if(!d.practice)run.ess-=r.stake;
+  r.started=true; r.die=bonesRoll(); AUDIO.coin();
   bonesAnim({kind:'start',seg:{yourThrow:[0,.6]},dur:.6,mv:{next:r.die}});
-  showLanding();
+  bonesShow(d);
 }
 function bonesMove(d,col){
   const r=d.room;
@@ -1522,7 +1550,7 @@ function bonesMove(d,col){
   add('yourPlace',.32); if(mv.you.knock)add('knockThem',.34);
   const s1=bonesCopy(r);
   if(!bonesFull(r.you)){
-    const tv=bonesRoll(), tc=bonesAI(r,tv);
+    const tv=bonesRoll(), tc=bonesAI(r,tv,d.practice?d.level:run.floor);
     mv.them={col:tc,v:tv,row:r.them[tc].length,knock:r.you[tc].filter(w=>w===tv).length};
     r.them[tc].push(tv); r.you[tc]=r.you[tc].filter(w=>w!==tv);
     add('theirThrow',.62); add('theirPlace',.28); if(mv.them.knock)add('knockYou',.34);
@@ -1530,13 +1558,14 @@ function bonesMove(d,col){
   if(bonesFull(r.you)||bonesFull(r.them)){bonesEnd(d); add('end',.8);}
   else{r.die=bonesRoll(); mv.next=r.die; add('yourThrow',.55);}
   if(mv.you.knock)AUDIO.coin(); else AUDIO.place();
-  const after=r.relic?()=>{if(F&&F.draft===d){startPick(d,1,'What it was keeping','Choose a relic.'); showLanding();}}:null;
+  const after=r.relic&&!d.practice?()=>{if(F&&F.draft===d){startPick(d,1,'What it was keeping','Choose a relic.'); showLanding();}}:null;
   bonesAnim({kind:'turn',seg,dur:t,s0,s1,mv,after});
-  showLanding();
+  bonesShow(d);
 }
 function bonesEnd(d){
   const r=d.room, a=bonesTotal(r.you), b=bonesTotal(r.them);
   r.score=[a,b];
+  if(d.practice){r.done=a>b?'win':a<b?'lose':'draw'; r.res='<b>'+a+'</b> to <b>'+b+'</b>. '+(a>b?'It sets the bones down and waits for another game.':a<b?'It gathers the bones without a word.':'A draw. It rolls the bones in its palm, and waits.'); if(a<b)AUDIO.slip(); return;}
   if(a>b){
     const pay=r.stake*2; run.ess+=pay; d.salvage=(d.salvage||0)+pay; r.done='win'; r.relic=a-b>=BONES_RELIC;
     r.res='<b>'+a+'</b> to <b>'+b+'</b>. It pushes '+pay+' essence across the stone'+(r.relic?', and then, slowly, something it was keeping for itself.':'.')+' The stair cannot burn what was won here.';
@@ -1548,11 +1577,11 @@ function bonesEnd(d){
 }
 /* a tap on the table: during a move it hurries the move along; on your turn it sets the bone in the column you tapped */
 function bonesTap(ev){
-  const d=F&&F.draft, r=d&&d.room; if(!r||r.type!=='bones')return;
+  const d=bonesCur(), r=d&&d.room; if(!r||r.type!=='bones')return;
   if(bonesBusy()){BONES_ANIM.t0=performance.now()-BONES_ANIM.dur*1000; return;}
   if(r.done||!r.die)return;
   const cv=ev.target, b=cv.getBoundingClientRect(), L=btLayout(b.width,b.height), X=(ev.clientX-b.left-L.cx)/L.S;
-  step('room',dd=>bonesMove(dd,X<-.13?0:X>.13?2:1))();
+  bonesPick(d,X<-.13?0:X>.13?2:1);
 }
 function bonesModal(d,take,pause){
   const r=d.room;
@@ -1560,27 +1589,53 @@ function bonesModal(d,take,pause){
   if(!r.you){if(r.pot&&!r.done){run.ess+=r.pot; d.salvage=(d.salvage||0)+r.pot;} Object.assign(r,{you:[[],[],[]],them:[[],[],[]],die:0,started:!!r.done,done:r.done==='cash'?'win':r.done==='bust'?'lose':null,res:r.res||''}); delete r.pot; delete r.wins; delete r.last;}
   const busy=bonesBusy();
   if(!bonesRaf)bonesRaf=requestAnimationFrame(bonesFrame);
-  const table='<canvas class="bones-cv" id="bonesCv" aria-label="The bones table: your three columns are nearest you, its three are across the table"></canvas>';
+  const table=BONES_TABLE;
   if(r.done&&!busy)return {kind:'draft',wide:true,title:r.done==='win'?'You beat it':r.done==='lose'?'It beats you':'A draw',bad:r.done==='lose',body:table+r.res,note:tollNote(d),actions:[take,pause]};
   if(!r.started){
     const can=r.stake>=20;
     return {kind:'draft',wide:true,title:'The Knucklebones',
-      body:table+'A hooded thing sits at a stone table with three columns carved on each side. Take turns rolling one bone and setting it in one of your columns. Matching bones in a column multiply. Set a bone and every bone of that number in its column across the table is knocked off. When either side fills all nine, the higher total wins.'+(can?'':' It looks at your purse, and looks away. You have nothing it wants.'),
+      body:table+'A hooded thing sits at a stone table with three columns carved on each side. '+BONES_HOW+(can?'':' It looks at your purse, and looks away. You have nothing it wants.'),
       note:tollNote(d),
       choices:can?[{cls:'curse',tag:'Stake '+r.stake+' essence',title:'Sit down and play',sub:'Win and it pays '+(r.stake*2)+', safe from the toll, and a relic if you win by '+BONES_RELIC+' or more. A draw hands it back. Lose and it keeps it.',fn:step('room',bonesStart)}]:[],
       actions:[{label:'Walk past',primary:true,fn:step('room',()=>descend())},pause]};
   }
   const die=busy?0:r.die;
-  const cols='<div class="bones-cols">'+[0,1,2].map(c=>{
+  return {kind:'draft',wide:true,title:'The Knucklebones',body:table+bonesTurnText(busy,die),
+    note:'You <b>'+bonesTotal(r.you)+'</b> · It <b>'+bonesTotal(r.them)+'</b>. Win and it pays <b>'+(r.stake*2)+'</b>.',
+    html:bonesCols(r,die),actions:[pause]};
+}
+const BONES_TABLE='<canvas class="bones-cv" id="bonesCv" aria-label="The bones table: your three columns are nearest you, its three are across the table"></canvas>';
+const BONES_HOW='Take turns rolling one bone and setting it in one of your columns. Matching bones in a column multiply. Set a bone and every bone of that number in its column across the table is knocked off. When either side fills all nine, the higher total wins.';
+function bonesTurnText(busy,die){return busy?'<span class="bones-wait">'+(BONES_ANIM.kind==='start'?'You throw the first bone…':'It takes its turn…')+'</span>':'You rolled a <b>'+die+'</b>. Tap a column to set it.';}
+function bonesCols(r,die){
+  return '<div class="bones-cols">'+[0,1,2].map(c=>{
     const full=r.you[c].length>=3, k=die?r.them[c].filter(w=>w===die).length:0, off=!die||full;
     return '<button class="choice'+(k&&!off?' curse':'')+'" data-bcol="'+c+'"'+(off?' disabled':'')+'><span class="tg">Column '+(c+1)+'</span><b>'+(full?'Full':bonesCol(r.you[c])+(die?' → '+bonesCol(r.you[c].concat(die)):''))+'</b><span>'+(k&&!off?'Knocks off '+k:full?'No room':'&nbsp;')+'</span></button>';
   }).join('')+'</div>';
-  return {kind:'draft',wide:true,title:'The Knucklebones',
-    body:table+(busy?'<span class="bones-wait">'+(BONES_ANIM.kind==='start'?'You throw the first bone…':'It takes its turn…')+'</span>':'You rolled a <b>'+die+'</b>. Tap a column to set it.'),
-    note:'You <b>'+bonesTotal(r.you)+'</b> · It <b>'+bonesTotal(r.them)+'</b>. Win and it pays <b>'+(r.stake*2)+'</b>.',
-    html:cols,actions:[pause]};
 }
-$('#mChoices').addEventListener('click',ev=>{const b=ev.target.closest('[data-bcol]'); if(!b||b.disabled)return; step('room',dd=>bonesMove(dd,+b.dataset.bcol))();});
+/* the practice table: opened from the title in developer mode. Nothing is staked or saved, and no run is touched */
+const BONES_LEVELS=[[0,'Gentle','It sometimes does not look.'],[2,'Cunning','It rarely misses a good move.'],[4,'Merciless','It plays its best every time.']];
+function bonesPractice(level){
+  BONES_ANIM=null;
+  bonesPrac={practice:true,level:level==null?2:level,room:{type:'bones',stake:0,you:[[],[],[]],them:[[],[],[]],die:0,started:false,done:null,res:''}};
+  showModal(bonesPracModal(bonesPrac));
+}
+function bonesPracEnd(){bonesPrac=null; BONES_ANIM=null; closeModal();}
+function bonesPracModal(d){
+  const r=d.room, busy=bonesBusy(), back={label:'Back to the title',fn:bonesPracEnd};
+  if(!bonesRaf)bonesRaf=requestAnimationFrame(bonesFrame);
+  if(r.done&&!busy)return {kind:'bones',wide:true,title:r.done==='win'?'You beat it':r.done==='lose'?'It beats you':'A draw',bad:r.done==='lose',body:BONES_TABLE+r.res,
+    actions:[{label:'Play again',primary:true,fn:()=>bonesPractice(d.level)},back]};
+  if(!r.started)return {kind:'bones',wide:true,title:'The Knucklebones',body:BONES_TABLE+'A practice table. Nothing is staked, and nothing is won. '+BONES_HOW,
+    choices:BONES_LEVELS.map(([lv,t,sub])=>({cls:lv===d.level?'relic':'',tag:'Its play',title:t,sub,fn:()=>{d.level=lv; bonesStart(d);}})),
+    actions:[back]};
+  const die=busy?0:r.die;
+  return {kind:'bones',wide:true,title:'The Knucklebones',body:BONES_TABLE+bonesTurnText(busy,die),note:'You <b>'+bonesTotal(r.you)+'</b> · It <b>'+bonesTotal(r.them)+'</b>.',
+    html:bonesCols(r,die),actions:[back]};
+}
+/* a column chosen, by its button or by a tap on the table. On the landing it goes through step(), so a double tap counts once */
+function bonesPick(d,col){if(d.practice)bonesMove(d,col); else step('room',dd=>bonesMove(dd,col))();}
+$('#mChoices').addEventListener('click',ev=>{const b=ev.target.closest('[data-bcol]'); if(!b||b.disabled)return; const d=bonesCur(); if(d&&d.room&&d.room.type==='bones')bonesPick(d,+b.dataset.bcol);});
 $('#mBody').addEventListener('click',ev=>{if(ev.target&&ev.target.id==='bonesCv')bonesTap(ev);});
 /* ---- the bones table ----
    A candle-lit stone table seen from your seat, the hooded thing across it, fog drifting over the stone.
@@ -1588,14 +1643,14 @@ $('#mBody').addEventListener('click',ev=>{if(ev.target&&ev.target.id==='bonesCv'
    the face the throw already decided. The wall, the robe and the table are painted once per size into offscreen
    canvases; a frame only draws what moves. All of it is visual only, never saved. */
 function bonesFrame(now){
-  let cv=document.getElementById('bonesCv'); const d=F&&F.draft, r=d&&d.room;
+  let cv=document.getElementById('bonesCv'); const d=bonesCur(), r=d&&d.room;
   if(!cv||$('#modal').hidden||!r||r.type!=='bones'){bonesRaf=0; return;}
   bonesRaf=requestAnimationFrame(bonesFrame);
   const A=BONES_ANIM, at=A?(now-A.t0)/1000:99;
   if(A&&!A.shown&&at>=A.dur){
-    A.shown=true; const f=A.after; A.after=null; if(f)f(); else showLanding();
+    A.shown=true; const f=A.after; A.after=null; if(f)f(); else bonesShow(d);
     /* the window was rebuilt with a fresh canvas: paint it in this same frame, so it never shows blank */
-    cv=document.getElementById('bonesCv'); if(!cv||$('#modal').hidden||!F.draft||F.draft.room!==r)return;
+    cv=document.getElementById('bonesCv'); if(!cv||$('#modal').hidden||bonesCur()!==d)return;
   }
   const W=cv.clientWidth, H=cv.clientHeight, dpr=Math.min(2,window.devicePixelRatio||1);
   if(!W||!H)return;
@@ -4299,6 +4354,151 @@ function hint(txt,ms){
   const h=$('#hint'); h.textContent=txt; h.classList.add('show');
   clearTimeout(hintTimer); hintTimer=setTimeout(()=>h.classList.remove('show'),ms||1800);
 }
+/* ---------------- the walkthrough and first-time tips ----------------
+   A coach bubble, and a ring around whatever it talks about. The bubble docks over the HUD (or over the command
+   bar when the HUD is what it explains), and only its buttons take taps, so the board under it still works (rule 1).
+   The walkthrough runs once, offered on the first descent, and teaches by doing: choose a ward, build it, open its
+   branches, call the dark. Tips appear the first time something new turns up, and hold the wave while they're read.
+   Progress lives in ll-tut: {walk:'done'|'skipped'|'', seen:[tip keys], off:true once tips are switched off}. */
+const COACH={on:false,list:null,i:0,kind:'',key:'',held:false,raf:0,last:0};
+function tut(){const t=store.get('ll-tut',null); return t&&typeof t==='object'?{walk:t.walk||'',seen:Array.isArray(t.seen)?t.seen:[],off:!!t.off}:{walk:'',seen:[],off:false};}
+function tutSave(t){store.set('ll-tut',t);}
+function coachEl(el){if(typeof el==='string')el=$(el); if(!el||el.hidden||el.closest('[hidden]'))return null; const r=el.getBoundingClientRect(); return r.width&&r.height?{left:r.left,top:r.top,width:r.width,height:r.height}:null;}
+/* a circle on the board, in tile units */
+function coachBoard(x,y,rad){const r=cv.getBoundingClientRect(), sx=r.width/COLS, sy=r.height/ROWS; return {left:r.left+(x-rad)*sx,top:r.top+(y-rad)*sy,width:2*rad*sx,height:2*rad*sy,round:true};}
+function coachTrayBtn(type){const ix=trayItems().findIndex(i=>i.type===type); return ix<0?null:$('#tray .titem[data-ix="'+ix+'"]');}
+function coachTray(type){return coachEl(coachTrayBtn(type));}
+/* the tray scrolls sideways on a narrow screen: bring the item a step talks about into view */
+function coachShowTray(type){const b=coachTrayBtn(type); if(b)b.scrollIntoView({block:'nearest',inline:'center'});}
+function coachStat(id){const e=$(id); return e?coachEl(e.closest('.stat')):null;}
+function coachWalkSteps(){
+  const candle=run.wards.includes('candle');
+  return [
+    {title:'Lamp oil',text:'Each creature that reaches the lamp drains its oil. When the oil runs out, the run is over.',target:()=>coachStat('#oilV'),next:true},
+    {title:'Essence',text:'Essence pays for everything you build. Kills earn more, and so does calling a wave early. Most of what you hold burns away on the stair, so spend it.',target:()=>coachStat('#essV'),next:true},
+    {title:'Madness',text:'Creatures you bind can fight for you, but every one you field adds madness. The higher it climbs, the worse the dark gets.',target:()=>coachStat('#madV'),next:true},
+    {title:'The light',text:'You can only build on lit tiles. They come up the path toward the lamp, and your wards cannot hit what the dark hides.',target:()=>coachBoard(F.lx,F.ly,Math.min(4,lampRadius()+.3)),next:true},
+    {title:'Choose a ward',enter:()=>{if(candle)coachShowTray('candle');},text:candle?'Tap the Candle below. Candles carry the light outward, so you can build further out.':'Tap a ward below to choose it.',target:()=>candle?coachTray('candle'):coachEl('#tray'),until:()=>!!sel},
+    {title:'Build it',text:'Now tap a lit tile. Anything you build refunds in full if you take it down before you call the dark.',target:()=>coachEl(cv),until:()=>F.towers.length>0,back:()=>!sel&&!F.towers.length},
+    {title:'Branches',text:'Tap what you just built, or the lamp, to open its branches.',enter:()=>{sel=null; forceUI();},target:()=>{const t=F.towers[F.towers.length-1]; return t?coachBoard(t.c+.5,t.r+.5,.7):null;},until:()=>!!selTower},
+    {title:'Branches',text:'Each ward has three branches. It can take two of them, and only one reaches its capstone. Everything is stripped when the floor ends, and half of it comes back.',target:()=>coachEl('#sheet'),next:true},
+    {title:'Rites',text:'Rites are spells on a cooldown. Some, like Flare, strike the moment you tap them. Others, like the Pillar of Salt, then wait for you to tap where they fall.',enter:()=>{selTower=null; forceUI();},target:()=>coachEl('#rites'),next:true,skip:()=>!ritesNow().length},
+    {title:'Call the dark',text:'When you are ready, call the dark. Once a wave has finished arriving, you can call the next one early for more essence.',enter:()=>{selTower=null; sel=null; forceUI();},target:()=>coachEl('#callBtn'),until:()=>F.phase!=='build'},
+    {title:'Speed and pause',text:'Speed the dark up here, and pause from the top whenever you need. New things get a tip the first time you meet them. Everything else is in How the dark works.',target:()=>coachEl('#speedBtn'),next:true}
+  ];
+}
+/* first-time tips: when each turns up, and what it says */
+const TIPS={
+  fork:{when:()=>F.phase==='build'&&F.forks.length,steps:()=>{
+    const out=[{title:'The stair forks',text:'Here the stair splits. They take the darker way, and only light you cast counts, never the lamp’s. The gold chevron shows where they will go. Shades and Stalkers hunt your light instead.',target:()=>F.forks[0]?coachBoard(F.forks[0].x,F.forks[0].y,.9):null}];
+    if(trayItems().some(i=>i.type==='weir'))out.push({title:'The Weir',enter:()=>coachShowTray('weir'),text:'Build a Weir on the fork and it shuts one way. Tap it between waves to flip it. Watchers fly over it, and a Behemoth breaks it.',target:()=>coachTray('weir')});
+    if(ritesNow().includes('wisp'))out.push({title:'The Will-o’-Wisp',text:'Mid-wave, tap the Wisp, then tap a way at the fork. For eight seconds everything but a boss follows it.',target:()=>coachEl('#rites [data-r="wisp"]')});
+    return out;}},
+  veiled:{foe:e=>e.def.veiled,title:'Something veiled',text:'Shades and Stalkers cannot be seen or hit, even in lamplight, until a Candle, a Flare or a bound Watcher unveils them.'},
+  gnasher:{foe:e=>e.type==='gnasher',title:'A Gnasher',text:'Slow and hard to kill. It drains two oil if it reaches the lamp, and it never leaves the main way.'},
+  watcher:{foe:e=>e.type==='watcher',title:'A Watcher',text:'It flies, so a Weir cannot stop it. Bound, it unveils what the dark hides.'},
+  wretch:{foe:e=>e.type==='wretch',title:'An Ichor Wretch',text:'When it dies it bursts into two Skitterlings. Kill it where your wards can reach the young.'},
+  shrieker:{foe:e=>e.type==='shrieker',title:'A Shrieker',text:'Everything near it moves faster. Kill it first.'},
+  behemoth:{foe:e=>e.def.heavy,title:'A Trench Behemoth',text:'It cannot be stunned or pushed back, and nothing slows it by more than 15%. Out-damage it.'},
+  elite:{foe:e=>e.type==='elite',title:'The Drowned Choirmaster',text:'Its hymn hastens everything near it, and it drains six oil if it arrives.'},
+  sigil:{when:()=>F.souls.some(so=>so.t>0&&!so.big),title:'A sigil',text:'Tap the violet sigil before it fades and that creature is bound to you. Bound horrors are built like wards, and each one you field adds madness.',
+    target:()=>{const so=F.souls.find(s=>s.t>0&&!s.big); return so?coachBoard(so.x,so.y,.75):null;}},
+  madness:{when:()=>F.towers.some(t=>t.kind==='horror'),title:'Madness',text:'Every horror you field adds madness. At Whispers the lamp flickers. Deeper, a horror may break loose, and when the dark leans in the lamp shrinks.',target:()=>coachStat('#madV')},
+  dark:{when:()=>F.towers.some(t=>t.dark&&t.kind==='ward'),title:'Cut off',text:'This ward stands outside the lamp’s light, so it does nothing. Light has to connect back to the lamp through lit tiles.',
+    target:()=>{const t=F.towers.find(t=>t.dark&&t.kind==='ward'); return t?coachBoard(t.c+.5,t.r+.5,.7):null;}}
+};
+/* where the walkthrough or a tip can appear: a floor being played, nothing else on top */
+function coachFree(){return !!(F&&run&&performance.now()-(F.born||0)>1800&&(F.phase==='build'||F.phase==='wave')&&!F.intro&&!MAP_SYS.active&&$('#modal').hidden&&$('#title').hidden);}
+function coachOffer(){
+  showModal({kind:'coach',title:'First time down here?',body:'A short walkthrough shows you the lamp, the light and your first ward, by doing it. After that, a tip appears the first time you meet something new.',
+    actions:[{label:'Show me',primary:true,fn:()=>{closeModal(); coachRun('walk','walk',coachWalkSteps());}},
+             {label:'I know the way',fn:()=>{closeModal(); const t=tut(); t.walk='skipped'; tutSave(t); hint('Pick a ward below, then tap a lit tile. Tap the lamp or any ward to upgrade it.',5200);}}]});
+}
+function coachRun(kind,key,list){
+  list=list.filter(s=>!(s.skip&&s.skip()));
+  if(!list.length)return;
+  Object.assign(COACH,{on:true,kind,key,list,i:0,held:false});
+  /* a tip that turns up mid-wave holds the wave while it's read */
+  if(kind==='tip'&&F.phase==='wave'&&!paused){paused=true; COACH.held=true;}
+  coachEnter();
+}
+function coachEnter(){
+  const s=COACH.list[COACH.i];
+  if(s.enter)s.enter();
+  const n=COACH.list.length, last=COACH.i===n-1;
+  $('#coachStep').textContent=COACH.kind==='walk'?'Walkthrough · '+(COACH.i+1)+' of '+n:'First time'+(n>1?' · '+(COACH.i+1)+' of '+n:'');
+  $('#coachTitle').textContent=s.title; $('#coachText').textContent=s.text;
+  const next=s.until?'':'<button class="btn call" data-coach="next">'+(last?'Got it':'Next')+'</button>';
+  $('#coachActs').innerHTML=next+'<button class="btn" data-coach="skip">'+(COACH.kind==='walk'?'Skip walkthrough':'No more tips')+'</button>';
+  $('#coach').hidden=false;
+  coachPlace();
+  if(!COACH.raf)COACH.raf=requestAnimationFrame(coachFrame);
+}
+function coachDone(skip){
+  const t=tut();
+  if(COACH.kind==='walk')t.walk=skip?'skipped':'done';
+  else{if(!t.seen.includes(COACH.key))t.seen.push(COACH.key); if(skip)t.off=true;}
+  tutSave(t);
+  if(COACH.held&&$('#modal').hidden)paused=false;
+  Object.assign(COACH,{on:false,list:null,held:false});
+  $('#coach').hidden=true; $('#coachRing').hidden=true;
+}
+/* leaving the floor (to the title, say) puts the coach away without counting it as seen */
+function coachStop(){Object.assign(COACH,{on:false,list:null,held:false}); $('#coach').hidden=true; $('#coachRing').hidden=true;}
+function coachNext(){
+  if(!COACH.on)return;
+  if(++COACH.i>=COACH.list.length){coachDone(false); return;}
+  coachEnter();
+}
+/* the ring follows its target, and steps that wait for you move on by themselves; about ten checks a second */
+function coachFrame(now){
+  if(!COACH.on){COACH.raf=0; return;}
+  COACH.raf=requestAnimationFrame(coachFrame);
+  if(now-COACH.last<100)return; COACH.last=now;
+  if(!F||!run||!$('#title').hidden){coachStop(); return;}
+  const s=COACH.list[COACH.i];
+  try{
+    if(s.until&&s.until()){coachNext(); return;}
+    /* put the ward down mid-step, and the walkthrough goes back to choosing one */
+    if(s.back&&s.back()&&COACH.i>0){COACH.i--; coachEnter(); return;}
+  }catch(err){reportError(err);}
+  coachPlace();
+}
+function coachPlace(){
+  const s=COACH.list[COACH.i], box=$('#coach'), ring=$('#coachRing');
+  let t=null; try{t=s.target?s.target():null;}catch(err){t=null;}
+  if(t){
+    const p=5; ring.hidden=false;
+    ring.style.left=(t.left-p)+'px'; ring.style.top=(t.top-p)+'px'; ring.style.width=(t.width+2*p)+'px'; ring.style.height=(t.height+2*p)+'px';
+    ring.style.borderRadius=t.round?'50%':'12px';
+  }else ring.hidden=true;
+  const hud=$('#hud').getBoundingClientRect(), bar=$('#cmdbar').getBoundingClientRect();
+  const inHud=t&&t.left<hud.right&&t.left+t.width>hud.left&&t.top<hud.bottom&&t.top+t.height>hud.top;
+  const D=inHud?bar:hud, w=Math.min(innerWidth-12,Math.max(240,Math.min(520,D.width-12)));
+  box.style.width=w+'px';
+  box.style.left=clamp(D.left+(D.width-w)/2,6,innerWidth-w-6)+'px';
+  if(inHud){box.style.top='auto'; box.style.bottom=Math.max(6,innerHeight-D.bottom+4)+'px';}
+  else{box.style.bottom='auto'; box.style.top=Math.max(6,D.top+4)+'px';}
+}
+/* checked with the HUD, five times a second: is there a tip to give? */
+function coachPoll(){
+  if(COACH.on||!coachFree())return;
+  const t=tut(); if(t.off)return;
+  for(const k in TIPS){
+    if(t.seen.includes(k))continue;
+    const tip=TIPS[k];
+    let e=null;
+    if(tip.foe){if(F.phase!=='wave')continue; for(let i=0;i<F.foes.length;i++){const o=F.foes[i]; if(!o.dead&&o.d>1.2&&tip.foe(o)){e=o; break;}} if(!e)continue;}
+    else if(!tip.when())continue;
+    const list=tip.steps?tip.steps():[{title:tip.title,text:tip.text,target:e?(()=>e.dead?null:coachBoard(e.x,e.y,Math.max(.6,e.def.r*1.6))):tip.target}];
+    coachRun('tip',k,list);
+    return;
+  }
+}
+$('#coachActs').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-coach]'); if(!b||!COACH.on)return;
+  if(b.dataset.coach==='next')coachNext(); else coachDone(true);
+});
 function trayItems(){
   const it=[];
   run.wards.forEach(w=>it.push({kind:'ward',type:w}));
@@ -4540,7 +4740,8 @@ function openSettings(fromPause){
   showModal({
     kind:'settings', title:'Settings',
     html: row('vMast','Master Volume', VOL.master) + row('vMus','Music Volume', VOL.bgm) + row('vSfx','SFX Volume', VOL.sfx)
-      + '<button class="btn" id="gfxBtn" style="width:100%;margin-top:4px">Visual effects: '+(gfxLite?'Lite':'Full')+'</button><p class="note" style="margin:6px 0 0;font-size:.78rem;color:var(--ash)">Lite drops fog, drifting dust, stains and rim light, for slower phones.</p>',
+      + '<button class="btn" id="gfxBtn" style="width:100%;margin-top:4px">Visual effects: '+(gfxLite?'Lite':'Full')+'</button><p class="note" style="margin:6px 0 0;font-size:.78rem;color:var(--ash)">Lite drops fog, drifting dust, stains and rim light, for slower phones.</p>'
+      + '<button class="btn" id="tutBtn" style="width:100%;margin-top:14px">Replay the walkthrough and tips</button>',
     actions:[{label:fromPause?'Back':'Close', primary:true, fn:()=>{if(fromPause)openPause(); else closeModal();}}]
   });
   ['vMast','vMus','vSfx'].forEach(id=>{
@@ -4555,6 +4756,8 @@ function openSettings(fromPause){
       if(id==='vSfx') AUDIO.place(); 
     };
   });
+  const tb=document.getElementById('tutBtn');
+  if(tb)tb.onclick=()=>{tutSave({walk:'',seen:[],off:false}); tb.textContent='They return on your next descent';};
   const gb=document.getElementById('gfxBtn');
   if(gb)gb.onclick=()=>{gfxLite=!gfxLite; store.set('ll-gfx-lite',gfxLite); gb.textContent='Visual effects: '+(gfxLite?'Lite':'Full');};
 }
@@ -4655,6 +4858,7 @@ function showTitle(){
     $('#contSub').textContent=lastSave.draft?FLOORS[lastSave.run.floor].name+' cleared · on the stair':FLOORS[lastSave.run.floor].name+' · wave '+(lastSave.wave+1)+' next';
     $('#descendBtn').classList.remove('call');
   }else{cb.hidden=true; $('#descendBtn').classList.add('call');}
+  $('#bonesBtn').hidden=!devOn;
   $('#title').hidden=false;
 }
 
@@ -4738,7 +4942,7 @@ function frame(now){
       {let sim=raw*speed; while(sim>1e-6&&!paused&&F&&F.phase!=='won'){const d=Math.min(.05,sim); update(d); sim-=d;}}
       render();
       uiAcc+=raw;
-      if(uiAcc>.2){uiAcc=0; tickUI();}
+      if(uiAcc>.2){uiAcc=0; tickUI(); coachPoll();}
     }
   }catch(err){reportError(err);}
 }
@@ -4762,6 +4966,7 @@ $('#modal').addEventListener('click', ev => {
 /* ---------------- wiring ---------------- */
 $('#verLine').textContent='Version '+GAME_VERSION+(window.LL_STORE_NS?' · preview build':'');
 $('#callBtn').onclick=callWave;
+$('#bonesBtn').onclick=()=>{AUDIO.init(); bonesPractice();};
 $('#speedBtn').onclick=toggleSpeed;
 $('#pauseBtn').onclick=openPause;
 $('#settingsBtn').onclick=()=>openSettings(false);
