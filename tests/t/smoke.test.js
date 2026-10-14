@@ -11,6 +11,10 @@ const {chromium}=require('playwright');
   const fl=await p.evaluate(()=>document.querySelector('#floorNo').textContent);
   console.log('floor label:',fl);
   if(!/Floor 1 of 5/.test(fl)){console.log('FAIL a new run did not start on floor 1'); process.exitCode=1;}
+  // a first descent offers the walkthrough
+  await p.waitForTimeout(2400);
+  const offer=await p.evaluate(()=>!document.querySelector('#modal').hidden&&document.querySelector('#mTitle').textContent);
+  if(offer!=='First time down here?'){console.log('FAIL the first descent should offer the walkthrough, got '+offer); process.exitCode=1;}
   await p.screenshot({path:(process.argv[3]||'.')+'/smoke.png'});
   await b.close();
 })();

@@ -136,7 +136,7 @@ Everything lives in one file: CSS, then markup, then one big script inside an II
 | `orientation` / `paths` | Board is 14×12 (`land`) or 12×14 (`port`), picked by `bestOrient()`. `buildGeometry()`, `posAt(path,d)`. Forks: each branch is a whole extra path sharing its root's prefix (`F.paths` beyond `F.nRoots`); at the fork a creature switches `e.gate` via `forkPick()` and keeps `e.d`. Spawns and rifts use roots only. |
 | `light` | `lampBase()`, `lampRadius()`, `lightsNow()`, `canSee(e)`, light connectivity (wards go `dark`). |
 | `saving` | `store` (all localStorage goes through it; prefixed by `window.LL_STORE_NS` in PR previews), `SAVEKEY='ll-save-v2'`, `checkpoint()`, `resumeFrom()` (migrates old saves; keep it backward compatible). |
-| `dev mode` | Hidden. Tap the title heading 7 times within 3s. `DEV_ACTS`. |
+| `dev mode` | Hidden. Tap the title heading 7 times within 3s. `DEV_ACTS`. It also shows a Knucklebones button on the title: a practice table (`bonesPractice()`) that stakes and saves nothing. |
 | `run & floors` | `newRun(kit,depth)`, `beginFloor(snap)`, `awardEmbers()`, `callWave()`, `startWave()`, `floorCleared()`. |
 | `entrances` | `BOSS_INTRO`, `BIG_INTRO`, `startIntro()` (`F.intro` freezes the sim during a boss reveal), `renderBossBar()`. |
 | `the landing` | State machine in `F.draft` (`step`: gift → relic → fork → room, plus `pick` sub-state). `draftOptions()`, `makeDoors()`, `makeRoom()`, `landingModal()`, `descend()` (applies the toll, then `showMap()`, then `beginFloor()`), the map: `MAP_SYS`, `drawMap()`. |
@@ -146,12 +146,13 @@ Everything lives in one file: CSS, then markup, then one big script inside an II
 | `update` | `update(dt)` → `updateFoes()`, `updateTowers()`, `updateShots()`. Dead foes are compacted once at the end of `update()`. |
 | art | `drawCreature()` (procedural creatures in unit space, cached as sprites in `SPRITES`; bosses paint live), `ART`, `THEMES` (per-floor props), `paintBoard()`, `paintFloor()`, `stainFloor()`, `drawWard()`, `drawLamp(c,x,y,tm,k)` (unit space: the lamp is ~0.75 units tall). |
 | `render` | `render()`: y-sorted draw list, shadows away from the lamp, rim light, darkness, fog, fx, boss intro, floats. |
+| `walkthrough and tips` | `COACH`, `coachWalkSteps()` (the first-descent walkthrough), `TIPS` (first-time tips: each a `foe` match or a `when()` test), `coachPoll()` (from the frame loop, 5×/s), `coachPlace()` (the bubble docks over the HUD, or over the command bar when the HUD is the subject; only its buttons take taps). Tests run with it off; `tutorial.test.js` turns it on. |
 | `UI` | `renderHUD()`, `renderPreview()`, `renderTray()`, `renderSheet()` (upgrade panel), `renderModebar()` (placement card), `renderRites()`; `tickUI()` runs every 0.2s, `forceUI()` runs now. `banner()`, `hint()`. |
 | `settings, modal, pause & title` | `showModal(o)`, `closeModal()`, `openPause()`, `openSettings()`, `showRules()`, `showTitle()`, `drawTitle()`. |
 | `loop` | `watchPerf()` (auto-Lite if frames stay slow), `frame()` (sim in steps ≤ 50ms; `speed` 1/2/3; the map overlay runs on real time). |
 | `wiring` | Button handlers, `layout()` (calls `applyShape()` first), resize handling. |
 
-**Storage keys:** `ll-save-v2` (the run), `ll-meta` (embers/unlocks), `ll-best`, `ll-vol`, `ll-dev`, `ll-gfx-lite`, `ll-gfx-auto`. Changing a stored shape needs a migration in `resumeFrom()` or `meta()`.
+**Storage keys:** `ll-save-v2` (the run), `ll-meta` (embers/unlocks), `ll-best`, `ll-vol`, `ll-dev`, `ll-gfx-lite`, `ll-gfx-auto`, `ll-tut` (walkthrough and tips: `{walk, seen, off}`). Changing a stored shape needs a migration in `resumeFrom()` or `meta()`.
 
 ---
 

@@ -4,6 +4,10 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **A walkthrough for the first descent.** Criss's friend playtested and was lost by floor 2. Now the first descent asks "First time down here?". The walkthrough teaches by doing: the oil, essence and madness on the HUD, the light, choosing a Candle and building it, opening its branches, rites, and calling the dark. A ring marks what each step talks about, and a bubble over the HUD explains it. Only the bubble's buttons take taps, so the board underneath still works. "I know the way" or "Skip walkthrough" ends it for good. (Claude)
+- **First-time tips.** The first time something new turns up, a tip explains it and holds the wave while you read: the fork (with the Weir and the Will-o'-Wisp), veiled Shades and Stalkers, Gnashers, Watchers, Ichor Wretches, Shriekers, Behemoths, the Choirmaster, sigils, madness, and wards cut off from the light. Each tip shows once. "No more tips" switches them off, and Settings can replay the walkthrough and tips. (Claude)
+- **The Knucklebones on the title**, in developer mode only: a practice table against a Gentle, Cunning or Merciless opponent. Nothing is staked, won or saved. (Claude)
+- The rules list still described the old push-your-luck Knucklebones; it now describes the current game. (Claude)
 ---
 
 ## v15.4 — The Knucklebones
