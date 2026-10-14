@@ -4382,7 +4382,7 @@ function coachWalkSteps(){
     {title:'Build it',text:'Now tap a lit tile. Anything you build refunds in full if you take it down before you call the dark.',target:()=>coachEl(cv),until:()=>F.towers.length>0,back:()=>!sel&&!F.towers.length},
     {title:'Branches',text:'Tap what you just built, or the lamp, to open its branches.',enter:()=>{sel=null; forceUI();},target:()=>{const t=F.towers[F.towers.length-1]; return t?coachBoard(t.c+.5,t.r+.5,.7):null;},until:()=>!!selTower},
     {title:'Branches',text:'Each ward has three branches. It can take two of them, and only one reaches its capstone. Everything is stripped when the floor ends, and half of it comes back.',target:()=>coachEl('#sheet'),next:true},
-    {title:'Rites',text:'Rites are spells on a cooldown. Tap one, then tap where it should fall.',enter:()=>{selTower=null; forceUI();},target:()=>coachEl('#rites'),next:true,skip:()=>!ritesNow().length},
+    {title:'Rites',text:'Rites are spells on a cooldown. Some, like Flare, strike the moment you tap them. Others, like the Pillar of Salt, then wait for you to tap where they fall.',enter:()=>{selTower=null; forceUI();},target:()=>coachEl('#rites'),next:true,skip:()=>!ritesNow().length},
     {title:'Call the dark',text:'When you are ready, call the dark. Once a wave has finished arriving, you can call the next one early for more essence.',enter:()=>{selTower=null; sel=null; forceUI();},target:()=>coachEl('#callBtn'),until:()=>F.phase!=='build'},
     {title:'Speed and pause',text:'Speed the dark up here, and pause from the top whenever you need. New things get a tip the first time you meet them. Everything else is in How the dark works.',target:()=>coachEl('#speedBtn'),next:true}
   ];
