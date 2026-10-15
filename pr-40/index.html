@@ -70,6 +70,8 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .preview{position:absolute;left:6px;top:6px;z-index:3;display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;max-width:calc(100% - 12px);padding:4px 9px;border-radius:6px;background:var(--veil);pointer-events:none}
 .preview .pl{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ash)}
 .preview .pv-n{font-size:.74rem;font-style:italic;color:var(--tallow)}
+.preview .pv-oil{font-family:var(--f-num);font-size:.7rem;color:var(--wound)}
+.preview .pv-oil.is-fed{color:var(--tallow)}
 .chip{display:flex;align-items:center;gap:1px;font-family:var(--f-num);font-size:.74rem;color:var(--bone);font-variant-numeric:tabular-nums}
 .chip canvas{width:22px;height:22px}
 .banner{position:absolute;left:50%;top:44px;z-index:4;transform:translateX(-50%);max-width:88%;width:max-content;padding:8px 16px 9px;border-radius:6px;background:var(--veil);text-align:center;opacity:0;transition:opacity .35s;pointer-events:none}
@@ -402,7 +404,7 @@ input[type=range]::-moz-range-track {
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
-        <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, and Kindle sets a creature burning and running, lighting the dark around it. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
+        <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, and Kindle sets a creature burning and running, lighting the dark around it. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
@@ -493,7 +495,7 @@ const WARDS={
   censer:{n:'Tar Censer',short:'Censer',cost:70,aim:true,d:'Lobs burning pitch that splashes a cluster. It hits whatever it lands on, lit or not.'},
   coil:{n:'Galvanic Coil',short:'Coil',cost:75,aim:true,d:'Throws lightning that leaps from creature to creature. Brine conducts: anything standing in salt takes double.'},
   lance:{n:'Whaling Gun',short:'Whaler',cost:90,aim:true,d:'A slow, enormous harpoon. Double damage to heavy creatures, elites and bosses.'},
-  trypot:{n:'Try-pot',short:'Try-pot',cost:45,kit:'whaler',d:'An iron rendering pot over a fire. Everything that dies near it gives up the oil it would have drained, and every 12 makes a measure of whale oil. A measure feeds your Blubber Lamps when a wave begins. When the pot is full, it pours into the lamp.'},
+  trypot:{n:'Try-pot',short:'Try-pot',cost:30,kit:'whaler',d:'An iron pot that renders the dead into whale oil. Build it where things die. Each Blubber Lamp drinks a measure from it as a wave begins. A full pot pours into the lamp, and whatever is left when the floor ends pours in too.'},
   weir:{n:'Weir',short:'Weir',cost:45,path:true,fork:true,d:'A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it.'}
 };
 const BASE_WARDS=['candle','harpoon','salt','chime','trap','tithe','effigy'];
@@ -503,10 +505,10 @@ const GIFT_WARDS=['censer','coil','lance'];
 const KIT_WARDS={
   lamplighter:{
     candle:{n:'Signal Candle',short:'Signal',d:'Casts light, unveils Shades, and slows what walks in it. Its light leaps up to 4 tiles to another Signal Candle, even across the dark.'},
-    harpoon:{n:'Flare Harpoon',d:'Fires barbed bolts at a single creature. Each bolt flares where it strikes, lighting what stands near it for a moment.'}
+    harpoon:{n:'Flare Harpoon',short:'Flare',d:'Fires barbed bolts at a single creature. Each bolt flares where it strikes, lighting what stands near it for a moment.'}
   },
   whaler:{
-    candle:{n:'Blubber Lamp',short:'Blubber',d:'A lamp of rendered fat. It burns almost a tile wider than a candle, but while any stands, the lamp loses 1 oil as each wave begins, unless a Try-pot feeds it.'},
+    candle:{n:'Blubber Lamp',short:'Blubber',d:'A lamp of rendered fat. It burns almost a tile wider than a candle, but it drinks: as each wave begins, every Blubber Lamp takes a measure from a Try-pot, or 1 oil from the lamp if the pots are dry.'},
     harpoon:{n:'Tether Harpoon',short:'Tether',d:'Fires barbed bolts on a line. The line holds what it strikes and slows it more the longer it holds, until the harpoon fires at something else.'}
   }
 };
@@ -517,7 +519,7 @@ const LEAP=4, GLINT_R=1.3, GLINT_T=1.5, GLINT_MAX=8, STAR_R=3, STAR_T=4;
 const KINDLE_T=8, KINDLE_R=1.8, KINDLE_DPS=5, KINDLE_RUN=1.25, THREAD_T=2;
 /* the Whaler: how much wider a Blubber Lamp burns; the Try-pot's reach, its measure and how many it holds;
    how fast the line's grip tightens and how far it goes; how often Reel In hauls */
-const BLUBBER_LIGHT=.8, POT_R=2.2, POT_MEASURE=12, POT_MAX=3, TETHER_RATE=.12, TETHER_MAX=.4, HAUL_EVERY=4;
+const BLUBBER_LIGHT=.8, POT_R=2.4, POT_MEASURE=6, POT_MAX=4, TETHER_RATE=.12, TETHER_MAX=.4, HAUL_EVERY=4;
 
 const HORRORS={
   gnasher:{n:'Bound Gnasher',cost:30,mad:3,range:1.35,dmg:24,rate:.9,aim:true,d:'Bites whatever passes within reach. Brutal and short-ranged.'},
@@ -1602,9 +1604,10 @@ function floorCleared(){
   for(const t of F.towers) if(t.kind==='ward') salvage+=t.invested;
   salvage=Math.floor(salvage*.5);
   run.ess+=salvage;
+  const poured=potsPour();
   const healed=Math.min(2,run.oilMax-run.oil);
   run.oil+=healed;
-  banner('Floor cleared','','The stair below is open');
+  banner('Floor cleared','',poured?'The pots pour '+poured+' oil into the lamp':'The stair below is open');
   AUDIO.win();
   forceUI();
   /* souls still on the board (the Keeper's above all) can be bound before the gift screen opens */
@@ -2581,14 +2584,26 @@ function potRender(e){
     else{gainOil(1); F.fx.push({k:'float',x:pot.x,y:pot.y-.5,txt:'+1 oil',col:PAL.tallow,t:0,dur:1.2,size:.26});}
   }
 }
-/* as a wave begins, standing Blubber Lamps drink a measure from a Try-pot, or else the lamp's own oil */
+/* as a wave begins, every lit Blubber Lamp drinks: a measure from a Try-pot if one has it, else 1 oil from the lamp */
+function blubberDue(){
+  if(kit()!=='whaler')return {lamps:0,fed:0,oil:0};
+  let lamps=0, meas=0;
+  for(const t of F.towers){if(t.kind==='ward'&&t.type==='candle'&&!t.dark)lamps++; else if(t.type==='trypot'&&!t.dark)meas+=t.meas||0;}
+  const fed=Math.min(lamps,meas); return {lamps,fed,oil:lamps-fed};
+}
 function blubberToll(){
-  if(kit()!=='whaler'||!F.towers.some(t=>t.kind==='ward'&&t.type==='candle'&&!t.dark))return;
-  const pot=F.towers.find(t=>t.type==='trypot'&&!t.dark&&(t.meas||0)>0);
-  if(pot){pot.meas--; pot.ping=.6; F.fx.push({k:'float',x:pot.x,y:pot.y-.5,txt:'feeds the lamps',col:PAL.tallow,t:0,dur:1.3,size:.22}); return;}
-  run.oil-=1; F.blubberHit=(F.blubberHit||0)+1;
-  F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'−1 oil · Blubber Lamps',col:PAL.wound,t:0,dur:1.4,size:.26});
+  const due=blubberDue(); if(!due.lamps)return;
+  let left=due.fed;
+  for(const t of F.towers){if(!left)break; if(t.type!=='trypot'||t.dark)continue; const k=Math.min(left,t.meas||0); if(k){t.meas-=k; left-=k; t.ping=.6; F.fx.push({k:'float',x:t.x,y:t.y-.5,txt:'−'+k+' measure'+(k>1?'s':''),col:PAL.tallow,t:0,dur:1.3,size:.22});}}
+  if(!due.oil)return;
+  run.oil-=due.oil; F.blubberHit=(F.blubberHit||0)+due.oil;
+  F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'−'+due.oil+' oil · the lamps drink',col:PAL.wound,t:0,dur:1.5,size:.26});
   if(run.oil<=0){run.oil=0; defeat();}
+}
+/* what is left in the pots when a floor ends pours into the lamp */
+function potsPour(){
+  let n=0; for(const t of F.towers)if(t.type==='trypot'&&!t.dark){n+=t.meas||0; t.meas=0;}
+  if(n)gainOil(n); return n;
 }
 function lampHit(e){
   run.oil-=e.def.oil;
@@ -2810,9 +2825,11 @@ function updateFoes(dt){
   }
 }
 function fireBolt(t,e,st,dmg,k){
+  /* a Tether Harpoon lets go of its old catch the moment it fires at another (the twin bolt keeps the line it has) */
+  if(st.tether&&!k&&t.tethered&&t.tethered!==e)t.tethered=null;
   const ang=Math.atan2(e.y-t.y,e.x-t.x), off=k?.13:0;
   const sx=t.x+Math.cos(ang)*.4-Math.sin(ang)*off, sy=t.y+Math.sin(ang)*.4+Math.cos(ang)*off;
-  if(st.pierce)F.shots.push({k:'pierce',x:sx,y:sy,dx:Math.cos(ang),dy:Math.sin(ang),ang,spd:14,trav:0,max:st.range+.8,dmg,hit:[],flare:st.flare,fr:st.flareR,ft:st.flareT});
+  if(st.pierce)F.shots.push({k:'pierce',x:sx,y:sy,dx:Math.cos(ang),dy:Math.sin(ang),ang,spd:14,trav:0,max:st.range+.8,dmg,hit:[],flare:st.flare,fr:st.flareR,ft:st.flareT,from:st.tether?t:null});
   else F.shots.push({k:'bolt',x:sx,y:sy,tg:e,tx:e.x,ty:e.y,spd:13,dmg,ang,flare:st.flare,fr:st.flareR,ft:st.flareT,from:st.tether?t:null});
   /* Starshell: every fourth bolt from this harpoon lights a wide circle */
   if(st.star){t.shots=(t.shots||0)+1; if(t.shots%4===0){const sh=F.shots[F.shots.length-1]; sh.fr=STAR_R; sh.ft=STAR_T; sh.star=true;}}
@@ -3008,7 +3025,9 @@ function updateShots(dt){
         const e=F.foes[i];
         if(e.dead||s.hit.includes(e.id))continue;
         const u=clamp((e.x-ox)*s.dx+(e.y-oy)*s.dy,0,step);
-        if(dst(e.x,e.y,ox+s.dx*u,oy+s.dy*u)<=e.def.r+.12){s.hit.push(e.id); if(s.flare)addGlint(e.x,e.y,s.fr,s.ft,s.star&&!s.starDone); if(s.star)s.starDone=true; hurt(e,s.dmg,'harpoon');}
+        if(dst(e.x,e.y,ox+s.dx*u,oy+s.dy*u)<=e.def.r+.12){s.hit.push(e.id); if(s.flare)addGlint(e.x,e.y,s.fr,s.ft,s.star&&!s.starDone); if(s.star)s.starDone=true; hurt(e,s.dmg,'harpoon');
+          /* a piercing line holds the first thing it runs through */
+          if(s.from&&!e.dead&&s.hit.length===1){if(e.tetherBy!==s.from){e.tetherBy=s.from; e.tetherT=0;} s.from.tethered=e;}}
       }
       if(s.trav>=s.max||s.x<-1||s.y<-1||s.x>COLS+1||s.y>ROWS+1)s.done=true;
     }else if(s.k==='tar'){
@@ -3865,15 +3884,44 @@ function drawWard(c,t,tm,icon){
   if(!icon&&hasCap(t)){c.strokeStyle='rgba(237,180,90,.55)'; c.lineWidth=.035; c.beginPath(); c.ellipse(x,y+.12,.46,.3,0,0,TAU2); c.stroke();}
   if(t.type!=='salt'&&t.type!=='trap'&&!icon)wardShadow(c,x,y,t.type==='lance'?.38:.3);
   if(t.type==='candle'){
-    const ember=!icon&&t.br&&t.br.ember>0, out=!icon&&t.dark;
+    const ember=!icon&&t.br&&t.br.ember>0, out=!icon&&t.dark, style=t.kit||kit();
+    /* each kit builds its own: the Lamplighter a signal lantern on a post, the Whaler a dish of rendered fat */
+    let by, fw=1;
+    if(style==='lamplighter'){
+      plinth(c,x,y+.02,.2);
+      /* in a tray icon the post is shorter, so the lantern fits the circle */
+      const post=icon?.2:.42;
+      c.fillStyle='#2a2522'; c.fillRect(x-.025,y-post,.05,post+.02);
+      c.fillStyle='#4a423c'; c.fillRect(x-.06,y-.02,.12,.04);
+      /* the lantern: a brass cage, smoked glass, a hood over the flame */
+      const lx=x, ly=y-post-.1;
+      c.fillStyle='#3a2e22'; c.fillRect(lx-.1,ly+.08,.2,.04);
+      c.fillStyle=out?'rgba(70,60,50,.8)':'rgba(255,214,140,.35)'; c.fillRect(lx-.08,ly-.12,.16,.2);
+      c.strokeStyle='#b08a48'; c.lineWidth=.02; c.strokeRect(lx-.08,ly-.12,.16,.2);
+      c.beginPath(); c.moveTo(lx,ly-.12); c.lineTo(lx,ly+.08); c.stroke();
+      c.fillStyle='#8a6a34'; c.beginPath(); c.moveTo(lx-.13,ly-.12); c.lineTo(lx,ly-.22); c.lineTo(lx+.13,ly-.12); c.closePath(); c.fill();
+      c.strokeStyle='#b08a48'; c.lineWidth=.015; c.beginPath(); c.arc(lx,ly-.25,.035,0,TAU2); c.stroke();
+      by=ly+.1; fw=.55;
+    }else if(style==='whaler'){
+      plinth(c,x,y+.02,.26);
+      /* three short legs, an iron dish, a lump of yellow fat sweating in it */
+      c.strokeStyle='#2a2420'; c.lineWidth=.035; c.lineCap='round';
+      c.beginPath(); c.moveTo(x-.16,y+.04); c.lineTo(x-.12,y-.12); c.moveTo(x+.16,y+.04); c.lineTo(x+.12,y-.12); c.moveTo(x,y+.08); c.lineTo(x,y-.1); c.stroke();
+      const dg=c.createLinearGradient(x-.26,0,x+.26,0); dg.addColorStop(0,'#5a524c'); dg.addColorStop(.5,'#2e2a28'); dg.addColorStop(1,'#141212');
+      c.fillStyle=dg; c.beginPath(); c.moveTo(x-.27,y-.2); c.quadraticCurveTo(x,y-.02,x+.27,y-.2); c.closePath(); c.fill();
+      c.fillStyle='#6e6660'; c.beginPath(); c.ellipse(x,y-.2,.27,.06,0,0,TAU2); c.fill();
+      const fat=c.createRadialGradient(x-.05,y-.24,0,x,y-.2,.24); fat.addColorStop(0,'#f4dc94'); fat.addColorStop(.6,'#c9a24e'); fat.addColorStop(1,'#6a4e22');
+      c.fillStyle=fat; c.beginPath(); c.ellipse(x,y-.22,.22,.07,0,0,TAU2); c.fill();
+      c.fillStyle='#e6c878'; c.beginPath(); c.ellipse(x-.02,y-.26,.11,.04,0,0,TAU2); c.fill();
+      c.strokeStyle='#1d1612'; c.lineWidth=.03; c.beginPath(); c.moveTo(x,y-.25); c.lineTo(x+.01,y-.31); c.stroke();
+      if(!icon&&!out){c.strokeStyle='rgba(60,54,50,.45)'; c.lineWidth=.04; const ph=((tm||0)*.5+x)%1; c.beginPath(); c.moveTo(x+.02,y-.6); c.quadraticCurveTo(x+.14,y-.75-ph*.15,x-.02,y-.9-ph*.2); c.stroke();}
+      by=y-.25; fw=1.6;
+    }else{
     plinth(c,x,y+.02,.26);
     /* a fat pillar of tallow, wax running down it */
-    const bx=x-.11, by=y-.24, bw=.22, bh=.4;
+    const bx=x-.11, bw=.22, bh=.4; by=y-.24;
     const g=c.createLinearGradient(bx,0,bx+bw,0);
-    /* the Whaler's Blubber Lamp is rendered fat: yellower and greasier */
-    const blub=kit()==='whaler';
-    if(blub){g.addColorStop(0,'#ecd48c'); g.addColorStop(.45,'#c9a24e'); g.addColorStop(1,'#6a4e22');}
-    else{g.addColorStop(0,'#f3e6c4'); g.addColorStop(.45,'#e2cfa3'); g.addColorStop(1,'#8f7a55');}
+    g.addColorStop(0,'#f3e6c4'); g.addColorStop(.45,'#e2cfa3'); g.addColorStop(1,'#8f7a55');
     c.fillStyle=g; c.fillRect(bx,by,bw,bh);
     c.beginPath(); c.ellipse(x,by+bh,bw/2,.05,0,0,Math.PI); c.fill();
     c.fillStyle='#f8eed6'; c.beginPath(); c.ellipse(x,by,bw/2,.05,0,0,TAU2); c.fill();
@@ -3881,13 +3929,14 @@ function drawWard(c,t,tm,icon){
     c.fillStyle='#efe2bf';
     for(const d of [[-.09,.16],[.02,.1],[.07,.22]]){c.beginPath(); c.moveTo(x+d[0]-.025,by); c.lineTo(x+d[0]-.025,by+d[1]); c.arc(x+d[0],by+d[1],.025,Math.PI,0,true); c.lineTo(x+d[0]+.025,by); c.fill();}
     c.strokeStyle='#1d1612'; c.lineWidth=.018; c.beginPath(); c.moveTo(x,by); c.lineTo(x+.01,by-.06); c.stroke();
+    }
     if(out){c.strokeStyle='rgba(139,146,148,.6)'; c.lineWidth=.025; c.beginPath(); c.moveTo(x+.01,by-.06); c.quadraticCurveTo(x+.08,by-.16,x-.01,by-.28); c.quadraticCurveTo(x-.07,by-.36,x+.02,by-.44); c.stroke();}
     else{
       const fl=1+Math.sin(tm*13+x*7)*.1+Math.sin(tm*21+y)*.05, fy=by-.06;
       if(!icon){c.save(); c.globalCompositeOperation='lighter'; const gl=c.createRadialGradient(x,fy-.1,0,x,fy-.1,.45); gl.addColorStop(0,ember?'rgba(255,120,50,.35)':'rgba(255,190,90,.32)'); gl.addColorStop(1,'rgba(255,150,60,0)'); c.fillStyle=gl; c.beginPath(); c.arc(x,fy-.1,.45,0,TAU2); c.fill(); c.restore();}
       const fg=c.createRadialGradient(x,fy-.06,0,x,fy-.1,.16*fl);
       fg.addColorStop(0,'#fffbe8'); fg.addColorStop(.35,ember?'#ffb070':'#ffe08a'); fg.addColorStop(.8,ember?'#e0401c':'#f08a2a'); fg.addColorStop(1,'rgba(200,60,20,0)');
-      c.fillStyle=fg; c.beginPath(); c.moveTo(x,fy-.3*fl); c.quadraticCurveTo(x+.1,fy-.1,x,fy); c.quadraticCurveTo(x-.1,fy-.1,x,fy-.3*fl); c.fill();
+      c.fillStyle=fg; c.beginPath(); c.moveTo(x,fy-.3*fl*Math.min(1.2,fw)); c.quadraticCurveTo(x+.1*fw,fy-.1,x,fy); c.quadraticCurveTo(x-.1*fw,fy-.1,x,fy-.3*fl*Math.min(1.2,fw)); c.fill();
     }
   }else if(t.type==='harpoon'){
     plinth(c,x,y+.02,.34);
@@ -3908,7 +3957,14 @@ function drawWard(c,t,tm,icon){
     c.strokeStyle='rgba(230,220,200,.75)'; c.lineWidth=.012; c.beginPath(); c.moveTo(.12,-.34); c.lineTo(-.1,0); c.lineTo(.12,.34); c.stroke();
     c.fillStyle='#c9c2b2'; c.fillRect(-.1,-.018,.48,.036);
     c.fillStyle='#e8e2d4'; c.beginPath(); c.moveTo(.36,-.07); c.lineTo(.52,0); c.lineTo(.36,.07); c.lineTo(.4,0); c.closePath(); c.fill();
+    /* the Lamplighter's bolt carries a red flare canister behind its barb; the Whaler's trails its line */
+    const hk=t.kit||kit();
+    if(hk==='lamplighter'){c.fillStyle='#a8281c'; c.fillRect(.24,-.04,.1,.08); c.fillStyle='#e8c060'; c.fillRect(.24,-.04,.02,.08);
+      if(!icon){c.save(); c.globalCompositeOperation='lighter'; c.fillStyle='rgba(255,90,40,'+(.25+.15*Math.sin((tm||0)*8))+')'; c.beginPath(); c.arc(.3,0,.09,0,TAU2); c.fill(); c.restore();}}
+    else if(hk==='whaler'){c.strokeStyle='#c9b896'; c.lineWidth=.016; c.beginPath(); c.moveTo(.3,0); c.quadraticCurveTo(.05,.12,-.18,.05); c.stroke();}
     c.restore();
+    if(hk==='whaler'){for(let k=0;k<3;k++){c.strokeStyle=k%2?'#a8946e':'#c9b896'; c.lineWidth=.022; c.beginPath(); c.ellipse(x-.2,y+.04-k*.035,.09,.04,0,0,TAU2); c.stroke();}}
+    else if(hk==='lamplighter'){c.strokeStyle='#b08a48'; c.lineWidth=.02; c.beginPath(); c.ellipse(x,y+.06,.28,.11,0,0,Math.PI); c.stroke();}
     c.fillStyle='#8C6B3A'; c.beginPath(); c.arc(x,y-.1,.05,0,TAU2); c.fill();
   }else if(t.type==='salt'){
     const a=icon?1:clamp(t.dur/t.max,.25,1);
@@ -3991,7 +4047,8 @@ function drawWard(c,t,tm,icon){
     const m=icon?2:(t.meas||0);
     if(m){c.fillStyle='rgba(232,192,96,'+(.35+.2*m)+')'; c.beginPath(); c.ellipse(x,y-.2,.24*(m/POT_MAX)+.06,.05,0,0,TAU2); c.fill();}
     c.strokeStyle='#8a7e72'; c.lineWidth=.02; c.beginPath(); c.arc(x-.33,y-.16,.05,Math.PI*.5,Math.PI*1.5); c.stroke(); c.beginPath(); c.arc(x+.33,y-.16,.05,-Math.PI*.5,Math.PI*.5); c.stroke();
-    if(!icon){for(let k=0;k<POT_MAX;k++){c.fillStyle=k<m?'#e8c060':'rgba(120,110,100,.5)'; c.beginPath(); c.arc(x-.12+k*.12,y+.3,.035,0,TAU2); c.fill();}}
+    if(!icon){for(let k=0;k<POT_MAX;k++){c.fillStyle=k<m?'#e8c060':'rgba(120,110,100,.5)'; c.beginPath(); c.arc(x-.18+k*.12,y+.3,.035,0,TAU2); c.fill();}
+      const pr=clamp((t.render||0)/POT_MEASURE,0,1); if(pr>0){c.strokeStyle='rgba(232,192,96,.7)'; c.lineWidth=.03; c.beginPath(); c.arc(x,y-.05,.4,-Math.PI/2,-Math.PI/2+pr*TAU2); c.stroke();}}
     if(!icon&&!out){c.strokeStyle='rgba(160,150,140,.35)'; c.lineWidth=.03; const ph=((tm||0)*.6)%1; c.beginPath(); c.moveTo(x+.05,y-.25); c.quadraticCurveTo(x+.15,y-.4-ph*.2,x,y-.55-ph*.25); c.stroke();}
     if(!icon&&t.ping>0){c.save(); c.globalCompositeOperation='lighter'; c.fillStyle='rgba(255,210,110,'+(.5*t.ping)+')'; c.beginPath(); c.ellipse(x,y-.22,.3,.09,0,0,TAU2); c.fill(); c.restore();}
   }else if(t.type==='tithe'){
@@ -4744,8 +4801,8 @@ function showBook(){
       +Object.keys(WARDS).map(k=>{const W=WARDS[k], where=W.kit?KITS[W.kit].n+'’s own':GIFT_WARDS.includes(k)?'Won as a gift':W.fork?'On forked floors':'';
         /* a kit's own version follows the ward it replaces; it shares that ward's branches */
         const own=Object.keys(KIT_WARDS).filter(kk=>KIT_WARDS[kk][k]).map(kk=>{const V=wdef(k,kk);
-          return bookEntry('<canvas width="72" height="72" data-icon="ward:'+k+':0"></canvas>',V.n,KITS[kk].n+'’s own '+W.short.toLowerCase()+' · Costs '+V.cost,V.d+' <i>Branches:</i> '+br(k,kk)+'.');}).join('');
-        return bookEntry('<canvas width="72" height="72" data-icon="ward:'+k+':0"></canvas>',W.n,'Costs '+W.cost+(where?' · '+where:''),W.d+(TREES[k]?' <i>Branches:</i> '+br(k)+'.':''))+own;}).join('');
+          return bookEntry('<canvas width="72" height="72" data-icon="ward:'+k+':0:'+kk+'"></canvas>',V.n,KITS[kk].n+'’s own '+W.short.toLowerCase()+' · Costs '+V.cost,V.d+' <i>Branches:</i> '+br(k,kk)+'.');}).join('');
+        return bookEntry('<canvas width="72" height="72" data-icon="ward:'+k+':0:'+(W.kit||'plain')+'"></canvas>',W.n,'Costs '+W.cost+(where?' · '+where:''),W.d+(TREES[k]?' <i>Branches:</i> '+br(k)+'.':''))+own;}).join('');
   }else if(t==='rites'){
     intro='Spells on a cooldown. Your kit decides which you start with.';
     list=Object.keys(RITES).map(k=>{const R=RITES[k];
@@ -4769,10 +4826,10 @@ function showBook(){
   const html='<div class="book-tabs">'+tabs.map(([k,n])=>'<button class="btn'+(k===t?' call':'')+'" data-book="'+k+'" aria-pressed="'+(k===t)+'">'+n+'</button>').join('')+'</div>'
     +'<p class="book-intro">'+intro+'</p><div class="book-list">'+list+'</div>';
   showModal({kind:'book',wide:true,title:'The Grimoire',body:'',html,actions:[{label:BOOK.from==='pause'?'Back':'Close',primary:true,fn:closeBook}]});
-  $('#mChoices').querySelectorAll('canvas[data-icon]').forEach(cv=>{const p=cv.dataset.icon.split(':'); bookIcon(cv,p[0],p[1],p[2]==='1');});
+  $('#mChoices').querySelectorAll('canvas[data-icon]').forEach(cv=>{const p=cv.dataset.icon.split(':'); bookIcon(cv,p[0],p[1],p[2]==='1',p[3]);});
 }
-function bookIcon(cvs,kind,type,sil){
-  if(!sil){drawIcon(cvs,{kind,type}); return;}
+function bookIcon(cvs,kind,type,sil,kt){
+  if(!sil){drawIcon(cvs,{kind,type,kit:kt}); return;}
   const c=cvs.getContext('2d'); c.setTransform(cvs.width,0,0,cvs.height,0,0);
   c.fillStyle='#0c0f11'; c.beginPath(); c.arc(.5,.5,.48,0,TAU); c.fill();
   foeShape(c,type,.5,.5,Math.min(.33,FOES[type].r*1.05),.4,true);
@@ -4838,10 +4895,10 @@ const TIPS={
     text:'Tap Kindle, then a creature you can see. It burns for eight seconds and lights the dark around it, waking any ward cut off there. It also runs faster, so kindle it far from the lamp.',
     target:()=>coachEl('#rites [data-r="kindle"]')},
   blubber:{when:()=>kit()==='whaler'&&((sel&&sel.kind==='ward'&&sel.type==='candle')||F.towers.some(t=>t.kind==='ward'&&t.type==='candle')),title:'Blubber Lamps',
-    text:'Your Blubber Lamps burn almost a tile wider than candles, but they drink. While any stands, the lamp loses 1 oil as each wave begins, unless a Try-pot has a measure to feed them.',
+    text:'Your Blubber Lamps burn almost a tile wider than candles, but they drink. As each wave begins, every one takes a measure from a Try-pot, or 1 oil from the lamp if the pots are dry. The strip above the board shows what the next wave will cost.',
     target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&t.type==='candle'); return t?coachBoard(t.x,t.y,1):coachTray('candle');}},
   trypot:{when:()=>kit()==='whaler'&&(F.towers.some(t=>t.type==='candle')||(sel&&sel.type==='trypot')),title:'The Try-pot',
-    text:'Build the Try-pot where things die. Each one that dies near it gives up the oil it would have drained, and every 12 fills a measure. The dots under the pot show its measures. A measure feeds your Blubber Lamps; when the pot is full, it pours into the lamp.',
+    text:'Build the Try-pot where things die. Each death near it renders oil; the ring around the pot fills, and each full ring is a measure, a gold dot. A measure feeds one Blubber Lamp for one wave. A full pot pours into the lamp, and so does whatever is left when the floor ends.',
     enter:()=>coachShowTray('trypot'),target:()=>{const t=F.towers.find(t=>t.type==='trypot'); return t?coachBoard(t.x,t.y,POT_R):coachTray('trypot');}},
   tether:{when:()=>kit()==='whaler'&&F.phase==='wave'&&F.foes.some(e=>!e.dead&&e.tetherBy),title:'The line',
     text:'Your harpoons hold what they hit on a line. The longer it holds, the slower that creature walks. It lets go when the harpoon fires at something else, so aim at the strongest to keep the big ones held.',
@@ -5008,7 +5065,7 @@ function drawIcon(cvs,i){
   c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,cvs.width,cvs.height);
   c.setTransform(cvs.width,0,0,cvs.height,0,0);
   c.fillStyle='#0c0f11'; c.beginPath(); c.arc(.5,.5,.48,0,TAU); c.fill();
-  if(i.kind==='ward')drawWard(c,{kind:'ward',type:i.type,x:.5,y:.52,ang:-.7,dur:1,max:1,ring:0,br:{}},.4,true);
+  if(i.kind==='ward')drawWard(c,{kind:'ward',type:i.type,kit:i.kit,x:.5,y:.52,ang:-.7,dur:1,max:1,ring:0,br:{}},.4,true);
   else if(i.kind==='horror')drawHorror(c,{type:i.type,x:.5,y:.5},.4);
   else if(i.kind==='foe')foeShape(c,i.type,.5,.5,Math.min(.33,FOES[i.type].r*1.05),.4,false);
   else drawLamp(c,.5,.56,.4,.9);
@@ -5030,7 +5087,9 @@ function statLine(o){
   const st=wstat(o);
   if(o.type==='candle')return 'Light <b>'+st.light.toFixed(1)+'</b> · Slows <b>'+Math.round(st.slow*100)+'%</b>'+(st.burn?' · Burns <b>'+st.burn+' damage/s</b>':'');
   if(o.type==='harpoon')return 'Damage <b>'+Math.round(st.dmg)+'</b> · Range <b>'+st.range.toFixed(1)+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s'+(st.twin?' · Twin':'')+(st.pierce?' · Pierce':'')+(st.deep?' · Sees in the dark':'')+(st.tether?' · Line slows up to <b>'+Math.round(st.tMax*100)+'%</b>'+(st.haul?' · Reels in':''):'');
-  if(o.type==='trypot')return '<b>'+(o.meas||0)+' of '+st.max+'</b> measures · next in <b>'+(st.every-(o.render||0))+'</b> oil of the dead · Reach <b>'+st.range.toFixed(1)+'</b>';
+  if(o.type==='trypot'){const d=blubberDue();
+    return 'Holds <b>'+(o.meas||0)+' of '+st.max+'</b> measures · the next is <b>'+Math.round((o.render||0)/st.every*100)+'%</b> rendered'
+      +'<br>Your lamps drink <b>'+d.lamps+'</b> a wave'+(d.lamps?(d.oil?' · <b>'+d.oil+'</b> will drink oil':' · all fed'):'')+' · Reach <b>'+st.range.toFixed(1)+'</b>';}
   if(o.type==='chime')return 'Damage <b>'+st.dmg+'</b> · Stun <b>'+st.stun.toFixed(1)+'s</b> · Range <b>'+st.range.toFixed(2)+'</b>';
   if(o.type==='censer')return 'Damage <b>'+st.dmg+'</b> · Splash <b>'+st.splash.toFixed(2)+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s'+(st.pool?' · Burning ground <b>'+st.pool.dps+' damage/s</b>':'');
   if(o.type==='trap')return 'Damage <b>'+st.dmg+'</b> · Holds <b>'+st.hold.toFixed(1)+'s</b> · Resets <b>'+st.reset.toFixed(1)+'s</b> · Catches unseen things, never fliers';
@@ -5139,10 +5198,12 @@ function renderPreview(){
   if(idx>=0)for(const raw of F.def.waves[idx]){const sg=scaledGroup(raw); groups[sg.type]=(groups[sg.type]||0)+sg.count;}
   /* the card the dark drew for that wave, by name */
   const wn=idx>=0&&F.def.wnames?F.def.wnames[idx]:'';
-  const key=label+'|'+wn+'|'+JSON.stringify(groups);
+  /* the Whaler sees what the next wave will cost before calling it */
+  const due=idx>=0?blubberDue():null, drink=due&&due.lamps?'<span class="pv-oil'+(due.oil?'':' is-fed')+'">Lamps drink '+due.lamps+(due.oil?' · −'+due.oil+' oil':' · fed')+'</span>':'';
+  const key=label+'|'+wn+'|'+drink+'|'+JSON.stringify(groups);
   if(key===previewKey)return; previewKey=key;
   const el=$('#preview');
-  el.innerHTML='<span class="pl">'+label+'</span>'+(wn?'<span class="pv-n">'+wn+'</span>':'')+Object.keys(groups).map(k=>'<span class="chip" title="'+FOES[k].n+'"><canvas width="44" height="44" data-f="'+k+'"></canvas>×'+groups[k]+'</span>').join('');
+  el.innerHTML='<span class="pl">'+label+'</span>'+(wn?'<span class="pv-n">'+wn+'</span>':'')+drink+Object.keys(groups).map(k=>'<span class="chip" title="'+FOES[k].n+'"><canvas width="44" height="44" data-f="'+k+'"></canvas>×'+groups[k]+'</span>').join('');
   el.querySelectorAll('canvas').forEach(c=>drawIcon(c,{kind:'foe',type:c.dataset.f}));
 }
 /* the rites you hold, plus the wisp on floors that fork (it is never a gift) */
