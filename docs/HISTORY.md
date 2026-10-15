@@ -4,6 +4,8 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **Wave decks** (#27). Each floor now draws its waves from a deck, so no two descents meet the same dark: every wave slot has today's wave plus one or two other cards of about the same weight, built from the creatures that floor already has. Waves with a boss or the Choirmaster keep their place, and floor 5 always brings a Behemoth. The draw is saved with the run; an old save plays the classic waves. The "Next wave" strip names the wave, a tip and a rules line teach it, and `docs/DESIGN.md` lists every card. (Claude, after Jules's run on #27 ended in an error)
+
 ---
 
 ## v16.0 — Kits that differ, part one
