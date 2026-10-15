@@ -2,7 +2,7 @@
 // Step 1 (here): load the game in a headless browser and dump its data tables to .build/data.json.
 // Step 2: tools/gen_design.py turns that JSON into docs/DESIGN.md.   Run both with: npm run design
 const {chromium}=require('playwright'), fs=require('fs'), path=require('path'), {spawnSync}=require('child_process');
-const NAMES='FOES SPAWNABLE WARDS BASE_WARDS GIFT_WARDS HORRORS TREES TARGETS RITES RELICS KITS OMENS ROOMS PACTS HALL DEPTHS EVENTS FLOORS COUNT_MUL GAP_MUL DELAY_MUL TIERNAMES BOSS_INTRO BIG_INTRO'.split(' ');
+const NAMES='FOES SPAWNABLE WARDS BASE_WARDS GIFT_WARDS KIT_WARDS LEAP GLINT_R GLINT_T GLINT_MAX KINDLE_T KINDLE_R KINDLE_DPS KINDLE_RUN HORRORS TREES TARGETS RITES RELICS KITS OMENS ROOMS PACTS HALL DEPTHS EVENTS FLOORS COUNT_MUL GAP_MUL DELAY_MUL TIERNAMES BOSS_INTRO BIG_INTRO'.split(' ');
 (async()=>{
   let s=fs.readFileSync(path.join(__dirname,'..','index.html'),'utf8');
   const dump='window.__d={};'+NAMES.map(n=>`try{window.__d.${n}=${n}}catch(e){}`).join('');

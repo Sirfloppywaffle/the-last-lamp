@@ -62,6 +62,12 @@ w("\n## Kits\n\n| Key | Name | Wards | Rites | Starts with | Unlock | Perk |\n|-
 for k,v in D['KITS'].items():
     w("| `%s` | %s | %s | %s | %s | %s | %s |"%(k,v['n'],', '.join(v['wards']),', '.join(v['rites']),', '.join('%s×%s'%(a,b) for a,b in v['roster'].items()) or '—',('Ember Hall (`%s`)'%v['lock']) if v.get('lock') else 'open',esc(v['d'])))
 
+if D.get('KIT_WARDS'):
+    w("\n### Kit wards\n\nA kit's own version of a ward. Underneath it is the same ward (same key, cost, branches, relics and omens); only its name and its twist differ.\n\n| Kit | Replaces | Name | What it does |\n|---|---|---|---|")
+    for kk,ws in D['KIT_WARDS'].items():
+        for wk,v in ws.items(): w("| `%s` | `%s` | %s | %s |"%(kk,wk,esc(v['n']),esc(v['d'])))
+    w("\nNumbers: Signal Candle light leaps **%s** tiles. A flare bolt lights **%s** tiles for **%ss** (at most %s at once). Kindle burns **%ss**, lights **%s** tiles, deals **%s** damage a second, and the creature moves **×%s** (bosses don't hurry)."%(D['LEAP'],D['GLINT_R'],D['GLINT_T'],D['GLINT_MAX'],D['KINDLE_T'],D['KINDLE_R'],D['KINDLE_DPS'],D['KINDLE_RUN']))
+
 w("\n## Relics\n\n| Key | Name | Cursed | Pack | Effect |\n|---|---|---|---|---|")
 for k,v in D['RELICS'].items(): w("| `%s` | %s | %s | %s | %s |"%(k,esc(v['n']),'yes' if v.get('curse') else '',v.get('pack','base'),esc(v['d'])))
 
