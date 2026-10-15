@@ -12,6 +12,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
   - **Relics**: every relic found, with the ones you carry marked.
 
   What you've met is remembered across runs. A player from before this version starts with every creature from the floors they reached. (Claude)
+- **The plan for runs that differ** (design only): kit variants, wave decks, patrons, Heralds, deeds and dev-mode unlocks, in `expansion/BRAINSTORM.md` §13. Two new rules in `AGENTS.md`: teach every change, and developer mode never saves unlocks. (Criss, Claude)
 ---
 
 ## v15.5 — The walkthrough
