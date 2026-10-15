@@ -158,16 +158,44 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `bell` | Drowning Bell | 34s | Every creature on the floor takes 25 damage, lit or not. |
 | `wisp` | Will-o’-Wisp | 30s | Tap a way at a fork. For 8 seconds, everything that reaches the fork follows the wisp, whatever it wants. Bosses ignore it. |
 | `name` | Name the Thing | once per floor | Once per floor. Tap a visible creature and its whole kind takes 60% more damage until the floor ends. |
+| `kindle` | Kindle | 30s | Tap a creature you can see. It burns for 8 seconds: it lights the dark around it, wakes your wards there, and takes fire damage, but it runs faster. Bosses burn without running. |
 
 ## Kits
 
 | Key | Name | Wards | Rites | Starts with | Unlock | Perk |
 |---|---|---|---|---|---|---|
-| `lamplighter` | The Lamplighter | candle, harpoon, salt, chime, trap, tithe | flare, pillar | — | open | Candles cost 20 and shine half a tile further, and the lamp burns half a tile wider. |
+| `lamplighter` | The Lamplighter | candle, harpoon, salt, chime, trap, tithe | kindle, pillar | — | open | Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. |
 | `whaler` | The Whaler | candle, harpoon, salt, trap, lance | flare, bell | — | open | Harpoons and Whaling Guns deal 20% more damage. Starts with the Whaling Gun. |
 | `occultist` | The Occultist | candle, harpoon, effigy, tithe, chime | flare, name | watcher×1, gnasher×1 | open | Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness. |
 | `galvanist` | The Galvanist | candle, harpoon, salt, coil, chime | flare, pillar | — | Ember Hall (`kit_galvanist`) | Lightning leaps to one more creature, and salt costs 15. Starts with the Galvanic Coil. |
 | `bellringer` | The Bellringer | candle, harpoon, chime, censer, trap | flare, bell | — | Ember Hall (`kit_bellringer`) | Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell. |
+
+### Kit wards
+
+A kit's own version of a ward. Underneath it is the same ward (same key, cost, branches, relics and omens); only its name and its twist differ.
+
+| Kit | Replaces | Name | What it does |
+|---|---|---|---|
+| `lamplighter` | `candle` | Signal Candle | Casts light, unveils Shades, and slows what walks in it. Its light leaps up to 4 tiles to another Signal Candle, even across the dark. |
+| `lamplighter` | `harpoon` | Flare Harpoon | Fires barbed bolts at a single creature. Each bolt flares where it strikes, lighting what stands near it for a moment. |
+
+**Signal Candle (`lamplighter`, replaces candle)**
+
+| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
+|---|---|---|---|
+| Glow | 15 — +0.5 light | 25 — +0.5 light | 50 — Beacon: wards in its light deal 20% more damage |
+| Signal | 15 — Its light leaps 1 tile further | 25 — Leaps 1 tile further again | 50 — Fire Thread: anything that crosses its threads catches fire |
+| Ember | 15 — Burns 3 damage a second in its light | 25 — Burns 6 damage a second | 50 — Pyre: anything dying in its light bursts for 12 damage |
+
+**Flare Harpoon (`lamplighter`, replaces harpoon)**
+
+| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
+|---|---|---|---|
+| Speed | 35 — Reload 25% faster | 50 — Reload 25% faster again | 120 — Twin Reel: two bolts per shot |
+| Strength | 35 — +6 damage | 55 — +8 damage | 130 — Piercing Barb: bolts pass through everything in a line |
+| Flare | 30 — Flares burn wider | 45 — Flares burn a second longer | 110 — Starshell: every fourth bolt lights a wide circle for 4 seconds |
+
+Numbers: Signal Candle light leaps **4** tiles. A flare bolt lights **1.3** tiles for **1.5s** (at most 8 at once); a Starshell lights **3** tiles for **4s**. A Fire Thread kindles what crosses it for **2s**. Kindle burns **8s**, lights **1.8** tiles, deals **5** damage a second, and the creature moves **×1.25** (bosses don't hurry).
 
 ## Relics
 

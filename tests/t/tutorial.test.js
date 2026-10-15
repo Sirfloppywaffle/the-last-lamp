@@ -48,6 +48,9 @@ const {chromium}=require('playwright');
     if(!/three branches/.test(await p.evaluate(()=>document.getElementById('coachText').textContent))||!await p.evaluate(()=>!document.getElementById('sheet').hidden))fail(tag+': tapping the ringed ward opens its branches '+JSON.stringify(c));
     await p.screenshot({path:(process.argv[3]||'.')+'/walk-branches-'+tag+'.png'});
     await btn(p,'Next'); await p.waitForTimeout(250);
+    /* the default kit is the Lamplighter, so its Signal Candles are taught here, at the start */
+    c=await coach(p); if(c.title!=='Signal Candles'||!c.tut.seen.includes('signal'))fail(tag+': then Signal Candles, counted as the tip '+JSON.stringify(c));
+    await btn(p,'Next'); await p.waitForTimeout(250);
     c=await coach(p); if(c.title!=='Rites')fail(tag+': then rites '+JSON.stringify(c));
     await btn(p,'Next'); await p.waitForTimeout(250);
     c=await coach(p); if(c.title!=='Call the dark')fail(tag+': then calling the dark '+JSON.stringify(c));
