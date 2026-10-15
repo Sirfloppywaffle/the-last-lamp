@@ -236,7 +236,7 @@ Three patrons of our own: **the Drowned Mother** (water, slow, oil), **the Wrong
 - **The price is Attention.** Each offering raises that patron's Attention. At thresholds the patron starts changing your floors: the Mother floods tiles, the Sun burns bright spots that unveil you to Stalkers, the Many-Mouthed sends its own creatures. **Your build changes what you face.**
 - **Conjunctions:** two patrons who have both noticed you can offer a combined offering.
 - **Kit offerings:** each patron has about 2 offerings per kit that twist that kit's own candle and harpoon. An offer of three holds at most one. Examples: *Drowned Mother × Whaler:* the Tether Harpoon drags its target into the deep, and kills leave a pool of oil. *Wrong Sun × Lamplighter:* Signal Candles jump further, but their light unveils you to Stalkers. *Many-Mouthed × Occultist:* a Corpse Candle lit where a horror died raises it for one wave. *Wrong Sun × Galvanist:* creatures stunned in the Arc Lamp's flare forget which way the fork goes. *Drowned Mother × Bellringer:* the Bell Candle's pulse slows everything on wet tiles.
-- Prototype **one patron first**, in `expansion/proto/`, per `expansion/README.md`.
+- Prototype **one patron first**. *Built (October 2026):* the Drowned Mother, woven into the game itself rather than `expansion/proto/`, since Criss wants to play changes in the real game. Her price is water on the path (Noticed 1, Watched 3, Claimed 5), and all ten offerings work through that water. The Wrong Sun and the Many-Mouthed, conjunctions, and kit offerings for the other three kits come after Criss has played her.
 
 ### 13.4 Relics while patrons are tested
 

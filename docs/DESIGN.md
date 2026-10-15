@@ -160,6 +160,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `wisp` | Will-o’-Wisp | 30s | Tap a way at a fork. For 8 seconds, everything that reaches the fork follows the wisp, whatever it wants. Bosses ignore it. |
 | `name` | Name the Thing | once per floor | Once per floor. Tap a visible creature and its whole kind takes 60% more damage until the floor ends. |
 | `kindle` | Kindle | 30s | Tap a creature you can see. It burns for 8 seconds: it lights the dark around it, wakes your wards there, and takes fire damage, but it runs faster. Bosses burn without running. |
+| `ebb` | The Ebb | 30s | The water draws back. Everything standing in it is dragged 2 tiles back down the path. Bosses and Behemoths hold their ground. |
 
 ## Kits
 
@@ -246,6 +247,33 @@ Numbers: Signal Candle light leaps **4** tiles. A flare bolt lights **1.3** tile
 | `eyes` | A Thousand Eyes | yes | relics_forbidden | Everything in light can be seen, veiled or not, but every madness threshold sits 2 lower. |
 
 **Resting while patrons are tested** (#29, `RELICS_RESTING`): Tallow of Saints, Whetted Barbs, Bounty of the Deep, Oil Reserve, Quiet Mind, Sealing Wax, Ossuary Key, Salt Flats, Thunder Marrow, Witch Salt, Leech Jar. They are never offered; a run that carries one keeps it.
+
+## Patrons
+
+At the landing the gift is a patron's offering instead, half the time; between waves one reaches out at **20%** of breaks (once a floor). Take one or refuse. Each gift is +1 Attention.
+
+**The Drowned Mother** (`mother`): She lies under all the water below the stair. She gives freely, and she remembers everything she gives.
+
+| Attention | Tier | What changes |
+|---|---|---|
+| 1 | Noticed | Water stands on the path of every floor. Its current carries creatures through it 30% faster. |
+| 3 | Watched | The water rises: as each wave begins, the flood creeps one tile further up the path. |
+| 5 | Claimed | Whatever walks in her water goes under. It cannot be seen or struck there unless something unveils it. |
+
+Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles; it rises to at most **14** tiles; "beside water" is within **1.5** tiles.
+
+| Key | Offering | Patron | Kit | Effect |
+|---|---|---|---|---|
+| `brine` | Brine Pools | mother |  | Your Salt Circles turn to brine. They no longer slow: each pool drags whatever wades into it a tile back, once. Bosses and Behemoths wade on. |
+| `undertow` | Undertow | mother |  | A harpoon bolt that strikes something standing in water holds it under for a second. A boss, for a moment. |
+| `hymn` | Hymn Under the Water | mother |  | Everything standing in water hears your Bone Chimes, wherever it is. Each ring strikes and stuns it too. |
+| `milk` | Her Milk | mother |  | What dies in water feeds the lamp: every 4 deaths there restore 1 oil. |
+| `cradle` | The Cradle | mother |  | Once, when a creature would put the lamp out, she catches it and leaves it 5 oil. Not a boss. When she does, her Attention rises by 2. |
+| `ebb` | The Ebb | mother |  | A new rite. The water draws back, and drags everything standing in it 2 tiles back down the path. Bosses and Behemoths hold their ground. |
+| `still` | Still Water | mother | lamplighter | Signal Candles that stand beside water pass their light to each other through it, however far apart. |
+| `drowned` | Drowned Flares | mother | lamplighter | A flare bolt that strikes something standing in water floats there, and burns three times as long. |
+| `deep` | Into the Deep | mother | whaler | Whatever is on your line cannot move while it stands in water, for up to 3 seconds a catch. Bosses and Behemoths still can. |
+| `fat` | Her Fat | mother | whaler | A Blubber Lamp that stands beside water drinks from it as a wave begins, not from your pots or your lamp. |
 
 ## Omens (on stair doors)
 
