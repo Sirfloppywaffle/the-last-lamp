@@ -258,7 +258,7 @@ Unlocks come from **how** you play, not only how much (the Ember Hall stays).
 - **Patrons:** the first meets you on your first descent; the others find you after you clear floor 3, then floor 5.
 - **Kit offerings** unlock as you play that kit.
 - A locked kit shows as a dark silhouette with its deed underneath.
-- **Open question for Criss:** the Whaler and Occultist are open today. Do existing saves keep them, or lock them so the deeds still count?
+- **Existing saves lock them too (Criss).** The Whaler and Occultist are open today; after this change every save, his included, earns them back through their deeds.
 - **Developer mode** shows every kit, patron, offering and Grimoire page while it's on, and **saves none of it**: turning it off puts real progress back exactly as it was. (Today's dev "Unlock everything" already only touches the current run, never `ll-meta`; keep it that way.)
 
 ### 13.7 Later
