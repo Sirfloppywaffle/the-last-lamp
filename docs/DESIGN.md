@@ -165,8 +165,8 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | Key | Name | Wards | Rites | Starts with | Unlock | Perk |
 |---|---|---|---|---|---|---|
 | `lamplighter` | The Lamplighter | candle, harpoon, salt, chime, trap, tithe | kindle, pillar | — | open | Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. |
-| `whaler` | The Whaler | candle, harpoon, salt, trap, lance | flare, bell | — | open | Harpoons and Whaling Guns deal 20% more damage. Starts with the Whaling Gun. |
-| `occultist` | The Occultist | candle, harpoon, effigy, tithe, chime | flare, name | watcher×1, gnasher×1 | open | Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness. |
+| `whaler` | The Whaler | candle, harpoon, salt, trap, lance | flare, bell | — | Ember Hall (`kit_whaler`) | Harpoons and Whaling Guns deal 20% more damage. Starts with the Whaling Gun. |
+| `occultist` | The Occultist | candle, harpoon, effigy, tithe, chime | flare, name | watcher×1, gnasher×1 | Ember Hall (`kit_occultist`) | Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness. |
 | `galvanist` | The Galvanist | candle, harpoon, salt, coil, chime | flare, pillar | — | Ember Hall (`kit_galvanist`) | Lightning leaps to one more creature, and salt costs 15. Starts with the Galvanic Coil. |
 | `bellringer` | The Bellringer | candle, harpoon, chime, censer, trap | flare, bell | — | Ember Hall (`kit_bellringer`) | Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell. |
 
@@ -325,52 +325,76 @@ Numbers: Signal Candle light leaps **4** tiles. A flare bolt lights **1.3** tile
 
 ## Floors and waves (base counts, before `COUNT_MUL`)
 
+Each floor draws one card per wave slot when it begins: the classic wave (listed first, with its name) or one of the alternatives under it. A **fixed** wave (a boss or the Choirmaster) always keeps its slot. The draw is saved with the run.
+
 ### 1. The Cistern
 
 Stipend **130** essence · 1 gate · hue 188
 
-- Wave 1: 8× Crawler
-- Wave 2: 8× Crawler + 6× Skitterling
-- Wave 3: 10× Crawler + 2× Gnasher
-- Wave 4: 10× Skitterling + 8× Crawler + 2× Watcher + 1× Gnasher
+- Wave 1 · *The first crawl*: 8× Crawler
+  - or *A trickle*: 5× Crawler + 4× Skitterling
+- Wave 2 · *Crawl and skitter*: 8× Crawler + 6× Skitterling
+  - or *The skittering*: 14× Skitterling + 3× Crawler
+- Wave 3 · *Teeth*: 10× Crawler + 2× Gnasher
+  - or *Two mouths*: 3× Gnasher + 6× Crawler
+  - or *Eyes above*: 3× Watcher + 8× Crawler + 4× Skitterling
+- Wave 4 · *Everything wakes*: 10× Skitterling + 8× Crawler + 2× Watcher + 1× Gnasher
+  - or *The flood*: 16× Crawler + 1× Gnasher
+  - or *Gnawing*: 5× Gnasher + 4× Skitterling
 
 ### 2. The Ossuary
 
 Stipend **110** essence · 1 gate · 1 fork · hue 36
 
-- Wave 1: 10× Crawler + 3× Shade
-- Wave 2: 14× Skitterling + 3× Watcher
-- Wave 3: 5× Ichor Wretch + 8× Crawler
-- Wave 4: 7× Shade + 3× Gnasher + 6× Crawler
-- Wave 5: 2× Shrieker + 12× Crawler + 8× Skitterling + 3× Ichor Wretch
+- Wave 1 · *Pale shapes*: 10× Crawler + 3× Shade
+  - or *The pale ones*: 7× Shade + 5× Crawler
+- Wave 2 · *Wings in the bone*: 14× Skitterling + 3× Watcher
+  - or *Rattle*: 10× Crawler + 4× Skitterling
+- Wave 3 · *Burst*: 5× Ichor Wretch + 8× Crawler
+  - or *Brood*: 7× Ichor Wretch + 3× Shade
+- Wave 4 · *Teeth in the dark*: 7× Shade + 3× Gnasher + 6× Crawler
+  - or *Gnashing dark*: 5× Gnasher + 3× Shade + 4× Crawler
+- Wave 5 · *The screaming*: 2× Shrieker + 12× Crawler + 8× Skitterling + 3× Ichor Wretch
+  - or *Choir of screams*: 4× Shrieker + 10× Crawler + 6× Shade
 
 ### 3. The Drowned Nave
 
 Stipend **120** essence · 2 gates · 1 fork · hue 205
 
-- Wave 1: 9× Crawler + 9× Crawler
-- Wave 2: 12× Skitterling + 6× Shade + 3× Watcher
-- Wave 3: 4× Gnasher + 4× Ichor Wretch + 2× Shrieker
-- Wave 4: 8× Shade + 14× Crawler + 3× Gnasher
-- Wave 5: 1× Drowned Choirmaster + 10× Crawler + 10× Skitterling + 2× Shrieker
+- Wave 1 · *Twin tides*: 9× Crawler + 9× Crawler
+  - or *Tide and shadow*: 10× Crawler + 4× Shade + 6× Skitterling
+- Wave 2 · *Veil and vigil*: 12× Skitterling + 6× Shade + 3× Watcher
+  - or *Watchers’ vigil*: 6× Watcher + 8× Crawler
+- Wave 3 · *Drowned teeth*: 4× Gnasher + 4× Ichor Wretch + 2× Shrieker
+  - or *Drowned shriek*: 3× Shrieker + 10× Crawler + 3× Gnasher
+- Wave 4 · *Black water*: 8× Shade + 14× Crawler + 3× Gnasher
+  - or *Veils*: 12× Shade + 4× Ichor Wretch + 6× Crawler
+- Wave 5 · *The Choirmaster*: 1× Drowned Choirmaster + 10× Crawler + 10× Skitterling + 2× Shrieker **(fixed)**
 
 ### 4. The Throat
 
 Stipend **130** essence · 1 gate · hue 358
 
-- Wave 1: 14× Crawler + 6× Shade + 3× Gnasher
-- Wave 2: 6× Ichor Wretch + 3× Shrieker + 4× Watcher + 14× Skitterling
-- Wave 3: 1× The Keeper Below + 10× Crawler + 4× Gnasher
+- Wave 1 · *Swallowed*: 14× Crawler + 6× Shade + 3× Gnasher
+  - or *Eyes in the gullet*: 5× Watcher + 10× Crawler + 5× Shade + 1× Gnasher
+  - or *The gullet*: 4× Gnasher + 10× Crawler + 4× Shade
+- Wave 2 · *Bile and wings*: 6× Ichor Wretch + 3× Shrieker + 4× Watcher + 14× Skitterling
+  - or *Peristalsis*: 18× Crawler + 4× Shrieker + 2× Gnasher
+  - or *Bile*: 8× Ichor Wretch + 3× Shade + 8× Skitterling
+- Wave 3 · *The Keeper Below*: 1× The Keeper Below + 10× Crawler + 4× Gnasher **(fixed)**
 
 ### 5. The Abyssal Heart
 
 Stipend **200** essence · 3 gates · hue 275
 
-- Wave 1: 4× Ichor Wretch + 4× Abyssal Stalker + 8× Crawler
-- Wave 2: 1× Trench Behemoth + 14× Skitterling + 6× Shade
-- Wave 3: 1× Drowned Choirmaster + 10× Abyssal Stalker + 3× Shrieker + 8× Crawler
-- Wave 4: 2× Trench Behemoth + 12× Crawler + 4× Watcher + 5× Abyssal Stalker
-- Wave 5: 1× The Primordial + 10× Abyssal Stalker + 6× Ichor Wretch + 1× Trench Behemoth
+- Wave 1 · *The hunt begins*: 4× Ichor Wretch + 4× Abyssal Stalker + 8× Crawler
+  - or *Hunters*: 4× Abyssal Stalker + 3× Abyssal Stalker + 6× Crawler + 3× Shade + 2× Gnasher
+- Wave 2 · *Something heavy*: 1× Trench Behemoth + 14× Skitterling + 6× Shade
+  - or *The weight below*: 1× Trench Behemoth + 8× Crawler + 3× Ichor Wretch
+- Wave 3 · *The Choirmaster*: 1× Drowned Choirmaster + 10× Abyssal Stalker + 3× Shrieker + 8× Crawler **(fixed)**
+- Wave 4 · *Leviathans*: 2× Trench Behemoth + 12× Crawler + 4× Watcher + 5× Abyssal Stalker
+  - or *Leviathan’s wake*: 1× Trench Behemoth + 1× Trench Behemoth + 8× Abyssal Stalker + 4× Shrieker + 6× Crawler
+- Wave 5 · *The Primordial*: 1× The Primordial + 10× Abyssal Stalker + 6× Ichor Wretch + 1× Trench Behemoth **(fixed)**
 
 Boss entrances: The Keeper Below (boss): “It has waited a long time for your light”; The Primordial (boss2): “It was here before the dark had a name”.
 

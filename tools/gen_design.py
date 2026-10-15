@@ -97,12 +97,19 @@ w("\n## Ember Hall\n\n| Key | Unlock | Cost | Effect |\n|---|---|---|---|")
 for h in D['HALL']: w("| `%s` | %s | %s | %s |"%(h['k'],h['n'],h['cost'],esc(h['d'])))
 
 w("\n## Floors and waves (base counts, before `COUNT_MUL`)\n")
+w("Each floor draws one card per wave slot when it begins: the classic wave (listed first, with its name) or one of the alternatives under it. A **fixed** wave (a boss or the Choirmaster) always keeps its slot. The draw is saved with the run.\n")
 for i,f in enumerate(D['FLOORS']):
     w("### %d. %s\n"%(i+1,f['name']))
     nf=len(f.get('forks',[]))
     w("Stipend **%s** essence · %d gate%s%s · hue %s\n"%(f['stipend'],len(f['paths']),'s' if len(f['paths'])>1 else '',(' · %d fork%s'%(nf,'s' if nf>1 else '')) if nf else '',f.get('hue')))
+    names=(D.get('WAVE_NAMES') or [[]]*99)[i]
+    deck=(D.get('DECKS') or [[]]*99)[i]
+    grp=lambda wave:' + '.join('%s× %s'%(g[1],D['FOES'][g[0]]['n']) for g in wave)
+    fixed=lambda wave:any(g[0] in ('boss','boss2','elite') for g in wave)
     for k,wave in enumerate(f['waves']):
-        w("- Wave %d: %s"%(k+1,' + '.join('%s× %s'%(g[1],D['FOES'][g[0]]['n']) for g in wave)))
+        w("- Wave %d%s: %s%s"%(k+1,(' · *%s*'%names[k]) if k<len(names) else '',grp(wave),' **(fixed)**' if fixed(wave) else ''))
+        for c in deck:
+            if k in c['at']: w("  - or *%s*: %s"%(c['n'],grp(c['w'])))
     w("")
 w("Boss entrances: %s.\n"%('; '.join('%s (%s): “%s”'%(v['name'],k,v['sub']) for k,v in D['BOSS_INTRO'].items())))
 open(sys.argv[2],'w').write('\n'.join(L)+'\n')
