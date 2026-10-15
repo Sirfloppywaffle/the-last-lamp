@@ -128,6 +128,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     out.wh.light=+(T.wstat(wc).light-2.3).toFixed(2);
     // Blubber Lamps cost 1 oil a wave with no pot
     T.run.oil=T.run.oilMax=20; T.startWave(); out.wh.toll=20-T.run.oil;
+    // every lamp drinks: three lamps with no pot cost 3
+    {const extra=tiles().filter(([c,r])=>T.placeProblem({kind:'ward',type:'candle'},c,r)==='').slice(0,2); extra.forEach(([c,r])=>placeAt('candle',c,r)); T.update(1/30);
+     T.F.phase='build'; T.run.oil=20; out.wh.due=T.blubberDue(); T.startWave(); out.wh.toll3=20-T.run.oil;}
     // a Try-pot renders the dead: 6 Gnashers (2 oil each) make one measure, which feeds the next wave
     setup('whaler'); T.run.oil=T.run.oilMax=20;
     placeAt('candle',edge[0],edge[1]); T.update(1/30);
@@ -138,8 +141,10 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     out.wh.meas=pot.meas||0;
     T.startWave(); out.wh.fed={oil:T.run.oil, meas:pot.meas};
     // a full pot pours into the lamp
-    pot.meas=3; T.run.oil=10; for(let i=0;i<6;i++){const g=T.spawnFoe('gnasher',0,pd); g.x=pot.x+.3; g.y=pot.y; T.hurt(g,1e6);}
+    pot.meas=4; T.run.oil=10; for(let i=0;i<6;i++){const g=T.spawnFoe('gnasher',0,pd); g.x=pot.x+.3; g.y=pot.y; T.hurt(g,1e6);}
     out.wh.pour=T.run.oil;
+    // what is left when the floor ends pours in
+    pot.meas=3; T.run.oil=10; out.wh.endPour=[T.potsPour(),T.run.oil,pot.meas];
     // the Try-pot never turns up as a gift or in other kits
     setup('lamplighter'); out.wh.lampHasPot=T.run.wards.includes('trypot');
 
@@ -154,6 +159,20 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       e.stunT=0; const d0=e.d; for(let k=0;k<30;k++)T.update(1/30);
       return {held:!!e.tetherBy, t:+(e.tetherT||0).toFixed(1), speed:+((e.d-d0)/(e.def.spd*1)).toFixed(2), d:+e.d.toFixed(2), d0:+d0.toFixed(2)};};
     out.teth=tetherRun('whaler',0); out.tethLamp=tetherRun('lamplighter',0);
+    // the line lets go when the harpoon fires at something else, even if that bolt never lands
+    {setup('whaler'); wave();
+     const P=T.F.paths[0]; let d=P.len-3; for(;d>0;d-=.25){const q=T.posAt(P,d); if(Math.hypot(q[0]-T.F.lx,q[1]-T.F.ly)>2.2)break;}
+     const q=T.posAt(P,d);
+     const hs=tiles().filter(([c,r])=>T.placeProblem({kind:'ward',type:'harpoon'},c,r)==='').sort((a,b)=>Math.hypot(a[0]+.5-q[0],a[1]+.5-q[1])-Math.hypot(b[0]+.5-q[0],b[1]+.5-q[1]))[0];
+     const h=placeAt('harpoon',hs[0],hs[1]);
+     const a=T.spawnFoe('gnasher',0,d); a.hp=a.max=1e6; a.stunT=99;
+     for(let k=0;k<60;k++)T.update(1/30);
+     const heldA=a.tetherBy===h;
+     // a creature it prefers turns up; its first bolt at it is in the air
+     h.tgt='strong'; const b=T.spawnFoe('behemoth',0,d+.2); b.hp=b.max=1e7; b.stunT=99; h.cd=0;
+     T.update(1/30); const firedAtB=T.F.shots.some(x=>x.tg===b);
+     b.dead=true; T.update(1/30); T.update(1/30);
+     out.release={heldA, firedAtB, aFree:a.tetherBy==null, hHolds:h.tethered?h.tethered.type:null};}
     // Reel In: held 5 seconds without moving, the catch is hauled back a tile
     {setup('whaler'); wave();
      const P=T.F.paths[0]; let d=P.len-3; for(;d>0;d-=.25){const q=T.posAt(P,d); if(Math.hypot(q[0]-T.F.lx,q[1]-T.F.ly)>2.2)break;}
@@ -218,12 +237,15 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(r.wh.names.join()==='Blubber Lamp,Tether Harpoon'&&/trypot/.test(r.wh.wards),'the Whaler builds Blubber Lamps, Tether Harpoons and the Try-pot',r.wh);
   ok(r.wh.trees.join()==='Reek,Line','the Whaler wards have their own branches',r.wh.trees);
   ok(r.wh.light===.8,'a Blubber Lamp burns 0.8 wider',r.wh.light);
-  ok(r.wh.toll===1,'Blubber Lamps cost 1 oil a wave with no pot',r.wh.toll);
-  ok(r.wh.meas===1&&r.wh.fed.oil===20&&r.wh.fed.meas===0,'a pot renders the dead into a measure, which feeds the lamps',[r.wh.meas,r.wh.fed]);
-  ok(r.wh.pour===11,'a full pot pours 1 oil into the lamp',r.wh.pour);
+  ok(r.wh.toll===1,'one Blubber Lamp drinks 1 oil a wave with no pot',r.wh.toll);
+  ok(r.wh.toll3===3&&r.wh.due.lamps===3,'every Blubber Lamp drinks: three cost 3',[r.wh.toll3,r.wh.due]);
+  ok(r.wh.meas===2&&r.wh.fed.oil===20&&r.wh.fed.meas===1,'six Gnashers render two measures, and one feeds the lamp',[r.wh.meas,r.wh.fed]);
+  ok(r.wh.pour===12,'a full pot pours its overflow into the lamp',r.wh.pour);
+  ok(r.wh.endPour.join()==='3,13,0','what is left at the floor end pours in',r.wh.endPour);
   ok(!r.wh.lampHasPot,'other kits have no Try-pot');
   ok(r.teth.held&&r.teth.speed<.75,'the line holds and slows its catch',r.teth);
   ok(!r.tethLamp.held&&r.tethLamp.speed>.95,'plain harpoons hold nothing',r.tethLamp);
+  ok(r.release.heldA&&r.release.firedAtB&&r.release.aFree,'the line lets go as soon as the harpoon fires at another',r.release);
   ok(r.tethHaul.held&&r.tethHaul.back>=.9,'Reel In hauls its catch back a tile',r.tethHaul);
   ok(r.reek.inLight===4&&r.reek.after>3.9&&r.reek.s>0,'Reek keeps slowing a creature after it leaves the light',r.reek);
   ok(r.lure.plain===0&&r.lure.lured===1&&r.lure.boss===0,'Lure draws the crowd down the way it lights, never a boss',[r.lure,r.lureGap]);

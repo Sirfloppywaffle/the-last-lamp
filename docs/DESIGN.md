@@ -54,7 +54,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `censer` | Tar Censer | 70 | beside path | Lobs burning pitch that splashes a cluster. It hits whatever it lands on, lit or not. *(aimed: First/Last/Strongest)* |
 | `coil` | Galvanic Coil | 75 | beside path | Throws lightning that leaps from creature to creature. Brine conducts: anything standing in salt takes double. *(aimed: First/Last/Strongest)* |
 | `lance` | Whaling Gun | 90 | beside path | A slow, enormous harpoon. Double damage to heavy creatures, elites and bosses. *(aimed: First/Last/Strongest)* |
-| `trypot` | Try-pot | 45 | beside path | An iron rendering pot over a fire. Everything that dies near it gives up the oil it would have drained, and every 12 makes a measure of whale oil. A measure feeds your Blubber Lamps when a wave begins. When the pot is full, it pours into the lamp. |
+| `trypot` | Try-pot | 30 | beside path | An iron pot that renders the dead into whale oil. Build it where things die. Each Blubber Lamp drinks a measure from it as a wave begins. A full pot pours into the lamp, and whatever is left when the floor ends pours in too. |
 | `weir` | Weir | 45 | path | A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it. |
 
 ### Upgrade trees (cost per tier; tier 3 is the capstone)
@@ -179,7 +179,7 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 |---|---|---|---|
 | `lamplighter` | `candle` | Signal Candle | Casts light, unveils Shades, and slows what walks in it. Its light leaps up to 4 tiles to another Signal Candle, even across the dark. |
 | `lamplighter` | `harpoon` | Flare Harpoon | Fires barbed bolts at a single creature. Each bolt flares where it strikes, lighting what stands near it for a moment. |
-| `whaler` | `candle` | Blubber Lamp | A lamp of rendered fat. It burns almost a tile wider than a candle, but while any stands, the lamp loses 1 oil as each wave begins, unless a Try-pot feeds it. |
+| `whaler` | `candle` | Blubber Lamp | A lamp of rendered fat. It burns almost a tile wider than a candle, but it drinks: as each wave begins, every Blubber Lamp takes a measure from a Try-pot, or 1 oil from the lamp if the pots are dry. |
 | `whaler` | `harpoon` | Tether Harpoon | Fires barbed bolts on a line. The line holds what it strikes and slows it more the longer it holds, until the harpoon fires at something else. |
 
 **Signal Candle (`lamplighter`, replaces candle)**
@@ -214,7 +214,7 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | Strength | 35 — +6 damage | 55 — +8 damage | 130 — Piercing Barb: bolts pass through everything in a line |
 | Line | 30 — The line slows by up to 55% | 45 — The line holds a tile further out | 110 — Reel In: every 4 seconds the line hauls its catch a tile back |
 
-Whaler numbers: a Blubber Lamp burns **+0.8** light; while any stands, each wave costs 1 oil unless a Try-pot has a measure. The Try-pot reaches **2.2** tiles; each death gives up its oil value (at most 12); every **12** makes a measure; it holds **3**, and a full pot pours 1 oil into the lamp instead. The line slows by **0.12** a second held, up to **40**%; Reel In hauls back 1 tile every **4s**.
+Whaler numbers: a Blubber Lamp burns **+0.8** light; while any stands, each wave costs 1 oil unless a Try-pot has a measure. The Try-pot reaches **2.4** tiles; each death gives up its oil value (at most 6); every **6** makes a measure; it holds **4**, and a full pot pours 1 oil into the lamp instead. The line slows by **0.12** a second held, up to **40**%; Reel In hauls back 1 tile every **4s**.
 
 Numbers: Signal Candle light leaps **4** tiles. A flare bolt lights **1.3** tiles for **1.5s** (at most 8 at once); a Starshell lights **3** tiles for **4s**. A Fire Thread kindles what crosses it for **2s**. Kindle burns **8s**, lights **1.8** tiles, deals **5** damage a second, and the creature moves **×1.25** (bosses don't hurry).
 
