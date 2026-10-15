@@ -190,3 +190,95 @@ What's in it:
 > "The path was working as intended with the abilities to swap the accessible pathways. It made the game feel more interesting allowing the user to try different strategies and keep them more engaged."
 
 Forked stairs graduate into the game (floors 2 and 3, the Weir, instincts, Wretch splits). Still open from §10: **Will-o'-Wisp** (mid-wave rite), **door previews** of the stair's shape, and the gambling pick, **Knucklebones**.
+
+---
+
+## 13. Runs that differ (October 2026, Criss and Claude)
+
+**Criss's problem:** runs don't feel different enough. Beating the five floors unlocks more, but it's the same floors and waves; the kits differ only by small perks; relics, omens and doors change numbers more than how you play.
+
+**Diagnosis (agreed):**
+1. **Every kit is the same kit.** Candle, Harpoon and Flare are in all five. You rebuild every floor, so the arsenal *is* the build.
+2. **What you face is a fixed script.** 22 known waves in a known order. Omens and depths change the numbers on the same test.
+3. **Rewards change numbers, not actions.** Most relics are "X deals 30% more".
+
+**Pushback Criss accepted:** more waves would make runs longer, not more varied (draw from a bigger pool instead); a fixed mid-floor mini-boss is just another script (Heralds are random and each breaks a rule); boons that only add a percentage repeat the relic problem (every offering changes an action, and has a price).
+
+### 13.1 Kit variants (build first)
+
+Every kit keeps both roles, but swaps the base Candle and Harpoon for **its own version**. Criss prefers this to taking wards away. The narrow-arsenal idea (e.g. an Occultist with no candles at all) becomes a **dev-mode test toggle**.
+
+| Kit | Its candle | Its harpoon |
+|---|---|---|
+| Lamplighter | **Signal Candle**: its light jumps to any other Signal Candle within 4 tiles, so you don't need a chain | **Flare Bolt**: briefly lights and unveils wherever it hits |
+| Whaler | **Blubber Lamp**: wide light, but it burns oil each wave unless the Try-pot feeds it | **Tether Harpoon**: the line slows its target more the longer it holds |
+| Occultist | **Corpse Candle**: free, can only be lit where something died, and burns out after the wave | **Bone Spear**: hits harder the higher your madness |
+| Galvanist | **Arc Lamp**: its light flickers, and anything in it when it flares takes a shock | **Lightning Rod**: the bolt stays planted, and coils arc through it |
+| Bellringer | **Bell Candle**: its light pulses with each chime, and Shades show on the pulse | **Clapper Harpoon**: knocks its target back along the path |
+
+Each kit also gets one **rule-breaking passive** and one **unique rite or ward** in place of today's percentage perks:
+- **Lamplighter:** rite *Kindle*: set a creature alight; it becomes a moving light your wards can use.
+- **Whaler:** ward *Try-pot*: renders heavy kills into oil (whale oil is lamp oil).
+- **Occultist:** madness tiers strengthen your horrors instead of only punishing you. Rite *Unbind*: send a horror charging down the stair, then it's gone.
+- **Galvanist:** wards linked by salt share charge. Rite *Arc Lamp*: the lamp itself fires lightning, paid in oil.
+- **Bellringer:** chimes work while dark (sound needs no light). The price: Shades and Stalkers hunt the noise.
+
+### 13.2 Wave decks
+
+Each floor gets a pool of about 9 wave cards; a run draws 4–5. During the break, the **next card is shown on the banner** (Into the Breach style), so the randomness is always readable. The boss wave stays fixed at the end. Existing creatures only at first.
+
+### 13.3 Patrons (the Hades layer, made our own)
+
+Three patrons of our own: **the Drowned Mother** (water, slow, oil), **the Wrong Sun** (alien light), **the Many-Mouthed** (madness, horrors). A fourth later if three isn't enough.
+
+- **Where offerings come from:** at the landing, the gift step is a normal gift or a patron's offering, **50/50**, so runs stay the same length. At about **20% of wave breaks** a patron also reaches out mid-floor: three offerings, take one or refuse (free for now).
+- **Offerings change actions, not numbers.** Examples: *Drowned Mother:* salt becomes brine pools that pull creatures back. *Wrong Sun:* candles burn a colour that hurts what stands in it, but your wards in it fire slower. *Many-Mouthed:* each madness tier lets you field one more horror for free.
+- **The price is Attention.** Each offering raises that patron's Attention. At thresholds the patron starts changing your floors: the Mother floods tiles, the Sun burns bright spots that unveil you to Stalkers, the Many-Mouthed sends its own creatures. **Your build changes what you face.**
+- **Conjunctions:** two patrons who have both noticed you can offer a combined offering.
+- **Kit offerings:** each patron has about 2 offerings per kit that twist that kit's own candle and harpoon. An offer of three holds at most one. Examples: *Drowned Mother × Whaler:* the Tether Harpoon drags its target into the deep, and kills leave a pool of oil. *Wrong Sun × Lamplighter:* Signal Candles jump further, but their light unveils you to Stalkers. *Many-Mouthed × Occultist:* a Corpse Candle lit where a horror died raises it for one wave. *Wrong Sun × Galvanist:* creatures stunned in the Arc Lamp's flare forget which way the fork goes. *Drowned Mother × Bellringer:* the Bell Candle's pulse slows everything on wet tiles.
+- Prototype **one patron first**, in `expansion/proto/`, per `expansion/README.md`.
+
+### 13.4 Relics while patrons are tested
+
+Behind one switch, the **number-only relics leave the pool** (they are not deleted): Tallow of Saints, Whetted Barbs, Bounty of the Deep, Oil Reserve, Quiet Mind, Sealing Wax, Ossuary Key, Salt Flats, Thunder Marrow, Witch Salt, Leech Jar.
+**Kept** (they change rules): Mourning Veil, Drowned Compass, Binder's Thread, Brined Ledger, Second Shadow, Black Wick, Glass Lantern, and the four Forbidden relics. Relics already in a saved run keep working. Once patrons settle, the pulled relics come back as merchant stock or patron rewards.
+
+### 13.5 Heralds (mini-bosses)
+
+Each floor has a pool of 3 Heralds; one arrives in a random wave, named during the break before. A Herald drains heavy oil (about 8) but **does not** end the run; bosses stay the only all-or-nothing threat. Killing it earns a patron offering or a relic. Reuses the boss intro.
+- **The Last Keeper:** a dead lamp-tender whose lamp snuffs your candles as it walks.
+- **The Tithe-taker:** steals essence while it lives.
+- **The Bellfather:** each toll stuns your wards in a ring around it.
+
+### 13.6 Unlocks, deeds and developer mode
+
+Unlocks come from **how** you play, not only how much (the Ember Hall stays).
+- **Open from the start:** the Lamplighter only.
+- **Whaler:** kill a Trench Behemoth with harpoons alone. **Occultist:** have 3 horrors bound at once. **Galvanist, Bellringer:** Ember Hall, as now.
+- **Patrons:** the first meets you on your first descent; the others find you after you clear floor 3, then floor 5.
+- **Kit offerings** unlock as you play that kit.
+- A locked kit shows as a dark silhouette with its deed underneath.
+- **Existing saves lock them too (Criss).** The Whaler and Occultist are open today; after this change every save, his included, earns them back through their deeds.
+- **Developer mode** shows every kit, patron, offering and Grimoire page while it's on, and **saves none of it**: turning it off puts real progress back exactly as it was. (Today's dev "Unlock everything" already only touches the current run, never `ll-meta`; keep it that way.)
+
+### 13.7 Later
+
+- **Floor-signature creatures**, each breaking one rule: Wick-eater (Cistern), the Reassembled (Ossuary), Congregant (Nave, an inverse Shade), Throat-polyp (Throat), Echo (Heart).
+- **The Touched:** one creature kind mutated at random each run, marked in the Grimoire.
+- **Variant floors with light hazards** (Rising Tide, Bone Rain, Drifting Glow) and **alternate floors** (Ossuary *or* the Lightless Well). Most expensive; wave decks give most of the variety first.
+
+### 13.8 Teach every change
+
+Every change to how you play ships with a first-time tip (or a walkthrough step if it shows up on the first floors), a line in "How the dark works", and a Grimoire entry for anything new. Now a rule in `AGENTS.md` §6.
+
+### 13.9 Build order
+
+| # | Item | Who | Size |
+|---|---|---|---|
+| 1 | Kit variants, passives and rites | Claude | medium |
+| 2 | Wave decks with the next wave shown | Gemini (Jules) | medium |
+| 3 | Deeds, kit unlocks and dev-mode unlocks | Gemini (Jules) | small |
+| 4 | Relic pool switch | Claude | small |
+| 5 | One patron + Attention + kit offerings (prototype) | Claude builds, Gemini attacks the design | big |
+| 6 | Heralds | Gemini (Jules) | medium |
+| 7 | Floor-signature creatures | Gemini (art), Claude (rules) | medium each |

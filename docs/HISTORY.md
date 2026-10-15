@@ -4,6 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **The Lamplighter plays differently** (#26, the first kit of five). Its candle is now the **Signal Candle**: you can light one in the dark if it stands within 4 tiles of a lit one, and a dotted thread shows the light leaping across. Its harpoon is the **Flare Harpoon**: each bolt flares where it strikes and unveils what stands near. **Kindle** replaces Flare: tap a creature and it burns for 8 seconds, lighting the dark around it and waking any ward cut off there, but it runs 25% faster. Each has its own branch in place of one plain one: the Signal Candle's **Signal** (the light leaps further; capstone **Fire Thread**: anything crossing a thread catches fire) replaces Wax, and the Flare Harpoon's **Flare** (wider, longer flares; capstone **Starshell**: every fourth bolt lights a wide circle) replaces Sight. The old perks (20-essence candles, wider light, wider lamp) are gone. New tips, rules lines and a Kits tab in the Grimoire teach it. (Claude)
 - **Relics in the HUD.** Criss found the Glass Lantern's cost only by watching his oil. Every relic you carry now sits as a seal beside the HUD (cursed ones in red). Tap one and a card says what it does; the next tap anywhere puts it away. The bar keeps one size, so gaining a relic never moves the board. (Claude)
 - **The Grimoire**, after Enter the Gungeon's Ammonomicon. It opens from the book in the HUD, the pause menu or the title, and has four tabs:
   - **Creatures**: portrait, life, speed, oil, essence, traits and how each one works. Creatures you haven't met yet are a dark shape and "???".
@@ -12,6 +13,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
   - **Relics**: every relic found, with the ones you carry marked.
 
   What you've met is remembered across runs. A player from before this version starts with every creature from the floors they reached. (Claude)
+- **The plan for runs that differ** (design only): kit variants, wave decks, patrons, Heralds, deeds and dev-mode unlocks, in `expansion/BRAINSTORM.md` §13. Two new rules in `AGENTS.md`: teach every change, and developer mode never saves unlocks. (Criss, Claude)
 ---
 
 ## v15.5 — The walkthrough
