@@ -12,7 +12,7 @@ const file='file://'+process.argv[2], out=process.argv[3];
   await p.click('#hallBtn'); await p.waitForTimeout(200); log('hall',await modal()); await p.screenshot({path:out+'/hall.png'}); await clickAction('Close');
   await p.click('#descendBtn'); await p.waitForTimeout(200); log('kits',await modal()); await p.screenshot({path:out+'/kits.png'});
   await clickChoice(3); log('locked kit',(await modal()).body);
-  await clickChoice(1); await p.waitForTimeout(400);
+  await clickChoice(0); await p.waitForTimeout(400);
   log('run',await p.evaluate(()=>({kit:__t.run.kit,wards:__t.run.wards,rites:__t.run.rites,ess:__t.run.ess})));
   // clear the floor
   const clear=async()=>{await p.evaluate(()=>{const o=document.getElementById('mapOverlay'); if(o&&!o.hidden)o.click();}); await p.waitForTimeout(100); await p.evaluate(()=>{const T=__t; T.F.wave=T.F.def.waves.length; T.F.phase='wave'; T.F.queue=[]; T.F.foes=[]; T.run.ess+=500; T.setP(false);}); await p.waitForTimeout(2600);};
