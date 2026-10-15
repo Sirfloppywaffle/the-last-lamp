@@ -4,6 +4,10 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+---
+
+## v16.2 — The Whaler
+The second kit that plays its own way, and every kit's wards now look like its own. Criss playtested the Whaler twice; the second round reshaped its oil economy and fixed the harpoon line ("that worked out better and I appreciate the design").
 - **The Whaler plays differently** (#26, the second kit of five). Its candle is the **Blubber Lamp**: a dish of rendered fat that burns 0.8 tiles wider, but **every Blubber Lamp drinks as each wave begins**: a measure from a Try-pot, or 1 oil from the lamp. Its own new ward, the **Try-pot** (30), renders the dead: each death near it gives up the oil it would have drained, every 6 makes a measure (a gold dot; a ring shows the next), it holds 4, a full pot pours into the lamp, and whatever is left when the floor ends pours in too. The "Next wave" strip shows what the lamps will drink. Its harpoon is the **Tether Harpoon**: the line holds what it hits and slows it more the longer it holds, up to 40%, and lets go as soon as the harpoon fires at something else. Own branches: **Reek** (capstone **Lure**) and **Line** (capstone **Reel In**). The old +20% harpoon damage is gone. Criss's playtest reshaped the economy (one lamp's toll was too gentle, the pot's payoff too small, its wording unclear) and found the line staying on an old target. (Claude)
 - **Each kit's wards look like its own.** The Signal Candle is a hooded brass lantern on an iron post, the Blubber Lamp a dish of yellow fat with a smoky flame; the Flare Harpoon carries a red flare canister, the Tether Harpoon a coil of line. The Grimoire shows each kit's version in its own art. (Claude)
 
