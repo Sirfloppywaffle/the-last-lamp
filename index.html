@@ -412,7 +412,7 @@ input[type=range]::-moz-range-track {
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
-        <li><b>Patrons.</b> Old things below the stair make offerings. Half the time the landing's gift is the Drowned Mother's offering instead, and now and then she reaches out between waves. Take one gift, or refuse her. Her gifts change what your wards do, and some belong to one kit. Every gift raises her Attention, and Attention changes your floors: at 1 her water stands on the path, and its current carries creatures 30% faster; at 3 it rises a tile with every wave; at 5 whatever walks in it goes under, unseen unless something unveils it. Her sign sits beside the Grimoire; tap it to see where you stand.</li>
+        <li><b>Patrons.</b> Old things below the stair make offerings. Half the time the landing's gift is the Drowned Mother's offering instead (a quarter, if she already reached out on that floor), and now and then she reaches out between waves. Take one gift, or refuse her. Her gifts change what your wards do, and some belong to one kit. Every gift raises her Attention, and Attention changes your floors: at 1 her water stands on the path, and its current carries creatures 30% faster; at 3 it rises a tile with every wave; at 5 whatever walks in it goes under, unseen unless something unveils it. Her sign sits beside the Grimoire; tap it to see where you stand.</li>
         <li><b>Embers.</b> Every descent, won or lost, leaves embers behind. Spend them in the Ember Hall on new kits, relics and stories. Carry the lamp to morning to open the Deeper Dark, where each depth adds a new cruelty.</li>
         <li><b>The Grimoire.</b> The book in the HUD holds every creature you have met, every ward and rite, and every relic you have found. The relics you carry sit beside it: tap one to read what it does.</li>
         <li><b>Saving.</b> The run saves at every break between waves. Save and quit from the pause menu, then Continue from the title.</li>
@@ -643,7 +643,7 @@ const PATRONS={
            {at:5,n:'Claimed',d:'Whatever walks in her water goes under. It cannot be seen or struck there unless something unveils it.'}]}
 };
 /* the water: how fast its current carries them, how much floods at first, how far it can rise */
-const CURRENT=1.3, FLOOD_N=2, FLOOD_LEN=3, FLOOD_MAX=14, NEAR_WATER=1.5, PATRON_BREAK=.2;
+const CURRENT=1.3, FLOOD_N=2, FLOOD_LEN=3, FLOOD_MAX=14, NEAR_WATER=1.5, PATRON_BREAK=.15;
 /* offerings change what you do, not just a number. A kit's own (kit:) only reach that kit; an offer of three holds at most one */
 const OFFERINGS={
   brine:{p:'mother',n:'Brine Pools',need:()=>run.wards.includes('salt'),d:'Your Salt Circles turn to brine. They no longer slow: each pool drags whatever wades into it a tile back, once. Bosses and Behemoths wade on.'},
@@ -661,7 +661,7 @@ const OFFERINGS={
 const KITS={
   lamplighter:{n:'The Lamplighter',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch.',wards:['candle','harpoon','salt','chime','trap','tithe'],rites:['kindle','pillar'],roster:{}},
   whaler:{n:'The Whaler',d:'Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance','trypot'],rites:['flare','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
-  occultist:{n:'The Occultist',d:'Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness.',wards:['candle','harpoon','effigy','tithe','chime'],rites:['flare','name'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Have 3 horrors bound at once.'},
+  occultist:{n:'The Occultist',d:'Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness.',wards:['candle','harpoon','effigy','tithe','chime'],rites:['flare','name'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
   galvanist:{n:'The Galvanist',d:'Lightning leaps to one more creature, and salt costs 15. Starts with the Galvanic Coil.',wards:['candle','harpoon','salt','coil','chime'],rites:['flare','pillar'],roster:{},lock:'kit_galvanist'},
   bellringer:{n:'The Bellringer',d:'Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell.',wards:['candle','harpoon','chime','censer','trap'],rites:['flare','bell'],roster:{},lock:'kit_bellringer'}
 };
@@ -703,8 +703,16 @@ const HALL=[
 ];
 const DEPTHS=['','Creatures have 15% more health.','Every floor carries an omen.','Each floor starts with 25% less essence.','Bosses have 30% more health.','The lamp holds 5 less oil.'];
 
-function meta(){const m=store.get('ll-meta',null)||{}; return {embers:m.embers||0,unlocked:m.unlocked||[],depth:m.depth||0,runs:m.runs||0,wins:m.wins||0,lastDepth:m.lastDepth||0,lastKit:m.lastKit||'lamplighter'};}
-function saveMeta(m){store.set('ll-meta',m);}
+function meta(){const m=store.get('ll-meta',null)||{}; return {embers:m.embers||0,unlocked:m.unlocked||[],depth:m.depth||0,runs:m.runs||0,wins:m.wins||0,lastDepth:m.lastDepth||0,lastKit:m.lastKit||'lamplighter',deeds:m.deeds||0};}
+/* the deeds' version: 2 is when the Occultist's deed got harder (binding three horrors was too easy, Criss). Every save stamps it */
+const DEEDS_V=2;
+function saveMeta(m){m.deeds=DEEDS_V; store.set('ll-meta',m);}
+/* a save from before version 2 earned the Occultist the easy way, so it earns it again (only ever done once, never in dev mode) */
+function deedsMigrate(){
+  if(devOn)return;
+  const m=meta(); if(m.deeds>=DEEDS_V||!m.unlocked.includes('kit_occultist'))return;
+  m.unlocked=m.unlocked.filter(k=>k!=='kit_occultist'); if(m.lastKit==='occultist')m.lastKit='lamplighter'; saveMeta(m);
+}
 function unlockDeed(k){
   if(devOn)return;
   const K=KITS[k]; if(!K||!K.lock)return;
@@ -717,10 +725,10 @@ function unlockDeed(k){
   /* the tip waits for a quiet moment on a floor (coachPoll), like every other tip, and respects "No more tips" */
   if(run){run.deeds=run.deeds||[]; if(!run.deeds.includes(k))run.deeds.push(k);}
 }
-function checkOccultistDeed(){
-  if(!run||!run.roster||devOn)return;
-  const tot=Object.values(run.roster).reduce((a,b)=>a+b,0);
-  if(tot>=3)unlockDeed('occultist');
+/* the Occultist's deed: break a wave with the dark already Slipping (checked as each wave breaks) */
+function checkOccultistDeed(cleared){
+  if(!cleared||!run||!F||devOn)return;
+  if(madTier()>=2)unlockDeed('occultist');
 }
 function kit(){return run&&run.kit;}
 function depthLvl(){return (run&&run.depth)||0;}
@@ -822,7 +830,7 @@ function offerChoice(k,fn){
   const O=OFFERINGS[k];
   return {cls:'patron',tag:(O.kit?KITS[O.kit].n.replace(/^The /,'')+'’s own':'Offering')+' · Attention +1',title:O.n,sub:O.d,fn};
 }
-/* mid-floor, at about one break in five (once a floor), she reaches out: three offerings, take one or refuse */
+/* mid-floor, at about one break in seven (once a floor), she reaches out: three offerings, take one or refuse */
 function patronBreak(force){
   if(!F||F.phase!=='build'||F.patronCalled)return;
   if(!force&&(Math.random()>=PATRON_BREAK||(COACH.on&&COACH.kind==='walk')||tut().walk===''&&run.floor===0))return;
@@ -863,9 +871,14 @@ function floodSeed(){
   waterSync();
 }
 function waterSync(){
-  F.water=new Map(); F.waterPts=[];
+  F.water=new Map(); F.waterPts=[]; F.waterLines=[];
   const W=run&&run.water; if(!W||W.floor!==run.floor)return;
   for(const [g,d0,d1] of W.str){const P=F.paths[g]; if(!P)continue;
+    /* the channel it is drawn along: the path's centre line, and a lane either side of it */
+    const c=[], l=[], r=[], a0=Math.max(0,d0-.1), a1=Math.min(P.len-.6,d1+.1);
+    for(let d=a0;d<=a1+1e-6;d+=.25){const p=posAt(P,d), q=posAt(P,Math.min(P.len,d+.2)), o=posAt(P,Math.max(0,d-.2)), dx=q[0]-o[0], dy=q[1]-o[1], n=Math.hypot(dx,dy)||1;
+      c.push(p[0],p[1]); l.push(p[0]-dy/n*.24,p[1]+dx/n*.24); r.push(p[0]+dy/n*.24,p[1]-dx/n*.24);}
+    if(c.length>=4)F.waterLines.push({c,l,r,seed:g*7.3+d0*1.7,n:Math.max(1,Math.round((d1-d0+1)/2))});
     for(let d=d0;d<=d1;d++){
       const p=posAt(P,d), q=posAt(P,Math.min(P.len,d+.5)), c=Math.floor(p[0]), r=Math.floor(p[1]), key=c+','+r;
       if(F.water.has(key)||(c===F.lampC&&r===F.lampR))continue;
@@ -1748,6 +1761,7 @@ function gainOil(n){
   if(run.oil>before)F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'+'+(run.oil-before)+' oil',col:PAL.tallow,t:0,dur:1,size:.3});
 }
 function waveCleared(){
+  checkOccultistDeed(true);
   const bonus=8+F.wave*2;
   run.ess+=bonus;
   let tithe=0;
@@ -1809,8 +1823,8 @@ function openDraft(salvage,healed){
   F.phase='draft';
   const n=3+(F.omen==='starved'?1:0)+(has('hollow')?1:0)+(F.elite?1:0);
   F.draft={step:'gift',salvage,healed,opts:draftOptions(n,F.elite),relics:(F.elite?1:0)+(F.omen==='hungering'?1:0)};
-  /* half the time the gift is a patron's offering instead */
-  if(Math.random()<.5)F.draft.patron=offerSet('mother');
+  /* half the time the gift is a patron's offering instead; a quarter, if she already reached out on this floor */
+  if(Math.random()<(F.patronCalled?.25:.5))F.draft.patron=offerSet('mother');
   showLanding();
 }
 function showLanding(){F.blocking=landingModal(); checkpoint(); showModal(F.blocking); forceUI();}
@@ -4542,21 +4556,32 @@ function drawMap(c, w, h, tm) {
 /* creatures grow out of their rift and are swallowed as they reach the lamp */
 function foeScale(e){const P=F.paths[e.gate]; return Math.max(.05,Math.min(clamp(e.d/.3,0,1),clamp((P.len-.4-e.d)/.45,.25,1)));}
 /* the Drowned Mother's water: dark and still, with the current drawn as slow ripples moving toward the lamp */
+/* the Drowned Mother's water: one body of dark water poured along the path, banks and all, with the current
+   drawn as streaks drifting toward the lamp. Each stretch is a single stroke, so a long flood reads as one channel */
+function waterStroke(pts,w,col){g.strokeStyle=col; g.lineWidth=w; g.beginPath(); g.moveTo(pts[0],pts[1]); for(let i=2;i<pts.length;i+=2)g.lineTo(pts[i],pts[i+1]); g.stroke();}
 function drawWater(tm,top){
-  for(const [key,dir] of F.water){
-    const i=key.indexOf(','), c=+key.slice(0,i), r=+key.slice(i+1), x=c+.5, y=r+.5;
+  g.save(); g.lineCap='round'; g.lineJoin='round';
+  const flow=reduceMotion?0:tm;
+  for(const W of F.waterLines){
     if(!top){
-      const wg=g.createRadialGradient(x,y,.05,x,y,.66);
-      wg.addColorStop(0,'rgba(44,104,104,.78)'); wg.addColorStop(.7,'rgba(26,66,70,.62)'); wg.addColorStop(1,'rgba(14,34,38,0)');
-      g.fillStyle=wg; g.fillRect(c-.1,r-.1,1.2,1.2);
-    }else{g.fillStyle='rgba(70,150,150,.06)'; g.fillRect(c+.06,r+.06,.88,.88);}
-    const ph=(reduceMotion?.5:(tm*.55+hash(c,r,5))%1), ax=dir[0], ay=dir[1];
-    g.strokeStyle='rgba(160,220,210,'+((top?.34:.5)*(.35+.65*Math.sin(ph*Math.PI)))+')'; g.lineWidth=top?.028:.034;
-    for(const o of [-.22,.22]){
-      const px=x+ax*(ph-.5)*.8-ay*o, py=y+ay*(ph-.5)*.8+ax*o;
-      g.beginPath(); g.moveTo(px-ay*.12-ax*.06,py+ax*.12-ay*.06); g.quadraticCurveTo(px+ax*.06,py+ay*.06,px+ay*.12-ax*.06,py-ax*.12-ay*.06); g.stroke();
+      waterStroke(W.c,1.04,'rgba(6,18,20,.42)');
+      waterStroke(W.c,.9,'rgba(20,52,56,.78)');
+      waterStroke(W.c,.66,'rgba(34,86,88,.62)');
+      waterStroke(W.c,.3,'rgba(64,132,128,.22)');
+    }else waterStroke(W.c,.82,'rgba(60,130,130,.07)');
+    /* the current: broken streaks on three lanes, each drifting at its own pace */
+    const lanes=[[W.l,.55,.5,[.07,.41,.13,.66]],[W.c,.8,0,[.15,.52,.05,.38]],[W.r,.65,.33,[.1,.7,.08,.29]]];
+    for(const [pts,sp,ph,dash] of lanes){
+      g.setLineDash(dash); g.lineDashOffset=-(flow*sp+ph*1.1+W.seed);
+      waterStroke(pts,top?.024:.03,'rgba(170,226,214,'+((top?.2:.36)+(top?.06:.12)*Math.sin(flow*1.7+ph*6))+')');
+    }
+    g.setLineDash([]);
+    if(!top){/* a few glints riding the water */
+      for(let k=0;k<W.n;k++){const u=((flow*.18+hash(k,W.seed,3))%1), i=Math.min(W.c.length-2,2*Math.floor(u*(W.c.length/2)));
+        const a=.35*Math.sin(u*Math.PI); g.fillStyle='rgba(210,240,232,'+a+')'; g.beginPath(); g.ellipse(W.c[i]+(hash(k,W.seed,7)-.5)*.5,W.c[i+1]+(hash(W.seed,k,9)-.5)*.5,.05,.022,0,0,TAU); g.fill();}
     }
   }
+  g.restore();
 }
 function drawWake(e,tm){
   const a=.45+.2*Math.sin(tm*5+e.wob);
@@ -5801,6 +5826,7 @@ if(hot&&typeof hot.snapshot==='function'){
   try{hot.snapshot(()=>({save:(F&&run&&F.phase!=='over'&&F.phase!=='won'&&$('#title').hidden)?lastSave:null}));}catch(e){}
 }
 function start(data){
+  deedsMigrate();
   layout();
   if(data&&data.save&&data.save.run)resumeFrom(data.save);
   else showTitle();

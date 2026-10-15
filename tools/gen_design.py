@@ -78,7 +78,7 @@ for k,v in D['RELICS'].items(): w("| `%s` | %s | %s | %s | %s |"%(k,esc(v['n']),
 if D.get('RELICS_RESTING'): w("\n**Resting while patrons are tested** (#29, `RELICS_RESTING`): %s. They are never offered; a run that carries one keeps it."%', '.join(esc(D['RELICS'][k]['n']) for k in D['RESTING']))
 
 if D.get('PATRONS'):
-    w("\n## Patrons\n\nAt the landing the gift is a patron's offering instead, half the time; between waves one reaches out at **%d%%** of breaks (once a floor). Take one or refuse. Each gift is +1 Attention.\n"%round(D['PATRON_BREAK']*100))
+    w("\n## Patrons\n\nAt the landing the gift is a patron's offering instead, half the time (a quarter if one already reached out on that floor); between waves one reaches out at **%d%%** of breaks (once a floor). Take one or refuse. Each gift is +1 Attention.\n"%round(D['PATRON_BREAK']*100))
     for pk,P in D['PATRONS'].items():
         w("**%s** (`%s`): %s\n"%(esc(P['n']),pk,esc(P['d'])))
         w("| Attention | Tier | What changes |\n|---|---|---|")

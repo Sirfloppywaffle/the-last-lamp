@@ -168,7 +168,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 |---|---|---|---|---|---|---|
 | `lamplighter` | The Lamplighter | candle, harpoon, salt, chime, trap, tithe | kindle, pillar | — | open | Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. |
 | `whaler` | The Whaler | candle, harpoon, salt, trap, lance, trypot | flare, bell | — | Deed: Kill a Trench Behemoth with harpoons alone. | Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line. Starts with the Whaling Gun. |
-| `occultist` | The Occultist | candle, harpoon, effigy, tithe, chime | flare, name | watcher×1, gnasher×1 | Deed: Have 3 horrors bound at once. | Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness. |
+| `occultist` | The Occultist | candle, harpoon, effigy, tithe, chime | flare, name | watcher×1, gnasher×1 | Deed: Break a wave with your madness at Slipping or deeper. | Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness. |
 | `galvanist` | The Galvanist | candle, harpoon, salt, coil, chime | flare, pillar | — | Ember Hall (`kit_galvanist`) | Lightning leaps to one more creature, and salt costs 15. Starts with the Galvanic Coil. |
 | `bellringer` | The Bellringer | candle, harpoon, chime, censer, trap | flare, bell | — | Ember Hall (`kit_bellringer`) | Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell. |
 
@@ -250,7 +250,7 @@ Numbers: Signal Candle light leaps **4** tiles. A flare bolt lights **1.3** tile
 
 ## Patrons
 
-At the landing the gift is a patron's offering instead, half the time; between waves one reaches out at **20%** of breaks (once a floor). Take one or refuse. Each gift is +1 Attention.
+At the landing the gift is a patron's offering instead, half the time (a quarter if one already reached out on that floor); between waves one reaches out at **15%** of breaks (once a floor). Take one or refuse. Each gift is +1 Attention.
 
 **The Drowned Mother** (`mother`): She lies under all the water below the stair. She gives freely, and she remembers everything she gives.
 

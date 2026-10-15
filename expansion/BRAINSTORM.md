@@ -254,7 +254,7 @@ Each floor has a pool of 3 Heralds; one arrives in a random wave, named during t
 
 Unlocks come from **how** you play, not only how much (the Ember Hall stays).
 - **Open from the start:** the Lamplighter only.
-- **Whaler:** kill a Trench Behemoth with harpoons alone. **Occultist:** have 3 horrors bound at once. **Galvanist, Bellringer:** Ember Hall, as now.
+- **Whaler:** kill a Trench Behemoth with harpoons alone. **Occultist:** break a wave with your madness at Slipping or deeper (was "have 3 horrors bound at once", which Criss found too easy). **Galvanist, Bellringer:** Ember Hall, as now.
 - **Patrons:** the first meets you on your first descent; the others find you after you clear floor 3, then floor 5.
 - **Kit offerings** unlock as you play that kit.
 - A locked kit shows as a dark silhouette with its deed underneath.
