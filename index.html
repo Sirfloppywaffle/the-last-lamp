@@ -621,6 +621,11 @@ const RELICS={
   hollow:{n:'Hollow Crown',curse:true,pack:'relics_forbidden',d:'Every gift offers one more choice, but the lamp holds 4 less oil.'},
   eyes:{n:'A Thousand Eyes',curse:true,pack:'relics_forbidden',d:'Everything in light can be seen, veiled or not, but every madness threshold sits 2 lower.'}
 };
+/* while patrons are tested, the relics that only change a number stay off the stair (#29). They are not gone:
+   a run that already carries one keeps it, and they come back (as merchant stock or patron rewards) when this is turned off */
+const RELICS_RESTING=true;
+const RESTING=['tallow','whetted','bounty','reserve','quiet','wax','key','saltflats','marrow','witchsalt','leech'];
+function resting(k){return RELICS_RESTING&&RESTING.includes(k);}
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
 const KITS={
   lamplighter:{n:'The Lamplighter',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch.',wards:['candle','harpoon','salt','chime','trap','tithe'],rites:['kindle','pillar'],roster:{}},
@@ -660,7 +665,7 @@ const PACTS={
 const HALL=[
   {k:'kit_galvanist',n:'The Galvanist',d:'A new kit, built on lightning and salt.',cost:70},
   {k:'kit_bellringer',n:'The Bellringer',d:'A new kit, built on chimes, pitch and the Drowning Bell.',cost:110},
-  {k:'relics_deep',n:'Relics of the Deep',d:'Leech Jar, Second Shadow, Thunder Marrow and Witch Salt join the relic pool.',cost:50},
+  {k:'relics_deep',n:'Relics of the Deep',d:RELICS_RESTING?'Second Shadow joins the relic pool, and Leech Jar, Thunder Marrow and Witch Salt when they return to the stair.':'Leech Jar, Second Shadow, Thunder Marrow and Witch Salt join the relic pool.',cost:50},
   {k:'relics_forbidden',n:'Forbidden Relics',d:'Four cursed relics with great power join the pool: Choir in the Walls, Gilded Teeth, Hollow Crown, A Thousand Eyes.',cost:90},
   {k:'events_more',n:'Older Stories',d:'Three more things can happen off the stair.',cost:60},
   {k:'merchant_plus',n:'A Regular Customer',d:'Merchants stock one more relic.',cost:60}
@@ -691,7 +696,7 @@ function depthLvl(){return (run&&run.depth)||0;}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
 function relicPool(curses){
   const m=meta();
-  return Object.keys(RELICS).filter(k=>!run.relics.includes(k)&&(!RELICS[k].pack||m.unlocked.includes(RELICS[k].pack))&&(curses===undefined||!!RELICS[k].curse===curses));
+  return Object.keys(RELICS).filter(k=>!run.relics.includes(k)&&!resting(k)&&(!RELICS[k].pack||m.unlocked.includes(RELICS[k].pack))&&(curses===undefined||!!RELICS[k].curse===curses));
 }
 function relicOpts(n){return shuffle(relicPool(false)).slice(0,n);}
 function relicOilMod(relics){
@@ -759,7 +764,7 @@ const EVENTS={
     {l:'Fill it in',d:'The lamp holds 2 more oil.',fn:()=>{run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+2; updateOilMax(); addOil(2); return {text:'Whatever it was for, it will not be you. The lamp steadies. +2 capacity.'};}},
     {l:'Walk on',d:'Nothing happens.',fn:()=>({text:'You do not look back. You hear dirt moving.'})}]},
   altar:{n:'A Salt-crusted Altar',body:'An old altar furred white with salt. Something was sacrificed here, and the salt kept it.',opts:[
-    {l:'Pray',d:'Gain Salt Flats, or Witch Salt if you have it.',fn:()=>{const k=!has('saltflats')?'saltflats':(!has('witchsalt')?'witchsalt':null); if(k){addRelic(k); if(!run.wards.includes('salt'))run.wards.push('salt'); return {text:'The salt answers. You carry '+RELICS[k].n+'.'};} run.ess+=60; return {text:'The salt has nothing more for you. +60 essence.'};}},
+    {l:'Pray',d:RELICS_RESTING?'Gain the Brined Ledger, and learn Salt if you have not.':'Gain Salt Flats, or Witch Salt if you have it.',fn:()=>{const k=RELICS_RESTING?(!has('ledger')?'ledger':null):!has('saltflats')?'saltflats':(!has('witchsalt')?'witchsalt':null); if(k){addRelic(k); if(!run.wards.includes('salt'))run.wards.push('salt'); return {text:'The salt answers. You carry '+RELICS[k].n+'.'};} run.ess+=60; return {text:'The salt has nothing more for you. +60 essence.'};}},
     {l:'Pocket the salt',d:'+70 essence.',fn:()=>{run.ess+=70; return {text:'It sells. +70 essence.'};}},
     {l:'Smash it',d:'The lamp holds 3 more oil, but you lose 2 oil now.',fn:()=>{run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+3; updateOilMax(); loseOil(2); return {text:'Brine pours out and runs toward the lamp. +3 capacity, −2 oil.'};}}]},
   door:{n:'A Door That Was Not There',pack:'events_more',body:'Set into the wall of the stair. The hinges are still wet.',opts:[
@@ -4820,7 +4825,7 @@ function showBook(){
     list=relics.map(k=>{const R=RELICS[k];
       if(!hasSeen('relics',k))return bookEntry(bookSeal('?'),'???','','Not yet found.','is-locked');
       const now=held.includes(k);
-      return bookEntry(bookSeal(relicGlyph(k),R.curse),R.n,(R.curse?'Cursed':'Relic')+(now?' · Carried now':''),R.d,now?'is-held':'');}).join('');
+      return bookEntry(bookSeal(relicGlyph(k),R.curse),R.n,(R.curse?'Cursed':'Relic')+(now?' · Carried now':resting(k)?' · Not on the stair for now':''),R.d,now?'is-held':'');}).join('');
   }
   const html='<div class="book-tabs">'+tabs.map(([k,n])=>'<button class="btn'+(k===t?' call':'')+'" data-book="'+k+'" aria-pressed="'+(k===t)+'">'+n+'</button>').join('')+'</div>'
     +'<p class="book-intro">'+intro+'</p><div class="book-list">'+list+'</div>';
