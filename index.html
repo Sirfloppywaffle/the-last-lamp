@@ -4843,13 +4843,25 @@ function coachPlace(){
 }
 /* checked with the HUD, five times a second: is there a tip to give? */
 function coachPoll(){
-  if(COACH.on||!coachFree())return;
+  if(!F||!run)return;
   const t=tut(); if(t.off)return;
-  for(const k in TIPS){
-    if(t.seen.includes(k))continue;
+  /* a creature you meet keeps its tip in line, even if another tip is up or it dies before its turn */
+  F.tipMet=F.tipMet||{};
+  if(F.phase==='wave')for(const k in TIPS){const tip=TIPS[k];
+    if(!tip.foe||F.tipMet[k]||t.seen.includes(k))continue;
+    for(let i=0;i<F.foes.length;i++){const o=F.foes[i]; if(!o.dead&&o.d>1.2&&tip.foe(o)){F.tipMet[k]=o; break;}}}
+  if(COACH.on||!coachFree())return;
+  /* creature tips first: they are the ones that can't wait */
+  for(const pass of [true,false])for(const k in TIPS){
     const tip=TIPS[k];
+    if(!!tip.foe!==pass||t.seen.includes(k))continue;
     let e=null;
-    if(tip.foe){if(F.phase!=='wave')continue; for(let i=0;i<F.foes.length;i++){const o=F.foes[i]; if(!o.dead&&o.d>1.2&&tip.foe(o)){e=o; break;}} if(!e)continue;}
+    if(tip.foe){
+      if(!F.tipMet[k])continue;
+      e=F.tipMet[k];
+      /* point at the one met if it still lives, otherwise at any other of its kind on the board */
+      if(e.dead){e=null; for(let i=0;i<F.foes.length;i++){const o=F.foes[i]; if(!o.dead&&tip.foe(o)){e=o; break;}}}
+    }
     else if(!tip.when())continue;
     const list=tip.steps?tip.steps():[{title:tip.title,text:tip.text,target:e?(()=>e.dead?null:coachBoard(e.x,e.y,Math.max(.6,e.def.r*1.6))):tip.target}];
     coachRun('tip',k,list);
