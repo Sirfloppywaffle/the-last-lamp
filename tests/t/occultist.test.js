@@ -65,6 +65,23 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     for(let k=0;k<8;k++){const f=T.spawnFoe('crawler',0,5.6); f.d=5.95; f.tile=pk; T.update(.01);}
     out.grasp.crumbled=!T.F.towers.includes(gw);
     T.F.foes.forEach(f=>f.dead=true); T.update(.01);
+    /* Raise the Dead: a pile stands up as a Risen beside the path; it bites in the dark and falls when the wave breaks */
+    fresh(); T.run.floor=1; T.beginFloor(null); T.setP(false);
+    T.castRite('raise'); out.raiseNone=T.F.cd.raise||0;
+    for(let i=0;i<3;i++)T.addCorpse({gate:0,d:7,def:{}});
+    const [rk,rb]=[...T.F.bodies.entries()][0];
+    T.castRite('raise'); const rx=rb.x, ry=rb.y;
+    __t.F; T.update(.001);
+    /* cast through the tap path: mode is set, the tap raises */
+    const rmode=document.querySelector('#modebar').textContent.includes('Raise');
+    const cvs=document.querySelector('#board').getBoundingClientRect();
+    document.querySelector('#board').dispatchEvent(new PointerEvent('pointerdown',{clientX:cvs.left+rx/T.COLS*cvs.width,clientY:cvs.top+ry/T.ROWS*cvs.height,bubbles:true}));
+    const ri=T.F.towers.find(t=>t.type==='risen');
+    out.raise={mode:rmode, risen:!!ri, bones:ri&&ri.bones.length, left:T.F.bodies.size, dmg:ri&&Math.round(T.wstat(ri).dmg), cd:T.F.cd.raise, dark:ri&&ri.dark, onPath:ri&&T.F.pathTiles.has(ri.c+','+ri.r)};
+    T.F.phase='wave'; const prey=T.spawnFoe('gnasher',0,7); T.update(.001); const php=prey.hp; for(let i=0;i<20;i++)T.update(.05);
+    out.raise.bit=prey.dead||prey.hp<php;
+    T.F.foes.forEach(f=>f.dead=true); T.F.wave=1; T.F.queue=[]; T.update(.01);
+    out.raise.fell=!T.F.towers.some(t=>t.type==='risen');
     /* Unbind: it charges down the stair, through everything, and leaves the roster */
     fresh(); T.F.towers=[]; T.run.roster={gnasher:1};
     T.castRite('unbind'); out.noHorror=T.F.cd.unbind||0;
@@ -103,7 +120,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     return out;});
   console.log(JSON.stringify(r));
   ok(r.names.join()==='Corpse Candle,Bone Spear'&&r.cost===0,'the Occultist builds Corpse Candles (free) and Bone Spears',r);
-  ok(r.wards.includes('grasp')&&r.rites.join()==='unbind,name'&&r.mad===3,'it casts Unbind and Name the Thing; horrors cost their full madness',r);
+  ok(r.wards.includes('grasp')&&r.rites.join()==='unbind,raise'&&r.mad===3,'it casts Unbind and Raise the Dead; horrors cost their full madness',r);
   ok(r.trees[0]===0&&r.trees[1]==='Speed,Strength,Dread','Corpse Candles take no branches; the Bone Spear has Dread',r.trees);
   ok(r.seeded[0]===2&&r.seeded[1]===3,'the first floor starts with two piles of bones',r.seeded);
   ok(r.noneAtStart,'a later floor begins with nowhere to light one');
@@ -120,6 +137,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.grasp.spots===1&&r.grasp.placed&&r.grasp.free&&r.grasp.bones===0,'the Grasping Dead rise only from a full pile, free, using its three bones',r.grasp);
   ok(!r.grasp.dark&&Math.abs(r.grasp.held-2)<.1,'they hold what walks over them for 2s, light or none',r.grasp);
   ok(r.grasp.crumbled,'after six grips they crumble',r.grasp);
+  ok(r.raiseNone===0,'Raise the Dead waits when there are no bones');
+  ok(r.raise.mode&&r.raise.risen&&r.raise.bones===3&&r.raise.left===0&&r.raise.dmg===42&&r.raise.cd===30&&!r.raise.dark&&!r.raise.onPath,'a tapped pile stands up beside the path, 14 a bone',r.raise);
+  ok(r.raise.bit&&r.raise.fell,'the Risen bites and falls when the wave breaks',r.raise);
   ok(r.noHorror===0,'Unbind waits when no horror stands on the board');
   ok(r.unbind.cd&&r.unbind.gone&&r.unbind.roster===0&&r.unbind.hit[0]&&r.unbind.hit[1]&&!r.unbind.hit[2]&&r.unbind.charges===0,'Unbind charges toward where they come from, hits what is in its way, and is gone',r.unbind);
   ok(r.soul===1,'Soul Spear leaves a sigil',r.soul);
