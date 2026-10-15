@@ -409,7 +409,7 @@ input[type=range]::-moz-range-track {
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
-        <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, and Kindle sets a creature burning and running, lighting the dark around it. The Occultist's Corpse Candles are free and need no lamp, but stand only beside a body from this floor and go out when the wave ends; its Bone Spears and its horrors hit harder with every tier of madness, and Unbind sends a horror charging down the stair for good. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
+        <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, and Kindle sets a creature burning and running, lighting the dark around it. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; its Bone Spears and its horrors hit harder with every tier of madness, and Unbind sends a horror charging down the stair for good. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
@@ -530,9 +530,10 @@ const KINDLE_T=8, KINDLE_R=1.8, KINDLE_DPS=5, KINDLE_RUN=1.25, THREAD_T=2;
 /* the Whaler: how much wider a Blubber Lamp burns; the Try-pot's reach, its measure and how many it holds;
    how fast the line's grip tightens and how far it goes; how often Reel In hauls */
 const BLUBBER_LIGHT=.8, POT_R=2.4, POT_MEASURE=6, POT_MAX=4, TETHER_RATE=.12, TETHER_MAX=.4, HAUL_EVERY=4;
-/* the Occultist: how far from a body a Corpse Candle can stand; what each tier of madness adds to a Bone Spear and
+/* the Occultist: how far from a body a Corpse Candle can stand; how many bones a pile holds, how near a death has to be
+   to join a pile, and how many bodies a floor keeps (the oldest crumble first); what each tier of madness adds to a Bone Spear and
    to every horror; how fast an unbound horror charges, and what it deals (a base, and more for each point of its madness) */
-const CORPSE_REACH=1.5, SPEAR_TIER=.25, DREAD_TIER=.1, HORROR_TIER=.2, UNBIND_SPD=7, UNBIND_BASE=30, UNBIND_PER=20;
+const CORPSE_REACH=1.5, PILE_MAX=3, PILE_GATHER=1.5, BODY_MAX=12, SPEAR_TIER=.25, DREAD_TIER=.1, HORROR_TIER=.2, UNBIND_SPD=7, UNBIND_BASE=30, UNBIND_PER=20;
 
 const HORRORS={
   gnasher:{n:'Bound Gnasher',cost:30,mad:3,range:1.35,dmg:24,rate:.9,aim:true,d:'Bites whatever passes within reach. Brutal and short-ranged.'},
@@ -918,10 +919,17 @@ function nearWater(x,y){const w=F.waterPts; if(!w)return false; for(let i=0;i<w.
 /* ---------------- the Occultist: bodies, Corpse Candles, and Unbind ---------------- */
 function corpseKit(){return kit()==='occultist';}
 /* every death leaves a body on the path for the rest of the floor, kept in the run as [path, distance along it] */
+/* so the board never fills with bones: a death near a pile joins it (a pile holds PILE_MAX), a death beside a full pile
+   scatters, and past BODY_MAX the oldest body crumbles. Piles stay a couple of tiles apart, and the fresh ones are kept */
 function addCorpse(e){
   if(!corpseKit()||!F||!F.paths[e.gate])return;
   if(!run.corpses||run.corpses.floor!==run.floor)run.corpses={floor:run.floor,list:[]};
-  const L=run.corpses.list; L.push([e.gate,Math.round(e.d*100)/100]); if(L.length>240)L.shift();
+  const L=run.corpses.list, p=posAt(F.paths[e.gate],e.d);
+  let pile=null, bd=PILE_GATHER+1e-6;
+  for(const b of F.bodies.values()){const d=dst(p[0],p[1],b.x,b.y); if(d<=bd){bd=d; pile=b;}}
+  if(pile&&pile.n>=PILE_MAX)return;
+  L.push(pile?pile.ref.slice():[e.gate,Math.round(e.d*100)/100]);
+  while(L.length>BODY_MAX)L.shift();
   corpseSync();
 }
 /* the bodies, gathered by tile, where the board can find them */
@@ -929,7 +937,13 @@ function corpseSync(){
   F.bodies=new Map();
   const C=run&&run.corpses; if(!C||C.floor!==run.floor)return;
   for(const [g,d] of C.list){const P=F.paths[g]; if(!P)continue; const p=posAt(P,d), c=Math.floor(p[0]), r=Math.floor(p[1]), key=c+','+r, b=F.bodies.get(key);
-    if(b)b.n++; else F.bodies.set(key,{x:c+.5,y:r+.5,n:1});}
+    if(b)b.n++; else F.bodies.set(key,{x:c+.5,y:r+.5,n:1,ref:[g,d]});}
+}
+/* every Occultist descent begins with two piles of bones, left by whoever carried the lamp down here last */
+function corpseSeed(){
+  const P=F.paths[0], L=Math.floor(P.len);
+  run.corpses={floor:run.floor,list:[[0,Math.round(L*.45)],[0,Math.round(L*.45)],[0,Math.round(L*.62)]]};
+  corpseSync();
 }
 function bodyNear(c,r){let best=null, bd=CORPSE_REACH+1e-6; for(const [k,b] of F.bodies){const d=dst(c+.5,r+.5,b.x,b.y); if(d<=bd){bd=d; best=k;}} return best;}
 /* a Corpse Candle uses up one body on that tile; it is handed back if the candle is taken down */
@@ -1684,6 +1698,7 @@ function beginFloor(snap){
   /* the Drowned Mother's water: a floor she has noticed you on floods as it begins (a resumed one keeps its water) */
   F.under=patTier('mother')>=3;
   if(patTier('mother')>=1&&(!run.water||run.water.floor!==run.floor))floodSeed();
+  if(!snap&&run.floor===0&&corpseKit())corpseSeed();
   if(snap){
     F.wave=snap.wave||0;
     F.towers=(snap.towers||[]).map(t=>{
@@ -5306,8 +5321,16 @@ const TIPS={
   deck:{when:()=>F.wave>=1&&F.wave<F.def.waves.length&&(F.phase==='build'||(F.phase==='wave'&&!F.queue.length)),title:'The dark draws its waves',
     text:'No floor comes the same way twice. Each one draws its waves from a deck, and the strip above the board names the next one and shows what it holds. A wave with a boss or the Choirmaster always keeps its place.',
     target:()=>coachEl('#preview')},
+  /* the Occultist's first descent: a short lesson on the bones it starts with, before the first wave */
+  occwalk:{when:()=>corpseKit()&&run.floor===0&&F.wave===0&&F.phase==='build'&&F.bodies.size>0&&!F.towers.some(t=>t.corpse),steps:()=>[
+    {title:'The Occultist',text:'Your light comes from the dead. These bones were left by whoever carried the lamp down here last.',target:()=>{for(const b of F.bodies.values())return coachBoard(b.x,b.y,.7); return null;},next:true},
+    {title:'Choose a Corpse Candle',text:'Tap Corpse below. It costs nothing.',enter:()=>coachShowTray('candle'),target:()=>coachTray('candle'),until:()=>!!(sel&&sel.kind==='ward'&&sel.type==='candle')},
+    {title:'Light it on the dead',text:'Now tap one of the marked tiles beside the bones. It needs no lamp: it burns on the dead, and uses one body up.',target:()=>{for(const b of F.bodies.values())return coachBoard(b.x,b.y,1.6); return null;},
+      until:()=>F.towers.some(t=>t.corpse),back:()=>!sel&&!F.towers.some(t=>t.corpse)},
+    {title:'It goes out',teaches:'corpse',text:'When this wave breaks, it goes out. Every kill leaves new bones, and they keep for the rest of the floor, lit or dark. Light the next candles where the killing was.',enter:()=>{sel=null; forceUI();},
+      target:()=>{const t=F.towers.find(t=>t.corpse); return t?coachBoard(t.x,t.y,1):null;},next:true}]},
   corpse:{when:()=>corpseKit()&&F.phase==='build'&&((sel&&sel.kind==='ward'&&sel.type==='candle')||F.bodies.size>0),title:'Corpse Candles',
-    text:'Your candles burn on the dead. Each death leaves a body on the path, marked in bone. A Corpse Candle is free and needs no lamp, but it must stand beside a body, it uses that body up, and it goes out when the wave ends. Every floor begins dark, so your light follows the killing.',
+    text:'Your candles burn on the dead. Each death leaves bones on the path, and they keep for the rest of the floor, lit or dark. A Corpse Candle is free and needs no lamp, but it must stand beside bones, it uses one body up, and it goes out when the wave ends. Every floor begins dark, so your light follows the killing.',
     target:()=>{for(const b of F.bodies.values())return coachBoard(b.x,b.y,.7); return coachTray('candle');}},
   madfeeds:{when:()=>corpseKit()&&madTier()>=1&&F.towers.some(t=>t.kind==='horror'),title:'Madness feeds you',
     text:'Your madness is rising, and you are stronger for it: each tier makes your Bone Spears hit 25% harder and your horrors 20% harder. The dark still gets worse with every tier.',
