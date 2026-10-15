@@ -77,6 +77,16 @@ w("\n## Relics\n\n| Key | Name | Cursed | Pack | Effect |\n|---|---|---|---|---|
 for k,v in D['RELICS'].items(): w("| `%s` | %s | %s | %s | %s |"%(k,esc(v['n']),'yes' if v.get('curse') else '',v.get('pack','base'),esc(v['d'])))
 if D.get('RELICS_RESTING'): w("\n**Resting while patrons are tested** (#29, `RELICS_RESTING`): %s. They are never offered; a run that carries one keeps it."%', '.join(esc(D['RELICS'][k]['n']) for k in D['RESTING']))
 
+if D.get('PATRONS'):
+    w("\n## Patrons\n\nAt the landing the gift is a patron's offering instead, half the time (a quarter if one already reached out on that floor); between waves one reaches out at **%d%%** of breaks (once a floor). Take one or refuse. Each gift is +1 Attention.\n"%round(D['PATRON_BREAK']*100))
+    for pk,P in D['PATRONS'].items():
+        w("**%s** (`%s`): %s\n"%(esc(P['n']),pk,esc(P['d'])))
+        w("| Attention | Tier | What changes |\n|---|---|---|")
+        for t in P['tiers']: w("| %s | %s | %s |"%(t['at'],t['n'],esc(t['d'])))
+    w("\nWater numbers: current **×%s**; a floor floods **%s** stretches of **%s** tiles; it rises to at most **%s** tiles; \"beside water\" is within **%s** tiles."%(D['CURRENT'],D['FLOOD_N'],D['FLOOD_LEN'],D['FLOOD_MAX'],D['NEAR_WATER']))
+    w("\n| Key | Offering | Patron | Kit | Effect |\n|---|---|---|---|---|")
+    for k,v in D['OFFERINGS'].items(): w("| `%s` | %s | %s | %s | %s |"%(k,esc(v['n']),v['p'],v.get('kit',''),esc(v['d'])))
+
 w("\n## Omens (on stair doors)\n\n| Key | Name | Effect |\n|---|---|---|")
 for k,v in D['OMENS'].items(): w("| `%s` | %s | %s |"%(k,v['n'],esc(v['d'])))
 

@@ -236,7 +236,7 @@ Three patrons of our own: **the Drowned Mother** (water, slow, oil), **the Wrong
 - **The price is Attention.** Each offering raises that patron's Attention. At thresholds the patron starts changing your floors: the Mother floods tiles, the Sun burns bright spots that unveil you to Stalkers, the Many-Mouthed sends its own creatures. **Your build changes what you face.**
 - **Conjunctions:** two patrons who have both noticed you can offer a combined offering.
 - **Kit offerings:** each patron has about 2 offerings per kit that twist that kit's own candle and harpoon. An offer of three holds at most one. Examples: *Drowned Mother × Whaler:* the Tether Harpoon drags its target into the deep, and kills leave a pool of oil. *Wrong Sun × Lamplighter:* Signal Candles jump further, but their light unveils you to Stalkers. *Many-Mouthed × Occultist:* a Corpse Candle lit where a horror died raises it for one wave. *Wrong Sun × Galvanist:* creatures stunned in the Arc Lamp's flare forget which way the fork goes. *Drowned Mother × Bellringer:* the Bell Candle's pulse slows everything on wet tiles.
-- Prototype **one patron first**, in `expansion/proto/`, per `expansion/README.md`.
+- Prototype **one patron first**. *Built (October 2026):* the Drowned Mother, woven into the game itself rather than `expansion/proto/`, since Criss wants to play changes in the real game. Her price is water on the path (Noticed 1, Watched 3, Claimed 5), and all ten offerings work through that water. The Wrong Sun and the Many-Mouthed, conjunctions, and kit offerings for the other three kits come after Criss has played her.
 
 ### 13.4 Relics while patrons are tested
 
@@ -254,7 +254,7 @@ Each floor has a pool of 3 Heralds; one arrives in a random wave, named during t
 
 Unlocks come from **how** you play, not only how much (the Ember Hall stays).
 - **Open from the start:** the Lamplighter only.
-- **Whaler:** kill a Trench Behemoth with harpoons alone. **Occultist:** have 3 horrors bound at once. **Galvanist, Bellringer:** Ember Hall, as now.
+- **Whaler:** kill a Trench Behemoth with harpoons alone. **Occultist:** break a wave with your madness at Slipping or deeper (was "have 3 horrors bound at once", which Criss found too easy). **Galvanist, Bellringer:** Ember Hall, as now.
 - **Patrons:** the first meets you on your first descent; the others find you after you clear floor 3, then floor 5.
 - **Kit offerings** unlock as you play that kit.
 - A locked kit shows as a dark silhouette with its deed underneath.
