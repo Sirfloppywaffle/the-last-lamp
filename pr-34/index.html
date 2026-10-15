@@ -504,9 +504,9 @@ const KIT_WARDS={
 };
 function wdef(type,k){const K=KIT_WARDS[k===undefined?kit():k]; return K&&K[type]?Object.assign({},WARDS[type],K[type]):WARDS[type];}
 /* Signal Candles: how far their light leaps. Flare bolts: how wide and how long each flare burns */
-const LEAP=4, GLINT_R=1.3, GLINT_T=1.5, GLINT_MAX=8;
+const LEAP=4, GLINT_R=1.3, GLINT_T=1.5, GLINT_MAX=8, STAR_R=3, STAR_T=4;
 /* Kindle: how long a creature burns, how far its light reaches, how hard it burns and how fast it runs */
-const KINDLE_T=8, KINDLE_R=1.8, KINDLE_DPS=5, KINDLE_RUN=1.25;
+const KINDLE_T=8, KINDLE_R=1.8, KINDLE_DPS=5, KINDLE_RUN=1.25, THREAD_T=2;
 
 const HORRORS={
   gnasher:{n:'Bound Gnasher',cost:30,mad:3,range:1.35,dmg:24,rate:.9,aim:true,d:'Bites whatever passes within reach. Brutal and short-ranged.'},
@@ -559,6 +559,17 @@ const TREES={
     {k:'breech',n:'Breech',t:[[50,'Reloads 25% faster'],[70,'Reloads 25% faster again'],[140,'Barbed Line: pins its target 1.5s, even heavy ones (bosses 0.5s)']]},
     {k:'spy',n:'Spyglass',t:[[40,'+0.6 range'],[55,'+0.6 range'],[120,'Deep Sight: fires into the dark and at veiled things']]}]
 };
+/* a kit's own ward swaps one branch for one that fits it; the other two stay as they are */
+const KIT_TREES={
+  lamplighter:{
+    candle:[TREES.candle[0],
+      {k:'signal',n:'Signal',t:[[15,'Its light leaps 1 tile further'],[25,'Leaps 1 tile further again'],[50,'Fire Thread: anything that crosses its threads catches fire']]},
+      TREES.candle[2]],
+    harpoon:[TREES.harpoon[0],TREES.harpoon[1],
+      {k:'flare',n:'Flare',t:[[30,'Flares burn wider'],[45,'Flares burn a second longer'],[110,'Starshell: every fourth bolt lights a wide circle for 4 seconds']]}]
+  }
+};
+function treeOf(type,k){const K=KIT_TREES[k===undefined?kit():k]; return K&&K[type]?K[type]:TREES[type];}
 const TARGETS=[['first','First'],['last','Last'],['strong','Strongest']];
 const RITES={
   flare:{n:'Flare',cd:28,d:'Everything on the floor is lit and unveiled for 5 seconds.'},
@@ -942,8 +953,8 @@ function avail(type){return (run.roster[type]||0)-F.towers.filter(t=>t.kind==='h
 const m2=n=>Math.min(n||0,2);
 function wstat(t){
   const b=t.br||{};
-  if(t.type==='harpoon')return {range:2.6+.4*m2(b.sight),dmg:(10+(b.strength>=1?6:0)+(b.strength>=2?8:0))*(has('whetted')?1.3:1)*(kit()==='whaler'?1.2:1),rate:1.1*Math.pow(1.25,m2(b.speed)),twin:b.speed>=3,pierce:b.strength>=3,deep:b.sight>=3,flare:kit()==='lamplighter'};
-  if(t.type==='candle')return {light:2.3+.5*m2(b.glow)-(F&&F.omen==='thickdark'?.5:0),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)],beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3};
+  if(t.type==='harpoon')return {range:2.6+.4*m2(b.sight),dmg:(10+(b.strength>=1?6:0)+(b.strength>=2?8:0))*(has('whetted')?1.3:1)*(kit()==='whaler'?1.2:1),rate:1.1*Math.pow(1.25,m2(b.speed)),twin:b.speed>=3,pierce:b.strength>=3,deep:b.sight>=3,flare:kit()==='lamplighter',flareR:GLINT_R+(b.flare>=1?.5:0),flareT:GLINT_T+(b.flare>=2?1:0),star:b.flare>=3};
+  if(t.type==='candle')return {light:2.3+.5*m2(b.glow)-(F&&F.omen==='thickdark'?.5:0),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)],beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3};
   if(t.type==='chime')return {range:1.8+.25*m2(b.res),dmg:14+(b.marrow>=1?6:0)+(b.marrow>=2?8:0),stun:.6+.3*m2(b.toll)+(has('marrow')?.4:0),period:kit()==='bellringer'?1.6:2,twice:b.res>=3,knell:b.toll>=3,shatter:b.marrow>=3};
   if(t.type==='censer')return {range:3.2,dmg:16,rate:.45*Math.pow(1.25,m2(b.swing)),splash:1+.25*m2(b.spread),volley:b.swing>=3,cluster:b.spread>=3,
     pool:b.pitch>=3?{dps:10,dur:4,r:1.4}:b.pitch>=1?{dps:b.pitch>=2?7:4,dur:b.pitch>=2?2.5:2,r:1}:null};
@@ -960,14 +971,14 @@ function lstat(){
     fire:b.fire>=3?{dps:16,r:2.2}:b.fire>=1?{dps:b.fire>=2?10:6,r:1.5}:null};
 }
 function branchState(o,bi){
-  const tree=TREES[o.type], B=tree[bi], lvl=o.br[B.k]||0;
+  const tree=treeOf(o.type), B=tree[bi], lvl=o.br[B.k]||0;
   if(lvl>=3)return {max:true};
   const active=tree.filter(b=>(o.br[b.k]||0)>0).length;
   if(lvl===0&&active>=2)return {lock:'Two branches already chosen'};
   if(lvl===2&&tree.some(b=>b.k!==B.k&&(o.br[b.k]||0)>=3))return {lock:'Another branch holds the capstone'};
   return {cost:B.t[lvl][0],desc:B.t[lvl][1],cap:lvl===2};
 }
-function newBranches(type){const o={}; (TREES[type]||[]).forEach(b=>o[b.k]=0); return o;}
+function newBranches(type){const o={}; (treeOf(type)||[]).forEach(b=>o[b.k]=0); return o;}
 
 /* ---------------- orientation ---------------- */
 function setDims(o){ORIENT=o; if(o==='land'){COLS=14; ROWS=12;}else{COLS=12; ROWS=14;}}
@@ -1113,7 +1124,11 @@ function lampRadius(){
 function isLightTower(t){return (t.kind==='ward'&&t.type==='candle')||(t.kind==='horror'&&t.type==='watcher');}
 function towerLightR(t){return t.type==='candle'?wstat(t).light:HORRORS.watcher.range;}
 /* a Signal Candle (the Lamplighter's) takes its light from another lit one up to LEAP tiles away, dark between or not */
+const NO_THREADS=[];
+function segDist(px,py,ax,ay,bx,by){const dx=bx-ax, dy=by-ay, l=dx*dx+dy*dy||1, u=clamp(((px-ax)*dx+(py-ay)*dy)/l,0,1); return dst(px,py,ax+dx*u,ay+dy*u);}
 function signalKit(){return kit()==='lamplighter';}
+/* how far one Signal Candle's light leaps: its Signal branch adds a tile per tier (read straight from branches: this runs every tick) */
+function candleLeap(t){const n=t.br&&t.br.signal||0; return LEAP+Math.min(n,2);}
 function connectedLights(exclude){
   const src=[{x:F.lx,y:F.ly,r:lampBase()}], conn=new Set(), links=[];
   /* a kindled creature is a light of its own: what stands in it is lit, for as long as it burns */
@@ -1126,7 +1141,7 @@ function connectedLights(exclude){
     for(const t of cands){
       if(conn.has(t))continue;
       let ok=src.some(s=>dst(t.x,t.y,s.x,s.y)<=s.r);
-      if(!ok&&leap&&t.type==='candle')for(const o of conn)if(o.type==='candle'&&dst(t.x,t.y,o.x,o.y)<=LEAP){links.push([o,t]); ok=true; break;}
+      if(!ok&&leap&&t.type==='candle')for(const o of conn)if(o.type==='candle'&&dst(t.x,t.y,o.x,o.y)<=Math.max(candleLeap(o),candleLeap(t))){links.push([o,t]); ok=true; break;}
       if(ok){conn.add(t); src.push({x:t.x,y:t.y,r:towerLightR(t)}); grew=true;}
     }
   }
@@ -1135,7 +1150,7 @@ function connectedLights(exclude){
 /* where a Signal Candle could stand in the dark: within reach of one that is lit now */
 function signalReach(x,y){
   if(!signalKit())return false;
-  for(const t of F.towers)if(t.kind==='ward'&&t.type==='candle'&&!t.dark&&!t.dead&&dst(x,y,t.x,t.y)<=LEAP)return true;
+  for(const t of F.towers)if(t.kind==='ward'&&t.type==='candle'&&!t.dark&&!t.dead&&dst(x,y,t.x,t.y)<=candleLeap(t))return true;
   return false;
 }
 function supported(t,C){
@@ -1149,9 +1164,11 @@ function lightsNow(){
   for(const t of C.conn)L.push({x:t.x,y:t.y,r:towerLightR(t),reveal:true,gaze:t.type==='watcher'});
   /* passing lights: they show what is there, but you can't build in them and they never steer the crowd at a fork */
   for(const e of F.foes)if(e.kindleT>0&&!e.dead)L.push({x:e.x,y:e.y,r:KINDLE_R,reveal:true,temp:true,kindle:true});
-  for(const gl of F.glints)L.push({x:gl.x,y:gl.y,r:GLINT_R*(.6+.4*gl.t/GLINT_T),reveal:true,temp:true,glint:true});
+  for(const gl of F.glints)L.push({x:gl.x,y:gl.y,r:gl.r*(.6+.4*gl.t/gl.max),reveal:true,temp:true,glint:true});
   for(const t of F.towers)t.dark = window.devNoDark ? false : !supported(t,C);
   F.links=C.links;
+  /* threads from a Fire Thread candle burn whatever crosses them */
+  F.threads=C.links.length?C.links.filter(([a,b])=>(a.br&&a.br.signal>=3)||(b.br&&b.br.signal>=3)):NO_THREADS;
   return L;
 }
 function cutVictims(t){
@@ -1308,7 +1325,7 @@ function beginFloor(snap){
   $('#title').hidden=true; closeModal();
   F=null;
   setDims(bestOrient());
-  F={def,time:0,towers:[],salt:new Map(),foes:[],shots:[],fx:[],souls:[],pools:[],glints:[],links:[],cands:[],knell:false,wave:0,phase:'build',queue:[],waveT:0,
+  F={def,time:0,towers:[],salt:new Map(),foes:[],shots:[],fx:[],souls:[],pools:[],glints:[],links:[],threads:[],cands:[],knell:false,wave:0,phase:'build',queue:[],waveT:0,
      flareT:0,cd:{},nameUsed:false,named:null,hurtFlash:0,shake:0,flickT:0,flickNext:6,lastTier:0,omen:run.omen||null,elite:!!run.elite};
   F.born=performance.now();
   F.lamp={isLamp:true,type:'lamp',x:0,y:0,br:newBranches('lamp'),invested:0,fresh:0};
@@ -2273,7 +2290,7 @@ function placeProblem(item,c,r){
   if(item.kind==='ward'&&WARDS[item.type].path){if(!onPath)return item.type==='salt'?'Salt has to be poured on the path.':'Traps are set on the path.';}
   else if(onPath)return 'Nothing can stand on the path.';
   if(!buildLit(c,r)&&!(item.kind==='ward'&&item.type==='candle'&&signalReach(c+.5,r+.5)))
-    return signalKit()&&item.kind==='ward'&&item.type==='candle'?'Too dark, and too far from a lit Signal Candle. Their light leaps 4 tiles.':'Too dark to build there. Bring light first.';
+    return signalKit()&&item.kind==='ward'&&item.type==='candle'?'Too dark, and too far from a lit Signal Candle. Their light leaps 4 tiles, more with the Signal branch.':'Too dark to build there. Bring light first.';
   return '';
 }
 function spend(o,cost){
@@ -2341,7 +2358,7 @@ function buyBranch(o,bi){
   const s=branchState(o,bi);
   if(s.max||s.lock)return;
   if(run.ess<s.cost){hint('Not enough essence.'); return;}
-  const B=TREES[o.type][bi];
+  const B=treeOf(o.type)[bi];
   spend(o,s.cost);
   o.br[B.k]=(o.br[B.k]||0)+1;
   if(o.isLamp&&B.k==='reservoir'&&o.br.reservoir<=2)gainOil(3);
@@ -2595,6 +2612,7 @@ function updateFoes(dt){
     if(e.poisonT>0){e.poisonT-=dt; hurt(e,e.poisonDps*dt); if(e.dead)continue;}
     if(e.bleedT>0){e.bleedT-=dt; hurt(e,10*dt); if(e.dead)continue;}
     if(e.flenseT>0)e.flenseT-=dt;
+    if(F.threads.length&&!(e.kindleT>0)&&!e.def.fly)for(const [a,b] of F.threads)if(segDist(e.x,e.y,a.x,a.y,b.x,b.y)<=.35){e.kindleT=THREAD_T; break;}
     if(e.kindleT>0){e.kindleT-=dt; hurt(e,KINDLE_DPS*dt); if(e.dead)continue;}
     if(e.def.spawner){
       e.spawnT-=dt;
@@ -2650,13 +2668,17 @@ function updateFoes(dt){
 function fireBolt(t,e,st,dmg,k){
   const ang=Math.atan2(e.y-t.y,e.x-t.x), off=k?.13:0;
   const sx=t.x+Math.cos(ang)*.4-Math.sin(ang)*off, sy=t.y+Math.sin(ang)*.4+Math.cos(ang)*off;
-  if(st.pierce)F.shots.push({k:'pierce',x:sx,y:sy,dx:Math.cos(ang),dy:Math.sin(ang),ang,spd:14,trav:0,max:st.range+.8,dmg,hit:[],flare:st.flare});
-  else F.shots.push({k:'bolt',x:sx,y:sy,tg:e,tx:e.x,ty:e.y,spd:13,dmg,ang,flare:st.flare});
+  if(st.pierce)F.shots.push({k:'pierce',x:sx,y:sy,dx:Math.cos(ang),dy:Math.sin(ang),ang,spd:14,trav:0,max:st.range+.8,dmg,hit:[],flare:st.flare,fr:st.flareR,ft:st.flareT});
+  else F.shots.push({k:'bolt',x:sx,y:sy,tg:e,tx:e.x,ty:e.y,spd:13,dmg,ang,flare:st.flare,fr:st.flareR,ft:st.flareT});
+  /* Starshell: every fourth bolt from this harpoon lights a wide circle */
+  if(st.star){t.shots=(t.shots||0)+1; if(t.shots%4===0){const sh=F.shots[F.shots.length-1]; sh.fr=STAR_R; sh.ft=STAR_T; sh.star=true;}}
 }
 /* a flare bolt burns where it strikes; the oldest flare gutters out if too many burn at once */
-function addGlint(x,y){
+function addGlint(x,y,r,t,star){
   if(F.glints.length>=GLINT_MAX)F.glints.shift();
-  F.glints.push({x,y,t:GLINT_T});
+  r=r||GLINT_R; t=t||GLINT_T;
+  F.glints.push({x,y,r,t,max:t});
+  if(star){F.fx.push({k:'ring',x,y,r0:.2,r1:r,t:0,dur:.6,col:'255,226,170'}); AUDIO.flare();}
 }
 function chimePulse(t,st){
   const es=allIn(t.x,t.y,st.range);
@@ -2831,7 +2853,7 @@ function updateShots(dt){
           }else
           hurt(s.tg,s.dmg);
         }
-        if(s.flare)addGlint(s.tx,s.ty);
+        if(s.flare)addGlint(s.tx,s.ty,s.fr,s.ft,s.star);
       }else{s.x+=dx/d*step; s.y+=dy/d*step;}
     }else if(s.k==='pierce'){
       const step=s.spd*dt, ox=s.x, oy=s.y;
@@ -2840,7 +2862,7 @@ function updateShots(dt){
         const e=F.foes[i];
         if(e.dead||s.hit.includes(e.id))continue;
         const u=clamp((e.x-ox)*s.dx+(e.y-oy)*s.dy,0,step);
-        if(dst(e.x,e.y,ox+s.dx*u,oy+s.dy*u)<=e.def.r+.12){s.hit.push(e.id); if(s.flare)addGlint(e.x,e.y); hurt(e,s.dmg);}
+        if(dst(e.x,e.y,ox+s.dx*u,oy+s.dy*u)<=e.def.r+.12){s.hit.push(e.id); if(s.flare)addGlint(e.x,e.y,s.fr,s.ft,s.star&&!s.starDone); if(s.star)s.starDone=true; hurt(e,s.dmg);}
       }
       if(s.trav>=s.max||s.x<-1||s.y<-1||s.x>COLS+1||s.y>ROWS+1)s.done=true;
     }else if(s.k==='tar'){
@@ -4349,6 +4371,9 @@ function render(){
     g.strokeStyle='rgba(237,180,90,'+(.3+.08*Math.sin(tm*2.2))+')'; g.lineWidth=.035; g.setLineDash([.1,.12]);
     for(const [a,b] of F.links){g.beginPath(); g.moveTo(a.x,a.y-.25); g.lineTo(b.x,b.y-.25); g.stroke();}
     g.setLineDash([]);
+    /* a Fire Thread burns along the ground, where creatures cross it */
+    if(F.threads.length){g.strokeStyle='rgba(255,120,40,'+(.45+.2*Math.sin(tm*6))+')'; g.lineWidth=.06;
+      for(const [a,b] of F.threads){g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke();}}
   }
   if(sel&&!mode){
     g.strokeStyle='rgba(237,180,90,.32)'; g.lineWidth=.03;
@@ -4537,12 +4562,12 @@ function showBook(){
         (LORE[k]||'')+(H&&f.bind?' <i>Bound:</i> '+H.d:''));}).join('');
   }else if(t==='wards'){
     intro='Everything you can build. Each has three branches; it can take two, and only one reaches its capstone.';
-    const br=k=>(TREES[k]||[]).map(b=>b.n+' (capstone: '+b.t[b.t.length-1][1].split(':')[0]+')').join(' · ');
+    const br=(k,kk)=>(treeOf(k,kk||'')||[]).map(b=>b.n+' (capstone: '+b.t[b.t.length-1][1].split(':')[0]+')').join(' · ');
     list=bookEntry('<canvas width="72" height="72" data-icon="lamp:lamp:0"></canvas>','The Lamp','Tap it on the board to upgrade it','Everything climbs toward it. Each creature that arrives drains its oil. '+(TREES.lamp?'Branches: '+br('lamp')+'.':''))
       +Object.keys(WARDS).map(k=>{const W=WARDS[k], where=GIFT_WARDS.includes(k)?'Won as a gift':W.fork?'On forked floors':'';
         /* a kit's own version follows the ward it replaces; it shares that ward's branches */
         const own=Object.keys(KIT_WARDS).filter(kk=>KIT_WARDS[kk][k]).map(kk=>{const V=wdef(k,kk);
-          return bookEntry('<canvas width="72" height="72" data-icon="ward:'+k+':0"></canvas>',V.n,KITS[kk].n+'’s own '+W.short.toLowerCase()+' · Costs '+V.cost,V.d+' It takes the '+W.short.toLowerCase()+'’s branches.');}).join('');
+          return bookEntry('<canvas width="72" height="72" data-icon="ward:'+k+':0"></canvas>',V.n,KITS[kk].n+'’s own '+W.short.toLowerCase()+' · Costs '+V.cost,V.d+' <i>Branches:</i> '+br(k,kk)+'.');}).join('');
         return bookEntry('<canvas width="72" height="72" data-icon="ward:'+k+':0"></canvas>',W.n,'Costs '+W.cost+(where?' · '+where:''),W.d+(TREES[k]?' <i>Branches:</i> '+br(k)+'.':''))+own;}).join('');
   }else if(t==='rites'){
     intro='Spells on a cooldown. Your kit decides which you start with.';
@@ -4594,6 +4619,7 @@ function coachTray(type){return coachEl(coachTrayBtn(type));}
 /* the tray scrolls sideways on a narrow screen: bring the item a step talks about into view */
 function coachShowTray(type){const b=coachTrayBtn(type); if(b)b.scrollIntoView({block:'nearest',inline:'center'});}
 function coachStat(id){const e=$(id); return e?coachEl(e.closest('.stat')):null;}
+const SIGNAL_LESSON='Your Signal Candles pass light to one another. Build one in the dark, up to 4 tiles from a lit one, and the light leaps across. A dotted thread shows each leap. Take away a link and everything past it goes dark.';
 /* the rites lesson names rites this kit really holds */
 function riteLesson(){
   const rs=ritesNow(), now=rs.find(r=>r==='flare'||r==='bell'), aim=rs.find(r=>r!==now&&r!=='wisp');
@@ -4610,6 +4636,9 @@ function coachWalkSteps(){
     {title:'Build it',text:'Now tap a lit tile. Anything you build refunds in full if you take it down before you call the dark.',target:()=>coachEl(cv),until:()=>F.towers.length>0,back:()=>!sel&&!F.towers.length},
     {title:'Branches',text:'Tap what you just built, or the lamp, to open its branches.',enter:()=>{sel=null; forceUI();},target:()=>{const t=F.towers[F.towers.length-1]; return t?coachBoard(t.c+.5,t.r+.5,.7):null;},until:()=>!!selTower},
     {title:'Branches',text:'Each ward has three branches. It can take two of them, and only one reaches its capstone. Everything is stripped when the floor ends, and half of it comes back.',target:()=>coachEl('#sheet'),next:true},
+    /* the Lamplighter learns its candle here, at the start, instead of from a tip later */
+    {title:'Signal Candles',teaches:'signal',text:SIGNAL_LESSON,enter:()=>{selTower=null; forceUI();},skip:()=>!(candle&&signalKit()),
+      target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&t.type==='candle'&&!t.dark); return t?coachBoard(t.x,t.y,candleLeap(t)):null;},next:true},
     {title:'Rites',text:riteLesson(),enter:()=>{selTower=null; forceUI();},target:()=>coachEl('#rites'),next:true,skip:()=>!ritesNow().length},
     {title:'Call the dark',text:'When you are ready, call the dark. Once a wave has finished arriving, you can call the next one early for more essence.',enter:()=>{selTower=null; sel=null; forceUI();},target:()=>coachEl('#callBtn'),until:()=>F.phase!=='build'},
     {title:'Speed and pause',text:'Speed the dark up here, and pause from the top whenever you need. New things get a tip the first time you meet them. The book at the top is the Grimoire: everything you have met, and every ward and rite.',target:()=>coachEl('#speedBtn'),next:true}
@@ -4622,9 +4651,9 @@ const TIPS={
     if(trayItems().some(i=>i.type==='weir'))out.push({title:'The Weir',enter:()=>coachShowTray('weir'),text:'Build a Weir on the fork and it shuts one way. Tap it between waves to flip it. Watchers fly over it, and a Behemoth breaks it.',target:()=>coachTray('weir')});
     if(ritesNow().includes('wisp'))out.push({title:'The Will-o’-Wisp',text:'Mid-wave, tap the Wisp, then tap a way at the fork. For eight seconds everything but a boss follows it.',target:()=>coachEl('#rites [data-r="wisp"]')});
     return out;}},
-  signal:{when:()=>signalKit()&&F.phase==='build'&&F.towers.some(t=>t.kind==='ward'&&t.type==='candle'&&!t.dark),title:'Signal Candles',
-    text:'Your Signal Candles pass light to one another. Build one in the dark, up to 4 tiles from a lit one, and the light leaps across. A dotted thread shows each leap. Take away a link and everything past it goes dark.',
-    target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&t.type==='candle'&&!t.dark); return t?coachBoard(t.x,t.y,Math.min(4,LEAP)):null;}},
+  signal:{when:()=>signalKit()&&((sel&&sel.kind==='ward'&&sel.type==='candle')||F.towers.some(t=>t.kind==='ward'&&t.type==='candle'&&!t.dark)),title:'Signal Candles',
+    text:SIGNAL_LESSON,
+    target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&t.type==='candle'&&!t.dark); return t?coachBoard(t.x,t.y,candleLeap(t)):coachTray('candle');}},
   flarebolt:{when:()=>signalKit()&&F.phase==='wave'&&F.glints.length>0,title:'Flare bolts',
     text:'Your harpoons fire flare bolts. Each one lights and unveils what stands near the creature it strikes, for a moment, so your other wards can hit it.',
     target:()=>{const gl=F.glints[F.glints.length-1]; return gl?coachBoard(gl.x,gl.y,GLINT_R):null;}},
@@ -4662,6 +4691,8 @@ function coachRun(kind,key,list){
 function coachEnter(){
   const s=COACH.list[COACH.i];
   if(s.enter)s.enter();
+  /* a walkthrough step that teaches what a tip would counts as that tip, so it isn't told twice */
+  if(s.teaches){const t=tut(); if(!t.seen.includes(s.teaches)){t.seen.push(s.teaches); tutSave(t);}}
   const n=COACH.list.length, last=COACH.i===n-1;
   $('#coachStep').textContent=COACH.kind==='walk'?'Walkthrough · '+(COACH.i+1)+' of '+n:'First time'+(n>1?' · '+(COACH.i+1)+' of '+n:'');
   $('#coachTitle').textContent=s.title; $('#coachText').textContent=s.text;
@@ -4807,7 +4838,7 @@ function statLine(o){
   return 'Slows <b>50%</b> · Holds <b>'+(o.dur!=null?o.dur:14*(has('saltflats')?2:1))+'</b> crossings';
 }
 function treeHTML(o,B){
-  return '<p class="rulenote">Two branches per '+(o.isLamp?'lamp':'ward')+'. Only one can reach its capstone.</p><div class="tree">'+TREES[o.type].map((br,bi)=>{
+  return '<p class="rulenote">Two branches per '+(o.isLamp?'lamp':'ward')+'. Only one can reach its capstone.</p><div class="tree">'+treeOf(o.type).map((br,bi)=>{
     const lvl=o.br[br.k]||0, s=branchState(o,bi);
     const pips='<span class="pips" aria-label="'+lvl+' of 3">'+[0,1,2].map(i=>'<i class="'+(i<lvl?'on':'')+(i===2?' cap':'')+'"></i>').join('')+'</span>';
     let body, btn='';
@@ -4845,7 +4876,7 @@ function renderSheet(){
       +(t.dark?'<p class="darknote">Cut off from the lamp. It does nothing until light reaches it again.</p>':'')
       +'<div class="st">'+statLine(t)+'</div>';
     if(W.aim)html+=segHTML(t,B);
-    if(TREES[t.type])html+=treeHTML(t,B);
+    if(treeOf(t.type))html+=treeHTML(t,B);
     html+='<div class="ibtns">';
     if(t.type==='salt')html+=B('Refill · '+refillCost(),()=>refillSalt(t),{cls:'call',disabled:t.dur>=t.max||run.ess<refillCost()});
     if(t.type==='weir')html+=B(F.phase==='wave'?'Locked until the wave ends':'Flip the weir',()=>{t.open=t.open?0:1; forceUI();},{cls:'call',disabled:F.phase==='wave'});
