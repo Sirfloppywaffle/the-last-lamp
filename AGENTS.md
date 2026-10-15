@@ -193,10 +193,12 @@ Every item here is a bug or near-miss we've already had.
 
 21. **In-game text:** terse, eerie, plain words. Second person ("You strip your wards…"), present tense, no exclamation marks, no jokes that break the mood. Name things as concretely as the game does: "Brine Harpoon", "the stair", "the dark".
 22. Balance changes go in their own PR, or are clearly listed in the PR description. Criss tunes difficulty by feel; don't hide number changes inside a refactor.
+23. **Teach every change.** Anything that changes how you play ships in the same PR with: a first-time tip in `TIPS` (or a walkthrough step in `COACH` if it shows up on the first floors), a line in "How the dark works" (`showRules()`), and a Grimoire entry for every new creature, ward, rite, relic, kit or patron. A reviewer should block a PR that's missing any of these.
+24. **Developer mode shows, never saves.** Dev mode may open every kit, patron, offering and Grimoire page while it's on, but must never write those unlocks to `ll-meta` or `ll-codex`. Turning it off puts real progress back exactly as it was.
 
 **Patching across AIs**
 
-23. If you ever hand over a FIND/REPLACE patch instead of a PR, copy every FIND **verbatim from the current `main`**, and make each one match exactly once. (A FIND written against an older version once failed; a non-unique one once replaced the wrong block.)
+25. If you ever hand over a FIND/REPLACE patch instead of a PR, copy every FIND **verbatim from the current `main`**, and make each one match exactly once. (A FIND written against an older version once failed; a non-unique one once replaced the wrong block.)
 
 ---
 
