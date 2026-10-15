@@ -230,6 +230,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .choice.curse .tg{color:var(--wound)}
 .choice.curse{border-color:rgba(218,90,75,.35)}
 .choice.off{opacity:.45}
+.choice.kit-locked .tg{color:var(--ash)}
 .choice.owned{border-color:var(--tallow)}
 .choice em{display:block;margin-top:4px;font-style:normal;color:var(--madness);font-size:.8rem}
 .box.wide{max-width:860px}
@@ -398,7 +399,7 @@ input[type=range]::-moz-range-track {
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
-        <li><b>Kits.</b> Every descent starts with a kit: its own wards, rites and a passive gift. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
+        <li><b>Kits.</b> Every descent starts with a kit: its own wards, rites and a passive gift. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
@@ -580,8 +581,8 @@ const RELICS={
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
 const KITS={
   lamplighter:{n:'The Lamplighter',d:'Candles cost 20 and shine half a tile further, and the lamp burns half a tile wider.',wards:['candle','harpoon','salt','chime','trap','tithe'],rites:['flare','pillar'],roster:{}},
-  whaler:{n:'The Whaler',d:'Harpoons and Whaling Guns deal 20% more damage. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance'],rites:['flare','bell'],roster:{}},
-  occultist:{n:'The Occultist',d:'Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness.',wards:['candle','harpoon','effigy','tithe','chime'],rites:['flare','name'],roster:{watcher:1,gnasher:1}},
+  whaler:{n:'The Whaler',d:'Harpoons and Whaling Guns deal 20% more damage. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance'],rites:['flare','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
+  occultist:{n:'The Occultist',d:'Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness.',wards:['candle','harpoon','effigy','tithe','chime'],rites:['flare','name'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Have 3 horrors bound at once.'},
   galvanist:{n:'The Galvanist',d:'Lightning leaps to one more creature, and salt costs 15. Starts with the Galvanic Coil.',wards:['candle','harpoon','salt','coil','chime'],rites:['flare','pillar'],roster:{},lock:'kit_galvanist'},
   bellringer:{n:'The Bellringer',d:'Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell.',wards:['candle','harpoon','chime','censer','trap'],rites:['flare','bell'],roster:{},lock:'kit_bellringer'}
 };
@@ -625,6 +626,25 @@ const DEPTHS=['','Creatures have 15% more health.','Every floor carries an omen.
 
 function meta(){const m=store.get('ll-meta',null)||{}; return {embers:m.embers||0,unlocked:m.unlocked||[],depth:m.depth||0,runs:m.runs||0,wins:m.wins||0,lastDepth:m.lastDepth||0,lastKit:m.lastKit||'lamplighter'};}
 function saveMeta(m){store.set('ll-meta',m);}
+function unlockDeed(k){
+  if(devOn)return;
+  const K=KITS[k]; if(!K||!K.lock)return;
+  const m=meta();
+  if(m.unlocked.includes(K.lock))return;
+  m.unlocked.push(K.lock);
+  saveMeta(m);
+  banner('Deed accomplished','relic',K.n+' is unlocked');
+  AUDIO.buy();
+  const tipKey='deed_'+k;
+  if(!tut().seen.includes(tipKey)){
+    coachRun('tip',tipKey,[{title:'Deed accomplished',text:'You have unlocked '+K.n+'. Choose it on your next descent from the title screen.'}]);
+  }
+}
+function checkOccultistDeed(){
+  if(!run||!run.roster||devOn)return;
+  const tot=Object.values(run.roster).reduce((a,b)=>a+b,0);
+  if(tot>=3)unlockDeed('occultist');
+}
 function kit(){return run&&run.kit;}
 function depthLvl(){return (run&&run.depth)||0;}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
@@ -706,7 +726,7 @@ const EVENTS={
     {l:'Leave it shut',d:'Nothing happens.',fn:()=>({text:'You leave it. When you look back, there is no door.'})}]},
   mirror:{n:'The Black Mirror',pack:'events_more',body:'Your reflection is carrying a lamp too. Its flame is brighter than yours.',opts:[
     {l:'Trade lamps',d:'The lamp holds 5 less oil, but burns half a tile wider for the rest of the run.',fn:()=>{const b=run.baseOilMax!=null?run.baseOilMax:run.oilMax; run.baseOilMax=Math.max(6,b-5); updateOilMax(); run.lampBonus=(run.lampBonus||0)+.5; return {text:'Your hand comes away holding the brighter lamp. It is lighter than it should be.'};}},
-    {l:'Break it',d:'Bind a Watcher from the shards.',fn:()=>{run.roster.watcher=(run.roster.watcher||0)+1; run.bound++; return {text:'One shard keeps looking at you. It is bound to you now.'};}},
+    {l:'Break it',d:'Bind a Watcher from the shards.',fn:()=>{run.roster.watcher=(run.roster.watcher||0)+1; run.bound++; checkOccultistDeed(); return {text:'One shard keeps looking at you. It is bound to you now.'};}},
     {l:'Look away',d:'Nothing happens.',fn:()=>({text:'You do not meet its eyes. It does not meet yours.'})}]},
   teeth:{n:'The Toothmonger',pack:'events_more',body:'A thing with too many hands offers to buy whatever you no longer need.',opts:[
     {l:'Sell a relic',d:'Lose a random relic. Gain 200 essence.',fn:()=>{const k=pick(run.relics); if(!k)return {text:'You have nothing it wants. It looks at your hands for a while.'}; removeRelic(k); run.ess+=200; return {text:'It takes '+RELICS[k].n+' and counts out 200 essence.'};}},
@@ -1237,9 +1257,17 @@ function openKitPicker(note){
     acts.push({label:'Back',fn:closeModal});
     const deeper=dp?' <span class="mad">The Deeper Dark, depth '+dp+': '+DEPTHS.slice(1,dp+1).join(' ')+'</span>':'';
     showModal({title:'Who carries the lamp?',wide:true,body:'Choose a kit. Each starts with its own wards, rites and a gift of its own.'+deeper,note:msg||note||'',
-      choices:Object.keys(KITS).map(k=>{const K=KITS[k], locked=K.lock&&!m.unlocked.includes(K.lock);
-        return {cls:locked?'off':(k===m.lastKit?'relic':''),tag:locked?'Locked · unlock it in the Ember Hall':K.wards.map(w=>WARDS[w].short).join(' · '),title:K.n,sub:K.d,
-          fn:()=>{if(locked){draw('That kit is still locked. Unlock it in the Ember Hall with embers from your descents.'); return;} const mm=store.get('ll-meta',{})||{}; mm.lastDepth=dp; mm.lastKit=k; saveMeta(Object.assign(meta(),mm)); closeModal(); clearSave(); newRun(k,dp);}};}),
+      choices:Object.keys(KITS).map(k=>{const K=KITS[k], locked=!devOn&&K.lock&&!m.unlocked.includes(K.lock);
+        const tagText=locked?(K.deed?('Deed: '+K.deed):'Locked · unlock it in the Ember Hall'):K.wards.map(w=>WARDS[w].short).join(' · ');
+        const lockMsg=K.deed?('That kit is locked. Deed: '+K.deed):'That kit is still locked. Unlock it in the Ember Hall with embers from your descents.';
+        return {cls:locked?'off kit-locked':(k===m.lastKit?'relic':''),tag:tagText,title:K.n,sub:K.d,
+          fn:()=>{
+            if(locked){draw(lockMsg); return;}
+            if(!devOn){
+              const mm=store.get('ll-meta',{})||{}; mm.lastDepth=dp; mm.lastKit=k; saveMeta(Object.assign(meta(),mm));
+            }
+            closeModal(); clearSave(); newRun(k,dp);
+          }};}),
       actions:acts});
   };
   draw();
@@ -1492,7 +1520,7 @@ function applyGift(o){
   if(o.kind==='ward'){if(!run.wards.includes(o.key))run.wards.push(o.key);}
   else if(o.kind==='rite'){if(!run.rites.includes(o.key))run.rites.push(o.key);}
   else if(o.kind==='relic')addRelic(o.key);
-  else{run.roster[o.key]=(run.roster[o.key]||0)+1; run.bound++;}
+  else{run.roster[o.key]=(run.roster[o.key]||0)+1; run.bound++; checkOccultistDeed();}
 }
 function giftChoice(o,fn){
   if(o.kind==='ward')return {cls:'',tag:'New ward',title:WARDS[o.key].n,sub:WARDS[o.key].d,fn};
@@ -2082,7 +2110,7 @@ function doPact(d,k){
   if(k==='flame'){const b=run.baseOilMax!=null?run.baseOilMax:run.oilMax; run.baseOilMax=Math.max(6,b-4); updateOilMax(); startPick(d,1,'Feed the flame','The flame takes its share. Choose what it gives back.');}
   else if(k==='blood'){loseOil(5); run.ess+=150;}
   else if(k==='curse'){const c=pick(relicPool(true)); addRelic(c); startPick(d,1,'Embrace the curse',c?'You carry '+RELICS[c].n+' now. Choose what comes with it.':'Choose a relic.');}
-  else if(k==='name'){run.roster.elite=(run.roster.elite||0)+1; run.bound++; run.madPen=(run.madPen||0)+2;}
+  else if(k==='name'){run.roster.elite=(run.roster.elite||0)+1; run.bound++; run.madPen=(run.madPen||0)+2; checkOccultistDeed();}
   else if(k==='forget'){const ws=run.wards.filter(w=>w!=='candle'&&w!=='harpoon'); const w=pick(ws); if(w)run.wards=run.wards.filter(x=>x!==w); startPick(d,2,'Forget a ward',w?'You no longer remember how to build a '+WARDS[w].n+'. Choose two relics.':'Choose two relics.');}
   else if(k==='burn'){run.ess=0; run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+6; updateOilMax(); addOil(6);}
   const said={flame:'The lamp gutters, then steadies smaller.',blood:'You bleed the lamp. 150 essence pools on the altar.',curse:'The curse settles on you like wet cloth.',name:'You whisper it. Something answers, and follows you down. A Drowned Choir is bound to you.',forget:'You forget. It is surprisingly easy.',burn:'Your essence burns on the altar, and the flame drinks it. The lamp holds 6 more oil.'};
@@ -2095,7 +2123,7 @@ function buyStock(d,i){
   run.ess-=it.cost; it.sold=true; d.room.msg='';
   if(it.kind==='relic')addRelic(it.key);
   else if(it.kind==='ward'){if(!run.wards.includes(it.key))run.wards.push(it.key);}
-  else if(it.kind==='bind'){run.roster[it.key]=(run.roster[it.key]||0)+1; run.bound++;}
+  else if(it.kind==='bind'){run.roster[it.key]=(run.roster[it.key]||0)+1; run.bound++; checkOccultistDeed();}
   else if(it.kind==='oil')addOil(5);
   else if(it.kind==='cleanse'){const c=pick(run.relics.filter(k=>RELICS[k].curse)); if(c){removeRelic(c); d.room.msg=RELICS[c].n+' is gone.';}}
   AUDIO.coin(); showLanding();
@@ -2337,8 +2365,12 @@ function pickTarget(x,y,range,mode2,blind,exclude){
   return best;
 }
 function allIn(x,y,range){return F.foes.filter(e=>!e.dead&&dst(x,y,e.x,e.y)<=range&&canSee(e));}
-function hurt(e,amt,echo){
+function hurt(e,amt,src,echo){
+  if(typeof src==='boolean'){echo=src; src=undefined;}
   if(e.dead)return;
+  if(e.type==='behemoth'&&amt>0){
+    if(src!=='harpoon'&&src!=='lance')e.nonHarpoon=true;
+  }
   if(F.named===e.type)amt*=1.6;
   if(F.knell&&(e.stunT>0||e.pinT>0))amt*=1.3;
   if(e.hex)amt*=e.hex.mul;
@@ -2348,7 +2380,7 @@ function hurt(e,amt,echo){
   if(e.hex&&e.hex.voodoo&&!echo&&amt>=3){
     let o=null, bd=1e9;
     for(const f of F.foes){if(f===e||f.dead||!f.hex)continue; const d=dst(f.x,f.y,e.x,e.y); if(d<bd){bd=d; o=f;}}
-    if(o){F.fx.push({k:'hexlink',x:e.x,y:e.y,tx:o.x,ty:o.y,t:0,dur:.3}); hurt(o,amt*.3,true);}
+    if(o){F.fx.push({k:'hexlink',x:e.x,y:e.y,tx:o.x,ty:o.y,t:0,dur:.3}); hurt(o,amt*.3,'hex',true);}
   }
   if(e.hp<=0)killFoe(e);
 }
@@ -2406,6 +2438,7 @@ function killFoe(e){
     if(c.st.pyre&&dst(e.x,e.y,c.x,c.y)<=c.st.light){burst(e.x,e.y,1,12,'224,102,46',e); break;}
   }
   if(e.def.boss)F.fx.push({k:'ring',x:e.x,y:e.y,r0:.2,r1:4,t:0,dur:1.2,col:'237,180,90'});
+  if(e.type==='behemoth'&&!e.nonHarpoon&&!devOn)unlockDeed('whaler');
 }
 function lampHit(e){
   run.oil-=e.def.oil;
@@ -2417,6 +2450,7 @@ function lampHit(e){
 function bindSoul(s){
   s.t=0;
   run.roster[s.type]=(run.roster[s.type]||0)+1; run.bound++;
+  checkOccultistDeed();
   F.fx.push({k:'ring',x:s.x,y:s.y,r0:.1,r1:1,t:0,dur:.6,col:'169,124,226'});
   AUDIO.bind();
   banner('Bound','mad',HORRORS[s.type].n+' joins your roster');
@@ -2775,11 +2809,11 @@ function updateShots(dt){
           if(s.k==='spit'){s.tg.poisonT=3; s.tg.poisonDps=s.poison;}
           if(s.k==='lance'){
             const big=s.tg.def.heavy||s.tg.def.elite||s.tg.def.boss;
-            hurt(s.tg,s.dmg*(big?2:1));
+            hurt(s.tg,s.dmg*(big?2:1),'lance');
             F.fx.push({k:'burst',x:s.tx,y:s.ty,col:'#C9C2B2',r:.5,t:0,dur:.35}); F.shake=Math.max(F.shake,.12);
             if(!s.tg.dead){if(s.flense)s.tg.flenseT=5; if(s.pin)s.tg.pinT=s.tg.def.boss?.5:1.5;}
           }else
-          hurt(s.tg,s.dmg);
+          hurt(s.tg,s.dmg,'harpoon');
         }
       }else{s.x+=dx/d*step; s.y+=dy/d*step;}
     }else if(s.k==='pierce'){
@@ -2789,7 +2823,7 @@ function updateShots(dt){
         const e=F.foes[i];
         if(e.dead||s.hit.includes(e.id))continue;
         const u=clamp((e.x-ox)*s.dx+(e.y-oy)*s.dy,0,step);
-        if(dst(e.x,e.y,ox+s.dx*u,oy+s.dy*u)<=e.def.r+.12){s.hit.push(e.id); hurt(e,s.dmg);}
+        if(dst(e.x,e.y,ox+s.dx*u,oy+s.dy*u)<=e.def.r+.12){s.hit.push(e.id); hurt(e,s.dmg,'harpoon');}
       }
       if(s.trav>=s.max||s.x<-1||s.y<-1||s.x>COLS+1||s.y>ROWS+1)s.done=true;
     }else if(s.k==='tar'){
@@ -4408,7 +4442,7 @@ function codex(){
   return CODEX;
 }
 function codexSave(){store.set('ll-codex',{foes:[...CODEX.foes],relics:[...CODEX.relics]});}
-function codexSee(kind,k){const C=codex(); if(C[kind].has(k))return; C[kind].add(k); codexSave();}
+function codexSee(kind,k){if(devOn)return; const C=codex(); if(C[kind].has(k))return; C[kind].add(k); codexSave();}
 function relicGlyph(k){return RELICS[k].n.replace(/^(The|A) /,'').charAt(0);}
 let relKey='', relTipT=0, relTipK='';
 function renderRelics(){
@@ -4463,15 +4497,16 @@ function bookEntry(icon,title,sub,text,cls){
 function bookSeal(ch,curse){return '<span class="book-seal'+(curse?' is-curse':'')+'">'+ch+'</span>';}
 function showBook(){
   const C=codex(), t=BOOK.tab, held=run?run.relics:[];
-  if(run)held.forEach(k=>C.relics.add(k));
+  if(run&&!devOn)held.forEach(k=>C.relics.add(k));
+  const hasSeen=(kind,k)=>devOn||C[kind].has(k);
   const foes=Object.keys(FOES).filter(k=>!FOES[k].bound), relics=Object.keys(RELICS);
   const tabs=[['foes','Creatures'],['wards','Wards'],['rites','Rites'],['relics','Relics']];
   let list='', intro='';
   if(t==='foes'){
-    const seen=foes.filter(k=>C.foes.has(k)).length;
+    const seen=foes.filter(k=>hasSeen('foes',k)).length;
     intro='Creatures met: <b>'+seen+' of '+foes.length+'</b>. The rest are still in the dark.';
     list=foes.map(k=>{const f=FOES[k];
-      if(!C.foes.has(k))return bookEntry('<canvas width="72" height="72" data-icon="foe:'+k+':1"></canvas>','???','','Not yet met.','is-locked');
+      if(!hasSeen('foes',k))return bookEntry('<canvas width="72" height="72" data-icon="foe:'+k+':1"></canvas>','???','','Not yet met.','is-locked');
       const tags=[f.boss?'Boss':'',f.elite?'Elite':'',f.veiled?'Veiled':'',f.fly?'Flies':'',f.heavy?'Heavy':'',f.bind?'Can be bound':''].filter(Boolean).join(' · ');
       const H=HORRORS[k];
       return bookEntry('<canvas width="72" height="72" data-icon="foe:'+k+':0"></canvas>',f.n,'Life '+f.hp+' · Speed '+f.spd+' · Oil '+(f.oil>=99?'all':f.oil)+(f.ess?' · Essence '+f.ess:'')+(tags?' · '+tags:''),
@@ -4487,10 +4522,10 @@ function showBook(){
     list=Object.keys(RITES).map(k=>{const R=RITES[k];
       return bookEntry(bookSeal(R.n.replace(/^(The|A) /,'').charAt(0)),R.n,R.cd?'Cooldown '+R.cd+'s'+(R.fork?' · Forked floors only':''):'Once per floor',R.d);}).join('');
   }else{
-    const seen=relics.filter(k=>C.relics.has(k)).length;
+    const seen=relics.filter(k=>hasSeen('relics',k)).length;
     intro='Relics found: <b>'+seen+' of '+relics.length+'</b>.'+(held.length?' The ones you carry now are marked.':'');
     list=relics.map(k=>{const R=RELICS[k];
-      if(!C.relics.has(k))return bookEntry(bookSeal('?'),'???','','Not yet found.','is-locked');
+      if(!hasSeen('relics',k))return bookEntry(bookSeal('?'),'???','','Not yet found.','is-locked');
       const now=held.includes(k);
       return bookEntry(bookSeal(relicGlyph(k),R.curse),R.n,(R.curse?'Cursed':'Relic')+(now?' · Carried now':''),R.d,now?'is-held':'');}).join('');
   }
