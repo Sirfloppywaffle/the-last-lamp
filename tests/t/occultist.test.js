@@ -5,17 +5,28 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const b=await chromium.launch(); const p=await b.newPage({viewport:{width:412,height:860}});
   const errs=[]; p.on('pageerror',e=>errs.push(String(e)));
   await p.goto('file://'+process.argv[2]); await p.waitForTimeout(300);
-  const r=await p.evaluate(()=>{const T=__t, out={}; window.devNoDark=false;
+  const r=await p.evaluate(async()=>{const T=__t, out={}; window.devNoDark=false;
     const fresh=()=>{T.newRun('occultist',0); T.setP(false); T.run.ess=2000;};
     const field=(type,i)=>{const t={kind:'horror',type,id:9100+i,c:0,r:i,x:.5,y:i+.5,br:{},cd:9,ang:0,tgt:'first',invested:0,fresh:0}; T.F.towers.push(t); return t;};
     fresh();
     out.names=[T.wdef('candle').n,T.wdef('harpoon').n]; out.cost=T.wardCost('candle'); out.rites=T.run.rites.slice(); out.mad=T.horrorMad('gnasher');
     out.trees=[T.treeOf('candle').length,T.treeOf('harpoon').map(x=>x.n).join()];
-    /* no bodies yet: nowhere to stand */
+    /* the first floor starts with the last lamp-carrier's bones; every floor after starts bare */
+    out.seeded=[T.F.bodies.size,T.run.corpses.list.length];
+    T.run.floor=1; T.beginFloor(null); T.setP(false);
     let any=false; for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++)if(T.placeProblem({kind:'ward',type:'candle'},c,r)==='')any=true;
     out.noneAtStart=!any;
     /* a death far down the path leaves a body; a Corpse Candle can stand beside it in the dark, free */
     const P=T.F.paths[0], e=T.spawnFoe('crawler',0,3); T.update(.001); T.hurt(e,999);
+    /* piles: deaths near one gather into it, three at most; a death beside a full pile scatters */
+    const pile=()=>[...T.F.bodies.values()].map(b=>b.n);
+    out.pile1=pile(); const save=JSON.stringify(T.run.corpses);
+    for(let i=0;i<4;i++){const f=T.spawnFoe('crawler',0,3.3+i*.2); T.update(.001); T.hurt(f,999);}
+    out.pileFull=pile();
+    /* the floor keeps the freshest twelve */
+    for(let i=0;i<20;i++){const f=T.spawnFoe('crawler',0,3+i*2.5); T.update(.001); T.hurt(f,999);}
+    out.capped=T.run.corpses.list.length; out.maxPile=Math.max(...pile());
+    T.run.corpses=JSON.parse(save); T.corpseSync();
     out.bodies=T.F.bodies.size;
     const spots=[]; for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++)if(T.placeProblem({kind:'ward',type:'candle'},c,r)==='')spots.push([c,r,T.buildLit(c,r)]);
     out.spots=spots.length; const dark=spots.find(s=>!s[2])||spots[0]; out.inDark=!dark[2];
@@ -65,15 +76,26 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.setSel({kind:'ward',type:'candle'}); T.tryPlace(near[0],near[1]); T.setSel(null);
     T.F.wave=1; T.F.phase='wave'; T.F.queue=[]; T.F.foes.forEach(f=>f.dead=true); T.update(.01);
     out.graves=T.F.towers.filter(t=>t.corpse).length;
-    /* the first Corpse Candle tip */
-    fresh(); T.addCorpse({gate:0,d:5,def:{}}); T.tutSet({walk:'done',seen:[],off:false}); T.F.born=-1e6; T.F.phase='build'; T.coachPoll(); out.tip=T.COACH.key;
+    /* the first descent's lesson: choose, light, and it teaches the Corpse Candle tip */
+    fresh(); T.tutSet({walk:'done',seen:[],off:false}); T.F.born=-1e6; T.F.phase='build'; T.coachPoll(); out.tip=T.COACH.key;
+    const step=()=>document.querySelector('#coachTitle').textContent;
+    out.steps=[step()]; document.querySelector('#coachActs [data-coach="next"]').click(); out.steps.push(step());
+    T.setSel({kind:'ward',type:'candle'}); await new Promise(r=>setTimeout(r,250)); out.steps.push(step());
+    const sp=[]; for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++)if(T.placeProblem({kind:'ward',type:'candle'},c,r)==='')sp.push([c,r]);
+    T.tryPlace(...sp[0]); await new Promise(r=>setTimeout(r,250)); out.steps.push(step());
+    document.querySelector('#coachActs [data-coach="next"]').click(); out.seenCorpse=T.tut().seen.includes('corpse')&&T.tut().seen.includes('occwalk');
+    /* a later floor's first bones get the plain tip only if the lesson never ran */
+    fresh(); T.run.floor=1; T.beginFloor(null); T.setP(false); T.addCorpse({gate:0,d:5,def:{}}); T.tutSet({walk:'done',seen:['fork','deck'],off:false}); T.F.born=-1e6; T.F.phase='build'; T.coachPoll(); out.tip2=T.COACH.key;
     T.tutSet({walk:'done',seen:[],off:true});
     return out;});
   console.log(JSON.stringify(r));
   ok(r.names.join()==='Corpse Candle,Bone Spear'&&r.cost===0,'the Occultist builds Corpse Candles (free) and Bone Spears',r);
   ok(r.rites.join()==='unbind,name'&&r.mad===3,'it casts Unbind and Name the Thing; horrors cost their full madness',r);
   ok(r.trees[0]===0&&r.trees[1]==='Speed,Strength,Dread','Corpse Candles take no branches; the Bone Spear has Dread',r.trees);
-  ok(r.noneAtStart,'a floor begins with nowhere to light one');
+  ok(r.seeded[0]===2&&r.seeded[1]===3,'the first floor starts with two piles of bones',r.seeded);
+  ok(r.noneAtStart,'a later floor begins with nowhere to light one');
+  ok(r.pile1.join()==='1'&&r.pileFull.join()==='3','deaths gather into one pile of three at most',[r.pile1,r.pileFull]);
+  ok(r.capped===12&&r.maxPile<=3,'a floor keeps at most twelve bodies',[r.capped,r.maxPile]);
   ok(r.bodies===1&&r.spots>0,'a death leaves a body with places beside it',r);
   ok(r.inDark&&r.placed.corpse&&r.placed.lit&&r.placed.free&&r.placed.bodiesLeft===0,'it stands in the dark, burns without the lamp, costs nothing, and uses the body',r.placed);
   ok(r.buildsNow,'its light lets you build');
@@ -87,7 +109,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.soul===1,'Soul Spear leaves a sigil',r.soul);
   ok(r.drowned===1,'Drowned Souls: death in water leaves a sigil',r.drowned);
   ok(r.graves===1,'Wet Graves: a Corpse Candle beside water stays lit',r.graves);
-  ok(r.tip==='corpse','the first body gets the Corpse Candle tip',r.tip);
+  ok(r.tip==='occwalk'&&r.steps.join('|')==='The Occultist|Choose a Corpse Candle|Light it on the dead|It goes out','the first descent walks through lighting a Corpse Candle',r.steps);
+  ok(r.seenCorpse,'the lesson counts as the Corpse Candle tip');
+  ok(r.tip2==='corpse','without the lesson, the first bones get the tip',r.tip2);
   ok(!errs.length,'no page errors',errs);
   fails.forEach(f=>console.log('FAIL '+f)); await b.close(); process.exitCode=fails.length?1:0;
 })();
