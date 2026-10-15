@@ -51,8 +51,8 @@ const file='file://'+process.argv[2], out=process.argv[3];
   const devUnlocked=await p.evaluate(()=>{
     const K=__t.KITS;
     const m=__t.meta;
-    const locks=Object.keys(K).map(k=>!window.devOn&&K[k].lock&&!m.unlocked.includes(K[k].lock));
-    return {devOn: window.devOn, locks, meta: m};
+    const locks=Object.keys(K).map(k=>!__t.devOn&&K[k].lock&&!m.unlocked.includes(K[k].lock));
+    return {devOn: __t.devOn, locks, meta: m};
   });
   ok(devUnlocked.devOn, 'devOn is true');
   ok(devUnlocked.locks.every(l=>!l), 'All kits are unlocked/selectable when devOn is true');
