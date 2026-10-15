@@ -407,8 +407,8 @@ input[type=range]::-moz-range-track {
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
-        <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
-        <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, and Kindle sets a creature burning and running, lighting the dark around it. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; its Bone Spears and its horrors hit harder with every tier of madness, and Unbind sends a horror charging down the stair for good. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
+        <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
+        <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, and Kindle sets a creature burning and running, lighting the dark around it. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, and Unbind sends a horror charging down the stair for good. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
@@ -501,6 +501,7 @@ const WARDS={
   coil:{n:'Galvanic Coil',short:'Coil',cost:75,aim:true,d:'Throws lightning that leaps from creature to creature. Brine conducts: anything standing in salt takes double.'},
   lance:{n:'Whaling Gun',short:'Whaler',cost:90,aim:true,d:'A slow, enormous harpoon. Double damage to heavy creatures, elites and bosses.'},
   trypot:{n:'Try-pot',short:'Try-pot',cost:30,kit:'whaler',d:'An iron pot that renders the dead into whale oil. Build it where things die. Each Blubber Lamp drinks a measure from it as a wave begins. A full pot pours into the lamp, and whatever is left when the floor ends pours in too.'},
+  grasp:{n:'Grasping Dead',short:'Grasp',cost:0,path:true,kit:'occultist',d:'Three bodies rise as arms from a full pile of bones on the path. They seize each creature that walks over them and hold it 2 seconds, seen or unseen, lit or dark. After six they crumble. Bosses they hold only a moment; Behemoths and fliers pass free.'},
   weir:{n:'Weir',short:'Weir',cost:45,path:true,fork:true,d:'A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it.'}
 };
 const BASE_WARDS=['candle','harpoon','salt','chime','trap','tithe','effigy'];
@@ -532,6 +533,7 @@ const BLUBBER_LIGHT=.8, POT_R=2.4, POT_MEASURE=6, POT_MAX=4, TETHER_RATE=.12, TE
 /* the Occultist: how far from a body a Corpse Candle can stand; how many bones a pile holds, how near a death has to be
    to join a pile, and how many bodies a floor keeps (the oldest crumble first); what each tier of madness adds to a Bone Spear and
    to every horror; how fast an unbound horror charges, and what it deals (a base, and more for each point of its madness) */
+const GRASP_HOLD=2, GRASP_BOSS=.5, GRASP_GRIPS=6;
 const CORPSE_REACH=1.5, PILE_MAX=3, PILE_GATHER=1.5, BODY_MAX=12, SPEAR_TIER=.25, DREAD_TIER=.1, HORROR_TIER=.2, UNBIND_SPD=7, UNBIND_BASE=30, UNBIND_PER=20;
 
 const HORRORS={
@@ -678,7 +680,7 @@ const OFFERINGS={
 const KITS={
   lamplighter:{n:'The Lamplighter',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch.',wards:['candle','harpoon','salt','chime','trap','tithe'],rites:['kindle','pillar'],roster:{}},
   whaler:{n:'The Whaler',d:'Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance','trypot'],rites:['flare','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
-  occultist:{n:'The Occultist',d:'Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher.',wards:['candle','harpoon','effigy','tithe','chime'],rites:['unbind','name'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
+  occultist:{n:'The Occultist',d:'Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher.',wards:['candle','harpoon','grasp','effigy','tithe','chime'],rites:['unbind','name'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
   galvanist:{n:'The Galvanist',d:'Lightning leaps to one more creature, and salt costs 15. Starts with the Galvanic Coil.',wards:['candle','harpoon','salt','coil','chime'],rites:['flare','pillar'],roster:{},lock:'kit_galvanist'},
   bellringer:{n:'The Bellringer',d:'Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell.',wards:['candle','harpoon','chime','censer','trap'],rites:['flare','bell'],roster:{},lock:'kit_bellringer'}
 };
@@ -1295,6 +1297,7 @@ function wstat(t){
     pool:b.pitch>=3?{dps:10,dur:4,r:1.4}:b.pitch>=1?{dps:b.pitch>=2?7:4,dur:b.pitch>=2?2.5:2,r:1}:null};
   if(t.type==='trap')return {dmg:60+(b.barbs>=1?20:0)+(b.barbs>=2?25:0),hold:1+.5*m2(b.chain),reset:3*Math.pow(.75,m2(b.spring)),bleed:b.barbs>=3,twin:b.spring>=3,drag:b.chain>=3};
   if(t.type==='trypot')return {range:POT_R,every:POT_MEASURE,max:POT_MAX};
+  if(t.type==='grasp')return {hold:GRASP_HOLD,grips:GRASP_GRIPS};
   if(t.type==='tithe')return {range:2+.5*m2(b.reach),per:2+(b.greed>=1?2:0)+(b.greed>=2?3:0),tithe:b.greed>=3?18:6,oilEvery:b.blood>=3?8:b.blood>=2?14:b.blood>=1?20:0,slow:b.reach>=3?.2:0};
   if(t.type==='effigy')return {range:2.3,mul:[1.4,1.55,1.7][m2(b.malice)],bleed:[0,4,8][m2(b.pins)],slow:[0,.12,.24][m2(b.wither)],doom:b.malice>=3,voodoo:b.pins>=3,unmask:b.wither>=3};
   if(t.type==='coil')return {range:2.4,dmg:14+(b.cap>=1?6:0)+(b.cap>=2?8:0),rate:(1/1.5)*Math.pow(1.25,m2(b.freq)),jumps:2+m2(b.cond)+(kit()==='galvanist'?1:0),falloff:b.cond>=2?1:.8,leap:b.cond>=3?2.6:1.6,storm:b.cond>=3,over:b.cap>=3,field:b.freq>=3?5:0};
@@ -1503,6 +1506,8 @@ function signalReach(x,y){
 }
 function supported(t,C){
   if(C.conn.has(t))return true;
+  /* the Grasping Dead need no light */
+  if(t.type==='grasp')return true;
   if(isLightTower(t))return false;
   return C.src.some(s=>dst(t.x,t.y,s.x,s.y)<=s.r);
 }
@@ -1549,7 +1554,7 @@ function checkpoint(){
   store.set(SAVEKEY,lastSave);
 }
 function clearSave(){lastSave=null; store.set(SAVEKEY,null);}
-function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; updateOilMax(); beginFloor(s);}
+function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; if(run.kit==='occultist'&&!run.wards.includes('grasp'))run.wards.splice(2,0,'grasp'); updateOilMax(); beginFloor(s);}
 
 /* ---------------- dev mode ----------------
    Hidden: tap the "The Last Lamp" heading on the title screen 7 times quickly to switch it on or off.
@@ -2674,8 +2679,9 @@ function placeProblem(item,c,r){
   if(towerAt(c,r))return 'taken';
   const onPath=F.pathTiles.has(c+','+r);
   if(item.kind==='ward'&&item.type==='weir'&&!F.forks.some(f=>f.c===c&&f.r===r))return 'A weir only fits where the stair forks.';
-  if(item.kind==='ward'&&WARDS[item.type].path){if(!onPath)return item.type==='salt'?'Salt has to be poured on the path.':'Traps are set on the path.';}
+  if(item.kind==='ward'&&WARDS[item.type].path){if(!onPath)return item.type==='salt'?'Salt has to be poured on the path.':item.type==='grasp'?'The Grasping Dead rise from bones on the path.':'Traps are set on the path.';}
   else if(onPath)return 'Nothing can stand on the path.';
+  if(item.kind==='ward'&&item.type==='grasp'){const b=F.bodies.get(c+','+r); return b&&b.n>=PILE_MAX?'':'The Grasping Dead rise from a full pile: three bodies on one tile of the path.';}
   if(item.kind==='ward'&&item.type==='candle'&&corpseKit())return bodyNear(c,r)?'':'A Corpse Candle burns on the dead. It stands beside the path, next to a body from this floor.';
   if(!buildLit(c,r)&&!(item.kind==='ward'&&item.type==='candle'&&signalReach(c+.5,r+.5)))
     return signalKit()&&item.kind==='ward'&&item.type==='candle'?'Too dark, and too far from a lit Signal Candle. Their light leaps 4 tiles, more with the Signal branch.':'Too dark to build there. Bring light first.';
@@ -2700,6 +2706,7 @@ function tryPlace(c,r){
   const t={kind:it.kind,type:it.type,id:++uid,c,r,x:c+.5,y:r+.5,br:newBranches(it.type),tgt:'first',invested:0,fresh:0,cd:.3,ang:-.7,ring:0,echo:0};
   spend(t,cost);
   if(it.kind==='ward'&&it.type==='candle'&&corpseKit()){t.corpse=true; t.body=takeBody(bodyNear(c,r));}
+  if(it.kind==='ward'&&it.type==='grasp'){t.bones=[]; for(let i=0;i<PILE_MAX;i++){const b=takeBody(c+','+r); if(b)t.bones.push(b);} t.grips=GRASP_GRIPS;}
   if(it.kind==='ward'&&it.type==='salt'){t.max=t.dur=14*(has('saltflats')?2:1); F.salt.set(c+','+r,t);}
   F.towers.push(t);
   F.L=lightsNow();
@@ -2735,6 +2742,7 @@ function sellTower(t,confirmed){
   }
   const back=refund(t);
   if(t.corpse&&t.body&&run.corpses){run.corpses.list.push(t.body); corpseSync();}
+  if(t.bones&&t.bones.length&&run.corpses&&t.grips===GRASP_GRIPS){run.corpses.list.push(...t.bones); corpseSync();}
   run.ess+=back; removeTower(t);
   F.fx.push({k:'float',x:t.x,y:t.y-.2,txt:'+'+back,col:PAL.tallow,t:0,dur:.9,size:.3});
   for(const v of victims){
@@ -3186,6 +3194,17 @@ function updateTowers(dt){
           if(chimePulse(t,st)){t.cd=st.period; if(st.twice)t.echo=.35;}
           else t.cd=.1;
         }
+      }else if(t.type==='grasp'){
+        /* the dead take hold of each creature once, as it steps onto them */
+        const key=t.c+','+t.r;
+        for(let i=0;i<F.foes.length&&t.grips>0;i++){
+          const e=F.foes[i]; if(e.dead||e.def.fly||e.tile!==key)continue;
+          const seen=e.grasped||(e.grasped=[]); if(seen.includes(t.id))continue; seen.push(t.id);
+          if(e.def.heavy)continue;
+          e.stunT=Math.max(e.stunT,e.def.boss?GRASP_BOSS:GRASP_HOLD); t.grips--; t.snap=.6;
+          F.fx.push({k:'ring',x:t.x,y:t.y,r0:.45,r1:.1,t:0,dur:.35,col:'222,214,192'}); AUDIO.trap();
+        }
+        if(t.grips<=0){removeTower(t); F.fx.push({k:'burst',x:t.x,y:t.y,col:'#D8CCAA',r:.4,t:0,dur:.5}); hint('The Grasping Dead crumble.');}
       }else if(t.type==='trap'){
         if(t.cd>0){t.cd-=dt; continue;}
         const key=t.c+','+t.r;
@@ -4330,6 +4349,18 @@ function drawWard(c,t,tm,icon){
       for(let k=0;k<4;k++){const p=(tm*.45+k/4)%1; c.fillStyle='rgba(120,110,104,'+(.32*(1-p))+')'; c.beginPath(); c.arc(x+Math.sin(tm*.9+k*2)*.1*p,y-.2-p*.6,.06+p*.12,0,TAU2); c.fill();}
       for(let k=0;k<3;k++){const p=(tm*.8+k/3)%1; c.fillStyle='rgba(255,180,90,'+(1-p)+')'; c.fillRect(x+Math.sin(k*3+tm)*.12,y-.18-p*.45,.02,.02);}
     }
+  }else if(t.type==='grasp'){
+    /* arms of the dead reaching up out of the path; they close when they seize something */
+    const n=icon?4:Math.max(1,Math.min(4,Math.ceil((t.grips||GRASP_GRIPS)/1.5))), clench=!icon&&t.snap>0?1:0;
+    c.fillStyle='rgba(20,16,12,.55)'; c.beginPath(); c.ellipse(x,y+.06,.36,.2,0,0,TAU2); c.fill();
+    c.lineCap='round'; c.lineJoin='round';
+    for(let k=0;k<n;k++){
+      const a=(k/n)*TAU2+.4, bx=x+Math.cos(a)*.2, byy=y+.04+Math.sin(a)*.11, sway=icon?0:Math.sin((tm||0)*2.2+k*1.7)*.04;
+      const ex=bx+(x-bx)*(.25+.45*clench)+sway, ey=byy-.36+.1*clench, elx=(bx+ex)/2+(k%2?.06:-.06), ely=(byy+ey)/2;
+      for(const [w,col] of [[.07,'rgba(10,8,6,.6)'],[.042,'#d8ccaa']]){c.strokeStyle=col; c.lineWidth=w; c.beginPath(); c.moveTo(bx,byy); c.lineTo(elx,ely); c.lineTo(ex,ey); c.stroke();}
+      c.strokeStyle='#e8dec4'; c.lineWidth=.018;
+      for(let f=-1;f<=1;f++){const fa=-Math.PI/2+f*.5+(clench?f*-.35:0); c.beginPath(); c.moveTo(ex,ey); c.lineTo(ex+Math.cos(fa)*.08,ey+Math.sin(fa)*.08+(clench?.03:0)); c.stroke();}
+    }
   }else if(t.type==='trap'){
     /* rusted jaws, flat and open when set, clamped shut while they reset */
     const armed=icon||!(t.cd>0), jit=t.snap>0?Math.sin(tm*90)*.02:0;
@@ -4758,7 +4789,7 @@ function render(){
   const ts=F.towers.slice().sort((a,b)=>a.y-b.y);
   const items=[];
   for(const t of ts){
-    if(t.kind==='ward'&&(t.type==='salt'||t.type==='trap')){drawWard(g,t,tm,false); continue;}
+    if(t.kind==='ward'&&(t.type==='salt'||t.type==='trap'||t.type==='grasp')){drawWard(g,t,tm,false); continue;}
     if(t.kind==='ward'&&t.type==='effigy'&&!t.dark){g.strokeStyle='rgba(150,230,120,'+(.16+.06*Math.sin(tm*2))+')'; g.lineWidth=.03; g.setLineDash([.16,.12]); g.beginPath(); g.arc(t.x,t.y,wstat(t).range,tm*.1,tm*.1+TAU); g.stroke(); g.setLineDash([]);}
     items.push({y:t.y+.05,k:0,o:t});
   }
@@ -5331,6 +5362,9 @@ const TIPS={
   corpse:{when:()=>corpseKit()&&F.phase==='build'&&((sel&&sel.kind==='ward'&&sel.type==='candle')||F.bodies.size>0),title:'Corpse Candles',
     text:'Your candles burn on the dead. Each death leaves bones on the path, and they keep for the rest of the floor, lit or dark. A Corpse Candle is free and needs no lamp, but it must stand beside bones, it uses one body up, and it goes out when the wave ends. Every floor begins dark, so your light follows the killing.',
     target:()=>{for(const b of F.bodies.values())return coachBoard(b.x,b.y,.7); return coachTray('candle');}},
+  grasp:{when:()=>corpseKit()&&run.wards.includes('grasp')&&F.phase==='build'&&[...F.bodies.values()].some(b=>b.n>=PILE_MAX),title:'The Grasping Dead',
+    text:'A full pile of bones, three bodies on one tile, can rise. Choose Grasp and tap the pile: dead arms seize each creature that walks over them and hold it for 2 seconds, lit or unseen. After six they crumble.',
+    enter:()=>coachShowTray('grasp'),target:()=>{for(const b of F.bodies.values())if(b.n>=PILE_MAX)return coachBoard(b.x,b.y,.7); return null;}},
   madfeeds:{when:()=>corpseKit()&&madTier()>=1&&F.towers.some(t=>t.kind==='horror'),title:'Madness feeds you',
     text:'Your madness is rising, and you are stronger for it: each tier makes your Bone Spears hit 25% harder and your horrors 20% harder. The dark still gets worse with every tier.',
     target:()=>coachStat('#madV')},
@@ -5535,6 +5569,7 @@ function statLine(o){
       +'<br>Your lamps drink <b>'+d.lamps+'</b> a wave'+(d.lamps?(d.oil?' · <b>'+d.oil+'</b> will drink oil':' · all fed'):'')+' · Reach <b>'+st.range.toFixed(1)+'</b>';}
   if(o.type==='chime')return 'Damage <b>'+st.dmg+'</b> · Stun <b>'+st.stun.toFixed(1)+'s</b> · Range <b>'+st.range.toFixed(2)+'</b>';
   if(o.type==='censer')return 'Damage <b>'+st.dmg+'</b> · Splash <b>'+st.splash.toFixed(2)+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s'+(st.pool?' · Burning ground <b>'+st.pool.dps+' damage/s</b>':'');
+  if(o.type==='grasp')return 'Holds <b>'+GRASP_HOLD+'s</b> (bosses <b>'+GRASP_BOSS+'s</b>) · <b>'+(o.grips!=null?o.grips:GRASP_GRIPS)+'</b> grips left · Needs no light';
   if(o.type==='trap')return 'Damage <b>'+st.dmg+'</b> · Holds <b>'+st.hold.toFixed(1)+'s</b> · Resets <b>'+st.reset.toFixed(1)+'s</b> · Catches unseen things, never fliers';
   if(o.type==='tithe')return '<b>+'+st.per+'</b> essence per death within <b>'+st.range.toFixed(1)+'</b> · Tithe <b>+'+st.tithe+'</b> each break'+(st.oilEvery?' · 1 oil per <b>'+st.oilEvery+'</b> deaths':'');
   if(o.type==='effigy')return 'Hexed take <b>+'+Math.round((st.mul-1)*100)+'%</b> damage · Range <b>'+st.range.toFixed(1)+'</b>'+(st.bleed?' · Bleed <b>'+st.bleed+'/s</b>':'')+(st.slow?' · Slow <b>'+Math.round(st.slow*100)+'%</b>':'')+(st.unmask?' · Unmasks':'');
@@ -5612,7 +5647,7 @@ function renderModebar(){
   else if(mode==='name'){title='Name the Thing'; sub='Tap a creature you can see. Its kind takes 60% more damage for the rest of the floor.';}
   else if(mode==='unbind'){title='Unbind'; sub='Tap one of your horrors. It charges down the stair through everything in its way, and is gone for good.';}
   else if(mode==='kindle'){title='Kindle'; sub='Tap a creature you can see. It burns and lights the dark around it for 8 seconds, and it runs.';}
-  else if(sel&&sel.kind==='ward'){const W=wdef(sel.type); title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(W.path?' Tap a lit path tile.':sel.type==='candle'&&corpseKit()?' Tap a marked tile beside a body.':sel.type==='candle'&&signalKit()?' Tap a lit tile beside the path, or a dark one near a lit Signal Candle.':' Tap a lit tile beside the path.');}
+  else if(sel&&sel.kind==='ward'){const W=wdef(sel.type); title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(sel.type==='grasp'?' Tap a full pile of bones on the path.':W.path?' Tap a lit path tile.':sel.type==='candle'&&corpseKit()?' Tap a marked tile beside a body.':sel.type==='candle'&&signalKit()?' Tap a lit tile beside the path, or a dark one near a lit Signal Candle.':' Tap a lit tile beside the path.');}
   else if(sel&&sel.kind==='horror'){const H=HORRORS[sel.type]; title=H.n+' · <i>'+H.cost+'</i> · <em>+'+horrorMad(sel.type)+' madness</em>'; sub=avail(sel.type)+' ready. '+H.d;}
   if(!title||!F||F.phase==='cleared'||F.phase==='draft'){if(!el.hidden){el.hidden=true; modeKey=''; modeTitle=''; $('#cmdbar').classList.remove('placing');} return;}
   const key=title+sub;

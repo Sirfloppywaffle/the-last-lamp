@@ -9,7 +9,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const fresh=()=>{T.newRun('occultist',0); T.setP(false); T.run.ess=2000;};
     const field=(type,i)=>{const t={kind:'horror',type,id:9100+i,c:0,r:i,x:.5,y:i+.5,br:{},cd:9,ang:0,tgt:'first',invested:0,fresh:0}; T.F.towers.push(t); return t;};
     fresh();
-    out.names=[T.wdef('candle').n,T.wdef('harpoon').n]; out.cost=T.wardCost('candle'); out.rites=T.run.rites.slice(); out.mad=T.horrorMad('gnasher');
+    out.names=[T.wdef('candle').n,T.wdef('harpoon').n]; out.cost=T.wardCost('candle'); out.rites=T.run.rites.slice(); out.wards=T.run.wards.slice(); out.mad=T.horrorMad('gnasher');
     out.trees=[T.treeOf('candle').length,T.treeOf('harpoon').map(x=>x.n).join()];
     /* the first floor starts with the last lamp-carrier's bones; every floor after starts bare */
     out.seeded=[T.F.bodies.size,T.run.corpses.list.length];
@@ -52,6 +52,19 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     field('shrieker',0); field('shrieker',1); field('gnasher',2); out.tier=T.madTier();
     out.spear2=+T.wstat(h).dmg.toFixed(2); out.boost2=+T.horrorBoost().toFixed(2);
     h.br.dread=2; out.dread2=+T.wstat(h).dmg.toFixed(2);
+    /* the Grasping Dead: a full pile rises as arms that hold what crosses them, six times, in the dark too */
+    fresh(); T.run.floor=1; T.beginFloor(null); T.setP(false); T.run.ess=500;
+    for(let i=0;i<3;i++)T.addCorpse({gate:0,d:6,def:{}});
+    const [pk,pb]=[...T.F.bodies.entries()][0]; const [gc,gr]=pk.split(',').map(Number);
+    let other=0; for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++)if(T.placeProblem({kind:'ward',type:'grasp'},c,r)==='')other++;
+    const ess2=T.run.ess; T.setSel({kind:'ward',type:'grasp'}); T.tryPlace(gc,gr); T.setSel(null);
+    const gw=T.F.towers.find(t=>t.type==='grasp');
+    out.grasp={spots:other, placed:!!gw, free:T.run.ess===ess2, bones:T.run.corpses.list.length, lit:T.buildLit(gc,gr), dark:gw&&gw.dark};
+    T.F.phase='wave'; const walker=T.spawnFoe('crawler',0,5.2); for(let i=0;i<20&&!(walker.stunT>0);i++)T.update(.05);
+    out.grasp.held=+walker.stunT.toFixed(2); out.grasp.grips=gw.grips;
+    for(let k=0;k<8;k++){const f=T.spawnFoe('crawler',0,5.6); f.d=5.95; f.tile=pk; T.update(.01);}
+    out.grasp.crumbled=!T.F.towers.includes(gw);
+    T.F.foes.forEach(f=>f.dead=true); T.update(.01);
     /* Unbind: it charges down the stair, through everything, and leaves the roster */
     fresh(); T.F.towers=[]; T.run.roster={gnasher:1};
     T.castRite('unbind'); out.noHorror=T.F.cd.unbind||0;
@@ -90,7 +103,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     return out;});
   console.log(JSON.stringify(r));
   ok(r.names.join()==='Corpse Candle,Bone Spear'&&r.cost===0,'the Occultist builds Corpse Candles (free) and Bone Spears',r);
-  ok(r.rites.join()==='unbind,name'&&r.mad===3,'it casts Unbind and Name the Thing; horrors cost their full madness',r);
+  ok(r.wards.includes('grasp')&&r.rites.join()==='unbind,name'&&r.mad===3,'it casts Unbind and Name the Thing; horrors cost their full madness',r);
   ok(r.trees[0]===0&&r.trees[1]==='Speed,Strength,Dread','Corpse Candles take no branches; the Bone Spear has Dread',r.trees);
   ok(r.seeded[0]===2&&r.seeded[1]===3,'the first floor starts with two piles of bones',r.seeded);
   ok(r.noneAtStart,'a later floor begins with nowhere to light one');
@@ -104,6 +117,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.resumed&&r.turned,'bodies survive a resume and a turned board',r);
   ok(r.tier===2&&Math.abs(r.spear2/r.spear0-1.5)<.01&&r.boost0===1&&r.boost2===1.4,'madness feeds the spear (+25%/tier) and the horrors (+20%/tier)',r);
   ok(Math.abs(r.dread2/r.spear0-1.9)<.01,'Dread adds 10% per tier per level',r.dread2/r.spear0);
+  ok(r.grasp.spots===1&&r.grasp.placed&&r.grasp.free&&r.grasp.bones===0,'the Grasping Dead rise only from a full pile, free, using its three bones',r.grasp);
+  ok(!r.grasp.dark&&Math.abs(r.grasp.held-2)<.1,'they hold what walks over them for 2s, light or none',r.grasp);
+  ok(r.grasp.crumbled,'after six grips they crumble',r.grasp);
   ok(r.noHorror===0,'Unbind waits when no horror stands on the board');
   ok(r.unbind.cd&&r.unbind.gone&&r.unbind.roster===0&&r.unbind.hit[0]&&r.unbind.hit[1]&&!r.unbind.hit[2]&&r.unbind.charges===0,'Unbind charges toward where they come from, hits what is in its way, and is gone',r.unbind);
   ok(r.soul===1,'Soul Spear leaves a sigil',r.soul);
