@@ -80,10 +80,43 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     a.stunT=99; for(let k=0;k<240;k++)T.update(1/30);
     out.kindleAfter={t:a.kindleT, light:T.F.L.some(L=>L.kindle)};
 
+    // kit branches: the Signal Candle trades Wax for Signal, the Flare Harpoon trades Sight for Flare
+    setup('lamplighter');
+    const bc=placeAt('candle',edge[0],edge[1]); T.update(1/30);
+    out.trees={candle:[0,1,2].map(i=>T.treeOf('candle')[i].n), harpoon:[0,1,2].map(i=>T.treeOf('harpoon')[i].n), whaler:[0,1,2].map(i=>T.treeOf('harpoon','whaler')[i].n)};
+    // Signal tier 2: the light leaps 6 tiles
+    const farSpot=tiles().find(([c,r])=>dark(c,r)&&Math.hypot(c-edge[0],r-edge[1])>4.3&&Math.hypot(c-edge[0],r-edge[1])<=5.8&&T.F.towers.every(t=>t===bc||Math.hypot(c+.5-t.x,r+.5-t.y)>4.5));
+    out.signal2={spot:!!farSpot, before:farSpot?T.placeProblem({kind:'ward',type:'candle'},farSpot[0],farSpot[1]):'none'};
+    T.buyBranch(bc,1); T.buyBranch(bc,1); T.update(1/30);
+    if(farSpot){const c3=placeAt('candle',farSpot[0],farSpot[1]); T.update(1/30); out.signal2.after=!!c3&&!c3.dark;}
+    // Fire Thread: a creature crossing a thread from a capstone candle catches fire
+    setup('lamplighter'); wave();
+    const fa=placeAt('candle',edge[0],edge[1]); for(let i=0;i<3;i++)T.buyBranch(fa,1); T.update(1/30);
+    const P2=T.F.paths[0]; let cross=null;
+    for(const [c,r] of tiles()){
+      if(!dark(c,r)||T.placeProblem({kind:'ward',type:'candle'},c,r)!=='')continue;
+      for(let d=1;d<P2.len-1;d+=.1){const q=T.posAt(P2,d); if(T.segDist(q[0],q[1],fa.x,fa.y,c+.5,r+.5)<.2&&Math.hypot(q[0]-fa.x,q[1]-fa.y)>.6){cross={c,r,d}; break;}}
+      if(cross)break;
+    }
+    out.thread={found:!!cross};
+    if(cross){placeAt('candle',cross.c,cross.r); T.update(1/30); out.thread.threads=T.F.threads.length;
+      const fe=T.spawnFoe('crawler',0,Math.max(0,cross.d-1)); fe.hp=fe.max=1e6; let lit=0;
+      for(let k=0;k<60;k++){T.update(1/30); if(fe.kindleT>0)lit++;}
+      out.thread.burned=lit>0;}
+    // Starshell: every fourth bolt lights a 3-tile circle
+    setup('lamplighter'); wave();
+    {const P=T.F.paths[0]; let d=P.len-2.2; for(;d>0;d-=.25){const q=T.posAt(P,d); if(Math.hypot(q[0]-T.F.lx,q[1]-T.F.ly)>2.2)break;}
+     const q=T.posAt(P,d);
+     const hs=tiles().filter(([c,r])=>T.placeProblem({kind:'ward',type:'harpoon'},c,r)==='').sort((a,b)=>Math.hypot(a[0]+.5-q[0],a[1]+.5-q[1])-Math.hypot(b[0]+.5-q[0],b[1]+.5-q[1]))[0];
+     const sh=placeAt('harpoon',hs[0],hs[1]); for(let i=0;i<3;i++)T.buyBranch(sh,2);
+     const cr=T.spawnFoe('crawler',0,d); cr.hp=cr.max=1e6; cr.stunT=99;
+     let star=0, small=0; for(let k=0;k<300;k++){T.update(1/30); for(const gl of T.F.glints){if(gl.r>=2.9)star++; else small++;}}
+     out.star={star:star>0, small:small>0, range:+T.wstat(sh).range.toFixed(2)};}
+
     // first-time tips for the Signal Candle, flare bolts and Kindle (AGENTS.md rule 23)
     const tipFor=(prep)=>{setup('lamplighter'); T.tutSet({walk:'done',seen:[],off:false}); prep(); T.F.born=-1e6; T.coachPoll(); const k=T.COACH.on?T.COACH.key:''; T.tutSet({walk:'done',seen:[],off:true}); document.querySelector('#coach').hidden=true; T.COACH.on=false; return k;};
     out.tips=[
-      tipFor(()=>{placeAt('candle',edge[0],edge[1]); T.update(1/30);}),
+      tipFor(()=>{T.setSel({kind:'ward',type:'candle'});}),
       tipFor(()=>{wave(); T.F.glints.push({x:T.F.lx,y:T.F.ly-1,t:1}); T.update(1/30); T.F.glints.push({x:T.F.lx,y:T.F.ly-1,t:1});}),
       tipFor(()=>{wave(); const e=T.spawnFoe('crawler',0,T.F.paths[0].len-2); e.stunT=99; T.update(1/30);})];
     T.tutSet({walk:'done',seen:[],off:true});
@@ -113,6 +146,11 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(r.kindleRun>1.15&&r.kindleRun<1.35,'a kindled creature runs about 25% faster',r.kindleRun);
   ok(r.kindleBurn>0,'a kindled creature burns',r.kindleBurn);
   ok(r.kindleAfter.t<=0&&!r.kindleAfter.light,'the fire goes out after 8 seconds',r.kindleAfter);
+  ok(r.trees.candle.join()==='Glow,Signal,Ember'&&r.trees.harpoon.join()==='Speed,Strength,Flare','the Lamplighter wards have their own branches',r.trees);
+  ok(r.trees.whaler.join()==='Speed,Strength,Sight','other kits keep the plain branches',r.trees.whaler);
+  ok(r.signal2.spot&&/4 tiles|leaps/.test(r.signal2.before)&&r.signal2.after===true,'the Signal branch lets the light leap further',r.signal2);
+  ok(r.thread.found&&r.thread.threads>0&&r.thread.burned,'a Fire Thread sets what crosses it burning',r.thread);
+  ok(r.star.star&&r.star.small,'Starshell lights a wide circle every fourth bolt',r.star);
   ok(r.tips.join()==='signal,flarebolt,kindle','first-time tips teach the Signal Candle, flare bolts and Kindle',r.tips);
   ok(r.book&&r.bookWards,'the Grimoire shows the kit and its wards',[r.book,r.bookWards]);
   fails.forEach(f=>console.log('FAIL '+f));
