@@ -75,6 +75,7 @@ if D.get('KIT_WARDS'):
 
 w("\n## Relics\n\n| Key | Name | Cursed | Pack | Effect |\n|---|---|---|---|---|")
 for k,v in D['RELICS'].items(): w("| `%s` | %s | %s | %s | %s |"%(k,esc(v['n']),'yes' if v.get('curse') else '',v.get('pack','base'),esc(v['d'])))
+if D.get('RELICS_RESTING'): w("\n**Resting while patrons are tested** (#29, `RELICS_RESTING`): %s. They are never offered; a run that carries one keeps it."%', '.join(esc(D['RELICS'][k]['n']) for k in D['RESTING']))
 
 w("\n## Omens (on stair doors)\n\n| Key | Name | Effect |\n|---|---|---|")
 for k,v in D['OMENS'].items(): w("| `%s` | %s | %s |"%(k,v['n'],esc(v['d'])))
