@@ -245,6 +245,8 @@ Numbers: Signal Candle light leaps **4** tiles. A flare bolt lights **1.3** tile
 | `hollow` | Hollow Crown | yes | relics_forbidden | Every gift offers one more choice, but the lamp holds 4 less oil. |
 | `eyes` | A Thousand Eyes | yes | relics_forbidden | Everything in light can be seen, veiled or not, but every madness threshold sits 2 lower. |
 
+**Resting while patrons are tested** (#29, `RELICS_RESTING`): Tallow of Saints, Whetted Barbs, Bounty of the Deep, Oil Reserve, Quiet Mind, Sealing Wax, Ossuary Key, Salt Flats, Thunder Marrow, Witch Salt, Leech Jar. They are never offered; a run that carries one keeps it.
+
 ## Omens (on stair doors)
 
 | Key | Name | Effect |
@@ -304,7 +306,7 @@ Numbers: Signal Candle light leaps **4** tiles. A flare bolt lights **1.3** tile
 
 **A Salt-crusted Altar** (`altar`): *An old altar furred white with salt. Something was sacrificed here, and the salt kept it.*
 
-- **Pray:** Gain Salt Flats, or Witch Salt if you have it.
+- **Pray:** Gain the Brined Ledger, and learn Salt if you have not.
 - **Pocket the salt:** +70 essence.
 - **Smash it:** The lamp holds 3 more oil, but you lose 2 oil now.
 
@@ -339,7 +341,7 @@ Numbers: Signal Candle light leaps **4** tiles. A flare bolt lights **1.3** tile
 |---|---|---|---|
 | `kit_galvanist` | The Galvanist | 70 | A new kit, built on lightning and salt. |
 | `kit_bellringer` | The Bellringer | 110 | A new kit, built on chimes, pitch and the Drowning Bell. |
-| `relics_deep` | Relics of the Deep | 50 | Leech Jar, Second Shadow, Thunder Marrow and Witch Salt join the relic pool. |
+| `relics_deep` | Relics of the Deep | 50 | Second Shadow joins the relic pool, and Leech Jar, Thunder Marrow and Witch Salt when they return to the stair. |
 | `relics_forbidden` | Forbidden Relics | 90 | Four cursed relics with great power join the pool: Choir in the Walls, Gilded Teeth, Hollow Crown, A Thousand Eyes. |
 | `events_more` | Older Stories | 60 | Three more things can happen off the stair. |
 | `merchant_plus` | A Regular Customer | 60 | Merchants stock one more relic. |

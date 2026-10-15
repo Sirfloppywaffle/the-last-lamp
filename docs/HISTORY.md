@@ -4,6 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **The number-only relics rest** (#29), so patrons can be tested without them: Tallow of Saints, Whetted Barbs, Bounty of the Deep, Oil Reserve, Quiet Mind, Sealing Wax, Ossuary Key, Salt Flats, Thunder Marrow, Witch Salt and Leech Jar are never offered while `RELICS_RESTING` is on. A run that carries one keeps it. The Salt-crusted Altar gives the Brined Ledger instead, and the Grimoire marks resting relics "Not on the stair for now". (Claude)
 ---
 
 ## v16.2 — The Whaler
