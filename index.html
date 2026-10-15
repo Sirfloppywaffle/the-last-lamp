@@ -407,8 +407,8 @@ input[type=range]::-moz-range-track {
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
-        <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
-        <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, and Kindle sets a creature burning and running, lighting the dark around it. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
+        <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
+        <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, and Kindle sets a creature burning and running, lighting the dark around it. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
@@ -501,6 +501,8 @@ const WARDS={
   coil:{n:'Galvanic Coil',short:'Coil',cost:75,aim:true,d:'Throws lightning that leaps from creature to creature. Brine conducts: anything standing in salt takes double.'},
   lance:{n:'Whaling Gun',short:'Whaler',cost:90,aim:true,d:'A slow, enormous harpoon. Double damage to heavy creatures, elites and bosses.'},
   trypot:{n:'Try-pot',short:'Try-pot',cost:30,kit:'whaler',d:'An iron pot that renders the dead into whale oil. Build it where things die. Each Blubber Lamp drinks a measure from it as a wave begins. A full pot pours into the lamp, and whatever is left when the floor ends pours in too.'},
+  grasp:{n:'Grasping Dead',short:'Grasp',cost:0,path:true,kit:'occultist',d:'Three bodies rise as arms from a full pile of bones on the path. They seize each creature that walks over them and hold it 2 seconds, seen or unseen, lit or dark. After six they crumble. Bosses they hold only a moment; Behemoths and fliers pass free.'},
+  risen:{n:'The Risen',short:'Risen',cost:0,kit:'occultist',raised:true,d:'Raised from a pile of bones by the rite Raise the Dead. It bites whatever comes near, seen or unseen, harder for every bone it rose from and every tier of madness, and falls when the wave breaks.'},
   weir:{n:'Weir',short:'Weir',cost:45,path:true,fork:true,d:'A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it.'}
 };
 const BASE_WARDS=['candle','harpoon','salt','chime','trap','tithe','effigy'];
@@ -515,6 +517,10 @@ const KIT_WARDS={
   whaler:{
     candle:{n:'Blubber Lamp',short:'Blubber',d:'A lamp of rendered fat. It burns almost a tile wider than a candle, but it drinks: as each wave begins, every Blubber Lamp takes a measure from a Try-pot, or 1 oil from the lamp if the pots are dry.'},
     harpoon:{n:'Tether Harpoon',short:'Tether',d:'Fires barbed bolts on a line. The line holds what it strikes and slows it more the longer it holds, until the harpoon fires at something else.'}
+  },
+  occultist:{
+    candle:{n:'Corpse Candle',short:'Corpse',cost:0,d:'Free, and it needs no lamp: it burns on the dead. It can only stand beside the path where something died this floor, and each one uses up a body. It goes out when the wave ends.'},
+    harpoon:{n:'Bone Spear',short:'Spear',d:'Fires a spear of sharpened bone at a single creature. The madder you are, the harder it hits: 25% more for each tier of madness.'}
   }
 };
 function wdef(type,k){const K=KIT_WARDS[k===undefined?kit():k]; return K&&K[type]?Object.assign({},WARDS[type],K[type]):WARDS[type];}
@@ -525,6 +531,11 @@ const KINDLE_T=8, KINDLE_R=1.8, KINDLE_DPS=5, KINDLE_RUN=1.25, THREAD_T=2;
 /* the Whaler: how much wider a Blubber Lamp burns; the Try-pot's reach, its measure and how many it holds;
    how fast the line's grip tightens and how far it goes; how often Reel In hauls */
 const BLUBBER_LIGHT=.8, POT_R=2.4, POT_MEASURE=6, POT_MAX=4, TETHER_RATE=.12, TETHER_MAX=.4, HAUL_EVERY=4;
+/* the Occultist: how far from a body a Corpse Candle can stand; how many bones a pile holds, how near a death has to be
+   to join a pile, and how many bodies a floor keeps (the oldest crumble first); what each tier of madness adds to a Bone Spear and
+   to every horror; how fast an unbound horror charges, and what it deals (a base, and more for each point of its madness) */
+const GRASP_HOLD=2, GRASP_BOSS=.5, GRASP_GRIPS=6, RISEN_DMG=14, RISEN_RANGE=1.5, RISEN_RATE=1;
+const CORPSE_REACH=1.5, PILE_MAX=3, PILE_GATHER=1.5, BODY_MAX=12, SPEAR_TIER=.25, DREAD_TIER=.1, HORROR_TIER=.2, UNBIND_SPD=7, UNBIND_BASE=30, UNBIND_PER=20;
 
 const HORRORS={
   gnasher:{n:'Bound Gnasher',cost:30,mad:3,range:1.35,dmg:24,rate:.9,aim:true,d:'Bites whatever passes within reach. Brutal and short-ranged.'},
@@ -591,6 +602,12 @@ const KIT_TREES={
       {k:'reek',n:'Reek',t:[[15,'Its smoke clings: what leaves its light stays slowed 2 seconds'],[25,'It clings 4 seconds'],[50,'Lure: at a fork, everything but a boss takes the way it lights']]}],
     harpoon:[TREES.harpoon[0],TREES.harpoon[1],
       {k:'line',n:'Line',t:[[30,'The line slows by up to 55%'],[45,'The line holds a tile further out'],[110,'Reel In: every 4 seconds the line hauls its catch a tile back']]}]
+  },
+  /* a Corpse Candle burns one wave, so it takes no branches */
+  occultist:{
+    candle:[],
+    harpoon:[TREES.harpoon[0],TREES.harpoon[1],
+      {k:'dread',n:'Dread',t:[[30,'Each tier of madness adds 10% more'],[45,'Each tier adds 10% more again'],[110,'Soul Spear: what it kills leaves its sigil, if its kind can be bound']]}]
   }
 };
 function treeOf(type,k){const K=KIT_TREES[k===undefined?kit():k]; return K&&K[type]?K[type]:TREES[type];}
@@ -602,6 +619,8 @@ const RITES={
   wisp:{n:'Will-o’-Wisp',cd:30,fork:true,d:'Tap a way at a fork. For 8 seconds, everything that reaches the fork follows the wisp, whatever it wants. Bosses ignore it.'},
   name:{n:'Name the Thing',cd:0,d:'Once per floor. Tap a visible creature and its whole kind takes 60% more damage until the floor ends.'},
   kindle:{n:'Kindle',cd:30,d:'Tap a creature you can see. It burns for 8 seconds: it lights the dark around it, wakes your wards there, and takes fire damage, but it runs faster. Bosses burn without running.'},
+  raise:{n:'Raise the Dead',cd:30,d:'Tap a pile of bones. Its dead stand up beside the path as a Risen that bites whatever comes near, seen or unseen, until the wave breaks. The more bones, the harder it bites.'},
+  unbind:{n:'Unbind',cd:25,d:'Tap one of your horrors on the board. It breaks its binding and charges down the path toward where they come from, tearing through everything in its way. Then it is gone for good.'},
   ebb:{n:'The Ebb',cd:30,patron:'mother',d:'The water draws back. Everything standing in it is dragged 2 tiles back down the path. Bosses and Behemoths hold their ground.'}
 };
 const RELICS={
@@ -655,13 +674,15 @@ const OFFERINGS={
   still:{p:'mother',kit:'lamplighter',n:'Still Water',d:'Signal Candles that stand beside water pass their light to each other through it, however far apart.'},
   drowned:{p:'mother',kit:'lamplighter',n:'Drowned Flares',d:'A flare bolt that strikes something standing in water floats there, and burns three times as long.'},
   deep:{p:'mother',kit:'whaler',n:'Into the Deep',d:'Whatever is on your line cannot move while it stands in water, for up to 3 seconds a catch. Bosses and Behemoths still can.'},
+  graves:{p:'mother',kit:'occultist',n:'Wet Graves',d:'A Corpse Candle that stands beside water does not go out when the wave ends.'},
+  souls:{p:'mother',kit:'occultist',n:'Drowned Souls',d:'Whatever dies in water leaves its sigil, if its kind can be bound.'},
   fat:{p:'mother',kit:'whaler',n:'Her Fat',d:'A Blubber Lamp that stands beside water drinks from it as a wave begins, not from your pots or your lamp.'}
 };
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
 const KITS={
   lamplighter:{n:'The Lamplighter',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch.',wards:['candle','harpoon','salt','chime','trap','tithe'],rites:['kindle','pillar'],roster:{}},
   whaler:{n:'The Whaler',d:'Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance','trypot'],rites:['flare','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
-  occultist:{n:'The Occultist',d:'Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness.',wards:['candle','harpoon','effigy','tithe','chime'],rites:['flare','name'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
+  occultist:{n:'The Occultist',d:'Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher.',wards:['candle','harpoon','grasp','effigy','tithe','chime'],rites:['unbind','raise'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
   galvanist:{n:'The Galvanist',d:'Lightning leaps to one more creature, and salt costs 15. Starts with the Galvanic Coil.',wards:['candle','harpoon','salt','coil','chime'],rites:['flare','pillar'],roster:{},lock:'kit_galvanist'},
   bellringer:{n:'The Bellringer',d:'Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell.',wards:['candle','harpoon','chime','censer','trap'],rites:['flare','bell'],roster:{},lock:'kit_bellringer'}
 };
@@ -898,6 +919,88 @@ function waterRise(){
 function waterAt(x,y){return !!(F.water&&F.water.size&&F.water.has(Math.floor(x)+','+Math.floor(y)));}
 function inWater(e){return !e.def.fly&&!!(F.water&&F.water.size&&F.water.has(e.tile));}
 function nearWater(x,y){const w=F.waterPts; if(!w)return false; for(let i=0;i<w.length;i+=2)if(dst(x,y,w[i],w[i+1])<=NEAR_WATER)return true; return false;}
+/* ---------------- the Occultist: bodies, Corpse Candles, and Unbind ---------------- */
+function corpseKit(){return kit()==='occultist';}
+/* every death leaves a body on the path for the rest of the floor, kept in the run as [path, distance along it] */
+/* so the board never fills with bones: a death near a pile joins it (a pile holds PILE_MAX), a death beside a full pile
+   scatters, and past BODY_MAX the oldest body crumbles. Piles stay a couple of tiles apart, and the fresh ones are kept */
+function addCorpse(e){
+  if(!corpseKit()||!F||!F.paths[e.gate])return;
+  if(!run.corpses||run.corpses.floor!==run.floor)run.corpses={floor:run.floor,list:[]};
+  const L=run.corpses.list, p=posAt(F.paths[e.gate],e.d);
+  let pile=null, bd=PILE_GATHER+1e-6;
+  for(const b of F.bodies.values()){const d=dst(p[0],p[1],b.x,b.y); if(d<=bd){bd=d; pile=b;}}
+  if(pile&&pile.n>=PILE_MAX)return;
+  L.push(pile?pile.ref.slice():[e.gate,Math.round(e.d*100)/100]);
+  while(L.length>BODY_MAX)L.shift();
+  corpseSync();
+}
+/* the bodies, gathered by tile, where the board can find them */
+function corpseSync(){
+  F.bodies=new Map();
+  const C=run&&run.corpses; if(!C||C.floor!==run.floor)return;
+  for(const [g,d] of C.list){const P=F.paths[g]; if(!P)continue; const p=posAt(P,d), c=Math.floor(p[0]), r=Math.floor(p[1]), key=c+','+r, b=F.bodies.get(key);
+    if(b)b.n++; else F.bodies.set(key,{x:c+.5,y:r+.5,n:1,ref:[g,d]});}
+}
+/* every Occultist descent begins with two piles of bones, left by whoever carried the lamp down here last */
+function corpseSeed(){
+  const P=F.paths[0], L=Math.floor(P.len);
+  run.corpses={floor:run.floor,list:[[0,Math.round(L*.45)],[0,Math.round(L*.45)],[0,Math.round(L*.62)]]};
+  corpseSync();
+}
+function bodyNear(c,r){let best=null, bd=CORPSE_REACH+1e-6; for(const [k,b] of F.bodies){const d=dst(c+.5,r+.5,b.x,b.y); if(d<=bd){bd=d; best=k;}} return best;}
+/* a Corpse Candle uses up one body on that tile; it is handed back if the candle is taken down */
+function takeBody(key){
+  const L=run.corpses&&run.corpses.list; if(!L||!key)return null;
+  const i=L.findIndex(([g,d])=>{const p=posAt(F.paths[g],d); return Math.floor(p[0])+','+Math.floor(p[1])===key;});
+  const out=i>=0?L.splice(i,1)[0]:null; corpseSync(); return out;
+}
+/* when a wave breaks, the Corpse Candles go out (Wet Graves keeps the ones beside water) */
+function corpseBurnOut(){
+  let n=0;
+  for(const t of F.towers.slice()){if(!(t.corpse||t.risen)||(t.corpse&&hasOff('graves')&&nearWater(t.x,t.y)))continue;
+    removeTower(t); n++; F.fx.push({k:'ring',x:t.x,y:t.y-.2,r0:.4,r1:.05,t:0,dur:.7,col:'170,190,160'});}
+  return n;
+}
+/* Raise the Dead: a pile's bones stand up on the nearest free tile beside it, and bite until the wave breaks */
+function castRaise(x,y){
+  let pile=null, bd=1;
+  for(const [k,b] of F.bodies){const d=dst(x,y,b.x,b.y); if(d<bd){bd=d; pile=k;}}
+  if(!pile){hint('Tap a pile of bones.'); return;}
+  const b=F.bodies.get(pile); let spot=null, sd=1e9;
+  for(let r=Math.floor(b.y)-1;r<=Math.floor(b.y)+1;r++)for(let c=Math.floor(b.x)-1;c<=Math.floor(b.x)+1;c++){
+    if(c<0||r<0||c>=COLS||r>=ROWS||F.pathTiles.has(c+','+r)||towerAt(c,r)||(c===F.lampC&&r===F.lampR))continue;
+    const d=dst(c+.5,r+.5,b.x,b.y); if(d<sd){sd=d; spot=[c,r];}}
+  if(!spot){hint('There is no room beside those bones.'); return;}
+  const bones=[]; for(let i=0,n=b.n;i<n;i++){const t=takeBody(pile); if(t)bones.push(t);}
+  const t={kind:'ward',type:'risen',risen:true,bones,id:++uid,c:spot[0],r:spot[1],x:spot[0]+.5,y:spot[1]+.5,br:{},tgt:'first',invested:0,fresh:0,cd:.3,ang:0,ring:0,echo:0};
+  F.towers.push(t); F.L=lightsNow();
+  F.fx.push({k:'ring',x:t.x,y:t.y,r0:.6,r1:.1,t:0,dur:.6,col:'222,214,192'}); F.shake=Math.max(F.shake,.12);
+  F.cd.raise=RITES.raise.cd; mode=null; AUDIO.bind();
+  banner('Risen','mad',bones.length+(bones.length>1?' dead stand up':' dead thing stands up'));
+  forceUI();
+}
+/* Unbind: the horror leaves your roster and charges down the stair from the nearest point of the path */
+function castUnbind(t){
+  const H=HORRORS[t.type], near=nearestPathPoint(t.x,t.y);
+  removeTower(t); run.roster[t.type]=Math.max(0,(run.roster[t.type]||0)-1);
+  F.charges.push({type:t.type,gate:near.gate,d:near.d,x:t.x,y:t.y,dmg:UNBIND_BASE+UNBIND_PER*H.mad,hit:[]});
+  F.cd.unbind=RITES.unbind.cd; mode=null;
+  F.fx.push({k:'ring',x:t.x,y:t.y,r0:.1,r1:1.4,t:0,dur:.6,col:'169,124,226'}); F.shake=Math.max(F.shake,.2);
+  AUDIO.shriek(); banner('Unbound','mad','The '+H.n.replace('Bound ','')+' charges down the stair');
+  forceUI();
+}
+function updateCharges(dt){
+  if(!F.charges.length)return;
+  for(const ch of F.charges){
+    ch.d-=UNBIND_SPD*dt; const p=posAt(F.paths[ch.gate],Math.max(0,ch.d)); ch.x=p[0]; ch.y=p[1];
+    for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(e.dead||ch.hit.includes(e.id)||dst(e.x,e.y,ch.x,ch.y)>.6)continue;
+      ch.hit.push(e.id); hurt(e,ch.dmg,'unbind'); if(!e.dead&&!e.def.heavy)e.stunT=Math.max(e.stunT,e.def.boss?.3:1);
+      F.fx.push({k:'burst',x:e.x,y:e.y,col:'#A97CE2',r:.4,t:0,dur:.3});}
+    if(ch.d<=0){ch.done=true; F.fx.push({k:'ring',x:ch.x,y:ch.y,r0:.1,r1:1,t:0,dur:.5,col:'169,124,226'});}
+  }
+  F.charges=F.charges.filter(c=>!c.done);
+}
 /* The Ebb: everything standing in water is dragged back; it waits if the water is empty */
 function castEbb(){
   const hit=F.foes.filter(e=>!e.dead&&inWater(e)&&!e.def.boss&&!e.def.heavy);
@@ -1193,10 +1296,12 @@ let sel=null, selTower=null, mode=null, paused=true, speed=1, uid=0, pauseOpen=f
 
 function has(k){return run.relics.includes(k);}
 function tiers(){const b=(has('quiet')?3:0)-(F&&F.omen==='whispering'?3:0)-(run.madPen||0)-(has('eyes')?2:0); return [Math.max(2,6+b),Math.max(3,10+b),Math.max(4,14+b)];}
-function horrorMad(type){if(has('choirwalls'))return 0; return Math.max(1,HORRORS[type].mad-(has('wax')?1:0)-(kit()==='occultist'?1:0));}
+function horrorMad(type){if(has('choirwalls'))return 0; return Math.max(1,HORRORS[type].mad-(has('wax')?1:0));}
+/* the Occultist's madness feeds its horrors */
+function horrorBoost(){return kit()==='occultist'?1+HORROR_TIER*madTier():1;}
 function madness(){let m=0; if(!F)return 0; for(const t of F.towers) if(t.kind==='horror') m+=horrorMad(t.type); return m;}
 function madTier(){const m=madness(), T=tiers(); return m>=T[2]?3:m>=T[1]?2:m>=T[0]?1:0;}
-function wardCost(type){if(type==='salt')return has('saltflats')?10:kit()==='galvanist'?15:WARDS.salt.cost; return WARDS[type].cost;}
+function wardCost(type){if(type==='candle'&&kit()==='occultist')return 0; if(type==='salt')return has('saltflats')?10:kit()==='galvanist'?15:WARDS.salt.cost; return WARDS[type].cost;}
 function refillCost(){return has('saltflats')?5:10;}
 function avail(type){return (run.roster[type]||0)-F.towers.filter(t=>t.kind==='horror'&&t.type===type).length;}
 
@@ -1204,7 +1309,7 @@ function avail(type){return (run.roster[type]||0)-F.towers.filter(t=>t.kind==='h
 const m2=n=>Math.min(n||0,2);
 function wstat(t){
   const b=t.br||{};
-  if(t.type==='harpoon')return {range:2.6+.4*m2(b.sight),dmg:(10+(b.strength>=1?6:0)+(b.strength>=2?8:0))*(has('whetted')?1.3:1),
+  if(t.type==='harpoon')return {range:2.6+.4*m2(b.sight),dmg:(10+(b.strength>=1?6:0)+(b.strength>=2?8:0))*(has('whetted')?1.3:1)*spearMul(b),spear:kit()==='occultist',soul:b.dread>=3,
     tether:kit()==='whaler',tMax:b.line>=1?.55:TETHER_MAX,leash:b.line>=2?2:1,haul:b.line>=3,rate:1.1*Math.pow(1.25,m2(b.speed)),twin:b.speed>=3,pierce:b.strength>=3,deep:b.sight>=3,flare:kit()==='lamplighter',flareR:GLINT_R+(b.flare>=1?.5:0),flareT:GLINT_T+(b.flare>=2?1:0),star:b.flare>=3};
   if(t.type==='candle')return {light:2.3+.5*m2(b.glow)+(kit()==='whaler'?BLUBBER_LIGHT:0)-(F&&F.omen==='thickdark'?.5:0),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)],beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3,reek:b.reek>=2?4:b.reek>=1?2:0,lure:b.reek>=3};
   if(t.type==='chime')return {range:1.8+.25*m2(b.res),dmg:14+(b.marrow>=1?6:0)+(b.marrow>=2?8:0),stun:.6+.3*m2(b.toll)+(has('marrow')?.4:0),period:kit()==='bellringer'?1.6:2,twice:b.res>=3,knell:b.toll>=3,shatter:b.marrow>=3};
@@ -1212,6 +1317,8 @@ function wstat(t){
     pool:b.pitch>=3?{dps:10,dur:4,r:1.4}:b.pitch>=1?{dps:b.pitch>=2?7:4,dur:b.pitch>=2?2.5:2,r:1}:null};
   if(t.type==='trap')return {dmg:60+(b.barbs>=1?20:0)+(b.barbs>=2?25:0),hold:1+.5*m2(b.chain),reset:3*Math.pow(.75,m2(b.spring)),bleed:b.barbs>=3,twin:b.spring>=3,drag:b.chain>=3};
   if(t.type==='trypot')return {range:POT_R,every:POT_MEASURE,max:POT_MAX};
+  if(t.type==='grasp')return {hold:GRASP_HOLD,grips:GRASP_GRIPS};
+  if(t.type==='risen')return {dmg:RISEN_DMG*(t.bones?t.bones.length:1)*horrorBoost(),range:RISEN_RANGE,rate:RISEN_RATE};
   if(t.type==='tithe')return {range:2+.5*m2(b.reach),per:2+(b.greed>=1?2:0)+(b.greed>=2?3:0),tithe:b.greed>=3?18:6,oilEvery:b.blood>=3?8:b.blood>=2?14:b.blood>=1?20:0,slow:b.reach>=3?.2:0};
   if(t.type==='effigy')return {range:2.3,mul:[1.4,1.55,1.7][m2(b.malice)],bleed:[0,4,8][m2(b.pins)],slow:[0,.12,.24][m2(b.wither)],doom:b.malice>=3,voodoo:b.pins>=3,unmask:b.wither>=3};
   if(t.type==='coil')return {range:2.4,dmg:14+(b.cap>=1?6:0)+(b.cap>=2?8:0),rate:(1/1.5)*Math.pow(1.25,m2(b.freq)),jumps:2+m2(b.cond)+(kit()==='galvanist'?1:0),falloff:b.cond>=2?1:.8,leap:b.cond>=3?2.6:1.6,storm:b.cond>=3,over:b.cap>=3,field:b.freq>=3?5:0};
@@ -1223,6 +1330,8 @@ function lstat(){
   return {wickR:.5*m2(b.wick)+(b.wick>=3?.5:0),sun:b.wick>=3,well:b.reservoir>=3,
     fire:b.fire>=3?{dps:16,r:2.2}:b.fire>=1?{dps:b.fire>=2?10:6,r:1.5}:null};
 }
+/* a Bone Spear hits harder with every tier of madness; its Dread branch adds more per tier */
+function spearMul(b){return kit()==='occultist'?1+(SPEAR_TIER+DREAD_TIER*m2(b.dread))*(F?madTier():0):1;}
 function branchState(o,bi){
   const tree=treeOf(o.type), B=tree[bi], lvl=o.br[B.k]||0;
   if(lvl>=3)return {max:true};
@@ -1282,6 +1391,7 @@ function buildGeometry(){
     }
   });
   waterSync();
+  corpseSync();
 }
 function setOrient(o){
   if(o===ORIENT)return;
@@ -1401,7 +1511,8 @@ function connectedLights(exclude){
     grew=false;
     for(const t of cands){
       if(conn.has(t))continue;
-      let ok=src.some(s=>dst(t.x,t.y,s.x,s.y)<=s.r);
+      /* a Corpse Candle burns on the dead, not on the lamp */
+      let ok=!!t.corpse||src.some(s=>dst(t.x,t.y,s.x,s.y)<=s.r);
       if(!ok&&leap&&t.type==='candle')for(const o of conn)if(o.type==='candle'&&(dst(t.x,t.y,o.x,o.y)<=Math.max(candleLeap(o),candleLeap(t))||still&&nearWater(t.x,t.y)&&nearWater(o.x,o.y))){links.push([o,t]); ok=true; break;}
       if(ok){conn.add(t); src.push({x:t.x,y:t.y,r:towerLightR(t)}); grew=true;}
     }
@@ -1416,6 +1527,8 @@ function signalReach(x,y){
 }
 function supported(t,C){
   if(C.conn.has(t))return true;
+  /* the Grasping Dead need no light */
+  if(t.type==='grasp'||t.type==='risen')return true;
   if(isLightTower(t))return false;
   return C.src.some(s=>dst(t.x,t.y,s.x,s.y)<=s.r);
 }
@@ -1462,7 +1575,7 @@ function checkpoint(){
   store.set(SAVEKEY,lastSave);
 }
 function clearSave(){lastSave=null; store.set(SAVEKEY,null);}
-function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; updateOilMax(); beginFloor(s);}
+function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; if(run.kit==='occultist'&&!run.wards.includes('grasp'))run.wards.splice(2,0,'grasp'); updateOilMax(); beginFloor(s);}
 
 /* ---------------- dev mode ----------------
    Hidden: tap the "The Last Lamp" heading on the title screen 7 times quickly to switch it on or off.
@@ -1474,7 +1587,7 @@ const DEV_ACTS={
   unlock(){
     Object.keys(HORRORS).forEach(k=>run.roster[k]=Math.max(run.roster[k]||0,5));
     Object.keys(RELICS).forEach(k=>{if(!RELICS[k].curse)addRelic(k);});
-    Object.keys(WARDS).forEach(k=>{if(!run.wards.includes(k))run.wards.push(k);});
+    Object.keys(WARDS).forEach(k=>{if(!run.wards.includes(k)&&!WARDS[k].raised)run.wards.push(k);});
     Object.keys(RITES).forEach(k=>{if(!run.rites.includes(k))run.rites.push(k);});
     forceUI(); return 'Everything unlocked';
   },
@@ -1602,7 +1715,7 @@ function beginFloor(snap){
   $('#title').hidden=true; closeModal();
   F=null;
   setDims(bestOrient());
-  F={def,time:0,towers:[],salt:new Map(),foes:[],shots:[],fx:[],souls:[],pools:[],glints:[],links:[],threads:[],cands:[],knell:false,wave:0,phase:'build',queue:[],waveT:0,
+  F={def,time:0,towers:[],salt:new Map(),foes:[],shots:[],fx:[],souls:[],pools:[],glints:[],links:[],threads:[],cands:[],charges:[],knell:false,wave:0,phase:'build',queue:[],waveT:0,
      flareT:0,cd:{},nameUsed:false,named:null,hurtFlash:0,shake:0,flickT:0,flickNext:6,lastTier:0,omen:run.omen||null,elite:!!run.elite};
   F.born=performance.now();
   F.lamp={isLamp:true,type:'lamp',x:0,y:0,br:newBranches('lamp'),invested:0,fresh:0};
@@ -1610,6 +1723,7 @@ function beginFloor(snap){
   /* the Drowned Mother's water: a floor she has noticed you on floods as it begins (a resumed one keeps its water) */
   F.under=patTier('mother')>=3;
   if(patTier('mother')>=1&&(!run.water||run.water.floor!==run.floor))floodSeed();
+  if(!snap&&run.floor===0&&corpseKit())corpseSeed();
   if(snap){
     F.wave=snap.wave||0;
     F.towers=(snap.towers||[]).map(t=>{
@@ -1762,6 +1876,7 @@ function gainOil(n){
 }
 function waveCleared(){
   checkOccultistDeed(true);
+  const gutter=F.wave<F.def.waves.length?corpseBurnOut():0;
   const bonus=8+F.wave*2;
   run.ess+=bonus;
   let tithe=0;
@@ -1770,7 +1885,7 @@ function waveCleared(){
   if(lstat().well)gainOil(1);
   if(F.wave>=F.def.waves.length){floorCleared(); return;}
   F.phase='build';
-  banner('The wave breaks','','+'+bonus+' essence. Build, then call the dark');
+  banner('The wave breaks','','+'+bonus+' essence. '+(gutter?'The Corpse Candles go out':'Build, then call the dark'));
   checkpoint();
   forceUI();
   patronBreak();
@@ -2585,8 +2700,10 @@ function placeProblem(item,c,r){
   if(towerAt(c,r))return 'taken';
   const onPath=F.pathTiles.has(c+','+r);
   if(item.kind==='ward'&&item.type==='weir'&&!F.forks.some(f=>f.c===c&&f.r===r))return 'A weir only fits where the stair forks.';
-  if(item.kind==='ward'&&WARDS[item.type].path){if(!onPath)return item.type==='salt'?'Salt has to be poured on the path.':'Traps are set on the path.';}
+  if(item.kind==='ward'&&WARDS[item.type].path){if(!onPath)return item.type==='salt'?'Salt has to be poured on the path.':item.type==='grasp'?'The Grasping Dead rise from bones on the path.':'Traps are set on the path.';}
   else if(onPath)return 'Nothing can stand on the path.';
+  if(item.kind==='ward'&&item.type==='grasp'){const b=F.bodies.get(c+','+r); return b&&b.n>=PILE_MAX?'':'The Grasping Dead rise from a full pile: three bodies on one tile of the path.';}
+  if(item.kind==='ward'&&item.type==='candle'&&corpseKit())return bodyNear(c,r)?'':'A Corpse Candle burns on the dead. It stands beside the path, next to a body from this floor.';
   if(!buildLit(c,r)&&!(item.kind==='ward'&&item.type==='candle'&&signalReach(c+.5,r+.5)))
     return signalKit()&&item.kind==='ward'&&item.type==='candle'?'Too dark, and too far from a lit Signal Candle. Their light leaps 4 tiles, more with the Signal branch.':'Too dark to build there. Bring light first.';
   return '';
@@ -2609,6 +2726,8 @@ function tryPlace(c,r){
   if(run.ess<cost){hint('Not enough essence. You need '+cost+'.'); return;}
   const t={kind:it.kind,type:it.type,id:++uid,c,r,x:c+.5,y:r+.5,br:newBranches(it.type),tgt:'first',invested:0,fresh:0,cd:.3,ang:-.7,ring:0,echo:0};
   spend(t,cost);
+  if(it.kind==='ward'&&it.type==='candle'&&corpseKit()){t.corpse=true; t.body=takeBody(bodyNear(c,r));}
+  if(it.kind==='ward'&&it.type==='grasp'){t.bones=[]; for(let i=0;i<PILE_MAX;i++){const b=takeBody(c+','+r); if(b)t.bones.push(b);} t.grips=GRASP_GRIPS;}
   if(it.kind==='ward'&&it.type==='salt'){t.max=t.dur=14*(has('saltflats')?2:1); F.salt.set(c+','+r,t);}
   F.towers.push(t);
   F.L=lightsNow();
@@ -2643,6 +2762,8 @@ function sellTower(t,confirmed){
     return;
   }
   const back=refund(t);
+  if(t.corpse&&t.body&&run.corpses){run.corpses.list.push(t.body); corpseSync();}
+  if(t.bones&&t.bones.length&&run.corpses&&t.grips===GRASP_GRIPS){run.corpses.list.push(...t.bones); corpseSync();}
   run.ess+=back; removeTower(t);
   F.fx.push({k:'float',x:t.x,y:t.y-.2,txt:'+'+back,col:PAL.tallow,t:0,dur:.9,size:.3});
   for(const v of victims){
@@ -2733,6 +2854,7 @@ function killFoe(e){
   if(bowl){gain+=bowl.st.per; bowl.ping=.6; AUDIO.coin(); if(bowl.st.oilEvery){bowl.kills=(bowl.kills||0)+1; if(bowl.kills>=bowl.st.oilEvery){bowl.kills=0; gainOil(1);}}}
   if(F.omen==='hungering')gain=0;
   potRender(e);
+  addCorpse(e);
   if(hasOff('milk')&&inWater(e)){run.milk=(run.milk||0)+1; if(run.milk>=4){run.milk=0; gainOil(1);}}
   if(e.def.boss)run.bosses=(run.bosses||0)+1;
   if(has('leech')){run.leech=(run.leech||0)+1; if(run.leech>=30){run.leech=0; gainOil(1);}}
@@ -2749,7 +2871,8 @@ function killFoe(e){
   
   const key=e.def.elite?'elite':(e.def.bind?e.type:null);
   if(key){
-    const ch=e.def.elite?1:(has('binder')?.64:.32);
+    /* Soul Spear and Drowned Souls make the sigil certain */
+    const ch=e.def.elite||e.soulDrop||(hasOff('souls')&&inWater(e))?1:(has('binder')?.64:.32);
     if(Math.random()<ch)F.souls.push({x:e.x,y:e.y,type:key,t:5.5,max:5.5});
   }
   if(e.type==='boss' && !run.roster.keeper && !F.towers.some(t=>t.type==='keeper')){
@@ -2828,6 +2951,8 @@ function castRite(k){
   else if((F.cd[k]||0)>0)return;
   if(k==='flare'){F.flareT=5; F.cd.flare=RITES.flare.cd; AUDIO.flare(); banner('Flare','rite','Everything is lit for five seconds');}
   else if(k==='ebb'){if(!castEbb())return;}
+  else if(k==='raise'){if(!F.bodies.size){hint('There are no bones to raise.'); return;} mode=k; sel=null; selTower=null;}
+  else if(k==='unbind'){if(!F.towers.some(t=>t.kind==='horror')){hint('None of your horrors stand on the board.'); return;} mode=k; sel=null; selTower=null;}
   else if(k==='bell'){
     for(let i=0,n=F.foes.length;i<n;i++)hurt(F.foes[i],25);
     F.fx.push({k:'ring',x:F.lx,y:F.ly,r0:.3,r1:9,t:0,dur:1.1,col:'106,169,159'});
@@ -2909,6 +3034,7 @@ function update(dt){
     while(F.queue.length&&F.queue[0].t<=F.waveT){const q=F.queue.shift(); spawnFoe(q.type,q.gate,0);}
   }
   updateFoes(dt);
+  updateCharges(dt);
   for(let i=F.towers.length-1;i>=0;i--)if(F.towers[i].smashed)removeTower(F.towers[i]);
   
   const ls=lstat();
@@ -3034,8 +3160,8 @@ function fireBolt(t,e,st,dmg,k){
   if(st.tether&&!k&&t.tethered&&t.tethered!==e)t.tethered=null;
   const ang=Math.atan2(e.y-t.y,e.x-t.x), off=k?.13:0;
   const sx=t.x+Math.cos(ang)*.4-Math.sin(ang)*off, sy=t.y+Math.sin(ang)*.4+Math.cos(ang)*off;
-  if(st.pierce)F.shots.push({k:'pierce',x:sx,y:sy,dx:Math.cos(ang),dy:Math.sin(ang),ang,spd:14,trav:0,max:st.range+.8,dmg,hit:[],flare:st.flare,fr:st.flareR,ft:st.flareT,from:st.tether?t:null});
-  else F.shots.push({k:'bolt',x:sx,y:sy,tg:e,tx:e.x,ty:e.y,spd:13,dmg,ang,flare:st.flare,fr:st.flareR,ft:st.flareT,from:st.tether?t:null});
+  if(st.pierce)F.shots.push({k:'pierce',x:sx,y:sy,dx:Math.cos(ang),dy:Math.sin(ang),ang,spd:14,trav:0,max:st.range+.8,dmg,hit:[],flare:st.flare,fr:st.flareR,ft:st.flareT,from:st.tether?t:null,soul:st.soul});
+  else F.shots.push({k:'bolt',x:sx,y:sy,tg:e,tx:e.x,ty:e.y,spd:13,dmg,ang,flare:st.flare,fr:st.flareR,ft:st.flareT,from:st.tether?t:null,soul:st.soul});
   /* Starshell: every fourth bolt from this harpoon lights a wide circle */
   if(st.star){t.shots=(t.shots||0)+1; if(t.shots%4===0){const sh=F.shots[F.shots.length-1]; sh.fr=STAR_R; sh.ft=STAR_T; sh.star=true;}}
 }
@@ -3090,6 +3216,21 @@ function updateTowers(dt){
           if(chimePulse(t,st)){t.cd=st.period; if(st.twice)t.echo=.35;}
           else t.cd=.1;
         }
+      }else if(t.type==='risen'){
+        /* the dead need no eyes: it bites in the dark too */
+        t.cd-=dt;
+        if(t.cd<=0){const e=pickTarget(t.x,t.y,st.range,t.tgt,true); if(e){t.ang=Math.atan2(e.y-t.y,e.x-t.x); hurt(e,st.dmg,'risen'); F.fx.push({k:'bite',x:e.x,y:e.y,t:0,dur:.28}); t.cd=1/st.rate; t.snap=.3; AUDIO.bite();} else t.cd=.1;}
+      }else if(t.type==='grasp'){
+        /* the dead take hold of each creature once, as it steps onto them */
+        const key=t.c+','+t.r;
+        for(let i=0;i<F.foes.length&&t.grips>0;i++){
+          const e=F.foes[i]; if(e.dead||e.def.fly||e.tile!==key)continue;
+          const seen=e.grasped||(e.grasped=[]); if(seen.includes(t.id))continue; seen.push(t.id);
+          if(e.def.heavy)continue;
+          e.stunT=Math.max(e.stunT,e.def.boss?GRASP_BOSS:GRASP_HOLD); t.grips--; t.snap=.6;
+          F.fx.push({k:'ring',x:t.x,y:t.y,r0:.45,r1:.1,t:0,dur:.35,col:'222,214,192'}); AUDIO.trap();
+        }
+        if(t.grips<=0){removeTower(t); F.fx.push({k:'burst',x:t.x,y:t.y,col:'#D8CCAA',r:.4,t:0,dur:.5}); hint('The Grasping Dead crumble.');}
       }else if(t.type==='trap'){
         if(t.cd>0){t.cd-=dt; continue;}
         const key=t.c+','+t.r;
@@ -3155,7 +3296,7 @@ function updateTowers(dt){
         }
       }
     }else{
-      const H=HORRORS[t.type], mult=beaconAt(t.x,t.y);
+      const H=HORRORS[t.type], mult=beaconAt(t.x,t.y)*horrorBoost();
       if(t.type==='gnasher'){
         t.cd-=dt;
         if(t.cd<=0){const e=pickTarget(t.x,t.y,H.range,t.tgt,false); if(e){hurt(e,H.dmg*mult); F.fx.push({k:'bite',x:e.x,y:e.y,t:0,dur:.28}); t.cd=1/H.rate; AUDIO.bite();} else t.cd=.08;}
@@ -3223,7 +3364,7 @@ function updateShots(dt){
             F.fx.push({k:'burst',x:s.tx,y:s.ty,col:'#C9C2B2',r:.5,t:0,dur:.35}); F.shake=Math.max(F.shake,.12);
             if(!s.tg.dead){if(s.flense)s.tg.flenseT=5; if(s.pin)s.tg.pinT=s.tg.def.boss?.5:1.5;}
           }else
-          {hurt(s.tg,s.dmg,'harpoon'); if(s.k==='bolt')undertow(s.tg);}
+          {if(s.soul)s.tg.soulDrop=true; hurt(s.tg,s.dmg,'harpoon'); if(!s.tg.dead)s.tg.soulDrop=false; if(s.k==='bolt')undertow(s.tg);}
           if(s.from&&!s.tg.dead){if(s.tg.tetherBy!==s.from){s.tg.tetherBy=s.from; s.tg.tetherT=0;} s.from.tethered=s.tg;}
         }
         if(s.flare)addGlint(s.tx,s.ty,s.fr,s.ft*drownedFlare(s.tx,s.ty),s.star);
@@ -3235,7 +3376,7 @@ function updateShots(dt){
         const e=F.foes[i];
         if(e.dead||s.hit.includes(e.id))continue;
         const u=clamp((e.x-ox)*s.dx+(e.y-oy)*s.dy,0,step);
-        if(dst(e.x,e.y,ox+s.dx*u,oy+s.dy*u)<=e.def.r+.12){s.hit.push(e.id); if(s.flare)addGlint(e.x,e.y,s.fr,s.ft*drownedFlare(e.x,e.y),s.star&&!s.starDone); if(s.star)s.starDone=true; hurt(e,s.dmg,'harpoon'); undertow(e);
+        if(dst(e.x,e.y,ox+s.dx*u,oy+s.dy*u)<=e.def.r+.12){s.hit.push(e.id); if(s.flare)addGlint(e.x,e.y,s.fr,s.ft*drownedFlare(e.x,e.y),s.star&&!s.starDone); if(s.star)s.starDone=true; if(s.soul)e.soulDrop=true; hurt(e,s.dmg,'harpoon'); if(!e.dead)e.soulDrop=false; undertow(e);
           /* a piercing line holds the first thing it runs through */
           if(s.from&&!e.dead&&s.hit.length===1){if(e.tetherBy!==s.from){e.tetherBy=s.from; e.tetherT=0;} s.from.tethered=e;}}
       }
@@ -4126,6 +4267,20 @@ function drawWard(c,t,tm,icon){
       c.strokeStyle='#1d1612'; c.lineWidth=.03; c.beginPath(); c.moveTo(x,y-.25); c.lineTo(x+.01,y-.31); c.stroke();
       if(!icon&&!out){c.strokeStyle='rgba(60,54,50,.45)'; c.lineWidth=.04; const ph=((tm||0)*.5+x)%1; c.beginPath(); c.moveTo(x+.02,y-.6); c.quadraticCurveTo(x+.14,y-.75-ph*.15,x-.02,y-.9-ph*.2); c.stroke();}
       by=y-.25; fw=1.6;
+    }else if(style==='occultist'){
+      /* a stub of black tallow pressed into a skull, wax running into the eye sockets */
+      plinth(c,x,y+.02,.22);
+      const sk=c.createRadialGradient(x-.06,y-.16,0,x,y-.1,.22); sk.addColorStop(0,'#efe6cf'); sk.addColorStop(.7,'#b9ad8e'); sk.addColorStop(1,'#6e6450');
+      c.fillStyle=sk; c.beginPath(); c.ellipse(x,y-.12,.17,.15,0,0,TAU2); c.fill();
+      c.fillRect(x-.09,y-.04,.18,.07);
+      c.fillStyle='#1a1512'; c.beginPath(); c.ellipse(x-.065,y-.11,.042,.036,0,0,TAU2); c.ellipse(x+.065,y-.11,.042,.036,0,0,TAU2); c.fill();
+      c.beginPath(); c.moveTo(x,y-.07); c.lineTo(x-.02,y-.03); c.lineTo(x+.02,y-.03); c.closePath(); c.fill();
+      c.strokeStyle='#4a4234'; c.lineWidth=.012; for(let k=-2;k<=2;k++){c.beginPath(); c.moveTo(x+k*.03,y+.005); c.lineTo(x+k*.03,y+.03); c.stroke();}
+      c.fillStyle='#1f1b1e'; c.fillRect(x-.05,y-.36,.1,.2);
+      c.fillStyle='#2e282c'; c.beginPath(); c.ellipse(x,y-.36,.05,.018,0,0,TAU2); c.fill();
+      c.fillStyle='#2a2428'; c.beginPath(); c.moveTo(x-.05,y-.2); c.quadraticCurveTo(x-.075,y-.15,x-.06,y-.1); c.lineTo(x-.04,y-.18); c.fill();
+      c.strokeStyle='#1d1612'; c.lineWidth=.018; c.beginPath(); c.moveTo(x,y-.36); c.lineTo(x+.01,y-.42); c.stroke();
+      by=y-.36; fw=.75;
     }else{
     plinth(c,x,y+.02,.26);
     /* a fat pillar of tallow, wax running down it */
@@ -4142,10 +4297,12 @@ function drawWard(c,t,tm,icon){
     }
     if(out){c.strokeStyle='rgba(139,146,148,.6)'; c.lineWidth=.025; c.beginPath(); c.moveTo(x+.01,by-.06); c.quadraticCurveTo(x+.08,by-.16,x-.01,by-.28); c.quadraticCurveTo(x-.07,by-.36,x+.02,by-.44); c.stroke();}
     else{
-      const fl=1+Math.sin(tm*13+x*7)*.1+Math.sin(tm*21+y)*.05, fy=by-.06;
-      if(!icon){c.save(); c.globalCompositeOperation='lighter'; const gl=c.createRadialGradient(x,fy-.1,0,x,fy-.1,.45); gl.addColorStop(0,ember?'rgba(255,120,50,.35)':'rgba(255,190,90,.32)'); gl.addColorStop(1,'rgba(255,150,60,0)'); c.fillStyle=gl; c.beginPath(); c.arc(x,fy-.1,.45,0,TAU2); c.fill(); c.restore();}
+      const fl=1+Math.sin(tm*13+x*7)*.1+Math.sin(tm*21+y)*.05, fy=by-.06, pale=style==='occultist';
+      if(!icon){c.save(); c.globalCompositeOperation='lighter'; const gl=c.createRadialGradient(x,fy-.1,0,x,fy-.1,.45); gl.addColorStop(0,pale?'rgba(170,230,170,.3)':ember?'rgba(255,120,50,.35)':'rgba(255,190,90,.32)'); gl.addColorStop(1,pale?'rgba(120,200,140,0)':'rgba(255,150,60,0)'); c.fillStyle=gl; c.beginPath(); c.arc(x,fy-.1,.45,0,TAU2); c.fill(); c.restore();}
       const fg=c.createRadialGradient(x,fy-.06,0,x,fy-.1,.16*fl);
-      fg.addColorStop(0,'#fffbe8'); fg.addColorStop(.35,ember?'#ffb070':'#ffe08a'); fg.addColorStop(.8,ember?'#e0401c':'#f08a2a'); fg.addColorStop(1,'rgba(200,60,20,0)');
+      /* a Corpse Candle burns the pale green of marsh-light */
+      if(pale){fg.addColorStop(0,'#f4fff0'); fg.addColorStop(.35,'#c8f0c0'); fg.addColorStop(.8,'#5aa878'); fg.addColorStop(1,'rgba(40,120,80,0)');}
+      else{fg.addColorStop(0,'#fffbe8'); fg.addColorStop(.35,ember?'#ffb070':'#ffe08a'); fg.addColorStop(.8,ember?'#e0401c':'#f08a2a'); fg.addColorStop(1,'rgba(200,60,20,0)');}
       c.fillStyle=fg; c.beginPath(); c.moveTo(x,fy-.3*fl*Math.min(1.2,fw)); c.quadraticCurveTo(x+.1*fw,fy-.1,x,fy); c.quadraticCurveTo(x-.1*fw,fy-.1,x,fy-.3*fl*Math.min(1.2,fw)); c.fill();
     }
   }else if(t.type==='harpoon'){
@@ -4172,9 +4329,15 @@ function drawWard(c,t,tm,icon){
     if(hk==='lamplighter'){c.fillStyle='#a8281c'; c.fillRect(.24,-.04,.1,.08); c.fillStyle='#e8c060'; c.fillRect(.24,-.04,.02,.08);
       if(!icon){c.save(); c.globalCompositeOperation='lighter'; c.fillStyle='rgba(255,90,40,'+(.25+.15*Math.sin((tm||0)*8))+')'; c.beginPath(); c.arc(.3,0,.09,0,TAU2); c.fill(); c.restore();}}
     else if(hk==='whaler'){c.strokeStyle='#c9b896'; c.lineWidth=.016; c.beginPath(); c.moveTo(.3,0); c.quadraticCurveTo(.05,.12,-.18,.05); c.stroke();}
+    /* the Bone Spear: a knuckle at the butt, a jagged bone point, sinew wound round the shaft */
+    else if(hk==='occultist'){c.fillStyle='#e6dcc0'; c.beginPath(); c.arc(-.1,-.03,.035,0,TAU2); c.arc(-.1,.03,.035,0,TAU2); c.fill();
+      c.fillStyle='#d8ccaa'; c.beginPath(); c.moveTo(.36,-.08); c.lineTo(.47,-.035); c.lineTo(.42,0); c.lineTo(.55,0); c.lineTo(.42,.02); c.lineTo(.47,.04); c.lineTo(.36,.08); c.closePath(); c.fill();
+      c.strokeStyle='#7a4a5a'; c.lineWidth=.014; for(let k=0;k<3;k++){c.beginPath(); c.moveTo(.06+k*.05,-.03); c.lineTo(.09+k*.05,.03); c.stroke();}}
     c.restore();
     if(hk==='whaler'){for(let k=0;k<3;k++){c.strokeStyle=k%2?'#a8946e':'#c9b896'; c.lineWidth=.022; c.beginPath(); c.ellipse(x-.2,y+.04-k*.035,.09,.04,0,0,TAU2); c.stroke();}}
     else if(hk==='lamplighter'){c.strokeStyle='#b08a48'; c.lineWidth=.02; c.beginPath(); c.ellipse(x,y+.06,.28,.11,0,0,Math.PI); c.stroke();}
+    else if(hk==='occultist'){c.strokeStyle='rgba(169,124,226,.7)'; c.lineWidth=.016; c.beginPath(); c.ellipse(x,y+.06,.28,.11,0,0,Math.PI); c.stroke();
+      c.fillStyle='rgba(169,124,226,.8)'; for(const k of [-.18,0,.18]){c.fillRect(x+k-.012,y+.12,.024,.024);}}
     c.fillStyle='#8C6B3A'; c.beginPath(); c.arc(x,y-.1,.05,0,TAU2); c.fill();
   }else if(t.type==='salt'){
     const a=icon?1:clamp(t.dur/t.max,.25,1);
@@ -4211,6 +4374,32 @@ function drawWard(c,t,tm,icon){
       c.save(); c.globalCompositeOperation='lighter'; const gl=c.createRadialGradient(x,y-.15,0,x,y-.15,.4); gl.addColorStop(0,'rgba(255,120,40,.25)'); gl.addColorStop(1,'rgba(255,90,30,0)'); c.fillStyle=gl; c.beginPath(); c.arc(x,y-.15,.4,0,TAU2); c.fill(); c.restore();
       for(let k=0;k<4;k++){const p=(tm*.45+k/4)%1; c.fillStyle='rgba(120,110,104,'+(.32*(1-p))+')'; c.beginPath(); c.arc(x+Math.sin(tm*.9+k*2)*.1*p,y-.2-p*.6,.06+p*.12,0,TAU2); c.fill();}
       for(let k=0;k<3;k++){const p=(tm*.8+k/3)%1; c.fillStyle='rgba(255,180,90,'+(1-p)+')'; c.fillRect(x+Math.sin(k*3+tm)*.12,y-.18-p*.45,.02,.02);}
+    }
+  }else if(t.type==='risen'){
+    /* a heap of the dead stood up: a ribcage, a skull, arms hanging to the ground; it lunges when it bites */
+    const lunge=!icon&&t.snap>0?.06:0, bob=icon?0:Math.sin((tm||0)*2.5+x)*.015, ax=Math.cos(t.ang||0)*lunge, hx=x+ax, hy=y+bob;
+    c.fillStyle='rgba(20,16,12,.5)'; c.beginPath(); c.ellipse(x,y+.12,.3,.12,0,0,TAU2); c.fill();
+    c.lineCap='round';
+    for(const [w,col] of [[.075,'rgba(10,8,6,.6)'],[.045,'#d8ccaa']]){c.strokeStyle=col; c.lineWidth=w;
+      c.beginPath(); c.moveTo(hx,hy-.38); c.lineTo(hx,hy+.06); c.stroke();
+      c.beginPath(); c.moveTo(hx-.06,hy-.3); c.quadraticCurveTo(hx-.24,hy-.1,hx-.2+ax*2,hy+.1); c.moveTo(hx+.06,hy-.3); c.quadraticCurveTo(hx+.24,hy-.1,hx+.2+ax*2,hy+.1); c.stroke();}
+    c.strokeStyle='#cfc3a0'; c.lineWidth=.024;
+    for(let k=0;k<4;k++){const ry=hy-.27+k*.075, rw=.13-k*.015; c.beginPath(); c.ellipse(hx,ry,rw,.035,0,Math.PI*.05,Math.PI*.95); c.stroke();}
+    const sk=c.createRadialGradient(hx-.04,hy-.5,0,hx,hy-.46,.14); sk.addColorStop(0,'#f2ead4'); sk.addColorStop(1,'#9e9274');
+    c.fillStyle=sk; c.beginPath(); c.ellipse(hx,hy-.47,.11,.1,0,0,TAU2); c.fill(); c.fillRect(hx-.06,hy-.42,.12,.05);
+    c.fillStyle='#120e0c'; c.beginPath(); c.ellipse(hx-.04,hy-.48,.028,.024,0,0,TAU2); c.ellipse(hx+.04,hy-.48,.028,.024,0,0,TAU2); c.fill();
+    if(!icon){c.fillStyle='rgba(170,230,170,'+(.55+.3*Math.sin((tm||0)*5+x))+')'; c.beginPath(); c.arc(hx-.04,hy-.48,.012,0,TAU2); c.arc(hx+.04,hy-.48,.012,0,TAU2); c.fill();}
+  }else if(t.type==='grasp'){
+    /* arms of the dead reaching up out of the path; they close when they seize something */
+    const n=icon?4:Math.max(1,Math.min(4,Math.ceil((t.grips||GRASP_GRIPS)/1.5))), clench=!icon&&t.snap>0?1:0;
+    c.fillStyle='rgba(20,16,12,.55)'; c.beginPath(); c.ellipse(x,y+.06,.36,.2,0,0,TAU2); c.fill();
+    c.lineCap='round'; c.lineJoin='round';
+    for(let k=0;k<n;k++){
+      const a=(k/n)*TAU2+.4, bx=x+Math.cos(a)*.2, byy=y+.04+Math.sin(a)*.11, sway=icon?0:Math.sin((tm||0)*2.2+k*1.7)*.04;
+      const ex=bx+(x-bx)*(.25+.45*clench)+sway, ey=byy-.36+.1*clench, elx=(bx+ex)/2+(k%2?.06:-.06), ely=(byy+ey)/2;
+      for(const [w,col] of [[.07,'rgba(10,8,6,.6)'],[.042,'#d8ccaa']]){c.strokeStyle=col; c.lineWidth=w; c.beginPath(); c.moveTo(bx,byy); c.lineTo(elx,ely); c.lineTo(ex,ey); c.stroke();}
+      c.strokeStyle='#e8dec4'; c.lineWidth=.018;
+      for(let f=-1;f<=1;f++){const fa=-Math.PI/2+f*.5+(clench?f*-.35:0); c.beginPath(); c.moveTo(ex,ey); c.lineTo(ex+Math.cos(fa)*.08,ey+Math.sin(fa)*.08+(clench?.03:0)); c.stroke();}
     }
   }else if(t.type==='trap'){
     /* rusted jaws, flat and open when set, clamped shut while they reset */
@@ -4583,6 +4772,17 @@ function drawWater(tm,top){
   }
   g.restore();
 }
+function drawBodies(tm){
+  for(const [key,b] of F.bodies){
+    const n=Math.min(3,b.n), h=hash(b.x,b.y,11);
+    g.lineCap='round';
+    for(let k=0;k<n;k++){const a=h*6+k*1.9, cx=b.x+(hash(k,b.x,b.y)-.5)*.35, cy=b.y+(hash(b.y,k,b.x)-.5)*.3, l=.13;
+      for(const [w,col] of [[.075,'rgba(10,8,6,.55)'],[.042,'rgba(232,224,202,.85)']]){g.strokeStyle=col; g.lineWidth=w; g.beginPath(); g.moveTo(cx-Math.cos(a)*l,cy-Math.sin(a)*l); g.lineTo(cx+Math.cos(a)*l,cy+Math.sin(a)*l); g.stroke();}
+      g.fillStyle='rgba(232,224,202,.85)'; for(const sg of [-1,1]){g.beginPath(); g.arc(cx+sg*Math.cos(a)*l,cy+sg*Math.sin(a)*l,.04,0,TAU); g.fill();}}
+    /* a faint pallor shows where a Corpse Candle could draw on them */
+    g.fillStyle='rgba(170,200,160,'+(.06+.04*Math.sin(tm*2+h*6))+')'; g.beginPath(); g.arc(b.x,b.y,.42,0,TAU); g.fill();
+  }
+}
 function drawWake(e,tm){
   const a=.45+.2*Math.sin(tm*5+e.wob);
   g.strokeStyle='rgba(150,210,200,'+a+')'; g.lineWidth=.03;
@@ -4629,7 +4829,7 @@ function render(){
   const ts=F.towers.slice().sort((a,b)=>a.y-b.y);
   const items=[];
   for(const t of ts){
-    if(t.kind==='ward'&&(t.type==='salt'||t.type==='trap')){drawWard(g,t,tm,false); continue;}
+    if(t.kind==='ward'&&(t.type==='salt'||t.type==='trap'||t.type==='grasp')){drawWard(g,t,tm,false); continue;}
     if(t.kind==='ward'&&t.type==='effigy'&&!t.dark){g.strokeStyle='rgba(150,230,120,'+(.16+.06*Math.sin(tm*2))+')'; g.lineWidth=.03; g.setLineDash([.16,.12]); g.beginPath(); g.arc(t.x,t.y,wstat(t).range,tm*.1,tm*.1+TAU); g.stroke(); g.setLineDash([]);}
     items.push({y:t.y+.05,k:0,o:t});
   }
@@ -4782,6 +4982,8 @@ function render(){
 
   /* her water shows through the dark too, faintly, so you can plan around it */
   if(F.water.size)drawWater(tm,true);
+  /* the Occultist sees its dead: pale bones on the path, drawn over the dark so the candles can find them */
+  if(corpseKit()&&F.bodies&&F.bodies.size)drawBodies(tm);
   /* what moves in the dark: shapes and burning eyes */
   for(const e of fs){
     if(seen.has(e))continue;
@@ -4816,6 +5018,13 @@ function render(){
     g.save(); g.globalCompositeOperation='lighter';
     const wg=g.createRadialGradient(wx,wy,0,wx,wy,.7*fl); wg.addColorStop(0,'rgba(220,255,240,'+(.9*fade)+')'); wg.addColorStop(.25,'rgba(120,230,200,'+(.45*fade)+')'); wg.addColorStop(1,'rgba(60,160,140,0)');
     g.fillStyle=wg; g.beginPath(); g.arc(wx,wy,.7*fl,0,TAU); g.fill(); g.restore();
+  }
+  /* an unbound horror, charging down the stair */
+  for(const ch of F.charges){
+    g.save(); g.globalCompositeOperation='lighter';
+    const cg=g.createRadialGradient(ch.x,ch.y,0,ch.x,ch.y,.8); cg.addColorStop(0,'rgba(190,140,255,.55)'); cg.addColorStop(1,'rgba(120,60,200,0)');
+    g.fillStyle=cg; g.beginPath(); g.arc(ch.x,ch.y,.8,0,TAU); g.fill(); g.restore();
+    drawCreature(g,ch.type,ch.x,ch.y-.05,Math.min(.4,(FOES[ch.type]||FOES.gnasher).r),tm,{ph:ch.d,face:1,alpha:.85});
   }
   /* the rifts */
   for(let pi=0;pi<F.nRoots;pi++){const P=F.paths[pi];
@@ -4928,6 +5137,13 @@ cv.addEventListener('pointerdown',ev=>{
   const x=(ev.clientX-rect.left)/rect.width*COLS, y=(ev.clientY-rect.top)/rect.height*ROWS;
   if(mode==='pillar'){castPillar(x,y); return;}
   if(mode==='wisp'){castWisp(x,y); return;}
+  if(mode==='raise'){castRaise(x,y); return;}
+  if(mode==='unbind'){
+    let best=null, bd=.8;
+    for(const t of F.towers){if(t.kind!=='horror')continue; const d=dst(t.x,t.y,x,y); if(d<bd){bd=d; best=t;}}
+    if(best)castUnbind(best); else hint('Tap one of your horrors.');
+    return;
+  }
   if(mode==='name'||mode==='kindle'){
     let best=null, bd=.75;
     for(const e of F.foes){if(e.dead||!canSee(e))continue; const d=dst(e.x,e.y,x,y); if(d<bd){bd=d; best=e;}}
@@ -5129,7 +5345,8 @@ function riteLesson(){
   return 'Rites are spells on a cooldown.'+(now?' Some, like '+RITES[now].n+', strike the moment you tap them.':'')+(aim?' Others, like '+RITES[aim].n.replace(/^Pillar/,'the Pillar')+', then wait for you to tap the board.':'');
 }
 function coachWalkSteps(){
-  const candle=run.wards.includes('candle');
+  /* the Occultist can't light a candle until something has died, so its walkthrough doesn't ask it to */
+  const candle=run.wards.includes('candle')&&!corpseKit();
   return [
     {title:'Lamp oil',text:'Each creature that reaches the lamp drains its oil. When the oil runs out, the run is over.',target:()=>coachStat('#oilV'),next:true},
     {title:'Essence',text:'Essence pays for everything you build. Kills earn more, and so does calling a wave early. Most of what you hold burns away on the stair, so spend it.',target:()=>coachStat('#essV'),next:true},
@@ -5175,6 +5392,29 @@ const TIPS={
   deck:{when:()=>F.wave>=1&&F.wave<F.def.waves.length&&(F.phase==='build'||(F.phase==='wave'&&!F.queue.length)),title:'The dark draws its waves',
     text:'No floor comes the same way twice. Each one draws its waves from a deck, and the strip above the board names the next one and shows what it holds. A wave with a boss or the Choirmaster always keeps its place.',
     target:()=>coachEl('#preview')},
+  /* the Occultist's first descent: a short lesson on the bones it starts with, before the first wave */
+  occwalk:{when:()=>corpseKit()&&run.floor===0&&F.wave===0&&F.phase==='build'&&F.bodies.size>0&&!F.towers.some(t=>t.corpse),steps:()=>[
+    {title:'The Occultist',text:'Your light comes from the dead. These bones were left by whoever carried the lamp down here last.',target:()=>{for(const b of F.bodies.values())return coachBoard(b.x,b.y,.7); return null;},next:true},
+    {title:'Choose a Corpse Candle',text:'Tap Corpse below. It costs nothing.',enter:()=>coachShowTray('candle'),target:()=>coachTray('candle'),until:()=>!!(sel&&sel.kind==='ward'&&sel.type==='candle')},
+    {title:'Light it on the dead',text:'Now tap one of the marked tiles beside the bones. It needs no lamp: it burns on the dead, and uses one body up.',target:()=>{for(const b of F.bodies.values())return coachBoard(b.x,b.y,1.6); return null;},
+      until:()=>F.towers.some(t=>t.corpse),back:()=>!sel&&!F.towers.some(t=>t.corpse)},
+    {title:'It goes out',teaches:'corpse',text:'When this wave breaks, it goes out. Every kill leaves new bones, and they keep for the rest of the floor, lit or dark. Light the next candles where the killing was.',enter:()=>{sel=null; forceUI();},
+      target:()=>{const t=F.towers.find(t=>t.corpse); return t?coachBoard(t.x,t.y,1):null;},next:true}]},
+  corpse:{when:()=>corpseKit()&&F.phase==='build'&&((sel&&sel.kind==='ward'&&sel.type==='candle')||F.bodies.size>0),title:'Corpse Candles',
+    text:'Your candles burn on the dead. Each death leaves bones on the path, and they keep for the rest of the floor, lit or dark. A Corpse Candle is free and needs no lamp, but it must stand beside bones, it uses one body up, and it goes out when the wave ends. Every floor begins dark, so your light follows the killing.',
+    target:()=>{for(const b of F.bodies.values())return coachBoard(b.x,b.y,.7); return coachTray('candle');}},
+  grasp:{when:()=>corpseKit()&&run.wards.includes('grasp')&&F.phase==='build'&&[...F.bodies.values()].some(b=>b.n>=PILE_MAX),title:'The Grasping Dead',
+    text:'A full pile of bones, three bodies on one tile, can rise. Choose Grasp and tap the pile: dead arms seize each creature that walks over them and hold it for 2 seconds, lit or unseen. After six they crumble.',
+    enter:()=>coachShowTray('grasp'),target:()=>{for(const b of F.bodies.values())if(b.n>=PILE_MAX)return coachBoard(b.x,b.y,.7); return null;}},
+  raise:{when:()=>ritesNow().includes('raise')&&(F.phase==='wave'||F.phase==='build')&&F.wave>=1&&[...F.bodies.values()].some(b=>b.n>=2)&&!(F.cd.raise>0),title:'Raise the Dead',
+    text:'Tap Raise the Dead, then a pile of bones. Its dead stand up beside the path and bite whatever comes near, even in the dark, until the wave breaks. A full pile bites three times as hard as one bone.',
+    target:()=>coachEl('#rites [data-r="raise"]')},
+  madfeeds:{when:()=>corpseKit()&&madTier()>=1&&F.towers.some(t=>t.kind==='horror'),title:'Madness feeds you',
+    text:'Your madness is rising, and you are stronger for it: each tier makes your Bone Spears hit 25% harder and your horrors 20% harder. The dark still gets worse with every tier.',
+    target:()=>coachStat('#madV')},
+  unbind:{when:()=>ritesNow().includes('unbind')&&F.phase==='wave'&&F.towers.some(t=>t.kind==='horror')&&F.foes.filter(e=>!e.dead).length>=4,title:'Unbind',
+    text:'Tap Unbind, then one of your horrors. It breaks free and charges down the path toward where they come from, tearing through everything in its way. Then it is gone for good, and so is its madness.',
+    target:()=>coachEl('#rites [data-r="unbind"]')},
   water:{when:()=>F.water&&F.water.size>0,title:'Her water',
     text:'The Drowned Mother has noticed you, and her water stands on the path. Its current carries creatures through 30% faster. Some of her offerings turn the water against them. Tap her sign beside the Grimoire to see what her Attention does next.',
     target:()=>{const w=F.waterPts; return w&&w.length?coachBoard(w[0],w[1],.8):null;}},
@@ -5366,13 +5606,15 @@ function statLine(o){
     return 'Slows <b>35%</b> · <b>6 damage</b> per second · Range <b>'+H.range+'</b>';
   }
   const st=wstat(o);
-  if(o.type==='candle')return 'Light <b>'+st.light.toFixed(1)+'</b> · Slows <b>'+Math.round(st.slow*100)+'%</b>'+(st.burn?' · Burns <b>'+st.burn+' damage/s</b>':'');
-  if(o.type==='harpoon')return 'Damage <b>'+Math.round(st.dmg)+'</b> · Range <b>'+st.range.toFixed(1)+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s'+(st.twin?' · Twin':'')+(st.pierce?' · Pierce':'')+(st.deep?' · Sees in the dark':'')+(st.tether?' · Line slows up to <b>'+Math.round(st.tMax*100)+'%</b>'+(st.haul?' · Reels in':''):'');
+  if(o.type==='candle')return 'Light <b>'+st.light.toFixed(1)+'</b> · Slows <b>'+Math.round(st.slow*100)+'%</b>'+(st.burn?' · Burns <b>'+st.burn+' damage/s</b>':'')+(o.corpse?(hasOff('graves')&&nearWater(o.x,o.y)?' · Beside water: it stays lit':' · Goes out when this wave ends'):'');
+  if(o.type==='harpoon')return 'Damage <b>'+Math.round(st.dmg)+'</b> · Range <b>'+st.range.toFixed(1)+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s'+(st.twin?' · Twin':'')+(st.pierce?' · Pierce':'')+(st.deep?' · Sees in the dark':'')+(st.spear?' · Madness <b>+'+Math.round((spearMul(o.br||{})-1)*100)+'%</b>':'')+(st.soul?' · Its kills leave sigils':'')+(st.tether?' · Line slows up to <b>'+Math.round(st.tMax*100)+'%</b>'+(st.haul?' · Reels in':''):'');
   if(o.type==='trypot'){const d=blubberDue();
     return 'Holds <b>'+(o.meas||0)+' of '+st.max+'</b> measures · the next is <b>'+Math.round((o.render||0)/st.every*100)+'%</b> rendered'
       +'<br>Your lamps drink <b>'+d.lamps+'</b> a wave'+(d.lamps?(d.oil?' · <b>'+d.oil+'</b> will drink oil':' · all fed'):'')+' · Reach <b>'+st.range.toFixed(1)+'</b>';}
   if(o.type==='chime')return 'Damage <b>'+st.dmg+'</b> · Stun <b>'+st.stun.toFixed(1)+'s</b> · Range <b>'+st.range.toFixed(2)+'</b>';
   if(o.type==='censer')return 'Damage <b>'+st.dmg+'</b> · Splash <b>'+st.splash.toFixed(2)+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s'+(st.pool?' · Burning ground <b>'+st.pool.dps+' damage/s</b>':'');
+  if(o.type==='risen')return 'Bites <b>'+Math.round(st.dmg)+'</b> · Range <b>'+st.range+'</b> · Risen from <b>'+(o.bones?o.bones.length:1)+'</b> · Falls when the wave breaks';
+  if(o.type==='grasp')return 'Holds <b>'+GRASP_HOLD+'s</b> (bosses <b>'+GRASP_BOSS+'s</b>) · <b>'+(o.grips!=null?o.grips:GRASP_GRIPS)+'</b> grips left · Needs no light';
   if(o.type==='trap')return 'Damage <b>'+st.dmg+'</b> · Holds <b>'+st.hold.toFixed(1)+'s</b> · Resets <b>'+st.reset.toFixed(1)+'s</b> · Catches unseen things, never fliers';
   if(o.type==='tithe')return '<b>+'+st.per+'</b> essence per death within <b>'+st.range.toFixed(1)+'</b> · Tithe <b>+'+st.tithe+'</b> each break'+(st.oilEvery?' · 1 oil per <b>'+st.oilEvery+'</b> deaths':'');
   if(o.type==='effigy')return 'Hexed take <b>+'+Math.round((st.mul-1)*100)+'%</b> damage · Range <b>'+st.range.toFixed(1)+'</b>'+(st.bleed?' · Bleed <b>'+st.bleed+'/s</b>':'')+(st.slow?' · Slow <b>'+Math.round(st.slow*100)+'%</b>':'')+(st.unmask?' · Unmasks':'');
@@ -5420,7 +5662,7 @@ function renderSheet(){
       +(t.dark?'<p class="darknote">Cut off from the lamp. It does nothing until light reaches it again.</p>':'')
       +'<div class="st">'+statLine(t)+'</div>';
     if(W.aim)html+=segHTML(t,B);
-    if(treeOf(t.type))html+=treeHTML(t,B);
+    if((treeOf(t.type)||[]).length)html+=treeHTML(t,B);
     html+='<div class="ibtns">';
     if(t.type==='salt')html+=B('Refill · '+refillCost(),()=>refillSalt(t),{cls:'call',disabled:t.dur>=t.max||run.ess<refillCost()});
     if(t.type==='weir')html+=B(F.phase==='wave'?'Locked until the wave ends':'Flip the weir',()=>{t.open=t.open?0:1; forceUI();},{cls:'call',disabled:F.phase==='wave'});
@@ -5448,8 +5690,10 @@ function renderModebar(){
   if(mode==='pillar'){title='Pillar of Salt'; sub='Tap the board where the salt should fall.';}
   else if(mode==='wisp'){title='Will-o’-Wisp'; sub='Tap one of the ways at a fork. For 8 seconds, everything that reaches it goes that way.';}
   else if(mode==='name'){title='Name the Thing'; sub='Tap a creature you can see. Its kind takes 60% more damage for the rest of the floor.';}
+  else if(mode==='raise'){title='Raise the Dead'; sub='Tap a pile of bones. Its dead stand up beside the path and bite until the wave breaks.';}
+  else if(mode==='unbind'){title='Unbind'; sub='Tap one of your horrors. It charges down the stair through everything in its way, and is gone for good.';}
   else if(mode==='kindle'){title='Kindle'; sub='Tap a creature you can see. It burns and lights the dark around it for 8 seconds, and it runs.';}
-  else if(sel&&sel.kind==='ward'){const W=wdef(sel.type); title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(W.path?' Tap a lit path tile.':sel.type==='candle'&&signalKit()?' Tap a lit tile beside the path, or a dark one near a lit Signal Candle.':' Tap a lit tile beside the path.');}
+  else if(sel&&sel.kind==='ward'){const W=wdef(sel.type); title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(sel.type==='grasp'?' Tap a full pile of bones on the path.':W.path?' Tap a lit path tile.':sel.type==='candle'&&corpseKit()?' Tap a marked tile beside a body.':sel.type==='candle'&&signalKit()?' Tap a lit tile beside the path, or a dark one near a lit Signal Candle.':' Tap a lit tile beside the path.');}
   else if(sel&&sel.kind==='horror'){const H=HORRORS[sel.type]; title=H.n+' · <i>'+H.cost+'</i> · <em>+'+horrorMad(sel.type)+' madness</em>'; sub=avail(sel.type)+' ready. '+H.d;}
   if(!title||!F||F.phase==='cleared'||F.phase==='draft'){if(!el.hidden){el.hidden=true; modeKey=''; modeTitle=''; $('#cmdbar').classList.remove('placing');} return;}
   const key=title+sub;
