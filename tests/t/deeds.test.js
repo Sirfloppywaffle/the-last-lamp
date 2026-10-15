@@ -9,7 +9,7 @@ const file='file://'+process.argv[2], out=process.argv[3];
   const ok=(cond,msg)=>{if(!cond)fail(msg); else console.log('OK '+msg);};
 
   // 1. Initial lock state (only Lamplighter is unlocked by default)
-  const meta0=await p.evaluate(()=>__t.meta());
+  const meta0=await p.evaluate(()=>__t.meta);
   ok(!meta0.unlocked.includes('kit_whaler'), 'Whaler is locked initially');
   ok(!meta0.unlocked.includes('kit_occultist'), 'Occultist is locked initially');
 
@@ -20,7 +20,7 @@ const file='file://'+process.argv[2], out=process.argv[3];
     T.hurt(e, 5, 'chime');
     T.hurt(e, e.hp, 'harpoon');
   });
-  const metaFail=await p.evaluate(()=>__t.meta());
+  const metaFail=await p.evaluate(()=>__t.meta);
   ok(!metaFail.unlocked.includes('kit_whaler'), 'Whaler NOT unlocked if Behemoth took chime damage');
 
   // 3. Whaler Deed: Kill Trench Behemoth with harpoons alone unlocks Whaler
@@ -29,7 +29,7 @@ const file='file://'+process.argv[2], out=process.argv[3];
     const e=T.spawnFoe('behemoth',0,1);
     T.hurt(e, e.hp, 'harpoon');
   });
-  const metaWhaler=await p.evaluate(()=>__t.meta());
+  const metaWhaler=await p.evaluate(()=>__t.meta);
   ok(metaWhaler.unlocked.includes('kit_whaler'), 'Whaler unlocked by harpoon-only Behemoth kill');
 
   // 4. Occultist Deed: Having 3 horrors bound at once
@@ -38,7 +38,7 @@ const file='file://'+process.argv[2], out=process.argv[3];
     T.run.roster={watcher:1, gnasher:1, wretch:1};
     T.checkOccultistDeed();
   });
-  const metaOccultist=await p.evaluate(()=>__t.meta());
+  const metaOccultist=await p.evaluate(()=>__t.meta);
   ok(metaOccultist.unlocked.includes('kit_occultist'), 'Occultist unlocked by having 3 horrors bound at once');
 
   // 5. Developer Mode: Unlocks kits and Grimoire without saving to ll-meta or ll-codex
@@ -50,7 +50,7 @@ const file='file://'+process.argv[2], out=process.argv[3];
 
   const devUnlocked=await p.evaluate(()=>{
     const K=__t.KITS;
-    const m=__t.meta();
+    const m=__t.meta;
     const locks=Object.keys(K).map(k=>!window.devOn&&K[k].lock&&!m.unlocked.includes(K[k].lock));
     return {devOn: window.devOn, locks, meta: m};
   });
@@ -63,7 +63,7 @@ const file='file://'+process.argv[2], out=process.argv[3];
   });
   await p.reload(); await p.waitForTimeout(300);
 
-  const metaRestored=await p.evaluate(()=>__t.meta());
+  const metaRestored=await p.evaluate(()=>__t.meta);
   ok(!metaRestored.unlocked.includes('kit_whaler'), 'Turning dev mode off restored exact real progress');
 
   await b.close();
