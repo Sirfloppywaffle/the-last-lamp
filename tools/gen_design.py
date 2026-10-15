@@ -60,7 +60,7 @@ for k,r in D['RITES'].items(): w("| `%s` | %s | %s | %s |"%(k,r['n'],('%ss'%r['c
 
 w("\n## Kits\n\n| Key | Name | Wards | Rites | Starts with | Unlock | Perk |\n|---|---|---|---|---|---|---|")
 for k,v in D['KITS'].items():
-    w("| `%s` | %s | %s | %s | %s | %s | %s |"%(k,v['n'],', '.join(v['wards']),', '.join(v['rites']),', '.join('%s×%s'%(a,b) for a,b in v['roster'].items()) or '—',('Ember Hall (`%s`)'%v['lock']) if v.get('lock') else 'open',esc(v['d'])))
+    w("| `%s` | %s | %s | %s | %s | %s | %s |"%(k,v['n'],', '.join(v['wards']),', '.join(v['rites']),', '.join('%s×%s'%(a,b) for a,b in v['roster'].items()) or '—',('Deed: %s'%esc(v['deed'])) if v.get('deed') else ('Ember Hall (`%s`)'%v['lock']) if v.get('lock') else 'open',esc(v['d'])))
 
 if D.get('KIT_WARDS'):
     w("\n### Kit wards\n\nA kit's own version of a ward. Underneath it is the same ward (same key, cost, branches, relics and omens); only its name and its twist differ.\n\n| Kit | Replaces | Name | What it does |\n|---|---|---|---|")
@@ -70,6 +70,7 @@ if D.get('KIT_WARDS'):
         for wk,tree in ts.items():
             w("\n**%s (`%s`, %s)**\n\n| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |\n|---|---|---|---|"%(esc(D['KIT_WARDS'][kk][wk]['n']),kk,'replaces '+wk))
             for b in tree: w("| %s | %s |"%(b['n'],' | '.join('%s — %s'%(c,esc(t)) for c,t in b['t'])))
+    if 'POT_R' in D: w("\nWhaler numbers: a Blubber Lamp burns **+%s** light; while any stands, each wave costs 1 oil unless a Try-pot has a measure. The Try-pot reaches **%s** tiles; each death gives up its oil value (at most %s); every **%s** makes a measure; it holds **%s**, and a full pot pours 1 oil into the lamp instead. The line slows by **%s** a second held, up to **%s**%%; Reel In hauls back 1 tile every **%ss**."%(D['BLUBBER_LIGHT'],D['POT_R'],D['POT_MEASURE'],D['POT_MEASURE'],D['POT_MAX'],D['TETHER_RATE'],int(D['TETHER_MAX']*100),D['HAUL_EVERY']))
     w("\nNumbers: Signal Candle light leaps **%s** tiles. A flare bolt lights **%s** tiles for **%ss** (at most %s at once); a Starshell lights **%s** tiles for **%ss**. A Fire Thread kindles what crosses it for **%ss**. Kindle burns **%ss**, lights **%s** tiles, deals **%s** damage a second, and the creature moves **×%s** (bosses don't hurry)."%(D['LEAP'],D['GLINT_R'],D['GLINT_T'],D['GLINT_MAX'],D['STAR_R'],D['STAR_T'],D['THREAD_T'],D['KINDLE_T'],D['KINDLE_R'],D['KINDLE_DPS'],D['KINDLE_RUN']))
 
 w("\n## Relics\n\n| Key | Name | Cursed | Pack | Effect |\n|---|---|---|---|---|")

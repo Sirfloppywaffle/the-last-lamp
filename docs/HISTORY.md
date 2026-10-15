@@ -4,6 +4,8 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **The Whaler plays differently** (#26, the second kit of five). Its candle is the **Blubber Lamp**: it burns 0.8 tiles wider, but while any stands, the lamp loses 1 oil as each wave begins. Its own new ward, the **Try-pot**, feeds them: everything that dies near it gives up the oil it would have drained, every 12 makes a measure (it holds 3), a measure feeds the lamps, and a full pot pours into the lamp. Its harpoon is the **Tether Harpoon**: the line holds what it hits and slows it more the longer it holds, up to 40%. Own branches: **Reek** (the smoke keeps slowing after they leave the light; capstone **Lure** draws the crowd down the way it lights at a fork) and **Line** (stronger, longer; capstone **Reel In**). The old +20% harpoon damage is gone. Tips, rules and the Grimoire teach it. (Claude)
+
 ---
 
 ## v16.1 — Wave decks
