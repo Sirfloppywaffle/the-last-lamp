@@ -56,6 +56,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `lance` | Whaling Gun | 90 | beside path | A slow, enormous harpoon. Double damage to heavy creatures, elites and bosses. *(aimed: First/Last/Strongest)* |
 | `trypot` | Try-pot | 30 | beside path | An iron pot that renders the dead into whale oil. Build it where things die. Each Blubber Lamp drinks a measure from it as a wave begins. A full pot pours into the lamp, and whatever is left when the floor ends pours in too. |
 | `grasp` | Grasping Dead | 0 | path | Three bodies rise as arms from a full pile of bones on the path. They seize each creature that walks over them and hold it 2 seconds, seen or unseen, lit or dark. After six they crumble. Bosses they hold only a moment; Behemoths and fliers pass free. |
+| `mirror` | Signal Mirror | 45 | beside path | A tilted mirror on an iron stand. Built in the lamp’s own light, it catches the lamp and throws a beam 5 tiles straight out, away from the lamp. The beam lights the ground it crosses, so you can build there, and burns whatever walks through it. Where you stand it decides where it points. |
 | `risen` | The Risen | 0 | beside path | Raised from a pile of bones by the rite Raise the Dead. It bites whatever comes near, seen or unseen, harder for every bone it rose from and every tier of madness, and falls when the wave breaks. |
 | `weir` | Weir | 45 | path | A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it. |
 
@@ -162,6 +163,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `wisp` | Will-o’-Wisp | 30s | Tap a way at a fork. For 8 seconds, everything that reaches the fork follows the wisp, whatever it wants. Bosses ignore it. |
 | `name` | Name the Thing | once per floor | Once per floor. Tap a visible creature and its whole kind takes 60% more damage until the floor ends. |
 | `kindle` | Kindle | 30s | Tap a creature you can see. It burns for 8 seconds: it lights the dark around it, wakes your wards there, and takes fire damage, but it runs faster. Bosses burn without running. |
+| `haul` | Haul Away | 22s | Every creature on one of your lines is dragged 2 tiles back down the path at once. Bosses and Behemoths hold their ground. |
 | `raise` | Raise the Dead | 30s | Tap a pile of bones. Its dead stand up beside the path as a Risen that bites whatever comes near, seen or unseen, until the wave breaks. The more bones, the harder it bites. |
 | `unbind` | Unbind | 25s | Tap one of your horrors on the board. It breaks its binding and charges down the path toward where they come from, tearing through everything in its way. Then it is gone for good. |
 | `ebb` | The Ebb | 30s | The water draws back. Everything standing in it is dragged 2 tiles back down the path. Bosses and Behemoths hold their ground. |
@@ -170,8 +172,8 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 
 | Key | Name | Wards | Rites | Starts with | Unlock | Perk |
 |---|---|---|---|---|---|---|
-| `lamplighter` | The Lamplighter | candle, harpoon, salt, chime, trap, tithe | kindle, pillar | — | open | Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. |
-| `whaler` | The Whaler | candle, harpoon, salt, trap, lance, trypot | flare, bell | — | Deed: Kill a Trench Behemoth with harpoons alone. | Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line. Starts with the Whaling Gun. |
+| `lamplighter` | The Lamplighter | candle, harpoon, mirror, salt, chime, trap, tithe | kindle, pillar | — | open | Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam. |
+| `whaler` | The Whaler | candle, harpoon, salt, trap, lance, trypot | haul, bell | — | Deed: Kill a Trench Behemoth with harpoons alone. | Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line, and Haul Away drags everything on your lines back at once. Starts with the Whaling Gun. |
 | `occultist` | The Occultist | candle, harpoon, grasp, effigy, tithe, chime | unbind, raise | watcher×1, gnasher×1 | Deed: Break a wave with your madness at Slipping or deeper. | Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher. |
 | `galvanist` | The Galvanist | candle, harpoon, salt, coil, chime | flare, pillar | — | Ember Hall (`kit_galvanist`) | Lightning leaps to one more creature, and salt costs 15. Starts with the Galvanic Coil. |
 | `bellringer` | The Bellringer | candle, harpoon, chime, censer, trap | flare, bell | — | Ember Hall (`kit_bellringer`) | Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell. |
@@ -233,6 +235,8 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | Speed | 35 — Reload 25% faster | 50 — Reload 25% faster again | 120 — Twin Reel: two bolts per shot |
 | Strength | 35 — +6 damage | 55 — +8 damage | 130 — Piercing Barb: bolts pass through everything in a line |
 | Dread | 30 — Each tier of madness adds 10% more | 45 — Each tier adds 10% more again | 110 — Soul Spear: what it kills leaves its sigil, if its kind can be bound |
+
+Own wards and rites: the Lamplighter's Signal Mirror throws a beam **5** tiles long (lit in patches of **0.8**) that burns **5** a second, and only while it stands in the lamp's own light. The Whaler's Haul Away drags everything on its lines **2** tiles back (bosses and Behemoths hold).
 
 Occultist numbers: a Corpse Candle costs nothing, needs no lamp, stands within **1.5** tiles of a body from this floor (one body per candle) and goes out when the wave breaks. A death within **1.5** tiles of a pile joins it; a pile holds **3**, a death beside a full one scatters, and a floor keeps the freshest **12** bodies. The first floor of an Occultist descent starts with two piles. The Grasping Dead rise from a full pile (its three bodies), need no light, hold each creature **2s** (bosses **0.5s**) and crumble after **6** grips. Raise the Dead stands a pile up as a Risen beside it: **14** damage per bone (× the horrors' madness bonus), range **1.5**, **1** bites a second, until the wave breaks. A Bone Spear deals **+25%** per tier of madness (Dread adds **+10%** per tier per level). Horrors deal **+20%** per tier. Unbind charges at **7** tiles a second, dealing **30 + 20 × the horror's madness** to each creature it passes, and stuns for 1s (bosses 0.3s, Behemoths not at all).
 

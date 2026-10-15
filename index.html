@@ -408,7 +408,7 @@ input[type=range]::-moz-range-track {
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
-        <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, and Kindle sets a creature burning and running, lighting the dark around it. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
+        <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, Kindle sets a creature burning and running, lighting the dark around it, and its Signal Mirror, built in the lamp's own light, throws that light 5 tiles out in a beam you can build in and that burns what crosses it. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it; Haul Away drags everything on its lines 2 tiles back at once. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
@@ -502,6 +502,7 @@ const WARDS={
   lance:{n:'Whaling Gun',short:'Whaler',cost:90,aim:true,d:'A slow, enormous harpoon. Double damage to heavy creatures, elites and bosses.'},
   trypot:{n:'Try-pot',short:'Try-pot',cost:30,kit:'whaler',d:'An iron pot that renders the dead into whale oil. Build it where things die. Each Blubber Lamp drinks a measure from it as a wave begins. A full pot pours into the lamp, and whatever is left when the floor ends pours in too.'},
   grasp:{n:'Grasping Dead',short:'Grasp',cost:0,path:true,kit:'occultist',d:'Three bodies rise as arms from a full pile of bones on the path. They seize each creature that walks over them and hold it 2 seconds, seen or unseen, lit or dark. After six they crumble. Bosses they hold only a moment; Behemoths and fliers pass free.'},
+  mirror:{n:'Signal Mirror',short:'Mirror',cost:45,kit:'lamplighter',d:'A tilted mirror on an iron stand. Built in the lamp’s own light, it catches the lamp and throws a beam 5 tiles straight out, away from the lamp. The beam lights the ground it crosses, so you can build there, and burns whatever walks through it. Where you stand it decides where it points.'},
   risen:{n:'The Risen',short:'Risen',cost:0,kit:'occultist',raised:true,d:'Raised from a pile of bones by the rite Raise the Dead. It bites whatever comes near, seen or unseen, harder for every bone it rose from and every tier of madness, and falls when the wave breaks.'},
   weir:{n:'Weir',short:'Weir',cost:45,path:true,fork:true,d:'A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it.'}
 };
@@ -534,6 +535,8 @@ const BLUBBER_LIGHT=.8, POT_R=2.4, POT_MEASURE=6, POT_MAX=4, TETHER_RATE=.12, TE
 /* the Occultist: how far from a body a Corpse Candle can stand; how many bones a pile holds, how near a death has to be
    to join a pile, and how many bodies a floor keeps (the oldest crumble first); what each tier of madness adds to a Bone Spear and
    to every horror; how fast an unbound horror charges, and what it deals (a base, and more for each point of its madness) */
+/* the Signal Mirror's beam: how long, how wide each patch of its light, how hard it burns. Haul Away: how far it drags */
+const MIRROR_LEN=5, MIRROR_R=.8, MIRROR_DPS=5, HAUL_BACK=2;
 const GRASP_HOLD=2, GRASP_BOSS=.5, GRASP_GRIPS=6, RISEN_DMG=14, RISEN_RANGE=1.5, RISEN_RATE=1;
 const CORPSE_REACH=1.5, PILE_MAX=3, PILE_GATHER=1.5, BODY_MAX=12, SPEAR_TIER=.25, DREAD_TIER=.1, HORROR_TIER=.2, UNBIND_SPD=7, UNBIND_BASE=30, UNBIND_PER=20;
 
@@ -619,6 +622,7 @@ const RITES={
   wisp:{n:'Will-o’-Wisp',cd:30,fork:true,d:'Tap a way at a fork. For 8 seconds, everything that reaches the fork follows the wisp, whatever it wants. Bosses ignore it.'},
   name:{n:'Name the Thing',cd:0,d:'Once per floor. Tap a visible creature and its whole kind takes 60% more damage until the floor ends.'},
   kindle:{n:'Kindle',cd:30,d:'Tap a creature you can see. It burns for 8 seconds: it lights the dark around it, wakes your wards there, and takes fire damage, but it runs faster. Bosses burn without running.'},
+  haul:{n:'Haul Away',cd:22,d:'Every creature on one of your lines is dragged 2 tiles back down the path at once. Bosses and Behemoths hold their ground.'},
   raise:{n:'Raise the Dead',cd:30,d:'Tap a pile of bones. Its dead stand up beside the path as a Risen that bites whatever comes near, seen or unseen, until the wave breaks. The more bones, the harder it bites.'},
   unbind:{n:'Unbind',cd:25,d:'Tap one of your horrors on the board. It breaks its binding and charges down the path toward where they come from, tearing through everything in its way. Then it is gone for good.'},
   ebb:{n:'The Ebb',cd:30,patron:'mother',d:'The water draws back. Everything standing in it is dragged 2 tiles back down the path. Bosses and Behemoths hold their ground.'}
@@ -680,8 +684,8 @@ const OFFERINGS={
 };
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
 const KITS={
-  lamplighter:{n:'The Lamplighter',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch.',wards:['candle','harpoon','salt','chime','trap','tithe'],rites:['kindle','pillar'],roster:{}},
-  whaler:{n:'The Whaler',d:'Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance','trypot'],rites:['flare','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
+  lamplighter:{n:'The Lamplighter',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam.',wards:['candle','harpoon','mirror','salt','chime','trap','tithe'],rites:['kindle','pillar'],roster:{}},
+  whaler:{n:'The Whaler',d:'Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line, and Haul Away drags everything on your lines back at once. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance','trypot'],rites:['haul','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
   occultist:{n:'The Occultist',d:'Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher.',wards:['candle','harpoon','grasp','effigy','tithe','chime'],rites:['unbind','raise'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
   galvanist:{n:'The Galvanist',d:'Lightning leaps to one more creature, and salt costs 15. Starts with the Galvanic Coil.',wards:['candle','harpoon','salt','coil','chime'],rites:['flare','pillar'],roster:{},lock:'kit_galvanist'},
   bellringer:{n:'The Bellringer',d:'Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell.',wards:['candle','harpoon','chime','censer','trap'],rites:['flare','bell'],roster:{},lock:'kit_bellringer'}
@@ -961,6 +965,17 @@ function corpseBurnOut(){
   for(const t of F.towers.slice()){if(!(t.corpse||t.risen)||(t.corpse&&hasOff('graves')&&nearWater(t.x,t.y)))continue;
     removeTower(t); n++; F.fx.push({k:'ring',x:t.x,y:t.y-.2,r0:.4,r1:.05,t:0,dur:.7,col:'170,190,160'});}
   return n;
+}
+/* Haul Away: everything on a line is dragged back down the path at once */
+function castHaul(){
+  const on=F.foes.filter(e=>!e.dead&&e.tetherBy&&!e.tetherBy.dead);
+  if(!on.length){hint('Nothing is on your lines.'); return false;}
+  let n=0;
+  for(const e of on){F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:.6,t:0,dur:.4,col:'201,194,178'}); if(e.def.boss||e.def.heavy)continue;
+    e.d=Math.max(0,e.d-HAUL_BACK); const q=posAt(F.paths[e.gate],e.d); e.x=q[0]; e.y=q[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y); n++;}
+  F.cd.haul=RITES.haul.cd; AUDIO.boom(); F.shake=Math.max(F.shake,.15);
+  banner('Haul Away','rite',n?n+' hauled back down the stair':'They hold their ground');
+  return true;
 }
 /* Raise the Dead: a pile's bones stand up on the nearest free tile beside it, and bite until the wave breaks */
 function castRaise(x,y){
@@ -1504,6 +1519,8 @@ function connectedLights(exclude){
   const src=[{x:F.lx,y:F.ly,r:lampBase()}], conn=new Set(), links=[];
   /* a kindled creature is a light of its own: what stands in it is lit, for as long as it burns */
   for(const e of F.foes)if(e.kindleT>0&&!e.dead)src.push({x:e.x,y:e.y,r:KINDLE_R});
+  /* a Signal Mirror's beam is the lamp's own light, thrown further: what stands in it is lit */
+  const beams=mirrorBeams(exclude); for(const b of beams)for(const p of b.pts)src.push({x:p[0],y:p[1],r:MIRROR_R});
   const cands=F.towers.filter(t=>isLightTower(t)&&t!==exclude&&!t.dead);
   const leap=signalKit(), still=leap&&hasOff('still')&&F.waterPts&&F.waterPts.length>0;
   let grew=true;
@@ -1517,7 +1534,17 @@ function connectedLights(exclude){
       if(ok){conn.add(t); src.push({x:t.x,y:t.y,r:towerLightR(t)}); grew=true;}
     }
   }
-  return {conn,src,links};
+  return {conn,src,links,beams};
+}
+/* each Signal Mirror standing in the lamp's own light throws a beam straight out, away from the lamp */
+function mirrorBeams(ex){
+  const out=[], R=lampBase();
+  for(const t of F.towers){if(t.type!=='mirror'||t.dead||t===ex||dst(t.x,t.y,F.lx,F.ly)>R)continue;
+    const dx=t.x-F.lx, dy=t.y-F.ly, l=Math.hypot(dx,dy)||1, ux=dx/l, uy=dy/l, pts=[];
+    let end=MIRROR_LEN;
+    for(let s2=.5;s2<=MIRROR_LEN+1e-6;s2+=.7){const x=t.x+ux*s2, y=t.y+uy*s2; if(x<0||y<0||x>COLS||y>ROWS){end=s2; break;} pts.push([x,y]);}
+    out.push({t,ux,uy,x0:t.x,y0:t.y,x1:t.x+ux*end,y1:t.y+uy*end,pts});}
+  return out;
 }
 /* where a Signal Candle could stand in the dark: within reach of one that is lit now */
 function signalReach(x,y){
@@ -1527,8 +1554,9 @@ function signalReach(x,y){
 }
 function supported(t,C){
   if(C.conn.has(t))return true;
-  /* the Grasping Dead need no light */
+  /* the Grasping Dead need no light; a Signal Mirror needs the lamp's own */
   if(t.type==='grasp'||t.type==='risen')return true;
+  if(t.type==='mirror')return dst(t.x,t.y,F.lx,F.ly)<=lampBase();
   if(isLightTower(t))return false;
   return C.src.some(s=>dst(t.x,t.y,s.x,s.y)<=s.r);
 }
@@ -1539,6 +1567,8 @@ function lightsNow(){
   /* passing lights: they show what is there, but you can't build in them and they never steer the crowd at a fork */
   for(const e of F.foes)if(e.kindleT>0&&!e.dead)L.push({x:e.x,y:e.y,r:KINDLE_R,reveal:true,temp:true,kindle:true});
   for(const gl of F.glints)L.push({x:gl.x,y:gl.y,r:gl.r*(.6+.4*gl.t/gl.max),reveal:true,temp:true,glint:true});
+  for(const b of C.beams)for(const p of b.pts)L.push({x:p[0],y:p[1],r:MIRROR_R,beam:true});
+  F.beams=C.beams;
   for(const t of F.towers)t.dark = window.devNoDark ? false : !supported(t,C);
   F.links=C.links;
   /* threads from a Fire Thread candle burn whatever crosses them */
@@ -1546,7 +1576,7 @@ function lightsNow(){
   return L;
 }
 function cutVictims(t){
-  if(!isLightTower(t))return [];
+  if(!isLightTower(t)&&t.type!=='mirror')return [];
   const before=connectedLights(null), after=connectedLights(t);
   return F.towers.filter(o=>o!==t&&supported(o,before)&&!supported(o,after));
 }
@@ -2702,6 +2732,7 @@ function placeProblem(item,c,r){
   if(item.kind==='ward'&&item.type==='weir'&&!F.forks.some(f=>f.c===c&&f.r===r))return 'A weir only fits where the stair forks.';
   if(item.kind==='ward'&&WARDS[item.type].path){if(!onPath)return item.type==='salt'?'Salt has to be poured on the path.':item.type==='grasp'?'The Grasping Dead rise from bones on the path.':'Traps are set on the path.';}
   else if(onPath)return 'Nothing can stand on the path.';
+  if(item.kind==='ward'&&item.type==='mirror'&&dst(c+.5,r+.5,F.lx,F.ly)>lampBase())return 'A Signal Mirror has to stand in the lamp’s own light, to catch it.';
   if(item.kind==='ward'&&item.type==='grasp'){const b=F.bodies.get(c+','+r); return b&&b.n>=PILE_MAX?'':'The Grasping Dead rise from a full pile: three bodies on one tile of the path.';}
   if(item.kind==='ward'&&item.type==='candle'&&corpseKit())return bodyNear(c,r)?'':'A Corpse Candle burns on the dead. It stands beside the path, next to a body from this floor.';
   if(!buildLit(c,r)&&!(item.kind==='ward'&&item.type==='candle'&&signalReach(c+.5,r+.5)))
@@ -2951,6 +2982,7 @@ function castRite(k){
   else if((F.cd[k]||0)>0)return;
   if(k==='flare'){F.flareT=5; F.cd.flare=RITES.flare.cd; AUDIO.flare(); banner('Flare','rite','Everything is lit for five seconds');}
   else if(k==='ebb'){if(!castEbb())return;}
+  else if(k==='haul'){if(!castHaul())return;}
   else if(k==='raise'){if(!F.bodies.size){hint('There are no bones to raise.'); return;} mode=k; sel=null; selTower=null;}
   else if(k==='unbind'){if(!F.towers.some(t=>t.kind==='horror')){hint('None of your horrors stand on the board.'); return;} mode=k; sel=null; selTower=null;}
   else if(k==='bell'){
@@ -3037,6 +3069,8 @@ function update(dt){
   updateCharges(dt);
   for(let i=F.towers.length-1;i>=0;i--)if(F.towers[i].smashed)removeTower(F.towers[i]);
   
+  /* the Signal Mirror's beam burns whatever walks through it */
+  if(F.beams&&F.beams.length)for(const b of F.beams)for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(!e.dead&&segDist(e.x,e.y,b.x0,b.y0,b.x1,b.y1)<=.45)hurt(e,MIRROR_DPS*dt,'mirror');}
   const ls=lstat();
   if(ls.fire){for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(!e.dead&&dst(e.x,e.y,F.lx,F.ly)<=ls.fire.r) hurt(e,ls.fire.dps*dt);}}
   
@@ -3194,7 +3228,7 @@ function updateTowers(dt){
   for(const t of F.towers.slice()){
     if(t.dead||t.dark)continue;
     if(t.kind==='ward'){
-      if(t.type==='candle'||t.type==='salt'||t.type==='tithe'||t.type==='effigy'||t.type==='weir'||t.type==='trypot')continue;
+      if(t.type==='candle'||t.type==='salt'||t.type==='tithe'||t.type==='effigy'||t.type==='weir'||t.type==='trypot'||t.type==='mirror')continue;
       const st=wstat(t);
       if(t.type==='harpoon'){
         t.st=st;
@@ -4375,6 +4409,18 @@ function drawWard(c,t,tm,icon){
       for(let k=0;k<4;k++){const p=(tm*.45+k/4)%1; c.fillStyle='rgba(120,110,104,'+(.32*(1-p))+')'; c.beginPath(); c.arc(x+Math.sin(tm*.9+k*2)*.1*p,y-.2-p*.6,.06+p*.12,0,TAU2); c.fill();}
       for(let k=0;k<3;k++){const p=(tm*.8+k/3)%1; c.fillStyle='rgba(255,180,90,'+(1-p)+')'; c.fillRect(x+Math.sin(k*3+tm)*.12,y-.18-p*.45,.02,.02);}
     }
+  }else if(t.type==='mirror'){
+    /* an iron stand with an oval mirror, turned to throw the lamp's light outward */
+    plinth(c,x,y+.02,.22);
+    c.fillStyle='#2a2522'; c.fillRect(x-.025,y-.3,.05,.32);
+    c.strokeStyle='#4a423c'; c.lineWidth=.03; c.beginPath(); c.moveTo(x-.14,y+.02); c.lineTo(x,y-.06); c.lineTo(x+.14,y+.02); c.stroke();
+    const out=!icon&&t.dark, face=icon?1:Math.sign((t.x-((typeof F!=='undefined'&&F)?F.lx:0))||1);
+    c.save(); c.translate(x,y-.36); c.scale(face,1); c.rotate(-.35);
+    c.fillStyle='#8a6a34'; c.beginPath(); c.ellipse(0,0,.13,.19,0,0,TAU2); c.fill();
+    const mg=c.createLinearGradient(-.1,-.15,.1,.15); mg.addColorStop(0,out?'#4a4c4e':'#f4f0e4'); mg.addColorStop(.5,out?'#2e3032':'#b8c0c4'); mg.addColorStop(1,out?'#1c1e20':'#6e767a');
+    c.fillStyle=mg; c.beginPath(); c.ellipse(0,0,.1,.16,0,0,TAU2); c.fill();
+    if(!out){c.fillStyle='rgba(255,250,230,'+(icon?.7:.5+.3*Math.sin((tm||0)*6+x))+')'; c.beginPath(); c.ellipse(-.03,-.06,.025,.06,.3,0,TAU2); c.fill();}
+    c.restore();
   }else if(t.type==='risen'){
     /* a heap of the dead stood up: a ribcage, a skull, arms hanging to the ground; it lunges when it bites */
     const lunge=!icon&&t.snap>0?.06:0, bob=icon?0:Math.sin((tm||0)*2.5+x)*.015, ax=Math.cos(t.ang||0)*lunge, hx=x+ax, hy=y+bob;
@@ -4800,6 +4846,12 @@ function render(){
   g.setTransform(s,0,0,s,sx,sy);
 
   if(F.water.size)drawWater(tm,false);
+  /* a Signal Mirror's beam, laid along the ground */
+  if(F.beams&&F.beams.length){g.save(); g.globalCompositeOperation='lighter'; g.lineCap='round';
+    for(const b of F.beams){const gr=g.createLinearGradient(b.x0,b.y0,b.x1,b.y1); gr.addColorStop(0,'rgba(255,214,140,.32)'); gr.addColorStop(1,'rgba(255,170,80,.04)');
+      g.strokeStyle=gr; g.lineWidth=.62; g.beginPath(); g.moveTo(b.x0,b.y0); g.lineTo(b.x1,b.y1); g.stroke();
+      g.strokeStyle='rgba(255,240,200,'+(.22+.1*Math.sin(tm*7+b.x0))+')'; g.lineWidth=.09; g.beginPath(); g.moveTo(b.x0,b.y0); g.lineTo(b.x1,b.y1); g.stroke();}
+    g.restore();}
   /* burning pitch */
   for(const p of F.pools){
     const a=clamp(p.t/p.max,0,1), fl=.85+.15*Math.sin(tm*12+p.x*3);
@@ -5406,6 +5458,12 @@ const TIPS={
   grasp:{when:()=>corpseKit()&&run.wards.includes('grasp')&&F.phase==='build'&&[...F.bodies.values()].some(b=>b.n>=PILE_MAX),title:'The Grasping Dead',
     text:'A full pile of bones, three bodies on one tile, can rise. Choose Grasp and tap the pile: dead arms seize each creature that walks over them and hold it for 2 seconds, lit or unseen. After six they crumble.',
     enter:()=>coachShowTray('grasp'),target:()=>{for(const b of F.bodies.values())if(b.n>=PILE_MAX)return coachBoard(b.x,b.y,.7); return null;}},
+  mirror:{when:()=>run.wards.includes('mirror')&&F.phase==='build'&&(sel&&sel.type==='mirror'||F.towers.some(t=>t.type==='mirror')),title:'The Signal Mirror',
+    text:'Build the Mirror inside the lamp’s own light. It throws the lamp’s light in a beam 5 tiles straight out, away from the lamp: so stand it between the lamp and where you want the light to go. The beam lights the ground, so you can build along it, and burns whatever walks through.',
+    target:()=>{const t=F.towers.find(t=>t.type==='mirror'); return t?coachBoard(t.x,t.y,1):coachTray('mirror');}},
+  haul:{when:()=>ritesNow().includes('haul')&&F.phase==='wave'&&F.foes.filter(e=>!e.dead&&e.tetherBy).length>=1,title:'Haul Away',
+    text:'Tap Haul Away and everything on your lines is dragged 2 tiles back down the path at once. Keep several harpoons holding, then haul.',
+    target:()=>coachEl('#rites [data-r="haul"]')},
   raise:{when:()=>ritesNow().includes('raise')&&(F.phase==='wave'||F.phase==='build')&&F.wave>=1&&[...F.bodies.values()].some(b=>b.n>=2)&&!(F.cd.raise>0),title:'Raise the Dead',
     text:'Tap Raise the Dead, then a pile of bones. Its dead stand up beside the path and bite whatever comes near, even in the dark, until the wave breaks. A full pile bites three times as hard as one bone.',
     target:()=>coachEl('#rites [data-r="raise"]')},
@@ -5613,6 +5671,7 @@ function statLine(o){
       +'<br>Your lamps drink <b>'+d.lamps+'</b> a wave'+(d.lamps?(d.oil?' · <b>'+d.oil+'</b> will drink oil':' · all fed'):'')+' · Reach <b>'+st.range.toFixed(1)+'</b>';}
   if(o.type==='chime')return 'Damage <b>'+st.dmg+'</b> · Stun <b>'+st.stun.toFixed(1)+'s</b> · Range <b>'+st.range.toFixed(2)+'</b>';
   if(o.type==='censer')return 'Damage <b>'+st.dmg+'</b> · Splash <b>'+st.splash.toFixed(2)+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s'+(st.pool?' · Burning ground <b>'+st.pool.dps+' damage/s</b>':'');
+  if(o.type==='mirror')return 'Beam <b>'+MIRROR_LEN+'</b> tiles · Burns <b>'+MIRROR_DPS+' damage/s</b> · Its light lets you build · '+(o.dark?'<b>Out of the lamp’s light: no beam</b>':'Catches the lamp');
   if(o.type==='risen')return 'Bites <b>'+Math.round(st.dmg)+'</b> · Range <b>'+st.range+'</b> · Risen from <b>'+(o.bones?o.bones.length:1)+'</b> · Falls when the wave breaks';
   if(o.type==='grasp')return 'Holds <b>'+GRASP_HOLD+'s</b> (bosses <b>'+GRASP_BOSS+'s</b>) · <b>'+(o.grips!=null?o.grips:GRASP_GRIPS)+'</b> grips left · Needs no light';
   if(o.type==='trap')return 'Damage <b>'+st.dmg+'</b> · Holds <b>'+st.hold.toFixed(1)+'s</b> · Resets <b>'+st.reset.toFixed(1)+'s</b> · Catches unseen things, never fliers';
@@ -5693,7 +5752,7 @@ function renderModebar(){
   else if(mode==='raise'){title='Raise the Dead'; sub='Tap a pile of bones. Its dead stand up beside the path and bite until the wave breaks.';}
   else if(mode==='unbind'){title='Unbind'; sub='Tap one of your horrors. It charges down the stair through everything in its way, and is gone for good.';}
   else if(mode==='kindle'){title='Kindle'; sub='Tap a creature you can see. It burns and lights the dark around it for 8 seconds, and it runs.';}
-  else if(sel&&sel.kind==='ward'){const W=wdef(sel.type); title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(sel.type==='grasp'?' Tap a full pile of bones on the path.':W.path?' Tap a lit path tile.':sel.type==='candle'&&corpseKit()?' Tap a marked tile beside a body.':sel.type==='candle'&&signalKit()?' Tap a lit tile beside the path, or a dark one near a lit Signal Candle.':' Tap a lit tile beside the path.');}
+  else if(sel&&sel.kind==='ward'){const W=wdef(sel.type); title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(sel.type==='mirror'?' Tap a tile in the lamp’s own light, on the side you want the beam to go.':sel.type==='grasp'?' Tap a full pile of bones on the path.':W.path?' Tap a lit path tile.':sel.type==='candle'&&corpseKit()?' Tap a marked tile beside a body.':sel.type==='candle'&&signalKit()?' Tap a lit tile beside the path, or a dark one near a lit Signal Candle.':' Tap a lit tile beside the path.');}
   else if(sel&&sel.kind==='horror'){const H=HORRORS[sel.type]; title=H.n+' · <i>'+H.cost+'</i> · <em>+'+horrorMad(sel.type)+' madness</em>'; sub=avail(sel.type)+' ready. '+H.d;}
   if(!title||!F||F.phase==='cleared'||F.phase==='draft'){if(!el.hidden){el.hidden=true; modeKey=''; modeTitle=''; $('#cmdbar').classList.remove('placing');} return;}
   const key=title+sub;
