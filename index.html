@@ -660,10 +660,8 @@ function unlockDeed(k){
   saveMeta(m);
   banner('Deed accomplished','relic',K.n+' is unlocked');
   AUDIO.buy();
-  const tipKey='deed_'+k;
-  if(!tut().seen.includes(tipKey)){
-    coachRun('tip',tipKey,[{title:'Deed accomplished',text:'You have unlocked '+K.n+'. Choose it on your next descent from the title screen.'}]);
-  }
+  /* the tip waits for a quiet moment on a floor (coachPoll), like every other tip, and respects "No more tips" */
+  if(run){run.deeds=run.deeds||[]; if(!run.deeds.includes(k))run.deeds.push(k);}
 }
 function checkOccultistDeed(){
   if(!run||!run.roster||devOn)return;
@@ -4612,7 +4610,7 @@ function showBook(){
     const m=meta();
     intro='Each descent starts with a kit. Every kit builds its own version of some wards and casts its own rites.';
     list=Object.keys(KITS).map(k=>{const K=KITS[k], locked=K.lock&&!m.unlocked.includes(K.lock)&&!devOn;
-      if(locked)return bookEntry(bookSeal('?'),'???','Not yet earned','Unlock it in the Ember Hall.','is-locked');
+      if(locked)return bookEntry(bookSeal('?'),'???','Not yet earned',K.deed?'Deed: '+K.deed:'Unlock it in the Ember Hall.','is-locked');
       const ws=K.wards.map(w=>wdef(w,k).n).join(', '), rs=K.rites.map(r=>RITES[r].n).join(', ');
       return bookEntry(bookSeal(K.n.replace(/^The /,'').charAt(0)),K.n,'Builds: '+ws+' · Casts: '+rs,K.d);}).join('');
   }else{
@@ -4707,6 +4705,8 @@ const TIPS={
   dark:{when:()=>F.towers.some(t=>t.dark&&t.kind==='ward'),title:'Cut off',text:'This ward stands outside the lamp’s light, so it does nothing. Light has to connect back to the lamp through lit tiles.',
     target:()=>{const t=F.towers.find(t=>t.dark&&t.kind==='ward'); return t?coachBoard(t.c+.5,t.r+.5,.7):null;}}
 };
+Object.keys(KITS).forEach(k=>{if(KITS[k].deed)TIPS['deed_'+k]={when:()=>!!(run.deeds&&run.deeds.includes(k)),title:'A deed is done',
+  text:'You have earned '+KITS[k].n+'. Choose it from the title on your next descent.'};});
 /* where the walkthrough or a tip can appear: a floor being played, nothing else on top */
 function coachFree(){return !!(F&&run&&performance.now()-(F.born||0)>1800&&(F.phase==='build'||F.phase==='wave')&&!F.intro&&!MAP_SYS.active&&$('#modal').hidden&&$('#title').hidden);}
 function coachOffer(){

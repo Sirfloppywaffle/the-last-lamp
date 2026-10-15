@@ -41,30 +41,52 @@ const file='file://'+process.argv[2], out=process.argv[3];
   const metaOccultist=await p.evaluate(()=>__t.meta);
   ok(metaOccultist.unlocked.includes('kit_occultist'), 'Occultist unlocked by having 3 horrors bound at once');
 
-  // 5. Developer Mode: Unlocks kits and Grimoire without saving to ll-meta or ll-codex
-  await p.evaluate(()=>{
-    localStorage.clear();
-    localStorage.setItem('ll-dev','true');
-  });
+  // 5. The deed tip is an ordinary tip: never with "No more tips", never over another tip, and it waits for a floor
+  const tips=await p.evaluate(()=>{const T=__t, out={};
+    localStorage.removeItem('ll-meta');
+    T.newRun('lamplighter'); T.setP(false); T.F.born=-1e6;
+    T.tutSet({walk:'done',seen:[],off:true});
+    T.run.roster={watcher:1,gnasher:1,wretch:1}; T.checkOccultistDeed(); T.coachPoll();
+    out.offUnlocked=T.meta.unlocked.includes('kit_occultist'); out.offShown=T.COACH.on;
+    localStorage.removeItem('ll-meta');
+    T.newRun('lamplighter'); T.setP(false); T.F.born=-1e6;
+    T.tutSet({walk:'done',seen:[],off:false});
+    T.coachRun('tip','madness',[{title:'Madness',text:'x'},{title:'Madness 2',text:'y'}]);
+    const e=T.spawnFoe('behemoth',0,1); T.hurt(e,e.hp,'harpoon'); T.coachPoll();
+    out.during=T.COACH.key;
+    document.querySelector('#coachActs [data-coach="next"]').click(); document.querySelector('#coachActs [data-coach="next"]').click();
+    out.madnessSeen=T.tut().seen.includes('madness');
+    T.coachPoll(); out.after=T.COACH.key; out.afterTitle=document.querySelector('#coachTitle').textContent;
+    return out;});
+  console.log(JSON.stringify(tips));
+  ok(tips.offUnlocked&&!tips.offShown, 'with "No more tips", the deed still unlocks but shows no tip');
+  ok(tips.during==='madness'&&tips.madnessSeen, 'a deed never cuts into a tip already on screen');
+  ok(tips.after==='deed_whaler'&&/deed/i.test(tips.afterTitle), 'the deed tip follows once the screen is free');
+
+  // 6. Developer mode opens every kit and Grimoire page, and saves none of it
+  const seededMeta={embers:12,unlocked:['kit_galvanist'],depth:0,runs:3,wins:0,lastDepth:0,lastKit:'lamplighter'};
+  const seededCodex={foes:['crawler'],relics:[]};
+  await p.evaluate(([m,c])=>{localStorage.clear(); localStorage.setItem('ll-meta',JSON.stringify(m)); localStorage.setItem('ll-codex',JSON.stringify(c)); localStorage.setItem('ll-dev','true'); localStorage.setItem('ll-tut',JSON.stringify({walk:'done',seen:[],off:true}));},[seededMeta,seededCodex]);
   await p.reload(); await p.waitForTimeout(300);
-
-  const devUnlocked=await p.evaluate(()=>{
-    const K=__t.KITS;
-    const m=__t.meta;
-    const locks=Object.keys(K).map(k=>!__t.devOn&&K[k].lock&&!m.unlocked.includes(K[k].lock));
-    return {devOn: __t.devOn, locks, meta: m};
-  });
-  ok(devUnlocked.devOn, 'devOn is true');
-  ok(devUnlocked.locks.every(l=>!l), 'All kits are unlocked/selectable when devOn is true');
-
-  // Turn devOn off and verify real progress is restored
-  await p.evaluate(()=>{
-    localStorage.setItem('ll-dev','false');
-  });
-  await p.reload(); await p.waitForTimeout(300);
-
-  const metaRestored=await p.evaluate(()=>__t.meta);
-  ok(!metaRestored.unlocked.includes('kit_whaler'), 'Turning dev mode off restored exact real progress');
+  const dev=await p.evaluate(()=>{const T=__t, out={devOn:T.devOn};
+    T.openKitPicker(); out.lockedChoices=document.querySelectorAll('#mChoices .choice.off').length;
+    T.openBook('title','foes'); out.unmet=document.querySelectorAll('#mChoices .is-locked').length;
+    T.openBook('title','kits'); out.lockedKits=document.querySelectorAll('#mChoices .is-locked').length;
+    T.newRun('occultist'); T.setP(false);
+    T.run.roster={watcher:2,gnasher:2}; T.checkOccultistDeed();
+    const e=T.spawnFoe('behemoth',0,1); T.hurt(e,e.hp,'harpoon');
+    T.spawnFoe('stalker',0,2);
+    return out;});
+  ok(dev.devOn, 'dev mode is on');
+  ok(dev.lockedChoices===0, 'every kit can be chosen in dev mode');
+  ok(dev.unmet===0&&dev.lockedKits===0, 'every Grimoire page is open in dev mode');
+  // turn dev mode off: real progress is exactly what it was
+  await p.evaluate(()=>localStorage.setItem('ll-dev','false')); await p.reload(); await p.waitForTimeout(300);
+  const back=await p.evaluate(()=>({meta:localStorage.getItem('ll-meta'),codex:localStorage.getItem('ll-codex'),devOn:__t.devOn}));
+  console.log(JSON.stringify({dev,back}));
+  ok(!back.devOn, 'dev mode is off');
+  ok(JSON.stringify(JSON.parse(back.meta))===JSON.stringify(seededMeta), 'll-meta is exactly the real progress');
+  ok(JSON.stringify(JSON.parse(back.codex))===JSON.stringify(seededCodex), 'll-codex is exactly the real progress');
 
   await b.close();
 })();
