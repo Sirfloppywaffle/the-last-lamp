@@ -22,6 +22,8 @@
 | **Claude** (Anthropic) | Engineer and QA | Builds features, runs the headless test suite on 14 screen sizes, reviews Jules's pull requests, keeps the docs current, mirrors releases to a claude.ai artifact. |
 | **Gemini via Jules** (Google) | Engineer and co-designer | Builds features from issues labelled `jules`. Gemini also reviews Claude's pull requests (through the Gemini reviewer workflow, or when asked). Gemini designed the descent map and came up with the red drop into the Abyssal Heart, the parallax dust and the 3× speed. |
 
+**Paused (October 2026):** Criss has taken Gemini and Jules off the project until further notice (usage limits and failed runs). Until he says otherwise, Claude builds everything. Without an independent reviewer, Claude posts a **self-review** on each of its PRs in the §2 shape, and is as hard on its own work as it would be on Jules's. Issues labelled `jules` go back to `claude`.
+
 **Disagreements:** argue on the PR with evidence (a repro, a number, a screenshot, a line reference). One round each. If still unresolved, write a comment headed **`Decision needed`** that states both positions in two or three lines each, and let Criss choose. Never "resolve" a disagreement by quietly doing it your way in another PR.
 
 **Decisions Criss has already made (do not reopen without his say-so):**

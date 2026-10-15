@@ -4,6 +4,13 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **The Whaler plays differently** (#26, the second kit of five). Its candle is the **Blubber Lamp**: a dish of rendered fat that burns 0.8 tiles wider, but **every Blubber Lamp drinks as each wave begins**: a measure from a Try-pot, or 1 oil from the lamp. Its own new ward, the **Try-pot** (30), renders the dead: each death near it gives up the oil it would have drained, every 6 makes a measure (a gold dot; a ring shows the next), it holds 4, a full pot pours into the lamp, and whatever is left when the floor ends pours in too. The "Next wave" strip shows what the lamps will drink. Its harpoon is the **Tether Harpoon**: the line holds what it hits and slows it more the longer it holds, up to 40%, and lets go as soon as the harpoon fires at something else. Own branches: **Reek** (capstone **Lure**) and **Line** (capstone **Reel In**). The old +20% harpoon damage is gone. Criss's playtest reshaped the economy (one lamp's toll was too gentle, the pot's payoff too small, its wording unclear) and found the line staying on an old target. (Claude)
+- **Each kit's wards look like its own.** The Signal Candle is a hooded brass lantern on an iron post, the Blubber Lamp a dish of yellow fat with a smoky flame; the Flare Harpoon carries a red flare canister, the Tether Harpoon a coil of line. The Grimoire shows each kit's version in its own art. (Claude)
+
+---
+
+## v16.1 — Wave decks
+Every floor now draws its waves, so no two descents meet the same dark. Criss playtested the decks on their preview and found the late Watcher tip, fixed here.
 - **Creature tips wait their turn.** Criss met Watchers on wave 3 but got their tip on wave 4: another tip was up, and the Watchers died before their turn, so the game waited for the next one. Now a creature you meet keeps its tip in line even after it dies, and creature tips come before the others. (Claude)
 - **Wave decks** (#27). Each floor now draws its waves from a deck, so no two descents meet the same dark: every wave slot has today's wave plus one or two other cards of about the same weight, built from the creatures that floor already has. Waves with a boss or the Choirmaster keep their place, and floor 5 always brings a Behemoth. The draw is saved with the run; an old save plays the classic waves. The "Next wave" strip names the wave, a tip and a rules line teach it, and `docs/DESIGN.md` lists every card. (Claude, after Jules's run on #27 ended in an error)
 

@@ -19,7 +19,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     setup('lamplighter');
     out.names=[T.wdef('candle').n,T.wdef('harpoon').n,T.run.rites.join(',')];
     out.cost=T.wardCost('candle'); const lampL=T.lampBase();
-    setup('whaler'); out.whalerNames=[T.wdef('candle').n,T.wdef('harpoon').n]; out.lampSame=Math.abs(T.lampBase()-lampL)<1e-9;
+    setup('occultist'); out.whalerNames=[T.wdef('candle').n,T.wdef('harpoon').n]; out.lampSame=Math.abs(T.lampBase()-lampL)<1e-9;
 
     // a Signal Candle at the edge of the light, then one in the dark within 4 tiles of it
     setup('lamplighter');
@@ -83,7 +83,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     // kit branches: the Signal Candle trades Wax for Signal, the Flare Harpoon trades Sight for Flare
     setup('lamplighter');
     const bc=placeAt('candle',edge[0],edge[1]); T.update(1/30);
-    out.trees={candle:[0,1,2].map(i=>T.treeOf('candle')[i].n), harpoon:[0,1,2].map(i=>T.treeOf('harpoon')[i].n), whaler:[0,1,2].map(i=>T.treeOf('harpoon','whaler')[i].n)};
+    out.trees={candle:[0,1,2].map(i=>T.treeOf('candle')[i].n), harpoon:[0,1,2].map(i=>T.treeOf('harpoon')[i].n), whaler:[0,1,2].map(i=>T.treeOf('harpoon','occultist')[i].n)};
     // Signal tier 2: the light leaps 6 tiles
     const farSpot=tiles().find(([c,r])=>dark(c,r)&&Math.hypot(c-edge[0],r-edge[1])>4.3&&Math.hypot(c-edge[0],r-edge[1])<=5.8&&T.F.towers.every(t=>t===bc||Math.hypot(c+.5-t.x,r+.5-t.y)>4.5));
     out.signal2={spot:!!farSpot, before:farSpot?T.placeProblem({kind:'ward',type:'candle'},farSpot[0],farSpot[1]):'none'};
@@ -121,6 +121,88 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       tipFor(()=>{wave(); const e=T.spawnFoe('crawler',0,T.F.paths[0].len-2); e.stunT=99; T.update(1/30);})];
     T.tutSet({walk:'done',seen:[],off:true});
 
+    // ---- the Whaler ----
+    setup('whaler');
+    out.wh={names:[T.wdef('candle').n,T.wdef('harpoon').n], wards:T.run.wards.join(','), trees:[T.treeOf('candle')[2].n,T.treeOf('harpoon')[2].n]};
+    const wc=placeAt('candle',edge[0],edge[1]); T.update(1/30);
+    out.wh.light=+(T.wstat(wc).light-2.3).toFixed(2);
+    // Blubber Lamps cost 1 oil a wave with no pot
+    T.run.oil=T.run.oilMax=20; T.startWave(); out.wh.toll=20-T.run.oil;
+    // every lamp drinks: three lamps with no pot cost 3
+    {const extra=tiles().filter(([c,r])=>T.placeProblem({kind:'ward',type:'candle'},c,r)==='').slice(0,2); extra.forEach(([c,r])=>placeAt('candle',c,r)); T.update(1/30);
+     T.F.phase='build'; T.run.oil=20; out.wh.due=T.blubberDue(); T.startWave(); out.wh.toll3=20-T.run.oil;}
+    // a Try-pot renders the dead: 6 Gnashers (2 oil each) make one measure, which feeds the next wave
+    setup('whaler'); T.run.oil=T.run.oilMax=20;
+    placeAt('candle',edge[0],edge[1]); T.update(1/30);
+    const PW=T.F.paths[0]; let pd=PW.len-2; const pq=T.posAt(PW,pd);
+    const pt=tiles().filter(([c,r])=>T.placeProblem({kind:'ward',type:'trypot'},c,r)==='').sort((a,b)=>Math.hypot(a[0]+.5-pq[0],a[1]+.5-pq[1])-Math.hypot(b[0]+.5-pq[0],b[1]+.5-pq[1]))[0];
+    const pot=placeAt('trypot',pt[0],pt[1]); T.update(1/30);
+    for(let i=0;i<6;i++){const g=T.spawnFoe('gnasher',0,pd); g.x=pot.x+.3; g.y=pot.y; T.hurt(g,1e6);}
+    out.wh.meas=pot.meas||0;
+    T.startWave(); out.wh.fed={oil:T.run.oil, meas:pot.meas};
+    // a full pot pours into the lamp
+    pot.meas=4; T.run.oil=10; for(let i=0;i<6;i++){const g=T.spawnFoe('gnasher',0,pd); g.x=pot.x+.3; g.y=pot.y; T.hurt(g,1e6);}
+    out.wh.pour=T.run.oil;
+    // what is left when the floor ends pours in
+    pot.meas=3; T.run.oil=10; out.wh.endPour=[T.potsPour(),T.run.oil,pot.meas];
+    // the Try-pot never turns up as a gift or in other kits
+    setup('lamplighter'); out.wh.lampHasPot=T.run.wards.includes('trypot');
+
+    // Tether Harpoon: the line slows its catch more the longer it holds, up to 40%
+    const tetherRun=(kit,line)=>{setup(kit); wave();
+      const P=T.F.paths[0]; let d=P.len-2.2; for(;d>0;d-=.25){const q=T.posAt(P,d); if(Math.hypot(q[0]-T.F.lx,q[1]-T.F.ly)>2.2)break;}
+      const q=T.posAt(P,d);
+      const hs=tiles().filter(([c,r])=>T.placeProblem({kind:'ward',type:'harpoon'},c,r)==='').sort((a,b)=>Math.hypot(a[0]+.5-q[0],a[1]+.5-q[1])-Math.hypot(b[0]+.5-q[0],b[1]+.5-q[1]))[0];
+      const h=placeAt('harpoon',hs[0],hs[1]); for(let i=0;i<line;i++)T.buyBranch(h,2);
+      const e=T.spawnFoe('gnasher',0,d); e.hp=e.max=1e6; e.stunT=99;
+      for(let k=0;k<90;k++)T.update(1/30);
+      e.stunT=0; const d0=e.d; for(let k=0;k<30;k++)T.update(1/30);
+      return {held:!!e.tetherBy, t:+(e.tetherT||0).toFixed(1), speed:+((e.d-d0)/(e.def.spd*1)).toFixed(2), d:+e.d.toFixed(2), d0:+d0.toFixed(2)};};
+    out.teth=tetherRun('whaler',0); out.tethLamp=tetherRun('lamplighter',0);
+    // the line lets go when the harpoon fires at something else, even if that bolt never lands
+    {setup('whaler'); wave();
+     const P=T.F.paths[0]; let d=P.len-3; for(;d>0;d-=.25){const q=T.posAt(P,d); if(Math.hypot(q[0]-T.F.lx,q[1]-T.F.ly)>2.2)break;}
+     const q=T.posAt(P,d);
+     const hs=tiles().filter(([c,r])=>T.placeProblem({kind:'ward',type:'harpoon'},c,r)==='').sort((a,b)=>Math.hypot(a[0]+.5-q[0],a[1]+.5-q[1])-Math.hypot(b[0]+.5-q[0],b[1]+.5-q[1]))[0];
+     const h=placeAt('harpoon',hs[0],hs[1]);
+     const a=T.spawnFoe('gnasher',0,d); a.hp=a.max=1e6; a.stunT=99;
+     for(let k=0;k<60;k++)T.update(1/30);
+     const heldA=a.tetherBy===h;
+     // a creature it prefers turns up; its first bolt at it is in the air
+     h.tgt='strong'; const b=T.spawnFoe('behemoth',0,d+.2); b.hp=b.max=1e7; b.stunT=99; h.cd=0;
+     T.update(1/30); const firedAtB=T.F.shots.some(x=>x.tg===b);
+     b.dead=true; T.update(1/30); T.update(1/30);
+     out.release={heldA, firedAtB, aFree:a.tetherBy==null, hHolds:h.tethered?h.tethered.type:null};}
+    // Reel In: held 5 seconds without moving, the catch is hauled back a tile
+    {setup('whaler'); wave();
+     const P=T.F.paths[0]; let d=P.len-3; for(;d>0;d-=.25){const q=T.posAt(P,d); if(Math.hypot(q[0]-T.F.lx,q[1]-T.F.ly)>2.2)break;}
+     const q=T.posAt(P,d);
+     const hs=tiles().filter(([c,r])=>T.placeProblem({kind:'ward',type:'harpoon'},c,r)==='').sort((a,b)=>Math.hypot(a[0]+.5-q[0],a[1]+.5-q[1])-Math.hypot(b[0]+.5-q[0],b[1]+.5-q[1]))[0];
+     const h=placeAt('harpoon',hs[0],hs[1]); for(let i=0;i<3;i++)T.buyBranch(h,2);
+     const e=T.spawnFoe('gnasher',0,d); e.hp=e.max=1e6; e.stunT=99;
+     for(let k=0;k<150;k++)T.update(1/30);
+     out.tethHaul={held:!!e.tetherBy,back:+(d-e.d).toFixed(2)};}
+
+    // Reek: the smoke keeps slowing a creature after it leaves the light
+    setup('whaler'); wave();
+    {const rc=placeAt('candle',edge[0],edge[1]); for(let i=0;i<2;i++)T.buyBranch(rc,2); T.update(1/30);
+     const e=T.spawnFoe('crawler',0,1); e.hp=e.max=1e6; e.x=rc.x; e.y=rc.y; e.reekT=0;
+     T.update(1/30); const r0=e.reekT; e.x=e.y=-50; T.update(1/30); out.reek={inLight:r0, after:+e.reekT.toFixed(2), s:e.reekS};}
+    // Lure: at a fork, a capstone Blubber Lamp lighting a way draws the crowd down it
+    setup('whaler'); T.run.floor=1; T.beginFloor(null); T.setP(false);
+    {const fk=T.F.forks[0]; const sm=fk.samples[1];
+     const plain=T.forkPick(fk,T.spawnFoe('crawler',0,0));
+     const mi=(sm.length>>1)&~1, s0=fk.samples[0];
+     out.lureGap=Math.min(...Array.from({length:s0.length/2},(_,i)=>Math.hypot(s0[2*i]-sm[mi],s0[2*i+1]-sm[mi+1]))).toFixed(2);
+     T.F.cands=[{x:sm[mi],y:sm[mi+1],st:{lure:true,light:1.2}}];
+     const lured=T.forkPick(fk,T.spawnFoe('crawler',0,0)), boss=T.forkPick(fk,T.spawnFoe('boss',0,0));
+     out.lure={plain,lured,boss};}
+    // the Whaler's tips
+    const whTip=(prep)=>{setup('whaler'); T.tutSet({walk:'done',seen:['blubber','trypot','tether'].filter(k=>k!==prep.k),off:false}); prep.f(); T.F.born=-1e6; T.coachPoll(); const k=T.COACH.on?T.COACH.key:''; T.tutSet({walk:'done',seen:[],off:true}); document.querySelector('#coach').hidden=true; T.COACH.on=false; return k;};
+    out.whTips=[whTip({k:'blubber',f:()=>T.setSel({kind:'ward',type:'candle'})}),
+      whTip({k:'trypot',f:()=>{placeAt('candle',edge[0],edge[1]);}}),
+      whTip({k:'tether',f:()=>{wave(); const e=T.spawnFoe('crawler',0,T.F.paths[0].len-3); e.tetherBy={}; }})];
+
     // the Grimoire's Kits tab lists the kit's own wards
     T.openBook('title','kits'); out.book=document.querySelector('#mChoices').innerText.includes('Signal Candle');
     T.openBook('title','wards'); out.bookWards=document.querySelector('#mChoices').innerText.includes('Flare Harpoon');
@@ -152,6 +234,22 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(r.thread.found&&r.thread.threads>0&&r.thread.burned,'a Fire Thread sets what crosses it burning',r.thread);
   ok(r.star.star&&r.star.small,'Starshell lights a wide circle every fourth bolt',r.star);
   ok(r.tips.join()==='signal,flarebolt,kindle','first-time tips teach the Signal Candle, flare bolts and Kindle',r.tips);
+  ok(r.wh.names.join()==='Blubber Lamp,Tether Harpoon'&&/trypot/.test(r.wh.wards),'the Whaler builds Blubber Lamps, Tether Harpoons and the Try-pot',r.wh);
+  ok(r.wh.trees.join()==='Reek,Line','the Whaler wards have their own branches',r.wh.trees);
+  ok(r.wh.light===.8,'a Blubber Lamp burns 0.8 wider',r.wh.light);
+  ok(r.wh.toll===1,'one Blubber Lamp drinks 1 oil a wave with no pot',r.wh.toll);
+  ok(r.wh.toll3===3&&r.wh.due.lamps===3,'every Blubber Lamp drinks: three cost 3',[r.wh.toll3,r.wh.due]);
+  ok(r.wh.meas===2&&r.wh.fed.oil===20&&r.wh.fed.meas===1,'six Gnashers render two measures, and one feeds the lamp',[r.wh.meas,r.wh.fed]);
+  ok(r.wh.pour===12,'a full pot pours its overflow into the lamp',r.wh.pour);
+  ok(r.wh.endPour.join()==='3,13,0','what is left at the floor end pours in',r.wh.endPour);
+  ok(!r.wh.lampHasPot,'other kits have no Try-pot');
+  ok(r.teth.held&&r.teth.speed<.75,'the line holds and slows its catch',r.teth);
+  ok(!r.tethLamp.held&&r.tethLamp.speed>.95,'plain harpoons hold nothing',r.tethLamp);
+  ok(r.release.heldA&&r.release.firedAtB&&r.release.aFree,'the line lets go as soon as the harpoon fires at another',r.release);
+  ok(r.tethHaul.held&&r.tethHaul.back>=.9,'Reel In hauls its catch back a tile',r.tethHaul);
+  ok(r.reek.inLight===4&&r.reek.after>3.9&&r.reek.s>0,'Reek keeps slowing a creature after it leaves the light',r.reek);
+  ok(r.lure.plain===0&&r.lure.lured===1&&r.lure.boss===0,'Lure draws the crowd down the way it lights, never a boss',[r.lure,r.lureGap]);
+  ok(r.whTips.join()==='blubber,trypot,tether','first-time tips teach the Blubber Lamp, the Try-pot and the line',r.whTips);
   ok(r.book&&r.bookWards,'the Grimoire shows the kit and its wards',[r.book,r.bookWards]);
   fails.forEach(f=>console.log('FAIL '+f));
   await b.close();
