@@ -1635,6 +1635,10 @@ function beginFloor(snap){
     }
     if(F.forks.length&&!(snap&&F.wave)&&(tut().off||tut().seen.includes('fork')))setTimeout(()=>{if(F&&F.forks.length)hint('The stair forks here. They take the darker way, and only your own light counts. The chevron shows where they will go.',6000);},F.omen?6800:2600);
     /* REVIEW(Claude) 3: copy the message first; the timer used to read it after the next line had cleared it */
+    /* a floor she has noticed you on says so as it begins, so the water never just appears (Gemini, #43) */
+    const pt=patTier('mother');
+    if(pt&&!(snap&&F.wave)){const T=PATRONS.mother.tiers[pt-1];
+      setTimeout(()=>{if(F&&F.water&&F.water.size&&F.phase==='build')hint(PATRONS.mother.n+' · '+T.n+'. '+T.d,5200);},F.omen?11500:(F.forks.length?9000:4200));}
     const tollMsg = MAP_SYS.pendingMsg;
     if(tollMsg)setTimeout(()=>hint(tollMsg, 4600), F.omen?5200:1400);
     MAP_SYS.pendingMsg = '';
