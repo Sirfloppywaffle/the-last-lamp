@@ -160,6 +160,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `wisp` | Will-o’-Wisp | 30s | Tap a way at a fork. For 8 seconds, everything that reaches the fork follows the wisp, whatever it wants. Bosses ignore it. |
 | `name` | Name the Thing | once per floor | Once per floor. Tap a visible creature and its whole kind takes 60% more damage until the floor ends. |
 | `kindle` | Kindle | 30s | Tap a creature you can see. It burns for 8 seconds: it lights the dark around it, wakes your wards there, and takes fire damage, but it runs faster. Bosses burn without running. |
+| `unbind` | Unbind | 25s | Tap one of your horrors on the board. It breaks its binding and charges down the path toward where they come from, tearing through everything in its way. Then it is gone for good. |
 | `ebb` | The Ebb | 30s | The water draws back. Everything standing in it is dragged 2 tiles back down the path. Bosses and Behemoths hold their ground. |
 
 ## Kits
@@ -168,7 +169,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 |---|---|---|---|---|---|---|
 | `lamplighter` | The Lamplighter | candle, harpoon, salt, chime, trap, tithe | kindle, pillar | — | open | Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. |
 | `whaler` | The Whaler | candle, harpoon, salt, trap, lance, trypot | flare, bell | — | Deed: Kill a Trench Behemoth with harpoons alone. | Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line. Starts with the Whaling Gun. |
-| `occultist` | The Occultist | candle, harpoon, effigy, tithe, chime | flare, name | watcher×1, gnasher×1 | Deed: Break a wave with your madness at Slipping or deeper. | Starts with a bound Watcher and a bound Gnasher. Every horror costs 1 less madness. |
+| `occultist` | The Occultist | candle, harpoon, effigy, tithe, chime | unbind, name | watcher×1, gnasher×1 | Deed: Break a wave with your madness at Slipping or deeper. | Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher. |
 | `galvanist` | The Galvanist | candle, harpoon, salt, coil, chime | flare, pillar | — | Ember Hall (`kit_galvanist`) | Lightning leaps to one more creature, and salt costs 15. Starts with the Galvanic Coil. |
 | `bellringer` | The Bellringer | candle, harpoon, chime, censer, trap | flare, bell | — | Ember Hall (`kit_bellringer`) | Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell. |
 
@@ -182,6 +183,8 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | `lamplighter` | `harpoon` | Flare Harpoon | Fires barbed bolts at a single creature. Each bolt flares where it strikes, lighting what stands near it for a moment. |
 | `whaler` | `candle` | Blubber Lamp | A lamp of rendered fat. It burns almost a tile wider than a candle, but it drinks: as each wave begins, every Blubber Lamp takes a measure from a Try-pot, or 1 oil from the lamp if the pots are dry. |
 | `whaler` | `harpoon` | Tether Harpoon | Fires barbed bolts on a line. The line holds what it strikes and slows it more the longer it holds, until the harpoon fires at something else. |
+| `occultist` | `candle` | Corpse Candle | Free, and it needs no lamp: it burns on the dead. It can only stand beside the path where something died this floor, and each one uses up a body. It goes out when the wave ends. |
+| `occultist` | `harpoon` | Bone Spear | Fires a spear of sharpened bone at a single creature. The madder you are, the harder it hits: 25% more for each tier of madness. |
 
 **Signal Candle (`lamplighter`, replaces candle)**
 
@@ -214,6 +217,21 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | Speed | 35 — Reload 25% faster | 50 — Reload 25% faster again | 120 — Twin Reel: two bolts per shot |
 | Strength | 35 — +6 damage | 55 — +8 damage | 130 — Piercing Barb: bolts pass through everything in a line |
 | Line | 30 — The line slows by up to 55% | 45 — The line holds a tile further out | 110 — Reel In: every 4 seconds the line hauls its catch a tile back |
+
+**Corpse Candle (`occultist`, replaces candle)**
+
+| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
+|---|---|---|---|
+
+**Bone Spear (`occultist`, replaces harpoon)**
+
+| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
+|---|---|---|---|
+| Speed | 35 — Reload 25% faster | 50 — Reload 25% faster again | 120 — Twin Reel: two bolts per shot |
+| Strength | 35 — +6 damage | 55 — +8 damage | 130 — Piercing Barb: bolts pass through everything in a line |
+| Dread | 30 — Each tier of madness adds 10% more | 45 — Each tier adds 10% more again | 110 — Soul Spear: what it kills leaves its sigil, if its kind can be bound |
+
+Occultist numbers: a Corpse Candle costs nothing, needs no lamp, stands within **1.5** tiles of a body from this floor (one body per candle) and goes out when the wave breaks. A Bone Spear deals **+25%** per tier of madness (Dread adds **+10%** per tier per level). Horrors deal **+20%** per tier. Unbind charges at **7** tiles a second, dealing **30 + 20 × the horror's madness** to each creature it passes, and stuns for 1s (bosses 0.3s, Behemoths not at all).
 
 Whaler numbers: a Blubber Lamp burns **+0.8** light; while any stands, each wave costs 1 oil unless a Try-pot has a measure. The Try-pot reaches **2.4** tiles; each death gives up its oil value (at most 6); every **6** makes a measure; it holds **4**, and a full pot pours 1 oil into the lamp instead. The line slows by **0.12** a second held, up to **40**%; Reel In hauls back 1 tile every **4s**.
 
@@ -273,6 +291,8 @@ Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles;
 | `still` | Still Water | mother | lamplighter | Signal Candles that stand beside water pass their light to each other through it, however far apart. |
 | `drowned` | Drowned Flares | mother | lamplighter | A flare bolt that strikes something standing in water floats there, and burns three times as long. |
 | `deep` | Into the Deep | mother | whaler | Whatever is on your line cannot move while it stands in water, for up to 3 seconds a catch. Bosses and Behemoths still can. |
+| `graves` | Wet Graves | mother | occultist | A Corpse Candle that stands beside water does not go out when the wave ends. |
+| `souls` | Drowned Souls | mother | occultist | Whatever dies in water leaves its sigil, if its kind can be bound. |
 | `fat` | Her Fat | mother | whaler | A Blubber Lamp that stands beside water drinks from it as a wave begins, not from your pots or your lamp. |
 
 ## Omens (on stair doors)

@@ -19,7 +19,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     setup('lamplighter');
     out.names=[T.wdef('candle').n,T.wdef('harpoon').n,T.run.rites.join(',')];
     out.cost=T.wardCost('candle'); const lampL=T.lampBase();
-    setup('occultist'); out.whalerNames=[T.wdef('candle').n,T.wdef('harpoon').n]; out.lampSame=Math.abs(T.lampBase()-lampL)<1e-9;
+    setup('galvanist'); out.whalerNames=[T.wdef('candle').n,T.wdef('harpoon').n]; out.lampSame=Math.abs(T.lampBase()-lampL)<1e-9;
 
     // a Signal Candle at the edge of the light, then one in the dark within 4 tiles of it
     setup('lamplighter');
@@ -83,7 +83,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     // kit branches: the Signal Candle trades Wax for Signal, the Flare Harpoon trades Sight for Flare
     setup('lamplighter');
     const bc=placeAt('candle',edge[0],edge[1]); T.update(1/30);
-    out.trees={candle:[0,1,2].map(i=>T.treeOf('candle')[i].n), harpoon:[0,1,2].map(i=>T.treeOf('harpoon')[i].n), whaler:[0,1,2].map(i=>T.treeOf('harpoon','occultist')[i].n)};
+    out.trees={candle:[0,1,2].map(i=>T.treeOf('candle')[i].n), harpoon:[0,1,2].map(i=>T.treeOf('harpoon')[i].n), whaler:[0,1,2].map(i=>T.treeOf('harpoon','galvanist')[i].n)};
     // Signal tier 2: the light leaps 6 tiles
     const farSpot=tiles().find(([c,r])=>dark(c,r)&&Math.hypot(c-edge[0],r-edge[1])>4.3&&Math.hypot(c-edge[0],r-edge[1])<=5.8&&T.F.towers.every(t=>t===bc||Math.hypot(c+.5-t.x,r+.5-t.y)>4.5));
     out.signal2={spot:!!farSpot, before:farSpot?T.placeProblem({kind:'ward',type:'candle'},farSpot[0],farSpot[1]):'none'};
