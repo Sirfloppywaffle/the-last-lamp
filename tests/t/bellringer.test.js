@@ -138,6 +138,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.newRun('lamplighter',0); T.run.floor=1; T.beginFloor(null);
     const seenR=new Set(); for(let i=0;i<300;i++)T.draftOptions(5).forEach(o=>{if(o.kind==='rite')seenR.add(o.key);});
     out.pool=[...seenR].sort();
+    /* one tap, one ward: placing puts the choice away */
+    {let sp=null; for(let rr=0;rr<T.ROWS&&!sp;rr++)for(let c=0;c<T.COLS&&!sp;c++)if(!T.placeProblem({kind:'ward',type:'harpoon'},c,rr))sp=[c,rr]; T.run.ess=999; T.setSel({kind:'ward',type:'harpoon'}); T.tryPlace(sp[0],sp[1]); out.afterPlace=T.sel;}
 
     /* Resonance: three cracks shatter a crawler and crack what stands beside it; a boss takes 8; cracks fade */
     fresh(); wave();
@@ -186,7 +188,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.swing===3&&r.noise1===1,'Toll swings for 3 seconds and makes 1 Noise',[r.swing,r.noise1]);
   ok(r.faded[0]===0&&!r.faded[1]&&r.ghosts>=2,'the echo fades, and ghosts stay where they were',[r.faded,r.ghosts]);
   ok(r.noise4.n===4&&r.noise4.stalkers===0,'four tolls, 4 Noise, nothing answers yet',r.noise4);
-  ok(Math.abs(r.faded1-1)<.05,'Noise fades 1 every 6 seconds',r.faded1);
+  ok(Math.abs(r.faded1-.75)<.05,'Noise fades 1 every 8 seconds',r.faded1);
   ok(r.answer.stalkers===2&&r.answer.noise===2,'at 5 Noise the dark answers: two Stalkers, and Noise drops to 2',r.answer);
   ok(r.peal.lstat===4&&r.peal.noise===0&&r.peal.crawler&&!r.peal.shade,'Peal tolls on its own every 4s, makes no Noise, and hears only the ordinary dark',r.peal);
   ok(r.cathedral.cap&&r.cathedral.stun>0,'Cathedral: a toll staggers what stands near the lamp',r.cathedral);
@@ -207,9 +209,10 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.steps>0&&r.shadeSteps===0,'unseen crawlers leave footsteps in the dark; Shades make none',[r.steps,r.shadeSteps]);
   ok(r.clap&&r.clap.hear===2&&Math.abs(r.knock.back-.5)<.01&&r.knock.heard,'a Clapper bolt rings what it strikes and knocks it half a tile back',[r.clap,r.knock]);
   ok(!r.knockShade,'a Clapper bolt alone does not hear a Shade');
-  ok(!r.chime.lit&&r.chime.hit&&r.chime.period===1.6,'her chimes hear and strike the ordinary dark, and ring 20% faster',r.chime);
-  ok(Math.abs(r.lullaby.faded-1)<.05&&r.lullaby.max===5,'Her Lullaby: Noise fades twice as fast, and Toll reaches 2 tiles less',r.lullaby);
-  ok(!['toll','greatbell','overload','anchor','raise'].some(k=>r.pool.includes(k))&&r.pool.length>0,'kit rites are never gifted to another kit',r.pool);
+  ok(!r.chime.lit&&!r.chime.hit&&r.chime.period===2,'her chimes no longer hear the dark by themselves: they strike only what a toll has found',r.chime);
+  ok(Math.abs(r.lullaby.faded-.75)<.05&&r.lullaby.max===5,'Her Lullaby: Noise fades twice as fast, and Toll reaches 2 tiles less',r.lullaby);
+  ok(!['toll','greatbell','overload','anchor','raise','unbind','kindle','haul'].some(k=>r.pool.includes(k))&&r.pool.length>0,'kit rites are never gifted to another kit',r.pool);
+  ok(r.afterPlace===null,'placing a ward puts the choice away',r.afterPlace);
   ok(r.res1.cracks===2,'two cracks hold',r.res1);
   ok(r.res2.cracks===0&&r.res2.hurt>=20&&r.res2.splash>=12&&r.res2.nearCrack>=1&&r.res2.fx,'the third crack shatters it, hurting and cracking what stands beside it',r.res2);
   ok(r.boss7.cracks===7,'a boss holds 7 cracks without shattering',r.boss7);
@@ -220,8 +223,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.fired.shells===1&&r.fired.ammo===0,'then it fires its shell',r.fired);
   ok(r.landed.hurt>=40&&r.landed.reloading,'the shell bursts on the wire, and the Tocsin reloads',r.landed);
   ok(Math.abs(r.beatOff-.1)<.02,'the beat is measured from the lamp’s own toll',r.beatOff);
-  ok(r.perfect.noise===0&&r.perfect.max===14&&r.perfect.cracks===2&&r.perfect.gold&&r.perfect.pealReset===0,'a Perfect Toll: twice as far, two cracks, no Noise, and it takes the beat’s place',r.perfect);
-  ok(r.offbeat.noise===1&&r.offbeat.max===7,'off the beat it is a plain Toll',r.offbeat);
+  ok(r.perfect.noise===.5&&r.perfect.max===10.5&&r.perfect.cracks===2&&r.perfect.gold&&r.perfect.pealReset===0,'a Perfect Toll: half again as far, two cracks, half the Noise, and it takes the beat’s place',r.perfect);
+  ok(r.offbeat.noise===1.5&&r.offbeat.max===7,'off the beat it is a plain Toll',r.offbeat);
   ok(r.edges>10,'she hears the path: its edges are traced in the dark',r.edges);
   ok(r.caption,'with Show sounds on, the toll writes itself on the board');
   ok(!errs.length,'no page errors',errs);
