@@ -205,6 +205,10 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .btn.call{background:var(--tallow);border-color:var(--tallow);color:var(--ink-on-tallow);font-family:var(--f-display);font-weight:700;font-size:1.1rem;line-height:1}
 .calls .btn.call{min-width:150px}
 .btn.big{padding:12px 26px;font-size:1.45rem}
+#holdBtn{min-width:44px;font-weight:700}
+#holdBtn.on{border-color:var(--tallow);color:var(--tallow)}
+.heldpill{position:absolute;left:50%;top:8px;z-index:5;transform:translateX(-50%);padding:5px 12px;border-radius:999px;background:var(--veil);border:1px solid var(--tallow);color:var(--tallow);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;pointer-events:none;white-space:nowrap}
+.peekback{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);z-index:60;box-shadow:0 6px 20px var(--shadow)}
 .btn:disabled{opacity:.45;cursor:default}
 
 /* Title */
@@ -365,13 +369,16 @@ input[type=range]::-moz-range-track {
     <div class="bosscard" id="bossCard" hidden><b></b><span></span></div>
     <div class="bossbar" id="bossBar" hidden><b></b><div class="bb"><i></i></div></div>
     <div class="sheet" id="sheet" hidden></div>
+    <div class="heldpill" id="heldPill" hidden>Held still · tap ▶ to go on</div>
   </main>
+  <button class="btn call peekback" id="peekBtn" hidden>Back to the stair</button>
   <footer class="cmdbar" id="cmdbar">
     <div class="tray" id="tray" role="toolbar" aria-label="Build"></div>
     <div class="rites" id="rites"></div>
     <div class="modebar" id="modebar" hidden></div>
     <div class="calls">
       <button class="btn call" id="callBtn">Call the dark</button>
+      <button class="btn" id="holdBtn" aria-label="Hold the dark still">‖</button>
       <button class="btn" id="speedBtn" aria-label="Game speed">1×</button>
     </div>
   </footer>
@@ -2241,7 +2248,7 @@ function beginFloor(snap){
     st+=run.bonusStipend||0; run.bonusStipend=0;
     run.ess+=st;
   }
-  $('#title').hidden=true; closeModal();
+  $('#title').hidden=true; closeModal(); $('#peekBtn').hidden=true;
   F=null;
   setDims(bestOrient());
   F={def,time:0,towers:[],salt:new Map(),foes:[],shots:[],fx:[],souls:[],pools:[],glints:[],links:[],threads:[],cands:[],charges:[],rods:[],wireCd:new Map(),tolls:[],ghosts:[],noise:0,pealT:0,lampRing:0,shatterQ:[],tocsinCalls:[],steps:[],wireBroken:new Set(),heat:0,knell:false,wave:0,phase:'build',queue:[],waveT:0,
@@ -3113,7 +3120,11 @@ function tollNote(d){
   const prot=Math.min(run.ess,d.salvage||0), loose=Math.max(0,run.ess-prot), burn=loose-Math.floor(loose*(has('gilded')?0:.3));
   return 'Essence <b>'+run.ess+'</b>. Your salvage of <b>'+(d.salvage||0)+'</b> is safe. When you take the stair, '+(has('gilded')?'everything else':'70% of everything else')+' burns away'+(burn>0?' (<b>'+burn+'</b> right now)':'')+'.';
 }
-function landingModal(){
+/* every landing can be set aside to look at the floor you just cleared (for a screenshot, or a second look) */
+function landingModal(){const o=landingStep(); if(o&&o.actions)o.actions=o.actions.concat([{label:'See the floor',fn:peekFloor}]); return o;}
+function peekFloor(){$('#modal').hidden=true; $('#peekBtn').hidden=false; F.peek=true; forceUI();}
+function peekBack(){$('#peekBtn').hidden=true; F.peek=false; showLanding();}
+function landingStep(){
   const d=F.draft; if(!d.step)d.step='gift';
   const pause={label:'Pause menu',fn:openPause};
   if(d.pick)return {kind:'draft',wide:true,title:d.pick.title,body:d.pick.body+(d.pick.left>1?' ('+d.pick.left+' to choose)':''),choices:d.pick.opts.map(k=>relicChoice(k,step('pick',dd=>takePick(dd,k)))),actions:[pause]};
@@ -6557,7 +6568,7 @@ function coachWalkSteps(){
       target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&t.type==='candle'&&!t.dark); return t?coachBoard(t.x,t.y,candleLeap(t)):null;},next:true},
     {title:'Rites',text:riteLesson(),enter:()=>{selTower=null; forceUI();},target:()=>coachEl('#rites'),next:true,skip:()=>!ritesNow().length},
     {title:'Call the dark',text:'When you are ready, call the dark. Once a wave has finished arriving, you can call the next one early for more essence.',enter:()=>{selTower=null; sel=null; forceUI();},target:()=>coachEl('#callBtn'),until:()=>F.phase!=='build'},
-    {title:'Speed and pause',text:'Speed the dark up here, and pause from the top whenever you need. New things get a tip the first time you meet them. The book at the top is the Grimoire: everything you have met, and every ward and rite.',target:()=>coachEl('#speedBtn'),next:true}
+    {title:'Speed and pause',text:'Speed the dark up here. The ‖ beside it holds everything still so you can look at the board; the button at the top pauses with the menu. New things get a tip the first time you meet them. The book at the top is the Grimoire: everything you have met, and every ward and rite.',target:()=>coachEl('#speedBtn'),next:true}
   ];
 }
 /* first-time tips: when each turns up, and what it says */
@@ -7041,7 +7052,7 @@ function renderHUD(){
   else{cb.disabled=true; cb.textContent='The floor is quiet';}
   $('#speedBtn').textContent=speed+'×';
 }
-function tickUI(){if(!F||!run)return; renderHUD(); renderPreview(); renderTray(); renderSheet(); renderModebar(); renderRites(); renderBossBar();}
+function tickUI(){if(!F||!run)return; syncHold(); renderHUD(); renderPreview(); renderTray(); renderSheet(); renderModebar(); renderRites(); renderBossBar();}
 function forceUI(){trayKey=''; sheetKey=''; modeKey=''; previewKey=''; tickUI();}
 
 /* ---------------- settings, modal, pause & title ---------------- */
@@ -7174,6 +7185,14 @@ function showRules(fromPause){
   showModal({title:'How the dark works',html:'<ul>'+$('#rulesList').innerHTML+'</ul>',
     actions:[{label:fromPause?'Back':'Close',primary:true,fn:()=>{if(fromPause)openPause(); else closeModal();}}]});
 }
+/* hold the dark still without leaving the board: a pause you can look through */
+let held=false;
+function toggleHold(){
+  if(!F||F.phase==='over'||F.phase==='won'||!$('#modal').hidden)return;
+  if(held){held=false; paused=false;} else if(!paused){held=true; paused=true; sel=null; mode=null;}
+  syncHold();
+}
+function syncHold(){if(held&&!paused)held=false; const b=$('#holdBtn'); b.textContent=held?'▶':'‖'; b.classList.toggle('on',held); b.setAttribute('aria-label',held?'Let the dark move again':'Hold the dark still'); $('#heldPill').hidden=!held;}
 function toggleSpeed(){speed=speed===1?2:speed===2?3:1; $('#speedBtn').textContent=speed+'×';}
 function showTitleLine(){
   const b=store.get('ll-best',{floor:0,wins:0})||{floor:0,wins:0}, m=meta();
@@ -7272,7 +7291,7 @@ function frame(now){
     else if(F&&run){
       if(artWarmQ.length)artWarmStep(F.phase==='wave'?1.5:4);
       {const bc=$('#bossCard'); if(!F.intro){if(!bc.hidden)bc.hidden=true;} else bc.classList.toggle('held',paused);}
-      if(F.blocking&&$('#modal').hidden)showModal(F.blocking);
+      if(F.blocking&&$('#modal').hidden&&!F.peek)showModal(F.blocking);
       {let sim=raw*speed; while(sim>1e-6&&!paused&&F&&F.phase!=='won'){const d=Math.min(.05,sim); update(d); sim-=d;}}
       render();
       uiAcc+=raw;
@@ -7303,6 +7322,8 @@ $('#callBtn').onclick=callWave;
 $('#bookTitleBtn').onclick=()=>openBook('title');
 $('#bonesBtn').onclick=()=>{AUDIO.init(); bonesPractice();};
 $('#speedBtn').onclick=toggleSpeed;
+$('#holdBtn').onclick=toggleHold;
+$('#peekBtn').onclick=peekBack;
 $('#pauseBtn').onclick=openPause;
 $('#settingsBtn').onclick=()=>openSettings(false);
 $('#descendBtn').onclick=()=>{
