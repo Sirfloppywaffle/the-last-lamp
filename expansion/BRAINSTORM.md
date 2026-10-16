@@ -276,6 +276,47 @@ A mad scientist who builds a **power grid**. Every other kit places wards that w
 - **Capture, not binding** (Criss, balanced with Gemini on #48): no sigils for him. The **Grounding Anchor** (rite, 30s, replaces Pillar of Salt) is a spike dropped anywhere for 8s that forces nearby powered pylons to link to it; its wires never shock. A bindable creature dying inside an Anchor triangle is caught (tap within 5s). One catch per Anchor; a capture vents 2 Heat. The Keeper's core waits 15s, and its fall resets the Anchor.
 - **Who builds the art:** Claude builds the mechanics with full art. Gemini (Jules) can take an art pass afterward from an issue that names the exact draw functions; if Jules hits its usage limit mid-way, Claude finishes from the same issue, so nothing waits on it.
 
+### 13.6c The Bellringer (draft for Criss and Gemini, October 2026)
+
+Criss: "Echo location. Being able to see into the dark. Setting bell trip wires. Using sound (or visuals for anyone unable to hear) in a way to see." Every other kit lives by the rule *you can only fight what light shows you*. The Bellringer breaks it: **light lets you build, sound lets you see.**
+
+**The core mechanic: Echo.**
+- **The lamp is a bell.** Every 4 seconds of a wave the Bellringer's lamp tolls. A pale ring sweeps out from it at about 8 tiles a second, reaching 7 tiles.
+- **Whatever the ring touches is *heard*** for 1.5 seconds, in the dark, veiled or not: outlined in bone-white, and every ward can target it. This uses `revealT`, which already exists for the Galvanist's wires.
+- **When a creature stops being heard, its echo stays**: a fading ghost of its shape where it last was, for about a second. You read the dark by its afterimages, a rhythm of seeing and losing.
+- **The price: they hear you too.** A heard creature moves 20% faster while it is heard. Every ring tells the dark where the lamp is. The Bellringer's lamp is also smaller (−0.5), because he trusts his ears, so he has less ground to build on.
+- **The rule that stays:** you still build only in light. Sound shows things; it is never ground to stand on.
+
+**His own wards.**
+- **Bell Wire** (his own ward, like the Mirror or the Pylon): a line of small bells strung across one path tile. It can be strung **in the dark**, anywhere on the path: his early warning.
+  - Whatever crosses it is heard for 4 seconds, and it sends a small echo (radius 1.5) that hears whatever walks beside it.
+  - It does no damage. It rings again after 2 seconds.
+  - At most 3 stand at once.
+  - Gnashers chew through one (gone for the wave). Watchers fly over.
+- **Bell Candle** (his candle): 0.3 dimmer than a candle, but each lamp toll relays from it, so the echo reaches past the lamp's 7 tiles: the ring starts again at every Bell Candle the sound reaches. Candles carry the sound outward the way Signal Candles carry light.
+- **Clapper Harpoon** (his harpoon): fires only at what is heard or lit, as now. A bolt that strikes **rings its target**, so it is heard for 2 seconds, and it knocks the target back 0.5 tiles.
+- **Bone Chime** keeps his 20% faster ring. Each ring is also a small echo, so chimes strike what they hear in the dark: sound needs no light.
+
+**Rites.**
+- **Toll the Great Bell** (replaces Flare): one huge ring across the whole floor. Everything is heard for 4 seconds, and everything heard is faster, so call it when you can kill what you hear.
+- **Silence** (replaces the Drowning Bell): for 6 seconds nothing is heard and nothing tolls. Creatures already heard *lose the lamp*: they slow by 40% and wander, but your wards are blind in the dark too. A breath held.
+
+**His lamp.** It swaps Fire for **Peal**: the lamp tolls every 3.5s, then every 3s. The capstone, **Cathedral**, makes each toll also stun everything in its first 2 tiles for half a second.
+
+**Seeing without hearing (accessibility; Criss asked for it).** Everything sound does is drawn: the expanding ring, the heard outline, the ghosts, and a small bell glyph that shakes at each Bell Wire when it trips. On phones that allow it, a Bell Wire trip also gives a short **haptic** buzz. A Settings toggle, **Sound cues on the board's edge**, draws a small arc at the edge of the board pointing toward any wire or chime that rings off-screen or in the dark.
+
+**What it changes in play.**
+- The board breathes: dark, toll, everything flashes into view, wards fire, the shapes fade to ghosts.
+- Strong in the dark, against Shades and Stalkers, and when spotting what is coming.
+- Weak, because hearing them makes them faster and his lamp is smaller.
+
+**Open questions for Gemini.**
+1. Does "heard = faster" hurt too much? The alternative is Noise, a meter like Heat that brings extra Stalkers into the next wave when it runs high.
+2. Should Bell Wires be able to stand in the dark? It is the one exception to "build only in light."
+3. Should Silence exist at all, or is it too clever for a phone game read at a glance?
+4. How should his capture or binding differ, if at all? The Galvanist captures; the Bellringer could bind normally, or "toll for the dead" (a sigil you *hear*, shown in the dark).
+5. Should the toll keep a fixed rhythm or be driven by taps?
+
 ### 13.7 Later
 
 - **Floor-signature creatures**, each breaking one rule: Wick-eater (Cistern), the Reassembled (Ossuary), Congregant (Nave, an inverse Shade), Throat-polyp (Throat), Echo (Heart).
