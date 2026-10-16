@@ -4820,6 +4820,34 @@ function drawMap(c, w, h, tm) {
 /* creatures grow out of their rift and are swallowed as they reach the lamp */
 function foeScale(e){const P=F.paths[e.gate]; return Math.max(.05,Math.min(clamp(e.d/.3,0,1),clamp((P.len-.4-e.d)/.45,.25,1)));}
 /* the Drowned Mother's water: dark and still, with the current drawn as slow ripples moving toward the lamp */
+/* a whaling net: thrown spinning, it opens in the air and lands as a sagging web of tarred rope, knotted where the strands
+   cross, weighted with lead at the rim and buoyed by two cork floats; then it is dragged back and sinks away */
+function drawNet(f,p){
+  const throwP=Math.min(1,p/.28), open=1-Math.pow(1-throwP,3), fade=p<.6?1:1-(p-.6)/.4;
+  const R=f.r*(.35+.65*open), spin=(1-open)*2.2, H=f.seed!=null?f.seed:(f.seed=Math.random()*9);
+  const cx=f.x, cy=f.y-(1-open)*.5, ca=Math.cos(spin), sa=Math.sin(spin);
+  /* the net's outline: a lumpy, draped shape, never a circle */
+  const edge=a=>R*(.78+.18*Math.sin(a*3+H)+.1*Math.sin(a*5+H*2.3));
+  const P=(u,v)=>[cx+u*ca-v*sa, cy+(u*sa+v*ca)*.8];
+  const inside=(u,v)=>Math.hypot(u,v)<=edge(Math.atan2(v,u));
+  /* the mesh: diamonds of rope, each knot pulled a little off true */
+  const N=Math.ceil(R/.22)+1, h=.22, node=(i,j)=>{const u=(i-j)*h+(hash(i,j,H)-.5)*.05, v=(i+j)*h+(hash(j,i,H)-.5)*.05; return [u,v];};
+  g.save(); g.globalAlpha=fade; g.lineCap='round'; g.lineJoin='round';
+  if(open>.9){g.fillStyle='rgba(0,0,0,.2)'; g.beginPath(); for(let k=0;k<=24;k++){const a=k/24*TAU, q=P(Math.cos(a)*edge(a),Math.sin(a)*edge(a)); k?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]);} g.fill();}
+  const strands=[];
+  for(let i=-N;i<=N;i++)for(let j=-N;j<=N;j++){const a=node(i,j); if(!inside(a[0],a[1]))continue;
+    for(const [di,dj] of [[1,0],[0,1]]){const b=node(i+di,j+dj); if(inside(b[0],b[1]))strands.push([a,b]);}}
+  for(const [w,col] of [[.06,'rgba(24,18,10,.55)'],[.026,'rgba(184,152,104,.95)']]){g.strokeStyle=col; g.lineWidth=w; g.beginPath();
+    for(const [a,b] of strands){const A=P(a[0],a[1]), B=P(b[0],b[1]); g.moveTo(A[0],A[1]); g.quadraticCurveTo((A[0]+B[0])/2,(A[1]+B[1])/2+.025,B[0],B[1]);} g.stroke();}
+  g.fillStyle='rgba(110,82,48,.95)';
+  for(const [a] of strands){const A=P(a[0],a[1]); g.fillRect(A[0]-.022,A[1]-.022,.044,.044);}
+  /* the rim: a heavier rope, weighted with lead, two cork floats */
+  const rimPt=k=>{const a=k/28*TAU; return P(Math.cos(a)*edge(a),Math.sin(a)*edge(a));};
+  for(const [w,col] of [[.09,'rgba(24,18,10,.6)'],[.05,'rgba(150,118,74,.95)']]){g.strokeStyle=col; g.lineWidth=w; g.beginPath(); for(let k=0;k<=28;k++){const q=rimPt(k); k?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]);} g.stroke();}
+  for(let k=0;k<28;k+=3){const q=rimPt(k); g.fillStyle='#36342f'; g.beginPath(); g.ellipse(q[0],q[1]+.02,.06,.045,0,0,TAU); g.fill(); g.fillStyle='rgba(210,210,200,.45)'; g.beginPath(); g.arc(q[0]-.018,q[1],.016,0,TAU); g.fill();}
+  for(const k of [5,19]){const q=rimPt(k); g.fillStyle='#c08a4a'; g.beginPath(); g.ellipse(q[0],q[1]-.03,.1,.06,.4,0,TAU); g.fill(); g.strokeStyle='#5a3a1c'; g.lineWidth=.02; g.stroke();}
+  g.restore();
+}
 /* the Drowned Mother's water: one body of dark water poured along the path, banks and all, with the current
    drawn as streaks drifting toward the lamp. Each stretch is a single stroke, so a long flood reads as one channel */
 function waterStroke(pts,w,col){g.strokeStyle=col; g.lineWidth=w; g.beginPath(); g.moveTo(pts[0],pts[1]); for(let i=2;i<pts.length;i+=2)g.lineTo(pts[i],pts[i+1]); g.stroke();}
@@ -4940,8 +4968,13 @@ function render(){
       if(e.pinT>0){g.strokeStyle='rgba(200,190,170,.85)'; g.lineWidth=.03; g.beginPath(); g.moveTo(e.x-.2,e.y+e.def.r*.7); g.lineTo(e.x+.12,e.y-e.def.r*.2); g.stroke();}
       if(e.flenseT>0){g.strokeStyle='rgba(218,90,75,.7)'; g.lineWidth=.02; for(let k=0;k<3;k++){g.beginPath(); g.moveTo(e.x-.12+k*.1,yy-e.def.r*.3); g.lineTo(e.x-.06+k*.1,yy+e.def.r*.1); g.stroke();}}
       /* tangled in a whaling net */
-      if(e.tangleT>0){const R=drawR*.9; g.save(); g.beginPath(); g.ellipse(e.x,yy,R,R*.85,0,0,TAU); g.clip(); g.strokeStyle='rgba(214,200,168,'+Math.min(.8,e.tangleT)+')'; g.lineWidth=.022;
-        for(let k=-3;k<=3;k++){g.beginPath(); g.moveTo(e.x+k*.11-.5,yy-.5); g.lineTo(e.x+k*.11+.5,yy+.5); g.stroke(); g.beginPath(); g.moveTo(e.x+k*.11+.5,yy-.5); g.lineTo(e.x+k*.11-.5,yy+.5); g.stroke();} g.restore();}
+      if(e.tangleT>0){const R=drawR, al=Math.min(.9,e.tangleT); g.save(); g.lineCap='round';
+        for(const [w,col] of [[.05,'rgba(28,20,12,'+(.5*al)+')'],[.024,'rgba(196,166,116,'+al+')']]){g.strokeStyle=col; g.lineWidth=w;
+          g.beginPath(); g.ellipse(e.x,yy,R*1.02,R*.42,.5,0,TAU); g.stroke();
+          g.beginPath(); g.ellipse(e.x,yy-R*.1,R*.9,R*.38,-.7,0,TAU); g.stroke();
+          g.beginPath(); g.moveTo(e.x-R*.8,yy+R*.5); g.quadraticCurveTo(e.x,yy-R*.2,e.x+R*.8,yy+R*.45); g.stroke();}
+        g.fillStyle='rgba(120,92,56,'+al+')'; for(const [kx,ky] of [[.35,.18],[-.4,-.15],[.05,-.32]]){g.beginPath(); g.arc(e.x+kx*R,yy+ky*R,.03,0,TAU); g.fill();}
+        g.restore();}
       if(F.named===e.type){g.strokeStyle='rgba(106,169,159,.8)'; g.lineWidth=.03; g.beginPath(); g.ellipse(e.x,e.y+e.def.r*.55,e.def.r+.12,(e.def.r+.12)*.45,0,0,TAU); g.stroke();}
       if(e.poisonT>0){g.fillStyle='#9BC23E'; for(let k=0;k<3;k++){g.beginPath(); g.arc(e.x-.15+k*.15,yy-e.def.r-.05-((tm*2+k*.3)%1)*.2,.03,0,TAU); g.fill();}}
       if(e.stunT>0){g.strokeStyle='rgba(236,232,222,.75)'; g.lineWidth=.025; g.setLineDash([.05,.05]); g.beginPath(); g.ellipse(e.x,yy-e.def.r-.08,e.def.r*.6,.08,tm*2,0,TAU); g.stroke(); g.setLineDash([]);}
@@ -5173,12 +5206,7 @@ function render(){
       g.restore();
     }
     else if(f.k==='hexlink'){g.save(); g.globalCompositeOperation='lighter'; g.strokeStyle='rgba(150,230,120,'+(.8*(1-p))+')'; g.lineWidth=.03; g.setLineDash([.05,.05]); g.beginPath(); g.moveTo(f.x,f.y); g.lineTo(f.tx,f.ty); g.stroke(); g.setLineDash([]); g.restore();}
-    else if(f.k==='net'){/* a whaling net drops, the mesh drawn tight, then sinks away */
-      const a=p<.15?p/.15:1-(p-.15)/.85, rr=f.r*(1.25-.25*Math.min(1,p/.2));
-      g.save(); g.beginPath(); g.arc(f.x,f.y,rr,0,TAU); g.clip();
-      g.strokeStyle='rgba(214,200,168,'+(.75*a)+')'; g.lineWidth=.035;
-      for(let k=-6;k<=6;k++){g.beginPath(); g.moveTo(f.x+k*.28-2,f.y-2); g.lineTo(f.x+k*.28+2,f.y+2); g.stroke(); g.beginPath(); g.moveTo(f.x+k*.28+2,f.y-2); g.lineTo(f.x+k*.28-2,f.y+2); g.stroke();}
-      g.restore(); g.strokeStyle='rgba(160,130,90,'+(.9*a)+')'; g.lineWidth=.06; g.beginPath(); g.arc(f.x,f.y,rr,0,TAU); g.stroke();}
+    else if(f.k==='net'){drawNet(f,p);}
     else if(f.k==='hline'){/* the line snapping taut from the harpoon as it hauls */
       if(f.e&&!f.e.dead){g.strokeStyle='rgba(222,206,170,'+(.9*(1-p))+')'; g.lineWidth=.045; g.beginPath(); g.moveTo(f.x,f.y); g.lineTo(f.e.x,f.e.y); g.stroke();}}
     else if(f.k==='pillar'){g.fillStyle='rgba(236,232,222,'+(.6*(1-p))+')'; g.fillRect(f.x-.18,f.y-1.4*(1-p*.3),.36,1.4*(1-p*.3)+.1);}
