@@ -40,14 +40,14 @@ Every table below is generated from the live code (`index.html`) by `tests/gen-d
 
 ## Wards
 
-Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `trap`, `tithe`, `effigy`. Gift-only: `censer`, `coil`, `lance`.
+Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `trap`, `tithe`, `effigy`. Gift-only: `chime`, `censer`, `coil`, `lance`.
 
 | Key | Name | Cost | Placement | Description |
 |---|---|---|---|---|
 | `candle` | Candle Ward | 30 | beside path | Casts light, unveils Shades, and slows whatever walks in it. |
 | `harpoon` | Brine Harpoon | 40 | beside path | Fires barbed bolts at a single creature. *(aimed: First/Last/Strongest)* |
 | `salt` | Salt Circle | 20 | path | Poured on the path. Anything crossing it moves at half speed until the salt scatters. |
-| `chime` | Bone Chime | 55 | beside path | Rings out in a circle, striking and stunning everything nearby. |
+| `chime` | Bone Chime | 60 | beside path | Rings out in a circle, stunning everything nearby. The four nearest take its full strike, the rest half. A boss it stuns goes deaf to chimes for 4 seconds. |
 | `trap` | Hook Trap | 35 | path | Rusted jaws set on the path. They snap shut on the first thing that walks in, seen or unseen, then reset. |
 | `tithe` | Tithe Bowl | 50 | beside path | Pays you essence for every creature that dies near it, and a tithe at every break between waves. |
 | `effigy` | Hex Effigy | 40 | beside path | A pinned doll. Everything that passes near it is hexed for a while and takes 40% more damage from every source. |
@@ -83,9 +83,9 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
 |---|---|---|---|
-| Resonance | 40 — +0.25 range | 60 — +0.25 range | 140 — Choir of Bone: every ring sounds twice |
+| Resonance | 40 — +0.25 range | 60 — +0.25 range | 140 — Choir of Bone: every ring sounds twice, striking again |
 | Toll | 40 — +0.3s stun | 60 — +0.3s stun | 140 — Deathknell: stunned creatures take 30% more damage from everything |
-| Marrow | 40 — +5 damage | 60 — +7 damage | 140 — Shatter: its kills burst into shrapnel for 10 damage |
+| Marrow | 40 — +6 damage | 60 — +8 damage | 140 — Shatter: its kills burst into shrapnel for 10 damage |
 
 **Tar Censer**
 
@@ -183,11 +183,11 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 
 | Key | Name | Wards | Rites | Starts with | Unlock | Perk |
 |---|---|---|---|---|---|---|
-| `lamplighter` | The Lamplighter | candle, harpoon, mirror, salt, chime, trap, tithe | kindle, pillar | — | open | Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam. |
+| `lamplighter` | The Lamplighter | candle, harpoon, mirror, salt, trap, tithe | kindle, pillar | — | open | Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam. |
 | `whaler` | The Whaler | candle, harpoon, salt, trap, lance, trypot | haul, bell | — | Deed: Kill a Trench Behemoth with harpoons alone. | Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line, and Haul Away casts a net that hauls a crowd back and tangles it. Starts with the Whaling Gun. |
-| `occultist` | The Occultist | candle, harpoon, grasp, effigy, tithe, chime | unbind, raise | watcher×1, gnasher×1 | Deed: Break a wave with your madness at Slipping or deeper. | Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher. |
-| `galvanist` | The Galvanist | candle, harpoon, pylon, salt, coil, chime | overload, anchor | — | Ember Hall (`kit_galvanist`) | A mad scientist with a power grid. Pylons string live wires across the path that shock and light what crosses them, if the grid reaches the lamp. Arc Lamps burn bright but flicker. Lightning Rods plant where they strike and join the grid. Overload fires every wire at once, paid in oil, and run too hot it fries your pylons. No ritual binds for him: the Grounding Anchor cages what dies in its circuit. Starts with the Galvanic Coil. |
-| `bellringer` | The Bellringer | candle, harpoon, chime, censer, trap | flare, bell | — | Ember Hall (`kit_bellringer`) | Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell. |
+| `occultist` | The Occultist | candle, harpoon, grasp, effigy, tithe | unbind, raise | watcher×1, gnasher×1 | Deed: Break a wave with your madness at Slipping or deeper. | Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher. |
+| `galvanist` | The Galvanist | candle, harpoon, pylon, salt, coil | overload, anchor | — | Ember Hall (`kit_galvanist`) | A mad scientist with a power grid. Pylons string live wires across the path that shock and light what crosses them, if the grid reaches the lamp. Arc Lamps burn bright but flicker. Lightning Rods plant where they strike and join the grid. Overload fires every wire at once, paid in oil, and run too hot it fries your pylons. No ritual binds for him: the Grounding Anchor cages what dies in its circuit. Starts with the Galvanic Coil. |
+| `bellringer` | The Bellringer | candle, harpoon, chime, censer, trap | flare, bell | — | Ember Hall (`kit_bellringer`) | His Bone Chimes ring 20% faster, and he is the only kit that starts with them. Starts with the Tar Censer and the Drowning Bell. |
 
 ### Kit wards
 
@@ -280,6 +280,8 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | Sinew | 35 — Corded sinew: hurls 25% faster | 50 — Hurls 25% faster again | 120 — Twin Spears: two spears per throw |
 | Splinter | 35 — A sharper splinter: +6 damage | 55 — +8 damage | 130 — Splintering Spear: it passes through everything in a line |
 | Dread | 30 — Each tier of madness adds 10% more | 45 — Each tier adds 10% more again | 110 — Soul Spear: what it kills leaves its sigil, if its kind can be bound |
+
+Bone Chime: the **4** creatures nearest take its full strike, the rest **×0.5**. A boss it stuns is deaf to every chime for **4s**. Found on the stair (gift, merchant, pack); only the Bellringer starts with it.
 
 Galvanist numbers: pylons link within **3.5** tiles, **3** wires each; a wire shocks for **12**, stuns **0.4s** (bosses 0.15s), lights what it touches for **1.2s**, then recharges **1.5s**. Lightning Rods stand **5s**, **2** per harpoon. The Arc Lamp shines **+0.4**, cuts out **0.5s** of every **4s** in a wave, and flares for **6** with a **0.3s** stun. Overload costs **2** oil, strikes at **×3**, adds 1 Heat (cools 1 per **10s**), and at **3** Heat or more fries pylons. Static Burst fires when something is within **1.5** of the lamp, stuns everything within **2.5** for **1.2s**, every **12s**. The Grounding Anchor stands **8s**; a catch waits **5s** for a tap and a capture vents **2** Heat.
 
