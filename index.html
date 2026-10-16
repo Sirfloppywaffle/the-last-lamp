@@ -415,7 +415,7 @@ input[type=range]::-moz-range-track {
         <li><b>Call early.</b> Once a wave has finished arriving, you can call the next one while stragglers still walk, for bonus essence.</li>
         <li><b>Binding.</b> Some creatures leave a violet sigil when they die. Tap it before it fades and that creature joins your roster. Bound horrors are placed like wards and hit far harder. Slay the Keeper Below and its soul lingers longer than most. Bind it and it fights for you on the last floor. The Galvanist binds nothing by ritual: he captures with his Grounding Anchor instead.</li>
         <li><b>Forks.</b> On some floors the stair splits. They take the darker way, and only light you cast counts, never the lamp's. A gold chevron at the fork shows where they will go. Shades and Stalkers do the opposite and hunt your light. Gnashers and bosses keep the main way. A Weir built on the fork shuts one way; flip it between waves. Watchers fly over it, and a Behemoth breaks it. On these floors you also hold the Will-o’-Wisp: tap a way at a fork and, for eight seconds, everything but a boss follows it there.</li>
-        <li><b>Heralds.</b> Some floors send a Herald: a named terror in one wave, shown on the strip above the board in the break before it comes. It drains 8 oil if it reaches the lamp, but it is no boss and never ends the run by itself. Kill it and it pays a relic. The Last Keeper, on the second floor, carries a lamp of its own, and every candle it passes goes out for 6.5 seconds.</li>
+        <li><b>Heralds.</b> Some floors send a Herald: a named terror in one wave, shown on the strip above the board in the break before it comes. It drains 8 oil if it reaches the lamp, but it is no boss and never ends the run by itself. Kill it and it pays a relic. Floors two to four each send one, and a descent never meets the same one twice. The Last Keeper carries a lamp of its own, and every candle it passes goes out for 6.5 seconds (a Tuning Fork falls silent). The Tithe-taker takes 3 essence a second while it lives; kill it and the sack bursts, paying it all back and half again. The Bellfather strikes its great bell every 5 seconds, and wards within 2.2 tiles reel and do nothing for 2 seconds.</li>
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Your kit names the wards you start with: Candles, Harpoons, Salt, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, the Hex Effigy that makes everything near it take more damage, and its own. The Bone Chime, Tar Censer, Galvanic Coil and Whaling Gun are found on the stair: as gifts, from merchants, or in a pack. Only the Bellringer starts with the Chime.</li>
@@ -499,6 +499,8 @@ const FOES={
   boss2:{n:'The Primordial',hp:4200,spd:.38,oil:99,ess:0,col:'#7A4FB8',r:.75,boss:true,aura:true,spawner:true},
   /* a Herald: a named mid-floor terror. It drains heavy oil, but it is no boss, and it never ends the run by itself */
   lastkeeper:{n:'The Last Keeper',hp:560,spd:.42,oil:8,ess:40,col:'#C9A35A',r:.52,herald:true},
+  tithetaker:{n:'The Tithe-taker',hp:520,spd:.5,oil:8,ess:0,col:'#9C8A4A',r:.5,herald:true},
+  bellfather:{n:'The Bellfather',hp:680,spd:.36,oil:8,ess:40,col:'#8A6A44',r:.56,herald:true},
   /* never spawns: the look and name of the Keeper once it is bound to you */
   keeper:{n:'Bound Keeper',hp:1,spd:0,oil:0,ess:0,col:'#B0507A',r:.6,bound:true}
 };
@@ -1372,6 +1374,8 @@ const AUDIO={
   /* the Tocsin fires: a bronze thump with a ring in it, then the shell's whistle */
   tocsin(){this.synth(82,'sine',.28,.5,50,0,.004); this.bronze(330,.05,1,.2); this.noise(.15,.18,500,.7,'lowpass'); this.synth(1600,'sine',.025,.8,700,.12,.05);},
   blast(){if(!this.gate('blast',80))return; this.noise(.4,.26,300,.6,'lowpass'); this.synth(55,'sine',.25,.6,35,0,.004); this.bronze(520,.03,.6,0);},
+  /* the Bellfather's bell: huge, flat and cracked, out of tune with everything */
+  bellfather(){this.bronze(58,.2,3.5,.3); this.synth(61.5,'sine',.12,3,0,0,.004); this.noise(.3,.14,240,.6,'lowpass');},
   /* a lamp snuffed: a soft breath and a hiss of smoke */
   snuff(){if(!this.gate('snuff',120))return; this.noise(.35,.12,900,.7,'lowpass'); this.synth(240,'sine',.03,.4,120,0,.02);},
   /* a tuning fork struck: a pure tone and its octave, long and clean */
@@ -1766,7 +1770,7 @@ function updateGrid(dt){
     if(!e.live||e.anchor)continue;
     let cd=F.wireCd.get(e.key)||0; if(cd>0){cd-=dt; F.wireCd.set(e.key,cd);}
     for(let i=0,n=F.foes.length;i<n;i++){const f=F.foes[i];
-      if(f.dead||f.def.fly||segDist(f.x,f.y,e.a.x,e.a.y,e.b.x,e.b.y)>.3)continue;
+      if(f.dead||f.def.fly||segDist(f.x,f.y,e.a.x,e.a.y,e.b.x,e.b.y)>.3||(e.a.t&&e.a.t.dazeT>0)||(e.b.t&&e.b.t.dazeT>0))continue;
       f.revealT=WIRE_REVEAL;
       /* a Behemoth snaps the wire for the rest of the wave */
       if(f.def.heavy){F.wireBroken.add(e.key); e.live=false; hurt(f,e.dmg,'grid'); F.fx.push({k:'fry',x:(e.a.x+e.b.x)/2,y:(e.a.y+e.b.y)/2,t:0,dur:.7}); AUDIO.fry(); break;}
@@ -1987,7 +1991,7 @@ function updateTocsin(dt){
   for(const c of F.tocsinCalls)c.t-=dt;
   while(F.tocsinCalls.length&&F.tocsinCalls[0].t<=0){
     const c=F.tocsinCalls.shift();
-    const guns=F.towers.filter(t=>t.type==='tocsin'&&!t.dark&&t.ammo>0).sort((a,b)=>dst(a.x,a.y,c.x,c.y)-dst(b.x,b.y,c.x,c.y));
+    const guns=F.towers.filter(t=>t.type==='tocsin'&&!t.dark&&!(t.dazeT>0)&&t.ammo>0).sort((a,b)=>dst(a.x,a.y,c.x,c.y)-dst(b.x,b.y,c.x,c.y));
     if(!guns.length)continue;
     const t=guns[0], st=wstat(t); if(t.ammo>=st.ammo)t.cd=st.reload; t.ammo--;
     t.ang=Math.atan2(c.y-t.y,c.x-t.x); t.recoil=.35;
@@ -2012,7 +2016,22 @@ function caption(x,y,txt,size){if(!captionsOn())return; F.fx.push({k:'float',x,y
 /* The Last Keeper snuffs every candle it passes, and stills every Tuning Fork (a hush, for the Bellringer, who lights nothing);
    they stay out for a while, and what they held up goes dark */
 function updateHeralds(dt){
-  for(const t of F.towers)if(t.snuffT>0)t.snuffT-=dt;
+  for(const t of F.towers){if(t.snuffT>0)t.snuffT-=dt; if(t.dazeT>0)t.dazeT-=dt;}
+  for(const e of F.foes){if(e.dead||!e.def.herald||e.type==='lastkeeper')continue;
+    if(e.type==='tithetaker'&&F.phase==='wave'){
+      /* it takes what you have, a little every second, into its sack */
+      e.titheT=(e.titheT||0)+dt; if(e.titheT>=1){e.titheT-=1; const n=Math.min(run.ess,TITHE_TAKE); if(n>0){run.ess-=n; e.sack=(e.sack||0)+n; F.fx.push({k:'float',x:e.x,y:e.y-.75,txt:'−'+n,col:PAL.wound,t:0,dur:.7,size:.22}); AUDIO.coin();}}
+    }else if(e.type==='bellfather'){
+      /* it tolls: the wards around it reel and do nothing for a moment. For the Bellringer, its toll is a ring like her own */
+      e.bellT=(e.bellT===undefined?BELLF_EVERY*.6:e.bellT)-dt;
+      if(e.bellT<=0&&!(e.stunT>0)){e.bellT=BELLF_EVERY;
+        for(const t of F.towers){if(t.isLamp||dst(t.x,t.y,e.x,e.y)>BELLF_R)continue; t.dazeT=Math.max(t.dazeT||0,BELLF_DAZE);}
+        F.fx.push({k:'ring',x:e.x,y:e.y,r0:.3,r1:BELLF_R,t:0,dur:.6,col:'186,120,70'}); F.fx.push({k:'ring',x:e.x,y:e.y,r0:.2,r1:BELLF_R*.7,t:0,dur:.45,col:'226,170,110'});
+        F.shake=Math.max(F.shake,.12); AUDIO.bellfather(); caption(e.x,e.y-.9,'BONG',.3); e.tollT=.5;
+        if(bellKit())startToll(e.x,e.y,BELLF_R+1,{relay:false,cracks:0,hear:HEAR_T});}
+      if(e.tollT>0)e.tollT-=dt;
+    }
+  }
   for(const e of F.foes){if(e.dead||e.type!=='lastkeeper')continue;
     for(const t of F.towers){if(t.kind!=='ward'||(t.type!=='candle'&&t.type!=='fork')||t.snuffT>0||dst(t.x,t.y,e.x,e.y)>SNUFF_R)continue;
       t.snuffT=SNUFF_T; F.fx.push({k:'snuff',x:t.x,y:t.y-.35,t:0,dur:1.4}); AUDIO.snuff(); F.L=lightsNow();}}
@@ -2336,7 +2355,7 @@ function startWave(sub){
   }
   /* the Herald walks in the middle of its wave */
   const hd=run.draw&&run.draw.herald;
-  if(hd&&hd.wave===F.wave-1){const mid=F.queue.reduce((m,q)=>Math.max(m,q.t),0)/2; F.queue.push({t:mid,type:hd.type,gate:0}); F.heraldWave=true;}
+  if(hd&&hd.wave===F.wave-1){heraldMet(hd.type); const mid=F.queue.reduce((m,q)=>Math.max(m,q.t),0)/2; F.queue.push({t:mid,type:hd.type,gate:0}); F.heraldWave=true;}
   waterRise();
   blubberToll();
   if(run.oil>0&&has('blackwick')){run.oil-=1; F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'−1 oil',col:PAL.wound,t:0,dur:1,size:.3}); if(run.oil<=0){run.oil=0; defeat();}}
@@ -2369,16 +2388,26 @@ const BOSS_INTRO={
 };
 /* Heralds: each floor that has them sends one, in a wave drawn when the floor begins and named in the break before it.
    The Last Keeper carries a lamp of its own, and every candle it passes goes out */
-const HERALDS={1:['lastkeeper']}, KEEPER_LIGHT=1.4, SNUFF_R=1.3, SNUFF_T=6.5;
+/* every floor between the first and the last sends one Herald; a run never meets the same one twice */
+const HERALDS={1:['lastkeeper','tithetaker','bellfather'],2:['lastkeeper','tithetaker','bellfather'],3:['lastkeeper','tithetaker','bellfather']},
+  KEEPER_LIGHT=1.4, SNUFF_R=1.3, SNUFF_T=6.5,
+  /* the Tithe-taker takes essence every second it lives, into its sack; killed, the sack bursts and pays it back with interest */
+  TITHE_TAKE=3, TITHE_BACK=1.5,
+  /* the Bellfather tolls its great bell every few seconds; wards near it reel and do nothing for a moment */
+  BELLF_EVERY=5, BELLF_R=2.2, BELLF_DAZE=2;
 function heraldDraw(fi){
   const pool=HERALDS[fi]; if(!pool)return null;
   const slots=FLOORS[fi].waves.map((w,i)=>i).filter(i=>!fixedWave(FLOORS[fi].waves[i])&&i>0);
   if(!slots.length)return null;
-  return {type:pick(pool),wave:pick(slots)};
+  const met=run.heraldsMet||[], fresh=pool.filter(k=>!met.includes(k));
+  return {type:pick(fresh.length?fresh:pool),wave:pick(slots)};
 }
+function heraldMet(k){run.heraldsMet=(run.heraldsMet||[]).concat(run.heraldsMet&&run.heraldsMet.includes(k)?[]:[k]);}
 function heraldNext(){const h=run.draw&&run.draw.herald; return h&&F&&h.wave===F.wave?h:null;}
 const BIG_INTRO={
   lastkeeper:{name:'The Last Keeper',sub:'It tends the only lamp it will allow'},
+  tithetaker:{name:'The Tithe-taker',sub:'Every breath you take here is owed'},
+  bellfather:{name:'The Bellfather',sub:'It carries the bell that rang the town under'},
   elite:{name:'The Drowned Choirmaster',sub:'A hymn rises out of the water'},
   behemoth:{name:'A Trench Behemoth',sub:'Something heavy drags itself up'}
 };
@@ -3424,6 +3453,7 @@ function killFoe(e){
   if(hasOff('milk')&&inWater(e)){run.milk=(run.milk||0)+1; if(run.milk>=4){run.milk=0; gainOil(1);}}
   if(e.def.boss)run.bosses=(run.bosses||0)+1;
   /* a Herald slain pays a relic */
+  if(e.def.herald&&e.hp<=0&&e.sack){const back=Math.round(e.sack*TITHE_BACK); run.ess+=back; F.fx.push({k:'float',x:e.x,y:e.y-.5,txt:'+'+back+' back',col:PAL.tallow,t:0,dur:1.4,size:.3}); AUDIO.coin(); e.sack=0;}
   if(e.def.herald&&e.hp<=0){run.heralds=(run.heralds||0)+1; const pool=relicPool(false), k=pool.length?pick(pool):null;
     if(k){addRelic(k); setTimeout(()=>banner(e.def.n+' falls','rite','You take '+RELICS[k].n),300);} else{run.ess+=60; setTimeout(()=>banner(e.def.n+' falls','rite','+60 essence'),300);}
     F.fx.push({k:'ring',x:e.x,y:e.y,r0:.2,r1:1.6,t:0,dur:.7,col:'237,180,90'});}
@@ -3814,7 +3844,7 @@ function chimePulse(t,st){
 }
 function updateTowers(dt){
   for(const t of F.towers.slice()){
-    if(t.dead||t.dark)continue;
+    if(t.dead||t.dark||t.dazeT>0)continue;
     if(t.kind==='ward'){
       if(t.type==='candle'||t.type==='salt'||t.type==='tithe'||t.type==='effigy'||t.type==='weir'||t.type==='trypot'||t.type==='mirror'||t.type==='tocsin')continue;
       const st=wstat(t);
@@ -4412,6 +4442,71 @@ lastkeeper:{ext:2,period:2.2,frames:14,flip:true,draw(c,w,M){
   blob(c,M,lit(CAPE,-.2),.1,-.93,.42,.07);
   blob(c,M,lit(CAPE,-.1),.1,-1.04,.2,.12);
   c.restore();
+}},
+
+/* The Tithe-taker: a bloated, waddling collector in a black coat gone green, spectacles on a hooked nose, an open ledger in
+   one hand and a coin-sack dragging from the other */
+tithetaker:{ext:1.9,period:1.8,frames:12,flip:true,draw(c,w,M){
+  const COAT=[46,52,40], SKIN=[176,160,128], GOLD=[214,176,90], PAGE=[226,214,180];
+  const sw=Math.sin(w), bob=Math.abs(sw)*.05;
+  c.save(); c.translate(0,-bob);
+  /* short legs, waddling */
+  tendril(c,M,[[-.18,.5],[-.22+sw*.08,.8],[-.24+sw*.12,1]],.16,.12,lit(COAT,-.3),{base:-.2});
+  tendril(c,M,[[.18,.5],[.2-sw*.08,.8],[.22-sw*.12,1]],.16,.12,lit(COAT,-.3),{base:-.2});
+  /* the sack, dragging behind on a cord */
+  tendril(c,M,[[-.45,0],[-.62,.3],[-.7,.5]],.05,.04,[120,96,60],{base:-.2});
+  blob(c,M,[150,120,70],-.78,.68,.3,.26);
+  if(!M.sil){c.fillStyle=rgba(GOLD,.9); for(const [x,y] of [[-.86,.52],[-.7,.48],[-.78,.42]]){ell(c,x,y,.05,.03); c.fill();}}
+  /* the bloated body in its coat */
+  blob(c,M,COAT,0,.05,.6,.62);
+  if(!M.sil){c.strokeStyle=rgba(lit(COAT,-.5),.6); c.lineWidth=.03; c.beginPath(); c.moveTo(.05,-.5); c.lineTo(.08,.6); c.stroke();
+    c.fillStyle=rgba(GOLD,.8); for(let k=0;k<4;k++){ell(c,.12,-.35+k*.22,.035,.035); c.fill();}}
+  /* the ledger held open in front */
+  tendril(c,M,[[.35,-.2],[.58,-.12],[.72,-.05]],.13,.1,COAT,{base:-.15});
+  if(M.sil){c.fillStyle=rgba(SILC); c.fillRect(.62,-.32,.42,.3);}
+  else{c.save(); c.translate(.83,-.17); c.rotate(-.15); c.fillStyle=rgba(lit(PAGE,-.1)); c.fillRect(-.21,-.15,.2,.28); c.fillStyle=rgba(PAGE); c.fillRect(.01,-.15,.2,.28);
+    c.strokeStyle='rgba(60,40,30,.6)'; c.lineWidth=.012; for(let k=0;k<4;k++){c.beginPath(); c.moveTo(-.18,-.09+k*.06); c.lineTo(-.04,-.09+k*.06); c.moveTo(.04,-.09+k*.06); c.lineTo(.18,-.09+k*.06); c.stroke();} c.restore();}
+  /* the head, sunk into the collar: jowls, a hooked nose, two glinting lenses */
+  blob(c,M,SKIN,.18,-.62,.24,.22);
+  blob(c,M,lit(SKIN,-.2),.38,-.6,.08,.05);
+  if(!M.sil){for(const x of [.16,.3]){c.strokeStyle='rgba(40,30,20,.9)'; c.lineWidth=.02; ell(c,x,-.66,.055,.045); c.stroke(); c.fillStyle='rgba(255,236,190,'+(.55+.35*Math.sin(w*3+x*9))+')'; ell(c,x,-.66,.035,.028); c.fill();}}
+  blob(c,M,[24,22,20],.16,-.86,.26,.06);
+  blob(c,M,[30,28,26],.16,-.98,.15,.12);
+  c.restore();
+}},
+
+/* The Bellfather: a hulking, hooded thing bent double under the drowned church's great bell, strapped to its back.
+   It carries a hammer to strike it */
+bellfather:{ext:2.1,period:2.6,frames:14,flip:true,draw(c,w,M){
+  const ROBE=[96,80,66], BRZ=[176,124,64], SKIN=[120,108,96];
+  const sw=Math.sin(w);
+  /* legs under the robe */
+  tendril(c,M,[[-.2,.55],[-.24+sw*.1,.8],[-.26+sw*.14,1.02]],.2,.15,lit(ROBE,-.35),{base:-.2});
+  tendril(c,M,[[.2,.55],[.22-sw*.1,.8],[.24-sw*.14,1.02]],.2,.15,lit(ROBE,-.35),{base:-.2});
+  /* the robe, hunched */
+  c.beginPath(); c.moveTo(.3,-.5); c.bezierCurveTo(.7,-.3,.7,.3,.55,.7);
+  for(let i=0;i<=6;i++){const x=.55-i*(1.15/6), y=.72+(i%2?.12:-.02)+Math.sin(w+i)*.04; c.lineTo(x,y);}
+  c.bezierCurveTo(-.75,.2,-.6,-.4,.3,-.5); c.closePath();
+  c.fillStyle=M.sil?rgba(SILC):rgba(lit(ROBE,-.1)); c.fill();
+  /* the great bell on its back, crusted with verdigris, a crack down one side */
+  c.save(); c.translate(-.28,-.38); c.rotate(-.35+sw*.03);
+  c.beginPath(); c.moveTo(-.2,-.5); c.quadraticCurveTo(-.28,-.1,-.5,.3); c.lineTo(.5,.3); c.quadraticCurveTo(.28,-.1,.2,-.5); c.closePath();
+  if(M.sil)c.fillStyle=rgba(SILC); else{const g=c.createLinearGradient(-.5,0,.5,0); g.addColorStop(0,rgba(lit(BRZ,-.55))); g.addColorStop(.45,rgba(lit(BRZ,.15))); g.addColorStop(1,rgba(lit(BRZ,-.5))); c.fillStyle=g;}
+  c.fill();
+  if(!M.sil){c.fillStyle='rgba(84,150,128,.5)'; ell(c,-.12,0,.1,.07); c.fill(); ell(c,.2,.18,.08,.05); c.fill();
+    c.fillStyle='#120b05'; ell(c,0,.3,.5,.08); c.fill();
+    c.strokeStyle='rgba(20,10,4,.9)'; c.lineWidth=.03; c.beginPath(); c.moveTo(.12,.28); c.lineTo(.08,.1); c.lineTo(.13,-.05); c.lineTo(.07,-.2); c.stroke();
+    c.strokeStyle='rgba(80,60,40,.9)'; c.lineWidth=.05; c.beginPath(); c.moveTo(-.4,.0); c.lineTo(.42,-.05); c.stroke();}
+  c.restore();
+  /* the head under a deep hood, two pale eyes */
+  blob(c,M,lit(ROBE,-.25),.42,-.3,.22,.2);
+  c.fillStyle=M.sil?rgba(SILC):'#070504'; ell(c,.5,-.28,.13,.12); c.fill();
+  if(!M.sil){eyeG(c,M,.47,-.3,.03,{emissive:true,glow:[230,210,170]}); eyeG(c,M,.57,-.29,.028,{emissive:true,glow:[230,210,170]});}
+  /* the arm and its hammer */
+  tendril(c,M,[[.45,-.05],[.66,.12],[.78,.22]],.15,.1,ROBE,{base:-.15});
+  tendril(c,M,[[.8,.24],[.9,-.1],[.96,-.34]],.06,.05,[70,52,34],{base:-.2});
+  blob(c,M,[90,86,80],.96,-.4,.13,.08);
+  blob(c,M,SKIN,.8,.24,.07,.06);
 }},
 
 wretch:{ext:1.5,period:1.7,frames:12,flip:true,draw(c,w,M){
@@ -5993,6 +6088,7 @@ function render(){
       }
       const lx=F.lx-e.x, ly=F.ly-e.y, ld=Math.hypot(lx,ly)||1;
       drawCreature(g,e.type,e.x,yy,drawR,tm,{ph:e.wob,face:e.face||1,rim,look:[lx/ld,ly/ld],flash:e.hitT*3});
+      if(e.sack>0){const sr=Math.min(.32,.08+e.sack*.004); g.fillStyle='rgba(214,176,90,.85)'; g.beginPath(); g.ellipse(e.x-(e.face||1)*drawR*1.3,yy+drawR*.7,sr,sr*.8,0,0,TAU); g.fill(); g.fillStyle='rgba(255,236,170,.9)'; g.font='bold .22px sans-serif'; g.textAlign='center'; g.fillText(e.sack,e.x-(e.face||1)*drawR*1.3,yy+drawR*.7+.07);}
       if(e.hex){g.strokeStyle='rgba(150,230,120,.6)'; g.lineWidth=.025; g.setLineDash([.06,.05]); g.beginPath(); g.ellipse(e.x,e.y+drawR*.55,drawR*.95,drawR*.4,0,tm*1.5,tm*1.5+TAU); g.stroke(); g.setLineDash([]);}
       if(e.kindleT>0){for(let k=0;k<3;k++){const f=(tm*2.6+k*.37)%1, fx=e.x+(k-1)*drawR*.45, fy=yy-drawR*(.3+f*.9);
         g.fillStyle='rgba('+(k===1?'255,214,140':'255,130,50')+','+(.85*(1-f))+')'; g.beginPath(); g.arc(fx,fy,drawR*.2*(1-f*.6),0,TAU); g.fill();}}
@@ -6168,6 +6264,8 @@ function render(){
   for(const e of seen)if(e.heardT>0&&!litAt(e.x,e.y))drawEcho(g,e,tm,Math.min(1,e.heardT/.4));
   if(F.tolls.length)drawTolls(tm);
   if(bellKit()){drawCracks(tm,seen); drawShells(tm); if(F.phase==='wave'&&lstat().peal)drawBeat(tm);}
+  /* wards reeling from the Bellfather's toll: a wobbling ring of bronze dashes */
+  for(const t of F.towers){if(!(t.dazeT>0))continue; g.save(); g.strokeStyle='rgba(226,170,110,'+Math.min(.9,t.dazeT)+')'; g.lineWidth=.035; g.setLineDash([.07,.09]); g.beginPath(); g.ellipse(t.x,t.y-.45,.26,.09,0,tm*5,tm*5+TAU); g.stroke(); g.restore();}
   for(const t of F.towers){
     if(!t.dark)continue;
     g.strokeStyle='rgba(139,146,148,.6)'; g.lineWidth=.035; g.setLineDash([.08,.08]);
@@ -6434,6 +6532,8 @@ document.addEventListener('click',ev=>{if(!$('#relTip').hidden&&!ev.target.close
 
 /* what the Grimoire says about each creature, beyond its numbers */
 const LORE={
+  tithetaker:'A Herald. A bloated collector with a ledger and a sack. While it lives it takes 3 essence a second from you, into its sack. Kill it and the sack bursts: everything it took comes back, and half again. If it reaches the lamp, the sack goes with it. It drains 8 oil there, but it is no boss.',
+  bellfather:'A Herald. A hulking, hooded thing with the drowned church’s great bell on its back. Every 5 seconds it strikes it, and every ward within 2.2 tiles reels and does nothing for 2 seconds. It drains 8 oil at the lamp, but it is no boss. For the Bellringer its toll is a ring like her own: everything it touches is heard.',
   lastkeeper:'A Herald. A dead lamp-tender who still walks its round, carrying the only lamp it will allow: every candle it passes goes out for a while, every Tuning Fork falls silent, and what they held up goes dark. It drains 8 oil if it reaches your lamp, but it is no boss. Kill it and it pays a relic.',
   crawler:'The most common thing on the stair. Slow and soft, and never alone.',
   skitter:'Small and quick. They come in swarms and slip past slow wards.',
@@ -6654,7 +6754,7 @@ const TIPS={
     text:'The lamp now tolls on its own, a quieter heartbeat that reaches 5 tiles and makes no Noise, and a ring closes on it before each beat. It hears only the ordinary dark, and cracks nothing. Tap Toll as the ring lands, when the button glows, for a Perfect Toll: half again as far, two cracks, and half the Noise.',
     target:()=>coachBoard(F.lx,F.ly,1.2)},
   herald:{when:()=>F.phase==='build'&&!!heraldNext(),title:'A Herald comes',
-    text:'A Herald walks in the next wave: its name is on the strip above the board. The Last Keeper carries a lamp of its own, and every candle it passes goes out for 6.5 seconds, and whatever that candle held up goes dark. It drains 8 oil at the lamp, but it is no boss. Kill it for a relic.',
+    text:'A Herald walks in the next wave: its name is on the strip above the board. Each is a named terror with its own way of hurting you (the Grimoire has them once met), and drains 8 oil if it reaches the lamp, but none is a boss. Kill it and it pays a relic.',
     target:()=>coachEl('#preview')},
   tuningfork:{when:()=>bellKit()&&F.phase==='build'&&run.wards.includes('fork'),title:'Tuning Forks',
     text:'She builds no candles. A Tuning Fork gives no light: it hums. It stands within 5 tiles of the lamp or 3.5 of another fork, lit or dark, and you can build inside its hum in the dark. But wards there are blind: they strike only what is heard. Keep the bell ringing.',
