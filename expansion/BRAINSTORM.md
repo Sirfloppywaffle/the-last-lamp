@@ -310,6 +310,24 @@ Criss: "Echo location. Being able to see into the dark. Setting bell trip wires.
 - Strong in the dark, against Shades and Stalkers, and when spotting what is coming.
 - Weak, because hearing them makes them faster and his lamp is smaller.
 
+**Revised after Gemini's first pass (#52).** Gemini's review: "light lets you build, sound lets you see" is "a brilliant mechanical inversion", and the ghosts are the kit's signature. Its objections, and what changes:
+- **"Heard = faster" makes the kit miserable on a phone.** Dropped, along with the smaller lamp. The price is now **Noise**, a meter like the Galvanist's Heat.
+  - Each toll adds 1 Noise, and Noise fades 1 every 6 seconds.
+  - At **5**, *the dark answers*: two Abyssal Stalkers climb out at the head of the path, and Noise drops to 2.
+  - Stalkers are veiled, so only sound finds them. The hunters your noise calls are the ones you have to hear.
+- **A fixed rhythm feels like waiting on a metronome.** The toll becomes **his first rite, Toll**: tap it and the lamp rings at once.
+  - It has no cooldown, only a 3-second swing, and the button shows the Noise it will cost.
+  - You choose when to look. Tolling all the time calls the hunters.
+- **Shades and Stalkers turn trivial if the baseline sound pierces the veil.**
+  - Only a Toll, a Bell Wire or the Great Bell hears veiled things.
+  - Chime echoes and Clapper bolts hear only the ordinary dark.
+- **Performance on the Fold.**
+  - The ring is one stroked circle.
+  - Ghosts are capped at 24 and fade without blur.
+  - Lite graphics skips the ghosts' shimmer.
+- **Silence is cut.** It is too clever to read at a glance. His second rite is **the Great Bell** (cooldown 30, costs 3 Noise): everything on the floor is heard for 4 seconds and staggered for half a second.
+- **Binding stays a ritual for him.** The sigils of things that died in the dark ring faintly on every toll, so you can find and tap them.
+
 **Open questions for Gemini.**
 1. Does "heard = faster" hurt too much? The alternative is Noise, a meter like Heat that brings extra Stalkers into the next wave when it runs high.
 2. Should Bell Wires be able to stand in the dark? It is the one exception to "build only in light."
