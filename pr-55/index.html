@@ -206,7 +206,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .btn.call{background:var(--tallow);border-color:var(--tallow);color:var(--ink-on-tallow);font-family:var(--f-display);font-weight:700;font-size:1.1rem;line-height:1}
 .calls .btn.call{min-width:150px}
 .btn.big{padding:12px 26px;font-size:1.45rem}
-#holdBtn{min-width:44px;font-weight:700}
+#holdBtn{min-width:46px;display:inline-flex;align-items:center;justify-content:center;padding:10px 12px}
 #holdBtn.on{border-color:var(--tallow);color:var(--tallow)}
 .heldpill{position:absolute;left:50%;top:8px;z-index:5;transform:translateX(-50%);padding:5px 12px;border-radius:999px;background:var(--veil);border:1px solid var(--tallow);color:var(--tallow);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;pointer-events:none;white-space:nowrap}
 .peekback{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);z-index:60;box-shadow:0 6px 20px var(--shadow)}
@@ -370,7 +370,7 @@ input[type=range]::-moz-range-track {
     <div class="bosscard" id="bossCard" hidden><b></b><span></span></div>
     <div class="bossbar" id="bossBar" hidden><b></b><div class="bb"><i></i></div></div>
     <div class="sheet" id="sheet" hidden></div>
-    <div class="heldpill" id="heldPill" hidden>Held still · tap ▶ to go on</div>
+    <div class="heldpill" id="heldPill" hidden>Held still · tap play to go on</div>
   </main>
   <button class="btn call peekback" id="peekBtn" hidden>Back to the stair</button>
   <footer class="cmdbar" id="cmdbar">
@@ -379,7 +379,7 @@ input[type=range]::-moz-range-track {
     <div class="modebar" id="modebar" hidden></div>
     <div class="calls">
       <button class="btn call" id="callBtn">Call the dark</button>
-      <button class="btn" id="holdBtn" aria-label="Hold the dark still">‖</button>
+      <button class="btn" id="holdBtn" aria-label="Hold the dark still"></button>
       <button class="btn" id="speedBtn" aria-label="Game speed">1×</button>
     </div>
   </footer>
@@ -416,7 +416,7 @@ input[type=range]::-moz-range-track {
         <li><b>Call early.</b> Once a wave has finished arriving, you can call the next one while stragglers still walk, for bonus essence.</li>
         <li><b>Binding.</b> Some creatures leave a violet sigil when they die. Tap it before it fades and that creature joins your roster. Bound horrors are placed like wards and hit far harder. Slay the Keeper Below and its soul lingers longer than most. Bind it and it fights for you on the last floor. The Galvanist binds nothing by ritual: he captures with his Grounding Anchor instead.</li>
         <li><b>Forks.</b> On some floors the stair splits. They take the darker way, and only light you cast counts, never the lamp's. A gold chevron at the fork shows where they will go. Shades and Stalkers do the opposite and hunt your light. Gnashers and bosses keep the main way. A Weir built on the fork shuts one way; flip it between waves. Watchers fly over it, and a Behemoth breaks it. On these floors you also hold the Will-o’-Wisp: tap a way at a fork and, for eight seconds, everything but a boss follows it there.</li>
-        <li><b>Heralds.</b> Some floors send a Herald: a named terror in one wave, shown on the strip above the board in the break before it comes. It drains 8 oil if it reaches the lamp, but it is no boss and never ends the run by itself. Kill it and it pays a relic. The Last Keeper, on the second floor, carries a lamp of its own, and every candle it passes goes out for 10 seconds.</li>
+        <li><b>Heralds.</b> Some floors send a Herald: a named terror in one wave, shown on the strip above the board in the break before it comes. It drains 8 oil if it reaches the lamp, but it is no boss and never ends the run by itself. Kill it and it pays a relic. The Last Keeper, on the second floor, carries a lamp of its own, and every candle it passes goes out for 6.5 seconds.</li>
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Your kit names the wards you start with: Candles, Harpoons, Salt, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, the Hex Effigy that makes everything near it take more damage, and its own. The Bone Chime, Tar Censer, Galvanic Coil and Whaling Gun are found on the stair: as gifts, from merchants, or in a pack. Only the Bellringer starts with the Chime.</li>
@@ -1861,7 +1861,7 @@ function forkRing(t,R){
 }
 /* the forks the lamp's sound reaches, hop by hop, and the hums she can build in */
 function forkNet(){
-  const forks=F.towers.filter(t=>t.type==='fork'&&!t.removed), net=new Set(), hums=[];
+  const forks=F.towers.filter(t=>t.type==='fork'&&!t.removed&&!(t.snuffT>0)), net=new Set(), hums=[];
   if(!bellKit()||!forks.length){F.forkNet=net; F.hums=hums; return;}
   const frontier=[{x:F.lx,y:F.ly,reach:FORK_LAMP}];
   while(frontier.length){const a=frontier.shift();
@@ -2010,11 +2010,12 @@ function buzz(ms){if(!store.get('ll-haptic',true)||!AUDIO.gate('buzz',120))retur
 function capLabel(){const c=store.get('ll-captions',null); return 'Show sounds: '+(c===null?'Auto':c?'On':'Off');}
 function captionsOn(){const c=store.get('ll-captions',null); return c===null?(VOL.master===0||VOL.sfx===0):!!c;}
 function caption(x,y,txt,size){if(!captionsOn())return; F.fx.push({k:'float',x,y,txt,col:'#D6E4EC',t:0,dur:1.1,size:size||.22,cap:true});}
-/* The Last Keeper snuffs every candle it passes; they stay out for a while, and what they held up goes dark */
+/* The Last Keeper snuffs every candle it passes, and stills every Tuning Fork (a hush, for the Bellringer, who lights nothing);
+   they stay out for a while, and what they held up goes dark */
 function updateHeralds(dt){
   for(const t of F.towers)if(t.snuffT>0)t.snuffT-=dt;
   for(const e of F.foes){if(e.dead||e.type!=='lastkeeper')continue;
-    for(const t of F.towers){if(t.kind!=='ward'||t.type!=='candle'||t.snuffT>0||dst(t.x,t.y,e.x,e.y)>SNUFF_R)continue;
+    for(const t of F.towers){if(t.kind!=='ward'||(t.type!=='candle'&&t.type!=='fork')||t.snuffT>0||dst(t.x,t.y,e.x,e.y)>SNUFF_R)continue;
       t.snuffT=SNUFF_T; F.fx.push({k:'snuff',x:t.x,y:t.y-.35,t:0,dur:1.4}); AUDIO.snuff(); F.L=lightsNow();}}
 }
 /* an Arc Lamp shocks everything in its light each time it comes back on */
@@ -2369,7 +2370,7 @@ const BOSS_INTRO={
 };
 /* Heralds: each floor that has them sends one, in a wave drawn when the floor begins and named in the break before it.
    The Last Keeper carries a lamp of its own, and every candle it passes goes out */
-const HERALDS={1:['lastkeeper']}, KEEPER_LIGHT=1.4, SNUFF_R=1.3, SNUFF_T=10;
+const HERALDS={1:['lastkeeper']}, KEEPER_LIGHT=1.4, SNUFF_R=1.3, SNUFF_T=6.5;
 function heraldDraw(fi){
   const pool=HERALDS[fi]; if(!pool)return null;
   const slots=FLOORS[fi].waves.map((w,i)=>i).filter(i=>!fixedWave(FLOORS[fi].waves[i])&&i>0);
@@ -6434,7 +6435,7 @@ document.addEventListener('click',ev=>{if(!$('#relTip').hidden&&!ev.target.close
 
 /* what the Grimoire says about each creature, beyond its numbers */
 const LORE={
-  lastkeeper:'A Herald. A dead lamp-tender who still walks its round, carrying the only lamp it will allow: every candle it passes goes out for a while, and what that candle held up goes dark. It drains 8 oil if it reaches your lamp, but it is no boss. Kill it and it pays a relic.',
+  lastkeeper:'A Herald. A dead lamp-tender who still walks its round, carrying the only lamp it will allow: every candle it passes goes out for a while, every Tuning Fork falls silent, and what they held up goes dark. It drains 8 oil if it reaches your lamp, but it is no boss. Kill it and it pays a relic.',
   crawler:'The most common thing on the stair. Slow and soft, and never alone.',
   skitter:'Small and quick. They come in swarms and slip past slow wards.',
   gnasher:'Slow and hard to kill, and it drains 2 oil if it arrives. At a fork it never leaves the main way.',
@@ -6569,7 +6570,7 @@ function coachWalkSteps(){
       target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&t.type==='candle'&&!t.dark); return t?coachBoard(t.x,t.y,candleLeap(t)):null;},next:true},
     {title:'Rites',text:riteLesson(),enter:()=>{selTower=null; forceUI();},target:()=>coachEl('#rites'),next:true,skip:()=>!ritesNow().length},
     {title:'Call the dark',text:'When you are ready, call the dark. Once a wave has finished arriving, you can call the next one early for more essence.',enter:()=>{selTower=null; sel=null; forceUI();},target:()=>coachEl('#callBtn'),until:()=>F.phase!=='build'},
-    {title:'Speed and pause',text:'Speed the dark up here. The ‖ beside it holds everything still so you can look at the board; the button at the top pauses with the menu. New things get a tip the first time you meet them. The book at the top is the Grimoire: everything you have met, and every ward and rite.',target:()=>coachEl('#speedBtn'),next:true}
+    {title:'Speed and pause',text:'Speed the dark up here. The pause beside it holds everything still so you can look at the board; the button at the top pauses with the menu. New things get a tip the first time you meet them. The book at the top is the Grimoire: everything you have met, and every ward and rite.',target:()=>coachEl('#speedBtn'),next:true}
   ];
 }
 /* first-time tips: when each turns up, and what it says */
@@ -6654,7 +6655,7 @@ const TIPS={
     text:'The lamp now tolls on its own, a quieter heartbeat that reaches 5 tiles and makes no Noise, and a ring closes on it before each beat. It hears only the ordinary dark, and cracks nothing. Tap Toll as the ring lands, when the button glows, for a Perfect Toll: half again as far, two cracks, and half the Noise.',
     target:()=>coachBoard(F.lx,F.ly,1.2)},
   herald:{when:()=>F.phase==='build'&&!!heraldNext(),title:'A Herald comes',
-    text:'A Herald walks in the next wave: its name is on the strip above the board. The Last Keeper carries a lamp of its own, and every candle it passes goes out for 10 seconds, and whatever that candle held up goes dark. It drains 8 oil at the lamp, but it is no boss. Kill it for a relic.',
+    text:'A Herald walks in the next wave: its name is on the strip above the board. The Last Keeper carries a lamp of its own, and every candle it passes goes out for 6.5 seconds, and whatever that candle held up goes dark. It drains 8 oil at the lamp, but it is no boss. Kill it for a relic.',
     target:()=>coachEl('#preview')},
   tuningfork:{when:()=>bellKit()&&F.phase==='build'&&run.wards.includes('fork'),title:'Tuning Forks',
     text:'She builds no candles. A Tuning Fork gives no light: it hums. It stands within 5 tiles of the lamp or 3.5 of another fork, lit or dark, and you can build inside its hum in the dark. But wards there are blind: they strike only what is heard. Keep the bell ringing.',
@@ -7193,7 +7194,8 @@ function toggleHold(){
   if(held){held=false; paused=false;} else if(!paused){held=true; paused=true; sel=null; mode=null;}
   syncHold();
 }
-function syncHold(){if(held&&!paused)held=false; const b=$('#holdBtn'); b.textContent=held?'▶':'‖'; b.classList.toggle('on',held); b.setAttribute('aria-label',held?'Let the dark move again':'Hold the dark still'); $('#heldPill').hidden=!held;}
+const HOLD_ICON='<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="5.5" y="4" width="4.5" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4.5" height="16" rx="1" fill="currentColor"/></svg>', PLAY_ICON='<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></svg>';
+function syncHold(){if(held&&!paused)held=false; const b=$('#holdBtn'), ic=held?PLAY_ICON:HOLD_ICON; if(b.dataset.ic!==ic){b.innerHTML=ic; b.dataset.ic=ic;} b.classList.toggle('on',held); b.setAttribute('aria-label',held?'Let the dark move again':'Hold the dark still'); $('#heldPill').hidden=!held;}
 function toggleSpeed(){speed=speed===1?2:speed===2?3:1; $('#speedBtn').textContent=speed+'×';}
 function showTitleLine(){
   const b=store.get('ll-best',{floor:0,wins:0})||{floor:0,wins:0}, m=meta();
