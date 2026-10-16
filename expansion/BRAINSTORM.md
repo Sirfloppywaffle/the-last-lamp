@@ -328,6 +328,13 @@ Criss: "Echo location. Being able to see into the dark. Setting bell trip wires.
 - **Silence is cut.** It is too clever to read at a glance. His second rite is **the Great Bell** (cooldown 30, costs 3 Noise): everything on the floor is heard for 4 seconds and staggered for half a second.
 - **Binding stays a ritual for him.** The sigils of things that died in the dark ring faintly on every toll, so you can find and tap them.
 
+**Criss's calls (October 2026).**
+- **Toll stays a tap**, and the lamp's **Peal** branch adds a free heartbeat. Tier 1: the lamp tolls on its own every 4 seconds, with no Noise. The heartbeat hears only the ordinary dark, so a tapped Toll still matters for Shades and Stalkers. Tier 2 shortens it to every 3.5 seconds. The capstone, Cathedral, makes every toll stun what is near the lamp.
+- **Bell Wires go in the dark**: one more thing only this kit does.
+- **She hears the path.** The path is always faintly outlined in the dark for her, like stone edges caught by an echo, so Bell Wires are easy to place. Each toll makes the outline flare where the ring passes.
+- **Noise calling Stalkers** is the price.
+- **She is a woman.** Backstory and look are being chosen next.
+
 **Open questions for Gemini.**
 1. Does "heard = faster" hurt too much? The alternative is Noise, a meter like Heat that brings extra Stalkers into the next wave when it runs high.
 2. Should Bell Wires be able to stand in the dark? It is the one exception to "build only in light."
