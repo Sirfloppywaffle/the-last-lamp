@@ -59,6 +59,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `pylon` | Pylon | 40 | beside path | An iron mast hung with porcelain and a jar of stored lightning. It links to other pylons within 3.5 tiles with a live wire across the ground; anything crossing a wire is shocked and stunned, and lit for a moment, Shades too. A wire needs a moment to recharge after each shock. The grid must reach the lamp: a pylon in the lamp’s own light is the mains. Behemoths snap wires; fliers pass over. |
 | `mirror` | Signal Mirror | 45 | beside path | A mirror on an iron stand. Built in the lamp’s own light, it reflects the lamp in a beam 5 tiles long. Turn it between waves to aim the beam; it locks while the dark comes. The beam lights the ground it crosses, so you can build there, and burns whatever walks through it. |
 | `risen` | The Risen | 0 | beside path | Raised from a pile of bones by the rite Raise the Dead. It bites whatever comes near, seen or unseen, harder for every bone it rose from and every tier of madness, and falls when the wave breaks. |
+| `bellwire` | Bell Wire | 25 | path | A line of small bells strung across the path, and the one thing that can be strung in the dark. It does no harm: whatever crosses it is heard for 4 seconds, veiled or not, and its jangle hears whatever walks beside it. It rings again 2 seconds later. Three at most. Gnashers chew through it; fliers pass over. |
 | `weir` | Weir | 45 | path | A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it. |
 
 ### Upgrade trees (cost per tier; tier 3 is the capstone)
@@ -151,6 +152,14 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | Span | 25 — Links 0.5 tiles further | 40 — 0.5 further again | 90 — Relay: it holds 2 more wires |
 | Capacitor | 30 — Its wires recharge 20% faster | 45 — 20% faster again | 100 — Insulated: an Overload never fries it |
 
+**Bell Wire**
+
+| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
+|---|---|---|---|
+| Chord | 20 — Its jangle hears 0.5 tiles further | 30 — 0.5 further again | 70 — Carillon: what its jangle hears is staggered for half a second |
+| Rope | 20 — Rings again half a second sooner | 30 — Half a second sooner again | 70 — Tarred Rope: Gnashers cannot chew through it |
+| Linger | 20 — What it hears stays heard 1 second longer | 30 — 1 second longer again | 70 — Marked: what it hears takes 15% more damage while heard |
+
 ## Horrors (bound creatures)
 
 | Key | Name | Cost | Madness | Range | Damage / effect | Description |
@@ -177,6 +186,8 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `haul` | Haul Away | 24s | Tap the path to cast a whaling net. Everything under it, and everything already on one of your lines, is hauled 3 tiles back down the path and left tangled, 50% slower for 3 seconds. Behemoths are dragged only a tile; bosses only tangle. |
 | `raise` | Raise the Dead | 30s | Tap a pile of bones. Its dead stand up beside the path as a Risen that bites whatever comes near, seen or unseen, until the wave breaks. The more bones, the harder it bites. |
 | `unbind` | Unbind | 25s | Tap one of your horrors on the board. It breaks its binding and charges down the path toward where they come from, tearing through everything in its way. Then it is gone for good. |
+| `toll` | Toll | 3s | The lamp tolls. A ring sweeps 7 tiles out from it, and everything it touches is heard for 1.5 seconds: outlined in the dark, veiled or not, and every ward can strike it. Each toll makes Noise. At 5 Noise the dark answers, and two Abyssal Stalkers climb toward the sound. |
+| `greatbell` | The Great Bell | 30s | One huge toll across the whole floor. Everything is heard for 4 seconds, veiled or not, and staggered for half a second. It makes 3 Noise. |
 | `ebb` | The Ebb | 30s | The water draws back. Everything standing in it is dragged 2 tiles back down the path. Bosses and Behemoths hold their ground. |
 
 ## Kits
@@ -187,7 +198,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `whaler` | The Whaler | candle, harpoon, salt, trap, lance, trypot | haul, bell | — | Deed: Kill a Trench Behemoth with harpoons alone. | Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line, and Haul Away casts a net that hauls a crowd back and tangles it. Starts with the Whaling Gun. |
 | `occultist` | The Occultist | candle, harpoon, grasp, effigy, tithe | unbind, raise | watcher×1, gnasher×1 | Deed: Break a wave with your madness at Slipping or deeper. | Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher. |
 | `galvanist` | The Galvanist | candle, harpoon, pylon, salt, coil | overload, anchor | — | Ember Hall (`kit_galvanist`) | A mad scientist with a power grid. Pylons string live wires across the path that shock and light what crosses them, if the grid reaches the lamp. Arc Lamps burn bright but flicker. Lightning Rods plant where they strike and join the grid. Overload fires every wire at once, paid in oil, and run too hot it fries your pylons. No ritual binds for him: the Grounding Anchor cages what dies in its circuit. Starts with the Galvanic Coil. |
-| `bellringer` | The Bellringer | candle, harpoon, chime, censer, trap | flare, bell | — | Ember Hall (`kit_bellringer`) | His Bone Chimes ring 20% faster, and he is the only kit that starts with them. Starts with the Tar Censer and the Drowning Bell. |
+| `bellringer` | The Bellringer | candle, harpoon, bellwire, chime, censer | toll, greatbell | — | Ember Hall (`kit_bellringer`) | Agathe Vell rang the bell of St. Agatha’s as the town went under, and came back up the stair blind. She sees by sound. Toll the lamp and everything its ring touches is heard: outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost. Each Toll makes Noise, and at 5 the dark answers with Stalkers. Bell Wires can be strung in the dark. Bell Candles carry the ring outward, and Clapper Harpoons ring what they strike. She hears the path, even in the dark. Her Bone Chimes ring 20% faster, and she is the only kit that starts with them. |
 
 ### Kit wards
 
@@ -201,6 +212,8 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | `whaler` | `harpoon` | Tether Harpoon | Fires barbed bolts on a line. The line holds what it strikes and slows it more the longer it holds, until the harpoon fires at something else. |
 | `galvanist` | `candle` | Arc Lamp | A glass bulb on a coil-wound post. It shines brighter than a candle but flickers: every few seconds in a wave it cuts out for half a second, and whatever needs its light goes dark with it. When it flares back on, everything in its light is shocked. |
 | `galvanist` | `harpoon` | Lightning Rod | Fires copper-tipped bolts. Each one stays planted where it strikes for a few seconds, and while it stands it is a pylon: wires link to it, and coil lightning arcs through it. |
+| `bellringer` | `candle` | Bell Candle | A candle under a small bronze bell. Its light is a little dimmer, but when the lamp tolls the bell answers: the ring starts again from every Bell Candle it reaches, and carries the sound out into the dark. |
+| `bellringer` | `harpoon` | Clapper Harpoon | Fires bronze-headed bolts that ring when they strike. What it hits is heard for 2 seconds, in the dark too, and knocked half a tile back down the path. |
 | `occultist` | `candle` | Corpse Candle | Free, and it needs no lamp: it burns on the dead. It can only stand beside the path where something died this floor, and each one uses up a body. It goes out when the wave ends. |
 | `occultist` | `harpoon` | Bone Spear | Fires a spear of sharpened bone at a single creature. The madder you are, the harder it hits: 25% more for each tier of madness. |
 
@@ -268,6 +281,38 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | Accumulator | 35 — Refill 3 oil | 50 — Refill 3 oil | 100 — Wellspring: +1 oil after every wave |
 | Dynamo | 40 — Every wire recharges 20% faster | 60 — 20% faster again | 130 — Static Burst: when something comes close, the lamp discharges and stuns everything near it, then recharges |
 
+**Bell Candle (`bellringer`, replaces candle)**
+
+| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
+|---|---|---|---|
+| Glass | 15 — Clearer glass: +0.5 light | 25 — +0.5 light again | 50 — Beacon: wards in its light deal 20% more damage |
+| Hush | 15 — Its hush slows what walks in it by 30% | 25 — Slows by 40% | 50 — Hold Still: roots each creature for 1s the first time it enters |
+| Relay | 15 — The ring it relays reaches 0.5 tiles further | 25 — 0.5 further again | 50 — Sanctus: the ring it relays hears veiled things too |
+
+**Clapper Harpoon (`bellringer`, replaces harpoon)**
+
+| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
+|---|---|---|---|
+| Crank | 35 — A quicker crank: fires 25% faster | 50 — Fires 25% faster again | 120 — Twin Clappers: two bolts per shot |
+| Bronze | 35 — Heavier bronze: +6 damage | 55 — +8 damage | 130 — Tolling Bolt: bolts pass through everything in a line |
+| Ring | 30 — What it strikes is heard 1 second longer | 45 — Its knock sends them a quarter tile further | 110 — Peal Bolt: each strike rings out, hearing everything within 1.5 tiles, veiled too |
+
+**Bell Wire (`bellringer`, its own bellwire)**
+
+| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
+|---|---|---|---|
+| Chord | 20 — Its jangle hears 0.5 tiles further | 30 — 0.5 further again | 70 — Carillon: what its jangle hears is staggered for half a second |
+| Rope | 20 — Rings again half a second sooner | 30 — Half a second sooner again | 70 — Tarred Rope: Gnashers cannot chew through it |
+| Linger | 20 — What it hears stays heard 1 second longer | 30 — 1 second longer again | 70 — Marked: what it hears takes 15% more damage while heard |
+
+**The Lamp (`bellringer`, its own lamp branches)**
+
+| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
+|---|---|---|---|
+| Votive | 40 — A votive wick: +0.5 light | 60 — +0.5 light again | 120 — Sanctuary Lamp: +0.5 light, and lamplight unveils Shades |
+| Font | 35 — Refill 3 oil | 50 — Refill 3 oil | 100 — Wellspring: +1 oil after every wave |
+| Peal | 40 — The lamp tolls on its own every 4 seconds of a wave, and makes no Noise | 60 — It tolls every 3.5 seconds | 130 — Cathedral: every toll of the lamp staggers everything within 2 tiles for half a second |
+
 **Corpse Candle (`occultist`, replaces candle)**
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
@@ -280,6 +325,8 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | Sinew | 35 — Corded sinew: hurls 25% faster | 50 — Hurls 25% faster again | 120 — Twin Spears: two spears per throw |
 | Splinter | 35 — A sharper splinter: +6 damage | 55 — +8 damage | 130 — Splintering Spear: it passes through everything in a line |
 | Dread | 30 — Each tier of madness adds 10% more | 45 — Each tier adds 10% more again | 110 — Soul Spear: what it kills leaves its sigil, if its kind can be bound |
+
+Bellringer numbers: a toll's ring sweeps **8** tiles a second out to **7** tiles; what it touches is heard for **1.5s**. A Bell Candle relays it **3** tiles. Toll has a **3s** swing and makes 1 Noise; Noise fades 1 per **6s**, and at **5** the dark answers with **2** Abyssal Stalkers and Noise drops to **2**. Bell Wires (at most **3**) hear what crosses them for **4s** and jangle within **1.5**, ringing again after **2s**. A Clapper bolt rings its target for **2s** and knocks it back **0.5** tiles. Peal tolls every **4s**; Cathedral staggers within **2** for **0.5s**. The Great Bell is heard **4s**, staggers **0.5s** and makes **3** Noise. Ghosts last **1.1s**, **24** at most.
 
 Bone Chime: the **4** creatures nearest take its full strike, the rest **×0.5**. A boss it stuns is deaf to every chime for **4s**. Found on the stair (gift, merchant, pack); only the Bellringer starts with it.
 
@@ -348,6 +395,8 @@ Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles;
 | `drowned` | Drowned Flares | mother | lamplighter | A flare bolt that strikes something standing in water floats there, and burns three times as long. |
 | `deep` | Into the Deep | mother | whaler | Whatever is on your line cannot move while it stands in water, for up to 3 seconds a catch. Bosses and Behemoths still can. |
 | `livewater` | Live Water | mother | galvanist | A wire that touches water electrifies it: each time it shocks something, everything standing in that water is shocked too. |
+| `drownedpeal` | The Drowned Peal | mother | bellringer | Her water carries the bell. Every time the lamp tolls, whatever stands in her water is heard, anywhere on the floor, veiled or not. |
+| `lullaby` | Her Lullaby | mother | bellringer | She hums the dark to sleep. Noise fades twice as fast, but your Toll reaches 2 tiles less far. |
 | `ground` | Grounded | mother | galvanist | A pylon that stands beside water never fries, and while one does, your grid sheds Heat twice as fast. |
 | `graves` | Wet Graves | mother | occultist | A Corpse Candle that stands beside water does not go out when the wave ends. |
 | `souls` | Drowned Souls | mother | occultist | Whatever dies in water leaves its sigil, if its kind can be bound. |
@@ -446,7 +495,7 @@ Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles;
 | Key | Unlock | Cost | Effect |
 |---|---|---|---|
 | `kit_galvanist` | The Galvanist | 70 | A new kit: a mad scientist’s power grid of pylons, arc lamps and lightning. |
-| `kit_bellringer` | The Bellringer | 110 | A new kit, built on chimes, pitch and the Drowning Bell. |
+| `kit_bellringer` | The Bellringer | 110 | A new kit: Agathe Vell, the blind bellringer, who sees the dark by its echoes. |
 | `relics_deep` | Relics of the Deep | 50 | Second Shadow joins the relic pool, and Leech Jar, Thunder Marrow and Witch Salt when they return to the stair. |
 | `relics_forbidden` | Forbidden Relics | 90 | Four cursed relics with great power join the pool: Choir in the Walls, Gilded Teeth, Hollow Crown, A Thousand Eyes. |
 | `events_more` | Older Stories | 60 | Three more things can happen off the stair. |
