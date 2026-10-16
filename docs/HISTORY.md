@@ -4,6 +4,8 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+## v16.7 — The Last Keeper
+The first Herald walks the second floor, putting out your candles as it goes. You can hold the dark still without leaving the board, and look back at a cleared floor.
 - **Hold the dark still, and look back at a cleared floor** (Criss: the only pause hid the map, and he wanted screenshots). A pause button beside the speed button freezes everything without covering the board; a pill says it's held, and play lets it move again. Every landing after a floor (the gift, the doors, the rooms) has a **See the floor** button that sets the screen aside so the board and your build can be seen; **Back to the stair** brings it back. (Claude)
 - **Heralds: The Last Keeper** (#31, the first of three). On the second floor, one wave (any but the first) is drawn for a Herald when the floor begins, and the strip above the board names it in red during the break before. The Last Keeper is a dead lamp-tender in a rotted cape and a wide hat, carrying a lantern on a crook. Its own lamp lights the dark around it, and every candle it passes goes out for 6.5 seconds, so whatever that candle held up goes dark (Criss: 6.5s, enough for it to walk on past). The Bellringer lights nothing, so for her it stills every Tuning Fork it passes instead, and what the fork's hum held goes blind. It walks in the middle of its wave, drains 8 oil if it reaches the lamp, and is no boss: it never ends the run by itself. Kill it and it pays a relic. It survives save and resume. A tip, a rules line (Heralds), a Grimoire entry, and DESIGN. (Claude)
 ## v16.6 — The Bellringer
