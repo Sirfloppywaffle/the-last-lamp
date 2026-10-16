@@ -11,8 +11,9 @@ const {chromium}=require('playwright');
     const list=await p.evaluate((fl)=>{const T=__t; T.newRun(); T.run.floor=fl; T.beginFloor(null); T.run.ess=5000; const it={kind:'ward',type:'candle'};
       // light the lower rows with candles, as a player would
       T.setSel(it); let s=7; const rnd=()=>{s=(s*9301+49297)%233280; return s/233280;};
-      for(let pass=0;pass<4;pass++)for(let r=T.ROWS-6;r<T.ROWS-2;r++)for(let c=0;c<T.COLS;c++)if(!T.placeProblem(it,c,r)&&rnd()<.5)T.tryPlace(c,r);
-      T.forceUI();
+      for(let pass=0;pass<4;pass++)for(let r=T.ROWS-6;r<T.ROWS-2;r++)for(let c=0;c<T.COLS;c++)if(!T.placeProblem(it,c,r)&&rnd()<.5){T.setSel(it); T.tryPlace(c,r);}
+      /* placing puts the choice away, so pick the candle again before tapping */
+      T.setSel(it); T.forceUI();
       const q=document.getElementById('board').getBoundingClientRect(), s2=q.width/T.COLS, out=[];
       for(let r=T.ROWS-2;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++)if(!T.placeProblem(it,c,r))out.push([q.left+(c+.5)*s2,q.top+(r+.5)*s2]);
       return out;},fl);

@@ -19,7 +19,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     setup('lamplighter');
     out.names=[T.wdef('candle').n,T.wdef('harpoon').n,T.run.rites.join(',')];
     out.cost=T.wardCost('candle'); const lampL=T.lampBase();
-    setup('bellringer'); out.whalerNames=[T.wdef('candle').n,T.wdef('harpoon').n]; out.lampSame=Math.abs(T.lampBase()-lampL)<1e-9;
+    setup('bellringer'); out.whalerNames=[T.wdef('fork').n,T.wdef('harpoon').n,T.wdef('candle','legacy').n,T.wdef('harpoon','legacy').n]; out.lampSame=Math.abs(T.lampBase()-lampL)<1e-9;
 
     // a Signal Candle at the edge of the light, then one in the dark within 4 tiles of it
     setup('lamplighter');
@@ -83,7 +83,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     // kit branches: the Signal Candle trades Wax for Signal, the Flare Harpoon trades Sight for Flare
     setup('lamplighter');
     const bc=placeAt('candle',edge[0],edge[1]); T.update(1/30);
-    out.trees={candle:[0,1,2].map(i=>T.treeOf('candle')[i].n), harpoon:[0,1,2].map(i=>T.treeOf('harpoon')[i].n), whaler:[0,1,2].map(i=>T.treeOf('harpoon','bellringer')[i].n)};
+    out.trees={candle:[0,1,2].map(i=>T.treeOf('candle')[i].n), harpoon:[0,1,2].map(i=>T.treeOf('harpoon')[i].n), whaler:[0,1,2].map(i=>T.treeOf('harpoon','bellringer')[i].n), plain:[0,1,2].map(i=>T.treeOf('harpoon','legacy')[i].n)};
     // Signal tier 2: the light leaps 6 tiles
     const farSpot=tiles().find(([c,r])=>dark(c,r)&&Math.hypot(c-edge[0],r-edge[1])>4.3&&Math.hypot(c-edge[0],r-edge[1])<=5.8&&T.F.towers.every(t=>t===bc||Math.hypot(c+.5-t.x,r+.5-t.y)>4.5));
     out.signal2={spot:!!farSpot, before:farSpot?T.placeProblem({kind:'ward',type:'candle'},farSpot[0],farSpot[1]):'none'};
@@ -212,7 +212,8 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(r.names[0]==='Signal Candle'&&r.names[1]==='Flare Harpoon','Lamplighter wards are named',r.names);
   ok(r.names[2]==='kindle,pillar','Lamplighter casts Kindle and the Pillar',r.names[2]);
   ok(r.cost===30,'Signal Candles cost what candles cost',r.cost);
-  ok(r.whalerNames[0]==='Candle Ward'&&r.whalerNames[1]==='Brine Harpoon','other kits keep the plain wards',r.whalerNames);
+  ok(r.whalerNames[0]==='Tuning Fork'&&r.whalerNames[1]==='Clapper Harpoon','the Bellringer builds Tuning Forks and her own harpoon',r.whalerNames);
+  ok(r.whalerNames[2]==='Candle Ward'&&r.whalerNames[3]==='Brine Harpoon','a run with no kit keeps the plain wards',r.whalerNames);
   ok(r.lampSame,'the Lamplighter lamp no longer burns wider');
   ok(r.spot,'found a dark tile within 4 tiles of a lit Signal Candle');
   ok(r.leap&&r.leap.placed&&!r.leap.dark&&r.leap.links===1,'a Signal Candle stands in the dark and its light leaps',r.leap);
@@ -229,7 +230,8 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(r.kindleBurn>0,'a kindled creature burns',r.kindleBurn);
   ok(r.kindleAfter.t<=0&&!r.kindleAfter.light,'the fire goes out after 8 seconds',r.kindleAfter);
   ok(r.trees.candle.join()==='Lens,Signal,Burner'&&r.trees.harpoon.join()==='Windlass,Heavy Bolts,Flare','the Lamplighter wards have their own branches',r.trees);
-  ok(r.trees.whaler.join()==='Speed,Strength,Sight','other kits keep the plain branches',r.trees.whaler);
+  ok(r.trees.whaler.join()==='Crank,Bronze,Ring','the Clapper Harpoon names its branches in her words',r.trees.whaler);
+  ok(r.trees.plain.join()==='Speed,Strength,Sight','a run with no kit keeps the plain branches',r.trees.plain);
   ok(r.signal2.spot&&/4 tiles|leaps/.test(r.signal2.before)&&r.signal2.after===true,'the Signal branch lets the light leap further',r.signal2);
   ok(r.thread.found&&r.thread.threads>0&&r.thread.burned,'a Fire Thread sets what crosses it burning',r.thread);
   ok(r.star.star&&r.star.small,'Starshell lights a wide circle every fourth bolt',r.star);
