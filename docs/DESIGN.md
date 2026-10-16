@@ -60,6 +60,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `mirror` | Signal Mirror | 45 | beside path | A mirror on an iron stand. Built in the lamp’s own light, it reflects the lamp in a beam 5 tiles long. Turn it between waves to aim the beam; it locks while the dark comes. The beam lights the ground it crosses, so you can build there, and burns whatever walks through it. |
 | `risen` | The Risen | 0 | beside path | Raised from a pile of bones by the rite Raise the Dead. It bites whatever comes near, seen or unseen, harder for every bone it rose from and every tier of madness, and falls when the wave breaks. |
 | `bellwire` | Bell Wire | 25 | path | A line of small bells strung across the path, and the one thing that can be strung in the dark. It does no harm: whatever crosses it is heard for 4 seconds, veiled or not, and its jangle hears whatever walks beside it. It rings again 2 seconds later. Three at most. Gnashers chew through it; fliers pass over. |
+| `fork` | Tuning Fork | 25 | beside path | A steel fork on a hollow box. It gives no light: it hums. It stands anywhere within 5 tiles of the lamp or 3.5 of another fork, lit or dark, and you can build inside its hum even in the dark. Wards there are blind: they strike only what is heard, so keep the bell ringing. A toll that reaches it rings again from it, carrying the sound further. |
 | `tocsin` | The Tocsin | 60 | beside path | An alarm bell cast as a mortar. It never aims at what is near it: when one of your Bell Wires jangles, there is a breath of silence, then it lobs a shell across the floor and bursts it on that wire, any distance away, in the dark or not. It reloads slowly, so where you string the wires is everything. |
 | `weir` | Weir | 45 | path | A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it. |
 
@@ -169,6 +170,14 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | Breech | 40 — Reloads 20% faster | 60 — 20% faster again | 130 — Ready Rounds: it holds two shells |
 | Clang | 35 — Its burst rings: what it hits is heard 2 seconds, veiled too | 50 — And staggered for half a second | 120 — Crack Shot: its burst lays two cracks, not one |
 
+**Tuning Fork**
+
+| Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
+|---|---|---|---|
+| Pitch | 15 — Its hum spreads 0.5 tiles wider | 25 — 0.5 wider again | 50 — Long Note: the next fork can stand 2 tiles further from it |
+| Sustain | 15 — What its ring hears stays heard 0.5s longer | 25 — 1s longer | 50 — Drone: it rings by itself every 5 seconds of a wave, with no Noise |
+| Overtone | 15 — Its ring carries 0.5 tiles further | 25 — 0.5 further again | 50 — Overtone: its ring hears veiled things too, and cracks twice |
+
 ## Horrors (bound creatures)
 
 | Key | Name | Cost | Madness | Range | Damage / effect | Description |
@@ -207,7 +216,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `whaler` | The Whaler | candle, harpoon, salt, trap, lance, trypot | haul, bell | — | Deed: Kill a Trench Behemoth with harpoons alone. | Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line, and Haul Away casts a net that hauls a crowd back and tangles it. Starts with the Whaling Gun. |
 | `occultist` | The Occultist | candle, harpoon, grasp, effigy, tithe | unbind, raise | watcher×1, gnasher×1 | Deed: Break a wave with your madness at Slipping or deeper. | Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher. |
 | `galvanist` | The Galvanist | candle, harpoon, pylon, salt, coil | overload, anchor | — | Ember Hall (`kit_galvanist`) | A mad scientist with a power grid. Pylons string live wires across the path that shock and light what crosses them, if the grid reaches the lamp. Arc Lamps burn bright but flicker. Lightning Rods plant where they strike and join the grid. Overload fires every wire at once, paid in oil, and run too hot it fries your pylons. No ritual binds for him: the Grounding Anchor cages what dies in its circuit. Starts with the Galvanic Coil. |
-| `bellringer` | The Bellringer | candle, harpoon, bellwire, tocsin, chime, censer | toll, greatbell | — | Ember Hall (`kit_bellringer`) | Agathe Vell rang the bell of St. Agatha’s as the town went under, and came back up the stair blind. She sees by sound. Toll the lamp and everything its ring touches is heard: outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost. Each Toll makes Noise, and at 5 the dark answers with Stalkers; tap it on the lamp’s own beat for a Perfect Toll. Every ring cracks what it strikes, and three cracks shatter it. Bell Wires can be strung in the dark, and the Tocsin shells whatever trips them, however far. Bell Candles carry the ring outward, and Clapper Harpoons ring what they strike. She hears the path, even in the dark. Her Bone Chimes ring 20% faster, and she is the only kit that starts with them. |
+| `bellringer` | The Bellringer | fork, harpoon, bellwire, tocsin, chime, censer | toll, greatbell | — | Ember Hall (`kit_bellringer`) | Agathe Vell rang the bell of St. Agatha’s as the town went under, and came back up the stair blind. She sees by sound. Toll the lamp and everything its ring touches is heard: outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost. Each Toll makes Noise, and at 5 the dark answers with Stalkers; tap it on the lamp’s own beat for a Perfect Toll. Every ring cracks what it strikes, and three cracks shatter it. She builds no candles: her Tuning Forks hum in the dark, and she can build inside their hum, but wards there strike only what is heard. Tolls echo back off the walls, and heavy things leave footsteps in the dark; Shades and Stalkers make none. Bell Wires can be strung anywhere on the path, and the Tocsin shells whatever trips them, however far. Clapper Harpoons ring what they strike. She hears the path, even in the dark. Her Bone Chimes ring 20% faster, and she is the only kit that starts with them. |
 
 ### Kit wards
 
@@ -221,7 +230,6 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | `whaler` | `harpoon` | Tether Harpoon | Fires barbed bolts on a line. The line holds what it strikes and slows it more the longer it holds, until the harpoon fires at something else. |
 | `galvanist` | `candle` | Arc Lamp | A glass bulb on a coil-wound post. It shines brighter than a candle but flickers: every few seconds in a wave it cuts out for half a second, and whatever needs its light goes dark with it. When it flares back on, everything in its light is shocked. |
 | `galvanist` | `harpoon` | Lightning Rod | Fires copper-tipped bolts. Each one stays planted where it strikes for a few seconds, and while it stands it is a pylon: wires link to it, and coil lightning arcs through it. |
-| `bellringer` | `candle` | Bell Candle | A candle under a small bronze bell. Its light is a little dimmer, but when the lamp tolls the bell answers: the ring starts again from every Bell Candle it reaches, and carries the sound out into the dark. |
 | `bellringer` | `harpoon` | Clapper Harpoon | Fires bronze-headed bolts that ring when they strike. What it hits is heard for 2 seconds, in the dark too, and knocked half a tile back down the path. |
 | `occultist` | `candle` | Corpse Candle | Free, and it needs no lamp: it burns on the dead. It can only stand beside the path where something died this floor, and each one uses up a body. It goes out when the wave ends. |
 | `occultist` | `harpoon` | Bone Spear | Fires a spear of sharpened bone at a single creature. The madder you are, the harder it hits: 25% more for each tier of madness. |
@@ -290,13 +298,13 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | Accumulator | 35 — Refill 3 oil | 50 — Refill 3 oil | 100 — Wellspring: +1 oil after every wave |
 | Dynamo | 40 — Every wire recharges 20% faster | 60 — 20% faster again | 130 — Static Burst: when something comes close, the lamp discharges and stuns everything near it, then recharges |
 
-**Bell Candle (`bellringer`, replaces candle)**
+**Tuning Fork (`bellringer`, its own fork)**
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
 |---|---|---|---|
-| Glass | 15 — Clearer glass: +0.5 light | 25 — +0.5 light again | 50 — Beacon: wards in its light deal 20% more damage |
-| Hush | 15 — Its hush slows what walks in it by 30% | 25 — Slows by 40% | 50 — Hold Still: roots each creature for 1s the first time it enters |
-| Relay | 15 — The ring it relays reaches 0.5 tiles further | 25 — 0.5 further again | 50 — Sanctus: the ring it relays hears veiled things too |
+| Pitch | 15 — Its hum spreads 0.5 tiles wider | 25 — 0.5 wider again | 50 — Long Note: the next fork can stand 2 tiles further from it |
+| Sustain | 15 — What its ring hears stays heard 0.5s longer | 25 — 1s longer | 50 — Drone: it rings by itself every 5 seconds of a wave, with no Noise |
+| Overtone | 15 — Its ring carries 0.5 tiles further | 25 — 0.5 further again | 50 — Overtone: its ring hears veiled things too, and cracks twice |
 
 **Clapper Harpoon (`bellringer`, replaces harpoon)**
 
@@ -343,7 +351,9 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | Splinter | 35 — A sharper splinter: +6 damage | 55 — +8 damage | 130 — Splintering Spear: it passes through everything in a line |
 | Dread | 30 — Each tier of madness adds 10% more | 45 — Each tier adds 10% more again | 110 — Soul Spear: what it kills leaves its sigil, if its kind can be bound |
 
-Bellringer numbers: a toll's ring sweeps **8** tiles a second out to **7** tiles; what it touches is heard for **1.5s**. A Bell Candle relays it **3** tiles. Toll has a **3s** swing and makes 1 Noise; Noise fades 1 per **6s**, and at **5** the dark answers with **2** Abyssal Stalkers and Noise drops to **2**. Bell Wires (at most **3**) hear what crosses them for **4s** and jangle within **1.5**, ringing again after **2s**. A Clapper bolt rings its target for **2s** and knocks it back **0.5** tiles. Peal tolls every **4s**; Cathedral staggers within **2** for **0.5s**. The Great Bell is heard **4s**, staggers **0.5s** and makes **3** Noise. Ghosts last **1.1s**, **24** at most.
+Bellringer numbers: a toll's ring sweeps **8** tiles a second out to **7** tiles; what it touches is heard for **1.5s**. Toll has a **3s** swing and makes 1 Noise; Noise fades 1 per **6s**, and at **5** the dark answers with **2** Abyssal Stalkers and Noise drops to **2**. Bell Wires (at most **3**) hear what crosses them for **4s** and jangle within **1.5**, ringing again after **2s**. A Clapper bolt rings its target for **2s** and knocks it back **0.5** tiles. Peal tolls every **4s**; Cathedral staggers within **2** for **0.5s**. The Great Bell is heard **4s**, staggers **0.5s** and makes **3** Noise. Ghosts last **1.1s**, **24** at most.
+
+Tuning Forks stand within **5** tiles of the lamp or **3.5** of a reached fork, hum **2.3** tiles (build there in the dark; wards strike only what is heard) and ring a toll on **3** tiles; Drone rings every **5s**. Echoes off the walls hear for **1s**. Unseen heavy things leave a footstep ripple every **0.55s** (at most **40** at once).
 
 The Tocsin answers a Bell Wire after **0.6s** of silence; its shell flies **0.9s** (more for distance), deals **40** in **1.1** tiles, and it reloads in **5s**. Resonance: **3** cracks shatter a creature (**5** for Behemoths and elites, **8** for bosses); a crack fades after **3s** without a ring. A shatter deals **20** + **0.12** of its health (bosses **120**) and **12** to everything within **1**, cracking it. A Perfect Toll lands within **0.25s** of the lamp's beat.
 

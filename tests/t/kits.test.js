@@ -19,7 +19,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     setup('lamplighter');
     out.names=[T.wdef('candle').n,T.wdef('harpoon').n,T.run.rites.join(',')];
     out.cost=T.wardCost('candle'); const lampL=T.lampBase();
-    setup('bellringer'); out.whalerNames=[T.wdef('candle').n,T.wdef('harpoon').n,T.wdef('candle','legacy').n,T.wdef('harpoon','legacy').n]; out.lampSame=Math.abs(T.lampBase()-lampL)<1e-9;
+    setup('bellringer'); out.whalerNames=[T.wdef('fork').n,T.wdef('harpoon').n,T.wdef('candle','legacy').n,T.wdef('harpoon','legacy').n]; out.lampSame=Math.abs(T.lampBase()-lampL)<1e-9;
 
     // a Signal Candle at the edge of the light, then one in the dark within 4 tiles of it
     setup('lamplighter');
@@ -212,7 +212,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(r.names[0]==='Signal Candle'&&r.names[1]==='Flare Harpoon','Lamplighter wards are named',r.names);
   ok(r.names[2]==='kindle,pillar','Lamplighter casts Kindle and the Pillar',r.names[2]);
   ok(r.cost===30,'Signal Candles cost what candles cost',r.cost);
-  ok(r.whalerNames[0]==='Bell Candle'&&r.whalerNames[1]==='Clapper Harpoon','the Bellringer builds her own candle and harpoon',r.whalerNames);
+  ok(r.whalerNames[0]==='Tuning Fork'&&r.whalerNames[1]==='Clapper Harpoon','the Bellringer builds Tuning Forks and her own harpoon',r.whalerNames);
   ok(r.whalerNames[2]==='Candle Ward'&&r.whalerNames[3]==='Brine Harpoon','a run with no kit keeps the plain wards',r.whalerNames);
   ok(r.lampSame,'the Lamplighter lamp no longer burns wider');
   ok(r.spot,'found a dark tile within 4 tiles of a lit Signal Candle');

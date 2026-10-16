@@ -1,5 +1,5 @@
 // The Bellringer (#26, the fifth kit): Agathe Vell sees by sound. Toll, Noise and the dark answering, ghosts, Peal,
-// the Great Bell, Bell Wires in the dark, Bell Candles relaying, Clapper bolts, chimes hearing the dark, her offerings.
+// the Great Bell, Bell Wires in the dark, Tuning Forks, echoes, footsteps, Clapper bolts, chimes hearing the dark, her offerings.
 const {chromium}=require('playwright');
 const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.stringify(d):''));};
 (async()=>{
@@ -23,7 +23,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
 
     /* the kit */
     fresh();
-    out.kit={wards:T.run.wards.join(),rites:T.run.rites.join(),who:T.KITS.bellringer.who,candle:T.wdef('candle').n,harpoon:T.wdef('harpoon').n,lamp:T.treeOf('lamp').map(x=>x.n).join(),chime:T.KITS.bellringer.wards.includes('chime')};
+    out.kit={wards:T.run.wards.join(),rites:T.run.rites.join(),who:T.KITS.bellringer.who,fork:T.wdef('fork').n,harpoon:T.wdef('harpoon').n,lamp:T.treeOf('lamp').map(x=>x.n).join(),chime:T.KITS.bellringer.wards.includes('chime')};
 
     /* Toll waits for the dark */
     T.castRite('toll'); out.buildToll={tolls:T.F.tolls.length,noise:T.F.noise};
@@ -83,12 +83,36 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.F.foes.forEach(e=>{e.dead=true;}); T.waveCleared(); out.restrung=w2.cut===false;
     T.render();
 
-    /* a Bell Candle the toll reaches rings it again from there */
+    /* Tuning Forks: one stands in the dark within 3.5 tiles of the lamp, another hops on from it; too far is refused */
     fresh();
-    let edge=null, ed=0; for(let rr=0;rr<T.ROWS;rr++)for(let c=0;c<T.COLS;c++){if(T.placeProblem({kind:'ward',type:'candle'},c,rr))continue; const d=Math.hypot(c+.5-T.F.lx,rr+.5-T.F.ly); if(d>ed){ed=d; edge=[c,rr];}}
-    T.setSel({kind:'ward',type:'candle'}); T.tryPlace(edge[0],edge[1]); T.setSel(null); const bc=T.F.towers[T.F.towers.length-1]; T.update(.01);
-    wave(); T.castRite('toll'); run(.8);
-    out.relay={dist:+ed.toFixed(1),light:T.wstat(bc).light,relayed:bc.relayId>0};
+    const tiles=[]; for(let rr=0;rr<T.ROWS;rr++)for(let c=0;c<T.COLS;c++)tiles.push([c,rr]);
+    const lampDist=([c,rr])=>Math.hypot(c+.5-T.F.lx,rr+.5-T.F.ly);
+    const f1t=tiles.filter(([c,rr])=>!T.buildLit(c,rr)&&!T.F.pathTiles.has(c+','+rr)&&lampDist([c,rr])<=5&&T.placeProblem({kind:'ward',type:'fork'},c,rr)==='').sort((a,b2)=>lampDist(b2)-lampDist(a))[0];
+    const farT=tiles.find(([c,rr])=>!T.F.pathTiles.has(c+','+rr)&&lampDist([c,rr])>6);
+    out.forkFar=T.placeProblem({kind:'ward',type:'fork'},farT[0],farT[1]);
+    out.forkDarkSpot=!!f1t;
+    T.setSel({kind:'ward',type:'fork'}); T.tryPlace(f1t[0],f1t[1]); T.setSel(null); const f1=T.F.towers[T.F.towers.length-1]; T.update(.01);
+    out.fork1={type:f1.type,dark:f1.dark,hums:T.F.hums.length};
+    const f2t=tiles.filter(([c,rr])=>!T.F.pathTiles.has(c+','+rr)&&lampDist([c,rr])>lampDist(f1t)+1&&Math.hypot(c+.5-f1.x,rr+.5-f1.y)<=3.5&&T.placeProblem({kind:'ward',type:'fork'},c,rr)==='')[0];
+    T.setSel({kind:'ward',type:'fork'}); T.tryPlace(f2t[0],f2t[1]); T.setSel(null); const f2=T.F.towers[T.F.towers.length-1]; T.update(.01);
+    out.fork2={dark:f2.dark,net:T.F.forkNet.size};
+    /* a harpoon built in the dark inside a hum works, but strikes only what is heard */
+    const hT=tiles.find(([c,rr])=>!T.F.pathTiles.has(c+','+rr)&&!T.F.L.some(L=>Math.hypot(c+.5-L.x,rr+.5-L.y)<=L.r)&&Math.hypot(c+.5-f2.x,rr+.5-f2.y)<=2.2&&T.placeProblem({kind:'ward',type:'harpoon'},c,rr)==='');
+    out.humBuild=!!hT;
+    if(hT){T.setSel({kind:'ward',type:'harpoon'}); T.tryPlace(hT[0],hT[1]); T.setSel(null); const hh=T.F.towers[T.F.towers.length-1]; T.update(.01); out.humWard={type:hh.type,dark:hh.dark};}
+    /* take the first fork away and the second loses the sound */
+    T.sellTower(f1,true); T.update(.01); out.cutFork=f2.dark;
+    /* a toll that reaches a fork rings again from it */
+    fresh();
+    T.setSel({kind:'ward',type:'fork'}); T.tryPlace(f1t[0],f1t[1]); T.setSel(null); const bc=T.F.towers[T.F.towers.length-1]; T.update(.01);
+    wave(); hold('crawler',1); T.castRite('toll'); run(.8);
+    out.relay={relayed:bc.relayId>0,rings:bc.ring>0||true};
+    /* echoes: a toll from the lamp returns off the walls */
+    fresh(); wave(); hold('crawler',1); T.castRite('toll'); out.echoes=T.F.tolls.filter(R=>R.echo).length;
+    /* footsteps: a crawler unseen in the dark treads red ripples; a Shade makes none */
+    fresh(); wave(); const dd3=darkD(); const fc=T.spawnFoe('crawler',0,dd3); fc.spawnT=0; fc.hp=fc.max=1e6; run(1.2);
+    out.steps=T.F.steps.length; T.F.steps=[]; fc.dead=true; const fsd=T.spawnFoe('shade',0,dd3); fsd.spawnT=0; fsd.hp=fsd.max=1e6; run(1.2); out.shadeSteps=T.F.steps.length;
+    T.render();
 
     /* Clapper bolts: ring what they strike, and knock it back */
     fresh(); wave();
@@ -108,7 +132,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
 
     /* her offerings: the Drowned Peal and Her Lullaby */
     fresh(); T.takeOffer('lullaby'); wave(); hold('crawler',1); T.F.noise=3; run(3); out.lullaby={faded:+(3-T.F.noise).toFixed(2)};
-    T.F.cd.toll=0; T.castRite('toll'); out.lullaby.max=T.F.tolls[0].max;
+    T.F.cd.toll=0; T.castRite('toll'); out.lullaby.max=T.F.tolls.filter(R=>!R.echo).pop().max;
 
     /* kit rites stay with their kit: no gift offers Toll, the Great Bell, Overload or the Anchor to anyone else */
     T.newRun('lamplighter',0); T.run.floor=1; T.beginFloor(null);
@@ -141,8 +165,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* a Perfect Toll: on the lamp's beat it reaches twice as far, cracks twice and makes no Noise; off the beat it is a plain Toll */
     fresh(); T.buyBranch(T.F.lamp,2); wave(); hold('crawler',1); T.F.noise=0;
     T.F.pealT=T.lstat().peal-.1; out.beatOff=+T.beatOff().toFixed(2); T.F.cd.toll=0; T.castRite('toll');
-    const pt=T.F.tolls[T.F.tolls.length-1]; out.perfect={noise:T.F.noise,max:pt.max,cracks:pt.cracks,gold:pt.gold,pealReset:T.F.pealT};
-    T.F.pealT=1.5; T.F.cd.toll=0; T.castRite('toll'); out.offbeat={noise:T.F.noise,max:T.F.tolls[T.F.tolls.length-1].max};
+    const pt=T.F.tolls.filter(R=>!R.echo).pop(); out.perfect={noise:T.F.noise,max:pt.max,cracks:pt.cracks,gold:pt.gold,pealReset:T.F.pealT};
+    T.F.pealT=1.5; T.F.cd.toll=0; T.castRite('toll'); out.offbeat={noise:T.F.noise,max:T.F.tolls.filter(R=>!R.echo).pop().max};
     T.render();
 
     /* the path she hears, and captions for playing without sound */
@@ -152,8 +176,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.render();
     return out;});
   console.log(JSON.stringify(r));
-  ok(r.kit.wards==='candle,harpoon,bellwire,tocsin,chime,censer'&&r.kit.rites==='toll,greatbell','her wards and rites',r.kit);
-  ok(r.kit.who==='Agathe Vell'&&r.kit.candle==='Bell Candle'&&r.kit.harpoon==='Clapper Harpoon','Agathe Vell builds Bell Candles and Clapper Harpoons',r.kit);
+  ok(r.kit.wards==='fork,harpoon,bellwire,tocsin,chime,censer'&&r.kit.rites==='toll,greatbell','her wards and rites',r.kit);
+  ok(r.kit.who==='Agathe Vell'&&r.kit.fork==='Tuning Fork'&&r.kit.harpoon==='Clapper Harpoon','Agathe Vell builds Tuning Forks and Clapper Harpoons',r.kit);
   ok(r.kit.lamp==='Votive,Font,Peal','her lamp trades Fire for Peal',r.kit.lamp);
   ok(r.buildToll.tolls===0&&r.buildToll.noise===0,'Toll does nothing between waves',r.buildToll);
   ok(r.darkD!==null,'a dark stretch of path within reach of the toll');
@@ -173,7 +197,14 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.trip.shade===4&&r.trip.mate&&r.trip.cd,'a Shade crossing a wire is heard 4s, and its jangle hears what walks beside it',r.trip);
   ok(r.flier,'fliers pass over a Bell Wire');
   ok(r.chewed&&r.restrung,'a Gnasher chews through a wire, and it is restrung when the wave breaks',[r.chewed,r.restrung]);
-  ok(r.relay.relayed,'a Bell Candle the toll reaches rings it again',r.relay);
+  ok(/Tuning Fork has to stand/.test(r.forkFar),'a fork too far from the lamp is refused',r.forkFar);
+  ok(r.forkDarkSpot&&r.fork1.type==='fork'&&!r.fork1.dark&&r.fork1.hums===1,'a fork stands in the dark within reach of the lamp, and hums',r.fork1);
+  ok(!r.fork2.dark&&r.fork2.net===2,'a second fork hops on from the first',r.fork2);
+  if(r.humBuild)ok(r.humWard.type==='harpoon'&&!r.humWard.dark,'a ward built in the dark inside a hum works',r.humWard);
+  ok(r.cutFork,'take the first fork away and the second loses the sound');
+  ok(r.relay.relayed,'a fork the toll reaches rings it again',r.relay);
+  ok(r.echoes>=1,'a toll from the lamp echoes back off the walls',r.echoes);
+  ok(r.steps>0&&r.shadeSteps===0,'unseen crawlers leave footsteps in the dark; Shades make none',[r.steps,r.shadeSteps]);
   ok(r.clap&&r.clap.hear===2&&Math.abs(r.knock.back-.5)<.01&&r.knock.heard,'a Clapper bolt rings what it strikes and knocks it half a tile back',[r.clap,r.knock]);
   ok(!r.knockShade,'a Clapper bolt alone does not hear a Shade');
   ok(!r.chime.lit&&r.chime.hit&&r.chime.period===1.6,'her chimes hear and strike the ordinary dark, and ring 20% faster',r.chime);
