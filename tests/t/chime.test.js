@@ -50,7 +50,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(Math.abs(r.deafTick-.5)<.05,'deafness wears off over time',r.deafTick);
   ok(r.boss3,'once it hears again, the chime stuns it');
   ok(r.tip===true,'the Deaf to the Chime tip fires while a boss is deaf',r.tip);
-  ok(r.cost===55,'the chime still costs 55',r.cost);
+  ok(r.cost===60,'the chime costs 60',r.cost);
   ok(!errs.length,'no page errors',errs);
   await b.close();
   if(fails.length){console.log('FAIL\n- '+fails.join('\n- ')); process.exit(1);} console.log('chime ok');

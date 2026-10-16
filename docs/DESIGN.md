@@ -47,7 +47,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `candle` | Candle Ward | 30 | beside path | Casts light, unveils Shades, and slows whatever walks in it. |
 | `harpoon` | Brine Harpoon | 40 | beside path | Fires barbed bolts at a single creature. *(aimed: First/Last/Strongest)* |
 | `salt` | Salt Circle | 20 | path | Poured on the path. Anything crossing it moves at half speed until the salt scatters. |
-| `chime` | Bone Chime | 55 | beside path | Rings out in a circle, stunning everything nearby. The four nearest take its full strike, the rest half. A boss it stuns goes deaf to chimes for 4 seconds. |
+| `chime` | Bone Chime | 60 | beside path | Rings out in a circle, stunning everything nearby. The four nearest take its full strike, the rest half. A boss it stuns goes deaf to chimes for 4 seconds. |
 | `trap` | Hook Trap | 35 | path | Rusted jaws set on the path. They snap shut on the first thing that walks in, seen or unseen, then reset. |
 | `tithe` | Tithe Bowl | 50 | beside path | Pays you essence for every creature that dies near it, and a tithe at every break between waves. |
 | `effigy` | Hex Effigy | 40 | beside path | A pinned doll. Everything that passes near it is hexed for a while and takes 40% more damage from every source. |
