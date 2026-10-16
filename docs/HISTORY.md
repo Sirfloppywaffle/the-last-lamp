@@ -4,6 +4,8 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+## v16.6 — The Bellringer
+Agathe Vell, the fifth and last kit, sees by sound: Toll, Noise, ghosts, Tuning Forks humming in the dark, Bell Wires and the Tocsin, Resonance and its shatters, the Perfect Toll, echoes and footsteps. Designed with Criss across four playtests, and balanced after the fourth. One tap now places one ward.
 - **The Bellringer sees by sound** (#26, the last of the five kits; designed with Criss and Gemini on #52: "Echo location. Being able to see into the dark. Setting bell trip wires."). She is **Agathe Vell**, who rang the bell of St. Agatha's as the town went under and came back up the stair blind. **Light lets you build; sound lets you see.**
   - **Toll** (her first rite; no cooldown, a 3-second swing): the lamp rings and a pale ring sweeps 7 tiles. Everything it touches is **heard** for 1.5 seconds: outlined in bone-white in the dark, veiled or not, and every ward can strike it. When the echo fades it leaves a hollow **ghost** where it was.
   - **Noise** is the price. Each Toll makes 1, and Noise fades 1 every 8 seconds. At 5 **the dark answers**: two Abyssal Stalkers climb out at the head of the path, and Noise drops to 2. The Toll button shows the Noise and warns when the next toll will call them.
