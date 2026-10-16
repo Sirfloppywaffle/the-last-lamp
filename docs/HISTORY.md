@@ -4,6 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **Heralds: The Last Keeper** (#31, the first of three). On the second floor, one wave (any but the first) is drawn for a Herald when the floor begins, and the strip above the board names it in red during the break before. The Last Keeper is a dead lamp-tender in a rotted cape and a wide hat, carrying a lantern on a crook. Its own lamp lights the dark around it, and every candle it passes goes out for 10 seconds, so whatever that candle held up goes dark. It walks in the middle of its wave, drains 8 oil if it reaches the lamp, and is no boss: it never ends the run by itself. Kill it and it pays a relic. It survives save and resume. A tip, a rules line (Heralds), a Grimoire entry, and DESIGN. (Claude)
 ## v16.6 — The Bellringer
 Agathe Vell, the fifth and last kit, sees by sound: Toll, Noise, ghosts, Tuning Forks humming in the dark, Bell Wires and the Tocsin, Resonance and its shatters, the Perfect Toll, echoes and footsteps. Designed with Criss across four playtests, and balanced after the fourth. One tap now places one ward.
 - **The Bellringer sees by sound** (#26, the last of the five kits; designed with Criss and Gemini on #52: "Echo location. Being able to see into the dark. Setting bell trip wires."). She is **Agathe Vell**, who rang the bell of St. Agatha's as the town went under and came back up the stair blind. **Light lets you build; sound lets you see.**

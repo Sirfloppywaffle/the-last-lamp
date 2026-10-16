@@ -34,9 +34,10 @@ Every table below is generated from the live code (`index.html`) by `tests/gen-d
 | `stalker` | Abyssal Stalker | 32 | 1.5 | 2 | 8 | 0.26 | veiled |
 | `behemoth` | Trench Behemoth | 420 | 0.35 | 6 | 35 | 0.55 | heavy |
 | `boss2` | The Primordial | 4200 | 0.38 | 99 | 0 | 0.75 | aura, boss, spawner |
+| `lastkeeper` | The Last Keeper | 560 | 0.42 | 8 | 40 | 0.52 |  |
 | `keeper` | Bound Keeper | 1 | 0 | 0 | 0 | 0.6 | bound |
 
-`bind` = can drop a sigil you can bind as a horror. `veiled` = invisible unless unveiled. `aura` = buffs nearby creatures. `spawner` = calls minions. `keeper` is the bound form of the Keeper Below; it never spawns as an enemy. Spawnable: `crawler`, `skitter`, `gnasher`, `watcher`, `shade`, `wretch`, `shrieker`, `elite`, `boss`, `stalker`, `behemoth`, `boss2`.
+`bind` = can drop a sigil you can bind as a horror. `veiled` = invisible unless unveiled. `aura` = buffs nearby creatures. `spawner` = calls minions. `keeper` is the bound form of the Keeper Below; it never spawns as an enemy. Spawnable: `crawler`, `skitter`, `gnasher`, `watcher`, `shade`, `wretch`, `shrieker`, `elite`, `boss`, `stalker`, `behemoth`, `boss2`, `lastkeeper`.
 
 ## Wards
 
@@ -352,6 +353,8 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 | Dread | 30 — Each tier of madness adds 10% more | 45 — Each tier adds 10% more again | 110 — Soul Spear: what it kills leaves its sigil, if its kind can be bound |
 
 Bellringer numbers: a toll's ring sweeps **8** tiles a second out to **7** tiles; what it touches is heard for **1.5s**. Toll has a **3s** swing and makes 1 Noise; Noise fades 1 per **8s**, and at **5** the dark answers with **2** Abyssal Stalkers and Noise drops to **2**. Bell Wires (at most **3**) hear what crosses them for **4s** and jangle within **1.5**, ringing again after **2s**. A Clapper bolt rings its target for **2s** and knocks it back **0.5** tiles. Peal tolls every **4s**; Cathedral staggers within **2** for **0.5s**. The Great Bell is heard **4s**, staggers **0.5s** and makes **3** Noise. Ghosts last **1.1s**, **24** at most.
+
+Heralds: floor 2: lastkeeper. The Last Keeper carries a lamp of **1.4** tiles and snuffs every candle within **1.3** for **10s**. A Herald drains its oil at the lamp but never ends the run by itself, and pays a relic when slain.
 
 Tuning Forks stand within **5** tiles of the lamp or **3.5** of a reached fork, hum **2.3** tiles (build there in the dark; wards strike only what is heard) and ring a toll on **3** tiles; Drone rings every **5s**. Echoes off the walls hear for **1s**. Unseen heavy things leave a footstep ripple every **0.55s** (at most **40** at once).
 

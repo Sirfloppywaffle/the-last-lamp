@@ -69,6 +69,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .preview{position:absolute;left:6px;top:6px;z-index:3;display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;max-width:calc(100% - 12px);padding:4px 9px;border-radius:6px;background:var(--veil);pointer-events:none}
 .preview .pl{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ash)}
 .preview .pv-n{font-size:.74rem;font-style:italic;color:var(--tallow)}
+.preview .pv-herald{font-family:var(--f-display);font-size:.86rem;color:var(--wound);letter-spacing:.02em}
 .preview .pv-oil{font-family:var(--f-num);font-size:.7rem;color:var(--wound)}
 .preview .pv-oil.is-fed{color:var(--tallow)}
 .chip{display:flex;align-items:center;gap:1px;font-family:var(--f-num);font-size:.74rem;color:var(--bone);font-variant-numeric:tabular-nums}
@@ -407,6 +408,7 @@ input[type=range]::-moz-range-track {
         <li><b>Call early.</b> Once a wave has finished arriving, you can call the next one while stragglers still walk, for bonus essence.</li>
         <li><b>Binding.</b> Some creatures leave a violet sigil when they die. Tap it before it fades and that creature joins your roster. Bound horrors are placed like wards and hit far harder. Slay the Keeper Below and its soul lingers longer than most. Bind it and it fights for you on the last floor. The Galvanist binds nothing by ritual: he captures with his Grounding Anchor instead.</li>
         <li><b>Forks.</b> On some floors the stair splits. They take the darker way, and only light you cast counts, never the lamp's. A gold chevron at the fork shows where they will go. Shades and Stalkers do the opposite and hunt your light. Gnashers and bosses keep the main way. A Weir built on the fork shuts one way; flip it between waves. Watchers fly over it, and a Behemoth breaks it. On these floors you also hold the Will-o’-Wisp: tap a way at a fork and, for eight seconds, everything but a boss follows it there.</li>
+        <li><b>Heralds.</b> Some floors send a Herald: a named terror in one wave, shown on the strip above the board in the break before it comes. It drains 8 oil if it reaches the lamp, but it is no boss and never ends the run by itself. Kill it and it pays a relic. The Last Keeper, on the second floor, carries a lamp of its own, and every candle it passes goes out for 10 seconds.</li>
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Your kit names the wards you start with: Candles, Harpoons, Salt, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, the Hex Effigy that makes everything near it take more damage, and its own. The Bone Chime, Tar Censer, Galvanic Coil and Whaling Gun are found on the stair: as gifts, from merchants, or in a pack. Only the Bellringer starts with the Chime.</li>
@@ -488,6 +490,8 @@ const FOES={
   stalker:{n:'Abyssal Stalker',hp:32,spd:1.5,oil:2,ess:8,col:'#4F7FA6',r:.26,veiled:true},
   behemoth:{n:'Trench Behemoth',hp:420,spd:.35,oil:6,ess:35,col:'#7A8486',r:.55,heavy:true},
   boss2:{n:'The Primordial',hp:4200,spd:.38,oil:99,ess:0,col:'#7A4FB8',r:.75,boss:true,aura:true,spawner:true},
+  /* a Herald: a named mid-floor terror. It drains heavy oil, but it is no boss, and it never ends the run by itself */
+  lastkeeper:{n:'The Last Keeper',hp:560,spd:.42,oil:8,ess:40,col:'#C9A35A',r:.52,herald:true},
   /* never spawns: the look and name of the Keeper once it is bound to you */
   keeper:{n:'Bound Keeper',hp:1,spd:0,oil:0,ess:0,col:'#B0507A',r:.6,bound:true}
 };
@@ -1361,6 +1365,8 @@ const AUDIO={
   /* the Tocsin fires: a bronze thump with a ring in it, then the shell's whistle */
   tocsin(){this.synth(82,'sine',.28,.5,50,0,.004); this.bronze(330,.05,1,.2); this.noise(.15,.18,500,.7,'lowpass'); this.synth(1600,'sine',.025,.8,700,.12,.05);},
   blast(){if(!this.gate('blast',80))return; this.noise(.4,.26,300,.6,'lowpass'); this.synth(55,'sine',.25,.6,35,0,.004); this.bronze(520,.03,.6,0);},
+  /* a lamp snuffed: a soft breath and a hiss of smoke */
+  snuff(){if(!this.gate('snuff',120))return; this.noise(.35,.12,900,.7,'lowpass'); this.synth(240,'sine',.03,.4,120,0,.02);},
   /* a tuning fork struck: a pure tone and its octave, long and clean */
   fork(){if(!this.gate('fork',200))return; this.synth(440,'sine',.05,1.4,0,0,.005); this.synth(880,'sine',.015,.6,0,0,.005);},
   /* a toll on the beat: the bell rings true, with a bright octave over it */
@@ -1665,7 +1671,7 @@ function connectedLights(exclude){
   /* a Signal Mirror's beam is the lamp's own light, thrown further: what stands in it is lit */
   const beams=mirrorBeams(exclude); for(const b of beams)for(const p of b.pts)src.push({x:p[0],y:p[1],r:MIRROR_R});
   /* an Arc Lamp mid-flicker gives no light at all */
-  const cands=F.towers.filter(t=>isLightTower(t)&&t!==exclude&&!t.dead&&!(t.type==='candle'&&arcOff(t)));
+  const cands=F.towers.filter(t=>isLightTower(t)&&t!==exclude&&!t.dead&&!(t.type==='candle'&&arcOff(t))&&!(t.snuffT>0));
   const leap=signalKit(), still=leap&&hasOff('still')&&F.waterPts&&F.waterPts.length>0;
   let grew=true;
   while(grew){
@@ -1996,6 +2002,13 @@ function buzz(ms){if(!store.get('ll-haptic',true)||!AUDIO.gate('buzz',120))retur
 function capLabel(){const c=store.get('ll-captions',null); return 'Show sounds: '+(c===null?'Auto':c?'On':'Off');}
 function captionsOn(){const c=store.get('ll-captions',null); return c===null?(VOL.master===0||VOL.sfx===0):!!c;}
 function caption(x,y,txt,size){if(!captionsOn())return; F.fx.push({k:'float',x,y,txt,col:'#D6E4EC',t:0,dur:1.1,size:size||.22,cap:true});}
+/* The Last Keeper snuffs every candle it passes; they stay out for a while, and what they held up goes dark */
+function updateHeralds(dt){
+  for(const t of F.towers)if(t.snuffT>0)t.snuffT-=dt;
+  for(const e of F.foes){if(e.dead||e.type!=='lastkeeper')continue;
+    for(const t of F.towers){if(t.kind!=='ward'||t.type!=='candle'||t.snuffT>0||dst(t.x,t.y,e.x,e.y)>SNUFF_R)continue;
+      t.snuffT=SNUFF_T; F.fx.push({k:'snuff',x:t.x,y:t.y-.35,t:0,dur:1.4}); AUDIO.snuff(); F.L=lightsNow();}}
+}
 /* an Arc Lamp shocks everything in its light each time it comes back on */
 function updateArcLamps(){
   if(kit()!=='galvanist')return;
@@ -2041,6 +2054,8 @@ function lightsNow(){
   for(const t of C.conn)L.push({x:t.x,y:t.y,r:towerLightR(t),reveal:true,gaze:t.type==='watcher'});
   /* passing lights: they show what is there, but you can't build in them and they never steer the crowd at a fork */
   for(const e of F.foes)if(e.kindleT>0&&!e.dead)L.push({x:e.x,y:e.y,r:KINDLE_R,reveal:true,temp:true,kindle:true});
+  /* the Last Keeper's own lamp: you can see it coming, and what walks with it */
+  for(const e of F.foes)if(e.type==='lastkeeper'&&!e.dead)L.push({x:e.x,y:e.y-.2,r:KEEPER_LIGHT,reveal:true,temp:true,kindle:true});
   for(const gl of F.glints)L.push({x:gl.x,y:gl.y,r:gl.r*(.6+.4*gl.t/gl.max),reveal:true,temp:true,glint:true});
   for(const b of C.beams)for(const p of b.pts)L.push({x:p[0],y:p[1],r:MIRROR_R,beam:true});
   F.beams=C.beams;
@@ -2216,7 +2231,7 @@ function awardEmbers(won){
 }
 function beginFloor(snap){
   /* a new floor draws its waves; a resumed one keeps its draw (an old save without one plays the classic waves) */
-  if(!snap||!run.draw||run.draw.floor!==run.floor)run.draw={floor:run.floor,cards:snap?FLOORS[run.floor].waves.map(()=>'c'):drawWaves(run.floor)};
+  if(!snap||!run.draw||run.draw.floor!==run.floor)run.draw={floor:run.floor,cards:snap?FLOORS[run.floor].waves.map(()=>'c'):drawWaves(run.floor),herald:snap?null:heraldDraw(run.floor)};
   const drawn=drawnWaves(run.floor,run.draw.cards);
   const def=Object.assign({},FLOORS[run.floor],{waves:drawn.map(d=>d.w),wnames:drawn.map(d=>d.n),walt:drawn.map(d=>d.alt)});
   if(!snap){
@@ -2311,6 +2326,9 @@ function startWave(sub){
     const n=F.elite&&g.count>1?Math.round(g.count*1.25):g.count;
     for(let i=0;i<n;i++)F.queue.push({t:g.delay+i*g.intv,type:g.type,gate:Math.min(g.gate,F.nRoots-1)});
   }
+  /* the Herald walks in the middle of its wave */
+  const hd=run.draw&&run.draw.herald;
+  if(hd&&hd.wave===F.wave-1){const mid=F.queue.reduce((m,q)=>Math.max(m,q.t),0)/2; F.queue.push({t:mid,type:hd.type,gate:0}); F.heraldWave=true;}
   waterRise();
   blubberToll();
   if(run.oil>0&&has('blackwick')){run.oil-=1; F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'−1 oil',col:PAL.wound,t:0,dur:1,size:.3}); if(run.oil<=0){run.oil=0; defeat();}}
@@ -2341,7 +2359,18 @@ const BOSS_INTRO={
   boss:{name:'The Keeper Below',sub:'It has waited a long time for your light',col:'#e8604c',glow:'rgba(232,96,76,.6)',rift:'230,90,70'},
   boss2:{name:'The Primordial',sub:'It was here before the dark had a name',col:'#c79bff',glow:'rgba(170,110,255,.65)',rift:'180,120,255'}
 };
+/* Heralds: each floor that has them sends one, in a wave drawn when the floor begins and named in the break before it.
+   The Last Keeper carries a lamp of its own, and every candle it passes goes out */
+const HERALDS={1:['lastkeeper']}, KEEPER_LIGHT=1.4, SNUFF_R=1.3, SNUFF_T=10;
+function heraldDraw(fi){
+  const pool=HERALDS[fi]; if(!pool)return null;
+  const slots=FLOORS[fi].waves.map((w,i)=>i).filter(i=>!fixedWave(FLOORS[fi].waves[i])&&i>0);
+  if(!slots.length)return null;
+  return {type:pick(pool),wave:pick(slots)};
+}
+function heraldNext(){const h=run.draw&&run.draw.herald; return h&&F&&h.wave===F.wave?h:null;}
 const BIG_INTRO={
+  lastkeeper:{name:'The Last Keeper',sub:'It tends the only lamp it will allow'},
   elite:{name:'The Drowned Choirmaster',sub:'A hymn rises out of the water'},
   behemoth:{name:'A Trench Behemoth',sub:'Something heavy drags itself up'}
 };
@@ -3382,6 +3411,10 @@ function killFoe(e){
   addCorpse(e);
   if(hasOff('milk')&&inWater(e)){run.milk=(run.milk||0)+1; if(run.milk>=4){run.milk=0; gainOil(1);}}
   if(e.def.boss)run.bosses=(run.bosses||0)+1;
+  /* a Herald slain pays a relic */
+  if(e.def.herald&&e.hp<=0){run.heralds=(run.heralds||0)+1; const pool=relicPool(false), k=pool.length?pick(pool):null;
+    if(k){addRelic(k); setTimeout(()=>banner(e.def.n+' falls','rite','You take '+RELICS[k].n),300);} else{run.ess+=60; setTimeout(()=>banner(e.def.n+' falls','rite','+60 essence'),300);}
+    F.fx.push({k:'ring',x:e.x,y:e.y,r0:.2,r1:1.6,t:0,dur:.7,col:'237,180,90'});}
   if(has('leech')){run.leech=(run.leech||0)+1; if(run.leech>=30){run.leech=0; gainOil(1);}}
   if(gain>0){run.ess+=gain; F.fx.push({k:'float',x:e.x,y:e.y-.3,txt:'+'+gain,col:PAL.tallow,t:0,dur:.8,size:.24});}
   if(e.hex&&e.hex.doom){
@@ -3587,6 +3620,7 @@ function update(dt){
     while(F.queue.length&&F.queue[0].t<=F.waveT){const q=F.queue.shift(); spawnFoe(q.type,q.gate,0);}
   }
   updateArcLamps();
+  updateHeralds(dt);
   updateFoes(dt);
   updateCharges(dt);
   updateGrid(dt);
@@ -4323,6 +4357,48 @@ shade:{ext:1.8,period:2.8,frames:14,flip:true,draw(c,w,M){
   const rh=Math.sin(w)*.06;
   tendril(c,M,[[.42,-.1],[.75,-.08+rh],[.98,-.02+rh]],.12,.07,[170,176,220],{base:0});
   for(let f=0;f<4;f++){const a=-.5+f*.32+Math.sin(w+f)*.1; tendril(c,M,swayPath(.98,-.02+rh,a,.38,3,t=>.25*t),.05,.012,[190,196,230],{base:0});}
+  c.restore();
+}},
+
+/* The Last Keeper: a tall, stooped lamp-tender in a rotted oilskin cape and a wide-brimmed hat, walking its round with a
+   lantern hung from a long crook. Under the brim, two dim coals. The lantern is the only warm thing about it */
+lastkeeper:{ext:2,period:2.2,frames:14,flip:true,draw(c,w,M){
+  const CAPE=[64,58,50], SKIN=[150,140,120], WOOD=[70,52,34];
+  const step=Math.sin(w), bob=Math.abs(Math.sin(w))*.04;
+  c.save(); c.translate(0,-bob);
+  /* the crook, held out ahead */
+  tendril(c,M,[[.55,.95],[.66,.1],[.72,-.75],[.76,-1.05]],.07,.06,WOOD,{base:-.2});
+  tendril(c,M,[[.76,-1.05],[.95,-1.14],[1.08,-1.02]],.06,.05,WOOD,{base:-.2});
+  /* the lantern, swinging a little on its chain */
+  const lx=1.08+Math.sin(w+.6)*.04, ly=-.72;
+  if(M.sil){c.fillStyle=rgba(SILC); c.fillRect(lx-.13,ly-.18,.26,.32);}
+  else{c.strokeStyle='rgba(40,30,20,.9)'; c.lineWidth=.025; c.beginPath(); c.moveTo(1.08,-1.02); c.lineTo(lx,ly-.18); c.stroke();
+    const lg=c.createRadialGradient(lx,ly,0,lx,ly,.42); lg.addColorStop(0,'rgba(255,236,180,.95)'); lg.addColorStop(.35,'rgba(255,190,90,.55)'); lg.addColorStop(1,'rgba(255,150,60,0)');
+    c.fillStyle=lg; c.beginPath(); c.arc(lx,ly,.42,0,Math.PI*2); c.fill();
+    c.fillStyle='#2a2016'; c.fillRect(lx-.13,ly-.2,.26,.05); c.fillRect(lx-.11,ly+.1,.22,.05);
+    c.fillStyle='rgba(255,226,160,.85)'; c.fillRect(lx-.1,ly-.15,.2,.25);
+    c.strokeStyle='#2a2016'; c.lineWidth=.03; c.strokeRect(lx-.1,ly-.15,.2,.25); c.beginPath(); c.moveTo(lx,ly-.15); c.lineTo(lx,ly+.1); c.stroke();}
+  /* the long legs under the cape, walking */
+  tendril(c,M,[[-.12,.45],[-.16+step*.12,.75],[-.18+step*.18,1.02]],.13,.09,lit(CAPE,-.3),{base:-.2});
+  tendril(c,M,[[.12,.45],[.14-step*.12,.75],[.16-step*.18,1.02]],.13,.09,lit(CAPE,-.3),{base:-.2});
+  /* the cape: broad shoulders, a ragged hem */
+  c.beginPath(); c.moveTo(-.1,-.62);
+  c.bezierCurveTo(.4,-.66,.6,-.3,.52,.25);
+  for(let i=0;i<=6;i++){const x=.52-i*(1.12/6), y=.7+(i%2?.14:-.02)+Math.sin(w+i*1.3)*.05; c.lineTo(x,y);}
+  c.bezierCurveTo(-.7,-.1,-.55,-.58,-.1,-.62); c.closePath();
+  if(M.sil)c.fillStyle=rgba(SILC); else{const g=c.createLinearGradient(-.6,0,.6,0); g.addColorStop(0,rgba(lit(CAPE,-.45))); g.addColorStop(.6,rgba(lit(CAPE,.05))); g.addColorStop(1,rgba(lit(CAPE,-.2))); c.fillStyle=g;}
+  c.fill();
+  if(!M.sil){c.strokeStyle=rgba(lit(CAPE,-.6),.5); c.lineWidth=.03; for(let k=0;k<3;k++){c.beginPath(); c.moveTo(-.25+k*.22,-.3); c.quadraticCurveTo(-.28+k*.24,.2,-.3+k*.25,.62); c.stroke();}}
+  /* the arm reaching to the crook */
+  tendril(c,M,[[.32,-.4],[.52,-.25],[.66,-.15]],.13,.09,CAPE,{base:-.15});
+  blob(c,M,SKIN,.68,-.14,.07,.06);
+  /* the head: a sunken face under a wide-brimmed hat */
+  blob(c,M,lit(SKIN,-.35),.12,-.78,.17,.19);
+  c.fillStyle=M.sil?rgba(SILC):'#0a0806'; ell(c,.16,-.76,.11,.12); c.fill();
+  const gl=.7+.3*Math.sin(w*2.3);
+  if(!M.sil){eyeG(c,M,.12,-.79,.032*gl,{emissive:true,glow:[255,190,110]}); eyeG(c,M,.22,-.78,.03*gl,{emissive:true,glow:[255,190,110]});}
+  blob(c,M,lit(CAPE,-.2),.1,-.93,.42,.07);
+  blob(c,M,lit(CAPE,-.1),.1,-1.04,.2,.12);
   c.restore();
 }},
 
@@ -5960,6 +6036,10 @@ function render(){
     if(f.k==='splash'){g.fillStyle='rgba(224,102,46,'+(.45*(1-p))+')'; g.beginPath(); g.arc(f.x,f.y,f.r*(.6+.4*p),0,TAU); g.fill();}
     else if(f.k==='bite'){g.strokeStyle='rgba(239,230,210,'+(1-p)+')'; g.lineWidth=.06; g.beginPath(); g.arc(f.x,f.y-.1+p*.1,.25,.2,Math.PI-.2); g.stroke(); g.beginPath(); g.arc(f.x,f.y+.1-p*.1,.25,Math.PI+.2,-.2); g.stroke();}
     else if(f.k==='beam'){g.strokeStyle='rgba(201,185,140,'+(.8*(1-p))+')'; g.lineWidth=.05; g.beginPath(); g.moveTo(f.x,f.y); g.lineTo(f.tx,f.ty); g.stroke();}
+    else if(f.k==='snuff'){/* a candle put out: a curl of smoke rising from the wick */
+      for(let k=0;k<3;k++){const q=clamp(p*1.2-k*.12,0,1); if(q<=0)continue; g.strokeStyle='rgba(150,150,150,'+(.5*(1-q))+')'; g.lineWidth=.04*(1-q*.5);
+        g.beginPath(); g.moveTo(f.x,f.y); g.quadraticCurveTo(f.x+.12*Math.sin(k+q*4),f.y-.25*q,f.x-.05+.1*k,f.y-.6*q); g.stroke();}
+    }
     else if(f.k==='shatter'){/* a creature shattering: shards of pale bronze-glass flying out and tumbling */
       g.save(); g.globalCompositeOperation='lighter';
       for(let k=0;k<10;k++){const a=k/10*TAU+f.seed, d=p*(f.r+.5)*(.6+hash(k,f.seed,3)*.6), sx=f.x+Math.cos(a)*d, sy=f.y+Math.sin(a)*d*.85-Math.sin(p*Math.PI)*.12, sz=.07*(1-p*.5), rot=a+p*6;
@@ -6342,6 +6422,7 @@ document.addEventListener('click',ev=>{if(!$('#relTip').hidden&&!ev.target.close
 
 /* what the Grimoire says about each creature, beyond its numbers */
 const LORE={
+  lastkeeper:'A Herald. A dead lamp-tender who still walks its round, carrying the only lamp it will allow: every candle it passes goes out for a while, and what that candle held up goes dark. It drains 8 oil if it reaches your lamp, but it is no boss. Kill it and it pays a relic.',
   crawler:'The most common thing on the stair. Slow and soft, and never alone.',
   skitter:'Small and quick. They come in swarms and slip past slow wards.',
   gnasher:'Slow and hard to kill, and it drains 2 oil if it arrives. At a fork it never leaves the main way.',
@@ -6560,6 +6641,9 @@ const TIPS={
   peal:{when:()=>bellKit()&&F.phase==='wave'&&lstat().peal>0,title:'Peal',
     text:'The lamp now tolls on its own, a quieter heartbeat that reaches 5 tiles and makes no Noise, and a ring closes on it before each beat. It hears only the ordinary dark, and cracks nothing. Tap Toll as the ring lands, when the button glows, for a Perfect Toll: half again as far, two cracks, and half the Noise.',
     target:()=>coachBoard(F.lx,F.ly,1.2)},
+  herald:{when:()=>F.phase==='build'&&!!heraldNext(),title:'A Herald comes',
+    text:'A Herald walks in the next wave: its name is on the strip above the board. The Last Keeper carries a lamp of its own, and every candle it passes goes out for 10 seconds, and whatever that candle held up goes dark. It drains 8 oil at the lamp, but it is no boss. Kill it for a relic.',
+    target:()=>coachEl('#preview')},
   tuningfork:{when:()=>bellKit()&&F.phase==='build'&&run.wards.includes('fork'),title:'Tuning Forks',
     text:'She builds no candles. A Tuning Fork gives no light: it hums. It stands within 5 tiles of the lamp or 3.5 of another fork, lit or dark, and you can build inside its hum in the dark. But wards there are blind: they strike only what is heard. Keep the bell ringing.',
     target:()=>coachTray('fork')},
@@ -6900,10 +6984,11 @@ function renderPreview(){
   const wn=idx>=0&&F.def.wnames?F.def.wnames[idx]:'';
   /* the Whaler sees what the next wave will cost before calling it */
   const due=idx>=0?blubberDue():null, drink=due&&due.lamps?'<span class="pv-oil'+(due.oil?'':' is-fed')+'">Lamps drink '+due.lamps+(due.oil?' · −'+due.oil+' oil':' · fed')+'</span>':'';
-  const key=label+'|'+wn+'|'+drink+'|'+JSON.stringify(groups);
+  const hd=run.draw&&run.draw.herald, herald=idx>=0&&hd&&hd.wave===idx?'<span class="pv-herald">Herald · '+FOES[hd.type].n+'</span><span class="chip" title="'+FOES[hd.type].n+'"><canvas width="44" height="44" data-f="'+hd.type+'"></canvas></span>':'';
+  const key=label+'|'+wn+'|'+drink+'|'+herald+'|'+JSON.stringify(groups);
   if(key===previewKey)return; previewKey=key;
   const el=$('#preview');
-  el.innerHTML='<span class="pl">'+label+'</span>'+(wn?'<span class="pv-n">'+wn+'</span>':'')+drink+Object.keys(groups).map(k=>'<span class="chip" title="'+FOES[k].n+'"><canvas width="44" height="44" data-f="'+k+'"></canvas>×'+groups[k]+'</span>').join('');
+  el.innerHTML='<span class="pl">'+label+'</span>'+(wn?'<span class="pv-n">'+wn+'</span>':'')+drink+herald+Object.keys(groups).map(k=>'<span class="chip" title="'+FOES[k].n+'"><canvas width="44" height="44" data-f="'+k+'"></canvas>×'+groups[k]+'</span>').join('');
   el.querySelectorAll('canvas').forEach(c=>drawIcon(c,{kind:'foe',type:c.dataset.f}));
 }
 /* the rites you hold, plus the wisp on floors that fork (it is never a gift) */
