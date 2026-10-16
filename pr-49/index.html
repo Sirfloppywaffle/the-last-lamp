@@ -1571,6 +1571,7 @@ function lampBase(){
   if(madTier()>=3)r-=1;
   return Math.max(1.6,r);
 }
+function flickering(){return F.arcOff||(madTier()>=1&&F.flickT>0);}
 function lampRadius(){
   let r=lampBase();
   if(madTier()>=1&&F.flickT>0)r-=.6;
@@ -3303,10 +3304,11 @@ function update(dt){
   F.bowls=F.towers.filter(t=>t.kind==='ward'&&t.type==='tithe'&&!t.dark).map(t=>{t.st=wstat(t); return t;});
   for(const t of F.towers){if(t.ping>0)t.ping-=dt; if(t.snap>0)t.snap-=dt; if(t.recoil>0)t.recoil-=dt;}
   for(const e of F.foes)if(!e.dead)applyHex(e,dt);
-  /* an Arc Lamp's flicker is not being cut off: the warning waits until it is lit again */
-  if(!F.arcOff){
+  /* a flicker is not being cut off (an Arc Lamp's, or the lamp's own at Whispers): the warning waits until it is lit again,
+     and in a wave it speaks once at most */
+  if(!flickering()){
     const darkN=F.towers.filter(t=>t.dark).length;
-    if(darkN>(F.lastDark||0))hint(darkN===1?'Something you built is cut off from the lamp. It does nothing until light reaches it again.':darkN+' of your wards are cut off from the lamp and doing nothing until light returns.',3400);
+    if(darkN>(F.lastDark||0)&&(F.phase!=='wave'||F.darkHintWave!==F.wave)&&(F.phase!=='wave'||(F.darkHintWave=F.wave,true)))hint(darkN===1?'Something you built is cut off from the lamp. It does nothing until light reaches it again.':darkN+' of your wards are cut off from the lamp and doing nothing until light returns.',3400);
     F.lastDark=darkN;
   }
   if(F.phase==='wave'){
@@ -5668,6 +5670,7 @@ function render(){
 
 /* ---------------- input ---------------- */
 cv.addEventListener('pointerdown',ev=>{
+  hideHint();
   if(!F||paused||F.intro||F.phase==='over'||F.phase==='won')return;
   const rect=cv.getBoundingClientRect();
   const x=(ev.clientX-rect.left)/rect.width*COLS, y=(ev.clientY-rect.top)/rect.height*ROWS;
@@ -5712,6 +5715,10 @@ function hint(txt,ms){
   const h=$('#hint'); h.textContent=txt; h.classList.add('show');
   clearTimeout(hintTimer); hintTimer=setTimeout(()=>h.classList.remove('show'),ms||1800);
 }
+/* any tap on the board puts a hint away at once, so it never stands between you and a tile */
+function hideHint(){clearTimeout(hintTimer); $('#hint').classList.remove('show');}
+/* a ward's full description shows by itself only the first time you pick it; tap the card for it again */
+let descSeen=store.get('ll-desc',[]); if(!Array.isArray(descSeen))descSeen=[];
 /* ---------------- relics in the HUD, and the Grimoire ----------------
    The relic bar holds a seal for every relic you carry; tap one and a card says what it does (it takes no taps
    itself, and the next tap anywhere puts it away). The bar keeps one size whatever it holds, so nothing shifts
@@ -6005,7 +6012,7 @@ const TIPS={
   sigil:{when:()=>F.souls.some(so=>so.t>0&&!so.big&&!so.cage),title:'A sigil',text:'Tap the violet sigil before it fades and that creature is bound to you. Bound horrors are built like wards, and each one you field adds madness.',
     target:()=>{const so=F.souls.find(s=>s.t>0&&!s.big); return so?coachBoard(so.x,so.y,.75):null;}},
   madness:{when:()=>F.towers.some(t=>t.kind==='horror'),title:'Madness',text:'Every horror you field adds madness. At Whispers the lamp flickers. Deeper, a horror may break loose, and when the dark leans in the lamp shrinks.',target:()=>coachStat('#madV')},
-  dark:{when:()=>!F.arcOff&&F.towers.some(t=>t.dark&&t.kind==='ward'),title:'Cut off',text:'This ward stands outside the lamp’s light, so it does nothing. Light has to connect back to the lamp through lit tiles.',
+  dark:{when:()=>!flickering()&&F.towers.some(t=>t.dark&&t.kind==='ward'),title:'Cut off',text:'This ward stands outside the lamp’s light, so it does nothing. Light has to connect back to the lamp through lit tiles.',
     target:()=>{const t=F.towers.find(t=>t.dark&&t.kind==='ward'); return t?coachBoard(t.c+.5,t.r+.5,.7):null;}}
 };
 Object.keys(KITS).forEach(k=>{if(KITS[k].deed)TIPS['deed_'+k]={when:()=>!!(run.deeds&&run.deeds.includes(k)),title:'A deed is done',
@@ -6285,7 +6292,8 @@ function renderModebar(){
   /* on narrow screens the card shortens the description; it shows in full once, and again on a tap */
   const sp=el.querySelector('span'), full=()=>hint(sub,4200);
   el.querySelector('.mt').onclick=full;
-  if(fresh&&sp.scrollWidth>sp.clientWidth+2)full();
+  const dk=sel?sel.kind+':'+sel.type:'mode:'+mode;
+  if(fresh&&sp.scrollWidth>sp.clientWidth+2&&!descSeen.includes(dk)){descSeen.push(dk); store.set('ll-desc',descSeen); full();}
 }
 let previewKey='';
 function renderPreview(){
