@@ -121,7 +121,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   console.log(JSON.stringify(r));
   ok(r.names.join()==='Corpse Candle,Bone Spear'&&r.cost===0,'the Occultist builds Corpse Candles (free) and Bone Spears',r);
   ok(r.wards.includes('grasp')&&r.rites.join()==='unbind,raise'&&r.mad===3,'it casts Unbind and Raise the Dead; horrors cost their full madness',r);
-  ok(r.trees[0]===0&&r.trees[1]==='Speed,Strength,Dread','Corpse Candles take no branches; the Bone Spear has Dread',r.trees);
+  ok(r.trees[0]===0&&r.trees[1]==='Sinew,Splinter,Dread','Corpse Candles take no branches; the Bone Spear has Dread',r.trees);
   ok(r.seeded[0]===2&&r.seeded[1]===3,'the first floor starts with two piles of bones',r.seeded);
   ok(r.noneAtStart,'a later floor begins with nowhere to light one');
   ok(r.pile1.join()==='1'&&r.pileFull.join()==='3','deaths gather into one pile of three at most',[r.pile1,r.pileFull]);

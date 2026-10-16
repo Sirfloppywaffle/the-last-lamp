@@ -261,6 +261,20 @@ Unlocks come from **how** you play, not only how much (the Ember Hall stays).
 - **Existing saves lock them too (Criss).** The Whaler and Occultist are open today; after this change every save, his included, earns them back through their deeds.
 - **Developer mode** shows every kit, patron, offering and Grimoire page while it's on, and **saves none of it**: turning it off puts real progress back exactly as it was. (Today's dev "Unlock everything" already only touches the current run, never `ll-meta`; keep it that way.)
 
+### 13.6b The Galvanist (agreed with Criss, October 2026)
+
+A mad scientist who builds a **power grid**. Every other kit places wards that work alone; his work as a network that can be overwhelmed, broken, cut off or overloaded.
+
+- **Pylon** (his own ward, think Wattson): links to other pylons within ~3.5 tiles with a live wire across the ground. Anything crossing a wire is shocked (damage + a short stun). A wire then needs ~1.5s to recharge and dims meanwhile, so one crawler dies but a swarm pours through. Behemoths snap a wire for the wave; fliers pass over. The grid must reach the lamp: a pylon in the lamp's own light is the **mains**, and anything cut off from it is dead.
+- **Arc Lamp** (his candle): brighter, but it flickers. Every few seconds it cuts out for half a second (wards in its light go dark for that moment); when it comes back, everything in its light takes a shock.
+- **Lightning Rod** (his harpoon): the bolt stays planted for a few seconds and counts as a temporary pylon. Wires and coil lightning jump through it.
+- **Overload** (his rite): paid in **oil, not a cooldown**: 2 oil, and every wire fires at triple strength, arcs leap between all pylons, every wire recharges. The setback is **Heat**: each Overload adds 1, it cools 1 every 10 seconds, and an Overload cast at 3 or more **fries** pylons (the hardest-worked ones burn out and must be rebuilt, which can cut power to what is behind them). The rite button always shows what the next one will cost.
+- **Rule-breaker:** live wires glow; anything crossing one is lit and unveiled for a moment, Shades included. Not buildable light.
+- **The lamp itself** gets his own branch, **Dynamo** (wires recharge faster), capped by **Static Burst**: when something comes close, the lamp discharges and stuns everything near it, then recharges. (If that doesn't fly, it becomes a gift.)
+- **Keeps the Galvanic Coil** (his Tesla coil) to test alongside pylons; coil lightning arcs through Lightning Rods.
+- **Look (go all out):** copper, porcelain insulators, Leyden jars, blue-white arcs that re-jag every few frames, sparks, a hum. **His lamp is restyled** as a carbon-arc lamp in a glass globe on a coil-wound copper base. Everything electric shares one palette (cold blue-white on copper).
+- **Who builds the art:** Claude builds the mechanics with full art. Gemini (Jules) can take an art pass afterward from an issue that names the exact draw functions; if Jules hits its usage limit mid-way, Claude finishes from the same issue, so nothing waits on it.
+
 ### 13.7 Later
 
 - **Floor-signature creatures**, each breaking one rule: Wick-eater (Cistern), the Reassembled (Ossuary), Congregant (Nave, an inverse Shade), Throat-polyp (Throat), Echo (Heart).
