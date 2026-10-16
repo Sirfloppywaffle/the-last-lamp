@@ -605,35 +605,45 @@ const TREES={
     {k:'spy',n:'Spyglass',t:[[40,'+0.6 range'],[55,'+0.6 range'],[120,'Deep Sight: fires into the dark and at veiled things']]}]
 };
 /* a kit's own ward swaps one branch for one that fits it; the other two stay as they are */
+/* a branch in a kit's own words: the same key and costs (so the same effect underneath), a new name and new lines */
+function rb(base,n,lines){return {k:base.k,n,t:base.t.map((x,i)=>[x[0],lines[i]||x[1]])};}
+const [GLOW,WAX,EMBER]=TREES.candle, [SPEED,STRENGTH]=TREES.harpoon, [WICK,RESERVOIR]=TREES.lamp;
 const KIT_TREES={
   lamplighter:{
-    candle:[TREES.candle[0],
+    candle:[rb(GLOW,'Lens',['A polished lens: +0.5 light','A finer lens: +0.5 light','Beacon: wards in its light deal 20% more damage']),
       {k:'signal',n:'Signal',t:[[15,'Its light leaps 1 tile further'],[25,'Leaps 1 tile further again'],[50,'Fire Thread: anything that crosses its threads catches fire']]},
-      TREES.candle[2]],
-    harpoon:[TREES.harpoon[0],TREES.harpoon[1],
+      rb(EMBER,'Burner',['The lantern runs hot: its light burns 3 damage a second','Hotter: 6 damage a second','Pyre: anything dying in its light bursts for 12 damage'])],
+    harpoon:[rb(SPEED,'Windlass',['A quicker crank: reloads 25% faster','Reloads 25% faster again','Twin Reel: two flare bolts per shot']),
+      rb(STRENGTH,'Heavy Bolts',['+6 damage','+8 damage','Piercing Flare: bolts pass through everything in a line']),
       {k:'flare',n:'Flare',t:[[30,'Flares burn wider'],[45,'Flares burn a second longer'],[110,'Starshell: every fourth bolt lights a wide circle for 4 seconds']]}]
   },
   whaler:{
-    candle:[TREES.candle[0],TREES.candle[1],
+    candle:[rb(GLOW,'Fat',['More fat in the dish: +0.5 light','A heaped dish: +0.5 light','Beacon: wards in its light deal 20% more damage']),
+      rb(WAX,'Smoke',['Its greasy smoke slows by 30%','Thicker smoke: slows by 40%','Tar Snare: the smoke roots each creature for 1s the first time it enters']),
       {k:'reek',n:'Reek',t:[[15,'Its smoke clings: what leaves its light stays slowed 2 seconds'],[25,'It clings 4 seconds'],[50,'Lure: at a fork, everything but a boss takes the way it lights']]}],
-    harpoon:[TREES.harpoon[0],TREES.harpoon[1],
+    harpoon:[rb(SPEED,'Winch',['A geared winch: reloads 25% faster','Reloads 25% faster again','Twin Reel: two lines per shot']),
+      rb(STRENGTH,'Iron',['A heavier iron: +6 damage','+8 damage','Through-Iron: bolts pass through everything in a line']),
       {k:'line',n:'Line',t:[[30,'The line slows by up to 55%'],[45,'The line holds a tile further out'],[110,'Reel In: every 4 seconds the line hauls its catch a tile back']]}]
   },
   galvanist:{
-    candle:[TREES.candle[0],TREES.candle[1],
+    candle:[rb(GLOW,'Filament',['A thicker filament: +0.5 light','+0.5 light again','Floodlight: wards in its light deal 20% more damage']),
+      rb(WAX,'Field',['Its field numbs: what stands in it slows by 30%','Slows by 40%','Seize: the first time each creature enters, the current locks its limbs for 1s']),
       {k:'spark',n:'Spark',t:[[15,'Its flare shocks for 4 more'],[25,'4 more again'],[50,'Steady Current: it never cuts out, and still flares']]}],
-    harpoon:[TREES.harpoon[0],TREES.harpoon[1],
+    harpoon:[rb(SPEED,'Solenoid',['A stronger solenoid: fires 25% faster','Fires 25% faster again','Twin Rods: two bolts per shot']),
+      rb(STRENGTH,'Copper',['A heavier copper tip: +6 damage','+8 damage','Arc Bolt: bolts pass through everything in a line']),
       {k:'charge',n:'Charge',t:[[30,'Rods stand 2 seconds longer'],[45,'Each harpoon keeps 3 rods'],[110,'Thunderhead: a rod bursts when it falls, shocking all within 1.5 tiles']]}],
     pylon:[{k:'volt',n:'Voltage',t:[[30,'Its wires shock for 6 more'],[45,'8 more again'],[100,'Arc Flash: its wires stun twice as long']]},
       {k:'span',n:'Span',t:[[25,'Links 0.5 tiles further'],[40,'0.5 further again'],[90,'Relay: it holds 2 more wires']]},
       {k:'cap',n:'Capacitor',t:[[30,'Its wires recharge 20% faster'],[45,'20% faster again'],[100,'Insulated: an Overload never fries it']]}],
-    lamp:[TREES.lamp[0],TREES.lamp[1],
+    lamp:[rb(WICK,'Carbon',['Thicker carbons: +0.5 light','+0.5 light again','Floodlamp: +0.5 light, and lamplight unveils Shades']),
+      rb(RESERVOIR,'Accumulator',['Refill 3 oil','Refill 3 oil','Wellspring: +1 oil after every wave']),
       {k:'dynamo',n:'Dynamo',t:[[40,'Every wire recharges 20% faster'],[60,'20% faster again'],[130,'Static Burst: when something comes close, the lamp discharges and stuns everything near it, then recharges']]}]
   },
   /* a Corpse Candle burns one wave, so it takes no branches */
   occultist:{
     candle:[],
-    harpoon:[TREES.harpoon[0],TREES.harpoon[1],
+    harpoon:[rb(SPEED,'Sinew',['Corded sinew: hurls 25% faster','Hurls 25% faster again','Twin Spears: two spears per throw']),
+      rb(STRENGTH,'Splinter',['A sharper splinter: +6 damage','+8 damage','Splintering Spear: it passes through everything in a line']),
       {k:'dread',n:'Dread',t:[[30,'Each tier of madness adds 10% more'],[45,'Each tier adds 10% more again'],[110,'Soul Spear: what it kills leaves its sigil, if its kind can be bound']]}]
   }
 };
@@ -1291,6 +1301,25 @@ const AUDIO={
   lose(){[233, 207.65, 185, 92.5].forEach((f,i)=>this.synth(f,'sawtooth',.15,1.2,null,i*.25));},
   trap(){if(!this.gate('trap',80))return; this.noise(.08,.35,2500,2); this.synth(180,'square',.18,.12,60);},
   zap(){if(!this.gate('zap',60))return; this.noise(.18,.22,5200,1.4,'highpass'); this.synth(1600,'sawtooth',.05,.15,300);},
+  /* the Galvanist's grid: a crackling bite, the surge of an Overload, a pylon burning out, the lamp's static, an Arc Lamp's
+     flare and a rod driven home, all from noise chopped into sparks over a mains buzz */
+  crackle(n,spread,peak,delay){for(let i=0;i<n;i++)this.noise(.02+Math.random()*.03,peak*(.6+Math.random()*.4),3500+Math.random()*3500,2.5,'bandpass',(delay||0)+Math.random()*spread);},
+  wire(){if(!this.gate('wire',70))return; this.crackle(4,.09,.24); this.synth(120,'sawtooth',.07,.16,90); this.synth(2400,'square',.025,.06,600);},
+  overload(){this.synth(55,'sawtooth',.3,1.1,520,0,.05); this.synth(57,'square',.18,1.1,500,0,.05,7); this.crackle(18,.9,.32); this.noise(1,.22,6000,.8,'highpass',.05); this.synth(1800,'sawtooth',.06,.5,200,.4);},
+  fry(){this.noise(.06,.45,1800,1.5); this.crackle(10,.6,.28,.04); this.noise(1.1,.16,900,.7,'lowpass',.1); this.synth(420,'sawtooth',.12,.7,60,.05);},
+  static(){this.noise(.05,.5,7000,1,'highpass'); this.crackle(8,.25,.3); this.synth(90,'square',.22,.35,40); this.noise(.5,.18,2500,.6,'bandpass',.05);},
+  arcflare(){if(!this.gate('arcflare',140))return; this.crackle(3,.05,.16); this.synth(240,'sawtooth',.05,.12,120);},
+  rod(){if(!this.gate('rod',90))return; this.synth(2600,'triangle',.06,.25,2400); this.synth(3900,'sine',.03,.2); this.crackle(2,.06,.12,.03);},
+  /* the grid's hum, held while live current runs and faded out otherwise */
+  humOsc:null, humGain:null,
+  hum(level){
+    if(!this.ctx||VOL.master===0||VOL.sfx===0)level=0;
+    if(!level&&!this.humGain)return;
+    if(!this.humGain&&this.ok()){const c=this.ctx; this.humGain=c.createGain(); this.humGain.gain.value=.0001;
+      const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=420; this.humGain.connect(lp); lp.connect(this.sfxGain);
+      this.humOsc=[60,120,180.5].map((f,i)=>{const o=c.createOscillator(); o.type=i?'sawtooth':'triangle'; o.frequency.value=f; const g2=c.createGain(); g2.gain.value=[1,.35,.12][i]; o.connect(g2); g2.connect(this.humGain); o.start(); return o;});}
+    if(this.humGain){const t=this.ctx.currentTime; this.humGain.gain.cancelScheduledValues(t); this.humGain.gain.setTargetAtTime(Math.max(.0001,level),t,.25);}
+  },
   boom(){this.noise(.35,.4,300,.8,'lowpass'); this.synth(90,'square',.28,.3,35);},
   coin(){if(!this.gate('coin',90))return; this.synth(1568,'sine',.07,.25); this.synth(2093,'sine',.05,.3,null,.04);},
   rumble(){this.synth(52,'sawtooth',.3,1.4,30,0,.2); this.noise(1.2,.22,120,.6,'lowpass');},
@@ -1621,7 +1650,7 @@ function plantRod(x,y,h){
   const st=h.st||wstat(h), mine=F.rods.filter(r=>r.by===h.id);
   while(mine.length>=st.rodMax){const o=mine.shift(); F.rods=F.rods.filter(r=>r!==o);}
   F.rods.push({id:--rodUid,x,y,t:st.rodT,max:st.rodT,by:h.id,thunder:st.thunder});
-  F.L=lightsNow();
+  F.L=lightsNow(); AUDIO.rod();
 }
 /* a shock from the grid: harm, a stun, and a moment's light on whatever it touched */
 function gridShock(e,dmg,stun){
@@ -1641,7 +1670,7 @@ function updateGrid(dt){
       if(f.dead||f.def.fly||segDist(f.x,f.y,e.a.x,e.a.y,e.b.x,e.b.y)>.3)continue;
       f.revealT=WIRE_REVEAL;
       /* a Behemoth snaps the wire for the rest of the wave */
-      if(f.def.heavy){F.wireBroken.add(e.key); e.live=false; hurt(f,e.dmg,'grid'); F.fx.push({k:'fry',x:(e.a.x+e.b.x)/2,y:(e.a.y+e.b.y)/2,t:0,dur:.7}); AUDIO.zap(); break;}
+      if(f.def.heavy){F.wireBroken.add(e.key); e.live=false; hurt(f,e.dmg,'grid'); F.fx.push({k:'fry',x:(e.a.x+e.b.x)/2,y:(e.a.y+e.b.y)/2,t:0,dur:.7}); AUDIO.fry(); break;}
       if(cd>0)continue;
       gridShock(f,e.dmg,e.stun);
       /* Live Water: a wire that touches water shocks everything standing in it */
@@ -1649,7 +1678,7 @@ function updateGrid(dt){
       for(const nd of [e.a,e.b])if(nd.t)nd.t.zaps=(nd.t.zaps||0)+1;
       cd=e.recharge; F.wireCd.set(e.key,cd);
       F.fx.push({k:'arc',pts:[[e.a.x,e.a.y-.35],[f.x,f.y],[e.b.x,e.b.y-.35]],t:0,dur:.22,seed:Math.random()*99});
-      AUDIO.zap();
+      AUDIO.wire();
     }
   }
 }
@@ -1671,7 +1700,7 @@ function castOverload(){
   let fried=0;
   if(fry){const ps=F.towers.filter(t=>t.type==='pylon'&&!t.dead&&!wstat(t).insulated&&!(hasOff('ground')&&nearWater(t.x,t.y))).sort((a,b)=>(b.zaps||0)-(a.zaps||0));
     for(const t of ps.slice(0,fry)){removeTower(t); fried++; F.fx.push({k:'fry',x:t.x,y:t.y-.3,t:0,dur:1.1});}}
-  F.L=lightsNow(); F.shake=Math.max(F.shake,.3); AUDIO.zap();
+  F.L=lightsNow(); F.shake=Math.max(F.shake,.3); AUDIO.overload(); if(fried)setTimeout(()=>AUDIO.fry(),350);
   banner('Overload','rite','−'+OVER_OIL+' oil'+(fried?' · '+fried+' pylon'+(fried>1?'s':'')+' fried':' · heat '+Math.floor(F.heat)));
   if(run.oil<=0){run.oil=0; defeat();}
   forceUI(); return true;
@@ -1682,7 +1711,7 @@ function updateStatic(dt){
   if((F.staticCd||0)>0){F.staticCd-=dt; return;}
   if(!F.foes.some(e=>!e.dead&&dst(e.x,e.y,F.lx,F.ly)<=STATIC_TRIG))return;
   for(const e of F.foes){if(e.dead||dst(e.x,e.y,F.lx,F.ly)>STATIC_R)continue; hurt(e,10,'grid'); e.revealT=WIRE_REVEAL; if(!e.dead&&!e.def.heavy)e.stunT=Math.max(e.stunT,e.def.boss?.4:STATIC_STUN);}
-  F.fx.push({k:'static',x:F.lx,y:F.ly,r:STATIC_R,t:0,dur:.6,seed:Math.random()*99}); F.staticCd=STATIC_CD; AUDIO.zap(); F.shake=Math.max(F.shake,.2);
+  F.fx.push({k:'static',x:F.lx,y:F.ly,r:STATIC_R,t:0,dur:.6,seed:Math.random()*99}); F.staticCd=STATIC_CD; AUDIO.static(); F.shake=Math.max(F.shake,.2);
 }
 /* an Arc Lamp shocks everything in its light each time it comes back on */
 function updateArcLamps(){
@@ -1691,7 +1720,7 @@ function updateArcLamps(){
     const ph=(F.time+hash(t.id,3,7)*ARC_PERIOD)%ARC_PERIOD;
     if(F.phase==='wave'&&t.arcPh!=null&&t.arcPh<ARC_OFF&&ph>=ARC_OFF&&!t.dark){const st=wstat(t);
       for(const e of F.foes){if(e.dead||dst(e.x,e.y,t.x,t.y)>st.light)continue; hurt(e,st.flare,'arc'); if(!e.dead&&!e.def.heavy&&!e.def.boss)e.stunT=Math.max(e.stunT,ARC_STUN);}
-      F.fx.push({k:'ring',x:t.x,y:t.y-.3,r0:.2,r1:st.light,t:0,dur:.35,col:'150,200,255'}); t.ping=.3;}
+      F.fx.push({k:'ring',x:t.x,y:t.y-.3,r0:.2,r1:st.light,t:0,dur:.35,col:'150,200,255'}); t.ping=.3; AUDIO.arcflare();}
     t.arcPh=ph;}
 }
 /* each Signal Mirror standing in the lamp's own light throws a beam straight out, away from the lamp */
@@ -6433,6 +6462,8 @@ function watchPerf(rawMs){
 }
 function frame(now){
   requestAnimationFrame(frame);
+  /* the grid hums while live current runs on a floor being played */
+  try{AUDIO.hum(F&&run&&!paused&&$('#title').hidden&&F.grid&&F.grid.edges.some(e=>e.live)&&(F.phase==='wave'||F.phase==='build')?(F.phase==='wave'?.05:.025):0);}catch(e){}
   watchPerf(now-last);
   const raw=Math.min(.05,(now-last)/1000); last=now;
   try{
