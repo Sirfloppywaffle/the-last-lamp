@@ -31,7 +31,13 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.setSel({kind:'ward',type:'candle'}); T.tryPlace(spot[0],spot[1]); const cdl=T.F.towers[T.F.towers.length-1]; T.update(.01);
     const k=T.spawnFoe('lastkeeper',0,sd); k.spawnT=0; k.stunT=1e6; k.hp=k.max=1e6; T.update(.05);
     out.snuff={t:+(cdl.snuffT||0).toFixed(1),dark:cdl.dark,fx:T.F.fx.some(f=>f.k==='snuff'),ownLight:T.F.L.some(L=>L.temp&&Math.hypot(L.x-k.x,L.y-k.y)<.5)};
-    k.dead=true; T.F.foes=[]; for(let i=0;i<220;i++)T.update(.05); out.relit=!cdl.dark&&!(cdl.snuffT>0);
+    k.dead=true; T.F.foes=[]; for(let i=0;i<140;i++)T.update(.05); out.relit=!cdl.dark&&!(cdl.snuffT>0);
+    /* the Bellringer lights nothing, so it stills her Tuning Forks instead */
+    T.newRun('bellringer',0); T.run.floor=1; T.beginFloor(null); T.setP(false); T.run.ess=9999; T.startWave(); T.F.queue=[];
+    const P2=T.F.paths[0]; let fs=null, fd=0; for(let d=2;d<P2.len-2&&!fs;d+=.25){const q=T.posAt(P2,d); for(let rr=0;rr<T.ROWS&&!fs;rr++)for(let c=0;c<T.COLS&&!fs;c++){if(T.placeProblem({kind:'ward',type:'fork'},c,rr))continue; if(Math.hypot(c+.5-q[0],rr+.5-q[1])<=1.1){fs=[c,rr]; fd=d;}}}
+    T.setSel({kind:'ward',type:'fork'}); T.tryPlace(fs[0],fs[1]); const fk=T.F.towers[T.F.towers.length-1]; T.update(.01); const fkWas=fk.dark;
+    const k4=T.spawnFoe('lastkeeper',0,fd); k4.spawnT=0; k4.stunT=1e6; k4.hp=k4.max=1e6; T.update(.05);
+    out.fork={before:fkWas,stilled:fk.snuffT>0,dark:fk.dark};
     /* at the lamp it drains 8 oil and the run goes on */
     fresh(1); T.startWave(); T.F.queue=[]; const k2=T.spawnFoe('lastkeeper',0,T.F.paths[0].len-.05); k2.spawnT=0; const o0=T.run.oil;
     for(let i=0;i<40&&!k2.dead;i++)T.update(.05);
@@ -49,7 +55,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(/Herald · The Last Keeper/.test(r.preview),'the break before names it on the strip',r.preview);
   ok(r.tip===true,'the Herald tip fires in that break');
   ok(r.resumed,'its wave survives a save and resume');
-  ok(r.snuff.t>9&&r.snuff.dark&&r.snuff.fx&&r.snuff.ownLight,'it snuffs a candle it passes, and carries its own lamp',r.snuff);
+  ok(Math.abs(r.snuff.t-6.5)<.1&&r.snuff.dark&&r.snuff.fx&&r.snuff.ownLight,'it snuffs a candle it passes, and carries its own lamp',r.snuff);
+  ok(!r.fork.before&&r.fork.stilled&&r.fork.dark,'for the Bellringer it stills the Tuning Forks it passes',r.fork);
   ok(r.relit,'the candle comes back when the snuff wears off');
   ok(r.arrive.drained===8&&r.arrive.alive,'at the lamp it drains 8 oil and the run goes on',r.arrive);
   ok(r.relic===1&&r.heralds===1,'slain, it pays a relic',[r.relic,r.heralds]);
