@@ -207,48 +207,48 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
 |---|---|---|---|
-| Glow | 15 — +0.5 light | 25 — +0.5 light | 50 — Beacon: wards in its light deal 20% more damage |
+| Lens | 15 — A polished lens: +0.5 light | 25 — A finer lens: +0.5 light | 50 — Beacon: wards in its light deal 20% more damage |
 | Signal | 15 — Its light leaps 1 tile further | 25 — Leaps 1 tile further again | 50 — Fire Thread: anything that crosses its threads catches fire |
-| Ember | 15 — Burns 3 damage a second in its light | 25 — Burns 6 damage a second | 50 — Pyre: anything dying in its light bursts for 12 damage |
+| Burner | 15 — The lantern runs hot: its light burns 3 damage a second | 25 — Hotter: 6 damage a second | 50 — Pyre: anything dying in its light bursts for 12 damage |
 
 **Flare Harpoon (`lamplighter`, replaces harpoon)**
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
 |---|---|---|---|
-| Speed | 35 — Reload 25% faster | 50 — Reload 25% faster again | 120 — Twin Reel: two bolts per shot |
-| Strength | 35 — +6 damage | 55 — +8 damage | 130 — Piercing Barb: bolts pass through everything in a line |
+| Windlass | 35 — A quicker crank: reloads 25% faster | 50 — Reloads 25% faster again | 120 — Twin Reel: two flare bolts per shot |
+| Heavy Bolts | 35 — +6 damage | 55 — +8 damage | 130 — Piercing Flare: bolts pass through everything in a line |
 | Flare | 30 — Flares burn wider | 45 — Flares burn a second longer | 110 — Starshell: every fourth bolt lights a wide circle for 4 seconds |
 
 **Blubber Lamp (`whaler`, replaces candle)**
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
 |---|---|---|---|
-| Glow | 15 — +0.5 light | 25 — +0.5 light | 50 — Beacon: wards in its light deal 20% more damage |
-| Wax | 15 — Slow rises to 30% | 25 — Slow rises to 40% | 50 — Tallow Snare: roots each creature for 1s the first time it enters |
+| Fat | 15 — More fat in the dish: +0.5 light | 25 — A heaped dish: +0.5 light | 50 — Beacon: wards in its light deal 20% more damage |
+| Smoke | 15 — Its greasy smoke slows by 30% | 25 — Thicker smoke: slows by 40% | 50 — Tar Snare: the smoke roots each creature for 1s the first time it enters |
 | Reek | 15 — Its smoke clings: what leaves its light stays slowed 2 seconds | 25 — It clings 4 seconds | 50 — Lure: at a fork, everything but a boss takes the way it lights |
 
 **Tether Harpoon (`whaler`, replaces harpoon)**
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
 |---|---|---|---|
-| Speed | 35 — Reload 25% faster | 50 — Reload 25% faster again | 120 — Twin Reel: two bolts per shot |
-| Strength | 35 — +6 damage | 55 — +8 damage | 130 — Piercing Barb: bolts pass through everything in a line |
+| Winch | 35 — A geared winch: reloads 25% faster | 50 — Reloads 25% faster again | 120 — Twin Reel: two lines per shot |
+| Iron | 35 — A heavier iron: +6 damage | 55 — +8 damage | 130 — Through-Iron: bolts pass through everything in a line |
 | Line | 30 — The line slows by up to 55% | 45 — The line holds a tile further out | 110 — Reel In: every 4 seconds the line hauls its catch a tile back |
 
 **Arc Lamp (`galvanist`, replaces candle)**
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
 |---|---|---|---|
-| Glow | 15 — +0.5 light | 25 — +0.5 light | 50 — Beacon: wards in its light deal 20% more damage |
-| Wax | 15 — Slow rises to 30% | 25 — Slow rises to 40% | 50 — Tallow Snare: roots each creature for 1s the first time it enters |
+| Filament | 15 — A thicker filament: +0.5 light | 25 — +0.5 light again | 50 — Floodlight: wards in its light deal 20% more damage |
+| Field | 15 — Its field numbs: what stands in it slows by 30% | 25 — Slows by 40% | 50 — Seize: the first time each creature enters, the current locks its limbs for 1s |
 | Spark | 15 — Its flare shocks for 4 more | 25 — 4 more again | 50 — Steady Current: it never cuts out, and still flares |
 
 **Lightning Rod (`galvanist`, replaces harpoon)**
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
 |---|---|---|---|
-| Speed | 35 — Reload 25% faster | 50 — Reload 25% faster again | 120 — Twin Reel: two bolts per shot |
-| Strength | 35 — +6 damage | 55 — +8 damage | 130 — Piercing Barb: bolts pass through everything in a line |
+| Solenoid | 35 — A stronger solenoid: fires 25% faster | 50 — Fires 25% faster again | 120 — Twin Rods: two bolts per shot |
+| Copper | 35 — A heavier copper tip: +6 damage | 55 — +8 damage | 130 — Arc Bolt: bolts pass through everything in a line |
 | Charge | 30 — Rods stand 2 seconds longer | 45 — Each harpoon keeps 3 rods | 110 — Thunderhead: a rod bursts when it falls, shocking all within 1.5 tiles |
 
 **Pylon (`galvanist`, its own pylon)**
@@ -263,8 +263,8 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
 |---|---|---|---|
-| Wick | 40 — +0.5 light | 60 — +0.5 light | 120 — Sunlamp: +0.5 light, and lamplight unveils Shades |
-| Reservoir | 35 — Refill 3 oil | 50 — Refill 3 oil | 100 — Wellspring: +1 oil after every wave |
+| Carbon | 40 — Thicker carbons: +0.5 light | 60 — +0.5 light again | 120 — Floodlamp: +0.5 light, and lamplight unveils Shades |
+| Accumulator | 35 — Refill 3 oil | 50 — Refill 3 oil | 100 — Wellspring: +1 oil after every wave |
 | Dynamo | 40 — Every wire recharges 20% faster | 60 — 20% faster again | 130 — Static Burst: when something comes close, the lamp discharges and stuns everything near it, then recharges |
 
 **Corpse Candle (`occultist`, replaces candle)**
@@ -276,8 +276,8 @@ A kit's own version of a ward. Underneath it is the same ward (same key, cost, b
 
 | Branch | Tier 1 | Tier 2 | Tier 3 (capstone) |
 |---|---|---|---|
-| Speed | 35 — Reload 25% faster | 50 — Reload 25% faster again | 120 — Twin Reel: two bolts per shot |
-| Strength | 35 — +6 damage | 55 — +8 damage | 130 — Piercing Barb: bolts pass through everything in a line |
+| Sinew | 35 — Corded sinew: hurls 25% faster | 50 — Hurls 25% faster again | 120 — Twin Spears: two spears per throw |
+| Splinter | 35 — A sharper splinter: +6 damage | 55 — +8 damage | 130 — Splintering Spear: it passes through everything in a line |
 | Dread | 30 — Each tier of madness adds 10% more | 45 — Each tier adds 10% more again | 110 — Soul Spear: what it kills leaves its sigil, if its kind can be bound |
 
 Galvanist numbers: pylons link within **3.5** tiles, **3** wires each; a wire shocks for **12**, stuns **0.4s** (bosses 0.15s), lights what it touches for **1.2s**, then recharges **1.5s**. Lightning Rods stand **5s**, **2** per harpoon. The Arc Lamp shines **+0.4**, cuts out **0.5s** of every **4s** in a wave, and flares for **6** with a **0.3s** stun. Overload costs **2** oil, strikes at **×3**, adds 1 Heat (cools 1 per **10s**), and at **3** Heat or more fries pylons. Static Burst fires when something is within **1.5** of the lamp, stuns everything within **2.5** for **1.2s**, every **12s**.
@@ -442,7 +442,7 @@ Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles;
 
 | Key | Unlock | Cost | Effect |
 |---|---|---|---|
-| `kit_galvanist` | The Galvanist | 70 | A new kit, built on lightning and salt. |
+| `kit_galvanist` | The Galvanist | 70 | A new kit: a mad scientist’s power grid of pylons, arc lamps and lightning. |
 | `kit_bellringer` | The Bellringer | 110 | A new kit, built on chimes, pitch and the Drowning Bell. |
 | `relics_deep` | Relics of the Deep | 50 | Second Shadow joins the relic pool, and Leech Jar, Thunder Marrow and Witch Salt when they return to the stair. |
 | `relics_forbidden` | Forbidden Relics | 90 | Four cursed relics with great power join the pool: Choir in the Walls, Gilded Teeth, Hollow Crown, A Thousand Eyes. |

@@ -228,7 +228,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(r.kindleRun>1.15&&r.kindleRun<1.35,'a kindled creature runs about 25% faster',r.kindleRun);
   ok(r.kindleBurn>0,'a kindled creature burns',r.kindleBurn);
   ok(r.kindleAfter.t<=0&&!r.kindleAfter.light,'the fire goes out after 8 seconds',r.kindleAfter);
-  ok(r.trees.candle.join()==='Glow,Signal,Ember'&&r.trees.harpoon.join()==='Speed,Strength,Flare','the Lamplighter wards have their own branches',r.trees);
+  ok(r.trees.candle.join()==='Lens,Signal,Burner'&&r.trees.harpoon.join()==='Windlass,Heavy Bolts,Flare','the Lamplighter wards have their own branches',r.trees);
   ok(r.trees.whaler.join()==='Speed,Strength,Sight','other kits keep the plain branches',r.trees.whaler);
   ok(r.signal2.spot&&/4 tiles|leaps/.test(r.signal2.before)&&r.signal2.after===true,'the Signal branch lets the light leap further',r.signal2);
   ok(r.thread.found&&r.thread.threads>0&&r.thread.burned,'a Fire Thread sets what crosses it burning',r.thread);
