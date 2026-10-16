@@ -273,6 +273,7 @@ A mad scientist who builds a **power grid**. Every other kit places wards that w
 - **The lamp itself** gets his own branch, **Dynamo** (wires recharge faster), capped by **Static Burst**: when something comes close, the lamp discharges and stuns everything near it, then recharges. (If that doesn't fly, it becomes a gift.)
 - **Keeps the Galvanic Coil** (his Tesla coil) to test alongside pylons; coil lightning arcs through Lightning Rods.
 - **Look (go all out):** copper, porcelain insulators, Leyden jars, blue-white arcs that re-jag every few frames, sparks, a hum. **His lamp is restyled** as a carbon-arc lamp in a glass globe on a coil-wound copper base. Everything electric shares one palette (cold blue-white on copper).
+- **Capture, not binding** (Criss, balanced with Gemini on #48): no sigils for him. The **Grounding Anchor** (rite, 30s, replaces Pillar of Salt) is a spike dropped anywhere for 8s that forces nearby powered pylons to link to it; its wires never shock. A bindable creature dying inside an Anchor triangle is caught (tap within 5s). One catch per Anchor; a capture vents 2 Heat. The Keeper's core waits 15s, and its fall resets the Anchor.
 - **Who builds the art:** Claude builds the mechanics with full art. Gemini (Jules) can take an art pass afterward from an issue that names the exact draw functions; if Jules hits its usage limit mid-way, Claude finishes from the same issue, so nothing waits on it.
 
 ### 13.7 Later
