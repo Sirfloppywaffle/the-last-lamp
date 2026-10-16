@@ -115,6 +115,36 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const seenR=new Set(); for(let i=0;i<300;i++)T.draftOptions(5).forEach(o=>{if(o.kind==='rite')seenR.add(o.key);});
     out.pool=[...seenR].sort();
 
+    /* Resonance: three cracks shatter a crawler and crack what stands beside it; a boss takes 8; cracks fade */
+    fresh(); wave();
+    const ra=hold('crawler',6), rb=hold('crawler',6.3), boss=hold('boss',8);
+    T.crack(ra,1); T.crack(ra,1); out.res1={cracks:ra.cracks};
+    const rhp=ra.hp, bhp=rb.hp; T.crack(ra,1); T.shatterAll();
+    out.res2={cracks:ra.cracks,hurt:Math.round(rhp-ra.hp),splash:Math.round(bhp-rb.hp),nearCrack:rb.cracks,fx:T.F.fx.some(f=>f.k==='shatter')};
+    for(let i=0;i<7;i++)T.crack(boss,1); out.boss7={cracks:boss.cracks,need:8};
+    T.crack(rb,1); run(6.3); out.fade=rb.cracks;
+    /* a toll's ring cracks what it hears */
+    const rc=hold('crawler',T.F.paths[0].len-2); T.update(.01); rc.cracks=0; T.F.cd.toll=0; T.castRite('toll'); run(.6); out.tollCrack=rc.cracks;
+    /* the Tocsin: a tripped wire calls it; after the silence it shells the wire, wherever it is */
+    fresh();
+    const dkT=[], seenK=new Set(); for(let d=0;d<P().len;d+=.1){const q=T.posAt(P(),d), c=Math.floor(q[0]), rr=Math.floor(q[1]), k=c+','+rr; if(!seenK.has(k)&&!T.buildLit(c,rr)){seenK.add(k); dkT.push([c,rr]);}}
+    T.setSel({kind:'ward',type:'bellwire'}); T.tryPlace(dkT[0][0],dkT[0][1]); T.setSel(null); const tw=T.F.towers[T.F.towers.length-1];
+    let ts=null; for(let rr=0;rr<T.ROWS&&!ts;rr++)for(let c=0;c<T.COLS&&!ts;c++)if(!T.placeProblem({kind:'ward',type:'tocsin'},c,rr))ts=[c,rr];
+    T.setSel({kind:'ward',type:'tocsin'}); T.tryPlace(ts[0],ts[1]); T.setSel(null); const toc=T.F.towers[T.F.towers.length-1];
+    wave();
+    const victim=T.spawnFoe('crawler',0,dAt(tw.x,tw.y)); victim.spawnT=0; victim.stunT=1e6; victim.hp=victim.max=1e6; tw.cd=0;
+    T.update(.05); out.call={calls:T.F.tocsinCalls.length,dist:+Math.hypot(toc.x-tw.x,toc.y-tw.y).toFixed(1),ammo:toc.ammo};
+    run(.5); out.silence=T.F.shots.filter(x=>x.k==='tocsin').length;
+    run(.3); out.fired={shells:T.F.shots.filter(x=>x.k==='tocsin').length,ammo:toc.ammo};
+    const vhp=victim.hp; run(1.6); out.landed={hurt:Math.round(vhp-victim.hp),reloading:toc.ammo===0&&toc.cd>0};
+    T.render();
+    /* a Perfect Toll: on the lamp's beat it reaches twice as far, cracks twice and makes no Noise; off the beat it is a plain Toll */
+    fresh(); T.buyBranch(T.F.lamp,2); wave(); hold('crawler',1); T.F.noise=0;
+    T.F.pealT=T.lstat().peal-.1; out.beatOff=+T.beatOff().toFixed(2); T.F.cd.toll=0; T.castRite('toll');
+    const pt=T.F.tolls[T.F.tolls.length-1]; out.perfect={noise:T.F.noise,max:pt.max,cracks:pt.cracks,gold:pt.gold,pealReset:T.F.pealT};
+    T.F.pealT=1.5; T.F.cd.toll=0; T.castRite('toll'); out.offbeat={noise:T.F.noise,max:T.F.tolls[T.F.tolls.length-1].max};
+    T.render();
+
     /* the path she hears, and captions for playing without sound */
     fresh(); out.edges=T.pathEdges().length;
     localStorage.setItem('ll-captions','true'); wave(); hold('crawler',1); T.castRite('toll'); out.caption=T.F.fx.some(f=>f.cap);
@@ -122,7 +152,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.render();
     return out;});
   console.log(JSON.stringify(r));
-  ok(r.kit.wards==='candle,harpoon,bellwire,chime,censer'&&r.kit.rites==='toll,greatbell','her wards and rites',r.kit);
+  ok(r.kit.wards==='candle,harpoon,bellwire,tocsin,chime,censer'&&r.kit.rites==='toll,greatbell','her wards and rites',r.kit);
   ok(r.kit.who==='Agathe Vell'&&r.kit.candle==='Bell Candle'&&r.kit.harpoon==='Clapper Harpoon','Agathe Vell builds Bell Candles and Clapper Harpoons',r.kit);
   ok(r.kit.lamp==='Votive,Font,Peal','her lamp trades Fire for Peal',r.kit.lamp);
   ok(r.buildToll.tolls===0&&r.buildToll.noise===0,'Toll does nothing between waves',r.buildToll);
@@ -149,6 +179,18 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(!r.chime.lit&&r.chime.hit&&r.chime.period===1.6,'her chimes hear and strike the ordinary dark, and ring 20% faster',r.chime);
   ok(Math.abs(r.lullaby.faded-1)<.05&&r.lullaby.max===5,'Her Lullaby: Noise fades twice as fast, and Toll reaches 2 tiles less',r.lullaby);
   ok(!['toll','greatbell','overload','anchor','raise'].some(k=>r.pool.includes(k))&&r.pool.length>0,'kit rites are never gifted to another kit',r.pool);
+  ok(r.res1.cracks===2,'two cracks hold',r.res1);
+  ok(r.res2.cracks===0&&r.res2.hurt>=20&&r.res2.splash>=12&&r.res2.nearCrack>=1&&r.res2.fx,'the third crack shatters it, hurting and cracking what stands beside it',r.res2);
+  ok(r.boss7.cracks===7,'a boss holds 7 cracks without shattering',r.boss7);
+  ok(r.fade===0,'cracks fade when nothing rings',r.fade);
+  ok(r.tollCrack>=1,'a toll cracks what it hears',r.tollCrack);
+  ok(r.call.calls===1&&r.call.dist>3,'a tripped Bell Wire calls the Tocsin, far away',r.call);
+  ok(r.silence===0,'a breath of silence before it fires',r.silence);
+  ok(r.fired.shells===1&&r.fired.ammo===0,'then it fires its shell',r.fired);
+  ok(r.landed.hurt>=40&&r.landed.reloading,'the shell bursts on the wire, and the Tocsin reloads',r.landed);
+  ok(Math.abs(r.beatOff-.1)<.02,'the beat is measured from the lamp’s own toll',r.beatOff);
+  ok(r.perfect.noise===0&&r.perfect.max===14&&r.perfect.cracks===2&&r.perfect.gold&&r.perfect.pealReset===0,'a Perfect Toll: twice as far, two cracks, no Noise, and it takes the beat’s place',r.perfect);
+  ok(r.offbeat.noise===1&&r.offbeat.max===7,'off the beat it is a plain Toll',r.offbeat);
   ok(r.edges>10,'she hears the path: its edges are traced in the dark',r.edges);
   ok(r.caption,'with Show sounds on, the toll writes itself on the board');
   ok(!errs.length,'no page errors',errs);
