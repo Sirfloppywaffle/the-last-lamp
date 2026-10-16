@@ -38,15 +38,21 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const b0=T.F.beams[0]; let fd=null; const P=T.F.paths[0];
     for(let d=0;d<P.len;d+=.25){const q=T.posAt(P,d); if(T.segDist(q[0],q[1],b0.x0,b0.y0,b0.x1,b0.y1)<.3){fd=d; break;}}
     if(fd!=null){const e=T.spawnFoe('behemoth',0,fd); e.def=Object.assign({},e.def,{spd:0}); T.update(.001); const hp=e.hp; for(let i=0;i<10;i++)T.update(.1); out.burn=+(hp-e.hp).toFixed(1); e.dead=true; T.update(.01);}
-    /* Haul Away: everything on a line is dragged back at once */
-    T.newRun('whaler',0); T.setP(false); window.devNoDark=true;
+    /* Haul Away: a net lands where you tap; under it, and on your lines, they slide 3 back and tangle */
+    {T.newRun('whaler',0); T.setP(false); window.devNoDark=true; T.F.phase='wave';
     out.whalerHas=T.run.rites.slice();
-    T.castRite('haul'); out.haulIdle=T.F.cd.haul||0;
-    const h={kind:'ward',type:'harpoon',id:9999,c:0,r:0,x:.5,y:.5,br:{speed:0,strength:0,line:0},cd:99,ang:0}; T.F.towers.push(h); h.st=T.wstat(h); h.st.range=99;
-    const e1=T.spawnFoe('crawler',0,8), boss=T.spawnFoe('boss',0,9); T.update(.001);
-    for(const e of [e1,boss]){e.tetherBy=h; e.tetherT=0;} h.tethered=e1;
-    const d1=e1.d, db=boss.d; T.castRite('haul');
-    out.haul={back:+(d1-e1.d).toFixed(2), boss:+(db-boss.d).toFixed(2), cd:T.F.cd.haul};
+    const P=T.F.paths[0], mid=Math.floor(P.len*.6), q=T.posAt(P,mid);
+    const crowd=[T.spawnFoe('crawler',0,mid),T.spawnFoe('crawler',0,mid+.5),T.spawnFoe('behemoth',0,mid-.4),T.spawnFoe('boss',0,mid+.3)], far=T.spawnFoe('crawler',0,3);
+    const h={kind:'ward',type:'harpoon',id:9999,c:0,r:0,x:.5,y:.5,br:{speed:0,strength:0,line:0},cd:99,ang:0}; T.F.towers.push(h); h.st=T.wstat(h); h.st.range=99; far.tetherBy=h; far.tetherT=0; h.tethered=far;
+    for(const e of crowd.concat(far))e.def=Object.assign({},e.def,{spd:0}); T.update(.001);
+    const d0=crowd.concat(far).map(e=>e.d);
+    T.castRite('haul'); out.haulMode=document.querySelector('#modebar').textContent.includes('Haul');
+    const cvs=document.querySelector('#board').getBoundingClientRect();
+    document.querySelector('#board').dispatchEvent(new PointerEvent('pointerdown',{clientX:cvs.left+q[0]/T.COLS*cvs.width,clientY:cvs.top+q[1]/T.ROWS*cvs.height,bubbles:true}));
+    for(let i=0;i<12;i++)T.update(.05);
+    const all=crowd.concat(far);
+    out.haul={back:all.map((e,i)=>+(d0[i]-e.d).toFixed(2)), tangled:all.map(e=>e.tangleT>0), cd:T.F.cd.haul};
+    }
     window.devNoDark=false;
     return out;});
   console.log(JSON.stringify(r));
@@ -60,8 +66,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.probe&&r.probeBefore===false&&r.probeAfter===true,'the beam lights ground past the lamp, to build on',r);
   ok(r.cut===1,'a ward standing in the beam is cut if the Mirror goes',r.cut);
   ok(r.burn>=4.5,'the beam burns what crosses it, 5 a second',r.burn);
-  ok(r.whalerHas.join()==='haul,bell'&&r.haulIdle===0,'Haul Away waits when nothing is on a line',r);
-  ok(Math.abs(r.haul.back-2)<.01&&r.haul.boss===0&&r.haul.cd===22,'Haul Away drags what is on a line 2 tiles back; a boss holds',r.haul);
+  ok(r.whalerHas.join()==='haul,bell'&&r.haulMode,'Haul Away asks where to cast',r);
+  const hb=r.haul.back; ok(Math.abs(hb[0]-3)<.05&&Math.abs(hb[1]-3)<.05&&Math.abs(hb[2]-1)<.05&&hb[3]===0&&Math.abs(hb[4]-3)<.05,'the net hauls a crowd 3 back (a Behemoth 1, a boss not at all), and what is on a line too',hb);
+  ok(r.haul.tangled.every(Boolean)&&r.haul.cd>23,'everything it caught is tangled',r.haul);
   ok(!errs.length,'no page errors',errs);
   fails.forEach(f=>console.log('FAIL '+f)); await b.close(); process.exitCode=fails.length?1:0;
 })();
