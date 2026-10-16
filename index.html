@@ -406,7 +406,8 @@ input[type=range]::-moz-range-track {
         <li><b>Forks.</b> On some floors the stair splits. They take the darker way, and only light you cast counts, never the lamp's. A gold chevron at the fork shows where they will go. Shades and Stalkers do the opposite and hunt your light. Gnashers and bosses keep the main way. A Weir built on the fork shuts one way; flip it between waves. Watchers fly over it, and a Behemoth breaks it. On these floors you also hold the Will-o’-Wisp: tap a way at a fork and, for eight seconds, everything but a boss follows it there.</li>
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
-        <li><b>Wards.</b> Seven are yours from the start: Candles, Harpoons, Salt, the Bone Chime, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, and the Hex Effigy that makes everything near it take more damage. The Tar Censer, Galvanic Coil and Whaling Gun can only be won as gifts between floors.</li>
+        <li><b>Wards.</b> Your kit names the wards you start with: Candles, Harpoons, Salt, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, the Hex Effigy that makes everything near it take more damage, and its own. The Bone Chime, Tar Censer, Galvanic Coil and Whaling Gun are found on the stair: as gifts, from merchants, or in a pack. Only the Bellringer starts with the Chime.</li>
+        <li><b>Chimes.</b> A Bone Chime stuns everything in its ring, but the ring spreads thin: the four nearest take its full strike, the rest half. A boss it stuns goes deaf to every chime for 4 seconds, and a dull grey ring shows it shrugging them off.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, Kindle sets a creature burning and running, lighting the dark around it, and its Signal Mirror, built in the lamp's own light, reflects it in a 5-tile beam you aim between waves (it locks while the dark comes); you can build in the beam, and it burns what crosses it. The Galvanist builds a power grid: Pylons string live wires that shock, stun and light what crosses them, if a pylon stands in the lamp's own light to power the rest; his Arc Lamps burn bright but flicker; his Lightning Rods plant where they strike and join the grid; Overload fires every wire at once for 2 oil, and run hot it fries his pylons; he binds nothing by ritual: his Grounding Anchor forces nearby pylons to link to it, and a bindable creature that dies inside one of its triangles is caught in a cage to tap (the Keeper's core waits 15 seconds for a cage, and its fall readies the Anchor), each capture drawing 2 Heat out of the grid; his lamp's Dynamo branch ends in a Static Burst. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it; Haul Away casts a whaling net that hauls everything under it, and everything on its lines, 3 tiles back and tangles it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
@@ -493,7 +494,7 @@ const WARDS={
   candle:{n:'Candle Ward',short:'Candle',cost:30,d:'Casts light, unveils Shades, and slows whatever walks in it.'},
   harpoon:{n:'Brine Harpoon',short:'Harpoon',cost:40,aim:true,d:'Fires barbed bolts at a single creature.'},
   salt:{n:'Salt Circle',short:'Salt',cost:20,path:true,d:'Poured on the path. Anything crossing it moves at half speed until the salt scatters.'},
-  chime:{n:'Bone Chime',short:'Chime',cost:55,d:'Rings out in a circle, striking and stunning everything nearby.'},
+  chime:{n:'Bone Chime',short:'Chime',cost:55,d:'Rings out in a circle, stunning everything nearby. The four nearest take its full strike, the rest half. A boss it stuns goes deaf to chimes for 4 seconds.'},
   trap:{n:'Hook Trap',short:'Trap',cost:35,path:true,d:'Rusted jaws set on the path. They snap shut on the first thing that walks in, seen or unseen, then reset.'},
   tithe:{n:'Tithe Bowl',short:'Tithe',cost:50,d:'Pays you essence for every creature that dies near it, and a tithe at every break between waves.'},
   effigy:{n:'Hex Effigy',short:'Effigy',cost:40,d:'A pinned doll. Everything that passes near it is hexed for a while and takes 40% more damage from every source.'},
@@ -508,7 +509,7 @@ const WARDS={
   weir:{n:'Weir',short:'Weir',cost:45,path:true,fork:true,d:'A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it.'}
 };
 const BASE_WARDS=['candle','harpoon','salt','chime','trap','tithe','effigy'];
-const GIFT_WARDS=['censer','coil','lance'];
+const GIFT_WARDS=['chime','censer','coil','lance'];
 /* each kit builds its own candle and harpoon. Underneath they are still the candle and harpoon
    (same key, branches, relics and omens), so only their names and their one twist change */
 const KIT_WARDS={
@@ -572,9 +573,9 @@ const TREES={
     {k:'wax',n:'Wax',t:[[15,'Slow rises to 30%'],[25,'Slow rises to 40%'],[50,'Tallow Snare: roots each creature for 1s the first time it enters']]},
     {k:'ember',n:'Ember',t:[[15,'Burns 3 damage a second in its light'],[25,'Burns 6 damage a second'],[50,'Pyre: anything dying in its light bursts for 12 damage']]}],
   chime:[
-    {k:'res',n:'Resonance',t:[[40,'+0.25 range'],[60,'+0.25 range'],[140,'Choir of Bone: every ring sounds twice']]},
+    {k:'res',n:'Resonance',t:[[40,'+0.25 range'],[60,'+0.25 range'],[140,'Choir of Bone: every ring sounds twice, striking again']]},
     {k:'toll',n:'Toll',t:[[40,'+0.3s stun'],[60,'+0.3s stun'],[140,'Deathknell: stunned creatures take 30% more damage from everything']]},
-    {k:'marrow',n:'Marrow',t:[[40,'+5 damage'],[60,'+7 damage'],[140,'Shatter: its kills burst into shrapnel for 10 damage']]}],
+    {k:'marrow',n:'Marrow',t:[[40,'+6 damage'],[60,'+8 damage'],[140,'Shatter: its kills burst into shrapnel for 10 damage']]}],
   censer:[
     {k:'swing',n:'Swing',t:[[45,'Lobs 25% faster'],[65,'Lobs 25% faster again'],[150,'Volley: three lobs at once']]},
     {k:'pitch',n:'Pitch',t:[[45,'Leaves burning ground, 4 damage a second'],[65,'Burning ground, 7 damage a second'],[150,'Inferno: wider pools, 10 damage a second, lasting 4s']]},
@@ -723,11 +724,11 @@ const OFFERINGS={
 };
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
 const KITS={
-  lamplighter:{n:'The Lamplighter',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam.',wards:['candle','harpoon','mirror','salt','chime','trap','tithe'],rites:['kindle','pillar'],roster:{}},
+  lamplighter:{n:'The Lamplighter',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam.',wards:['candle','harpoon','mirror','salt','trap','tithe'],rites:['kindle','pillar'],roster:{}},
   whaler:{n:'The Whaler',d:'Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line, and Haul Away casts a net that hauls a crowd back and tangles it. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance','trypot'],rites:['haul','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
-  occultist:{n:'The Occultist',d:'Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher.',wards:['candle','harpoon','grasp','effigy','tithe','chime'],rites:['unbind','raise'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
-  galvanist:{n:'The Galvanist',d:'A mad scientist with a power grid. Pylons string live wires across the path that shock and light what crosses them, if the grid reaches the lamp. Arc Lamps burn bright but flicker. Lightning Rods plant where they strike and join the grid. Overload fires every wire at once, paid in oil, and run too hot it fries your pylons. No ritual binds for him: the Grounding Anchor cages what dies in its circuit. Starts with the Galvanic Coil.',wards:['candle','harpoon','pylon','salt','coil','chime'],rites:['overload','anchor'],roster:{},lock:'kit_galvanist'},
-  bellringer:{n:'The Bellringer',d:'Bone Chimes ring 20% faster. Starts with the Tar Censer and the Drowning Bell.',wards:['candle','harpoon','chime','censer','trap'],rites:['flare','bell'],roster:{},lock:'kit_bellringer'}
+  occultist:{n:'The Occultist',d:'Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher.',wards:['candle','harpoon','grasp','effigy','tithe'],rites:['unbind','raise'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
+  galvanist:{n:'The Galvanist',d:'A mad scientist with a power grid. Pylons string live wires across the path that shock and light what crosses them, if the grid reaches the lamp. Arc Lamps burn bright but flicker. Lightning Rods plant where they strike and join the grid. Overload fires every wire at once, paid in oil, and run too hot it fries your pylons. No ritual binds for him: the Grounding Anchor cages what dies in its circuit. Starts with the Galvanic Coil.',wards:['candle','harpoon','pylon','salt','coil'],rites:['overload','anchor'],roster:{},lock:'kit_galvanist'},
+  bellringer:{n:'The Bellringer',d:'His Bone Chimes ring 20% faster, and he is the only kit that starts with them. Starts with the Tar Censer and the Drowning Bell.',wards:['candle','harpoon','chime','censer','trap'],rites:['flare','bell'],roster:{},lock:'kit_bellringer'}
 };
 const OMENS={
   moonless:{n:'Moonless',d:'The lamp burns a whole tile smaller.'},
@@ -3402,6 +3403,7 @@ function updateFoes(dt){
           e.d=Math.max(0,e.d-1); const q=posAt(F.paths[e.gate],e.d); e.x=q[0]; e.y=q[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y);
           F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:.5,t:0,dur:.3,col:'201,194,178'});}}}
     if(e.def.heavy)e.stunT=0;
+    if(e.deafT>0)e.deafT-=dt;
     /* hauled: it slides back down the path for a moment, and nothing else moves it */
     if(e.haulT>0){const step=Math.min(e.haulLeft,e.haulLeft*dt/e.haulT); e.haulT-=dt; e.haulLeft-=step; e.d=Math.max(0,e.d-step);
       const q=posAt(F.paths[e.gate],e.d); e.x=q[0]; e.y=q[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y); continue;}
@@ -3465,17 +3467,22 @@ function addGlint(x,y,r,t,star){
   F.glints.push({x,y,r,t,max:t});
   if(star){F.fx.push({k:'ring',x,y,r0:.2,r1:r,t:0,dur:.6,col:'255,226,170'}); AUDIO.flare();}
 }
+/* the ring spreads thin: the nearest few take its full weight, the rest half. A boss it has stunned goes deaf to every chime for a while */
+const CHIME_FULL=4, CHIME_FAR=.5, CHIME_DEAF=4;
 function chimePulse(t,st){
   const es=allIn(t.x,t.y,st.range);
   /* Hymn Under the Water: whatever stands in water hears every ring, wherever it is */
   if(hasOff('hymn')&&F.water.size)for(const e of F.foes)if(!e.dead&&inWater(e)&&!es.includes(e)&&canSee(e)){es.push(e); F.fx.push({k:'ring',x:e.x,y:e.y,r0:.15,r1:.6,t:0,dur:.45,col:'106,169,159'});}
   if(!es.length)return false;
   const mult=beaconAt(t.x,t.y);
-  for(const e of es){
-    e.stunT=Math.max(e.stunT,e.def.boss?st.stun*.4:st.stun);
-    hurt(e,st.dmg*mult);
+  es.sort((a,b)=>dst(a.x,a.y,t.x,t.y)-dst(b.x,b.y,t.x,t.y));
+  es.forEach((e,i)=>{
+    if(!e.def.boss)e.stunT=Math.max(e.stunT,st.stun);
+    else if(!(e.deafT>0)){e.stunT=Math.max(e.stunT,st.stun*.4); e.deafT=CHIME_DEAF;}
+    else F.fx.push({k:'ring',x:e.x,y:e.y,r0:e.def.r+.1,r1:e.def.r+.3,t:0,dur:.4,col:'120,116,108'});
+    hurt(e,st.dmg*mult*(i<CHIME_FULL?1:CHIME_FAR));
     if(e.dead&&st.shatter)burst(e.x,e.y,.9,10,'236,232,222',e);
-  }
+  });
   F.fx.push({k:'ring',x:t.x,y:t.y,r0:.2,r1:st.range,t:0,dur:.5,col:'236,232,222'});
   t.ring=.4; AUDIO.chime();
   return true;
@@ -5813,7 +5820,7 @@ function showBook(){
     intro='Everything you can build. Each has three branches; it can take two, and only one reaches its capstone.';
     const br=(k,kk)=>(treeOf(k,kk||'')||[]).map(b=>b.n+' (capstone: '+b.t[b.t.length-1][1].split(':')[0]+')').join(' · ');
     list=bookEntry('<canvas width="72" height="72" data-icon="lamp:lamp:0"></canvas>','The Lamp','Tap it on the board to upgrade it','Everything climbs toward it. Each creature that arrives drains its oil. '+(TREES.lamp?'Branches: '+br('lamp')+'.':''))
-      +Object.keys(WARDS).map(k=>{const W=WARDS[k], where=W.kit?KITS[W.kit].n+'’s own':GIFT_WARDS.includes(k)?'Won as a gift':W.fork?'On forked floors':'';
+      +Object.keys(WARDS).map(k=>{const W=WARDS[k], where=W.kit?KITS[W.kit].n+'’s own':GIFT_WARDS.includes(k)?(k==='chime'?'Found on the stair; the Bellringer starts with it':'Won as a gift'):W.fork?'On forked floors':'';
         /* a kit's own version follows the ward it replaces; it shares that ward's branches */
         const own=Object.keys(KIT_WARDS).filter(kk=>KIT_WARDS[kk][k]).map(kk=>{const V=wdef(k,kk);
           return bookEntry('<canvas width="72" height="72" data-icon="ward:'+k+':0:'+kk+'"></canvas>',V.n,KITS[kk].n+'’s own '+W.short.toLowerCase()+' · Costs '+V.cost,V.d+' <i>Branches:</i> '+br(k,kk)+'.');}).join('');
@@ -5970,6 +5977,9 @@ const TIPS={
   mirror:{when:()=>run.wards.includes('mirror')&&F.phase==='build'&&(sel&&sel.type==='mirror'||F.towers.some(t=>t.type==='mirror')),title:'The Signal Mirror',
     text:'Build the Mirror inside the lamp’s own light, and it reflects the lamp in a beam 5 tiles long. Tap the mirror, then Aim the beam and tap where it should go, or turn it a step at a time. It locks when a wave begins. The beam lights the ground, so you can build along it, and burns whatever walks through.',
     target:()=>{const t=F.towers.find(t=>t.type==='mirror'); return t?coachBoard(t.x,t.y,1):coachTray('mirror');}},
+  chimedeaf:{when:()=>F.phase==='wave'&&F.foes.some(e=>!e.dead&&e.def.boss&&e.deafT>0)&&F.towers.some(t=>t.type==='chime'),title:'Deaf to the Chime',
+    text:'Once a Bone Chime stuns a boss, the boss is deaf to every chime for 4 seconds: they still strike it, but cannot stun it. The dull grey ring is it shrugging them off. Chimes hold crowds; a boss needs more than bells.',
+    target:()=>{const e=F.foes.find(e=>!e.dead&&e.def.boss); return e?coachBoard(e.x,e.y,1):null;}},
   haul:{when:()=>ritesNow().includes('haul')&&F.phase==='wave'&&F.foes.filter(e=>!e.dead&&e.d>1.2).length>=4,title:'Haul Away',
     text:'Tap Haul Away, then the path where they crowd. A whaling net lands there: everything under it, and everything already on your lines, is hauled 3 tiles back and tangled, 50% slower for 3 seconds.',
     target:()=>coachEl('#rites [data-r="haul"]')},

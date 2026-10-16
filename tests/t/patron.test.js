@@ -20,7 +20,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(offers.lamp.kitMax===1&&offers.whaler.kitMax===1,'at most one kit offering per offer',[offers.lamp.kitMax,offers.whaler.kitMax]);
   ok(offers.lamp.keys.includes('still')&&offers.lamp.keys.includes('drowned')&&!offers.lamp.keys.includes('fat'),'the Lamplighter sees its own, not the Whaler’s',offers.lamp.keys);
   ok(offers.whaler.keys.includes('fat')&&offers.whaler.keys.includes('deep')&&!offers.whaler.keys.includes('still'),'the Whaler sees its own',offers.whaler.keys);
-  ok(!offers.occ.keys.includes('brine')&&offers.occ.keys.includes('hymn'),'Brine Pools needs salt; the Occultist has none but has chimes',offers.occ.keys);
+  ok(!offers.occ.keys.includes('brine')&&!offers.occ.keys.includes('hymn'),'Brine Pools needs salt and the Hymn a chime; the Occultist starts with neither',offers.occ.keys);
   ok(offers.empty===null,'nothing left to give: no offer',offers.empty);
 
   /* Attention: the first gift floods the floor at once; water sits on the path, never on the lamp; the current is 30% */
