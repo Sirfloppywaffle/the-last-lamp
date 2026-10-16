@@ -58,9 +58,33 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* Static Burst: the Dynamo's capstone stuns what comes close */
     fresh(); T.F.lamp.br.dynamo=3; T.F.phase='wave'; const near=T.spawnFoe('crawler',0,T.F.paths[0].len-1.2); near.def=Object.assign({},near.def,{spd:0});
     T.update(.001); T.update(.02); out.static={stun:near.stunT>0, cd:T.F.staticCd>10};
+    {/* the Grounding Anchor: forced links that never shock, a cage, one catch, a capture that vents Heat */
+    fresh(); const a1=put('pylon',...best.a), a2=put('pylon',...best.b);
+    const mid=[(a1.x+a2.x)/2,(a1.y+a2.y)/2], q=best.q, ax=q[0]+(q[0]-mid[0])*1.5, ay=q[1]+(q[1]-mid[1])*1.5;
+    T.F.phase='wave'; const idle2=T.spawnFoe('crawler',0,0); idle2.def=Object.assign({},idle2.def,{spd:0}); T.update(.001);
+    T.castAnchor(ax,ay);
+    const an=T.F.grid.edges.filter(e=>e.anchor);
+    out.anc={links:an.length, tris:T.F.grid.tris.length, cd:T.F.cd.anchor, inside:T.inCage(q[0],q[1])};
+    /* an anchor wire does not shock */
+    const ae=an[0]; const qx=(ae.a.x+ae.b.x)/2, qy=(ae.a.y+ae.b.y)/2;
+    const bystander=T.spawnFoe('crawler',0,1); bystander.def=Object.assign({},bystander.def,{spd:0}); bystander.x=qx; bystander.y=qy; bystander.d=-1;
+    /* a Gnasher dies inside the cage: caught, not a sigil; the Anchor burns out */
+    T.F.heat=2.5; const gn=T.spawnFoe('gnasher',0,best.d); T.update(.001); gn.x=q[0]+(ax-q[0])*.3; gn.y=q[1]+(ay-q[1])*.3; out.anc.gnIn=T.inCage(gn.x,gn.y); T.hurt(gn,9999);
+    const cg=T.F.souls.find(x=>x.cage);
+    out.anc.caught=!!cg&&cg.max===5; out.anc.burnt=T.F.anchor===null; out.anc.sigils=T.F.souls.filter(x=>!x.cage).length;
+    if(!cg)return out; const before=T.run.roster.gnasher||0; T.bindSoul(cg); out.anc.captured=(T.run.roster.gnasher||0)-before; out.anc.heat=+T.F.heat.toFixed(2);
+    /* dying outside any cage leaves nothing for the Galvanist */
+    T.F.souls=[]; const g2=T.spawnFoe('gnasher',0,1); T.update(.001); T.hurt(g2,9999); out.anc.outside=T.F.souls.length;
+    /* the Keeper: its fall readies the Anchor; its core needs a cage before a tap takes it */
+    T.F.cd.anchor=20; const kp=T.spawnFoe('boss',0,best.d); T.update(.001); kp.x=q[0]+(ax-q[0])*.3; kp.y=q[1]+(ay-q[1])*.3; T.hurt(kp,1e9);
+    const core=T.F.souls.find(x=>x.core); out.keeper={core:!!core&&core.max===15, cd:T.F.cd.anchor};
+    const rr=document.querySelector('#board').getBoundingClientRect(), tap=()=>document.querySelector('#board').dispatchEvent(new PointerEvent('pointerdown',{clientX:rr.left+core.x/T.COLS*rr.width,clientY:rr.top+core.y/T.ROWS*rr.height,bubbles:true}));
+    tap(); out.keeper.uncaged=!T.run.roster.keeper;
+    T.castAnchor(ax,ay); out.keeper.coreIn=T.inCage(core.x,core.y); tap(); out.keeper.taken=T.run.roster.keeper===1;
+    }
     return out;});
   console.log(JSON.stringify(r));
-  ok(r.kit.wards.includes('pylon')&&r.kit.wards.includes('coil')&&r.kit.rites.join()==='overload,pillar'&&r.kit.names.join()==='Arc Lamp,Lightning Rod'&&r.kit.salt===20,'the Galvanist builds pylons, Arc Lamps, Lightning Rods and keeps the coil',r.kit);
+  ok(r.kit.wards.includes('pylon')&&r.kit.wards.includes('coil')&&r.kit.rites.join()==='overload,anchor'&&r.kit.names.join()==='Arc Lamp,Lightning Rod'&&r.kit.salt===20,'the Galvanist builds pylons, Arc Lamps, Lightning Rods and keeps the coil',r.kit);
   ok(r.found&&r.grid.live===1&&!r.grid.p1dark&&!r.grid.p2dark,'two pylons, one in the lamp’s light, string a live wire',r.grid);
   ok(r.grid.lonely&&r.cut,'a pylon cut off from the mains is dead; taking the mains away cuts the rest',r);
   ok(r.shock.dmg>=12&&r.shock.stun>=.3&&r.shock.lit,'a wire shocks, stuns and lights what crosses it',r.shock);
@@ -72,6 +96,12 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.rod.rods===1&&r.rod.linked&&r.rod.capped===2&&r.rod.fell===0,'a Lightning Rod plants, joins the grid, two at most, then falls',r.rod);
   ok(Math.abs(r.arc.light-2.7)<.01&&r.arc.offFrames>0&&r.arc.offFrames<30&&r.arc.buildOff===false,'the Arc Lamp shines brighter and flickers only in a wave',r.arc);
   ok(r.static.stun&&r.static.cd,'Static Burst stuns what comes close, then recharges',r.static);
+  ok(r.anc.links===2&&r.anc.tris===1&&r.anc.cd===30&&r.anc.inside,'the Anchor links both pylons and closes a cage over the path',r.anc);
+  ok(r.anc.caught&&r.anc.burnt&&r.anc.sigils===0,'a bindable death in the cage is caught, never a sigil, and the Anchor burns out',r.anc);
+  ok(r.anc.captured===1&&Math.abs(r.anc.heat-.5)<.05,'tapping the cage captures it and vents 2 Heat',r.anc);
+  ok(r.anc.outside===0,'outside a cage, the Galvanist gets nothing',r.anc);
+  ok(r.keeper.core&&r.keeper.cd===0,'the Keeper leaves a core for 15 s and readies the Anchor',r.keeper);
+  ok(r.keeper.uncaged&&r.keeper.coreIn&&r.keeper.taken,'its core is taken only inside a cage',r.keeper);
   ok(!errs.length,'no page errors',errs);
   fails.forEach(f=>console.log('FAIL '+f)); await b.close(); process.exitCode=fails.length?1:0;
 })();
