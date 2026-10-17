@@ -5058,7 +5058,8 @@ const PORTRAIT_ART={
   /* ================= 4. DR. LUCAN VOSS: THE GALVANIST (HAIR & MOUTH RENDERED CORRECTLY) ================= */
   galvanist:{light:VOSS_L,col:[160,210,255],reach:1.52,
     body(c,M){
-      const L=VOSS_L, AP=[38,28,24], SKIN=[172,150,138], SKIN_SH=[32,30,42], HAIR=[228,232,240], COPPER=[204,122,56], BRASS=[188,150,76], IRON=[76,84,94];
+      const L=VOSS_L, VEST=[64,48,34], SHIRT=[210,214,222], SKIN=[174,152,138], SKIN_SH=[38,34,42], HAIR=[222,226,234], COPPER=[204,122,56], BRASS=[188,150,76], IRON=[76,84,94];
+      /* 1. Twin Background Galvanic Pylons */
       for(const s of [-1,1]){
         const px=s*.66;
         tendril(c,M,[[px-s*.06,1.42],[px,-.74]],.042,.022,IRON,{base:-.35,ridge:.3});
@@ -5068,64 +5069,66 @@ const PORTRAIT_ART={
         for(const ox of [-.09,.09])for(let r=0;r<2;r++){ell(c,px+ox,-.73-r*.034,.028,.015); fillVol(c,M,[210,220,232],px+ox,-.73-r*.034,.028,.015,L,.55);}
         ell(c,px,-.82,.042,.042); fillVol(c,M,COPPER,px,-.82,.042,.042,L,.75);
       }
-      planeGrad(c,M,[[-.26,.02],[.24,.02],[.28,1.42],[-.30,1.42]],lit(AP,.22),[12,8,8],L,0,.62,.55,false);
-      tendril(c,M,[[-.38,-.14],[-.14,.42],[.34,1.02]],.075,.075,[58,38,24],{base:-.25,ridge:.35});
-      tendril(c,M,[[.36,-.14],[.10,.42],[-.34,1.02]],.075,.075,[58,38,24],{base:-.25,ridge:.35});
-      for(const s of [-1,1]){
-        const cx=s*.36, cy=-.18;
-        for(let r=0;r<3;r++){ell(c,cx,cy-r*.036,.048,.018,s*.25); fillVol(c,M,COPPER,cx,cy-r*.036,.048,.018,L,.65);}
-        ell(c,cx,cy-.11,.028,.028); fillVol(c,M,BRASS,cx,cy-.11,.028,.028,L,.75);
+      /* 2. Fitted Leather Vest over Rolled-Up Sleeve Shirt */
+      planeGrad(c,M,[[-.18,-.26],[-.44,-.14],[-.50,.12],[-.48,.78],[-.52,1.42],[.48,1.42],[.46,.76],[.44,.12],[.38,-.16],[.16,-.26]],lit(VEST,.12),[28,20,14],L,.04,.44,.76,true);
+      planeGrad(c,M,[[-.22,-.18],[-.42,.12],[-.32,.62],[0,.55],[.32,.62],[.42,.12],[.22,-.18]],VEST,[42,30,20],L,0,.22,.45,false);
+      planeGrad(c,M,[[-.14,-.22],[.14,-.22],[.16,.45],[0,.52],[-.16,.45]],SHIRT,[185,192,204],L,0,.15,.35,false);
+      /* leather straps & brass buckles on vest */
+      tendril(c,M,[[-.36,-.08],[-.12,.32]],.045,.045,[58,38,24],{base:-.25,ridge:.35});
+      tendril(c,M,[[.36,-.08],[.12,.32]],.045,.045,[58,38,24],{base:-.25,ridge:.35});
+      ell(c,-.12,.32,.022,.022); fillVol(c,M,BRASS,-.12,.32,.022,.022,L,.7);
+      ell(c,.12,.32,.022,.022); fillVol(c,M,BRASS,.12,.32,.022,.022,L,.7);
+
+      /* 3a. A shock of white hair stood up by static: a mass of tufts behind the head, each one a lit volume (Criss: not lines) */
+      for(let i=0;i<15;i++){
+        const a=-Math.PI*.98+i/14*Math.PI*.96+(srand(i,51)-.5)*.12, r=.2+srand(i,53)*.07, pr=.075+srand(i,57)*.045;
+        const hx=Math.cos(a)*r*1.05, hy=-.64+Math.sin(a)*r*1.2;
+        blob(c,M,lit(HAIR,-.12-srand(i,59)*.18),hx,hy,pr*1.35,pr*.72,Object.assign(facing(L,hx,hy,.55),{rot:a}));
       }
-      for(let i=0;i<3;i++){
-        const t=.22+i*.25, x=-.36+.70*t, y=-.10+1.10*t; c.save(); c.translate(x,y); c.rotate(-.68);
-        planeGrad(c,M,[[-.036,-.068],[.036,-.068],[.036,.068],[-.036,.068]],[92,140,180],[18,28,42],L,0,0,.05,false);
-        planeGrad(c,M,[[-.036,.01],[.036,.01],[.036,.068],[-.036,.068]],lit(COPPER,.3),lit(COPPER,-.5),L,0,.04,.04,false); c.restore();
+      /* an outer ring of smaller tufts, so the shock frays at its edge */
+      for(let i=0;i<13;i++){
+        const a=-Math.PI*.95+i/12*Math.PI*.9+(srand(i,63)-.5)*.1, r=.3+srand(i,65)*.06, pr=.04+srand(i,67)*.03;
+        const hx=Math.cos(a)*r*1.05, hy=-.64+Math.sin(a)*r*1.22;
+        blob(c,M,lit(HAIR,-.2-srand(i,69)*.15),hx,hy,pr*2.1,pr*.55,Object.assign(facing(L,hx,hy,.5),{rot:a}));
       }
+      /* 3. Gaunt, Intense Face with Wild Bushy Hair & Prominent Round Goggles */
       planeGrad(c,M,[[-.11,-.42],[.09,-.42],[.11,-.20],[0,-.14],[-.12,-.20]],lit(SKIN,.18),SKIN_SH,L,0,-.28,.13,true);
-      tendril(c,M,[[-.07,-.38],[-.02,-.22]],.024,.016,lit(SKIN,.28),{base:-.2,ridge:.45});
-      tendril(c,M,[[.06,-.38],[.02,-.22]],.024,.016,lit(SKIN,.35),{base:-.2,ridge:.5});
       planeGrad(c,M,[[-.20,-.76],[-.21,-.54],[-.16,-.36],[-.03,-.28],[.05,-.28],[.17,-.36],[.20,-.54],[.18,-.76],[-.01,-.86]],SKIN,SKIN_SH,L,.02,-.56,.24,true);
       planeGrad(c,M,[[-.21,-.74],[-.21,-.52],[-.16,-.36],[-.03,-.29],[-.03,-.56],[-.07,-.78]],lit(SKIN,-.30),SKIN_SH,L,-.12,-.55,.16,true);
       planeGrad(c,M,[[.02,-.62],[.18,-.64],[.19,-.50],[.10,-.41],[0,-.48]],lit(SKIN,.38),lit(SKIN,-.12),L,.11,-.54,.12,true);
-      if(!M.sil){
-        c.strokeStyle='rgba(110,42,48,.65)'; c.lineWidth=.009;
-        c.beginPath(); c.moveTo(.15,-.48); c.lineTo(.09,-.53); c.lineTo(.12,-.58); c.moveTo(.09,-.53); c.lineTo(.05,-.51); c.stroke();
-        hatchStrokes(c,-.14,-.44,.14,-.30,45,.020,1.4,[42,38,44],.45,.006,412);
-      }
-      humanEye(c,M,-.075,-.62,.042,.024,.05,{sclera:[215,225,238],iris:[82,136,174],pupilR:.32,look:[.2,.1],catchCol:[195,235,255]});
+      humanEye(c,M,-.075,-.62,.044,.024,.05,{sclera:[215,225,238],iris:[82,136,174],pupilR:.32,look:[.2,.1],catchCol:[195,235,255]});
       humanEye(c,M,.080,-.62,.045,.026,-.04,{sclera:[228,236,245],iris:[92,148,186],pupilR:.30,look:[.2,.1],catchCol:[215,245,255]});
       tendril(c,M,[[-.15,-.66],[-.07,-.65],[-.02,-.64]],.024,.015,[34,32,36],{base:-.3,ridge:.25});
       tendril(c,M,[[.02,-.64],[.09,-.66],[.16,-.67]],.024,.015,[34,32,36],{base:-.2,ridge:.4});
       planeGrad(c,M,[[-.01,-.63],[.045,-.63],[.08,-.51],[.035,-.49],[-.01,-.51]],lit(SKIN,.45),lit(SKIN,-.08),L,.04,-.56,.08,false);
-      
-      /* Rendered Mouth & Gritted Teeth (Permanently Locked In) */
+      /* a grin too wide for his face: lips drawn back, two rows of teeth, smile lines cut deep */
       if(!M.sil){
-        c.fillStyle='#0c080a'; ell(c,.01,-.42,.075,.028); c.fill();
-        c.fillStyle='#e4edf8'; c.fillRect(-.045,-.432,.10,.022);
-        c.strokeStyle='rgba(20,16,22,.9)'; c.lineWidth=.007;
-        for(let i=-3;i<=3;i++){c.beginPath(); c.moveTo(.01+i*.016,-.435); c.lineTo(.01+i*.016,-.408); c.stroke();}
-        c.strokeStyle='rgba(32,16,20,.95)'; c.lineWidth=.014; ell(c,.01,-.42,.075,.028); c.stroke();
+        c.beginPath(); c.moveTo(-.1,-.44); c.quadraticCurveTo(0,-.405,.11,-.455); c.quadraticCurveTo(.02,-.34,-.1,-.44); c.closePath();
+        c.fillStyle='#120a0c'; c.fill();
+        c.save(); c.clip();
+        c.fillStyle='rgba(232,226,210,1)'; c.beginPath(); c.moveTo(-.1,-.44); c.quadraticCurveTo(0,-.405,.11,-.455); c.lineTo(.11,-.43); c.quadraticCurveTo(0,-.385,-.1,-.415); c.closePath(); c.fill();
+        c.fillStyle='rgba(206,198,180,1)'; c.beginPath(); c.moveTo(-.07,-.385); c.quadraticCurveTo(0,-.36,.07,-.392); c.lineTo(.07,-.37); c.quadraticCurveTo(0,-.35,-.07,-.37); c.closePath(); c.fill();
+        c.strokeStyle='rgba(60,46,44,.7)'; c.lineWidth=.005; for(let i=-4;i<=4;i++){c.beginPath(); c.moveTo(i*.022,-.44+Math.abs(i)*.002); c.lineTo(i*.022,-.418); c.stroke();}
+        c.restore();
+        c.strokeStyle='rgba(70,30,32,.9)'; c.lineWidth=.012; c.beginPath(); c.moveTo(-.1,-.44); c.quadraticCurveTo(0,-.405,.11,-.455); c.stroke();
+        c.strokeStyle='rgba(30,22,28,.75)'; c.lineWidth=.01;
+        c.beginPath(); c.moveTo(-.07,-.5); c.quadraticCurveTo(-.13,-.46,-.12,-.4); c.moveTo(.08,-.5); c.quadraticCurveTo(.15,-.47,.14,-.41); c.stroke();
       }
-
-      /* Clean Structured Hair & Goggles */
-      planeGrad(c,M,[[-.23,-.78],[-.26,-.96],[-.08,-1.05],[.14,-1.03],[.24,-.84],[.20,-.70],[.04,-.78],[-.16,-.76]],[42,40,46],[14,12,16],L,0,-.88,.28,true);
-      for(let i=0;i<14;i++){
-        const u=i/13, hx=-.22+u*.44, hy=-.82+Math.sin(u*Math.PI)*-.15;
-        tendril(c,M,[[hx,hy],[hx+(u-.5)*.3,hy-.18],[hx+(u-.5)*.5,hy-.32]],.055,.015,HAIR,{base:-.2,ridge:.4});
-      }
+      /* the front of the shock, falling over the brow */
+      for(let i=0;i<6;i++){const hx=-.16+i*.064, hy=-.8-Math.sin(i/5*Math.PI)*.03; blob(c,M,lit(HAIR,-.05),hx,hy,.06,.045,facing(L,hx,hy,.6));}
+      /* Prominent Round Brass Goggles Perched on Forehead */
       for(const s of [-1,1]){
-        const gx=s*.095, gy=-.74;
+        const gx=s*.095, gy=-.76;
         ell(c,gx,gy,.062,.062); fillVol(c,M,BRASS,gx,gy,.062,.062,L,.7);
         ell(c,gx,gy,.044,.044); c.fillStyle=M.sil?rgba(SILC):'#18283a'; c.fill();
         spec(c,M,gx-.015,gy-.018,.018,.014,.8,-.2);
       }
       c.strokeStyle=M.sil?rgba(SILC):'#281e14'; c.lineWidth=.022;
-      c.beginPath(); c.moveTo(-.22,-.70); c.quadraticCurveTo(0,-.78,.22,-.70); c.stroke();
-      planeGrad(c,M,[[.14,.48],[.30,.08],[.42,.14],[.28,.58]],[185,192,204],SKIN_SH,L,.30,.34,.22,true);
-      tendril(c,M,[[.28,1.42],[.28,-.02]],.042,.034,[48,34,26],{base:-.22,ridge:.35});
-      c.strokeStyle=M.sil?rgba(SILC):rgba(lit(COPPER,.35)); c.lineWidth=.022; c.lineCap='round';
-      c.beginPath(); c.moveTo(.28,-.06); c.bezierCurveTo(.16,-.08,.16,-.22,.21,-.26); c.moveTo(.28,-.06); c.bezierCurveTo(.40,-.08,.40,-.22,.35,-.26); c.stroke();
-      for(const hx of [.21,.35]){ell(c,hx,-.26,.024,.024); fillVol(c,M,BRASS,hx,-.26,.024,.024,L,.75);}
+      c.beginPath(); c.moveTo(-.22,-.74); c.quadraticCurveTo(0,-.82,.22,-.74); c.stroke();
+
+      /* 4. Foreground Arm Channeling Plasma Electricity */
+      planeGrad(c,M,[[.14,.48],[.32,.10],[.44,.16],[.30,.58]],[185,192,204],SKIN_SH,L,.30,.34,.22,true);
+      tendril(c,M,[[.30,1.42],[.28,-.02]],.044,.036,[52,38,28],{base:-.22,ridge:.35});
     },
     glow(c,M){
       const f=M.f||0, k=[1,.82,.95,.76,.92,.86][f%6]*(M.locked?.55:1);
@@ -5134,8 +5137,6 @@ const PORTRAIT_ART={
       zapBolt(c,.66,-.82,.36,-.29,6,.18,'rgba(95,160,255,'+(.45*k)+')','rgba(235,248,255,'+(.9*k)+')',.009,20+f*17);
       if(f%2===0)zapBolt(c,-.66,-.82,.66,-.82,9,.22,'rgba(85,145,255,'+(.32*k)+')','rgba(215,240,255,'+(.72*k)+')',.007,30+f*23);
       softGlow(c,.28,-.20,0,.42,[135,195,255],.52*k,0); softGlow(c,.28,-.20,0,.16,[225,242,255],.80*k,0);
-      zapBolt(c,.21,-.26,.35,-.26,5,.14,'rgba(110,175,255,'+(.65*k)+')','#ffffff',.011,40+f*19);
-      for(let i=0;i<3;i++){const t=.22+i*.25; softGlow(c,-.36+.70*t,-.10+1.10*t,0,.10,[115,175,255],.38*k,0);}
       if(!M.locked){softGlow(c,-.075,-.62,0,.035,[165,218,255],.38*k,0); softGlow(c,.080,-.62,0,.038,[185,228,255],.42*k,0);}
     }},
 
