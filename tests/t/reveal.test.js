@@ -87,6 +87,18 @@ const file='file://'+process.argv[2], out=process.argv[3];
   ok(!s.reveal&&hall.t==='The Ember Hall'&&/is yours/.test(hall.b),'the Hall comes back with its note after the reveal');
   await p.close();
 
+  // 4b. developer mode can preview any reveal, and records nothing
+  p=await page(412,860);
+  await p.evaluate(()=>{const T=__t; T.newRun('lamplighter'); T.beginFloor(null); window.__before=JSON.stringify(localStorage.getItem('ll-meta')); T.DEV_ACTS.reveal('bellringer');});
+  await p.waitForTimeout(150);
+  s=await state(p);
+  ok(s.reveal&&/Agathe Vell/.test(s.text)&&/Ember Hall/.test(s.text),'the developer menu can preview a reveal');
+  await tap(p); await tap(p);
+  s=await state(p);
+  ok(!s.reveal&&s.title==='Developer','it returns to the developer menu');
+  ok(await p.evaluate(()=>JSON.stringify(localStorage.getItem('ll-meta'))===window.__before&&!__t.meta.unlocked.includes('kit_bellringer')),'and saves nothing');
+  await p.close();
+
   // 5. reduce motion: a plain fade, still finished by itself, still one tap to snap
   p=await page(412,860,{reducedMotion:'reduce'});
   await p.evaluate(()=>{const T=__t; T.newRun('lamplighter'); T.beginFloor(null); T.unlockDeed('whaler'); T.victory();});

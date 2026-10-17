@@ -2213,6 +2213,8 @@ const DEV_ACTS={
     F.wave=F.def.waves.length;
     closeModal(); paused=false; floorCleared(); return null;
   },
+  /* previews a kit's reveal; it shows, never saves (rule 24) */
+  reveal(k){revealKit(k,KITS[k].deed?'deed':'hall',()=>openDevMode(),false); return null;},
   spawn(k){
     if(F.phase==='build'){hint('Call the wave first, then spawn.',2200); return 'Spawns only during a wave';}
     spawnFoe(k,Math.floor(Math.random()*F.nRoots),0); return FOES[k].n+' spawned';
@@ -2226,6 +2228,8 @@ function openDevMode(msg){
     +btn('dark',window.devNoDark?'Darkness: off':'Darkness: on')+btn('cheat','Max essence & oil')+btn('unlock','Unlock everything')+btn('patron','Mother: offer now')+btn('attention','Mother: Attention +1')+btn('kill','Kill all creatures')+btn('clear','Clear wards')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Floors</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+FLOORS.map((f,i)=>btn('floor',(i===run.floor?'● ':'')+(i+1)+' · '+f.name,String(i))).join('')+btn('skip','Clear this floor →')+'</div>'
+    +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Reveal a kit</h3>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+Object.keys(KITS).filter(k=>k!=='lamplighter').map(k=>btn('reveal',KITS[k].who||KITS[k].n,k)).join('')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Spawn on a random path</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px">'+SPAWNABLE.map(k=>btn('spawn',FOES[k].n,k)).join('')+'</div>';
   showModal({kind:'dev',title:'Developer',body:msg?'<span class="note">'+msg+'</span>':'Test tools. Nothing here is saved as a normal run would be.',html,
