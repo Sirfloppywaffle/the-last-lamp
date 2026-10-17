@@ -87,7 +87,7 @@ Rules for reviewers:
 
 ### Claude's side
 - Claude opens PRs from `claude/<topic>` branches, runs the full test suite, and posts results.
-- The **Gemini reviewer** workflow reviews Claude's PRs when they open (see `.github/workflows/gemini-review.yml`). Comment `/gemini <message>` on a PR to ask it something, or `/gemini re-review` after new commits.
+- The **Gemini reviewer** workflow runs **only when someone trusted comments `/gemini` on a PR** (see `.github/workflows/gemini-review.yml`); it no longer reviews PRs on its own, to save its quota. Comment `/gemini <message>` to ask it something, or `/gemini re-review` for a full review of the current diff.
 
 ### Previews and releases
 - **Every pull request gets a playable preview** at `https://<owner>.github.io/the-last-lamp/pr-<number>/`. The `site` workflow posts the link on the PR and updates it on every push. Previews use their own save space (`window.LL_STORE_NS`) and show a "PREVIEW" badge, so Criss's real run is never touched. Mention anything he should try in the PR description.

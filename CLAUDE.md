@@ -22,7 +22,7 @@ You're the engineer and QA on this project. Gemini, working through Jules, is yo
 
 ## Your PRs get reviewed by Gemini
 - **Paused:** Gemini and Jules are off the project for now (see `AGENTS.md` §1). Post a self-review in the §2 shape on each PR instead; when Gemini returns, ask it to `/gemini re-review` anything merged without it.
-- The `gemini-review` workflow reviews your PR when it opens. Reply on the PR with `/gemini <message>` to discuss, and `/gemini re-review` after pushing fixes.
+- The `gemini-review` workflow runs only when a trusted person comments `/gemini` on the PR; it doesn't review on open. Don't comment `/gemini` yourself unless Criss asks, because its quota is small. Criss comments `/gemini re-review` when he wants a review.
 - Take its objections seriously. Agree and fix, or answer with evidence.
 
 ## Handing work to Jules
