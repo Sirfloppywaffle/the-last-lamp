@@ -15,7 +15,7 @@ Everything below is a proposal. The bold calls are made so there's something to 
 - **Tap a card** and it lifts: lamplight sweeps across the portrait, and the kit's wards, rites and "plays like" line appear beneath. **Descend as …** begins the run. Tapping another card switches; nothing jumps.
 - **Locked kits** are a figure in the dark: the silhouette with one detail catching light, set by each character below. Underneath, in tallow, is the deed (Whaler, Occultist) or the Ember Hall cost (Galvanist 70, Bellringer 110). Tapping one says the deed. It never starts a run.
 - **The Grimoire's Kits tab** shows the same portrait in place of the letter seal, with the backstory below.
-- **The reveal** (part 1): when a deed is done during a run, or a kit is bought in the Ember Hall, the end-of-run screen shows that portrait dark, then floods it with lamplight. Its name, its title, the deed and the reveal line follow.
+- **The reveal** (part 1): when a deed is done during a run, the end-of-run screen shows that portrait dark, then floods it with lamplight. Its name, its title, the deed and the reveal line follow. A kit bought in the Ember Hall gets the same reveal right there in the Hall.
 
 ---
 
