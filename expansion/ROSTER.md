@@ -55,6 +55,7 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
   - **Shrieker:** two wide violet eyes, ringed white, that never blink.
   - **The Drowned Choirmaster:** two drowned blue-white eyes that weep water down the inside of the hood.
   - **The Keeper Below:** one huge red eye that opens last, behind all the others, and fills the hood. Bind it once and the Nameless looks finished.
+  **Layered by depth, never side by side** (Gemini: six kinds in a ~55 px hood turn to mud otherwise). The Keeper's red is the deepest layer: a looming red glow that silhouettes everything in front of it. The Watcher's eye holds the centre. The other four cling to the inner rim of the hood. Six kinds only: the Primordial and the Heralds are never bound, so they add nothing.
   The Galvanist's captures count, since a caught thing is held too. **The eyes move:** a slow drift, each kind at its own pace, and they glance toward the card you're choosing. That's the one animated detail besides Voss's arc (Lite freezes them). The roster card and the Grimoire say **"Eyes in the hood: 3 of 6"**, so there's always one more to go and find.
 - **Light source:** the corpse candle, a sickly green-white, and the violet of madness (`--madness`).
 - **Locked:** only the eyes you've already bound (or the two violet pinpricks), glinting inside a hood you can't see.
