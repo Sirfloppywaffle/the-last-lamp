@@ -269,6 +269,31 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .mmore::before{content:"";position:absolute;left:-20px;right:-20px;bottom:-20px;height:84px;background:linear-gradient(rgba(18,22,24,0),var(--stone) 70%)}
 .mmore span{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);padding:4px 12px;border-radius:999px;background:var(--slab);border:1px solid var(--tallow);color:var(--tallow);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 .mactions.stack{flex-direction:column;align-items:stretch;max-width:340px}
+/* the Roster: one card per kit, a painted portrait on each. The portrait keeps its 3:4 shape from the first frame, so nothing shifts as it paints (rule 2) */
+.rost-row{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 10px;margin:0 -2px;scrollbar-width:none}
+.rost-row::-webkit-scrollbar{display:none}
+.rost-card{position:relative;overflow:hidden;flex:1 0 clamp(118px,36vw,150px);max-width:176px;scroll-snap-align:start;padding:6px 6px 8px;gap:2px;transition:transform .2s,border-color .2s}
+.rost-card .rost-port{display:block;width:100%;height:auto;aspect-ratio:3/4;border-radius:6px;background:#050607;margin-bottom:4px}
+.rost-card b{font-size:1.02rem;line-height:1.05}
+.rost-card .tg{font-size:.56rem}
+.rost-card .rost-sub{font-size:.72rem;line-height:1.25}
+.rost-card.on{border-color:var(--tallow);transform:translateY(-3px);box-shadow:0 6px 18px var(--shadow)}
+.rost-card.on .tg{color:var(--tallow)}
+.rost-card.kit-locked{opacity:.8}
+.rost-card.kit-locked .rost-sub{color:var(--tallow)}
+/* lamplight sweeps across the card you choose */
+.rost-card.on::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(237,180,90,.22) 50%,transparent 70%);transform:translateX(-120%);animation:rostSweep .9s ease-out forwards}
+@keyframes rostSweep{to{transform:translateX(120%)}}
+@media (prefers-reduced-motion:reduce){.rost-card{transition:none}.rost-card.on::after{animation:none;display:none}.rost-card.on{transform:none}}
+.rost-info{min-height:7.5em;padding:2px 2px 0;font-size:.86rem;color:var(--ash);max-width:62ch}
+.rost-info p{margin:4px 0 0}
+.rost-info .rost-who{font-family:var(--f-display);font-weight:500;font-size:1.3rem;color:var(--bone)}
+.rost-info .rost-kitn{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tallow)}
+.rost-info .rost-line{font-style:italic;color:var(--bone)}
+.rost-info .rost-how{color:var(--tallow)}
+.rost-info .rost-st{font-family:var(--f-num);font-size:.72rem}
+.book-e canvas.book-port{width:54px;height:72px;border-radius:5px}
+@media (max-height:500px){.rost-card{flex:1 0 96px;max-width:120px}.rost-card .rost-sub{display:none}.rost-info{min-height:5em}}
 
 /* Map Overlay */
 #mapOverlay{position:fixed;inset:0;z-index:100;background:#050607;touch-action:none;display:flex;flex-direction:column}
@@ -423,6 +448,7 @@ input[type=range]::-moz-range-track {
         <li><b>Chimes.</b> A Bone Chime stuns everything in its ring, but the ring spreads thin: the four nearest take its full strike, the rest half. A boss it stuns goes deaf to every chime for 4 seconds, and a dull grey ring shows it shrugging them off.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, Kindle sets a creature burning and running, lighting the dark around it, and its Signal Mirror, built in the lamp's own light, reflects it in a 5-tile beam you aim between waves (it locks while the dark comes); you can build in the beam, and it burns what crosses it. The Galvanist builds a power grid: Pylons string live wires that shock, stun and light what crosses them, if a pylon stands in the lamp's own light to power the rest; his Arc Lamps burn bright but flicker; his Lightning Rods plant where they strike and join the grid; Overload fires every wire at once for 2 oil, and run hot it fries his pylons; he binds nothing by ritual: his Grounding Anchor forces nearby pylons to link to it, and a bindable creature that dies inside one of its triangles is caught in a cage to tap (the Keeper's core waits 15 seconds for a cage, and its fall readies the Anchor), each capture drawing 2 Heat out of the grid; his lamp's Dynamo branch ends in a Static Burst. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Bellringer, Agathe Vell, sees by sound: her Toll rings the lamp, and whatever its ring touches is heard for 1.5 seconds, outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost; each Toll makes 1 Noise (it fades 1 every 8 seconds), and at 5 the dark answers with two Abyssal Stalkers; the Great Bell is heard across the whole floor for 3 Noise; her Bell Wires can be strung anywhere on the path, even in the dark, and hear what crosses them; she builds no candles: her Tuning Forks give no light but hum, standing within 5 tiles of the lamp or 3.5 of another fork, and she can build inside a hum even in the dark, though wards there strike only what is heard; a toll that reaches a fork rings again from it; a toll from the lamp echoes back off the walls of the floor; heavy things leave red footsteps where they tread unseen, but Shades, Stalkers and fliers make none; her Clapper Harpoons ring what they strike and knock it back, and the path's edges show for her even where it is dark; her lamp's Peal branch makes it toll on its own, with no Noise, but that heartbeat finds only the ordinary dark; tap Toll on the beat (a ring closes on the lamp, and the button glows) for a Perfect Toll that reaches half again as far, cracks twice and makes half the Noise; her Tolls, Great Bell, Bell Wires, Clapper bolts and Tocsin shells crack what they strike, and three cracks shatter it, hurting and cracking what stands beside it (bosses take 8, Behemoths and elites 5); her Tocsin shells any Bell Wire that jangles, however far away. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it; Haul Away casts a whaling net that hauls everything under it, and everything on its lines, 3 tiles back and tangles it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
+        <li><b>The Roster.</b> Five went down the stair the night Saltmouth drowned: Ambrose Fenn the lamplighter, Jonah Tolland the harpooner, the Nameless, Dr. Lucan Voss and Agathe Vell. Each carries the lamp their own way. Some are earned by a deed on the stair, some in the Ember Hall. Every kind of horror you bind or capture, on any descent, adds its eyes to the Nameless’s hood, for good: there are six to find.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
@@ -785,10 +811,10 @@ const OFFERINGS={
 };
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
 const KITS={
-  lamplighter:{n:'The Lamplighter',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam.',wards:['candle','harpoon','mirror','salt','trap','tithe'],rites:['kindle','pillar'],roster:{}},
-  whaler:{n:'The Whaler',d:'Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line, and Haul Away casts a net that hauls a crowd back and tangles it. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance','trypot'],rites:['haul','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
-  occultist:{n:'The Occultist',d:'Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher.',wards:['candle','harpoon','grasp','effigy','tithe'],rites:['unbind','raise'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
-  galvanist:{n:'The Galvanist',d:'A mad scientist with a power grid. Pylons string live wires across the path that shock and light what crosses them, if the grid reaches the lamp. Arc Lamps burn bright but flicker. Lightning Rods plant where they strike and join the grid. Overload fires every wire at once, paid in oil, and run too hot it fries your pylons. No ritual binds for him: the Grounding Anchor cages what dies in its circuit. Starts with the Galvanic Coil.',wards:['candle','harpoon','pylon','salt','coil'],rites:['overload','anchor'],roster:{},lock:'kit_galvanist'},
+  lamplighter:{n:'The Lamplighter',who:'Ambrose Fenn',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam.',wards:['candle','harpoon','mirror','salt','trap','tithe'],rites:['kindle','pillar'],roster:{}},
+  whaler:{n:'The Whaler',who:'Jonah Tolland',d:'Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line, and Haul Away casts a net that hauls a crowd back and tangles it. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance','trypot'],rites:['haul','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
+  occultist:{n:'The Occultist',who:'The Nameless',d:'Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher.',wards:['candle','harpoon','grasp','effigy','tithe'],rites:['unbind','raise'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
+  galvanist:{n:'The Galvanist',who:'Dr. Lucan Voss',d:'A mad scientist with a power grid. Pylons string live wires across the path that shock and light what crosses them, if the grid reaches the lamp. Arc Lamps burn bright but flicker. Lightning Rods plant where they strike and join the grid. Overload fires every wire at once, paid in oil, and run too hot it fries your pylons. No ritual binds for him: the Grounding Anchor cages what dies in its circuit. Starts with the Galvanic Coil.',wards:['candle','harpoon','pylon','salt','coil'],rites:['overload','anchor'],roster:{},lock:'kit_galvanist'},
   bellringer:{n:'The Bellringer',who:'Agathe Vell',d:'Agathe Vell rang the bell of St. Agatha’s as the town went under, and came back up the stair blind. She sees by sound. Toll the lamp and everything its ring touches is heard: outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost. Each Toll makes Noise, and at 5 the dark answers with Stalkers; tap it on the lamp’s own beat for a Perfect Toll. Her bells crack what they strike, and three cracks shatter it. She builds no candles: her Tuning Forks hum in the dark, and she can build inside their hum, but wards there strike only what is heard. Tolls echo back off the walls, and heavy things leave footsteps in the dark; Shades and Stalkers make none. Bell Wires can be strung anywhere on the path, and the Tocsin shells whatever trips them, however far. Clapper Harpoons ring what they strike. She hears the path, even in the dark. She is the only kit that starts with the Bone Chime.',wards:['fork','harpoon','bellwire','tocsin','chime','censer'],rites:['toll','greatbell'],roster:{},lock:'kit_bellringer'}
 };
 const OMENS={
@@ -2225,26 +2251,64 @@ function newRun(k,depth){
   if(run.depth>=5){run.baseOilMax-=5; updateOilMax(); run.oil=run.oilMax;}
   beginFloor(null);
 }
+/* the Roster: who each kit was the night Saltmouth drowned (expansion/ROSTER.md) */
+const ROSTER={
+  lamplighter:{line:'He kept the harbour lamps forty years. On the last night he kept one more.',plays:'Light passes hand to hand.'},
+  whaler:{line:'Harpooner off the Patience. He has gutted worse than what climbs these stairs.',plays:'Hold them, haul them, render them.'},
+  occultist:{line:'It gave its name to something below, and got this in return.',plays:'Madness is the price, and the weapon.'},
+  galvanist:{line:'Struck off the Royal Institution’s rolls. He came down to prove the lamp could run on lightning.',plays:'Wire the dark; don’t let it run hot.'},
+  bellringer:{line:'She rang the bell of St. Agatha’s as the town went under, and came back up the stair blind.',plays:'Light lets you build; sound lets you see.'}
+};
+function hoodLine(){return 'Eyes in the hood: '+hoodEyes().length+' of '+HOOD_EYES.length;}
+function kitLocked(k,m){const K=KITS[k]; return !devOn&&!!K.lock&&!(m||meta()).unlocked.includes(K.lock);}
+function kitHow(k){const K=KITS[k], H=HALL.find(h=>h.k===K.lock); return K.deed?'Deed: '+K.deed:'The Ember Hall · '+(H?H.cost+' embers':'embers');}
+let rostTimer=0;
+/* the cards that move: the Nameless's eyes drift and glance toward the card you are choosing, Voss's pylons spark, Agathe's bell swings */
+function rosterPaint(pick,f){
+  const ks=Object.keys(KITS), look=Math.sign(ks.indexOf(pick)-ks.indexOf('occultist'));
+  document.querySelectorAll('#rostRow canvas[data-port]').forEach(cv=>{const k=cv.dataset.port; if(f!==undefined&&k!=='occultist'&&k!=='galvanist'&&k!=='bellringer')return;
+    paintPortrait(cv,k,kitLocked(k),f||0,look);});
+}
+function rosterAnim(getPick){
+  clearInterval(rostTimer); if(gfxLite||reduceMotion)return;
+  let f=0;
+  rostTimer=setInterval(()=>{if(!document.getElementById('rostRow')||$('#modal').hidden){clearInterval(rostTimer); return;} f=(f+1)%PORT_FRAMES; rosterPaint(getPick(),f);},240);
+}
 function openKitPicker(note){
   const m=meta(); let dp=Math.min(m.lastDepth||0,m.depth);
+  const ks=Object.keys(KITS);
+  /* the last kit carried is chosen already, so one tap on it descends */
+  let pick=ks.includes(m.lastKit)&&!kitLocked(m.lastKit,m)?m.lastKit:'lamplighter';
+  const go=()=>{
+    if(!devOn){const mm=store.get('ll-meta',{})||{}; mm.lastDepth=dp; mm.lastKit=pick; saveMeta(Object.assign(meta(),mm));}
+    clearInterval(rostTimer); closeModal(); clearSave(); newRun(pick,dp);
+  };
+  const info=(k,msg)=>{const K=KITS[k], R=ROSTER[k]||{};
+    if(kitLocked(k,m))return '<b class="rost-who">'+K.n+'</b><p class="rost-how">'+kitHow(k)+'</p><p>'+(msg||'Not yet earned. Every descent, won or lost, leaves embers for the Ember Hall.')+'</p>';
+    const ws=K.wards.map(w=>wdef(w,k).short||wdef(w,k).n).join(' · '), rs=K.rites.map(r=>RITES[r].n).join(' · ');
+    return '<b class="rost-who">'+(K.who||K.n)+'</b> <span class="rost-kitn">'+K.n+'</span><p class="rost-line">'+(R.line||'')+'</p><p>'+K.d+'</p><p class="rost-st">Builds '+ws+' · Casts '+rs+(k==='occultist'?' · '+hoodLine():'')+'</p>';};
+  const card=k=>{const K=KITS[k], lk=kitLocked(k,m);
+    return '<button class="choice rost-card'+(k===pick?' on':'')+(lk?' off kit-locked':'')+'" data-kit="'+k+'"><canvas class="rost-port" width="'+PORT_W+'" height="'+PORT_H+'" data-port="'+k+'"></canvas>'
+      +'<span class="tg">'+(lk?'Locked':K.n)+'</span><b>'+(lk?K.n:(K.who||K.n))+'</b><span class="rost-sub">'+(lk?kitHow(k):(ROSTER[k]||{}).plays||'')+'</span></button>';};
   const draw=(msg)=>{
     const acts=[];
-    if(m.depth>0)for(let i=0;i<=m.depth;i++)acts.push({label:(i===dp?'● ':'')+'Depth '+i,primary:i===dp,fn:()=>{dp=i; draw();}});
-    acts.push({label:'Back',fn:closeModal});
+    if(m.depth>0)for(let i=0;i<=m.depth;i++)acts.push({label:(i===dp?'● ':'')+'Depth '+i,fn:()=>{dp=i; draw();}});
+    acts.push({label:'Descend as '+(KITS[pick].who||KITS[pick].n),primary:true,fn:go});
+    acts.push({label:'Back',fn:()=>{clearInterval(rostTimer); closeModal();}});
     const deeper=dp?' <span class="mad">The Deeper Dark, depth '+dp+': '+DEPTHS.slice(1,dp+1).join(' ')+'</span>':'';
-    showModal({title:'Who carries the lamp?',wide:true,body:'Choose a kit. Each starts with its own wards, rites and a gift of its own.'+deeper,note:msg||note||'',
-      choices:Object.keys(KITS).map(k=>{const K=KITS[k], locked=!devOn&&K.lock&&!m.unlocked.includes(K.lock);
-        const tagText=locked?(K.deed?('Deed: '+K.deed):'Locked · unlock it in the Ember Hall'):K.wards.map(w=>(wdef(w,k).short||wdef(w,k).n)).join(' · ');
-        const lockMsg=K.deed?('That kit is locked. Deed: '+K.deed):'That kit is still locked. Unlock it in the Ember Hall with embers from your descents.';
-        return {cls:locked?'off kit-locked':(k===m.lastKit?'relic':''),tag:tagText,title:K.n+(K.who&&!locked?' · '+K.who:''),sub:K.d,
-          fn:()=>{
-            if(locked){draw(lockMsg); return;}
-            if(!devOn){
-              const mm=store.get('ll-meta',{})||{}; mm.lastDepth=dp; mm.lastKit=k; saveMeta(Object.assign(meta(),mm));
-            }
-            closeModal(); clearSave(); newRun(k,dp);
-          }};}),
-      actions:acts});
+    showModal({title:'Who carries the lamp?',wide:true,body:'Five went down the stair the night Saltmouth drowned. Tap one to see who they were; tap them again, or Descend, to go down.'+deeper,note:note||'',
+      html:'<div class="rost-row" id="rostRow">'+ks.map(card).join('')+'</div><div class="rost-info" id="rostInfo">'+info(pick,msg)+'</div>',actions:acts});
+    rosterPaint(pick);
+    document.querySelectorAll('#rostRow .rost-card').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.kit;
+      if(kitLocked(k,m)){$('#rostInfo').innerHTML=info(k,KITS[k].deed?'Do the deed on any descent and they are yours.':'Unlock it in the Ember Hall with embers from your descents.'); moreCue(); return;}
+      if(k===pick){go(); return;}
+      pick=k; AUDIO.click&&AUDIO.click();
+      document.querySelectorAll('#rostRow .rost-card').forEach(x=>x.classList.toggle('on',x.dataset.kit===pick));
+      $('#rostInfo').innerHTML=info(pick);
+      const d=[...document.querySelectorAll('#mActions button')].find(x=>x.classList.contains('call')); if(d)d.textContent='Descend as '+(KITS[pick].who||KITS[pick].n);
+      rosterPaint(pick); moreCue();}));
+    const on=document.querySelector('#rostRow .rost-card.on'); if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'nearest'});
+    rosterAnim(()=>pick);
   };
   draw();
 }
@@ -3560,6 +3624,9 @@ function lampHit(e){
 function bindSoul(s){
   s.t=0;
   run.roster[s.type]=(run.roster[s.type]||0)+1; run.bound++;
+  /* every kind ever bound or caught adds its eyes to the Nameless's hood on the roster, for good */
+  if(!devOn&&!codex().bound.has(s.type)&&HOOD_EYES.includes(s.type))run.newEye=s.type;
+  codexSee('bound',s.type);
   checkOccultistDeed();
   /* a capture: the specimen soaks up the grid's charge, and a core's Anchor burns out on it */
   if(s.cage||s.core){F.heat=Math.max(0,(F.heat||0)-CAPTURE_VENT); if(s.core)F.anchor=null; F.L=lightsNow();
@@ -4765,6 +4832,426 @@ function artFrame(A,tm,ph){const u=(tm/A.period+(ph||0))%1; return Math.floor((u
 const artWarmQ=[];
 function warmArt(types){for(const t of types){const A=ART[t]; if(!A||A.live)continue; for(let f=0;f<A.frames;f++)for(const v of ['n','m','s'])artWarmQ.push([t,v,f]);}}
 function artWarmStep(budgetMs){const t0=performance.now(); while(artWarmQ.length&&performance.now()-t0<budgetMs){const [t,v,f]=artWarmQ.shift(); artSprite(t,v,f);}}
+
+/* ================= the Roster: a painted portrait for each kit =================
+   Five went down the stair the night Saltmouth drowned. Each portrait is painted once into its own canvas, in unit space
+   (x from -1 to 1, y from -1.333 to 1.333), lit by one light of its own; everything else falls off into the dark.
+   Locked, the figure is a shape in the dark and only its light (or its eyes) shows. Painted once and cached (rule 17);
+   only the Nameless's eyes, Voss's sparks and Agathe's bell move, from six cached frames, and Lite and reduce-motion keep them still. */
+const PORT_W=300, PORT_H=400, PORT_FRAMES=6;
+const PORTRAITS=new Map();
+const HOOD_EYES=['keeper','watcher','gnasher','wretch','shrieker','elite'];
+function hoodEyes(){return devOn?HOOD_EYES.slice():HOOD_EYES.filter(k=>codex().bound.has(k));}
+function facing(L,x,y,hi){const dx=L[0]-x, dy=L[1]-y, d=Math.hypot(dx,dy)||1; return {hx:-dx/d*.55,hy:-dy/d*.6,hi:hi===undefined?.4:hi};}
+function smoothPath(c,P,closed){
+  c.beginPath(); const n=P.length; if(!n)return;
+  if(closed){c.moveTo((P[n-1][0]+P[0][0])/2,(P[n-1][1]+P[0][1])/2); for(let i=0;i<n;i++){const a=P[i],b=P[(i+1)%n]; c.quadraticCurveTo(a[0],a[1],(a[0]+b[0])/2,(a[1]+b[1])/2);} c.closePath();}
+  else{c.moveTo(P[0][0],P[0][1]); for(let i=1;i<n-1;i++){const a=P[i],b=P[i+1]; c.quadraticCurveTo(a[0],a[1],(a[0]+b[0])/2,(a[1]+b[1])/2);} c.lineTo(P[n-1][0],P[n-1][1]);}
+}
+function fillVol(c,M,A,cx,cy,rx,ry,L,hi){c.fillStyle=vol(c,M,A,cx,cy,rx,ry,facing(L,cx,cy,hi)); c.fill();}
+function polyPath(c,P,closed){c.beginPath(); for(let i=0;i<P.length;i++)i?c.lineTo(P[i][0],P[i][1]):c.moveTo(P[i][0],P[i][1]); if(closed!==false)c.closePath();}
+function planeGrad(c,M,P,cLit,cDark,L,cx,cy,r,smooth){
+  if(smooth)smoothPath(c,P,true); else polyPath(c,P,true);
+  if(M.sil){c.fillStyle=rgba(SILC); c.fill(); return;}
+  const dx=L[0]-cx, dy=L[1]-cy, d=Math.hypot(dx,dy)||1, ux=dx/d, uy=dy/d;
+  const g=c.createLinearGradient(cx+ux*r,cy+uy*r,cx-ux*r,cy-uy*r);
+  g.addColorStop(0,rgba(cLit)); g.addColorStop(.52,rgba(mixc(cLit,cDark,.52))); g.addColorStop(1,rgba(cDark));
+  c.fillStyle=g; c.fill();
+}
+function softGlow(c,x,y,r0,r1,col,a0,a1){
+  const g=c.createRadialGradient(x,y,r0,x,y,r1);
+  g.addColorStop(0,rgba(col,a0)); g.addColorStop(.45,rgba(col,(a0+(a1||0))*.35)); g.addColorStop(1,rgba(col,a1||0));
+  c.fillStyle=g; c.beginPath(); c.arc(x,y,r1,0,TAU); c.fill();
+}
+function clothFold(c,M,P,w0,w1,A,L,hi){
+  tendril(c,M,P,w0,w1,lit(A,-.26),{base:-.34,ridge:.08}); if(M.sil)return;
+  const n=P.length, side=(L[0]-P[0][0])>=0?1:-1; c.save(); c.lineCap='round';
+  c.strokeStyle=rgba(lit(A,hi||.32),.55); c.lineWidth=Math.max(w0,w1)*.22; c.beginPath();
+  for(let i=0;i<n;i++){const o=w0+(w1-w0)*(i/(n-1)); i?c.lineTo(P[i][0]+side*o*.22,P[i][1]-o*.07):c.moveTo(P[i][0]+side*o*.22,P[i][1]-o*.07);} c.stroke();
+  c.strokeStyle='rgba(4,5,7,.68)'; c.lineWidth=Math.max(w0,w1)*.18; c.beginPath();
+  for(let i=0;i<n;i++){const o=w0+(w1-w0)*(i/(n-1)); i?c.lineTo(P[i][0]-side*o*.26,P[i][1]+o*.09):c.moveTo(P[i][0]-side*o*.26,P[i][1]+o*.09);} c.stroke(); c.restore();
+}
+function hatchStrokes(c,x0,y0,x1,y1,n,len,ang,col,alpha,lw,seed){
+  c.save(); c.strokeStyle=rgba(col,alpha); c.lineWidth=lw||.007; c.lineCap='round';
+  for(let i=0;i<n;i++){
+    const x=x0+(x1-x0)*srand(i,seed||11), y=y0+(y1-y0)*srand(i,(seed||11)+7), a=ang+(srand(i,(seed||11)+23)-.5)*.26, l=len*(.6+.7*srand(i,(seed||11)+31));
+    c.beginPath(); c.moveTo(x,y); c.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l); c.stroke();
+  }
+  c.restore();
+}
+function humanEye(c,M,x,y,w,h,rot,o){
+  o=o||{}; c.save(); c.translate(x,y); if(rot)c.rotate(rot);
+  if(!M.sil){const sg=c.createRadialGradient(0,0,w*.1,0,0,w*1.65); sg.addColorStop(0,'rgba(6,4,4,.86)'); sg.addColorStop(.65,'rgba(14,9,8,.42)'); sg.addColorStop(1,'rgba(0,0,0,0)'); c.fillStyle=sg; ell(c,0,-h*.08,w*1.65,h*2.2); c.fill();}
+  c.beginPath(); c.moveTo(-w,0); c.bezierCurveTo(-w*.45,-h*1.12,w*.45,-h*1.12,w,.03); c.bezierCurveTo(w*.45,h*.92,-w*.45,h*.92,-w,0); c.closePath();
+  if(M.sil){c.fillStyle=o.emissive?rgba(o.glow||[237,180,90],.85):'#040506'; c.fill(); c.restore(); return;}
+  c.save(); c.clip();
+  const sc=o.sclera||[192,180,164], g=c.createRadialGradient(-w*.15,-h*.2,w*.05,0,0,w*1.1);
+  g.addColorStop(0,rgba(lit(sc,.18))); g.addColorStop(.6,rgba(sc)); g.addColorStop(1,rgba(lit(sc,-.55)));
+  c.fillStyle=g; c.fillRect(-w*1.2,-h*1.4,w*2.4,h*2.8);
+  const lx=(o.look?o.look[0]:0)*w*.26, ly=(o.look?o.look[1]:0)*h*.2, ir=w*(o.irisR||.48), ic=o.iris||[92,72,48];
+  const ig=c.createRadialGradient(lx,ly,ir*.1,lx,ly,ir); ig.addColorStop(0,rgba(lit(ic,.35))); ig.addColorStop(.65,rgba(ic)); ig.addColorStop(1,rgba(lit(ic,-.65)));
+  c.fillStyle=ig; c.beginPath(); c.arc(lx,ly,ir,0,TAU); c.fill();
+  if(!o.cataract){c.fillStyle='#050303'; c.beginPath(); c.arc(lx,ly,ir*(o.pupilR||.42),0,TAU); c.fill();}
+  else{const cg=c.createRadialGradient(lx-ir*.15,ly-ir*.15,0,lx,ly,ir*1.04); cg.addColorStop(0,'rgba(236,240,234,.92)'); cg.addColorStop(.62,'rgba(172,184,180,.78)'); cg.addColorStop(1,'rgba(104,116,114,.2)'); c.fillStyle=cg; c.beginPath(); c.arc(lx,ly,ir*1.04,0,TAU); c.fill();}
+  c.fillStyle='rgba(5,3,3,.52)'; c.fillRect(-w*1.2,-h*1.3,w*2.4,h*.82);
+  c.fillStyle=rgba(o.catchCol||[255,242,210],.92); ell(c,lx+(o.catchX||w*.2),ly+(o.catchY||-h*.2),w*.12,h*.16,-.3); c.fill();
+  c.restore();
+  c.strokeStyle='rgba(8,5,4,.92)'; c.lineWidth=.012; c.beginPath(); c.moveTo(-w*1.06,.02); c.bezierCurveTo(-w*.45,-h*1.16,w*.45,-h*1.16,w*1.06,.04); c.stroke();
+  c.strokeStyle=rgba(o.rimCol||[188,132,96],.42); c.lineWidth=.008; c.beginPath(); c.moveTo(-w*.92,.04); c.bezierCurveTo(-w*.4,h*.98,w*.4,h*.98,w*.96,.05); c.stroke();
+  c.restore();
+}
+function portFlame(c,x,y,h,col,a){
+  softGlow(c,x,y-h*.2,0,h*4.2,col,.46*a,0); softGlow(c,x,y-h*.15,0,h*1.7,[255,224,156],.64*a,0);
+  c.beginPath(); c.moveTo(x,y-h*1.35); c.bezierCurveTo(x+h*.46,y-h*.55,x+h*.42,y+h*.25,x,y+h*.44); c.bezierCurveTo(x-h*.42,y+h*.25,x-h*.46,y-h*.55,x,y-h*1.35); c.closePath();
+  const fg=c.createLinearGradient(x,y-h*1.35,x,y+h*.44); fg.addColorStop(0,rgba(lit(col,.25),a*.9)); fg.addColorStop(.55,rgba(col,a*.95)); fg.addColorStop(1,'rgba(68,94,162,'+(a*.42)+')'); c.fillStyle=fg; c.fill();
+  c.beginPath(); c.moveTo(x,y-h*.72); c.bezierCurveTo(x+h*.21,y-h*.2,x+h*.19,y+h*.2,x,y+h*.3); c.bezierCurveTo(x-h*.19,y+h*.2,x-h*.21,y-h*.2,x,y-h*.72); c.closePath();
+  c.fillStyle='rgba(255,252,240,'+(a*.96)+')'; c.fill();
+}
+function zapBolt(c,x0,y0,x1,y1,segs,jit,col,coreCol,w,seed){
+  const P=[[x0,y0]], dx=x1-x0, dy=y1-y0, nx=-dy, ny=dx;
+  for(let i=1;i<segs;i++){const u=i/segs, j=(srand(i,seed)-.5)*jit*Math.sin(u*Math.PI); P.push([x0+dx*u+nx*j,y0+dy*u+ny*j]);}
+  P.push([x1,y1]); c.save(); c.lineCap='round'; c.lineJoin='round';
+  c.strokeStyle=col; c.lineWidth=w*2.6; polyPath(c,P,false); c.stroke();
+  c.strokeStyle=coreCol; c.lineWidth=w; polyPath(c,P,false); c.stroke(); c.restore();
+}
+
+const FENN_L=[.48,-.30], TOLL_L=[-.22,.48], NAME_L=[.44,.04], VOSS_L=[.38,-.26], VELL_B=[-.50,.10];
+const PORTRAIT_ART={
+  lamplighter:{light:FENN_L,col:[237,180,90],reach:1.72,
+    body(c,M){
+      const L=FENN_L, COAT=[44,34,26], COAT_HI=[116,84,54], WAX=[214,192,144], WAX_SH=[108,88,58], SKIN=[172,126,92], SKIN_SH=[56,34,24], BRASS=[190,146,68];
+      tendril(c,M,[[.60,1.42],[.59,.28],[.58,-.94]],.052,.042,[68,48,32],{base:-.22,ridge:.28});
+      c.strokeStyle=M.sil?rgba(SILC):rgba(BRASS); c.lineWidth=.028; c.lineCap='round';
+      c.beginPath(); c.moveTo(.58,-.94); c.bezierCurveTo(.58,-1.10,.46,-1.10,.46,-.98); c.lineTo(.48,-.60); c.stroke();
+      planeGrad(c,M,[[-.18,-.26],[-.46,-.15],[-.54,.12],[-.58,.72],[-.62,1.42],[.46,1.42],[.44,.70],[.42,.08],[.34,-.16],[.14,-.26]],COAT_HI,lit(COAT,-.68),L,-.04,.52,.78,true);
+      planeGrad(c,M,[[.24,-.10],[.42,-.04],[.60,.18],[.54,.34],[.30,.22],[.18,.04]],lit(COAT_HI,.08),lit(COAT,-.55),L,.40,.14,.28,true);
+      clothFold(c,M,[[-.40,-.08],[-.46,.56],[-.50,1.42]],.095,.14,COAT,L,.26);
+      clothFold(c,M,[[-.18,.02],[-.22,.66],[-.26,1.42]],.085,.13,COAT,L,.30);
+      clothFold(c,M,[[.16,-.02],[.22,.62],[.26,1.42]],.09,.14,COAT,L,.44);
+      planeGrad(c,M,[[-.22,-.40],[-.30,-.18],[-.12,.04],[-.04,-.24]],lit(COAT,.12),lit(COAT,-.58),L,-.18,-.20,.22,false);
+      planeGrad(c,M,[[.14,-.40],[.26,-.16],[.10,.06],[.01,-.24]],COAT_HI,lit(COAT,-.42),L,.14,-.20,.22,false);
+      if(!M.sil){for(let i=0;i<3;i++){const by=.22+i*.25; ell(c,-.09,by,.022,.022); fillVol(c,M,BRASS,-.09,by,.022,.022,L,.5); ell(c,.07,by,.022,.022); fillVol(c,M,BRASS,.07,by,.022,.022,L,.65);}}
+      planeGrad(c,M,[[-.52,.02],[-.46,-.15],[-.24,-.22],[-.14,-.12],[-.20,.06],[-.44,.11]],WAX,WAX_SH,L,-.34,-.06,.24,true);
+      for(let i=0;i<8;i++){
+        const t=i/7, bx=-.50+t*.34, by=.01-t*.12+(srand(i,3)-.5)*.03, h=.045+srand(i,17)*.11*(1-.35*Math.abs(t-.45)), w=.022+srand(i,23)*.018, dlen=.10+srand(i,41)*.32;
+        planeGrad(c,M,[[bx-w,by+.02],[bx-w*.35,by-h*.65],[bx,by-h],[bx+w*.35,by-h*.65],[bx+w,by+.02]],lit(WAX,.25),WAX_SH,L,bx,by-h*.4,w*1.5,true);
+        tendril(c,M,[[bx,by+.02],[bx+(srand(i,43)-.5)*.02,by+dlen*.55],[bx+(srand(i,47)-.5)*.025,by+dlen]],w*.9,w*.32,WAX,{base:-.18,ridge:.45});
+      }
+      ell(c,-.30,.82,.11,.11); fillVol(c,M,BRASS,-.30,.82,.11,.11,L,.65);
+      if(!M.sil){ell(c,-.30,.82,.082,.082); const mg=c.createRadialGradient(-.27,.79,.01,-.30,.82,.085); mg.addColorStop(0,'rgba(255,232,175,.95)'); mg.addColorStop(.48,'rgba(176,128,64,.85)'); mg.addColorStop(1,'rgba(28,22,16,.95)'); c.fillStyle=mg; c.fill();}
+      planeGrad(c,M,[[-.10,-.42],[.09,-.42],[.11,-.18],[0,-.12],[-.12,-.20]],SKIN,SKIN_SH,L,0,-.28,.14,true);
+      planeGrad(c,M,[[-.17,-.76],[-.18,-.54],[-.14,-.37],[-.01,-.30],[.11,-.34],[.17,-.48],[.18,-.68],[.14,-.84],[-.03,-.88]],SKIN,SKIN_SH,L,.02,-.58,.24,true);
+      planeGrad(c,M,[[-.18,-.74],[-.18,-.52],[-.14,-.37],[-.03,-.31],[-.02,-.56],[-.06,-.78]],lit(SKIN,-.28),SKIN_SH,L,-.11,-.55,.16,true);
+      planeGrad(c,M,[[.03,-.62],[.16,-.64],[.17,-.50],[.10,-.42],[.01,-.48]],lit(SKIN,.28),lit(SKIN,-.15),L,.12,-.54,.12,true);
+      if(!M.sil)hatchStrokes(c,-.13,-.48,.13,-.32,50,.022,1.3,[195,188,174],.5,.006,202);
+      humanEye(c,M,-.07,-.63,.044,.024,.06,{iris:[72,58,42],look:[.35,.1],catchX:.012});
+      humanEye(c,M,.095,-.63,.046,.026,-.05,{cataract:true,look:[.2,.1],catchCol:[255,220,150]});
+      tendril(c,M,[[-.13,-.67],[-.06,-.65],[-.02,-.67]],.022,.014,[155,148,136],{base:-.25,ridge:.3});
+      tendril(c,M,[[.03,-.67],[.09,-.65],[.15,-.68]],.024,.014,[175,168,154],{base:-.15,ridge:.45});
+      planeGrad(c,M,[[.01,-.64],[.055,-.64],[.09,-.52],[.045,-.50],[.01,-.52]],lit(SKIN,.35),lit(SKIN,-.1),L,.06,-.57,.08,false);
+      tendril(c,M,[[-.07,-.45],[.01,-.43],[.09,-.45]],.024,.016,[150,142,130],{base:-.3,ridge:.35});
+      planeGrad(c,M,[[-.20,-.81],[-.22,-.95],[-.03,-1.02],[.17,-.96],[.20,-.81]],[46,38,32],[16,13,11],L,.03,-.90,.24,true);
+      planeGrad(c,M,[[-.18,-.80],[.03,-.84],[.22,-.78],[.17,-.72],[-.02,-.75],[-.15,-.75]],[55,44,34],[12,10,9],L,.06,-.77,.22,true);
+      for(let i=0;i<4;i++){const fy=.16+i*.028; tendril(c,M,[[.52,fy],[.59,fy-.008],[.64,fy+.006]],.024,.016,SKIN,{base:-.15,ridge:.4});}
+      planeGrad(c,M,[[.42,-.61],[.54,-.61],[.56,-.54],[.40,-.54]],lit(BRASS,.25),lit(BRASS,-.55),L,.48,-.57,.09,false);
+      planeGrad(c,M,[[.35,-.48],[.61,-.48],[.56,-.54],[.40,-.54]],lit(BRASS,.35),lit(BRASS,-.5),L,.48,-.51,.13,false);
+      planeGrad(c,M,[[.38,-.18],[.58,-.18],[.55,-.11],[.41,-.11]],lit(BRASS,.2),lit(BRASS,-.6),L,.48,-.15,.11,false);
+      c.strokeStyle=M.sil?rgba(SILC):rgba(lit(BRASS,-.35)); c.lineWidth=.016; c.strokeRect(.38,-.48,.20,.30);
+    },
+    glow(c,M){
+      const a=M.locked?.65:1, g=c.createLinearGradient(.38,-.48,.58,-.18);
+      g.addColorStop(0,'rgba(255,228,162,'+(.92*a)+')'); g.addColorStop(.5,'rgba(242,178,84,'+(.88*a)+')'); g.addColorStop(1,'rgba(198,118,38,'+(.82*a)+')');
+      c.fillStyle=g; c.fillRect(.39,-.47,.18,.28);
+      portFlame(c,.48,-.30,.08,[255,192,92],a);
+      c.strokeStyle='rgba(58,38,18,'+(.92*a)+')'; c.lineWidth=.014; c.beginPath(); c.moveTo(.48,-.48); c.lineTo(.48,-.18); c.moveTo(.38,-.33); c.lineTo(.58,-.33); c.stroke();
+      if(!M.locked){softGlow(c,-.28,.80,0,.075,[255,214,140],.52,0); softGlow(c,.095,-.63,0,.04,[255,220,155],.38,0);}
+    }},
+
+  whaler:{light:TOLL_L,col:[242,166,68],reach:1.75,
+    body(c,M){
+      const L=TOLL_L, SLICKER=[92,68,32], SLICK_SH=[22,16,10], SWEATER=[42,50,54], WADER=[26,28,30], BEANIE=[58,44,32], SKIN=[174,124,90], SKIN_SH=[46,28,20], IRON=[134,144,154];
+      planeGrad(c,M,[[-.22,-.28],[-.48,-.16],[-.56,.16],[-.54,.78],[-.58,1.42],[.50,1.42],[.48,.76],[.48,.14],[.42,-.14],[.20,-.28]],SLICKER,SLICK_SH,L,-.04,.46,.78,true);
+      planeGrad(c,M,[[-.20,-.40],[-.36,-.16],[-.22,.32],[-.08,.18]],lit(SLICKER,.22),SLICK_SH,L,-.22,-.04,.28,false);
+      planeGrad(c,M,[[.18,-.40],[.34,-.16],[.20,.32],[.06,.18]],lit(SLICKER,.08),SLICK_SH,L,.20,-.04,.28,false);
+      planeGrad(c,M,[[-.18,-.30],[.17,-.30],[.22,.38],[-.22,.38]],lit(SWEATER,.22),[12,15,17],L,-.02,.04,.26,false);
+      if(!M.sil){for(let x=-.15;x<=.15;x+=.05){c.strokeStyle='rgba(10,14,16,.65)'; c.lineWidth=.010; c.beginPath(); c.moveTo(x,-.28); c.lineTo(x,.28); c.stroke();}}
+      tendril(c,M,[[-.15,-.22],[-.13,.16]],.052,.052,WADER,{base:-.2,ridge:.3});
+      tendril(c,M,[[.14,-.22],[.12,.16]],.052,.052,WADER,{base:-.2,ridge:.25});
+      planeGrad(c,M,[[-.22,.14],[.20,.14],[.24,1.42],[-.26,1.42]],lit(WADER,.18),[8,9,10],L,-.02,.72,.52,false);
+      if(!M.sil){for(const bx of [-.13,.12]){ell(c,bx,.17,.022,.022); fillVol(c,M,[184,142,72],bx,.17,.022,.022,L,.65);} spec(c,M,-.36,.28,.022,.20,.38,-.10);}
+      planeGrad(c,M,[[-.09,-.42],[.09,-.42],[.11,-.22],[0,-.16],[-.11,-.22]],lit(SKIN,.12),SKIN_SH,L,-.01,-.28,.12,true);
+      planeGrad(c,M,[[-.16,-.76],[-.17,-.54],[-.14,-.36],[-.04,-.26],[.04,-.26],[.14,-.36],[.17,-.54],[.16,-.76],[0,-.84]],SKIN,SKIN_SH,L,-.02,-.56,.22,true);
+      planeGrad(c,M,[[-.17,-.60],[-.05,-.56],[-.07,-.44],[-.15,-.45]],lit(SKIN,.32),SKIN_SH,L,-.11,-.52,.09,true);
+      planeGrad(c,M,[[.16,-.60],[.05,-.56],[.07,-.44],[.14,-.45]],lit(SKIN,.10),SKIN_SH,L,.10,-.52,.09,true);
+      if(!M.sil){c.strokeStyle='rgba(26,12,10,.72)'; c.lineWidth=.010; c.beginPath(); c.moveTo(-.13,-.59); c.quadraticCurveTo(-.08,-.56,-.03,-.59); c.moveTo(.03,-.59); c.quadraticCurveTo(.08,-.56,.13,-.59); c.moveTo(-.10,-.70); c.quadraticCurveTo(0,-.72,.10,-.70); c.stroke();}
+      /* Jonah's beard, grey and salt-stiff, and his moustache (Gemini's) */
+      planeGrad(c,M,[[-.17,-.52],[-.19,-.34],[-.12,-.18],[0,-.14],[.12,-.18],[.18,-.34],[.16,-.52],[.08,-.44],[-.08,-.44]],[138,134,126],[28,26,24],L,-.03,-.34,.22,true);
+      if(!M.sil){hatchStrokes(c,-.16,-.48,.15,-.18,95,.034,1.48,[205,200,190],.55,.006,333); hatchStrokes(c,-.16,-.48,.15,-.18,55,.030,1.56,[34,30,28],.65,.006,339);}
+      tendril(c,M,[[-.12,-.42],[0,-.45],[.0,-.44]],.038,.026,[168,162,152],{base:-.22,ridge:.45});
+      tendril(c,M,[[.12,-.42],[.0,-.45],[.0,-.44]],.038,.026,[148,142,132],{base:-.28,ridge:.35});
+      planeGrad(c,M,[[-.03,-.65],[.025,-.65],[.038,-.56],[0,-.50],[-.035,-.51],[-.025,-.58]],lit(SKIN,.36),SKIN_SH,L,-.01,-.56,.07,false);
+      humanEye(c,M,-.075,-.62,.040,.019,.05,{iris:[78,96,92],look:[-.1,.1],catchY:.006,catchCol:[255,200,115]});
+      humanEye(c,M,.075,-.62,.040,.019,-.05,{iris:[78,96,92],look:[-.1,.1],catchY:.006,catchCol:[255,200,115]});
+      tendril(c,M,[[-.14,-.66],[-.07,-.65],[-.02,-.64]],.026,.018,[96,92,86],{base:-.25,ridge:.35});
+      tendril(c,M,[[.14,-.66],[.07,-.65],[.02,-.64]],.026,.018,[86,82,76],{base:-.3,ridge:.3});
+      planeGrad(c,M,[[-.18,-.72],[-.17,-.94],[-.06,-1.02],[.07,-1.02],[.17,-.94],[.18,-.72]],lit(BEANIE,.25),[14,10,8],L,-.02,-.88,.20,true);
+      planeGrad(c,M,[[-.19,-.70],[-.19,-.81],[0,-.84],[.19,-.81],[.19,-.70],[0,-.73]],lit(BEANIE,.38),[18,13,10],L,-.02,-.76,.20,true);
+      if(!M.sil){c.strokeStyle='rgba(16,11,8,.72)'; c.lineWidth=.010; for(let x=-.16;x<=.16;x+=.032){c.beginPath(); c.moveTo(x,-.82); c.lineTo(x,-.71); c.stroke(); c.beginPath(); c.moveTo(x*.9,-.99); c.lineTo(x,-.82); c.stroke();}}
+      tendril(c,M,[[.38,1.42],[.36,.12],[.34,-.62]],.054,.050,[82,54,34],{base:-.22,ridge:.35});
+      tendril(c,M,[[.34,-.62],[.33,-.96]],.038,.026,IRON,{base:-.25,ridge:.55});
+      planeGrad(c,M,[[.33,-.92],[.32,-1.28],[.43,-.98],[.35,-.88]],lit(IRON,.62),lit(IRON,-.55),L,.37,-1.06,.12,false);
+      planeGrad(c,M,[[.33,-1.18],[.22,-.96],[.30,-.90],[.33,-1.02]],lit(IRON,.45),lit(IRON,-.60),L,.28,-1.02,.10,false);
+      planeGrad(c,M,[[.34,-.12],[.52,.18],[.48,.44],[.28,.30],[.24,.06]],lit(SLICKER,.12),SLICK_SH,L,.38,.18,.22,true);
+      planeGrad(c,M,[[.28,.12],[.43,.10],[.44,.25],[.29,.26]],lit(SKIN,.25),SKIN_SH,L,.36,.18,.10,true);
+      for(let i=0;i<4;i++){const fy=.12+i*.032; tendril(c,M,[[.29,fy],[.37,fy-.006],[.43,fy+.008]],.026,.020,SKIN,{base:-.18,ridge:.42});}
+      c.strokeStyle=M.sil?rgba(SILC):rgba(lit(IRON,-.2)); c.lineWidth=.018; c.beginPath(); c.moveTo(-.22,.32); c.lineTo(-.28,.54); c.moveTo(-.22,.32); c.lineTo(-.16,.54); c.stroke();
+      planeGrad(c,M,[[-.33,.54],[-.11,.54],[-.15,.64],[-.29,.64]],lit(IRON,.38),lit(IRON,-.6),L,-.22,.59,.13,true);
+    },
+    glow(c,M){
+      const a=M.locked?.6:1;
+      if(!M.locked){c.save(); c.lineCap='round'; for(let i=0;i<3;i++){c.strokeStyle='rgba(18,16,15,'+(.34-i*.08)+')'; c.lineWidth=.026+i*.014; c.beginPath(); c.moveTo(-.22,.36); c.bezierCurveTo(-.15,.22,-.30,.08,-.19,-.10); c.stroke();} c.restore();}
+      portFlame(c,-.22,.46,.084,[246,164,62],a);
+      c.strokeStyle='rgba(255,242,215,'+(.78*a)+')'; c.lineWidth=.011; c.beginPath(); c.moveTo(.33,-.94); c.lineTo(.32,-1.26); c.stroke();
+    }},
+
+  occultist:{light:NAME_L,col:[192,232,182],reach:1.22,
+    body(c,M){
+      const L=NAME_L, ROBE=[28,36,30], ROBE_HI=[76,94,78], STOLE=[42,50,42], BONE=[212,202,172], BONE_SH=[64,58,44], HAND=[148,144,124], CWAX=[198,212,184];
+      planeGrad(c,M,[[-.18,-.28],[-.44,-.16],[-.52,.14],[-.56,.78],[-.60,1.42],[.54,1.42],[.50,.76],[.48,.12],[.40,-.16],[.18,-.28]],ROBE_HI,[8,11,9],L,.10,.42,.78,true);
+      planeGrad(c,M,[[.20,-.08],[.44,.04],[.60,.34],[.48,.62],[.26,.48],[.14,.16]],ROBE_HI,[10,14,11],L,.38,.32,.28,true);
+      clothFold(c,M,[[-.38,-.08],[-.44,.58],[-.48,1.42]],.09,.15,ROBE,L,.28);
+      clothFold(c,M,[[.32,.02],[.38,.68],[.42,1.42]],.095,.15,ROBE,L,.42);
+      planeGrad(c,M,[[-.34,-.20],[-.20,-.38],[.22,-.38],[.34,-.20],[.20,.02],[-.20,.02]],lit(STOLE,.22),[12,15,12],L,.04,-.18,.32,false);
+      planeGrad(c,M,[[-.22,-.02],[-.11,-.02],[-.14,1.42],[-.26,1.42]],lit(STOLE,.18),[10,13,11],L,-.18,.6,1.0,false);
+      planeGrad(c,M,[[.08,-.02],[.19,-.02],[.22,1.42],[.10,1.42]],lit(STOLE,.25),[10,13,11],L,.15,.6,1.0,false);
+      ell(c,-.01,-.18,.048,.034); fillVol(c,M,BONE,-.01,-.18,.048,.034,L,.55);
+      planeGrad(c,M,[[-.04,-1.18],[-.28,-.96],[-.36,-.62],[-.30,-.34],[.30,-.34],[.36,-.62],[.24,-.96]],ROBE_HI,[9,12,10],L,.06,-.72,.42,true);
+      clothFold(c,M,[[-.32,-.56],[-.18,-.82],[.02,-.90],[.22,-.80],[.32,-.54]],.085,.075,ROBE,L,.45);
+      clothFold(c,M,[[-.28,-.40],[-.02,-.32],[.28,-.38]],.075,.07,ROBE,L,.38);
+      smoothPath(c,[[-.24,-.44],[-.26,-.64],[-.14,-.80],[.02,-.84],[.18,-.78],[.26,-.62],[.24,-.44],[.02,-.38]],true);
+      c.fillStyle='#010202'; c.fill();
+      planeGrad(c,M,[[.52,.42],[.36,.44],[.34,.54],[.52,.54]],lit(HAND,.22),lit(HAND,-.55),L,.44,.48,.11,true);
+      for(let i=0;i<4;i++){const fy=.40+i*.034, fx=.30+i*.014; tendril(c,M,[[.50,fy+.02],[.40,fy],[fx,fy-.02]],.022,.013,HAND,{base:-.25,ridge:.45});}
+      planeGrad(c,M,[[.29,.26],[.28,.14],[.37,.07],[.51,.07],[.59,.15],[.58,.27],[.52,.34],[.35,.34]],lit(BONE,.35),BONE_SH,L,.44,.20,.17,true);
+      planeGrad(c,M,[[.31,.27],[.56,.27],[.54,.36],[.49,.41],[.38,.41],[.33,.36]],lit(BONE,.25),BONE_SH,L,.44,.33,.13,true);
+      if(!M.sil){
+        c.fillStyle='#080907'; ell(c,.38,.27,.038,.030,.12); c.fill(); ell(c,.50,.27,.038,.030,-.12); c.fill();
+        polyPath(c,[[.44,.29],[.42,.35],[.46,.35]],true); c.fill();
+        for(let i=0;i<6;i++){c.fillStyle=rgba(lit(BONE,.15)); c.fillRect(.385+i*.019,.372,.015,.025);}
+      }
+      planeGrad(c,M,[[.408,-.04],[.472,-.04],[.482,.09],[.398,.09]],lit(CWAX,.3),lit(CWAX,-.45),L,.44,.03,.06,false);
+    },
+    glow(c,M){
+      if(!M.locked){portFlame(c,.44,-.08,.066,[192,240,180],1); softGlow(c,.38,.27,0,.032,[180,235,170],.35,0); softGlow(c,.50,.27,0,.032,[180,235,170],.35,0);}
+      const has=k=>M.eyes.includes(k), lk=M.look||0, f=M.f||0, a=M.locked?.78:1;
+      const dr=i=>[Math.sin(f*1.05+i*1.7)*.01+lk*.026,Math.cos(f*.85+i*2.3)*.007];
+      c.save(); smoothPath(c,[[-.24,-.44],[-.26,-.64],[-.14,-.80],[.02,-.84],[.18,-.78],[.26,-.62],[.24,-.44],[.02,-.38]],true); c.clip();
+      if(has('keeper')){const d=dr(0); softGlow(c,.01+d[0]*.4,-.60,.04,.24,[210,38,32],.65*a,0); c.strokeStyle='rgba(255,140,80,'+(.55*a)+')'; c.lineWidth=.012; c.beginPath(); c.arc(.01+d[0]*.4,-.60,.14,0,TAU); c.stroke(); c.fillStyle='rgba(8,2,3,.92)'; c.beginPath(); c.arc(.01+d[0]*.4,-.60,.095,0,TAU); c.fill();}
+      for(const s of [-1,1]){const d=dr(1); eyeG(c,{sil:false},.01+s*.062+d[0],-.58+d[1],.016*a,{emissive:true,glow:[178,132,240]});}
+      if(has('shrieker'))for(const [x,y,i] of [[-.14,-.68,2],[-.17,-.53,3]]){const d=dr(i); c.strokeStyle='rgba(232,224,205,'+(.82*a)+')'; c.lineWidth=.011; ell(c,x+d[0],y+d[1],.034,.030); c.stroke(); eyeG(c,{sil:false},x+d[0],y+d[1],.021*a,{emissive:true,glow:[198,124,242]});}
+      if(has('wretch'))for(let i=0;i<5;i++){const d=dr(4+i); eyeG(c,{sil:false},.09+srand(i,41)*.10+d[0],-.74+srand(i,43)*.11+d[1],(.010+(i%2)*.004)*a,{emissive:true,glow:[212,235,88]});}
+      if(has('elite'))for(const [x,y,i] of [[.13,-.48,9],[.17,-.58,10]]){const d=dr(i); eyeG(c,{sil:false},x+d[0],y+d[1],.019*a,{emissive:true,glow:[185,232,250]});}
+      if(has('gnasher'))for(const s of [-1,1]){const d=dr(11); eyeG(c,{sil:false},.01+s*.082+d[0],-.46+d[1],.021*a,{emissive:true,glow:[244,68,42],pupil:'slit'});}
+      if(has('watcher')){const d=dr(12); eyeG(c,{sil:false},.01+d[0],-.68+d[1],.056*a,{sclera:[228,218,192],iris:[118,154,182],look:[lk*.85,0],veins:true});}
+      c.restore();
+    }},
+
+  /* ================= 4. DR. LUCAN VOSS: THE GALVANIST (HAIR & MOUTH RENDERED CORRECTLY) ================= */
+  galvanist:{light:VOSS_L,col:[160,210,255],reach:1.52,
+    body(c,M){
+      const L=VOSS_L, VEST=[64,48,34], SHIRT=[210,214,222], SKIN=[174,152,138], SKIN_SH=[38,34,42], HAIR=[222,226,234], COPPER=[204,122,56], BRASS=[188,150,76], IRON=[76,84,94];
+      /* 1. Twin Background Galvanic Pylons */
+      for(const s of [-1,1]){
+        const px=s*.66;
+        tendril(c,M,[[px-s*.06,1.42],[px,-.74]],.042,.022,IRON,{base:-.35,ridge:.3});
+        tendril(c,M,[[px+s*.08,1.42],[px,-.74]],.038,.020,IRON,{base:-.4,ridge:.25});
+        if(!M.sil){c.strokeStyle=rgba(lit(IRON,-.2)); c.lineWidth=.014; for(let k=0;k<4;k++){const y=.5-k*.28; c.beginPath(); c.moveTo(px-.05,y); c.lineTo(px+.05,y-.14); c.stroke();}}
+        planeGrad(c,M,[[px-.13,-.70],[px+.13,-.70],[px+.13,-.65],[px-.13,-.65]],lit(IRON,.25),[16,20,26],L,px,-.67,.12,false);
+        for(const ox of [-.09,.09])for(let r=0;r<2;r++){ell(c,px+ox,-.73-r*.034,.028,.015); fillVol(c,M,[210,220,232],px+ox,-.73-r*.034,.028,.015,L,.55);}
+        ell(c,px,-.82,.042,.042); fillVol(c,M,COPPER,px,-.82,.042,.042,L,.75);
+      }
+      /* 2. Fitted Leather Vest over Rolled-Up Sleeve Shirt */
+      planeGrad(c,M,[[-.18,-.26],[-.44,-.14],[-.50,.12],[-.48,.78],[-.52,1.42],[.48,1.42],[.46,.76],[.44,.12],[.38,-.16],[.16,-.26]],lit(VEST,.12),[28,20,14],L,.04,.44,.76,true);
+      planeGrad(c,M,[[-.22,-.18],[-.42,.12],[-.32,.62],[0,.55],[.32,.62],[.42,.12],[.22,-.18]],VEST,[42,30,20],L,0,.22,.45,false);
+      planeGrad(c,M,[[-.14,-.22],[.14,-.22],[.16,.45],[0,.52],[-.16,.45]],SHIRT,[185,192,204],L,0,.15,.35,false);
+      /* leather straps & brass buckles on vest */
+      tendril(c,M,[[-.36,-.08],[-.12,.32]],.045,.045,[58,38,24],{base:-.25,ridge:.35});
+      tendril(c,M,[[.36,-.08],[.12,.32]],.045,.045,[58,38,24],{base:-.25,ridge:.35});
+      ell(c,-.12,.32,.022,.022); fillVol(c,M,BRASS,-.12,.32,.022,.022,L,.7);
+      ell(c,.12,.32,.022,.022); fillVol(c,M,BRASS,.12,.32,.022,.022,L,.7);
+
+      /* 3a. A shock of white hair stood up by static: a mass of tufts behind the head, each one a lit volume (Criss: not lines) */
+      for(let i=0;i<15;i++){
+        const a=-Math.PI*.98+i/14*Math.PI*.96+(srand(i,51)-.5)*.12, r=.2+srand(i,53)*.07, pr=.075+srand(i,57)*.045;
+        const hx=Math.cos(a)*r*1.05, hy=-.64+Math.sin(a)*r*1.2;
+        blob(c,M,lit(HAIR,-.12-srand(i,59)*.18),hx,hy,pr*1.35,pr*.72,Object.assign(facing(L,hx,hy,.55),{rot:a}));
+      }
+      /* an outer ring of smaller tufts, so the shock frays at its edge */
+      for(let i=0;i<13;i++){
+        const a=-Math.PI*.95+i/12*Math.PI*.9+(srand(i,63)-.5)*.1, r=.3+srand(i,65)*.06, pr=.04+srand(i,67)*.03;
+        const hx=Math.cos(a)*r*1.05, hy=-.64+Math.sin(a)*r*1.22;
+        blob(c,M,lit(HAIR,-.2-srand(i,69)*.15),hx,hy,pr*2.1,pr*.55,Object.assign(facing(L,hx,hy,.5),{rot:a}));
+      }
+      /* 3. Gaunt, Intense Face with Wild Bushy Hair & Prominent Round Goggles */
+      planeGrad(c,M,[[-.11,-.42],[.09,-.42],[.11,-.20],[0,-.14],[-.12,-.20]],lit(SKIN,.18),SKIN_SH,L,0,-.28,.13,true);
+      planeGrad(c,M,[[-.20,-.76],[-.21,-.54],[-.16,-.36],[-.03,-.28],[.05,-.28],[.17,-.36],[.20,-.54],[.18,-.76],[-.01,-.86]],SKIN,SKIN_SH,L,.02,-.56,.24,true);
+      planeGrad(c,M,[[-.21,-.74],[-.21,-.52],[-.16,-.36],[-.03,-.29],[-.03,-.56],[-.07,-.78]],lit(SKIN,-.30),SKIN_SH,L,-.12,-.55,.16,true);
+      planeGrad(c,M,[[.02,-.62],[.18,-.64],[.19,-.50],[.10,-.41],[0,-.48]],lit(SKIN,.38),lit(SKIN,-.12),L,.11,-.54,.12,true);
+      humanEye(c,M,-.075,-.62,.044,.024,.05,{sclera:[215,225,238],iris:[82,136,174],pupilR:.32,look:[.2,.1],catchCol:[195,235,255]});
+      humanEye(c,M,.080,-.62,.045,.026,-.04,{sclera:[228,236,245],iris:[92,148,186],pupilR:.30,look:[.2,.1],catchCol:[215,245,255]});
+      tendril(c,M,[[-.15,-.66],[-.07,-.65],[-.02,-.64]],.024,.015,[34,32,36],{base:-.3,ridge:.25});
+      tendril(c,M,[[.02,-.64],[.09,-.66],[.16,-.67]],.024,.015,[34,32,36],{base:-.2,ridge:.4});
+      planeGrad(c,M,[[-.01,-.63],[.045,-.63],[.08,-.51],[.035,-.49],[-.01,-.51]],lit(SKIN,.45),lit(SKIN,-.08),L,.04,-.56,.08,false);
+      /* a grin too wide for his face: lips drawn back, two rows of teeth, smile lines cut deep */
+      if(!M.sil){
+        c.beginPath(); c.moveTo(-.1,-.44); c.quadraticCurveTo(0,-.405,.11,-.455); c.quadraticCurveTo(.02,-.34,-.1,-.44); c.closePath();
+        c.fillStyle='#120a0c'; c.fill();
+        c.save(); c.clip();
+        c.fillStyle='rgba(232,226,210,1)'; c.beginPath(); c.moveTo(-.1,-.44); c.quadraticCurveTo(0,-.405,.11,-.455); c.lineTo(.11,-.43); c.quadraticCurveTo(0,-.385,-.1,-.415); c.closePath(); c.fill();
+        c.fillStyle='rgba(206,198,180,1)'; c.beginPath(); c.moveTo(-.07,-.385); c.quadraticCurveTo(0,-.36,.07,-.392); c.lineTo(.07,-.37); c.quadraticCurveTo(0,-.35,-.07,-.37); c.closePath(); c.fill();
+        c.strokeStyle='rgba(60,46,44,.7)'; c.lineWidth=.005; for(let i=-4;i<=4;i++){c.beginPath(); c.moveTo(i*.022,-.44+Math.abs(i)*.002); c.lineTo(i*.022,-.418); c.stroke();}
+        c.restore();
+        c.strokeStyle='rgba(70,30,32,.9)'; c.lineWidth=.012; c.beginPath(); c.moveTo(-.1,-.44); c.quadraticCurveTo(0,-.405,.11,-.455); c.stroke();
+        c.strokeStyle='rgba(30,22,28,.75)'; c.lineWidth=.01;
+        c.beginPath(); c.moveTo(-.07,-.5); c.quadraticCurveTo(-.13,-.46,-.12,-.4); c.moveTo(.08,-.5); c.quadraticCurveTo(.15,-.47,.14,-.41); c.stroke();
+      }
+      /* the front of the shock, falling over the brow */
+      for(let i=0;i<6;i++){const hx=-.16+i*.064, hy=-.8-Math.sin(i/5*Math.PI)*.03; blob(c,M,lit(HAIR,-.05),hx,hy,.06,.045,facing(L,hx,hy,.6));}
+      /* Prominent Round Brass Goggles Perched on Forehead */
+      for(const s of [-1,1]){
+        const gx=s*.095, gy=-.76;
+        ell(c,gx,gy,.062,.062); fillVol(c,M,BRASS,gx,gy,.062,.062,L,.7);
+        ell(c,gx,gy,.044,.044); c.fillStyle=M.sil?rgba(SILC):'#18283a'; c.fill();
+        spec(c,M,gx-.015,gy-.018,.018,.014,.8,-.2);
+      }
+      c.strokeStyle=M.sil?rgba(SILC):'#281e14'; c.lineWidth=.022;
+      c.beginPath(); c.moveTo(-.22,-.74); c.quadraticCurveTo(0,-.82,.22,-.74); c.stroke();
+
+      /* 4. Foreground Arm Channeling Plasma Electricity */
+      planeGrad(c,M,[[.14,.48],[.32,.10],[.44,.16],[.30,.58]],[185,192,204],SKIN_SH,L,.30,.34,.22,true);
+      tendril(c,M,[[.30,1.42],[.28,-.02]],.044,.036,[52,38,28],{base:-.22,ridge:.35});
+    },
+    glow(c,M){
+      const f=M.f||0, k=[1,.82,.95,.76,.92,.86][f%6]*(M.locked?.55:1);
+      softGlow(c,-.66,-.82,0,.28,[120,185,255],.42*k,0); softGlow(c,.66,-.82,0,.28,[120,185,255],.42*k,0);
+      zapBolt(c,-.66,-.82,-.36,-.29,6,.18,'rgba(95,160,255,'+(.45*k)+')','rgba(235,248,255,'+(.9*k)+')',.009,10+f*13);
+      zapBolt(c,.66,-.82,.36,-.29,6,.18,'rgba(95,160,255,'+(.45*k)+')','rgba(235,248,255,'+(.9*k)+')',.009,20+f*17);
+      if(f%2===0)zapBolt(c,-.66,-.82,.66,-.82,9,.22,'rgba(85,145,255,'+(.32*k)+')','rgba(215,240,255,'+(.72*k)+')',.007,30+f*23);
+      softGlow(c,.28,-.20,0,.42,[135,195,255],.52*k,0); softGlow(c,.28,-.20,0,.16,[225,242,255],.80*k,0);
+      if(!M.locked){softGlow(c,-.075,-.62,0,.035,[165,218,255],.38*k,0); softGlow(c,.080,-.62,0,.038,[185,228,255],.42*k,0);}
+    }},
+
+  bellringer:{light:VELL_B,col:[236,224,198],reach:1.45,echo:true,
+    shapes(c,stroke,sw){
+      const go=()=>stroke?c.stroke():c.fill();
+      c.save(); c.translate(-.06,-.54); c.rotate(.08); c.translate(.06,.54);
+      smoothPath(c,[[0,-1.18],[-.26,-.92],[-.38,-.52],[-.48,-.16],[-.58,.18],[-.56,.82],[-.62,1.42],[.54,1.42],[.50,.80],[.46,.16],[.36,-.20],[.30,-.54],[.22,-.92]],true); go();
+      if(stroke){
+        for(let i=0;i<7;i++){const ty=-.18+i*.11; c.beginPath(); c.moveTo(-.46,ty); c.quadraticCurveTo(-.62,ty+.04,-.70+(i%2)*.06,ty+.12); c.stroke();}
+        for(let i=0;i<6;i++){const hy=-.68+i*.06; c.beginPath(); c.moveTo(-.18,hy); c.bezierCurveTo(-.32,hy-.02,-.44,hy+.04,-.52,hy+.10); c.moveTo(.16,hy); c.bezierCurveTo(.28,hy-.01,.36,hy+.05,.42,hy+.11); c.stroke();}
+        for(const x of [-.38,-.24,-.12,0,.12,.24,.36]){c.beginPath(); c.moveTo(x*.45,-.08); c.quadraticCurveTo(x*.80,.58,x*1.08,1.42); c.stroke();}
+        c.beginPath(); c.moveTo(-.15,-.24); c.lineTo(-.08,-.04); c.lineTo(0,-.14); c.lineTo(.08,-.04); c.lineTo(.15,-.24);
+        for(let i=0;i<5;i++){const fy=-.18+i*.14; c.moveTo(-.07,fy); c.quadraticCurveTo(0,fy-.06,.07,fy); c.moveTo(-.07,fy); c.quadraticCurveTo(0,fy+.06,.07,fy);} c.stroke();
+      }
+      smoothPath(c,[[0,-.98],[-.19,-.82],[-.22,-.52],[-.14,-.30],[.14,-.30],[.21,-.52],[.18,-.82]],true); go();
+      smoothPath(c,[[-.14,-.76],[-.15,-.54],[-.11,-.38],[-.03,-.31],[.03,-.31],[.11,-.38],[.15,-.54],[.14,-.76],[0,-.84]],true); go();
+      c.beginPath(); c.moveTo(-.16,-.66); c.quadraticCurveTo(0,-.61,.16,-.66); c.lineTo(.16,-.55); c.quadraticCurveTo(0,-.50,-.16,-.55); c.closePath(); go();
+      if(stroke){
+        c.beginPath(); c.moveTo(-.15,-.62); c.quadraticCurveTo(0,-.57,.15,-.62); c.moveTo(-.15,-.58); c.quadraticCurveTo(0,-.53,.15,-.58);
+        c.moveTo(-.13,-.52); c.quadraticCurveTo(-.08,-.46,-.05,-.38); c.moveTo(.13,-.52); c.quadraticCurveTo(.08,-.46,.05,-.38);
+        c.moveTo(0,-.58); c.lineTo(.018,-.48); c.lineTo(-.015,-.48); ell(c,0,-.40,.038,.026); c.stroke();
+      }
+      c.restore();
+      c.beginPath(); c.moveTo(-.36,-.12); c.quadraticCurveTo(-.48,-.24,-.56,-.22); c.lineTo(-.54,-.12); c.quadraticCurveTo(-.44,-.12,-.34,-.02); c.closePath(); go();
+      if(stroke){for(let i=0;i<4;i++){const fx=-.56+i*.028; c.beginPath(); c.moveTo(fx,-.20); c.lineTo(fx-.015,-.13); c.lineTo(fx,-.09); c.stroke();}}
+      c.save(); c.translate(-.50,-.10); c.rotate(sw||0); c.translate(.50,.10);
+      c.beginPath(); c.moveTo(-.50,-.10); c.lineTo(-.50,-.02); c.moveTo(-.55,-.02); c.lineTo(-.45,-.02); c.bezierCurveTo(-.43,.08,-.39,.16,-.34,.22); c.lineTo(-.66,.22); c.bezierCurveTo(-.61,.16,-.57,.08,-.55,-.02); c.closePath(); go();
+      ell(c,-.50+(sw||0)*.18,.26,.032,.032); go();
+      if(stroke){c.beginPath(); c.moveTo(-.56,.06); c.lineTo(-.44,.06); c.moveTo(-.61,.16); c.lineTo(-.39,.16); for(let i=0;i<3;i++){const bx=-.56+i*.045; c.moveTo(bx,.16); c.quadraticCurveTo(bx+.02,.08,bx+.04,.16);} c.stroke();}
+      c.restore();
+      c.beginPath(); c.moveTo(.28,.18); c.quadraticCurveTo(.22,.32,.10,.36); c.lineTo(.08,.44); c.quadraticCurveTo(.26,.42,.34,.24); c.closePath(); go();
+      if(stroke){c.beginPath(); c.moveTo(.16,.38); c.lineTo(-.18,.52); c.moveTo(-.02,.45); c.lineTo(-.24,.52); c.moveTo(-.01,.48); c.lineTo(-.22,.56); c.stroke();}
+    },
+    body(c,M){
+      const L=VELL_B, CLOAK=[32,42,52], CLOAK_HI=[58,72,88], SKIN=[156,164,168], SKIN_SH=[18,22,28], LINEN=[182,188,194], BRZ=[186,154,102], sw=[.14,.05,-.09,-.04,.03,.09][(M.f||0)%6];
+      c.save(); c.translate(-.06,-.54); c.rotate(.08); c.translate(.06,.54);
+      planeGrad(c,M,[[0,-1.18],[-.26,-.92],[-.38,-.52],[-.48,-.16],[-.58,.18],[-.56,.82],[-.62,1.42],[.54,1.42],[.50,.80],[.46,.16],[.36,-.20],[.30,-.54],[.22,-.92]],CLOAK_HI,[6,8,12],L,-.06,.20,.95,true);
+      clothFold(c,M,[[-.22,-.92],[-.32,-.44],[-.40,.35],[-.46,1.42]],.085,.14,CLOAK,L,.45);
+      clothFold(c,M,[[.18,-.90],[.26,-.42],[.32,.38],[.36,1.42]],.085,.14,CLOAK,L,.30);
+      smoothPath(c,[[0,-.98],[-.19,-.82],[-.22,-.52],[-.14,-.30],[.14,-.30],[.21,-.52],[.18,-.82]],true); c.fillStyle='#040609'; c.fill();
+      planeGrad(c,M,[[-.14,-.76],[-.15,-.54],[-.11,-.38],[-.03,-.31],[.03,-.31],[.11,-.38],[.15,-.54],[.14,-.76],[0,-.84]],SKIN,SKIN_SH,L,-.02,-.56,.18,true);
+      if(!M.sil){c.fillStyle='rgba(78,22,24,.65)'; ell(c,-.09,-.45,.032,.055,.2); c.fill(); ell(c,.09,-.45,.032,.055,-.2); c.fill(); c.fillStyle='#06080c'; ell(c,0,-.40,.036,.024); c.fill();}
+      planeGrad(c,M,[[-.16,-.66],[0,-.61],[.16,-.66],[.16,-.55],[0,-.50],[-.16,-.55]],LINEN,[36,42,50],L,-.02,-.60,.18,false);
+      tendril(c,M,[[-.15,-.74],[-.22,-.48],[-.28,-.22]],.032,.008,[145,155,165],{base:-.2,ridge:.45});
+      tendril(c,M,[[.14,-.74],[.20,-.48],[.24,-.24]],.030,.008,[135,145,155],{base:-.25,ridge:.4});
+      c.restore();
+      planeGrad(c,M,[[-.36,-.12],[-.56,-.22],[-.54,-.12],[-.34,-.02]],SKIN,SKIN_SH,L,-.46,-.14,.14,false);
+      c.save(); c.translate(-.50,-.10); c.rotate(sw); c.translate(.50,.10);
+      planeGrad(c,M,[[-.55,-.02],[-.45,-.02],[-.34,.22],[-.66,.22]],lit(BRZ,.35),[24,18,14],L,-.50,.10,.18,false);
+      ell(c,-.50+sw*.18,.26,.032,.032); fillVol(c,M,BRZ,-.50+sw*.18,.26,.032,.032,L,.75);
+      c.restore();
+      planeGrad(c,M,[[.28,.18],[.10,.36],[.08,.44],[.34,.24]],SKIN,SKIN_SH,L,.20,.32,.14,false);
+      tendril(c,M,[[.16,.38],[-.02,.45]],.024,.020,[165,178,192],{base:-.15,ridge:.55});
+      tendril(c,M,[[-.02,.45],[-.24,.52]],.016,.012,[195,208,222],{base:-.1,ridge:.65});
+      tendril(c,M,[[-.01,.48],[-.22,.56]],.016,.012,[195,208,222],{base:-.1,ridge:.65});
+    },
+    glow(c,M){
+      const B=VELL_B, f=(M.f||0)%6, sw=[.14,.05,-.09,-.04,.03,.09][f];
+      if(M.locked){c.strokeStyle='rgba(214,228,236,.28)'; c.lineWidth=.013; c.beginPath(); c.arc(B[0],B[1],.46,0,TAU); c.stroke(); return;}
+      const phase=f/6, R=[.14+phase*.36, .50+phase*.36, .86+phase*.36, 1.22+phase*.36, 1.58+phase*.36];
+      for(let i=0;i<R.length;i++){
+        const r=R[i], a=Math.max(0,(i===0?.54:.28)*(1-r/2.2));
+        c.strokeStyle=i===0?'rgba(255,226,170,'+a+')':'rgba(214,228,236,'+a+')';
+        c.lineWidth=i===0?.022:.012; c.beginPath(); c.arc(B[0],B[1],r,0,TAU); c.stroke();
+      }
+      const O=document.createElement('canvas'); O.width=PORT_W; O.height=PORT_H; const o=O.getContext('2d');
+      o.setTransform(PORT_W/2,0,0,PORT_W/2,PORT_W/2,PORT_H/2); o.lineCap='round'; o.lineJoin='round';
+      o.strokeStyle='rgba(244,238,220,.96)'; o.lineWidth=.014; PORTRAIT_ART.bellringer.shapes(o,true,sw);
+      hatchStrokes(o,-.45,-.95,.40,1.2,90,.036,-.55,[214,228,236],.45,.006,505);
+      o.globalCompositeOperation='destination-in';
+      const g=o.createRadialGradient(B[0],B[1],0,B[0],B[1],2.2), w=.11; g.addColorStop(0,'rgba(0,0,0,.95)');
+      for(const r of R){
+        const a=Math.max(.38,1-r/2.3);
+        g.addColorStop(Math.max(0,(r-w)/2.2),'rgba(0,0,0,.20)');
+        g.addColorStop(Math.min(1,r/2.2),'rgba(0,0,0,'+a+')');
+        g.addColorStop(Math.min(1,(r+w)/2.2),'rgba(0,0,0,.20)');
+      }
+      o.fillStyle=g; o.fillRect(-1.2,-1.5,2.4,3);
+      c.save(); c.setTransform(1,0,0,1,0,0); c.drawImage(O,0,0); c.restore();
+      const strike=f===0?1:f===1?.65:.35;
+      softGlow(c,B[0],B[1]+.12,0,.36*strike,[255,214,140],.48*strike,0);
+    }}
+};
+
+function portraitCanvas(k,locked,f,look){
+  const P=PORTRAIT_ART[k]; if(!P)return null;
+  const eyes=k==='occultist'?hoodEyes():[];
+  f=(k==='occultist'||k==='galvanist'||k==='bellringer')?(f||0)%PORT_FRAMES:0; look=k==='occultist'?(look||0):0;
+  const key=k+'|'+(locked?1:0)+'|'+f+'|'+look+'|'+eyes.join(',');
+  let cv=PORTRAITS.get(key); if(cv)return cv;
+  cv=document.createElement('canvas'); cv.width=PORT_W; cv.height=PORT_H;
+  const c=cv.getContext('2d'), u=PORT_W/2, Lc=document.createElement('canvas'); Lc.width=PORT_W; Lc.height=PORT_H; const l=Lc.getContext('2d');
+  const unit=g=>{g.setTransform(u,0,0,u,PORT_W/2,PORT_H/2); g.lineCap='round'; g.lineJoin='round';}; unit(c); unit(l);
+  const M={sil:!!locked,f,look,locked:!!locked,eyes}, [lx,ly]=P.light, col=P.col, R=P.reach;
+  c.fillStyle='#050608'; c.fillRect(-1.1,-1.45,2.2,2.9);
+  if(!P.echo)softGlow(c,lx,ly,0,R*(locked?.45:1.15),col,locked?.14:.26,0);
+  else if(!locked)softGlow(c,lx,ly,0,1.4,[160,185,205],.18,0);
+  P.body(l,M); l.globalCompositeOperation='source-atop';
+  if(locked){l.fillStyle='rgb(11,13,16)'; l.fillRect(-1.1,-1.45,2.2,2.9);}
+  else if(P.echo){const g=l.createRadialGradient(lx,ly,.08,lx,ly,1.85); g.addColorStop(0,'rgba(210,226,238,.18)'); g.addColorStop(.55,'rgba(8,12,18,.32)'); g.addColorStop(1,'rgba(3,5,8,.78)'); l.fillStyle=g; l.fillRect(-1.1,-1.45,2.2,2.9);}
+  else{let g=l.createRadialGradient(lx,ly,0,lx,ly,R); g.addColorStop(0,rgba(col,.30)); g.addColorStop(.45,rgba(col,.08)); g.addColorStop(1,'rgba(0,0,0,0)'); l.fillStyle=g; l.fillRect(-1.1,-1.45,2.2,2.9); g=l.createRadialGradient(lx,ly,R*.28,lx,ly,R*1.14); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.68,'rgba(2,3,5,.56)'); g.addColorStop(1,'rgba(2,3,5,.94)'); l.fillStyle=g; l.fillRect(-1.1,-1.45,2.2,2.9);}
+  c.save(); c.setTransform(1,0,0,1,0,0); c.drawImage(Lc,0,0); c.restore();
+  P.glow(c,M); c.setTransform(1,0,0,1,0,0);
+  const v=c.createRadialGradient(PORT_W/2,PORT_H*.42,PORT_W*.34,PORT_W/2,PORT_H*.5,PORT_H*.74); v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(.7,'rgba(0,0,0,.35)'); v.addColorStop(1,'rgba(0,0,0,.86)'); c.fillStyle=v; c.fillRect(0,0,PORT_W,PORT_H);
+  PORTRAITS.set(key,cv); return cv;
+}
+function warmPortraits(){
+  const q=[]; for(const k of Object.keys(KITS)){const lk=kitLocked(k); q.push([k,lk,0,0]); if(k==='galvanist'||k==='bellringer')for(let f=1;f<PORT_FRAMES;f++)q.push([k,lk,f,0]); if(k==='occultist')for(const lo of [-1,0,1])for(let f=0;f<PORT_FRAMES;f++)if(lo||f)q.push([k,lk,f,lo]);}
+  const idle=f=>window.requestIdleCallback?requestIdleCallback(f,{timeout:400}):setTimeout(f,80);
+  const step=()=>{const n=q.shift(); if(!n)return; portraitCanvas(n[0],n[1],n[2],n[3]); idle(step);}; idle(step);
+}
+function paintPortrait(cv,k,locked,f,look){const src=portraitCanvas(k,locked,f,look); if(!src||!cv.getContext)return; const c=cv.getContext('2d'); c.clearRect(0,0,cv.width,cv.height); c.drawImage(src,0,0,cv.width,cv.height);
+}
 
 /* draw one creature at (x,y) in board tiles.
    o: {sil, face, ph, look:[x,y], rim:{dx,dy,a}, flash, alpha} */
@@ -6511,14 +6998,14 @@ function codex(){
   const s=store.get('ll-codex',null);
   /* whatever was stored, only arrays of known keys are kept, so a damaged ll-codex can't break the book */
   const list=(v,T)=>Array.isArray(v)?v.filter(k=>typeof k==='string'&&T[k]):[];
-  CODEX={foes:new Set(list(s&&s.foes,FOES)),relics:new Set(list(s&&s.relics,RELICS)),offs:new Set(list(s&&s.offs,OFFERINGS))};
+  CODEX={foes:new Set(list(s&&s.foes,FOES)),relics:new Set(list(s&&s.relics,RELICS)),offs:new Set(list(s&&s.offs,OFFERINGS)),bound:new Set(list(s&&s.bound,HORRORS))};
   /* someone who played before the Grimoire existed has met everything on the floors they reached */
   if(!s||typeof s!=='object'){const b=store.get('ll-best',null), reached=b&&b.floor?Math.min(FLOORS.length,b.floor):0;
     for(let i=0;i<reached;i++)FLOORS[i].waves.forEach(w=>w.forEach(g=>{if(FOES[g[0]])CODEX.foes.add(g[0]);}));
     if(reached)codexSave();}
   return CODEX;
 }
-function codexSave(){store.set('ll-codex',{foes:[...CODEX.foes],relics:[...CODEX.relics],offs:[...CODEX.offs]});}
+function codexSave(){store.set('ll-codex',{foes:[...CODEX.foes],relics:[...CODEX.relics],offs:[...CODEX.offs],bound:[...CODEX.bound]});}
 function codexSee(kind,k){if(devOn)return; const C=codex(); if(C[kind].has(k))return; C[kind].add(k); codexSave();}
 function relicGlyph(k){return RELICS[k].n.replace(/^(The|A) /,'').charAt(0);}
 let relKey='', relTipT=0, relTipK='';
@@ -6627,11 +7114,12 @@ function showBook(){
   }else if(t==='kits'){
     /* every kit, what it builds and what it casts; a kit not yet earned stays dark, unless developer mode is on */
     const m=meta();
-    intro='Each descent starts with a kit. Every kit builds its own version of some wards and casts its own rites.';
-    list=Object.keys(KITS).map(k=>{const K=KITS[k], locked=K.lock&&!m.unlocked.includes(K.lock)&&!devOn;
-      if(locked)return bookEntry(bookSeal('?'),'???','Not yet earned',K.deed?'Deed: '+K.deed:'Unlock it in the Ember Hall.','is-locked');
+    intro='Five went down the stair the night Saltmouth drowned. Each descent, one of them carries the lamp, with wards and rites of their own.';
+    const port=(k,lk)=>'<canvas class="book-port" width="'+PORT_W+'" height="'+PORT_H+'" data-port="'+k+':'+(lk?1:0)+'"></canvas>';
+    list=Object.keys(KITS).map(k=>{const K=KITS[k], locked=kitLocked(k,m);
+      if(locked)return bookEntry(port(k,1),K.n,'Not yet earned',kitHow(k)+'.','is-locked');
       const ws=K.wards.map(w=>wdef(w,k).n).join(', '), rs=K.rites.map(r=>RITES[r].n).join(', ');
-      return bookEntry(bookSeal(K.n.replace(/^The /,'').charAt(0)),K.n+(K.who?' · '+K.who:''),'Builds: '+ws+' · Casts: '+rs,K.d);}).join('');
+      return bookEntry(port(k,0),(K.who||K.n)+' · '+K.n,'Builds: '+ws+' · Casts: '+rs+(k==='occultist'?' · '+hoodLine():''),'<i>'+((ROSTER[k]||{}).line||'')+'</i> '+K.d);}).join('');
   }else{
     const seen=relics.filter(k=>hasSeen('relics',k)).length;
     intro='Relics found: <b>'+seen+' of '+relics.length+'</b>.'+(held.length?' The ones you carry now are marked.':'');
@@ -6644,6 +7132,7 @@ function showBook(){
     +'<p class="book-intro">'+intro+'</p><div class="book-list">'+list+'</div>';
   showModal({kind:'book',wide:true,title:'The Grimoire',body:'',html,actions:[{label:BOOK.from==='pause'?'Back':'Close',primary:true,fn:closeBook}]});
   $('#mChoices').querySelectorAll('canvas[data-icon]').forEach(cv=>{const p=cv.dataset.icon.split(':'); bookIcon(cv,p[0],p[1],p[2]==='1',p[3]);});
+  $('#mChoices').querySelectorAll('canvas[data-port]').forEach(cv=>{const p=cv.dataset.port.split(':'); paintPortrait(cv,p[0],p[1]==='1');});
 }
 function bookIcon(cvs,kind,type,sil,kt){
   if(!sil){drawIcon(cvs,{kind,type,kit:kt}); return;}
@@ -6777,6 +7266,9 @@ const TIPS={
   peal:{when:()=>bellKit()&&F.phase==='wave'&&lstat().peal>0,title:'Peal',
     text:'The lamp now tolls on its own, a quieter heartbeat that reaches 5 tiles and makes no Noise, and a ring closes on it before each beat. It hears only the ordinary dark, and cracks nothing. Tap Toll as the ring lands, when the button glows, for a Perfect Toll: half again as far, two cracks, and half the Noise.',
     target:()=>coachBoard(F.lx,F.ly,1.2)},
+  hoodeye:{when:()=>!!run.newEye&&F.phase==='build',title:'Eyes in the hood',
+    text:'Something you bound has never been bound before. Its eyes now open in the Nameless’s hood, on the roster when you next descend, and they stay there for good. There are six kinds to find.',
+    target:()=>null},
   herald:{when:()=>F.phase==='build'&&!!heraldNext(),title:'A Herald comes',
     text:'A Herald walks in the next wave: its name is on the strip, and a red ring marks the rift it will climb out of, so build for it there. Each is a named terror with its own way of hurting you (the Grimoire has them once met), and drains 8 oil if it reaches the lamp, but none is a boss. Stuns and holds slow it, but none keeps it for long: held 3 seconds, it breaks free for a while. Kill it and it pays a relic.',
     target:()=>coachEl('#preview')},
@@ -7497,6 +7989,7 @@ if(hot&&typeof hot.snapshot==='function'){
 }
 function start(data){
   deedsMigrate();
+  warmPortraits();
   layout();
   if(data&&data.save&&data.save.run)resumeFrom(data.save);
   else showTitle();
