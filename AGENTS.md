@@ -150,12 +150,13 @@ Everything lives in one file: CSS, then markup, then one big script inside an II
 | `render` | `render()`: y-sorted draw list, shadows away from the lamp, rim light, darkness, fog, fx, boss intro, floats. |
 | `relics in the HUD, and the Grimoire` | `#relBar` in the HUD: the book button and a seal per relic (`renderRelics()`, one fixed size so nothing shifts); a tap shows `#relTip`, which takes no taps. `codex()`/`codexSee()` record creatures met (in `spawnFoe`) and relics found (in `addRelic`). `openBook(from,tab)` / `showBook()`: tabs Creatures, Wards, Rites, Relics; unmet creatures and unfound relics show as ???. `LORE` holds each creature's how-it-works line. |
 | `walkthrough and tips` | `COACH`, `coachWalkSteps()` (the first-descent walkthrough), `TIPS` (first-time tips: each a `foe` match or a `when()` test), `coachPoll()` (from the frame loop, 5×/s), `coachPlace()` (the bubble docks over the HUD, or over the command bar when the HUD is the subject; only its buttons take taps). Tests run with it off; `tutorial.test.js` turns it on. |
+| `the Roster` | `PORTRAIT_ART` (one painter per kit, unit space, one light each), `portraitCanvas()` (cached, locked and lit, a few frames for the Nameless's eyes and Voss's arc), `HOOD_EYES`/`hoodEyes()` (kinds bound, from `ll-codex`), `ROSTER` (who they were), `openKitPicker()` (the roster screen: tap chooses, tap again descends). |
 | `UI` | `renderHUD()`, `renderPreview()`, `renderTray()`, `renderSheet()` (upgrade panel), `renderModebar()` (placement card), `renderRites()`; `tickUI()` runs every 0.2s, `forceUI()` runs now. `banner()`, `hint()`. |
 | `settings, modal, pause & title` | `showModal(o)`, `closeModal()`, `openPause()`, `openSettings()`, `showRules()`, `showTitle()`, `drawTitle()`. |
 | `loop` | `watchPerf()` (auto-Lite if frames stay slow), `frame()` (sim in steps ≤ 50ms; `speed` 1/2/3; the map overlay runs on real time). |
 | `wiring` | Button handlers, `layout()` (calls `applyShape()` first), resize handling. |
 
-**Storage keys:** `ll-save-v2` (the run), `ll-meta` (embers/unlocks), `ll-best`, `ll-vol`, `ll-dev`, `ll-gfx-lite`, `ll-gfx-auto`, `ll-tut` (walkthrough and tips: `{walk, seen, off}`), `ll-codex` (the Grimoire: creatures met and relics found, `{foes, relics}`). Changing a stored shape needs a migration in `resumeFrom()` or `meta()`.
+**Storage keys:** `ll-save-v2` (the run), `ll-meta` (embers/unlocks), `ll-best`, `ll-vol`, `ll-dev`, `ll-gfx-lite`, `ll-gfx-auto`, `ll-tut` (walkthrough and tips: `{walk, seen, off}`), `ll-codex` (the Grimoire: creatures met, relics found, offerings seen, and kinds of horror ever bound for the Nameless's hood, `{foes, relics, offs, bound}`). Changing a stored shape needs a migration in `resumeFrom()` or `meta()`.
 
 ---
 

@@ -36,6 +36,8 @@ const {chromium}=require('playwright');
   const hall=await p.evaluate(()=>({note:document.querySelector('#mBody').innerText.slice(-60),first:document.querySelector('#mChoices .choice .tg').textContent}));
   await p.evaluate(()=>[...document.querySelectorAll('#mActions button')].find(b=>b.textContent==='Close').click());
   await p.click('#descendBtn'); await p.waitForTimeout(150);
+  // the roster (#36): the first tap on a card chooses it, the second descends
+  await p.evaluate(()=>document.querySelectorAll('#mChoices .choice')[3].click()); await p.waitForTimeout(150);
   await p.evaluate(()=>document.querySelectorAll('#mChoices .choice')[3].click()); await p.waitForTimeout(400);
   console.log('hall',JSON.stringify(hall),'kit picked:',await p.evaluate(()=>__t.run.kit+' '+__t.run.wards.join(',')), 'title line:', await p.evaluate(()=>document.querySelector('#bestLine').textContent), errs);
   await b.close();

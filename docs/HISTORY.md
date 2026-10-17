@@ -4,6 +4,14 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **The Roster: five who went down the stair** (#36, designed with Gemini on #60). Descend now opens a roster of five painted characters, each lit by a light of their own:
+  - **Ambrose Fenn**, the lamplighter, in a coat crusted with wax, his lantern at his chin.
+  - **Mags Tolland**, a harpooner, a cruse lamp burning at her chest.
+  - **The Nameless**, a hood with no face.
+  - **Dr. Lucan Voss**, with an arc across his collar.
+  - **Agathe Vell**, drawn only in the rings of her bell.
+
+  A kit you haven't earned is a shape in the dark with only its light showing, and its deed or Ember Hall cost beneath. Tap a character to read who they were; tap again, or Descend, to go down. The last one you carried is chosen already. **The Nameless's hood fills with what you bind:** every kind of horror bound or captured, on any descent with any kit, adds its eyes for good, six kinds in all (the Keeper's is last), so there's a reason to keep playing. The Grimoire's Kits page shows the portraits, How the dark works has a Roster line, and a tip marks each new eye. The Galvanist and Bellringer stay Ember Hall unlocks (Criss). (Claude)
 ## v16.8 — The Tithe and the Bell
 Two more Heralds walk the middle floors, and every Herald can now be prepared for: a red mark on its rift, gentler health, and no way to hold one under forever.
 - **No Herald can be held forever** (Criss: a Tithe-taker stood stunned at the edge of her water, filling its sack). Undertow holds whatever a harpoon bolt strikes in water for a second, and a fast harpoon re-holds it before it can move, so a Herald could be kept under for the whole wave. Now a Herald held 3 seconds (stunned or pinned; the count eases while it walks) breaks free with a red ring and *breaks free*, and shrugs off every hold, Into the Deep's line included, for 3 seconds. Slows still work. Every kit's holds count: Undertow, candle snares, the Galvanist's shocks, the Bellringer's peals, the Occultist's grasping hands. (Claude)

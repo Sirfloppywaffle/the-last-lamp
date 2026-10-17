@@ -269,6 +269,31 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .mmore::before{content:"";position:absolute;left:-20px;right:-20px;bottom:-20px;height:84px;background:linear-gradient(rgba(18,22,24,0),var(--stone) 70%)}
 .mmore span{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);padding:4px 12px;border-radius:999px;background:var(--slab);border:1px solid var(--tallow);color:var(--tallow);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
 .mactions.stack{flex-direction:column;align-items:stretch;max-width:340px}
+/* the Roster: one card per kit, a painted portrait on each. The portrait keeps its 3:4 shape from the first frame, so nothing shifts as it paints (rule 2) */
+.rost-row{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 10px;margin:0 -2px;scrollbar-width:none}
+.rost-row::-webkit-scrollbar{display:none}
+.rost-card{position:relative;overflow:hidden;flex:1 0 clamp(118px,36vw,150px);max-width:176px;scroll-snap-align:start;padding:6px 6px 8px;gap:2px;transition:transform .2s,border-color .2s}
+.rost-card .rost-port{display:block;width:100%;height:auto;aspect-ratio:3/4;border-radius:6px;background:#050607;margin-bottom:4px}
+.rost-card b{font-size:1.02rem;line-height:1.05}
+.rost-card .tg{font-size:.56rem}
+.rost-card .rost-sub{font-size:.72rem;line-height:1.25}
+.rost-card.on{border-color:var(--tallow);transform:translateY(-3px);box-shadow:0 6px 18px var(--shadow)}
+.rost-card.on .tg{color:var(--tallow)}
+.rost-card.kit-locked{opacity:.8}
+.rost-card.kit-locked .rost-sub{color:var(--tallow)}
+/* lamplight sweeps across the card you choose */
+.rost-card.on::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(237,180,90,.22) 50%,transparent 70%);transform:translateX(-120%);animation:rostSweep .9s ease-out forwards}
+@keyframes rostSweep{to{transform:translateX(120%)}}
+@media (prefers-reduced-motion:reduce){.rost-card{transition:none}.rost-card.on::after{animation:none;display:none}.rost-card.on{transform:none}}
+.rost-info{min-height:7.5em;padding:2px 2px 0;font-size:.86rem;color:var(--ash);max-width:62ch}
+.rost-info p{margin:4px 0 0}
+.rost-info .rost-who{font-family:var(--f-display);font-weight:500;font-size:1.3rem;color:var(--bone)}
+.rost-info .rost-kitn{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tallow)}
+.rost-info .rost-line{font-style:italic;color:var(--bone)}
+.rost-info .rost-how{color:var(--tallow)}
+.rost-info .rost-st{font-family:var(--f-num);font-size:.72rem}
+.book-e canvas.book-port{width:54px;height:72px;border-radius:5px}
+@media (max-height:500px){.rost-card{flex:1 0 96px;max-width:120px}.rost-card .rost-sub{display:none}.rost-info{min-height:5em}}
 
 /* Map Overlay */
 #mapOverlay{position:fixed;inset:0;z-index:100;background:#050607;touch-action:none;display:flex;flex-direction:column}
@@ -423,6 +448,7 @@ input[type=range]::-moz-range-track {
         <li><b>Chimes.</b> A Bone Chime stuns everything in its ring, but the ring spreads thin: the four nearest take its full strike, the rest half. A boss it stuns goes deaf to every chime for 4 seconds, and a dull grey ring shows it shrugging them off.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, Kindle sets a creature burning and running, lighting the dark around it, and its Signal Mirror, built in the lamp's own light, reflects it in a 5-tile beam you aim between waves (it locks while the dark comes); you can build in the beam, and it burns what crosses it. The Galvanist builds a power grid: Pylons string live wires that shock, stun and light what crosses them, if a pylon stands in the lamp's own light to power the rest; his Arc Lamps burn bright but flicker; his Lightning Rods plant where they strike and join the grid; Overload fires every wire at once for 2 oil, and run hot it fries his pylons; he binds nothing by ritual: his Grounding Anchor forces nearby pylons to link to it, and a bindable creature that dies inside one of its triangles is caught in a cage to tap (the Keeper's core waits 15 seconds for a cage, and its fall readies the Anchor), each capture drawing 2 Heat out of the grid; his lamp's Dynamo branch ends in a Static Burst. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Bellringer, Agathe Vell, sees by sound: her Toll rings the lamp, and whatever its ring touches is heard for 1.5 seconds, outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost; each Toll makes 1 Noise (it fades 1 every 8 seconds), and at 5 the dark answers with two Abyssal Stalkers; the Great Bell is heard across the whole floor for 3 Noise; her Bell Wires can be strung anywhere on the path, even in the dark, and hear what crosses them; she builds no candles: her Tuning Forks give no light but hum, standing within 5 tiles of the lamp or 3.5 of another fork, and she can build inside a hum even in the dark, though wards there strike only what is heard; a toll that reaches a fork rings again from it; a toll from the lamp echoes back off the walls of the floor; heavy things leave red footsteps where they tread unseen, but Shades, Stalkers and fliers make none; her Clapper Harpoons ring what they strike and knock it back, and the path's edges show for her even where it is dark; her lamp's Peal branch makes it toll on its own, with no Noise, but that heartbeat finds only the ordinary dark; tap Toll on the beat (a ring closes on the lamp, and the button glows) for a Perfect Toll that reaches half again as far, cracks twice and makes half the Noise; her Tolls, Great Bell, Bell Wires, Clapper bolts and Tocsin shells crack what they strike, and three cracks shatter it, hurting and cracking what stands beside it (bosses take 8, Behemoths and elites 5); her Tocsin shells any Bell Wire that jangles, however far away. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it; Haul Away casts a whaling net that hauls everything under it, and everything on its lines, 3 tiles back and tangles it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
+        <li><b>The Roster.</b> Five went down the stair the night Saltmouth drowned: Ambrose Fenn the lamplighter, Mags Tolland the harpooner, the Nameless, Dr. Lucan Voss and Agathe Vell. Each carries the lamp their own way. Some are earned by a deed on the stair, some in the Ember Hall. Every kind of horror you bind or capture, on any descent, adds its eyes to the Nameless’s hood, for good: there are six to find.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
@@ -785,10 +811,10 @@ const OFFERINGS={
 };
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
 const KITS={
-  lamplighter:{n:'The Lamplighter',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam.',wards:['candle','harpoon','mirror','salt','trap','tithe'],rites:['kindle','pillar'],roster:{}},
-  whaler:{n:'The Whaler',d:'Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line, and Haul Away casts a net that hauls a crowd back and tangles it. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance','trypot'],rites:['haul','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
-  occultist:{n:'The Occultist',d:'Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher.',wards:['candle','harpoon','grasp','effigy','tithe'],rites:['unbind','raise'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
-  galvanist:{n:'The Galvanist',d:'A mad scientist with a power grid. Pylons string live wires across the path that shock and light what crosses them, if the grid reaches the lamp. Arc Lamps burn bright but flicker. Lightning Rods plant where they strike and join the grid. Overload fires every wire at once, paid in oil, and run too hot it fries your pylons. No ritual binds for him: the Grounding Anchor cages what dies in its circuit. Starts with the Galvanic Coil.',wards:['candle','harpoon','pylon','salt','coil'],rites:['overload','anchor'],roster:{},lock:'kit_galvanist'},
+  lamplighter:{n:'The Lamplighter',who:'Ambrose Fenn',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam.',wards:['candle','harpoon','mirror','salt','trap','tithe'],rites:['kindle','pillar'],roster:{}},
+  whaler:{n:'The Whaler',who:'Mags Tolland',d:'Your Blubber Lamps burn wide but cost the lamp oil each wave, unless your Try-pot renders it from the dead. Your harpoons hold what they hit on a line, and Haul Away casts a net that hauls a crowd back and tangles it. Starts with the Whaling Gun.',wards:['candle','harpoon','salt','trap','lance','trypot'],rites:['haul','bell'],roster:{},lock:'kit_whaler',deed:'Kill a Trench Behemoth with harpoons alone.'},
+  occultist:{n:'The Occultist',who:'The Nameless',d:'Your Corpse Candles are free and need no lamp, but stand only where something died, and go out when the wave ends. Madness feeds you: your Bone Spears and your horrors hit harder with every tier. Unbind sends a horror charging down the stair. Starts with a bound Watcher and a bound Gnasher.',wards:['candle','harpoon','grasp','effigy','tithe'],rites:['unbind','raise'],roster:{watcher:1,gnasher:1},lock:'kit_occultist',deed:'Break a wave with your madness at Slipping or deeper.'},
+  galvanist:{n:'The Galvanist',who:'Dr. Lucan Voss',d:'A mad scientist with a power grid. Pylons string live wires across the path that shock and light what crosses them, if the grid reaches the lamp. Arc Lamps burn bright but flicker. Lightning Rods plant where they strike and join the grid. Overload fires every wire at once, paid in oil, and run too hot it fries your pylons. No ritual binds for him: the Grounding Anchor cages what dies in its circuit. Starts with the Galvanic Coil.',wards:['candle','harpoon','pylon','salt','coil'],rites:['overload','anchor'],roster:{},lock:'kit_galvanist'},
   bellringer:{n:'The Bellringer',who:'Agathe Vell',d:'Agathe Vell rang the bell of St. Agatha’s as the town went under, and came back up the stair blind. She sees by sound. Toll the lamp and everything its ring touches is heard: outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost. Each Toll makes Noise, and at 5 the dark answers with Stalkers; tap it on the lamp’s own beat for a Perfect Toll. Her bells crack what they strike, and three cracks shatter it. She builds no candles: her Tuning Forks hum in the dark, and she can build inside their hum, but wards there strike only what is heard. Tolls echo back off the walls, and heavy things leave footsteps in the dark; Shades and Stalkers make none. Bell Wires can be strung anywhere on the path, and the Tocsin shells whatever trips them, however far. Clapper Harpoons ring what they strike. She hears the path, even in the dark. She is the only kit that starts with the Bone Chime.',wards:['fork','harpoon','bellwire','tocsin','chime','censer'],rites:['toll','greatbell'],roster:{},lock:'kit_bellringer'}
 };
 const OMENS={
@@ -2225,26 +2251,64 @@ function newRun(k,depth){
   if(run.depth>=5){run.baseOilMax-=5; updateOilMax(); run.oil=run.oilMax;}
   beginFloor(null);
 }
+/* the Roster: who each kit was the night Saltmouth drowned (expansion/ROSTER.md) */
+const ROSTER={
+  lamplighter:{line:'He kept the harbour lamps forty years. On the last night he kept one more.',plays:'Light passes hand to hand.'},
+  whaler:{line:'Harpooner off the Patience. She has gutted worse than what climbs these stairs.',plays:'Hold them, haul them, render them.'},
+  occultist:{line:'It gave its name to something below, and got this in return.',plays:'Madness is the price, and the weapon.'},
+  galvanist:{line:'Struck off the Royal Institution’s rolls. He came down to prove the lamp could run on lightning.',plays:'Wire the dark; don’t let it run hot.'},
+  bellringer:{line:'She rang the bell of St. Agatha’s as the town went under, and came back up the stair blind.',plays:'Light lets you build; sound lets you see.'}
+};
+function hoodLine(){return 'Eyes in the hood: '+hoodEyes().length+' of '+HOOD_EYES.length;}
+function kitLocked(k,m){const K=KITS[k]; return !devOn&&!!K.lock&&!(m||meta()).unlocked.includes(K.lock);}
+function kitHow(k){const K=KITS[k], H=HALL.find(h=>h.k===K.lock); return K.deed?'Deed: '+K.deed:'The Ember Hall · '+(H?H.cost+' embers':'embers');}
+let rostTimer=0;
+/* the cards that move: the Nameless's eyes drift and glance toward the card you are choosing; Voss's arc flickers */
+function rosterPaint(pick,f){
+  const ks=Object.keys(KITS), look=Math.sign(ks.indexOf(pick)-ks.indexOf('occultist'));
+  document.querySelectorAll('#rostRow canvas[data-port]').forEach(cv=>{const k=cv.dataset.port; if(f!==undefined&&k!=='occultist'&&k!=='galvanist')return;
+    paintPortrait(cv,k,kitLocked(k),f||0,look);});
+}
+function rosterAnim(getPick){
+  clearInterval(rostTimer); if(gfxLite||reduceMotion)return;
+  let f=0;
+  rostTimer=setInterval(()=>{if(!document.getElementById('rostRow')||$('#modal').hidden){clearInterval(rostTimer); return;} f=(f+1)%PORT_FRAMES; rosterPaint(getPick(),f);},240);
+}
 function openKitPicker(note){
   const m=meta(); let dp=Math.min(m.lastDepth||0,m.depth);
+  const ks=Object.keys(KITS);
+  /* the last kit carried is chosen already, so one tap on it descends */
+  let pick=ks.includes(m.lastKit)&&!kitLocked(m.lastKit,m)?m.lastKit:'lamplighter';
+  const go=()=>{
+    if(!devOn){const mm=store.get('ll-meta',{})||{}; mm.lastDepth=dp; mm.lastKit=pick; saveMeta(Object.assign(meta(),mm));}
+    clearInterval(rostTimer); closeModal(); clearSave(); newRun(pick,dp);
+  };
+  const info=(k,msg)=>{const K=KITS[k], R=ROSTER[k]||{};
+    if(kitLocked(k,m))return '<b class="rost-who">'+K.n+'</b><p class="rost-how">'+kitHow(k)+'</p><p>'+(msg||'Not yet earned. Every descent, won or lost, leaves embers for the Ember Hall.')+'</p>';
+    const ws=K.wards.map(w=>wdef(w,k).short||wdef(w,k).n).join(' · '), rs=K.rites.map(r=>RITES[r].n).join(' · ');
+    return '<b class="rost-who">'+(K.who||K.n)+'</b> <span class="rost-kitn">'+K.n+'</span><p class="rost-line">'+(R.line||'')+'</p><p>'+K.d+'</p><p class="rost-st">Builds '+ws+' · Casts '+rs+(k==='occultist'?' · '+hoodLine():'')+'</p>';};
+  const card=k=>{const K=KITS[k], lk=kitLocked(k,m);
+    return '<button class="choice rost-card'+(k===pick?' on':'')+(lk?' off kit-locked':'')+'" data-kit="'+k+'"><canvas class="rost-port" width="'+PORT_W+'" height="'+PORT_H+'" data-port="'+k+'"></canvas>'
+      +'<span class="tg">'+(lk?'Locked':K.n)+'</span><b>'+(lk?K.n:(K.who||K.n))+'</b><span class="rost-sub">'+(lk?kitHow(k):(ROSTER[k]||{}).plays||'')+'</span></button>';};
   const draw=(msg)=>{
     const acts=[];
-    if(m.depth>0)for(let i=0;i<=m.depth;i++)acts.push({label:(i===dp?'● ':'')+'Depth '+i,primary:i===dp,fn:()=>{dp=i; draw();}});
-    acts.push({label:'Back',fn:closeModal});
+    if(m.depth>0)for(let i=0;i<=m.depth;i++)acts.push({label:(i===dp?'● ':'')+'Depth '+i,fn:()=>{dp=i; draw();}});
+    acts.push({label:'Descend as '+(KITS[pick].who||KITS[pick].n),primary:true,fn:go});
+    acts.push({label:'Back',fn:()=>{clearInterval(rostTimer); closeModal();}});
     const deeper=dp?' <span class="mad">The Deeper Dark, depth '+dp+': '+DEPTHS.slice(1,dp+1).join(' ')+'</span>':'';
-    showModal({title:'Who carries the lamp?',wide:true,body:'Choose a kit. Each starts with its own wards, rites and a gift of its own.'+deeper,note:msg||note||'',
-      choices:Object.keys(KITS).map(k=>{const K=KITS[k], locked=!devOn&&K.lock&&!m.unlocked.includes(K.lock);
-        const tagText=locked?(K.deed?('Deed: '+K.deed):'Locked · unlock it in the Ember Hall'):K.wards.map(w=>(wdef(w,k).short||wdef(w,k).n)).join(' · ');
-        const lockMsg=K.deed?('That kit is locked. Deed: '+K.deed):'That kit is still locked. Unlock it in the Ember Hall with embers from your descents.';
-        return {cls:locked?'off kit-locked':(k===m.lastKit?'relic':''),tag:tagText,title:K.n+(K.who&&!locked?' · '+K.who:''),sub:K.d,
-          fn:()=>{
-            if(locked){draw(lockMsg); return;}
-            if(!devOn){
-              const mm=store.get('ll-meta',{})||{}; mm.lastDepth=dp; mm.lastKit=k; saveMeta(Object.assign(meta(),mm));
-            }
-            closeModal(); clearSave(); newRun(k,dp);
-          }};}),
-      actions:acts});
+    showModal({title:'Who carries the lamp?',wide:true,body:'Five went down the stair the night Saltmouth drowned. Tap one to see who they were; tap them again, or Descend, to go down.'+deeper,note:note||'',
+      html:'<div class="rost-row" id="rostRow">'+ks.map(card).join('')+'</div><div class="rost-info" id="rostInfo">'+info(pick,msg)+'</div>',actions:acts});
+    rosterPaint(pick);
+    document.querySelectorAll('#rostRow .rost-card').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.kit;
+      if(kitLocked(k,m)){$('#rostInfo').innerHTML=info(k,KITS[k].deed?'Do the deed on any descent and they are yours.':'Unlock it in the Ember Hall with embers from your descents.'); moreCue(); return;}
+      if(k===pick){go(); return;}
+      pick=k; AUDIO.click&&AUDIO.click();
+      document.querySelectorAll('#rostRow .rost-card').forEach(x=>x.classList.toggle('on',x.dataset.kit===pick));
+      $('#rostInfo').innerHTML=info(pick);
+      const d=[...document.querySelectorAll('#mActions button')].find(x=>x.classList.contains('call')); if(d)d.textContent='Descend as '+(KITS[pick].who||KITS[pick].n);
+      rosterPaint(pick); moreCue();}));
+    const on=document.querySelector('#rostRow .rost-card.on'); if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'nearest'});
+    rosterAnim(()=>pick);
   };
   draw();
 }
@@ -3560,6 +3624,9 @@ function lampHit(e){
 function bindSoul(s){
   s.t=0;
   run.roster[s.type]=(run.roster[s.type]||0)+1; run.bound++;
+  /* every kind ever bound or caught adds its eyes to the Nameless's hood on the roster, for good */
+  if(!devOn&&!codex().bound.has(s.type)&&HOOD_EYES.includes(s.type))run.newEye=s.type;
+  codexSee('bound',s.type);
   checkOccultistDeed();
   /* a capture: the specimen soaks up the grid's charge, and a core's Anchor burns out on it */
   if(s.cage||s.core){F.heat=Math.max(0,(F.heat||0)-CAPTURE_VENT); if(s.core)F.anchor=null; F.L=lightsNow();
@@ -4765,6 +4832,300 @@ function artFrame(A,tm,ph){const u=(tm/A.period+(ph||0))%1; return Math.floor((u
 const artWarmQ=[];
 function warmArt(types){for(const t of types){const A=ART[t]; if(!A||A.live)continue; for(let f=0;f<A.frames;f++)for(const v of ['n','m','s'])artWarmQ.push([t,v,f]);}}
 function artWarmStep(budgetMs){const t0=performance.now(); while(artWarmQ.length&&performance.now()-t0<budgetMs){const [t,v,f]=artWarmQ.shift(); artSprite(t,v,f);}}
+
+/* ================= the Roster: a painted portrait for each kit =================
+   Five went down the stair the night Saltmouth drowned. Each portrait is painted once into its own canvas, in unit space
+   (x from -1 to 1, y from -1.333 to 1.333), lit by one light of its own; everything else falls off into the dark.
+   Locked, the figure is a shape in the dark and only its light (or its eyes) shows. Painted once and cached (rule 17);
+   only the Nameless's eyes and Voss's arc move, from a few cached frames, and Lite and reduce-motion keep them still. */
+const PORT_W=300, PORT_H=400, PORT_FRAMES=3;
+const PORTRAITS=new Map();
+/* the six kinds of horror whose eyes can fill the Nameless's hood, deepest first */
+const HOOD_EYES=['keeper','watcher','gnasher','wretch','shrieker','elite'];
+function hoodEyes(){return devOn?HOOD_EYES.slice():HOOD_EYES.filter(k=>codex().bound.has(k));}
+/* vol() puts its highlight at (cx - rx*hx, cy - ry*hy): aim it at the portrait's own light */
+function facing(L,x,y,hi){const dx=L[0]-x, dy=L[1]-y, d=Math.hypot(dx,dy)||1; return {hx:-dx/d*.55,hy:-dy/d*.6,hi:hi===undefined?.4:hi};}
+/* a filled outline path from a list of points, smoothed through their midpoints */
+function smoothPath(c,P,closed){
+  c.beginPath(); const n=P.length;
+  if(closed){c.moveTo((P[n-1][0]+P[0][0])/2,(P[n-1][1]+P[0][1])/2);
+    for(let i=0;i<n;i++){const a=P[i], b=P[(i+1)%n]; c.quadraticCurveTo(a[0],a[1],(a[0]+b[0])/2,(a[1]+b[1])/2);} c.closePath();}
+  else{c.moveTo(P[0][0],P[0][1]); for(let i=1;i<n-1;i++){const a=P[i], b=P[i+1]; c.quadraticCurveTo(a[0],a[1],(a[0]+b[0])/2,(a[1]+b[1])/2);} c.lineTo(P[n-1][0],P[n-1][1]);}
+}
+function fillVol(c,M,A,cx,cy,rx,ry,L,hi){c.fillStyle=vol(c,M,A,cx,cy,rx,ry,facing(L,cx,cy,hi)); c.fill();}
+/* a flame: a teardrop of light with a white heart */
+function portFlame(c,x,y,h,col,a){
+  const g=c.createRadialGradient(x,y,0,x,y,h*3.2); g.addColorStop(0,rgba(col,.55*a)); g.addColorStop(.4,rgba(col,.16*a)); g.addColorStop(1,rgba(col,0));
+  c.fillStyle=g; c.beginPath(); c.arc(x,y,h*3.2,0,TAU); c.fill();
+  c.beginPath(); c.moveTo(x,y-h); c.quadraticCurveTo(x+h*.42,y-h*.1,x,y+h*.42); c.quadraticCurveTo(x-h*.42,y-h*.1,x,y-h); c.closePath();
+  c.fillStyle=rgba(col,a); c.fill();
+  c.beginPath(); c.moveTo(x,y-h*.5); c.quadraticCurveTo(x+h*.2,y,x,y+h*.3); c.quadraticCurveTo(x-h*.2,y,x,y-h*.5); c.closePath();
+  c.fillStyle='rgba(255,250,232,'+a+')'; c.fill();
+}
+
+const FENN_L=[.47,-.27], TOLL_L=[.05,.12], NAME_L=[.5,.06], VOSS_L=[0,-.24], VELL_B=[.4,-.66];
+const PORTRAIT_ART={
+  /* Ambrose Fenn: forty years of harbour lamps, a coat stiff with wax, his lantern at his chin */
+  lamplighter:{light:FENN_L,col:[237,180,90],reach:1.75,
+    body(c,M){
+      const L=FENN_L, COAT=[66,50,36], WAX=[188,168,126], SKIN=[162,128,98], BRASS=[176,136,70];
+      /* the lighting pole, and the hook it hangs the lantern from */
+      tendril(c,M,[[.66,1.4],[.65,.2],[.64,-1.0]],.07,.055,[86,64,42],{base:-.1});
+      c.strokeStyle=rgba(BRASS); c.lineWidth=.035; c.beginPath(); c.moveTo(.64,-1.0); c.quadraticCurveTo(.62,-1.14,.5,-1.1); c.quadraticCurveTo(.42,-1.06,.45,-.96); c.stroke();
+      c.strokeStyle=rgba([60,52,40]); c.lineWidth=.014; c.beginPath(); c.moveTo(.45,-.96); c.lineTo(.47,-.58); c.stroke();
+      /* the greatcoat */
+      smoothPath(c,[[-.16,-.24],[-.62,-.14],[-.86,.04],[-.98,.7],[-1.02,1.42],[1.02,1.42],[.96,.7],[.84,.04],[.6,-.14],[.16,-.24],[0,-.05]],true);
+      fillVol(c,M,COAT,0,.55,.95,.9,L,.35);
+      c.strokeStyle=rgba(lit(COAT,-.55)); c.lineWidth=.03; c.beginPath(); c.moveTo(-.16,-.2); c.lineTo(-.05,.5); c.lineTo(-.1,1.4); c.moveTo(.16,-.2); c.lineTo(.05,.5); c.stroke();
+      /* forty years of wax, run down the front in pale drips */
+      for(let i=0;i<7;i++){const x=-.62+i*.2+(srand(i,3)-.5)*.1, y0=.02+srand(i,5)*.3, len=.12+srand(i,7)*.38, w=.02+srand(i,9)*.025;
+        tendril(c,M,[[x,y0],[x+(srand(i,11)-.5)*.05,y0+len*.6],[x+(srand(i,13)-.5)*.06,y0+len]],w*1.3,w,lit(WAX,-.1),{base:-.2,ridge:.2});
+        blob(c,M,WAX,x+(srand(i,13)-.5)*.06,y0+len,w*.9,w*1.1,facing(L,x,y0+len,.3));}
+      /* and built up on his left shoulder in a crust of stalagmites, so his outline leans */
+      for(let i=0;i<7;i++){const t=i/6, bx=-.84+t*.6, by=-.04+t*-.12, h=.07+srand(i,21)*.14, w=.06+srand(i,23)*.04;
+        c.beginPath(); c.moveTo(bx-w,by+.04); c.quadraticCurveTo(bx-w*.3,by-h*.6,bx+(srand(i,25)-.5)*.04,by-h); c.quadraticCurveTo(bx+w*.3,by-h*.6,bx+w,by+.04); c.closePath();
+        fillVol(c,M,WAX,bx,by-h*.4,w*1.4,h*.6,L,.45);}
+      blob(c,M,WAX,-.56,-.1,.3,.09,facing(L,-.56,-.1,.35));
+      /* the brass Signal Mirror at his hip */
+      ell(c,-.46,.86,.13,.13); fillVol(c,M,BRASS,-.46,.86,.13,.13,L,.6);
+      ell(c,-.46,.86,.09,.09); const mg=c.createLinearGradient(-.55,.77,-.37,.95); mg.addColorStop(0,'rgba(250,214,150,1)'); mg.addColorStop(.5,'rgba(120,96,60,1)'); mg.addColorStop(1,'rgba(40,32,24,1)'); c.fillStyle=mg; c.fill();
+      /* his neck and head, lit from below */
+      blob(c,M,lit(SKIN,-.2),.02,-.3,.11,.12,facing(L,.02,-.3));
+      blob(c,M,SKIN,.02,-.6,.24,.3,facing(L,.02,-.6,.45));
+      c.beginPath(); c.moveTo(.13,-.68); c.quadraticCurveTo(.3,-.62,.27,-.52); c.quadraticCurveTo(.22,-.48,.15,-.53); c.closePath(); fillVol(c,M,SKIN,.2,-.58,.08,.08,L,.5);
+      c.fillStyle='rgba(18,10,6,.85)'; ell(c,-.07,-.66,.075,.05); c.fill(); ell(c,.13,-.67,.065,.045); c.fill();
+      c.fillStyle='rgba(208,212,206,.95)'; ell(c,.13,-.665,.04,.028); c.fill();
+      c.fillStyle='rgba(40,30,20,1)'; ell(c,-.07,-.66,.026,.022); c.fill();
+      c.strokeStyle='rgba(50,26,18,.8)'; c.lineWidth=.016; c.beginPath(); c.moveTo(-.06,-.43); c.quadraticCurveTo(.05,-.41,.14,-.45); c.stroke();
+      c.strokeStyle='rgba(60,40,28,.6)'; c.lineWidth=.012; for(let i=0;i<3;i++){c.beginPath(); c.moveTo(-.12,-.77-i*.035); c.lineTo(.08,-.78-i*.035); c.stroke();}
+      /* a battered cap */
+      blob(c,M,[44,36,30],.0,-.86,.27,.12,facing(L,0,-.86));
+      blob(c,M,[38,30,26],.16,-.8,.24,.05,facing(L,.16,-.8));
+      /* the hand on the pole */
+      blob(c,M,SKIN,.64,.2,.09,.11,facing(L,.64,.2));
+      /* the lantern: a brass hood, glass, and a frame */
+      c.beginPath(); c.moveTo(.36,-.5); c.lineTo(.58,-.5); c.lineTo(.53,-.58); c.lineTo(.41,-.58); c.closePath(); fillVol(c,M,BRASS,.47,-.54,.12,.05,L,.5);
+      c.fillStyle=rgba(lit(BRASS,-.3)); c.fillRect(.37,-.18,.2,.035);
+      c.strokeStyle=rgba(lit(BRASS,-.2)); c.lineWidth=.02; c.strokeRect(.38,-.5,.18,.32);
+    },
+    glow(c,M){
+      const g=c.createLinearGradient(.38,-.5,.56,-.18); g.addColorStop(0,'rgba(255,214,140,.92)'); g.addColorStop(1,'rgba(237,170,80,.9)');
+      c.fillStyle=g; c.fillRect(.39,-.49,.16,.3);
+      portFlame(c,.47,-.31,.075,[255,190,96],1);
+      c.strokeStyle='rgba(120,86,40,.9)'; c.lineWidth=.016; c.beginPath(); c.moveTo(.47,-.5); c.lineTo(.47,-.18); c.stroke();
+      if(!M.locked){c.fillStyle='rgba(255,220,150,.5)'; ell(c,-.5,.83,.03,.02); c.fill();}
+    }},
+
+  /* Mags Tolland: oilskins and irons, a coil of tarred line, a cruse lamp burning fat at her chest */
+  whaler:{light:TOLL_L,col:[232,160,72],reach:1.7,
+    body(c,M){
+      const L=TOLL_L, OIL=[30,36,36], SKIN=[178,130,98], IRON=[96,98,102], LINE=[86,66,42];
+      /* the toggle harpoon, resting across her right shoulder */
+      tendril(c,M,[[-.75,1.2],[.2,-.2],[.88,-1.1]],.055,.05,[96,74,50],{base:-.1});
+      c.beginPath(); c.moveTo(.86,-1.06); c.lineTo(.98,-1.3); c.lineTo(1.0,-1.1); c.lineTo(.92,-1.02); c.closePath(); fillVol(c,M,IRON,.93,-1.15,.06,.12,L,.6);
+      c.beginPath(); c.moveTo(.95,-1.18); c.lineTo(.8,-1.24); c.lineTo(.84,-1.12); c.closePath(); fillVol(c,M,IRON,.86,-1.18,.06,.05,L,.5);
+      /* the sou'wester, pushed back off her head */
+      ell(c,-.02,-.86,.46,.14,-.2); fillVol(c,M,[48,52,40],-.02,-.86,.46,.14,L,.3);
+      /* broad shoulders in black oilskin, slick with brine */
+      smoothPath(c,[[-.2,-.28],[-.7,-.18],[-.98,.02],[-1.06,.7],[-1.08,1.42],[1.08,1.42],[1.04,.7],[.98,.02],[.7,-.18],[.2,-.28],[0,-.12]],true);
+      fillVol(c,M,OIL,0,.5,1,.9,L,.5);
+      if(!M.locked)for(let i=0;i<5;i++){spec(c,M,-.6+i*.3,.3+srand(i,31)*.4,.03,.22,.22,(srand(i,33)-.5)*.4);}
+      /* a coil of tarred line over her left shoulder */
+      c.lineWidth=.05; for(let i=0;i<5;i++){c.strokeStyle=rgba(lit(LINE,-.05-i*.1)); ell(c,-.62+i*.025,.28+i*.03,.17,.3,.18); c.stroke();}
+      tendril(c,M,[[-.5,-.18],[-.6,.0],[-.64,.08]],.06,.05,LINE,{base:-.1});
+      /* the cruse lamp, an iron dish hooked to her coat */
+      c.strokeStyle=rgba(lit(IRON,-.3)); c.lineWidth=.02; c.beginPath(); c.moveTo(.05,.23); c.lineTo(.05,.0); c.stroke();
+      ell(c,.05,.25,.15,.055); fillVol(c,M,IRON,.05,.25,.15,.055,L,.3);
+      /* her neck, the scar across her throat, her set jaw */
+      blob(c,M,lit(SKIN,-.15),0,-.3,.13,.14,facing(L,0,-.3));
+      c.strokeStyle='rgba(226,190,160,.7)'; c.lineWidth=.014; c.beginPath(); c.moveTo(-.08,-.26); c.quadraticCurveTo(.0,-.22,.09,-.29); c.stroke();
+      blob(c,M,SKIN,0,-.62,.25,.28,facing(L,0,-.62,.45));
+      blob(c,M,SKIN,0,-.47,.23,.13,facing(L,0,-.47,.4));
+      /* dark hair under the hat, a heavy brow, narrowed eyes */
+      tendril(c,M,[[-.22,-.78],[-.27,-.6],[-.26,-.42]],.08,.04,[34,28,24],{base:-.1});
+      tendril(c,M,[[.22,-.78],[.27,-.6],[.25,-.44]],.08,.04,[34,28,24],{base:-.1});
+      blob(c,M,[40,32,26],0,-.83,.25,.08,facing(L,0,-.83));
+      c.strokeStyle='rgba(30,18,12,.9)'; c.lineWidth=.022; c.beginPath(); c.moveTo(-.16,-.69); c.lineTo(-.03,-.67); c.moveTo(.03,-.67); c.lineTo(.16,-.69); c.stroke();
+      c.lineWidth=.016; c.beginPath(); c.moveTo(-.14,-.63); c.lineTo(-.05,-.625); c.moveTo(.05,-.625); c.lineTo(.14,-.63); c.stroke();
+      c.fillStyle='rgba(255,236,200,.8)'; ell(c,-.09,-.628,.012,.008); c.fill(); ell(c,.09,-.628,.012,.008); c.fill();
+      c.strokeStyle='rgba(70,36,26,.8)'; c.lineWidth=.016; c.beginPath(); c.moveTo(-.07,-.42); c.lineTo(.07,-.42); c.stroke();
+      /* her hand on the shaft */
+      blob(c,M,SKIN,-.36,.78,.12,.1,facing(L,-.36,.78));
+    },
+    glow(c,M){
+      if(!M.locked){c.strokeStyle='rgba(120,110,100,.25)'; c.lineWidth=.03; for(let i=0;i<3;i++){c.beginPath(); c.moveTo(.05+i*.02,.06); c.bezierCurveTo(.12,-.1,-.05,-.2,.06+i*.03,-.36); c.stroke();}}
+      portFlame(c,.05,.13,.08,[240,168,72],M.locked?.6:1);
+      if(M.locked){c.fillStyle='rgba(200,206,214,.55)'; ell(c,.94,-1.18,.025,.04); c.fill();}
+    }},
+
+  /* the Nameless: a hood with no face, a corpse candle on a skull, and in the hood the eyes of everything it has bound */
+  occultist:{light:NAME_L,col:[196,226,186],reach:1.1,
+    body(c,M){
+      const L=NAME_L, ROBE=[36,42,36], BONE=[206,198,170];
+      smoothPath(c,[[0,-1.24],[-.42,-1.08],[-.6,-.5],[-.66,-.14],[-.94,.08],[-1.06,.8],[-1.1,1.42],[1.1,1.42],[1.06,.8],[.94,.08],[.66,-.14],[.6,-.5],[.42,-1.08]],true);
+      fillVol(c,M,ROBE,0,.1,1,1.3,L,.3);
+      /* the hem has gone green */
+      const g=c.createLinearGradient(0,.9,0,1.42); g.addColorStop(0,'rgba(40,70,46,0)'); g.addColorStop(1,'rgba(40,80,50,.6)');
+      c.save(); c.globalCompositeOperation='source-atop'; c.fillStyle=g; c.fillRect(-1.2,.9,2.4,.6); c.restore();
+      c.strokeStyle=rgba(lit(ROBE,-.5)); c.lineWidth=.03;
+      for(const x of [-.5,-.18,.22,.55]){c.beginPath(); c.moveTo(x*.6,0); c.quadraticCurveTo(x,.7,x*1.15,1.42); c.stroke();}
+      /* the rim of the hood, and the dark inside it where a face should be */
+      ell(c,0,-.5,.34,.42); fillVol(c,M,lit(ROBE,.05),0,-.5,.34,.42,L,.25);
+      ell(c,0,-.5,.27,.35); c.fillStyle='#010202'; c.fill();
+      /* a bony hand, a skull, and the candle stub on it */
+      tendril(c,M,[[.7,.2],[.6,.42],[.5,.5]],.16,.12,ROBE,{base:-.2});
+      blob(c,M,[150,148,128],.5,.5,.1,.08,facing(L,.5,.5));
+      blob(c,M,BONE,.5,.33,.13,.11,facing(L,.5,.33,.5));
+      blob(c,M,BONE,.5,.42,.08,.05,facing(L,.5,.42,.4));
+      c.fillStyle='rgba(20,16,10,.9)'; ell(c,.45,.33,.035,.03); c.fill(); ell(c,.56,.33,.035,.03); c.fill();
+      c.fillStyle=rgba([210,206,184]); c.fillRect(.47,.12,.06,.12);
+    },
+    glow(c,M){
+      if(!M.locked)portFlame(c,.5,.07,.065,[204,236,196],1);
+      /* the hood fills with what you have bound, deepest first, layered (Gemini: never side by side, or it turns to mud) */
+      const has=k=>M.eyes.includes(k), lk=M.look||0, f=M.f||0;
+      const dr=(i)=>[Math.sin(f*2.1+i*1.7)*.012+lk*.03,Math.cos(f*1.7+i*2.3)*.008];
+      c.save(); ell(c,0,-.5,.27,.35); c.clip();
+      const a=M.locked?.75:1;
+      if(has('keeper')){const g=c.createRadialGradient(0,-.5,0,0,-.5,.36); g.addColorStop(0,'rgba(200,40,30,'+(.75*a)+')'); g.addColorStop(.6,'rgba(110,14,12,'+(.5*a)+')'); g.addColorStop(1,'rgba(40,0,0,0)');
+        c.fillStyle=g; ell(c,0,-.5,.36,.4); c.fill();
+        const d=dr(0); c.fillStyle='rgba(8,2,2,.92)'; ell(c,d[0]*.6,-.5,.035,.2); c.fill();}
+      /* two violet pinpricks: all it has of its own */
+      for(const s of [-1,1]){const d=dr(1); eyeG(c,{sil:false},s*.065+d[0],-.52+d[1],.016*a,{emissive:true,glow:[169,124,226]});}
+      if(has('shrieker'))for(const [x,y,i] of [[-.17,-.66,2],[-.2,-.5,3]]){const d=dr(i);
+        c.strokeStyle='rgba(240,236,250,'+(.8*a)+')'; c.lineWidth=.012; ell(c,x+d[0],y+d[1],.04,.04); c.stroke();
+        eyeG(c,{sil:false},x+d[0],y+d[1],.026,{emissive:true,glow:[186,120,236]});}
+      if(has('wretch'))for(let i=0;i<5;i++){const d=dr(4+i); eyeG(c,{sil:false},.13+srand(i,41)*.09+d[0],-.75+srand(i,43)*.12+d[1],.012,{emissive:true,glow:[206,224,96]});}
+      if(has('elite'))for(const [x,y,i] of [[.17,-.38,9],[.21,-.5,10]]){const d=dr(i);
+        c.strokeStyle='rgba(160,210,236,'+(.45*a)+')'; c.lineWidth=.01; c.beginPath(); c.moveTo(x+d[0],y+d[1]+.02); c.quadraticCurveTo(x+d[0]+.01,y+.1,x+d[0]-.005,y+.2); c.stroke();
+        eyeG(c,{sil:false},x+d[0],y+d[1],.022,{emissive:true,glow:[190,226,246]});}
+      if(has('gnasher'))for(const s of [-1,1]){const d=dr(11); eyeG(c,{sil:false},s*.09+d[0],-.29+d[1],.024,{emissive:true,glow:[236,70,46],pupil:'slit'});}
+      if(has('watcher')){const d=dr(12); eyeG(c,{sil:false},d[0],-.5+d[1],.085,{sclera:[226,220,198],iris:[120,150,176],look:[lk*.8,0],veins:true});}
+      c.restore();
+    }},
+
+  /* Dr. Lucan Voss: struck off the rolls, a bandolier of Leyden jars, and an arc across his collar that lights his grin */
+  galvanist:{light:VOSS_L,col:[170,205,255],reach:1.25,
+    body(c,M){
+      const L=VOSS_L, SHIRT=[100,96,88], VEST=[64,52,42], SKIN=[178,152,128], COPPER=[190,118,56];
+      smoothPath(c,[[-.18,-.24],[-.62,-.14],[-.84,.06],[-.9,.8],[-.92,1.42],[.92,1.42],[.9,.8],[.84,.06],[.62,-.14],[.18,-.24],[0,-.12]],true);
+      fillVol(c,M,SHIRT,0,.5,.9,.9,L,.35);
+      smoothPath(c,[[-.44,-.02],[-.52,.7],[-.54,1.42],[.54,1.42],[.52,.7],[.44,-.02],[.12,.22],[0,.4],[-.12,.22]],true);
+      fillVol(c,M,VEST,0,.7,.55,.75,L,.3);
+      if(!M.locked){c.fillStyle='rgba(16,10,6,.55)'; for(let i=0;i<4;i++){ell(c,-.4+srand(i,51)*.8,.5+srand(i,53)*.8,.06+srand(i,55)*.05,.04,srand(i,57)); c.fill();}}
+      /* a bandolier of Leyden jars across his chest */
+      tendril(c,M,[[-.66,-.05],[-.1,.5],[.55,1.15]],.1,.1,[84,58,38],{base:-.15});
+      for(let i=0;i<4;i++){const t=.18+i*.2, x=-.66+(1.21*t), y=-.05+(1.2*t);
+        c.fillStyle=M.locked?rgba(SILC):'rgba(60,80,96,.85)'; c.fillRect(x-.045,y-.08,.09,.14);
+        blob(c,M,COPPER,x,y-.09,.05,.02,facing(L,x,y-.09));}
+      /* the high collar and its two copper electrodes */
+      blob(c,M,lit(SKIN,-.2),0,-.32,.1,.1,facing(L,0,-.32));
+      c.beginPath(); c.moveTo(-.2,-.2); c.lineTo(-.18,-.33); c.lineTo(.18,-.33); c.lineTo(.2,-.2); c.closePath(); fillVol(c,M,SHIRT,0,-.27,.2,.07,L,.4);
+      for(const s of [-1,1]){ell(c,s*.19,-.25,.05,.05); fillVol(c,M,COPPER,s*.19,-.25,.05,.05,L,.6);}
+      /* a gaunt head, hair stood up by static */
+      for(let i=0;i<14;i++){const x=-.22+i*.034, h=.18+srand(i,61)*.22, lean=(srand(i,63)-.5)*.2;
+        tendril(c,M,[[x,-.78],[x+lean*.5,-.78-h*.5],[x+lean,-.78-h]],.05,.012,[56,50,44],{base:-.1});}
+      blob(c,M,SKIN,0,-.6,.21,.27,facing(L,0,-.6,.5));
+      c.fillStyle='rgba(40,24,16,.35)'; ell(c,-.13,-.52,.05,.08); c.fill(); ell(c,.13,-.52,.05,.08); c.fill();
+      /* smoked goggles pushed up on his forehead */
+      c.fillStyle=M.locked?rgba(SILC):'rgba(40,40,36,1)'; c.fillRect(-.22,-.85,.44,.04);
+      for(const s of [-1,1]){ell(c,s*.1,-.82,.075,.06); fillVol(c,M,[176,140,70],s*.1,-.82,.075,.06,L,.5); ell(c,s*.1,-.82,.055,.042); c.fillStyle=M.locked?rgba(SILC):'rgba(30,34,40,1)'; c.fill(); spec(c,M,s*.1-.02,-.84,.02,.012,.6);}
+      /* wide eyes, tiny pupils; a grin too wide for his face */
+      for(const s of [-1,1])eyeG(c,M,s*.085,-.63,.034,{sclera:[230,224,210],iris:[90,120,140],irisR:.35});
+      c.beginPath(); c.moveTo(-.14,-.5); c.quadraticCurveTo(0,-.38,.14,-.5); c.quadraticCurveTo(0,-.45,-.14,-.5); c.closePath(); c.fillStyle=M.locked?rgba(SILC):'rgba(236,230,210,1)'; c.fill();
+      c.strokeStyle='rgba(50,24,16,.8)'; c.lineWidth=.012; c.stroke();
+      /* a forearm wound in copper to the fingertips, burnt */
+      tendril(c,M,[[-.98,1.42],[-.82,1.0],[-.62,.72]],.2,.15,SKIN,{base:-.15});
+      c.lineWidth=.02; for(let i=0;i<7;i++){const t=i/6, x=-.96+t*.32, y=1.38-t*.62; c.strokeStyle=rgba(lit(COPPER,M.locked?-.9:.1)); ell(c,x,y,.1,.03,-.9); c.stroke();}
+      blob(c,M,lit(SKIN,-.3),-.6,.68,.08,.08,facing(L,-.6,.68));
+    },
+    glow(c,M){
+      const f=M.f||0, k=[1,.7,.9][f%3]*(M.locked?.55:1);
+      /* the arc across his throat: three jagged strands, a glow, a white core */
+      const P=[[-.15,-.25]]; for(let i=1;i<6;i++)P.push([-.15+i*.05,-.25+(srand(i+f*7,71)-.5)*.09]); P.push([.15,-.25]);
+      const g=c.createRadialGradient(0,-.25,0,0,-.25,.4); g.addColorStop(0,'rgba(170,205,255,'+(.45*k)+')'); g.addColorStop(1,'rgba(170,205,255,0)'); c.fillStyle=g; c.beginPath(); c.arc(0,-.25,.4,0,TAU); c.fill();
+      for(const [w,col] of [[.07,'rgba(110,160,255,'+(.3*k)+')'],[.028,'rgba(170,210,255,'+(.8*k)+')'],[.011,'rgba(250,252,255,'+k+')']]){
+        c.strokeStyle=col; c.lineWidth=w; c.beginPath(); P.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])); c.stroke();}
+      /* the jars, faintly charged */
+      for(let i=0;i<4;i++){const t=.18+i*.2, x=-.66+1.21*t, y=-.05+1.2*t;
+        const jg=c.createRadialGradient(x,y,0,x,y,.12); jg.addColorStop(0,'rgba(120,170,255,'+(.35*k)+')'); jg.addColorStop(1,'rgba(120,170,255,0)'); c.fillStyle=jg; c.beginPath(); c.arc(x,y,.12,0,TAU); c.fill();}
+    }},
+
+  /* Agathe Vell: no light on her at all. She is drawn the way she sees, by the rings of her bell */
+  bellringer:{light:VELL_B,col:[228,221,204],reach:1,echo:true,
+    shapes(c,stroke){
+      const go=()=>stroke?c.stroke():c.fill();
+      c.save(); c.translate(0,-.6); c.rotate(.16); c.translate(0,.6);
+      /* the warden's cloak, its hood thrown back */
+      smoothPath(c,[[-.16,-.26],[-.6,-.16],[-.86,.04],[-.98,.8],[-1.04,1.42],[1.04,1.42],[.98,.8],[.86,.04],[.6,-.16],[.16,-.26],[0,-.1]],true); go();
+      smoothPath(c,[[-.3,-.3],[-.42,-.55],[-.36,-.8],[-.2,-.9],[-.24,-.6],[-.16,-.32]],true); go();
+      ell(c,0,-.6,.22,.28); go();
+      /* the linen over her eyes */
+      c.beginPath(); c.moveTo(-.23,-.68); c.quadraticCurveTo(0,-.63,.23,-.68); c.lineTo(.23,-.58); c.quadraticCurveTo(0,-.53,-.23,-.58); c.closePath(); go();
+      c.beginPath(); c.moveTo(-.23,-.6); c.quadraticCurveTo(-.32,-.55,-.34,-.44); if(stroke)c.stroke();
+      c.beginPath(); c.moveTo(-.06,-.42); c.quadraticCurveTo(0,-.4,.06,-.42); if(stroke)c.stroke();
+      c.restore();
+      /* her arm raised, the bell held up by her ear, rope wound round her wrist */
+      c.beginPath(); c.moveTo(.5,.02); c.quadraticCurveTo(.62,-.2,.46,-.42); c.lineTo(.36,-.4); c.quadraticCurveTo(.46,-.2,.38,.02); c.closePath(); go();
+      if(stroke){for(let i=0;i<3;i++){c.beginPath(); c.moveTo(.37,-.36+i*.05); c.lineTo(.5,-.38+i*.05); c.stroke();}}
+      c.beginPath(); c.moveTo(.34,-.86); c.quadraticCurveTo(.3,-.66,.22,-.56); c.lineTo(.6,-.56); c.quadraticCurveTo(.52,-.66,.48,-.86); c.quadraticCurveTo(.41,-.92,.34,-.86); c.closePath(); go();
+      ell(c,.41,-.5,.04,.04); go();
+      if(stroke){c.beginPath(); c.moveTo(.42,-.54); c.lineTo(.4,-.6); c.lineTo(.44,-.66); c.lineTo(.41,-.72); c.stroke();}
+    },
+    body(c,M){PORTRAIT_ART.bellringer.shapes(c,false);},
+    glow(c,M){
+      const B=VELL_B;
+      if(M.locked){c.strokeStyle='rgba(228,221,204,.22)'; c.lineWidth=.014; c.beginPath(); c.arc(0,-.3,.55,0,TAU); c.stroke(); return;}
+      /* faint rings across the whole dark */
+      const R=[.22,.5,.84,1.22,1.66,2.1];
+      for(const r of R){c.strokeStyle='rgba(228,221,204,'+(.1*(1-r/2.4))+')'; c.lineWidth=.012; c.beginPath(); c.arc(B[0],B[1],r,0,TAU); c.stroke();}
+      /* her outline, only where a ring passes through it */
+      const O=document.createElement('canvas'); O.width=PORT_W; O.height=PORT_H; const o=O.getContext('2d');
+      o.setTransform(PORT_W/2,0,0,PORT_W/2,PORT_W/2,PORT_H/2); o.lineCap='round'; o.lineJoin='round';
+      o.strokeStyle='rgba(236,230,214,1)'; o.lineWidth=.03; PORTRAIT_ART.bellringer.shapes(o,true);
+      o.globalCompositeOperation='destination-in';
+      const g=o.createRadialGradient(B[0],B[1],0,B[0],B[1],2.4), w=.09;
+      g.addColorStop(0,'rgba(0,0,0,.9)');
+      for(const r of R){const a=Math.max(.35,1-r/2.8); g.addColorStop(Math.max(0,(r-w)/2.4),'rgba(0,0,0,.05)'); g.addColorStop(r/2.4,'rgba(0,0,0,'+a+')'); g.addColorStop(Math.min(1,(r+w)/2.4),'rgba(0,0,0,.05)');}
+      o.fillStyle=g; o.fillRect(-1.2,-1.5,2.4,3);
+      c.save(); c.setTransform(1,0,0,1,0,0); c.drawImage(O,0,0); c.restore();
+      /* the bell itself always rings clear */
+      c.strokeStyle='rgba(236,230,214,.9)'; c.lineWidth=.02;
+      c.beginPath(); c.moveTo(.34,-.86); c.quadraticCurveTo(.3,-.66,.22,-.56); c.lineTo(.6,-.56); c.quadraticCurveTo(.52,-.66,.48,-.86); c.quadraticCurveTo(.41,-.92,.34,-.86); c.closePath(); c.stroke();
+    }}
+};
+function portraitCanvas(k,locked,f,look){
+  const P=PORTRAIT_ART[k]; if(!P)return null;
+  const eyes=k==='occultist'?hoodEyes():[];
+  f=(k==='occultist'||k==='galvanist')?(f||0)%PORT_FRAMES:0; look=k==='occultist'?(look||0):0;
+  const key=k+'|'+(locked?1:0)+'|'+f+'|'+look+'|'+eyes.join(',');
+  let cv=PORTRAITS.get(key); if(cv)return cv;
+  cv=document.createElement('canvas'); cv.width=PORT_W; cv.height=PORT_H;
+  const c=cv.getContext('2d'), u=PORT_W/2;
+  const Lc=document.createElement('canvas'); Lc.width=PORT_W; Lc.height=PORT_H; const l=Lc.getContext('2d');
+  const unit=g=>{g.setTransform(u,0,0,u,PORT_W/2,PORT_H/2); g.lineCap='round'; g.lineJoin='round';};
+  unit(c); unit(l);
+  const M={sil:false,f,look,locked:!!locked,eyes}, [lx,ly]=P.light, col=P.col, R=P.reach;
+  c.fillStyle='#050607'; c.fillRect(-1.1,-1.45,2.2,2.9);
+  /* the light's own glow in the air around it */
+  if(!P.echo){const g=c.createRadialGradient(lx,ly,0,lx,ly,R*(locked?.3:1.05)); g.addColorStop(0,rgba(col,locked?.1:.24)); g.addColorStop(1,rgba(col,0)); c.fillStyle=g; c.fillRect(-1.1,-1.45,2.2,2.9);}
+  P.body(l,M);
+  l.globalCompositeOperation='source-atop';
+  if(locked||P.echo){l.fillStyle=locked?'rgb(13,15,17)':'#101418'; l.fillRect(-1.1,-1.45,2.2,2.9);}
+  else{
+    let g=l.createRadialGradient(lx,ly,0,lx,ly,R); g.addColorStop(0,rgba(col,.5)); g.addColorStop(.5,rgba(col,.12)); g.addColorStop(1,rgba(col,0)); l.fillStyle=g; l.fillRect(-1.1,-1.45,2.2,2.9);
+    g=l.createRadialGradient(lx,ly,R*.22,lx,ly,R*1.1); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,.94)'); l.fillStyle=g; l.fillRect(-1.1,-1.45,2.2,2.9);
+  }
+  c.save(); c.setTransform(1,0,0,1,0,0); c.drawImage(Lc,0,0); c.restore();
+  P.glow(c,M);
+  /* every card ends in the same dark at its edges */
+  c.setTransform(1,0,0,1,0,0);
+  const v=c.createRadialGradient(PORT_W/2,PORT_H*.42,PORT_W*.38,PORT_W/2,PORT_H*.5,PORT_H*.72); v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(0,0,0,.8)');
+  c.fillStyle=v; c.fillRect(0,0,PORT_W,PORT_H);
+  PORTRAITS.set(key,cv);
+  return cv;
+}
+function paintPortrait(cv,k,locked,f,look){const src=portraitCanvas(k,locked,f,look); if(!src||!cv.getContext)return; const c=cv.getContext('2d'); c.clearRect(0,0,cv.width,cv.height); c.drawImage(src,0,0,cv.width,cv.height);}
 
 /* draw one creature at (x,y) in board tiles.
    o: {sil, face, ph, look:[x,y], rim:{dx,dy,a}, flash, alpha} */
@@ -6511,14 +6872,14 @@ function codex(){
   const s=store.get('ll-codex',null);
   /* whatever was stored, only arrays of known keys are kept, so a damaged ll-codex can't break the book */
   const list=(v,T)=>Array.isArray(v)?v.filter(k=>typeof k==='string'&&T[k]):[];
-  CODEX={foes:new Set(list(s&&s.foes,FOES)),relics:new Set(list(s&&s.relics,RELICS)),offs:new Set(list(s&&s.offs,OFFERINGS))};
+  CODEX={foes:new Set(list(s&&s.foes,FOES)),relics:new Set(list(s&&s.relics,RELICS)),offs:new Set(list(s&&s.offs,OFFERINGS)),bound:new Set(list(s&&s.bound,HORRORS))};
   /* someone who played before the Grimoire existed has met everything on the floors they reached */
   if(!s||typeof s!=='object'){const b=store.get('ll-best',null), reached=b&&b.floor?Math.min(FLOORS.length,b.floor):0;
     for(let i=0;i<reached;i++)FLOORS[i].waves.forEach(w=>w.forEach(g=>{if(FOES[g[0]])CODEX.foes.add(g[0]);}));
     if(reached)codexSave();}
   return CODEX;
 }
-function codexSave(){store.set('ll-codex',{foes:[...CODEX.foes],relics:[...CODEX.relics],offs:[...CODEX.offs]});}
+function codexSave(){store.set('ll-codex',{foes:[...CODEX.foes],relics:[...CODEX.relics],offs:[...CODEX.offs],bound:[...CODEX.bound]});}
 function codexSee(kind,k){if(devOn)return; const C=codex(); if(C[kind].has(k))return; C[kind].add(k); codexSave();}
 function relicGlyph(k){return RELICS[k].n.replace(/^(The|A) /,'').charAt(0);}
 let relKey='', relTipT=0, relTipK='';
@@ -6627,11 +6988,12 @@ function showBook(){
   }else if(t==='kits'){
     /* every kit, what it builds and what it casts; a kit not yet earned stays dark, unless developer mode is on */
     const m=meta();
-    intro='Each descent starts with a kit. Every kit builds its own version of some wards and casts its own rites.';
-    list=Object.keys(KITS).map(k=>{const K=KITS[k], locked=K.lock&&!m.unlocked.includes(K.lock)&&!devOn;
-      if(locked)return bookEntry(bookSeal('?'),'???','Not yet earned',K.deed?'Deed: '+K.deed:'Unlock it in the Ember Hall.','is-locked');
+    intro='Five went down the stair the night Saltmouth drowned. Each descent, one of them carries the lamp, with wards and rites of their own.';
+    const port=(k,lk)=>'<canvas class="book-port" width="'+PORT_W+'" height="'+PORT_H+'" data-port="'+k+':'+(lk?1:0)+'"></canvas>';
+    list=Object.keys(KITS).map(k=>{const K=KITS[k], locked=kitLocked(k,m);
+      if(locked)return bookEntry(port(k,1),K.n,'Not yet earned',kitHow(k)+'.','is-locked');
       const ws=K.wards.map(w=>wdef(w,k).n).join(', '), rs=K.rites.map(r=>RITES[r].n).join(', ');
-      return bookEntry(bookSeal(K.n.replace(/^The /,'').charAt(0)),K.n+(K.who?' · '+K.who:''),'Builds: '+ws+' · Casts: '+rs,K.d);}).join('');
+      return bookEntry(port(k,0),(K.who||K.n)+' · '+K.n,'Builds: '+ws+' · Casts: '+rs+(k==='occultist'?' · '+hoodLine():''),'<i>'+((ROSTER[k]||{}).line||'')+'</i> '+K.d);}).join('');
   }else{
     const seen=relics.filter(k=>hasSeen('relics',k)).length;
     intro='Relics found: <b>'+seen+' of '+relics.length+'</b>.'+(held.length?' The ones you carry now are marked.':'');
@@ -6644,6 +7006,7 @@ function showBook(){
     +'<p class="book-intro">'+intro+'</p><div class="book-list">'+list+'</div>';
   showModal({kind:'book',wide:true,title:'The Grimoire',body:'',html,actions:[{label:BOOK.from==='pause'?'Back':'Close',primary:true,fn:closeBook}]});
   $('#mChoices').querySelectorAll('canvas[data-icon]').forEach(cv=>{const p=cv.dataset.icon.split(':'); bookIcon(cv,p[0],p[1],p[2]==='1',p[3]);});
+  $('#mChoices').querySelectorAll('canvas[data-port]').forEach(cv=>{const p=cv.dataset.port.split(':'); paintPortrait(cv,p[0],p[1]==='1');});
 }
 function bookIcon(cvs,kind,type,sil,kt){
   if(!sil){drawIcon(cvs,{kind,type,kit:kt}); return;}
@@ -6777,6 +7140,9 @@ const TIPS={
   peal:{when:()=>bellKit()&&F.phase==='wave'&&lstat().peal>0,title:'Peal',
     text:'The lamp now tolls on its own, a quieter heartbeat that reaches 5 tiles and makes no Noise, and a ring closes on it before each beat. It hears only the ordinary dark, and cracks nothing. Tap Toll as the ring lands, when the button glows, for a Perfect Toll: half again as far, two cracks, and half the Noise.',
     target:()=>coachBoard(F.lx,F.ly,1.2)},
+  hoodeye:{when:()=>!!run.newEye&&F.phase==='build',title:'Eyes in the hood',
+    text:'Something you bound has never been bound before. Its eyes now open in the Nameless’s hood, on the roster when you next descend, and they stay there for good. There are six kinds to find.',
+    target:()=>null},
   herald:{when:()=>F.phase==='build'&&!!heraldNext(),title:'A Herald comes',
     text:'A Herald walks in the next wave: its name is on the strip, and a red ring marks the rift it will climb out of, so build for it there. Each is a named terror with its own way of hurting you (the Grimoire has them once met), and drains 8 oil if it reaches the lamp, but none is a boss. Stuns and holds slow it, but none keeps it for long: held 3 seconds, it breaks free for a while. Kill it and it pays a relic.',
     target:()=>coachEl('#preview')},
