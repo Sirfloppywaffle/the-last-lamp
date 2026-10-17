@@ -3,6 +3,7 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **The unlock reveal** (#36, part 1). When a deed earns a kit during a run, the end screen opens on its portrait first: the locked silhouette, then the lit painting floods out from the character's own light (a ring sweeps out and draws Agathe, who has none). Then the name, the kit, how it was earned and a reveal line. A kit bought in the Ember Hall gets the same reveal there, and the Hall comes back after it. One tap snaps to the finished card and a second goes on (on `click`, and a hasty double tap isn't read as both). It shows whatever the tip setting says. With reduced motion it is a plain fade. Two kits earned on one run reveal one after the other. No balance changes. (Claude)
 
 ## v16.9 — The Roster
 Descend opens a roster of five painted characters, and the Nameless's hood fills with what you bind.
