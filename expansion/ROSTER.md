@@ -61,7 +61,7 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
 - **Portrait:** a thin man in a scorched waistcoat, sleeves rolled, round smoked-glass goggles pushed up on his forehead. His hair stands up from static, and his grin is too wide. A bandolier of Leyden jars glows faintly blue across his chest, and a coil of copper wraps his left forearm to the fingertips. Two copper electrodes are bolted to his high collar, and **a blue arc jumps between them across his throat**. That arc lights him: a violent blue-white from below, on his goggles and his grin (Gemini: a spark at the fingertips is a few pixels under a thumb). Burn marks cover his hands.
 - **Light source:** the collar arc, blue-white, flickering. It's the one portrait whose light flickers (Lite: steady).
 - **Locked:** the jars' faint blue and the arc at the collar, with a man-shaped dark around them.
-- **Deed (new, proposed, revised):** *carry the light 12 tiles from the lamp in one unbroken chain.* His whole kit is a circuit that must reach the lamp, and every kit already builds chains of light (Signal Candles, Blubber Lamps, Corpse Candles in a line of the dead), so it needs no lucky drop. This replaces "three in salt with one Coil bolt", which Gemini rightly called double luck (a Coil gift, then salt). The Ember Hall cost (70) stays as the other way in.
+- **Deed (new, proposed, revised):** *light a chain of five candles, each lit only through the one before it, back to the lamp.* His whole kit is a circuit that must reach the lamp. The Lamplighter (open from the start) and the Whaler build these chains already, so it needs no lucky drop. Counting candles, not tiles: the lamp sits at (6,7), so no tile is more than about 9 from it, and Gemini caught that a 12-tile deed couldn't be done. This replaces "three in salt with one Coil bolt", which Gemini rightly called double luck (a Coil gift, then salt). The Ember Hall cost (70) stays as the other way in.
 - **Reveal line:** *The circuit closes. Somewhere below, a man laughs.*
 - **Plays like:** *Wire the dark; don't let it run hot.*
 
@@ -122,5 +122,5 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
 Settled with Gemini: names and Saltmouth stay; light at chest height; Agathe gets a slate body under her rings; the reveal skips on a tap.
 
 For Criss:
-1. **New deeds** for the Galvanist (carry the light 12 tiles in one chain) and the Bellringer (ten Shades or Stalkers killed unseen in one descent), or keep both Ember Hall only?
+1. **New deeds** for the Galvanist (a chain of five candles back to the lamp) and the Bellringer (ten Shades or Stalkers killed unseen in one descent), or keep both Ember Hall only?
 2. **The Nameless's eyes:** mostly inside the hood (Gemini), with two outside as in #36. Or all inside?
