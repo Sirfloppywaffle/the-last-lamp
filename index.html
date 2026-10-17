@@ -4843,257 +4843,882 @@ const PORTRAITS=new Map();
 /* the six kinds of horror whose eyes can fill the Nameless's hood, deepest first */
 const HOOD_EYES=['keeper','watcher','gnasher','wretch','shrieker','elite'];
 function hoodEyes(){return devOn?HOOD_EYES.slice():HOOD_EYES.filter(k=>codex().bound.has(k));}
-/* vol() puts its highlight at (cx - rx*hx, cy - ry*hy): aim it at the portrait's own light */
 function facing(L,x,y,hi){const dx=L[0]-x, dy=L[1]-y, d=Math.hypot(dx,dy)||1; return {hx:-dx/d*.55,hy:-dy/d*.6,hi:hi===undefined?.4:hi};}
-/* a filled outline path from a list of points, smoothed through their midpoints */
 function smoothPath(c,P,closed){
-  c.beginPath(); const n=P.length;
+  c.beginPath(); const n=P.length; if(!n)return;
   if(closed){c.moveTo((P[n-1][0]+P[0][0])/2,(P[n-1][1]+P[0][1])/2);
     for(let i=0;i<n;i++){const a=P[i], b=P[(i+1)%n]; c.quadraticCurveTo(a[0],a[1],(a[0]+b[0])/2,(a[1]+b[1])/2);} c.closePath();}
   else{c.moveTo(P[0][0],P[0][1]); for(let i=1;i<n-1;i++){const a=P[i], b=P[i+1]; c.quadraticCurveTo(a[0],a[1],(a[0]+b[0])/2,(a[1]+b[1])/2);} c.lineTo(P[n-1][0],P[n-1][1]);}
 }
 function fillVol(c,M,A,cx,cy,rx,ry,L,hi){c.fillStyle=vol(c,M,A,cx,cy,rx,ry,facing(L,cx,cy,hi)); c.fill();}
-/* a flame: a teardrop of light with a white heart */
+
+/* --- Painterly & Anatomical Portrait Helpers --- */
+function polyPath(c,P,closed){
+  c.beginPath();
+  for(let i=0;i<P.length;i++){if(!i)c.moveTo(P[i][0],P[i][1]); else c.lineTo(P[i][0],P[i][1]);}
+  if(closed!==false)c.closePath();
+}
+/* a soft radial glow of light in the air */
+function softGlow(c,x,y,r0,r1,col,a0,a1){
+  const g=c.createRadialGradient(x,y,r0,x,y,r1);
+  g.addColorStop(0,rgba(col,a0)); g.addColorStop(.45,rgba(col,(a0+a1)*.35)); g.addColorStop(1,rgba(col,a1||0));
+  c.fillStyle=g; c.beginPath(); c.arc(x,y,r1,0,TAU); c.fill();
+}
+/* a flat plane shaded from its lit side (toward the light) to its dark side */
+function planeGrad(c,M,P,cLit,cDark,L,cx,cy,r,smooth){
+  if(smooth)smoothPath(c,P,true); else polyPath(c,P,true);
+  if(M.sil){c.fillStyle=rgba(SILC); c.fill(); return;}
+  const dx=L[0]-cx, dy=L[1]-cy, d=Math.hypot(dx,dy)||1, ux=dx/d, uy=dy/d;
+  const g=c.createLinearGradient(cx+ux*r,cy+uy*r,cx-ux*r,cy-uy*r);
+  g.addColorStop(0,rgba(cLit)); g.addColorStop(.55,rgba(mixc(cLit,cDark,.55))); g.addColorStop(1,rgba(cDark));
+  c.fillStyle=g; c.fill();
+}
+/* a fold of cloth: a shaded ridge, a highlight on the side toward the light and a crease on the other */
+function clothFold(c,M,P,w0,w1,A,L,hi){
+  if(M.sil)return;
+  const n=P.length; if(n<2)return;
+  tendril(c,M,P,w0,w1,lit(A,-.28),{base:-.35,ridge:.08});
+  const dx=L[0]-P[0][0], side=dx>=0?1:-1;
+  c.save(); c.lineCap='round'; c.lineJoin='round';
+  c.strokeStyle=rgba(lit(A,hi||.32),.55); c.lineWidth=Math.max(w0,w1)*.22;
+  c.beginPath();
+  for(let i=0;i<n;i++){
+    const o=w0+(w1-w0)*(i/(n-1));
+    const px=P[i][0]+side*o*.22, py=P[i][1]-o*.08;
+    if(!i)c.moveTo(px,py); else c.lineTo(px,py);
+  }
+  c.stroke();
+  c.strokeStyle='rgba(4,5,7,.65)'; c.lineWidth=Math.max(w0,w1)*.18;
+  c.beginPath();
+  for(let i=0;i<n;i++){
+    const o=w0+(w1-w0)*(i/(n-1));
+    const px=P[i][0]-side*o*.28, py=P[i][1]+o*.1;
+    if(!i)c.moveTo(px,py); else c.lineTo(px,py);
+  }
+  c.stroke(); c.restore();
+}
+function hatchStrokes(c,x0,y0,x1,y1,n,len,ang,col,alpha,lw,seed){
+  c.save(); c.strokeStyle=rgba(col,alpha); c.lineWidth=lw||.008; c.lineCap='round';
+  for(let i=0;i<n;i++){
+    const u=srand(i,seed||11), v=srand(i,seed+7||19);
+    const x=x0+(x1-x0)*u, y=y0+(y1-y0)*v, a=ang+(srand(i,seed+23)-.5)*.28;
+    const l=len*(.6+.7*srand(i,seed+31));
+    c.beginPath(); c.moveTo(x,y); c.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l); c.stroke();
+  }
+  c.restore();
+}
+function humanEye(c,M,x,y,w,h,rot,o){
+  o=o||{};
+  c.save(); c.translate(x,y); if(rot)c.rotate(rot);
+  /* deep orbital socket shadow */
+  if(!M.sil){
+    const sg=c.createRadialGradient(0,0,w*.1,0,0,w*1.7);
+    sg.addColorStop(0,'rgba(6,4,4,.88)'); sg.addColorStop(.65,'rgba(14,9,8,.48)'); sg.addColorStop(1,'rgba(0,0,0,0)');
+    c.fillStyle=sg; ell(c,0,-h*.1,w*1.7,h*2.3); c.fill();
+  }
+  /* almond eye opening */
+  c.beginPath();
+  c.moveTo(-w,0);
+  c.bezierCurveTo(-w*.45,-h*1.15,w*.45,-h*1.15,w,.04);
+  c.bezierCurveTo(w*.45,h*.95,-w*.45,h*.95,-w,0);
+  c.closePath();
+  if(M.sil){
+    if(o.emissive){c.fillStyle=rgba(o.glow||[237,180,90],.85); c.fill();}
+    else{c.fillStyle='#040506'; c.fill();}
+    c.restore(); return;
+  }
+  c.save(); c.clip();
+  const sc=o.sclera||[188,176,158];
+  const g=c.createRadialGradient(-w*.15,-h*.2,w*.05,0,0,w*1.1);
+  g.addColorStop(0,rgba(lit(sc,.18))); g.addColorStop(.6,rgba(sc)); g.addColorStop(1,rgba(lit(sc,-.55)));
+  c.fillStyle=g; c.fillRect(-w*1.2,-h*1.4,w*2.4,h*2.8);
+  const lx=(o.look?o.look[0]:0)*w*.28, ly=(o.look?o.look[1]:0)*h*.22, ir=w*(o.irisR||.48);
+  const ic=o.iris||[96,74,48];
+  const ig=c.createRadialGradient(lx,ly,ir*.1,lx,ly,ir);
+  ig.addColorStop(0,rgba(lit(ic,.35))); ig.addColorStop(.65,rgba(ic)); ig.addColorStop(1,rgba(lit(ic,-.65)));
+  c.fillStyle=ig; c.beginPath(); c.arc(lx,ly,ir,0,TAU); c.fill();
+  if(!o.cataract){
+    c.fillStyle='#050303';
+    if(o.slit){ell(c,lx,ly,ir*.18,ir*.82); c.fill();}
+    else{c.beginPath(); c.arc(lx,ly,ir*(o.pupilR||.44),0,TAU); c.fill();}
+  }else{
+    const cg=c.createRadialGradient(lx-ir*.15,ly-ir*.15,0,lx,ly,ir*1.05);
+    cg.addColorStop(0,'rgba(235,238,230,.92)'); cg.addColorStop(.6,'rgba(175,186,182,.78)'); cg.addColorStop(1,'rgba(110,120,118,.2)');
+    c.fillStyle=cg; c.beginPath(); c.arc(lx,ly,ir*1.05,0,TAU); c.fill();
+  }
+  /* upper lid cast shadow across eyeball */
+  c.fillStyle='rgba(5,3,3,.55)'; c.fillRect(-w*1.2,-h*1.3,w*2.4,h*.85);
+  /* specular catchlight */
+  if(o.catch!==false){
+    const cx=o.catchX!==undefined?o.catchX:w*.22, cy=o.catchY!==undefined?o.catchY:-h*.22;
+    c.fillStyle=rgba(o.catchCol||[255,242,210],.92);
+    ell(c,lx+cx,ly+cy,w*.13,h*.18,-.3); c.fill();
+    c.fillStyle='rgba(255,250,240,.45)';
+    ell(c,lx-cx*.6,ly-cy*.5,w*.06,h*.08); c.fill();
+  }
+  c.restore();
+  /* upper and lower eyelid creases & wet rim */
+  c.strokeStyle='rgba(8,5,4,.92)'; c.lineWidth=.014;
+  c.beginPath(); c.moveTo(-w*1.08,.02); c.bezierCurveTo(-w*.45,-h*1.2,w*.45,-h*1.2,w*1.08,.05); c.stroke();
+  c.strokeStyle=rgba(o.rimCol||[190,135,98],.45); c.lineWidth=.009;
+  c.beginPath(); c.moveTo(-w*.92,.04); c.bezierCurveTo(-w*.4,h*1.02,w*.4,h*1.02,w*.96,.06); c.stroke();
+  /* upper lid fold */
+  c.strokeStyle='rgba(10,6,5,.7)'; c.lineWidth=.009;
+  c.beginPath(); c.moveTo(-w*1.05,-h*.55); c.bezierCurveTo(-w*.35,-h*1.65,w*.4,-h*1.6,w*1.02,-h*.45); c.stroke();
+  c.restore();
+}
 function portFlame(c,x,y,h,col,a){
-  const g=c.createRadialGradient(x,y,0,x,y,h*3.2); g.addColorStop(0,rgba(col,.55*a)); g.addColorStop(.4,rgba(col,.16*a)); g.addColorStop(1,rgba(col,0));
-  c.fillStyle=g; c.beginPath(); c.arc(x,y,h*3.2,0,TAU); c.fill();
-  c.beginPath(); c.moveTo(x,y-h); c.quadraticCurveTo(x+h*.42,y-h*.1,x,y+h*.42); c.quadraticCurveTo(x-h*.42,y-h*.1,x,y-h); c.closePath();
-  c.fillStyle=rgba(col,a); c.fill();
-  c.beginPath(); c.moveTo(x,y-h*.5); c.quadraticCurveTo(x+h*.2,y,x,y+h*.3); c.quadraticCurveTo(x-h*.2,y,x,y-h*.5); c.closePath();
-  c.fillStyle='rgba(255,250,232,'+a+')'; c.fill();
+  softGlow(c,x,y-h*.2,0,h*4.2,col,.48*a,0);
+  softGlow(c,x,y-h*.15,0,h*1.8,[255,220,150],.65*a,0);
+  /* outer flame mantle */
+  c.beginPath();
+  c.moveTo(x,y-h*1.35);
+  c.bezierCurveTo(x+h*.48,y-h*.55,x+h*.44,y+h*.25,x,y+h*.45);
+  c.bezierCurveTo(x-h*.44,y+h*.25,x-h*.48,y-h*.55,x,y-h*1.35);
+  c.closePath();
+  const fg=c.createLinearGradient(x,y-h*1.35,x,y+h*.45);
+  fg.addColorStop(0,rgba(lit(col,.25),a*.9));
+  fg.addColorStop(.55,rgba(col,a*.95));
+  fg.addColorStop(1,'rgba(70,95,165,'+(a*.45)+')');
+  c.fillStyle=fg; c.fill();
+  /* inner white-hot core */
+  c.beginPath();
+  c.moveTo(x,y-h*.75);
+  c.bezierCurveTo(x+h*.22,y-h*.2,x+h*.2,y+h*.2,x,y+h*.32);
+  c.bezierCurveTo(x-h*.2,y+h*.2,x-h*.22,y-h*.2,x,y-h*.75);
+  c.closePath();
+  c.fillStyle='rgba(255,252,240,'+(a*.96)+')'; c.fill();
 }
 
 const FENN_L=[.47,-.27], TOLL_L=[.05,.12], NAME_L=[.5,.06], VOSS_L=[0,-.24], VELL_B=[.4,-.66];
 const PORTRAIT_ART={
-  /* Ambrose Fenn: forty years of harbour lamps, a coat stiff with wax, his lantern at his chin */
-  lamplighter:{light:FENN_L,col:[237,180,90],reach:1.75,
+  /* ================= 1. AMBROSE FENN: THE LAMPLIGHTER =================
+     Elderly harbour watchman in three-quarter view. Weathered cheekbones, aquiline nose,
+     one milky cataract eye catching the lantern glare, heavy wool ulster coat encrusted
+     with 40 years of layered tallow stalagmites, holding an iron-and-brass harbour lantern. */
+  lamplighter:{light:FENN_L,col:[237,180,90],reach:1.78,
     body(c,M){
-      const L=FENN_L, COAT=[66,50,36], WAX=[188,168,126], SKIN=[162,128,98], BRASS=[176,136,70];
-      /* the lighting pole, and the hook it hangs the lantern from */
-      tendril(c,M,[[.66,1.4],[.65,.2],[.64,-1.0]],.07,.055,[86,64,42],{base:-.1});
-      c.strokeStyle=rgba(BRASS); c.lineWidth=.035; c.beginPath(); c.moveTo(.64,-1.0); c.quadraticCurveTo(.62,-1.14,.5,-1.1); c.quadraticCurveTo(.42,-1.06,.45,-.96); c.stroke();
-      c.strokeStyle=rgba([60,52,40]); c.lineWidth=.014; c.beginPath(); c.moveTo(.45,-.96); c.lineTo(.47,-.58); c.stroke();
-      /* the greatcoat */
-      smoothPath(c,[[-.16,-.24],[-.62,-.14],[-.86,.04],[-.98,.7],[-1.02,1.42],[1.02,1.42],[.96,.7],[.84,.04],[.6,-.14],[.16,-.24],[0,-.05]],true);
-      fillVol(c,M,COAT,0,.55,.95,.9,L,.35);
-      c.strokeStyle=rgba(lit(COAT,-.55)); c.lineWidth=.03; c.beginPath(); c.moveTo(-.16,-.2); c.lineTo(-.05,.5); c.lineTo(-.1,1.4); c.moveTo(.16,-.2); c.lineTo(.05,.5); c.stroke();
-      /* forty years of wax, run down the front in pale drips */
-      for(let i=0;i<7;i++){const x=-.62+i*.2+(srand(i,3)-.5)*.1, y0=.02+srand(i,5)*.3, len=.12+srand(i,7)*.38, w=.02+srand(i,9)*.025;
-        tendril(c,M,[[x,y0],[x+(srand(i,11)-.5)*.05,y0+len*.6],[x+(srand(i,13)-.5)*.06,y0+len]],w*1.3,w,lit(WAX,-.1),{base:-.2,ridge:.2});
-        blob(c,M,WAX,x+(srand(i,13)-.5)*.06,y0+len,w*.9,w*1.1,facing(L,x,y0+len,.3));}
-      /* and built up on his left shoulder in a crust of stalagmites, so his outline leans */
-      for(let i=0;i<7;i++){const t=i/6, bx=-.84+t*.6, by=-.04+t*-.12, h=.07+srand(i,21)*.14, w=.06+srand(i,23)*.04;
-        c.beginPath(); c.moveTo(bx-w,by+.04); c.quadraticCurveTo(bx-w*.3,by-h*.6,bx+(srand(i,25)-.5)*.04,by-h); c.quadraticCurveTo(bx+w*.3,by-h*.6,bx+w,by+.04); c.closePath();
-        fillVol(c,M,WAX,bx,by-h*.4,w*1.4,h*.6,L,.45);}
-      blob(c,M,WAX,-.56,-.1,.3,.09,facing(L,-.56,-.1,.35));
-      /* the brass Signal Mirror at his hip */
-      ell(c,-.46,.86,.13,.13); fillVol(c,M,BRASS,-.46,.86,.13,.13,L,.6);
-      ell(c,-.46,.86,.09,.09); const mg=c.createLinearGradient(-.55,.77,-.37,.95); mg.addColorStop(0,'rgba(250,214,150,1)'); mg.addColorStop(.5,'rgba(120,96,60,1)'); mg.addColorStop(1,'rgba(40,32,24,1)'); c.fillStyle=mg; c.fill();
-      /* his neck and head, lit from below */
-      blob(c,M,lit(SKIN,-.2),.02,-.3,.11,.12,facing(L,.02,-.3));
-      blob(c,M,SKIN,.02,-.6,.24,.3,facing(L,.02,-.6,.45));
-      c.beginPath(); c.moveTo(.13,-.68); c.quadraticCurveTo(.3,-.62,.27,-.52); c.quadraticCurveTo(.22,-.48,.15,-.53); c.closePath(); fillVol(c,M,SKIN,.2,-.58,.08,.08,L,.5);
-      c.fillStyle='rgba(18,10,6,.85)'; ell(c,-.07,-.66,.075,.05); c.fill(); ell(c,.13,-.67,.065,.045); c.fill();
-      c.fillStyle='rgba(208,212,206,.95)'; ell(c,.13,-.665,.04,.028); c.fill();
-      c.fillStyle='rgba(40,30,20,1)'; ell(c,-.07,-.66,.026,.022); c.fill();
-      c.strokeStyle='rgba(50,26,18,.8)'; c.lineWidth=.016; c.beginPath(); c.moveTo(-.06,-.43); c.quadraticCurveTo(.05,-.41,.14,-.45); c.stroke();
-      c.strokeStyle='rgba(60,40,28,.6)'; c.lineWidth=.012; for(let i=0;i<3;i++){c.beginPath(); c.moveTo(-.12,-.77-i*.035); c.lineTo(.08,-.78-i*.035); c.stroke();}
-      /* a battered cap */
-      blob(c,M,[44,36,30],.0,-.86,.27,.12,facing(L,0,-.86));
-      blob(c,M,[38,30,26],.16,-.8,.24,.05,facing(L,.16,-.8));
-      /* the hand on the pole */
-      blob(c,M,SKIN,.64,.2,.09,.11,facing(L,.64,.2));
-      /* the lantern: a brass hood, glass, and a frame */
-      c.beginPath(); c.moveTo(.36,-.5); c.lineTo(.58,-.5); c.lineTo(.53,-.58); c.lineTo(.41,-.58); c.closePath(); fillVol(c,M,BRASS,.47,-.54,.12,.05,L,.5);
-      c.fillStyle=rgba(lit(BRASS,-.3)); c.fillRect(.37,-.18,.2,.035);
-      c.strokeStyle=rgba(lit(BRASS,-.2)); c.lineWidth=.02; c.strokeRect(.38,-.5,.18,.32);
+      const L=FENN_L, COAT=[46,35,26], COAT_HI=[118,86,56], WAX=[212,190,142], WAX_SH=[112,92,62], SKIN=[172,126,92], SKIN_SH=[58,36,26], BRASS=[188,144,68];
+      /* 1. Ashwood lamplighter's pole & forged hook */
+      tendril(c,M,[[.68,1.42],[.66,.35],[.64,-.96]],.068,.052,[68,48,32],{base:-.22,ridge:.25});
+      if(!M.sil)hatchStrokes(c,.62,-.9,.67,1.3,22,.14,Math.PI/2,[28,18,10],.45,.006,101);
+      c.strokeStyle=M.sil?rgba(SILC):rgba(BRASS); c.lineWidth=.032; c.lineCap='round';
+      c.beginPath(); c.moveTo(.64,-.96); c.bezierCurveTo(.64,-1.14,.46,-1.14,.46,-1.0); c.lineTo(.47,-.62); c.stroke();
+      if(!M.sil){c.strokeStyle=rgba(lit(BRASS,.45),.7); c.lineWidth=.01; c.beginPath(); c.moveTo(.63,-.96); c.bezierCurveTo(.63,-1.11,.48,-1.11,.47,-1.0); c.stroke();}
+
+      /* 2. Heavy wool Ulster greatcoat & storm collar */
+      planeGrad(c,M,[[-.22,-.26],[-.68,-.14],[-.92,.08],[-1.04,.75],[-1.08,1.42],[1.04,1.42],[.98,.72],[.82,.06],[.56,-.16],[.18,-.26]],COAT_HI,lit(COAT,-.65),L,-.05,.55,1.15,true);
+      /* deep drapery folds in the coat */
+      clothFold(c,M,[[-.58,-.08],[-.72,.55],[-.84,1.42]],.14,.22,COAT,L,.25);
+      clothFold(c,M,[[-.24,.04],[-.32,.68],[-.38,1.42]],.12,.18,COAT,L,.28);
+      clothFold(c,M,[[.24,-.02],[.34,.62],[.42,1.42]],.13,.2,COAT,L,.42);
+      clothFold(c,M,[[.52,-.06],[.62,.5],[.74,1.42]],.12,.18,COAT,L,.38);
+      /* upturned storm collar */
+      planeGrad(c,M,[[-.26,-.42],[-.38,-.18],[-.16,.08],[-.04,-.24]],lit(COAT,.12),lit(COAT,-.55),L,-.22,-.2,.28,false);
+      planeGrad(c,M,[[.18,-.42],[.34,-.16],[.14,.1],[.02,-.24]],COAT_HI,lit(COAT,-.4),L,.18,-.2,.28,false);
+      /* double-breasted lapels & tarnished brass buttons */
+      if(!M.sil){
+        c.strokeStyle='rgba(12,8,5,.8)'; c.lineWidth=.018;
+        c.beginPath(); c.moveTo(-.16,-.06); c.lineTo(-.04,.45); c.lineTo(-.08,1.42);
+        c.moveTo(.16,-.06); c.lineTo(.06,.38); c.stroke();
+        for(let i=0;i<3;i++){
+          const by=.22+i*.26;
+          ell(c,-.12,by,.026,.026); fillVol(c,M,BRASS,-.12,by,.026,.026,L,.5);
+          ell(c,.1,by,.026,.026); fillVol(c,M,BRASS,.1,by,.026,.026,L,.65);
+        }
+      }
+
+      /* 3. Forty years of encrusted tallow wax on left shoulder & chest */
+      /* broad shelf of hardened wax over right/left shoulder */
+      planeGrad(c,M,[[-.88,.02],[-.76,-.16],[-.42,-.24],[-.26,-.14],[-.36,.08],[-.72,.14]],WAX,WAX_SH,L,-.55,-.06,.38,true);
+      for(let i=0;i<11;i++){
+        const t=i/10, bx=-.86+t*.58, by=.01-t*.15+(srand(i,3)-.5)*.04;
+        const h=.06+srand(i,17)*.16*(1-.4*Math.abs(t-.45)), w=.032+srand(i,23)*.028;
+        /* stalagmite spires of built-up tallow */
+        planeGrad(c,M,[[bx-w,by+.03],[bx-w*.35,by-h*.65],[bx+(srand(i,29)-.5)*.02,by-h],[bx+w*.35,by-h*.65],[bx+w,by+.03]],lit(WAX,.25),WAX_SH,L,bx,by-h*.4,w*1.6,true);
+        /* long wax rivulets dripping down the wool */
+        const dlen=.14+srand(i,41)*.42;
+        tendril(c,M,[[bx,by+.02],[bx+(srand(i,43)-.5)*.03,by+dlen*.55],[bx+(srand(i,47)-.5)*.04,by+dlen]],w*.95,w*.35,WAX,{base:-.18,ridge:.45});
+        blob(c,M,WAX,bx+(srand(i,47)-.5)*.04,by+dlen,w*.48,w*.68,facing(L,bx,by+dlen,.55));
+      }
+
+      /* 4. Convex brass Signal Mirror clipped at hip */
+      ell(c,-.46,.86,.14,.14); fillVol(c,M,BRASS,-.46,.86,.14,.14,L,.65);
+      if(!M.sil){
+        ell(c,-.46,.86,.105,.105);
+        const mg=c.createRadialGradient(-.42,.82,.01,-.46,.86,.11);
+        mg.addColorStop(0,'rgba(255,232,175,.95)'); mg.addColorStop(.45,'rgba(176,128,64,.85)'); mg.addColorStop(1,'rgba(28,22,16,.95)');
+        c.fillStyle=mg; c.fill();
+        c.strokeStyle='rgba(25,18,10,.85)'; c.lineWidth=.012; c.stroke();
+      }
+
+      /* 5. Sculpted Anatomical Head & Neck (3/4 turn toward the lantern on the right) */
+      /* neck & sternocleidomastoid tendon catching light */
+      planeGrad(c,M,[[-.11,-.42],[.11,-.42],[.14,-.18],[0,-.12],[-.14,-.2]],SKIN,SKIN_SH,L,.02,-.28,.16,true);
+      tendril(c,M,[[.08,-.4],[.04,-.26],[-.02,-.15]],.038,.024,lit(SKIN,.08),{base:-.2,ridge:.35});
+      /* cranium & jaw block */
+      planeGrad(c,M,[[-.21,-.76],[-.23,-.54],[-.17,-.37],[-.01,-.30],[.14,-.34],[.21,-.48],[.23,-.68],[.17,-.84],[-.03,-.88]],SKIN,SKIN_SH,L,.04,-.58,.28,true);
+      /* deep shadow side of face (left) */
+      planeGrad(c,M,[[-.22,-.74],[-.23,-.52],[-.17,-.37],[-.03,-.31],[-.02,-.56],[-.06,-.78]],lit(SKIN,-.28),SKIN_SH,L,-.12,-.55,.18,true);
+      /* brightly lit right cheekbone (zygomatic arch) & temple */
+      planeGrad(c,M,[[.04,-.62],[.21,-.64],[.22,-.50],[.13,-.42],[.02,-.48]],lit(SKIN,.28),lit(SKIN,-.15),L,.14,-.54,.14,true);
+      /* hollow gaunt cheek below cheekbone */
+      planeGrad(c,M,[[.03,-.49],[.16,-.44],[.14,-.35],[.01,-.35]],lit(SKIN,-.35),SKIN_SH,L,.08,-.42,.1,true);
+      /* grizzled white-grey beard stubble & weathered wrinkles */
+      if(!M.sil){
+        hatchStrokes(c,-.16,-.48,.16,-.32,65,.024,1.3,[195,188,174],.48,.006,202);
+        hatchStrokes(c,-.18,-.46,.02,-.33,35,.022,1.4,[35,24,18],.55,.006,209);
+        /* forehead creases & nasolabial fold */
+        c.strokeStyle='rgba(32,16,10,.68)'; c.lineWidth=.011;
+        for(let i=0;i<3;i++){c.beginPath(); c.moveTo(-.12,-.74-i*.032); c.quadraticCurveTo(.02,-.76-i*.032,.14,-.73-i*.03); c.stroke();}
+        c.beginPath(); c.moveTo(.09,-.54); c.quadraticCurveTo(.15,-.46,.11,-.38); c.stroke();
+        c.beginPath(); c.moveTo(-.05,-.53); c.quadraticCurveTo(-.11,-.45,-.08,-.38); c.stroke();
+      }
+      /* eyes: left in deep shadow, right milky cataract catching the amber lamp */
+      humanEye(c,M,-.08,-.64,.052,.028,.06,{iris:[72,58,42],look:[.35,.1],catchX:.015});
+      humanEye(c,M,.11,-.64,.054,.03,-.05,{cataract:true,look:[.2,.1],catchCol:[255,220,150]});
+      /* heavy overhanging brow ridge & grey eyebrows */
+      tendril(c,M,[[-.16,-.68],[-.07,-.66],[-.02,-.68]],.026,.016,[155,148,136],{base:-.25,ridge:.3});
+      tendril(c,M,[[.04,-.68],[.12,-.66],[.19,-.69]],.028,.016,[175,168,154],{base:-.15,ridge:.45});
+      /* prominent aquiline nose (lit bridge, hooked tip, dark nostril) */
+      planeGrad(c,M,[[.01,-.65],[.07,-.65],[.12,-.52],[.06,-.50],[.01,-.52]],lit(SKIN,.35),lit(SKIN,-.1),L,.07,-.57,.09,false);
+      planeGrad(c,M,[[-.03,-.64],[.01,-.65],[.01,-.52],[-.03,-.53]],lit(SKIN,-.25),SKIN_SH,L,-.01,-.58,.06,false);
+      if(!M.sil){c.fillStyle='rgba(22,10,8,.85)'; ell(c,.04,-.515,.018,.01,.2); c.fill();}
+      /* stern weathered mouth & grizzled moustache */
+      tendril(c,M,[[-.09,-.46],[.02,-.44],[.12,-.46]],.028,.018,[150,142,130],{base:-.3,ridge:.35});
+      if(!M.sil){
+        c.strokeStyle='rgba(24,10,8,.88)'; c.lineWidth=.014;
+        c.beginPath(); c.moveTo(-.08,-.44); c.quadraticCurveTo(.02,-.425,.11,-.445); c.stroke();
+        c.fillStyle=rgba(lit(SKIN,-.05),.7); ell(c,.02,-.415,.055,.018); c.fill();
+      }
+
+      /* 6. Peaked Mariner's Cap & cracked leather visor */
+      planeGrad(c,M,[[-.25,-.82],[-.28,-.96],[-.04,-1.04],[.22,-.98],[.25,-.82]],[46,38,32],[16,13,11],L,.04,-.92,.28,true);
+      /* brass cap band */
+      if(!M.sil){c.strokeStyle=rgba(BRASS,.75); c.lineWidth=.018; c.beginPath(); c.moveTo(-.23,-.82); c.quadraticCurveTo(.02,-.85,.24,-.81); c.stroke();}
+      /* glossy visor casting shadow across forehead */
+      planeGrad(c,M,[[-.23,-.81],[.04,-.85],[.27,-.79],[.22,-.73],[-.02,-.76],[-.20,-.76]],[55,44,34],[12,10,9],L,.08,-.78,.24,true);
+      if(!M.sil)spec(c,M,.08,-.78,.11,.018,.45,.12);
+
+      /* 7. Weathered hand gripping the pole */
+      planeGrad(c,M,[[.56,.22],[.72,.20],[.73,.34],[.57,.35]],lit(SKIN,.15),SKIN_SH,L,.64,.27,.1,true);
+      for(let i=0;i<4;i++){
+        const fy=.22+i*.03;
+        tendril(c,M,[[.58,fy],[.65,fy-.005],[.71,fy+.005]],.026,.02,SKIN,{base:-.2,ridge:.35});
+      }
+
+      /* 8. Wrought-Iron & Brass Storm Lantern */
+      /* top chimney & cupola */
+      planeGrad(c,M,[[.41,-.63],[.53,-.63],[.55,-.56],[.39,-.56]],lit(BRASS,.25),lit(BRASS,-.55),L,.47,-.59,.1,false);
+      planeGrad(c,M,[[.33,-.50],[.61,-.50],[.55,-.56],[.39,-.56]],lit(BRASS,.35),lit(BRASS,-.5),L,.47,-.53,.14,false);
+      /* bottom oil reservoir */
+      planeGrad(c,M,[[.36,-.18],[.58,-.18],[.55,-.11],[.39,-.11]],lit(BRASS,.2),lit(BRASS,-.6),L,.47,-.15,.12,false);
+      /* lantern cage bars */
+      c.strokeStyle=M.sil?rgba(SILC):rgba(lit(BRASS,-.35)); c.lineWidth=.018;
+      c.strokeRect(.36,-.50,.22,.32);
     },
     glow(c,M){
-      const g=c.createLinearGradient(.38,-.5,.56,-.18); g.addColorStop(0,'rgba(255,214,140,.92)'); g.addColorStop(1,'rgba(237,170,80,.9)');
-      c.fillStyle=g; c.fillRect(.39,-.49,.16,.3);
-      portFlame(c,.47,-.31,.075,[255,190,96],1);
-      c.strokeStyle='rgba(120,86,40,.9)'; c.lineWidth=.016; c.beginPath(); c.moveTo(.47,-.5); c.lineTo(.47,-.18); c.stroke();
-      if(!M.locked){c.fillStyle='rgba(255,220,150,.5)'; ell(c,-.5,.83,.03,.02); c.fill();}
+      const a=M.locked?.65:1;
+      /* warm illuminated bevelled glass panes */
+      const g=c.createLinearGradient(.36,-.50,.58,-.18);
+      g.addColorStop(0,'rgba(255,228,162,'+(.92*a)+')');
+      g.addColorStop(.5,'rgba(242,178,84,'+(.88*a)+')');
+      g.addColorStop(1,'rgba(198,118,38,'+(.82*a)+')');
+      c.fillStyle=g; c.fillRect(.37,-.49,.20,.30);
+      /* internal silvered reflector disc behind flame */
+      c.fillStyle='rgba(255,244,208,'+(.45*a)+')'; ell(c,.47,-.33,.065,.085); c.fill();
+      portFlame(c,.47,-.31,.085,[255,192,92],a);
+      /* front cage mullion & glass specular highlights */
+      c.strokeStyle='rgba(58,38,18,'+(.92*a)+')'; c.lineWidth=.016;
+      c.beginPath(); c.moveTo(.47,-.50); c.lineTo(.47,-.18); c.moveTo(.36,-.34); c.lineTo(.58,-.34); c.stroke();
+      c.strokeStyle='rgba(255,248,225,'+(.55*a)+')'; c.lineWidth=.008;
+      c.beginPath(); c.moveTo(.39,-.47); c.lineTo(.39,-.21); c.stroke();
+      if(!M.locked){
+        /* secondary amber glint on his cataract eye, nose bridge, and hip mirror */
+        softGlow(c,-.44,.84,0,.09,[255,214,140],.55,0);
+        softGlow(c,.11,-.64,0,.045,[255,220,155],.4,0);
+      }
     }},
 
-  /* Mags Tolland: oilskins and irons, a coil of tarred line, a cruse lamp burning fat at her chest */
-  whaler:{light:TOLL_L,col:[232,160,72],reach:1.7,
+  /* ================= 2. MAGS TOLLAND: THE WHALER =================
+     Broad-shouldered veteran harpooner lit from below by an iron whale-oil cruse lamp.
+     Square jaw, crooked broken nose, throat scar, fierce narrowed eyes under a heavy brow,
+     wet brine-slicked black oilskins, twisted hemp line coil, and a forged toggle-iron harpoon. */
+  whaler:{light:TOLL_L,col:[236,158,68],reach:1.72,
     body(c,M){
-      const L=TOLL_L, OIL=[30,36,36], SKIN=[178,130,98], IRON=[96,98,102], LINE=[86,66,42];
-      /* the toggle harpoon, resting across her right shoulder */
-      tendril(c,M,[[-.75,1.2],[.2,-.2],[.88,-1.1]],.055,.05,[96,74,50],{base:-.1});
-      c.beginPath(); c.moveTo(.86,-1.06); c.lineTo(.98,-1.3); c.lineTo(1.0,-1.1); c.lineTo(.92,-1.02); c.closePath(); fillVol(c,M,IRON,.93,-1.15,.06,.12,L,.6);
-      c.beginPath(); c.moveTo(.95,-1.18); c.lineTo(.8,-1.24); c.lineTo(.84,-1.12); c.closePath(); fillVol(c,M,IRON,.86,-1.18,.06,.05,L,.5);
-      /* the sou'wester, pushed back off her head */
-      ell(c,-.02,-.86,.46,.14,-.2); fillVol(c,M,[48,52,40],-.02,-.86,.46,.14,L,.3);
-      /* broad shoulders in black oilskin, slick with brine */
-      smoothPath(c,[[-.2,-.28],[-.7,-.18],[-.98,.02],[-1.06,.7],[-1.08,1.42],[1.08,1.42],[1.04,.7],[.98,.02],[.7,-.18],[.2,-.28],[0,-.12]],true);
-      fillVol(c,M,OIL,0,.5,1,.9,L,.5);
-      if(!M.locked)for(let i=0;i<5;i++){spec(c,M,-.6+i*.3,.3+srand(i,31)*.4,.03,.22,.22,(srand(i,33)-.5)*.4);}
-      /* a coil of tarred line over her left shoulder */
-      c.lineWidth=.05; for(let i=0;i<5;i++){c.strokeStyle=rgba(lit(LINE,-.05-i*.1)); ell(c,-.62+i*.025,.28+i*.03,.17,.3,.18); c.stroke();}
-      tendril(c,M,[[-.5,-.18],[-.6,.0],[-.64,.08]],.06,.05,LINE,{base:-.1});
-      /* the cruse lamp, an iron dish hooked to her coat */
-      c.strokeStyle=rgba(lit(IRON,-.3)); c.lineWidth=.02; c.beginPath(); c.moveTo(.05,.23); c.lineTo(.05,.0); c.stroke();
-      ell(c,.05,.25,.15,.055); fillVol(c,M,IRON,.05,.25,.15,.055,L,.3);
-      /* her neck, the scar across her throat, her set jaw */
-      blob(c,M,lit(SKIN,-.15),0,-.3,.13,.14,facing(L,0,-.3));
-      c.strokeStyle='rgba(226,190,160,.7)'; c.lineWidth=.014; c.beginPath(); c.moveTo(-.08,-.26); c.quadraticCurveTo(.0,-.22,.09,-.29); c.stroke();
-      blob(c,M,SKIN,0,-.62,.25,.28,facing(L,0,-.62,.45));
-      blob(c,M,SKIN,0,-.47,.23,.13,facing(L,0,-.47,.4));
-      /* dark hair under the hat, a heavy brow, narrowed eyes */
-      tendril(c,M,[[-.22,-.78],[-.27,-.6],[-.26,-.42]],.08,.04,[34,28,24],{base:-.1});
-      tendril(c,M,[[.22,-.78],[.27,-.6],[.25,-.44]],.08,.04,[34,28,24],{base:-.1});
-      blob(c,M,[40,32,26],0,-.83,.25,.08,facing(L,0,-.83));
-      c.strokeStyle='rgba(30,18,12,.9)'; c.lineWidth=.022; c.beginPath(); c.moveTo(-.16,-.69); c.lineTo(-.03,-.67); c.moveTo(.03,-.67); c.lineTo(.16,-.69); c.stroke();
-      c.lineWidth=.016; c.beginPath(); c.moveTo(-.14,-.63); c.lineTo(-.05,-.625); c.moveTo(.05,-.625); c.lineTo(.14,-.63); c.stroke();
-      c.fillStyle='rgba(255,236,200,.8)'; ell(c,-.09,-.628,.012,.008); c.fill(); ell(c,.09,-.628,.012,.008); c.fill();
-      c.strokeStyle='rgba(70,36,26,.8)'; c.lineWidth=.016; c.beginPath(); c.moveTo(-.07,-.42); c.lineTo(.07,-.42); c.stroke();
-      /* her hand on the shaft */
-      blob(c,M,SKIN,-.36,.78,.12,.1,facing(L,-.36,.78));
+      const L=TOLL_L, OIL=[24,30,32], OIL_HI=[74,88,92], SKIN=[176,124,90], SKIN_SH=[52,30,22], IRON=[108,114,120], LINE=[104,80,50];
+      /* 1. Hand-forged toggle harpoon resting across right shoulder */
+      tendril(c,M,[[-.78,1.28],[.18,-.18],[.76,-.96]],.058,.046,[78,52,32],{base:-.22,ridge:.3});
+      /* wrought-iron socket & blood-darkened seizing wrap */
+      tendril(c,M,[[.68,-.85],[.82,-1.04]],.048,.034,IRON,{base:-.25,ridge:.45});
+      /* wicked Pivoting Toggle Barb */
+      planeGrad(c,M,[[.80,-1.01],[.97,-1.29],[.99,-1.09],[.88,-.98]],lit(IRON,.55),lit(IRON,-.55),L,.90,-1.12,.14,false);
+      planeGrad(c,M,[[.93,-1.18],[.74,-1.23],[.79,-1.10],[.89,-1.08]],lit(IRON,.35),lit(IRON,-.6),L,.83,-1.16,.1,false);
+      if(!M.sil){
+        c.strokeStyle='rgba(255,245,225,.75)'; c.lineWidth=.009;
+        c.beginPath(); c.moveTo(.81,-1.02); c.lineTo(.97,-1.28); c.stroke();
+      }
+
+      /* 2. Canvas Sou'wester hat slung back behind her neck */
+      planeGrad(c,M,[[-.46,-.78],[-.32,-1.02],[.28,-1.00],[.44,-.76],[.18,-.68],[-.22,-.68]],[56,58,42],[18,20,15],L,0,-.86,.45,true);
+      if(!M.sil){
+        c.strokeStyle='rgba(95,98,72,.45)'; c.lineWidth=.014;
+        c.beginPath(); c.moveTo(-.42,-.80); c.quadraticCurveTo(0,-.94,.40,-.78); c.stroke();
+      }
+
+      /* 3. Heavy Brine-Slicked Black Oilskin Coat */
+      planeGrad(c,M,[[-.24,-.28],[-.74,-.18],[-1.02,.04],[-1.10,.74],[-1.12,1.42],[1.12,1.42],[1.08,.74],[1.00,.04],[.72,-.18],[.24,-.28]],OIL_HI,lit(OIL,-.65),L,.04,.48,1.15,true);
+      clothFold(c,M,[[-.68,-.06],[-.82,.58],[-.92,1.42]],.16,.24,OIL,L,.45);
+      clothFold(c,M,[[-.28,.02],[-.36,.68],[-.42,1.42]],.14,.20,OIL,L,.5);
+      clothFold(c,M,[[.30,-.02],[.42,.62],[.52,1.42]],.15,.22,OIL,L,.55);
+      clothFold(c,M,[[.66,-.04],[.78,.56],[.88,1.42]],.14,.22,OIL,L,.42);
+      /* sharp wet specular brine glints along oilskin folds */
+      if(!M.sil){
+        for(const [gx,gy,rx,ry,rot] of [[-.32,.28,.022,.18,-.12],[.34,.24,.025,.22,.15],[.18,-.14,.02,.12,-.35],[-.52,.45,.018,.16,-.18],[.62,.38,.02,.16,.2]]){
+          spec(c,M,gx,gy,rx,ry,.38,rot);
+        }
+        /* salt-crust & wet droplets */
+        hatchStrokes(c,-.85,.1,.85,1.2,45,.012,1.5,[175,195,200],.22,.007,303);
+      }
+
+      /* 4. Coiled Tarred Hemp Whaling Line over left shoulder */
+      for(let i=0;i<5;i++){
+        const rx=.17+i*.012, ry=.31+i*.014, cx=-.62+i*.024, cy=.26+i*.026;
+        c.strokeStyle=M.sil?rgba(SILC):rgba(lit(LINE,.12-i*.08)); c.lineWidth=.046;
+        ell(c,cx,cy,rx,ry,.2); c.stroke();
+        if(!M.sil){
+          /* rope lay twist marks */
+          c.strokeStyle='rgba(22,15,9,.65)'; c.lineWidth=.01;
+          for(let a=0;a<14;a++){
+            const th=a/14*TAU;
+            const px=cx+Math.cos(th)*rx, py=cy+Math.sin(th)*ry;
+            c.beginPath(); c.moveTo(px-.018,py-.012); c.lineTo(px+.018,py+.012); c.stroke();
+          }
+        }
+      }
+
+      /* 5. Iron Whale-Oil Cruse Lamp (baleen-hung pan lamp at chest) */
+      c.strokeStyle=M.sil?rgba(SILC):rgba(lit(IRON,-.2)); c.lineWidth=.02;
+      c.beginPath(); c.moveTo(.05,-.04); c.lineTo(-.02,.22); c.moveTo(.05,-.04); c.lineTo(.12,.22); c.stroke();
+      planeGrad(c,M,[[-.12,.22],[.22,.22],[.17,.31],[-.06,.31]],lit(IRON,.35),lit(IRON,-.6),L,.05,.26,.18,true);
+      /* spout lip for the wick */
+      planeGrad(c,M,[[.01,.18],[.09,.18],[.11,.24],[-.01,.24]],lit(IRON,.45),lit(IRON,-.4),L,.05,.21,.07,false);
+
+      /* 6. Neck, Blade/Rope Scar & Square-Jawed Weathered Head (lit from below) */
+      planeGrad(c,M,[[-.13,-.42],[.13,-.42],[.16,-.14],[0,-.08],[-.16,-.14]],lit(SKIN,.1),SKIN_SH,L,.02,-.26,.18,true);
+      /* jagged pale keloid scar across throat */
+      if(!M.sil){
+        c.strokeStyle='rgba(42,16,14,.75)'; c.lineWidth=.018;
+        c.beginPath(); c.moveTo(-.10,-.26); c.quadraticCurveTo(.01,-.21,.11,-.28); c.stroke();
+        c.strokeStyle='rgba(232,192,168,.82)'; c.lineWidth=.011;
+        c.beginPath(); c.moveTo(-.10,-.265); c.quadraticCurveTo(.01,-.215,.11,-.285); c.stroke();
+        for(let i=0;i<6;i++){
+          const sx=-.08+i*.034, sy=-.25+(i%2?-.005:.005);
+          c.beginPath(); c.moveTo(sx,sy-.016); c.lineTo(sx+.005,sy+.016); c.stroke();
+        }
+      }
+      /* strong angular jaw & cheekbones, lit from the cruse lamp below */
+      planeGrad(c,M,[[-.23,-.76],[-.25,-.54],[-.20,-.38],[-.07,-.31],[.07,-.31],[.20,-.38],[.25,-.54],[.23,-.76],[0,-.86]],SKIN,SKIN_SH,L,.02,-.54,.28,true);
+      /* underside of chin & jaw catching bright upward cruse glow */
+      planeGrad(c,M,[[-.18,-.42],[-.06,-.31],[.07,-.31],[.19,-.42],[.10,-.48],[-.10,-.48]],lit(SKIN,.32),lit(SKIN,-.15),L,.02,-.38,.18,true);
+      /* broad cheekbones catching warm light */
+      planeGrad(c,M,[[-.23,-.60],[-.08,-.56],[-.10,-.46],[-.21,-.46]],lit(SKIN,.18),SKIN_SH,L,-.15,-.52,.12,true);
+      planeGrad(c,M,[[.23,-.60],[.08,-.56],[.10,-.46],[.21,-.46]],lit(SKIN,.26),SKIN_SH,L,.15,-.52,.12,true);
+      /* crooked, once-broken nose with strong underside highlight */
+      planeGrad(c,M,[[-.03,-.66],[.03,-.66],[.05,-.58],[.02,-.51],[-.03,-.52],[-.02,-.59]],lit(SKIN,.25),SKIN_SH,L,.01,-.58,.09,false);
+      planeGrad(c,M,[[-.05,-.52],[.05,-.52],[.03,-.49],[-.03,-.49]],lit(SKIN,.42),lit(SKIN,0),L,0,-.51,.06,false);
+      if(!M.sil){
+        c.fillStyle='rgba(18,8,6,.9)';
+        ell(c,-.022,-.508,.015,.009,-.2); c.fill();
+        ell(c,.024,-.508,.015,.009,.2); c.fill();
+      }
+      /* fierce, narrowed hunter's eyes under a heavy dark brow */
+      humanEye(c,M,-.10,-.63,.052,.022,.08,{iris:[88,104,96],look:[0,.15],catchY:.008,catchCol:[255,190,100]});
+      humanEye(c,M,.10,-.63,.052,.022,-.08,{iris:[88,104,96],look:[0,.15],catchY:.008,catchCol:[255,190,100]});
+      /* furrowed glabella & heavy eyebrows */
+      tendril(c,M,[[-.19,-.67],[-.10,-.66],[-.03,-.65]],.026,.018,[28,20,16],{base:-.3,ridge:.2});
+      tendril(c,M,[[.19,-.67],[.10,-.66],[.03,-.65]],.026,.018,[28,20,16],{base:-.3,ridge:.2});
+      if(!M.sil){
+        c.strokeStyle='rgba(28,12,10,.75)'; c.lineWidth=.012;
+        c.beginPath(); c.moveTo(-.018,-.65); c.lineTo(-.015,-.71); c.moveTo(.018,-.65); c.lineTo(.015,-.71); c.stroke();
+      }
+      /* set, grim mouth with bottom lip lit from below */
+      if(!M.sil){
+        planeGrad(c,M,[[-.08,-.41],[.08,-.41],[.06,-.385],[-.06,-.385]],lit(SKIN,.28),lit(SKIN,-.1),L,0,-.395,.08,true);
+        c.strokeStyle='rgba(24,10,8,.92)'; c.lineWidth=.015;
+        c.beginPath(); c.moveTo(-.09,-.42); c.quadraticCurveTo(0,-.432,.09,-.42); c.stroke();
+      }
+      /* wet dark hair plastered to forehead & temples */
+      planeGrad(c,M,[[-.24,-.74],[-.18,-.86],[.18,-.86],[.24,-.74],[.12,-.78],[-.12,-.78]],[38,30,26],[10,8,7],L,0,-.80,.25,true);
+      tendril(c,M,[[-.23,-.76],[-.27,-.56],[-.25,-.38]],.065,.02,[24,18,15],{base:-.3,ridge:.25});
+      tendril(c,M,[[.23,-.76],[.27,-.56],[.24,-.40]],.065,.02,[24,18,15],{base:-.3,ridge:.25});
+      tendril(c,M,[[-.14,-.82],[-.08,-.73],[-.05,-.68]],.028,.008,[24,18,15],{base:-.2,ridge:.2});
+
+      /* 7. Calloused, scarred hand gripping the harpoon shaft */
+      planeGrad(c,M,[[-.46,.72],[-.28,.68],[-.26,.84],[-.44,.86]],lit(SKIN,.2),SKIN_SH,L,-.36,.77,.12,true);
+      for(let i=0;i<4;i++){
+        const fx=-.42+i*.036, fy=.71+i*.028;
+        tendril(c,M,[[fx,fy],[fx+.05,fy+.04],[fx+.03,fy+.09]],.028,.022,SKIN,{base:-.2,ridge:.35});
+      }
     },
     glow(c,M){
-      if(!M.locked){c.strokeStyle='rgba(120,110,100,.25)'; c.lineWidth=.03; for(let i=0;i<3;i++){c.beginPath(); c.moveTo(.05+i*.02,.06); c.bezierCurveTo(.12,-.1,-.05,-.2,.06+i*.03,-.36); c.stroke();}}
-      portFlame(c,.05,.13,.08,[240,168,72],M.locked?.6:1);
-      if(M.locked){c.fillStyle='rgba(200,206,214,.55)'; ell(c,.94,-1.18,.025,.04); c.fill();}
+      const a=M.locked?.6:1;
+      /* greasy black blubber-smoke curling up from the cruse wick */
+      if(!M.locked){
+        c.save(); c.lineCap='round';
+        for(let i=0;i<4;i++){
+          c.strokeStyle='rgba(18,16,15,'+(.38-i*.07)+')'; c.lineWidth=.035+i*.018;
+          c.beginPath(); c.moveTo(.05,.04);
+          c.bezierCurveTo(.14-.04*i,-.08,-.08+.03*i,-.22,.08+i*.02,-.42); c.stroke();
+        }
+        c.restore();
+      }
+      portFlame(c,.05,.13,.09,[244,162,64],a);
+      /* cold metallic glint on the harpoon barb high above */
+      c.strokeStyle='rgba(245,235,215,'+(.65*a)+')'; c.lineWidth=.012;
+      c.beginPath(); c.moveTo(.83,-1.04); c.lineTo(.96,-1.26); c.stroke();
     }},
 
-  /* the Nameless: a hood with no face, a corpse candle on a skull, and in the hood the eyes of everything it has bound */
-  occultist:{light:NAME_L,col:[196,226,186],reach:1.1,
+  /* ================= 3. THE NAMELESS: THE OCCULTIST =================
+     Towering rotting cowl, no face—only the pitch-black abyssal cavity housing the layered
+     anatomical eyes of bound horrors. A skeletal hand with stretched tendons cradles a realistic
+     human skull with a tallow Corpse Candle melted onto its crown. */
+  occultist:{light:NAME_L,col:[192,232,182],reach:1.18,
     body(c,M){
-      const L=NAME_L, ROBE=[36,42,36], BONE=[206,198,170];
-      smoothPath(c,[[0,-1.24],[-.42,-1.08],[-.6,-.5],[-.66,-.14],[-.94,.08],[-1.06,.8],[-1.1,1.42],[1.1,1.42],[1.06,.8],[.94,.08],[.66,-.14],[.6,-.5],[.42,-1.08]],true);
-      fillVol(c,M,ROBE,0,.1,1,1.3,L,.3);
-      /* the hem has gone green */
-      const g=c.createLinearGradient(0,.9,0,1.42); g.addColorStop(0,'rgba(40,70,46,0)'); g.addColorStop(1,'rgba(40,80,50,.6)');
-      c.save(); c.globalCompositeOperation='source-atop'; c.fillStyle=g; c.fillRect(-1.2,.9,2.4,.6); c.restore();
-      c.strokeStyle=rgba(lit(ROBE,-.5)); c.lineWidth=.03;
-      for(const x of [-.5,-.18,.22,.55]){c.beginPath(); c.moveTo(x*.6,0); c.quadraticCurveTo(x,.7,x*1.15,1.42); c.stroke();}
-      /* the rim of the hood, and the dark inside it where a face should be */
-      ell(c,0,-.5,.34,.42); fillVol(c,M,lit(ROBE,.05),0,-.5,.34,.42,L,.25);
-      ell(c,0,-.5,.27,.35); c.fillStyle='#010202'; c.fill();
-      /* a bony hand, a skull, and the candle stub on it */
-      tendril(c,M,[[.7,.2],[.6,.42],[.5,.5]],.16,.12,ROBE,{base:-.2});
-      blob(c,M,[150,148,128],.5,.5,.1,.08,facing(L,.5,.5));
-      blob(c,M,BONE,.5,.33,.13,.11,facing(L,.5,.33,.5));
-      blob(c,M,BONE,.5,.42,.08,.05,facing(L,.5,.42,.4));
-      c.fillStyle='rgba(20,16,10,.9)'; ell(c,.45,.33,.035,.03); c.fill(); ell(c,.56,.33,.035,.03); c.fill();
-      c.fillStyle=rgba([210,206,184]); c.fillRect(.47,.12,.06,.12);
+      const L=NAME_L, ROBE=[30,38,32], ROBE_HI=[78,96,80], BONE=[212,202,172], BONE_SH=[68,62,48];
+      /* 1. Rotting Monastic Cowl & Habit */
+      planeGrad(c,M,[[0,-1.26],[-.44,-1.08],[-.64,-.52],[-.70,-.14],[-.98,.10],[-1.10,.82],[-1.14,1.42],[1.14,1.42],[1.10,.82],[.98,.10],[.70,-.14],[.64,-.52],[.44,-1.08]],ROBE_HI,[8,11,9],L,.15,.08,1.25,true);
+      /* heavy vertical cowl & sleeve folds */
+      clothFold(c,M,[[-.38,-.95],[-.54,-.35],[-.76,.55],[-.92,1.42]],.14,.24,ROBE,L,.3);
+      clothFold(c,M,[[-.22,-.12],[-.34,.62],[-.44,1.42]],.15,.22,ROBE,L,.28);
+      clothFold(c,M,[[.28,-.10],[.36,.65],[.46,1.42]],.15,.22,ROBE,L,.45);
+      clothFold(c,M,[[.40,-.92],[.56,-.32],[.78,.48],[.94,1.42]],.14,.24,ROBE,L,.42);
+      /* waterlogged, algae-stained hem at bottom */
+      if(!M.sil){
+        const g=c.createLinearGradient(0,.75,0,1.42);
+        g.addColorStop(0,'rgba(28,58,36,0)'); g.addColorStop(1,'rgba(24,64,34,.68)');
+        c.save(); c.globalCompositeOperation='source-atop'; c.fillStyle=g; c.fillRect(-1.2,.75,2.4,.7); c.restore();
+        hatchStrokes(c,-.95,-.9,.95,1.3,80,.035,Math.PI/2,[14,18,15],.45,.006,401);
+      }
+
+      /* 2. Layered Rim of the Hood & the Abyssal Void Inside */
+      clothFold(c,M,[[0,-1.14],[-.28,-.96],[-.39,-.52],[-.28,-.08],[0,.02]],.11,.09,ROBE,L,.32);
+      clothFold(c,M,[[0,-1.14],[.28,-.96],[.39,-.52],[.28,-.08],[0,.02]],.11,.09,ROBE,L,.48);
+      /* inner pitch-black hood opening */
+      smoothPath(c,[[0,-1.04],[-.24,-.88],[-.32,-.50],[-.22,-.14],[0,-.06],[.22,-.14],[.32,-.50],[.24,-.88]],true);
+      c.fillStyle='#010202'; c.fill();
+      if(!M.sil){
+        c.strokeStyle='rgba(95,118,96,.35)'; c.lineWidth=.014; c.stroke();
+      }
+
+      /* 3. Desiccated Skeletal Hand with Tendons & Blackened Nails */
+      clothFold(c,M,[[.82,.18],[.68,.44],[.54,.56]],.22,.16,ROBE,L,.4);
+      const HAND=[146,142,122];
+      planeGrad(c,M,[[.58,.46],[.42,.48],[.40,.58],[.58,.58]],lit(HAND,.2),lit(HAND,-.55),L,.50,.52,.12,true);
+      for(let i=0;i<4;i++){
+        const fy=.44+i*.036, fx=.36+i*.015;
+        tendril(c,M,[[.56,fy+.02],[.46,fy],[fx,fy-.02]],.024,.014,HAND,{base:-.25,ridge:.45});
+        if(!M.sil){
+          /* knuckle joint & blackened claw-nail */
+          c.fillStyle=rgba(lit(HAND,.35),.8); ell(c,.46,fy,.014,.011); c.fill();
+          c.fillStyle='#0c0e0c'; ell(c,fx-.008,fy-.022,.014,.008,-.2); c.fill();
+        }
+      }
+
+      /* 4. Realistic Anatomical Human Skull Held in the Hand */
+      /* cranium dome */
+      planeGrad(c,M,[[.35,.28],[.34,.16],[.43,.09],[.57,.09],[.65,.17],[.64,.29],[.58,.36],[.41,.36]],lit(BONE,.35),BONE_SH,L,.50,.22,.18,true);
+      /* zygomatic arches (cheekbones) & maxilla (upper jaw) */
+      planeGrad(c,M,[[.37,.29],[.62,.29],[.60,.38],[.55,.43],[.44,.43],[.39,.38]],lit(BONE,.25),BONE_SH,L,.50,.35,.14,true);
+      if(!M.sil){
+        /* cranial sutures, temporal ridge & teeth */
+        c.strokeStyle='rgba(28,24,18,.75)'; c.lineWidth=.009;
+        c.beginPath(); c.moveTo(.42,.12); c.lineTo(.46,.16); c.lineTo(.44,.21);
+        c.moveTo(.59,.15); c.quadraticCurveTo(.62,.24,.58,.33); c.stroke();
+        /* deep orbital sockets & piriform nasal aperture */
+        c.fillStyle='#080907';
+        ell(c,.44,.29,.042,.034,.12); c.fill();
+        ell(c,.56,.29,.042,.034,-.12); c.fill();
+        polyPath(c,[[.50,.31],[.48,.37],[.52,.37]],true); c.fill();
+        /* upper row of teeth */
+        c.fillStyle=rgba(lit(BONE,.15));
+        for(let i=0;i<6;i++){
+          const tx=.445+i*.021;
+          c.fillRect(tx,.395,.016,.028);
+          c.strokeStyle='rgba(20,16,12,.85)'; c.lineWidth=.006; c.strokeRect(tx,.395,.016,.028);
+        }
+      }
+
+      /* 5. Melted Tallow Corpse Candle on the Skull's Crown */
+      const CWAX=[198,212,184];
+      planeGrad(c,M,[[.465,-.03],[.535,-.03],[.545,.11],[.455,.11]],lit(CWAX,.3),lit(CWAX,-.45),L,.50,.04,.06,false);
+      /* wax drips running down the forehead into the eye sockets */
+      for(const [dx,len] of [[-.035,.15],[-.01,.12],[.018,.17],[.038,.13]]){
+        tendril(c,M,[[.50+dx,.09],[.50+dx*1.2,.09+len*.6],[.50+dx*1.3,.09+len]],.018,.008,CWAX,{base:-.15,ridge:.5});
+      }
+      c.strokeStyle='#141812'; c.lineWidth=.012; c.beginPath(); c.moveTo(.50,-.03); c.lineTo(.50,-.065); c.stroke();
     },
     glow(c,M){
-      if(!M.locked)portFlame(c,.5,.07,.065,[204,236,196],1);
-      /* the hood fills with what you have bound, deepest first, layered (Gemini: never side by side, or it turns to mud) */
+      if(!M.locked){
+        portFlame(c,.50,-.07,.07,[192,240,180],1);
+        /* faint green reflection in the skull's eye sockets */
+        softGlow(c,.44,.29,0,.035,[180,235,170],.35,0);
+        softGlow(c,.56,.29,0,.035,[180,235,170],.35,0);
+      }
+      /* The Hood's Bound Horror Eyes: layered in depth inside the pitch-black cowl */
       const has=k=>M.eyes.includes(k), lk=M.look||0, f=M.f||0;
-      const dr=(i)=>[Math.sin(f*2.1+i*1.7)*.012+lk*.03,Math.cos(f*1.7+i*2.3)*.008];
-      c.save(); ell(c,0,-.5,.27,.35); c.clip();
-      const a=M.locked?.75:1;
-      if(has('keeper')){const g=c.createRadialGradient(0,-.5,0,0,-.5,.36); g.addColorStop(0,'rgba(200,40,30,'+(.75*a)+')'); g.addColorStop(.6,'rgba(110,14,12,'+(.5*a)+')'); g.addColorStop(1,'rgba(40,0,0,0)');
-        c.fillStyle=g; ell(c,0,-.5,.36,.4); c.fill();
-        const d=dr(0); c.fillStyle='rgba(8,2,2,.92)'; ell(c,d[0]*.6,-.5,.035,.2); c.fill();}
-      /* two violet pinpricks: all it has of its own */
-      for(const s of [-1,1]){const d=dr(1); eyeG(c,{sil:false},s*.065+d[0],-.52+d[1],.016*a,{emissive:true,glow:[169,124,226]});}
-      if(has('shrieker'))for(const [x,y,i] of [[-.17,-.66,2],[-.2,-.5,3]]){const d=dr(i);
-        c.strokeStyle='rgba(240,236,250,'+(.8*a)+')'; c.lineWidth=.012; ell(c,x+d[0],y+d[1],.04,.04); c.stroke();
-        eyeG(c,{sil:false},x+d[0],y+d[1],.026,{emissive:true,glow:[186,120,236]});}
-      if(has('wretch'))for(let i=0;i<5;i++){const d=dr(4+i); eyeG(c,{sil:false},.13+srand(i,41)*.09+d[0],-.75+srand(i,43)*.12+d[1],.012,{emissive:true,glow:[206,224,96]});}
-      if(has('elite'))for(const [x,y,i] of [[.17,-.38,9],[.21,-.5,10]]){const d=dr(i);
-        c.strokeStyle='rgba(160,210,236,'+(.45*a)+')'; c.lineWidth=.01; c.beginPath(); c.moveTo(x+d[0],y+d[1]+.02); c.quadraticCurveTo(x+d[0]+.01,y+.1,x+d[0]-.005,y+.2); c.stroke();
-        eyeG(c,{sil:false},x+d[0],y+d[1],.022,{emissive:true,glow:[190,226,246]});}
-      if(has('gnasher'))for(const s of [-1,1]){const d=dr(11); eyeG(c,{sil:false},s*.09+d[0],-.29+d[1],.024,{emissive:true,glow:[236,70,46],pupil:'slit'});}
-      if(has('watcher')){const d=dr(12); eyeG(c,{sil:false},d[0],-.5+d[1],.085,{sclera:[226,220,198],iris:[120,150,176],look:[lk*.8,0],veins:true});}
+      const dr=i=>[Math.sin(f*2.1+i*1.7)*.012+lk*.032,Math.cos(f*1.7+i*2.3)*.008];
+      c.save();
+      smoothPath(c,[[0,-1.04],[-.24,-.88],[-.32,-.50],[-.22,-.14],[0,-.06],[.22,-.14],[.32,-.50],[.24,-.88]],true);
+      c.clip();
+      const a=M.locked?.78:1;
+      /* 1. The Keeper Below: colossal abyssal crimson vertical maw-eye in the deep background */
+      if(has('keeper')){
+        const d=dr(0);
+        softGlow(c,d[0]*.5,-.52,.02,.36,[210,38,32],.72*a,0);
+        c.fillStyle='rgba(255,120,60,'+(.35*a)+')'; ell(c,d[0]*.5,-.52,.11,.26); c.fill();
+        c.fillStyle='rgba(6,1,2,.96)'; ell(c,d[0]*.65,-.52,.032,.23); c.fill();
+        c.strokeStyle='rgba(255,190,110,'+(.55*a)+')'; c.lineWidth=.009; ell(c,d[0]*.5,-.52,.11,.26); c.stroke();
+      }
+      /* The Nameless's own two violet pinpricks */
+      for(const s of [-1,1]){
+        const d=dr(1);
+        eyeG(c,{sil:false},s*.068+d[0],-.52+d[1],.018*a,{emissive:true,glow:[178,132,240]});
+      }
+      /* 2. Shrieker: bone-ringed violet eyes on the upper-left */
+      if(has('shrieker'))for(const [x,y,i] of [[-.16,-.68,2],[-.19,-.50,3]]){
+        const d=dr(i);
+        c.strokeStyle='rgba(232,224,205,'+(.82*a)+')'; c.lineWidth=.013; ell(c,x+d[0],y+d[1],.042,.038); c.stroke();
+        eyeG(c,{sil:false},x+d[0],y+d[1],.026*a,{emissive:true,glow:[198,124,242]});
+      }
+      /* 3. Ichor Wretch: cluster of feverish yellow-green eyes on the upper-right */
+      if(has('wretch'))for(let i=0;i<5;i++){
+        const d=dr(4+i);
+        eyeG(c,{sil:false},.11+srand(i,41)*.11+d[0],-.76+srand(i,43)*.14+d[1],(.011+(i%2)*.005)*a,{emissive:true,glow:[212,235,88]});
+      }
+      /* 4. Drowned Choir: weeping pale brine-blue eyes on the mid-right */
+      if(has('elite'))for(const [x,y,i] of [[.16,-.38,9],[.20,-.52,10]]){
+        const d=dr(i);
+        c.strokeStyle='rgba(140,210,235,'+(.5*a)+')'; c.lineWidth=.011;
+        c.beginPath(); c.moveTo(x+d[0],y+d[1]+.02); c.quadraticCurveTo(x+d[0]+.012,y+.11,x+d[0]-.004,y+.22); c.stroke();
+        eyeG(c,{sil:false},x+d[0],y+d[1],.023*a,{emissive:true,glow:[185,232,250]});
+      }
+      /* 5. Gnasher: predatory slit-pupil crimson eyes low in the hood */
+      if(has('gnasher'))for(const s of [-1,1]){
+        const d=dr(11);
+        eyeG(c,{sil:false},s*.095+d[0],-.28+d[1],.026*a,{emissive:true,glow:[244,68,42],pupil:'slit'});
+      }
+      /* 6. Watcher: huge bloodshot anatomical eye in the centre of the brow */
+      if(has('watcher')){
+        const d=dr(12);
+        eyeG(c,{sil:false},d[0],-.52+d[1],.082*a,{sclera:[228,218,192],iris:[118,154,182],look:[lk*.85,0],veins:true});
+      }
       c.restore();
     }},
 
-  /* Dr. Lucan Voss: struck off the rolls, a bandolier of Leyden jars, and an arc across his collar that lights his grin */
-  galvanist:{light:VOSS_L,col:[170,205,255],reach:1.25,
+  /* ================= 4. DR. LUCAN VOSS: THE GALVANIST =================
+     Gaunt, sleep-deprived rogue scientist lit from below by a blinding high-voltage arc
+     snapping between his collar electrodes. Sunken manic eyes, clenched teeth, static-lifted
+     hair, smoked brass lab goggles on his forehead, bandolier of glowing Leyden jars. */
+  galvanist:{light:VOSS_L,col:[165,208,255],reach:1.34,
     body(c,M){
-      const L=VOSS_L, SHIRT=[100,96,88], VEST=[64,52,42], SKIN=[178,152,128], COPPER=[190,118,56];
-      smoothPath(c,[[-.18,-.24],[-.62,-.14],[-.84,.06],[-.9,.8],[-.92,1.42],[.92,1.42],[.9,.8],[.84,.06],[.62,-.14],[.18,-.24],[0,-.12]],true);
-      fillVol(c,M,SHIRT,0,.5,.9,.9,L,.35);
-      smoothPath(c,[[-.44,-.02],[-.52,.7],[-.54,1.42],[.54,1.42],[.52,.7],[.44,-.02],[.12,.22],[0,.4],[-.12,.22]],true);
-      fillVol(c,M,VEST,0,.7,.55,.75,L,.3);
-      if(!M.locked){c.fillStyle='rgba(16,10,6,.55)'; for(let i=0;i<4;i++){ell(c,-.4+srand(i,51)*.8,.5+srand(i,53)*.8,.06+srand(i,55)*.05,.04,srand(i,57)); c.fill();}}
-      /* a bandolier of Leyden jars across his chest */
-      tendril(c,M,[[-.66,-.05],[-.1,.5],[.55,1.15]],.1,.1,[84,58,38],{base:-.15});
-      for(let i=0;i<4;i++){const t=.18+i*.2, x=-.66+(1.21*t), y=-.05+(1.2*t);
-        c.fillStyle=M.locked?rgba(SILC):'rgba(60,80,96,.85)'; c.fillRect(x-.045,y-.08,.09,.14);
-        blob(c,M,COPPER,x,y-.09,.05,.02,facing(L,x,y-.09));}
-      /* the high collar and its two copper electrodes */
-      blob(c,M,lit(SKIN,-.2),0,-.32,.1,.1,facing(L,0,-.32));
-      c.beginPath(); c.moveTo(-.2,-.2); c.lineTo(-.18,-.33); c.lineTo(.18,-.33); c.lineTo(.2,-.2); c.closePath(); fillVol(c,M,SHIRT,0,-.27,.2,.07,L,.4);
-      for(const s of [-1,1]){ell(c,s*.19,-.25,.05,.05); fillVol(c,M,COPPER,s*.19,-.25,.05,.05,L,.6);}
-      /* a gaunt head, hair stood up by static */
-      for(let i=0;i<14;i++){const x=-.22+i*.034, h=.18+srand(i,61)*.22, lean=(srand(i,63)-.5)*.2;
-        tendril(c,M,[[x,-.78],[x+lean*.5,-.78-h*.5],[x+lean,-.78-h]],.05,.012,[56,50,44],{base:-.1});}
-      blob(c,M,SKIN,0,-.6,.21,.27,facing(L,0,-.6,.5));
-      c.fillStyle='rgba(40,24,16,.35)'; ell(c,-.13,-.52,.05,.08); c.fill(); ell(c,.13,-.52,.05,.08); c.fill();
-      /* smoked goggles pushed up on his forehead */
-      c.fillStyle=M.locked?rgba(SILC):'rgba(40,40,36,1)'; c.fillRect(-.22,-.85,.44,.04);
-      for(const s of [-1,1]){ell(c,s*.1,-.82,.075,.06); fillVol(c,M,[176,140,70],s*.1,-.82,.075,.06,L,.5); ell(c,s*.1,-.82,.055,.042); c.fillStyle=M.locked?rgba(SILC):'rgba(30,34,40,1)'; c.fill(); spec(c,M,s*.1-.02,-.84,.02,.012,.6);}
-      /* wide eyes, tiny pupils; a grin too wide for his face */
-      for(const s of [-1,1])eyeG(c,M,s*.085,-.63,.034,{sclera:[230,224,210],iris:[90,120,140],irisR:.35});
-      c.beginPath(); c.moveTo(-.14,-.5); c.quadraticCurveTo(0,-.38,.14,-.5); c.quadraticCurveTo(0,-.45,-.14,-.5); c.closePath(); c.fillStyle=M.locked?rgba(SILC):'rgba(236,230,210,1)'; c.fill();
-      c.strokeStyle='rgba(50,24,16,.8)'; c.lineWidth=.012; c.stroke();
-      /* a forearm wound in copper to the fingertips, burnt */
-      tendril(c,M,[[-.98,1.42],[-.82,1.0],[-.62,.72]],.2,.15,SKIN,{base:-.15});
-      c.lineWidth=.02; for(let i=0;i<7;i++){const t=i/6, x=-.96+t*.32, y=1.38-t*.62; c.strokeStyle=rgba(lit(COPPER,M.locked?-.9:.1)); ell(c,x,y,.1,.03,-.9); c.stroke();}
-      blob(c,M,lit(SKIN,-.3),-.6,.68,.08,.08,facing(L,-.6,.68));
+      const L=VOSS_L, SHIRT=[112,108,100], VEST=[48,38,32], SKIN=[174,152,138], SKIN_SH=[38,34,42], COPPER=[198,118,54], BRASS=[182,146,72];
+      /* 1. Scorched Linen Shirt & Singed Waistcoat */
+      planeGrad(c,M,[[-.20,-.24],[-.66,-.14],[-.88,.08],[-.94,.82],[-.96,1.42],[.96,1.42],[.94,.82],[.88,.08],[.66,-.14],[.20,-.24]],lit(SHIRT,.25),[18,18,22],L,0,.45,.95,true);
+      clothFold(c,M,[[-.62,.02],[-.74,.65],[-.82,1.42]],.13,.20,SHIRT,L,.35);
+      clothFold(c,M,[[.62,.02],[.74,.65],[.82,1.42]],.13,.20,SHIRT,L,.35);
+      /* waistcoat with sharp lapels */
+      planeGrad(c,M,[[-.48,-.04],[-.56,.72],[-.58,1.42],[.58,1.42],[.56,.72],[.48,-.04],[.16,.24],[0,.44],[-.16,.24]],lit(VEST,.28),[12,10,12],L,0,.62,.62,false);
+      if(!M.sil){
+        /* soot & arc-burn scorch marks */
+        for(let i=0;i<5;i++){
+          softGlow(c,-.38+srand(i,51)*.76,.35+srand(i,53)*.75,0,.09+srand(i,55)*.06,[10,8,8],.65,0);
+        }
+      }
+
+      /* 2. Leather Bandolier & Glass Leyden Jars */
+      tendril(c,M,[[-.68,-.06],[-.08,.52],[.58,1.18]],.105,.105,[68,44,28],{base:-.25,ridge:.3});
+      for(let i=0;i<4;i++){
+        const t=.16+i*.21, x=-.68+1.26*t, y=-.06+1.24*t;
+        c.save(); c.translate(x,y); c.rotate(-.72);
+        /* copper foil bottom & glass cylinder */
+        planeGrad(c,M,[[-.048,-.08],[.048,-.08],[.048,.08],[-.048,.08]],[90,130,165],[22,32,44],L,0,0,.06,false);
+        planeGrad(c,M,[[-.048,.01],[.048,.01],[.048,.08],[-.048,.08]],lit(COPPER,.25),lit(COPPER,-.5),L,0,.04,.05,false);
+        /* brass terminal rod & knob */
+        planeGrad(c,M,[[-.052,-.095],[.052,-.095],[.048,-.072],[-.048,-.072]],lit(BRASS,.3),lit(BRASS,-.5),L,0,-.08,.05,false);
+        c.strokeStyle=M.sil?rgba(SILC):rgba(lit(BRASS,.4)); c.lineWidth=.014;
+        c.beginPath(); c.moveTo(0,-.095); c.lineTo(0,-.13); c.stroke();
+        ell(c,0,-.132,.018,.018); fillVol(c,M,BRASS,0,-.132,.018,.018,L,.65);
+        c.restore();
+      }
+
+      /* 3. Strained Neck, High Insulated Collar & Copper Electrodes */
+      planeGrad(c,M,[[-.11,-.40],[.11,-.40],[.13,-.18],[0,-.12],[-.13,-.18]],lit(SKIN,.25),SKIN_SH,L,0,-.27,.14,true);
+      /* stark sternocleidomastoid tendons lit by the arc */
+      tendril(c,M,[[-.09,-.38],[-.04,-.24],[-.01,-.15]],.026,.018,lit(SKIN,.35),{base:-.2,ridge:.55});
+      tendril(c,M,[[.09,-.38],[.04,-.24],[.01,-.15]],.026,.018,lit(SKIN,.35),{base:-.2,ridge:.55});
+      /* stiff collar & porcelain/copper terminals */
+      planeGrad(c,M,[[-.24,-.18],[-.20,-.34],[-.08,-.30],[-.10,-.14]],lit(SHIRT,.3),[24,26,32],L,-.16,-.24,.12,false);
+      planeGrad(c,M,[[.24,-.18],[.20,-.34],[.08,-.30],[.10,-.14]],lit(SHIRT,.3),[24,26,32],L,.16,-.24,.12,false);
+      for(const s of [-1,1]){
+        /* ribbed porcelain insulator & copper sphere */
+        for(let r=0;r<2;r++){
+          ell(c,s*(.22-r*.02),-.25,.032,.048);
+          fillVol(c,M,[210,216,224],s*(.22-r*.02),-.25,.032,.048,L,.5);
+        }
+        ell(c,s*.165,-.25,.038,.038);
+        fillVol(c,M,COPPER,s*.165,-.25,.038,.038,L,.75);
+      }
+
+      /* 4. Static-Charged Hair (fine multi-layered strands standing on end) */
+      for(let i=0;i<24;i++){
+        const u=i/23, x=-.23+u*.46, h=.16+srand(i,61)*.26, lean=(u-.5)*.28+(srand(i,63)-.5)*.14;
+        const col=i%3===0?[145,152,162]:[46,42,40];
+        tendril(c,M,[[x,-.76],[x+lean*.5,-.76-h*.55],[x+lean,-.76-h]],.032,.005,col,{base:-.2,ridge:.45});
+      }
+
+      /* 5. Gaunt Head Lit Harshly from Below by the Collar Arc */
+      planeGrad(c,M,[[-.20,-.78],[-.22,-.56],[-.17,-.40],[-.06,-.32],[.06,-.32],[.17,-.40],[.22,-.56],[.20,-.78],[0,-.86]],SKIN,SKIN_SH,L,0,-.54,.26,true);
+      /* bright upward-lit jaw, chin & underside of cheekbones */
+      planeGrad(c,M,[[-.15,-.44],[-.06,-.32],[.06,-.32],[.15,-.44],[.08,-.50],[-.08,-.50]],lit(SKIN,.42),lit(SKIN,-.1),L,0,-.39,.15,true);
+      planeGrad(c,M,[[-.21,-.60],[-.07,-.56],[-.09,-.46],[-.19,-.47]],lit(SKIN,.28),SKIN_SH,L,-.14,-.52,.11,true);
+      planeGrad(c,M,[[.21,-.60],[.07,-.56],[.09,-.46],[.19,-.47]],lit(SKIN,.28),SKIN_SH,L,.14,-.52,.11,true);
+      /* deep hollow cheeks in shadow */
+      planeGrad(c,M,[[-.18,-.50],[-.09,-.48],[-.10,-.40],[-.16,-.41]],SKIN_SH,[14,12,16],L,-.13,-.45,.07,true);
+      planeGrad(c,M,[[.18,-.50],[.09,-.48],[.10,-.40],[.16,-.41]],SKIN_SH,[14,12,16],L,.13,-.45,.07,true);
+      /* sharp nose with brightly lit septum/nostrils from below */
+      planeGrad(c,M,[[-.025,-.66],[.025,-.66],[.035,-.52],[-.035,-.52]],lit(SKIN,.18),SKIN_SH,L,0,-.58,.08,false);
+      planeGrad(c,M,[[-.042,-.53],[.042,-.53],[.028,-.495],[-.028,-.495]],lit(SKIN,.52),lit(SKIN,.05),L,0,-.51,.05,false);
+      if(!M.sil){
+        c.fillStyle='#090608';
+        ell(c,-.018,-.51,.013,.008,-.2); c.fill();
+        ell(c,.018,-.51,.013,.008,.2); c.fill();
+      }
+      /* wide, sleep-deprived manic eyes with tiny pinpoint pupils & blue arc catchlights */
+      for(const s of [-1,1]){
+        humanEye(c,M,s*.09,-.63,.05,.032,s*-.04,{
+          sclera:[228,232,240],iris:[92,138,168],irisR:.44,pupilR:.28,
+          catchX:0,catchY:.012,catchCol:[200,235,255],rimCol:[140,165,195]
+        });
+      }
+      /* tense, unhinged grimace with clenched teeth catching the arc light */
+      if(!M.sil){
+        c.beginPath();
+        c.moveTo(-.12,-.44); c.quadraticCurveTo(0,-.47,.12,-.44);
+        c.quadraticCurveTo(0,-.39,-.12,-.44); c.closePath();
+        c.fillStyle='#e8ecf2'; c.fill();
+        c.strokeStyle='rgba(25,20,25,.85)'; c.lineWidth=.007;
+        for(let i=-3;i<=3;i++){c.beginPath(); c.moveTo(i*.028,-.455); c.lineTo(i*.028,-.415); c.stroke();}
+        c.beginPath(); c.moveTo(-.11,-.438); c.quadraticCurveTo(0,-.445,.11,-.438); c.stroke();
+        c.strokeStyle='rgba(28,14,16,.9)'; c.lineWidth=.014;
+        c.beginPath(); c.moveTo(-.12,-.44); c.quadraticCurveTo(0,-.47,.12,-.44);
+        c.quadraticCurveTo(0,-.39,-.12,-.44); c.stroke();
+      }
+
+      /* 6. Brass & Smoked-Glass Lab Goggles Pushed Up on Forehead */
+      c.fillStyle=M.sil?rgba(SILC):'#1c1614'; c.fillRect(-.22,-.84,.44,.038);
+      for(const s of [-1,1]){
+        ell(c,s*.095,-.82,.076,.058); fillVol(c,M,BRASS,s*.095,-.82,.076,.058,L,.6);
+        ell(c,s*.095,-.82,.056,.042);
+        if(!M.sil){
+          const gg=c.createLinearGradient(s*.095-.05,-.86,s*.095+.05,-.78);
+          gg.addColorStop(0,'#1e2836'); gg.addColorStop(.5,'#0c1016'); gg.addColorStop(1,'#28384c');
+          c.fillStyle=gg; c.fill();
+          spec(c,M,s*.095-.018,-.838,.024,.012,.7,-.25);
+        }else{c.fillStyle=rgba(SILC); c.fill();}
+      }
+
+      /* 7. Forearm Bound in Heavy Copper Coils & Scorched Gauntlet */
+      tendril(c,M,[[-.96,1.42],[-.80,.98],[-.58,.68]],.19,.14,[32,24,20],{base:-.3,ridge:.25});
+      for(let i=0;i<8;i++){
+        const t=i/7, x=-.92+t*.32, y=1.34-t*.62;
+        c.strokeStyle=M.sil?rgba(SILC):rgba(lit(COPPER,.25)); c.lineWidth=.022;
+        ell(c,x,y,.095,.028,-.88); c.stroke();
+      }
+      blob(c,M,lit(SKIN,-.35),-.56,.64,.085,.075,facing(L,-.56,.64,.4));
     },
     glow(c,M){
-      const f=M.f||0, k=[1,.7,.9][f%3]*(M.locked?.55:1);
-      /* the arc across his throat: three jagged strands, a glow, a white core */
-      const P=[[-.15,-.25]]; for(let i=1;i<6;i++)P.push([-.15+i*.05,-.25+(srand(i+f*7,71)-.5)*.09]); P.push([.15,-.25]);
-      const g=c.createRadialGradient(0,-.25,0,0,-.25,.4); g.addColorStop(0,'rgba(170,205,255,'+(.45*k)+')'); g.addColorStop(1,'rgba(170,205,255,0)'); c.fillStyle=g; c.beginPath(); c.arc(0,-.25,.4,0,TAU); c.fill();
-      for(const [w,col] of [[.07,'rgba(110,160,255,'+(.3*k)+')'],[.028,'rgba(170,210,255,'+(.8*k)+')'],[.011,'rgba(250,252,255,'+k+')']]){
-        c.strokeStyle=col; c.lineWidth=w; c.beginPath(); P.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])); c.stroke();}
-      /* the jars, faintly charged */
-      for(let i=0;i<4;i++){const t=.18+i*.2, x=-.66+1.21*t, y=-.05+1.2*t;
-        const jg=c.createRadialGradient(x,y,0,x,y,.12); jg.addColorStop(0,'rgba(120,170,255,'+(.35*k)+')'); jg.addColorStop(1,'rgba(120,170,255,0)'); c.fillStyle=jg; c.beginPath(); c.arc(x,y,.12,0,TAU); c.fill();}
+      const f=M.f||0, k=[1,.72,.92][f%3]*(M.locked?.6:1);
+      /* Blinding Multi-Forked High-Voltage Arc Snapping Across his Throat */
+      softGlow(c,0,-.25,0,.48,[135,195,255],.52*k,0);
+      softGlow(c,0,-.25,0,.20,[220,240,255],.75*k,0);
+      for(let b=0;b<2;b++){
+        const P=[[-.15,-.25]];
+        for(let i=1;i<7;i++){
+          P.push([-.15+i*.043,-.25+(srand(i+f*11+b*19,71)-.5)*(b?.11:.065)]);
+        }
+        P.push([.15,-.25]);
+        for(const [w,col] of [[.055,'rgba(95,155,255,'+(.32*k*(b?.5:1))+')'],[.022,'rgba(165,215,255,'+(.85*k*(b?.6:1))+')'],[.009,'rgba(250,254,255,'+(k*(b?.7:1))+')']]){
+          c.strokeStyle=col; c.lineWidth=w; c.lineCap='round'; c.lineJoin='round';
+          polyPath(c,P,false); c.stroke();
+        }
+      }
+      /* Corona glow inside the four Leyden Jars */
+      for(let i=0;i<4;i++){
+        const t=.16+i*.21, x=-.68+1.26*t, y=-.06+1.24*t;
+        softGlow(c,x,y,0,.13,[115,175,255],.38*k,0);
+      }
+      if(!M.locked){
+        /* sharp electric-blue reflections in his wide eyes and goggles */
+        softGlow(c,-.09,-.63,0,.04,[165,215,255],.35*k,0);
+        softGlow(c,.09,-.63,0,.04,[165,215,255],.35*k,0);
+      }
     }},
 
-  /* Agathe Vell: no light on her at all. She is drawn the way she sees, by the rings of her bell */
+  /* ================= 5. AGATHE VELL: THE BELLRINGER =================
+     Blind bellringer of St. Agatha's. No lamplight touches her; she is sculpted in an
+     engraving/sonar aesthetic where concentric acoustic wavefronts from her bronze sanctuary
+     bell reveal the realistic 3D anatomical planes of her tilted face, linen blindfold,
+     wind-swept hair, rope-bound wrist, and pleated warden's cloak. */
   bellringer:{light:VELL_B,col:[228,221,204],reach:1,echo:true,
     shapes(c,stroke){
       const go=()=>stroke?c.stroke():c.fill();
-      c.save(); c.translate(0,-.6); c.rotate(.16); c.translate(0,.6);
-      /* the warden's cloak, its hood thrown back */
-      smoothPath(c,[[-.16,-.26],[-.6,-.16],[-.86,.04],[-.98,.8],[-1.04,1.42],[1.04,1.42],[.98,.8],[.86,.04],[.6,-.16],[.16,-.26],[0,-.1]],true); go();
-      smoothPath(c,[[-.3,-.3],[-.42,-.55],[-.36,-.8],[-.2,-.9],[-.24,-.6],[-.16,-.32]],true); go();
-      ell(c,0,-.6,.22,.28); go();
-      /* the linen over her eyes */
-      c.beginPath(); c.moveTo(-.23,-.68); c.quadraticCurveTo(0,-.63,.23,-.68); c.lineTo(.23,-.58); c.quadraticCurveTo(0,-.53,-.23,-.58); c.closePath(); go();
-      c.beginPath(); c.moveTo(-.23,-.6); c.quadraticCurveTo(-.32,-.55,-.34,-.44); if(stroke)c.stroke();
-      c.beginPath(); c.moveTo(-.06,-.42); c.quadraticCurveTo(0,-.4,.06,-.42); if(stroke)c.stroke();
+      c.save(); c.translate(0,-.58); c.rotate(.14); c.translate(0,.58);
+      /* 1. Pleated Church-Warden's Cloak & Thrown-Back Hood */
+      smoothPath(c,[[-.18,-.26],[-.64,-.16],[-.90,.06],[-1.02,.82],[-1.08,1.42],[1.08,1.42],[1.02,.82],[.90,.06],[.64,-.16],[.18,-.26],[0,-.08]],true); go();
+      smoothPath(c,[[-.32,-.28],[-.46,-.56],[-.38,-.82],[-.20,-.92],[-.24,-.60],[-.16,-.30]],true); go();
+      if(stroke){
+        /* engraved drapery folds & collar seams */
+        for(const x of [-.72,-.48,-.24,0,.24,.48,.72]){
+          c.beginPath(); c.moveTo(x*.35,-.12); c.quadraticCurveTo(x*.75,.55,x*1.08,1.42); c.stroke();
+        }
+        /* high buttoned warden collar */
+        c.beginPath(); c.moveTo(-.15,-.28); c.lineTo(-.13,-.40); c.lineTo(.13,-.40); c.lineTo(.15,-.28); c.stroke();
+      }
+
+      /* 2. Sculpted Anatomical Head, Cheekbones, Nose & Parted Lips */
+      smoothPath(c,[[-.19,-.78],[-.21,-.56],[-.16,-.40],[-.04,-.33],[.04,-.33],[.16,-.40],[.21,-.56],[.19,-.78],[0,-.88]],true); go();
+      if(stroke){
+        /* delicate jawline, neck tendons, cheekbone planes, nose bridge, and parted lips */
+        c.beginPath();
+        c.moveTo(-.09,-.35); c.lineTo(-.11,-.16);
+        c.moveTo(.09,-.35); c.lineTo(.11,-.16);
+        c.moveTo(-.04,-.34); c.lineTo(-.01,-.12);
+        /* cheekbone contours */
+        c.moveTo(-.19,-.54); c.quadraticCurveTo(-.12,-.49,-.07,-.43);
+        c.moveTo(.19,-.54); c.quadraticCurveTo(.12,-.49,.07,-.43);
+        /* nose bridge & nostril wing */
+        c.moveTo(.01,-.62); c.lineTo(.025,-.49); c.lineTo(-.02,-.485);
+        /* solemn parted lips */
+        c.moveTo(-.065,-.415); c.quadraticCurveTo(0,-.43,.065,-.415);
+        c.moveTo(-.055,-.412); c.quadraticCurveTo(0,-.405,.055,-.412);
+        c.moveTo(-.045,-.392); c.quadraticCurveTo(0,-.382,.045,-.392);
+        c.stroke();
+        /* wind-lifted hair strands around temples & crown */
+        for(let i=0;i<9;i++){
+          const hx=-.20+i*.05;
+          c.beginPath(); c.moveTo(hx,-.76); c.quadraticCurveTo(hx-.04,-.88,hx-.09,-.94); c.stroke();
+        }
+      }
+
+      /* 3. Frayed Linen Blindfold Tied Across Her Eyes */
+      c.beginPath();
+      c.moveTo(-.22,-.70); c.quadraticCurveTo(0,-.64,.22,-.70);
+      c.lineTo(.22,-.56); c.quadraticCurveTo(0,-.50,-.22,-.56); c.closePath(); go();
+      if(stroke){
+        /* linen fold pleats & trailing knot ribbons on the left */
+        c.beginPath();
+        c.moveTo(-.21,-.65); c.quadraticCurveTo(0,-.60,.21,-.65);
+        c.moveTo(-.21,-.60); c.quadraticCurveTo(0,-.55,.21,-.60);
+        c.moveTo(-.22,-.62); c.bezierCurveTo(-.34,-.58,-.38,-.46,-.36,-.34);
+        c.moveTo(-.22,-.58); c.bezierCurveTo(-.30,-.52,-.32,-.42,-.29,-.32);
+        c.stroke();
+      }
       c.restore();
-      /* her arm raised, the bell held up by her ear, rope wound round her wrist */
-      c.beginPath(); c.moveTo(.5,.02); c.quadraticCurveTo(.62,-.2,.46,-.42); c.lineTo(.36,-.4); c.quadraticCurveTo(.46,-.2,.38,.02); c.closePath(); go();
-      if(stroke){for(let i=0;i<3;i++){c.beginPath(); c.moveTo(.37,-.36+i*.05); c.lineTo(.5,-.38+i*.05); c.stroke();}}
-      c.beginPath(); c.moveTo(.34,-.86); c.quadraticCurveTo(.3,-.66,.22,-.56); c.lineTo(.6,-.56); c.quadraticCurveTo(.52,-.66,.48,-.86); c.quadraticCurveTo(.41,-.92,.34,-.86); c.closePath(); go();
-      ell(c,.41,-.5,.04,.04); go();
-      if(stroke){c.beginPath(); c.moveTo(.42,-.54); c.lineTo(.4,-.6); c.lineTo(.44,-.66); c.lineTo(.41,-.72); c.stroke();}
+
+      /* 4. Raised Forearm, Rope-Wrapped Wrist & Cast-Bronze Sanctuary Bell */
+      c.beginPath();
+      c.moveTo(.48,.06); c.quadraticCurveTo(.62,-.18,.47,-.44);
+      c.lineTo(.35,-.42); c.quadraticCurveTo(.46,-.18,.36,.06); c.closePath(); go();
+      if(stroke){
+        /* hemp bell-rope coiled around her wrist & fingers holding the crown handle */
+        for(let i=0;i<5;i++){
+          const ry=-.38+i*.048;
+          c.beginPath(); c.moveTo(.35,ry); c.quadraticCurveTo(.43,ry+.018,.51,ry-.01); c.stroke();
+        }
+        for(let i=0;i<4;i++){
+          const fy=-.89+i*.018;
+          c.beginPath(); c.moveTo(.36,fy); c.lineTo(.45,fy); c.stroke();
+        }
+      }
+      /* Sanctuary Bell: crown, waist, sound-bow lip & heavy iron clapper */
+      c.beginPath();
+      c.moveTo(.34,-.86);
+      c.bezierCurveTo(.31,-.70,.27,-.60,.20,-.54);
+      c.lineTo(.62,-.54);
+      c.bezierCurveTo(.55,-.60,.51,-.70,.48,-.86);
+      c.quadraticCurveTo(.41,-.93,.34,-.86);
+      c.closePath(); go();
+      ell(c,.41,-.49,.042,.042); go();
+      if(stroke){
+        /* inscribeddecorative bands & stress fracture on the bell */
+        c.beginPath();
+        c.moveTo(.31,-.76); c.lineTo(.51,-.76);
+        c.moveTo(.25,-.60); c.lineTo(.57,-.60);
+        c.moveTo(.22,-.565); c.lineTo(.60,-.565);
+        c.moveTo(.43,-.54); c.lineTo(.40,-.61); c.lineTo(.44,-.67); c.lineTo(.41,-.74);
+        c.stroke();
+      }
     },
-    body(c,M){PORTRAIT_ART.bellringer.shapes(c,false);},
+    body(c,M){
+      /* subtle base volume so her silhouette has depth between the sonar rings */
+      PORTRAIT_ART.bellringer.shapes(c,false);
+      if(!M.locked&&!M.sil){
+        c.save(); c.globalCompositeOperation='source-atop';
+        softGlow(c,VELL_B[0],VELL_B[1],.02,1.65,[160,185,200],.24,0);
+        c.restore();
+      }
+    },
     glow(c,M){
       const B=VELL_B;
-      if(M.locked){c.strokeStyle='rgba(228,221,204,.22)'; c.lineWidth=.014; c.beginPath(); c.arc(0,-.3,.55,0,TAU); c.stroke(); return;}
-      /* faint rings across the whole dark */
-      const R=[.22,.5,.84,1.22,1.66,2.1];
-      for(const r of R){c.strokeStyle='rgba(228,221,204,'+(.1*(1-r/2.4))+')'; c.lineWidth=.012; c.beginPath(); c.arc(B[0],B[1],r,0,TAU); c.stroke();}
-      /* her outline, only where a ring passes through it */
-      const O=document.createElement('canvas'); O.width=PORT_W; O.height=PORT_H; const o=O.getContext('2d');
-      o.setTransform(PORT_W/2,0,0,PORT_W/2,PORT_W/2,PORT_H/2); o.lineCap='round'; o.lineJoin='round';
-      o.strokeStyle='rgba(236,230,214,1)'; o.lineWidth=.03; PORTRAIT_ART.bellringer.shapes(o,true);
+      if(M.locked){
+        c.strokeStyle='rgba(214,228,236,.26)'; c.lineWidth=.014;
+        c.beginPath(); c.arc(B[0],B[1],.48,0,TAU); c.stroke();
+        c.beginPath(); c.arc(B[0],B[1],.85,0,TAU); c.stroke();
+        return;
+      }
+      /* Concentric Acoustic Wavefronts Expanding Across the Dark */
+      const R=[.18,.42,.70,1.02,1.38,1.78,2.22];
+      for(const r of R){
+        const a=Math.max(0,.16*(1-r/2.5));
+        c.strokeStyle='rgba(214,228,236,'+a+')'; c.lineWidth=.012;
+        c.beginPath(); c.arc(B[0],B[1],r,0,TAU); c.stroke();
+      }
+      /* Render her fine engraved anatomical contours masked by the passing soundwaves */
+      const O=document.createElement('canvas'); O.width=PORT_W; O.height=PORT_H;
+      const o=O.getContext('2d');
+      o.setTransform(PORT_W/2,0,0,PORT_W/2,PORT_W/2,PORT_H/2);
+      o.lineCap='round'; o.lineJoin='round';
+      o.strokeStyle='rgba(232,238,242,.95)'; o.lineWidth=.022;
+      PORTRAIT_ART.bellringer.shapes(o,true);
+      /* fine cross-hatching on her face and cloak that lights up as the ring passes */
+      hatchStrokes(o,-.35,-.85,.35,1.2,110,.045,-.6,[214,228,236],.5,.007,505);
       o.globalCompositeOperation='destination-in';
-      const g=o.createRadialGradient(B[0],B[1],0,B[0],B[1],2.4), w=.09;
-      g.addColorStop(0,'rgba(0,0,0,.9)');
-      for(const r of R){const a=Math.max(.35,1-r/2.8); g.addColorStop(Math.max(0,(r-w)/2.4),'rgba(0,0,0,.05)'); g.addColorStop(r/2.4,'rgba(0,0,0,'+a+')'); g.addColorStop(Math.min(1,(r+w)/2.4),'rgba(0,0,0,.05)');}
+      const g=o.createRadialGradient(B[0],B[1],0,B[0],B[1],2.4), w=.095;
+      g.addColorStop(0,'rgba(0,0,0,.95)');
+      for(const r of R){
+        const a=Math.max(.38,1-r/2.7);
+        g.addColorStop(Math.max(0,(r-w)/2.4),'rgba(0,0,0,.12)');
+        g.addColorStop(r/2.4,'rgba(0,0,0,'+a+')');
+        g.addColorStop(Math.min(1,(r+w)/2.4),'rgba(0,0,0,.12)');
+      }
       o.fillStyle=g; o.fillRect(-1.2,-1.5,2.4,3);
       c.save(); c.setTransform(1,0,0,1,0,0); c.drawImage(O,0,0); c.restore();
-      /* the bell itself always rings clear */
-      c.strokeStyle='rgba(236,230,214,.9)'; c.lineWidth=.02;
-      c.beginPath(); c.moveTo(.34,-.86); c.quadraticCurveTo(.3,-.66,.22,-.56); c.lineTo(.6,-.56); c.quadraticCurveTo(.52,-.66,.48,-.86); c.quadraticCurveTo(.41,-.92,.34,-.86); c.closePath(); c.stroke();
+
+      /* The Sanctuary Bell itself rings clear with warm bronze & verdigris highlights */
+      softGlow(c,B[0],B[1],0,.32,[236,214,168],.28,0);
+      c.strokeStyle='rgba(242,232,208,.94)'; c.lineWidth=.018;
+      c.beginPath();
+      c.moveTo(.34,-.86);
+      c.bezierCurveTo(.31,-.70,.27,-.60,.20,-.54);
+      c.lineTo(.62,-.54);
+      c.bezierCurveTo(.55,-.60,.51,-.70,.48,-.86);
+      c.quadraticCurveTo(.41,-.93,.34,-.86);
+      c.closePath(); c.stroke();
+      c.fillStyle='rgba(242,232,208,.9)'; ell(c,.41,-.49,.036,.036); c.fill();
     }}
 };
+
 function portraitCanvas(k,locked,f,look){
   const P=PORTRAIT_ART[k]; if(!P)return null;
   const eyes=k==='occultist'?hoodEyes():[];
@@ -5105,22 +5730,46 @@ function portraitCanvas(k,locked,f,look){
   const Lc=document.createElement('canvas'); Lc.width=PORT_W; Lc.height=PORT_H; const l=Lc.getContext('2d');
   const unit=g=>{g.setTransform(u,0,0,u,PORT_W/2,PORT_H/2); g.lineCap='round'; g.lineJoin='round';};
   unit(c); unit(l);
-  const M={sil:false,f,look,locked:!!locked,eyes}, [lx,ly]=P.light, col=P.col, R=P.reach;
-  c.fillStyle='#050607'; c.fillRect(-1.1,-1.45,2.2,2.9);
-  /* the light's own glow in the air around it */
-  if(!P.echo){const g=c.createRadialGradient(lx,ly,0,lx,ly,R*(locked?.3:1.05)); g.addColorStop(0,rgba(col,locked?.1:.24)); g.addColorStop(1,rgba(col,0)); c.fillStyle=g; c.fillRect(-1.1,-1.45,2.2,2.9);}
+  const M={sil:!!locked,f,look,locked:!!locked,eyes}, [lx,ly]=P.light, col=P.col, R=P.reach;
+
+  /* 1. Deep atmospheric abyssal background & subtle stonework texture */
+  c.fillStyle='#050608'; c.fillRect(-1.1,-1.45,2.2,2.9);
+  if(!P.echo){
+    softGlow(c,lx,ly,0,R*(locked?.45:1.15),col,locked?.14:.26,0);
+    if(!locked)hatchStrokes(c,-1,-1.3,1,1.3,65,.12,Math.PI/2,col,.04,.012,777);
+  }
+
+  /* 2. Paint character body & apply directional chiaroscuro lighting falloff */
   P.body(l,M);
   l.globalCompositeOperation='source-atop';
-  if(locked||P.echo){l.fillStyle=locked?'rgb(13,15,17)':'#101418'; l.fillRect(-1.1,-1.45,2.2,2.9);}
-  else{
-    let g=l.createRadialGradient(lx,ly,0,lx,ly,R); g.addColorStop(0,rgba(col,.5)); g.addColorStop(.5,rgba(col,.12)); g.addColorStop(1,rgba(col,0)); l.fillStyle=g; l.fillRect(-1.1,-1.45,2.2,2.9);
-    g=l.createRadialGradient(lx,ly,R*.22,lx,ly,R*1.1); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,.94)'); l.fillStyle=g; l.fillRect(-1.1,-1.45,2.2,2.9);
+  if(locked){
+    l.fillStyle='rgb(11,13,16)'; l.fillRect(-1.1,-1.45,2.2,2.9);
+    const rg=l.createRadialGradient(lx,ly,0,lx,ly,R*.9);
+    rg.addColorStop(0,rgba(col,.28)); rg.addColorStop(.45,rgba(col,.06)); rg.addColorStop(1,'rgba(0,0,0,0)');
+    l.fillStyle=rg; l.fillRect(-1.1,-1.45,2.2,2.9);
+  }else if(P.echo){
+    l.fillStyle='#0c1014'; l.fillRect(-1.1,-1.45,2.2,2.9);
+    const rg=l.createRadialGradient(lx,ly,0,lx,ly,1.6);
+    rg.addColorStop(0,'rgba(195,212,224,.18)'); rg.addColorStop(1,'rgba(0,0,0,0)');
+    l.fillStyle=rg; l.fillRect(-1.1,-1.45,2.2,2.9);
+  }else{
+    /* warm specular wash near the light source + deep Rembrandt shadow falloff */
+    let g=l.createRadialGradient(lx,ly,0,lx,ly,R);
+    g.addColorStop(0,rgba(col,.32)); g.addColorStop(.45,rgba(col,.08)); g.addColorStop(1,'rgba(0,0,0,0)');
+    l.fillStyle=g; l.fillRect(-1.1,-1.45,2.2,2.9);
+    g=l.createRadialGradient(lx,ly,R*.26,lx,ly,R*1.12);
+    g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.68,'rgba(2,3,5,.58)'); g.addColorStop(1,'rgba(2,3,5,.95)');
+    l.fillStyle=g; l.fillRect(-1.1,-1.45,2.2,2.9);
   }
   c.save(); c.setTransform(1,0,0,1,0,0); c.drawImage(Lc,0,0); c.restore();
+
+  /* 3. Paint the emissive light source, arcs, flames, or sonar rings on top */
   P.glow(c,M);
-  /* every card ends in the same dark at its edges */
+
+  /* 4. Fine oil-canvas grain & dark vignette frame */
   c.setTransform(1,0,0,1,0,0);
-  const v=c.createRadialGradient(PORT_W/2,PORT_H*.42,PORT_W*.38,PORT_W/2,PORT_H*.5,PORT_H*.72); v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(0,0,0,.8)');
+  const v=c.createRadialGradient(PORT_W/2,PORT_H*.42,PORT_W*.34,PORT_W/2,PORT_H*.5,PORT_H*.74);
+  v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(.7,'rgba(0,0,0,.35)'); v.addColorStop(1,'rgba(0,0,0,.86)');
   c.fillStyle=v; c.fillRect(0,0,PORT_W,PORT_H);
   PORTRAITS.set(key,cv);
   return cv;
