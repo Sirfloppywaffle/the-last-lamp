@@ -4,6 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+- **Gemini answers only when asked** (Criss: its quota is small). The review workflow no longer runs when a PR opens; it runs only on a trusted `/gemini` comment. (Claude)
 - **The Roster: five who went down the stair** (#36, designed with Gemini on #60). Descend now opens a roster of five painted characters, each lit by a light of their own:
   - **Ambrose Fenn**, the lamplighter, in a coat crusted with wax, his lantern at his chin.
   - **Jonah Tolland**, a grey-bearded harpooner with a cruse lamp held low.
