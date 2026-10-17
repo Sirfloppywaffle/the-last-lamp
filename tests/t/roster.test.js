@@ -46,7 +46,7 @@ const file='file://'+process.argv[2], out=process.argv[3];
   await p.tap('#descendBtn'); await p.waitForTimeout(300);
   await p.evaluate(()=>document.querySelector('#rostRow [data-kit="whaler"]').click()); await p.waitForTimeout(150);
   r=await roster(p);
-  ok(r.on==='whaler'&&!r.run&&r.descend==='Descend as Mags Tolland'&&r.info.includes('Patience'),'one tap on Mags Tolland chooses her and starts nothing '+r.descend);
+  ok(r.on==='whaler'&&!r.run&&r.descend==='Descend as Jonah Tolland'&&r.info.includes('Patience'),'one tap on Jonah Tolland chooses him and starts nothing '+r.descend);
   await p.evaluate(()=>document.querySelector('#rostRow [data-kit="whaler"]').click()); await p.waitForTimeout(400);
   ok(await p.evaluate(()=>__t.run&&__t.run.kit==='whaler'&&document.querySelector('#modal').hidden),'a second tap descends as the Whaler');
   // and she is chosen already the next time

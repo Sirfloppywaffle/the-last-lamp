@@ -6,7 +6,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 - **The Roster: five who went down the stair** (#36, designed with Gemini on #60). Descend now opens a roster of five painted characters, each lit by a light of their own:
   - **Ambrose Fenn**, the lamplighter, in a coat crusted with wax, his lantern at his chin.
-  - **Mags Tolland**, a harpooner, a cruse lamp burning at her chest.
+  - **Jonah Tolland**, a grey-bearded harpooner with a cruse lamp held low.
   - **The Nameless**, a hood with no face.
   - **Dr. Lucan Voss**, with an arc across his collar.
   - **Agathe Vell**, drawn only in the rings of her bell.
