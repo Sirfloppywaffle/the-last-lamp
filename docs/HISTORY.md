@@ -4,6 +4,8 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+## v16.8 — The Tithe and the Bell
+Two more Heralds walk the middle floors, and every Herald can now be prepared for: a red mark on its rift, gentler health, and no way to hold one under forever.
 - **No Herald can be held forever** (Criss: a Tithe-taker stood stunned at the edge of her water, filling its sack). Undertow holds whatever a harpoon bolt strikes in water for a second, and a fast harpoon re-holds it before it can move, so a Herald could be kept under for the whole wave. Now a Herald held 3 seconds (stunned or pinned; the count eases while it walks) breaks free with a red ring and *breaks free*, and shrugs off every hold, Into the Deep's line included, for 3 seconds. Slows still work. Every kit's holds count: Undertow, candle snares, the Galvanist's shocks, the Bellringer's peals, the Occultist's grasping hands. (Claude)
 - **Heralds you can prepare for** (Criss lost to the first two: "I don't know which side they're going to come from"). In the break before a Herald's wave, a pulsing red ring with a **!** marks the rift it will climb out of, so you know where to build; the rift is chosen once and kept with the save. The **Tithe-taker** now takes 2 essence a second and only while it walks in your light, so it can't drain you before it reaches your defences. All three Heralds have less health: the Last Keeper 440, the Tithe-taker 400, the Bellfather 520 (before floor scaling).
 - **The wave strip moved to the top centre** (Criss: it hid an entrance). It is narrower and wraps; if it would still cover a rift, it drops to the bottom of the board. (Claude)
