@@ -5125,6 +5125,19 @@ function portraitCanvas(k,locked,f,look){
   PORTRAITS.set(key,cv);
   return cv;
 }
+/* paint the roster's portraits in idle moments on the title screen, one at a time, so the first Descend never waits on
+   them (Gemini: five at once was a 300 ms hitch on a slow phone) */
+function warmPortraits(){
+  /* the title's own animation can leave no idle time on a slow phone, so each step also has a deadline */
+  const q=[];
+  for(const k of Object.keys(KITS)){const lk=kitLocked(k); q.push([k,lk,0,0]);
+    /* the moving ones: every frame, and the Nameless glancing either way */
+    if(k==='galvanist')for(let f=1;f<PORT_FRAMES;f++)q.push([k,lk,f,0]);
+    if(k==='occultist')for(const lo of [-1,0,1])for(let f=0;f<PORT_FRAMES;f++)if(lo||f)q.push([k,lk,f,lo]);}
+  const idle=f=>window.requestIdleCallback?requestIdleCallback(f,{timeout:400}):setTimeout(f,80);
+  const step=()=>{const n=q.shift(); if(!n)return; portraitCanvas(n[0],n[1],n[2],n[3]); idle(step);};
+  idle(step);
+}
 function paintPortrait(cv,k,locked,f,look){const src=portraitCanvas(k,locked,f,look); if(!src||!cv.getContext)return; const c=cv.getContext('2d'); c.clearRect(0,0,cv.width,cv.height); c.drawImage(src,0,0,cv.width,cv.height);}
 
 /* draw one creature at (x,y) in board tiles.
@@ -7863,6 +7876,7 @@ if(hot&&typeof hot.snapshot==='function'){
 }
 function start(data){
   deedsMigrate();
+  warmPortraits();
   layout();
   if(data&&data.save&&data.save.run)resumeFrom(data.save);
   else showTitle();
