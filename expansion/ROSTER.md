@@ -35,14 +35,14 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
 - **Locked:** n/a, since he's always open. In the reveal and the Grimoire, his lantern is the first thing to light.
 - **Plays like:** *Light passes hand to hand.*
 
-### The Whaler: Margery "Mags" Tolland
-*"Harpooner off the Patience. She has gutted worse than what climbs these stairs."*
-- **Who:** the first woman to throw iron off a Saltmouth ship. She was rendering blubber on the quay when the sea came over it, and she followed the dark down with her irons because it had taken her ship.
-- **Portrait:** broad-shouldered, in black oilskins slick with brine. A sou'wester is pushed back. A coil of tarred line hangs over one shoulder, and a toggle harpoon rests across the other. Her forearms are scarred, with a faded anchor tattoo. An open iron cruse lamp, hooked to her oilskins at mid-chest, burns rendered fat. It throws a smoky amber light up across her collar, a scar at her throat and her jaw, and catches the iron toggle head on her shoulder (Gemini; it was a dish at her belt). Her jaw is set and her eyes are narrowed.
+### The Whaler: Jonah Tolland
+*"Harpooner off the Patience. He has gutted worse than what climbs these stairs."*
+- **Who:** forty years throwing iron off Saltmouth ships. He was rendering blubber on the quay when the sea came over it, and he followed the dark down with his irons because it had taken his ship.
+- **Portrait:** broad and weathered, in a knit cap and oilskins, a grey beard stiff with salt, an upright harpoon in one fist and a cruse lamp held low, lighting him from below (Gemini's portrait).
 - **Light source:** the blubber flame, smoky yellow.
-- **Locked:** the flame at her chest, and the glint of the harpoon's iron head.
+- **Locked:** the lamp's flame, and the glint of the harpoon's iron head.
 - **Deed (as now):** kill a Trench Behemoth with harpoons alone.
-- **Reveal line:** *The line holds. She comes down after it.*
+- **Reveal line:** *The line holds. He comes down after it.*
 - **Plays like:** *Hold them, haul them, render them.*
 
 ### The Occultist: the Nameless
@@ -130,3 +130,6 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
 Settled:
 - **With Gemini:** names and Saltmouth stay; every light sits at chest height; Agathe gets a slate body under her rings; the reveal skips on a tap; a chain is counted in candles, not tiles.
 - **By Criss:** the Galvanist and Bellringer stay **Ember Hall unlocks**, with no new deeds. The Nameless's eyes are open to better ideas, so the hood now fills with the eyes of every kind of horror you've bound across all your runs.
+
+
+**Later (Criss, after the portraits):** the Whaler is **Jonah Tolland**, a grey-bearded harpooner. Criss liked Gemini's bearded portrait, so he replaced Mags.
