@@ -294,6 +294,16 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .rost-info .rost-st{font-family:var(--f-num);font-size:.72rem}
 .book-e canvas.book-port{width:54px;height:72px;border-radius:5px}
 @media (max-height:500px){.rost-card{flex:1 0 96px;max-width:120px}.rost-card .rost-sub{display:none}.rost-info{min-height:5em}}
+/* the reveal of a kit just earned: the portrait floods with light, then the name. The text is there from the first frame (clear, not hidden), so nothing shifts when it fades in */
+.urv{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.urv-port{display:block;width:clamp(150px,52vw,230px);height:auto;aspect-ratio:3/4;border-radius:8px;background:#050607;border:1px solid var(--seam)}
+.urv-txt{opacity:0;transition:opacity .6s}
+.urv-txt.on{opacity:1}
+.urv-kit{display:block;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tallow)}
+.urv-who{display:block;font-family:var(--f-display);font-weight:500;font-size:1.6rem;line-height:1.05;color:var(--bone)}
+.urv-how{display:block;margin-top:4px;font-variant-caps:all-small-caps;letter-spacing:.08em;font-size:.86rem;color:var(--ash)}
+.urv-line{display:block;margin-top:6px;color:var(--bone)}
+@media (max-height:500px){.urv{flex-direction:row;justify-content:center;gap:16px;text-align:left}.urv-port{width:auto;height:min(50vh,200px)}.urv-who{font-size:1.35rem}}
 
 /* Map Overlay */
 #mapOverlay{position:fixed;inset:0;z-index:100;background:#050607;touch-action:none;display:flex;flex-direction:column}
@@ -2203,6 +2213,8 @@ const DEV_ACTS={
     F.wave=F.def.waves.length;
     closeModal(); paused=false; floorCleared(); return null;
   },
+  /* previews a kit's reveal; it shows, never saves (rule 24) */
+  reveal(k){revealKit(k,KITS[k].deed?'deed':'hall',()=>openDevMode(),false); return null;},
   spawn(k){
     if(F.phase==='build'){hint('Call the wave first, then spawn.',2200); return 'Spawns only during a wave';}
     spawnFoe(k,Math.floor(Math.random()*F.nRoots),0); return FOES[k].n+' spawned';
@@ -2216,6 +2228,8 @@ function openDevMode(msg){
     +btn('dark',window.devNoDark?'Darkness: off':'Darkness: on')+btn('cheat','Max essence & oil')+btn('unlock','Unlock everything')+btn('patron','Mother: offer now')+btn('attention','Mother: Attention +1')+btn('kill','Kill all creatures')+btn('clear','Clear wards')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Floors</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+FLOORS.map((f,i)=>btn('floor',(i===run.floor?'● ':'')+(i+1)+' · '+f.name,String(i))).join('')+btn('skip','Clear this floor →')+'</div>'
+    +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Reveal a kit</h3>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+Object.keys(KITS).filter(k=>k!=='lamplighter').map(k=>btn('reveal',KITS[k].who||KITS[k].n,k)).join('')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Spawn on a random path</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px">'+SPAWNABLE.map(k=>btn('spawn',FOES[k].n,k)).join('')+'</div>';
   showModal({kind:'dev',title:'Developer',body:msg?'<span class="note">'+msg+'</span>':'Test tools. Nothing here is saved as a normal run would be.',html,
@@ -2254,10 +2268,10 @@ function newRun(k,depth){
 /* the Roster: who each kit was the night Saltmouth drowned (expansion/ROSTER.md) */
 const ROSTER={
   lamplighter:{line:'He kept the harbour lamps forty years. On the last night he kept one more.',plays:'Light passes hand to hand.'},
-  whaler:{line:'Harpooner off the Patience. He has gutted worse than what climbs these stairs.',plays:'Hold them, haul them, render them.'},
-  occultist:{line:'It gave its name to something below, and got this in return.',plays:'Madness is the price, and the weapon.'},
-  galvanist:{line:'Struck off the Royal Institution’s rolls. He came down to prove the lamp could run on lightning.',plays:'Wire the dark; don’t let it run hot.'},
-  bellringer:{line:'She rang the bell of St. Agatha’s as the town went under, and came back up the stair blind.',plays:'Light lets you build; sound lets you see.'}
+  whaler:{line:'Harpooner off the Patience. He has gutted worse than what climbs these stairs.',plays:'Hold them, haul them, render them.',reveal:'The line holds. He comes down after it.'},
+  occultist:{line:'It gave its name to something below, and got this in return.',plays:'Madness is the price, and the weapon.',reveal:'Something below hears it ask, and answers.'},
+  galvanist:{line:'Struck off the Royal Institution’s rolls. He came down to prove the lamp could run on lightning.',plays:'Wire the dark; don’t let it run hot.',reveal:'The circuit closes. Somewhere below, a man laughs.'},
+  bellringer:{line:'She rang the bell of St. Agatha’s as the town went under, and came back up the stair blind.',plays:'Light lets you build; sound lets you see.',reveal:'A bell rings under the water. She heard you.'}
 };
 function hoodLine(){return 'Eyes in the hood: '+hoodEyes().length+' of '+HOOD_EYES.length;}
 function kitLocked(k,m){const K=KITS[k]; return !devOn&&!!K.lock&&!(m||meta()).unlocked.includes(K.lock);}
@@ -2312,6 +2326,57 @@ function openKitPicker(note){
   };
   draw();
 }
+/* the reveal (#36): a kit just earned rises out of the dark. Its portrait shows as the locked silhouette, then the lit one floods out from its own light (a ring for Agathe, who has none);
+   then the name, how it was earned, and a line. A tap snaps it to the end, a second tap goes on. Shown whatever the tip setting says: it is a reward. Reduce motion: a plain fade. */
+const REVEAL_MS=1200;
+function revealKit(k,how,done,more){
+  const K=KITS[k], R=ROSTER[k]||{}, P=PORTRAIT_ART[k], lock=portraitCanvas(k,true,0,0), lit=portraitCanvas(k,false,0,0);
+  if(!K||!P||!lock||!lit){done(); return;}
+  showModal({title:how==='hall'?'The Ember Hall':'A deed is done',
+    html:'<div class="urv" id="urvBox"><canvas class="urv-port" id="urvCv" width="'+PORT_W+'" height="'+PORT_H+'"></canvas><div class="urv-txt" id="urvTxt"><span class="urv-kit">'+K.n+'</span><b class="urv-who">'+(K.who||K.n)+'</b><span class="urv-how">'+(how==='hall'?'Bought in the Ember Hall':K.deed||'')+'</span><i class="urv-line">'+(R.reveal||'')+'</i></div></div>',
+    actions:[{label:'Skip',primary:true,fn:()=>step()}]});
+  const cv=$('#urvCv'), c=cv.getContext('2d'), off=document.createElement('canvas'); off.width=PORT_W; off.height=PORT_H; const o=off.getContext('2d');
+  const u=PORT_W/2, px=PORT_W/2+P.light[0]*u, py=PORT_H/2+P.light[1]*u, rmax=Math.hypot(Math.max(px,PORT_W-px),Math.max(py,PORT_H-py))*1.1, ms=reduceMotion?600:REVEAL_MS;
+  const paint=p=>{
+    c.clearRect(0,0,PORT_W,PORT_H); c.drawImage(lock,0,0);
+    if(p>=1){c.drawImage(lit,0,0); return;}
+    if(reduceMotion){c.globalAlpha=p; c.drawImage(lit,0,0); c.globalAlpha=1; return;}
+    const r=rmax*(1-Math.pow(1-p,3));
+    o.globalCompositeOperation='source-over'; o.clearRect(0,0,PORT_W,PORT_H); o.drawImage(lit,0,0);
+    o.globalCompositeOperation='destination-in'; const g=o.createRadialGradient(px,py,r*.55,px,py,r+1); g.addColorStop(0,'#000'); g.addColorStop(1,'rgba(0,0,0,0)'); o.fillStyle=g; o.fillRect(0,0,PORT_W,PORT_H);
+    c.drawImage(off,0,0);
+    if(P.echo){c.strokeStyle='rgba(214,228,240,'+(.7*(1-p)).toFixed(2)+')'; c.lineWidth=PORT_W*.012; c.beginPath(); c.arc(px,py,r,0,Math.PI*2); c.stroke();}
+  };
+  let state='play', raf=0, snapAt=0, t0=performance.now();
+  const finish=()=>{
+    cancelAnimationFrame(raf); state='done'; paint(1);
+    const t=$('#urvTxt'); if(t)t.classList.add('on');
+    const b=$('#mActions button'); if(b)b.textContent=more?'Next':'Continue';
+  };
+  /* a tap snaps to the finished card; the next one goes on (and a hasty double tap is not read as both) */
+  function step(){
+    if(state==='play'){snapAt=performance.now(); finish(); return;}
+    if(performance.now()-snapAt<350)return;
+    state='gone'; done();
+  }
+  const tick=now=>{
+    if(state!=='play')return;
+    if(!document.getElementById('urvCv')){state='gone'; return;}
+    const p=Math.max(0,Math.min(1,(now-t0)/ms)); paint(p);
+    if(p<1)raf=requestAnimationFrame(tick); else finish();
+  };
+  $('#urvBox').addEventListener('click',step);
+  paint(0); raf=requestAnimationFrame(tick);
+}
+function revealKits(list,how,done){
+  if(!list.length){done(); return;}
+  revealKit(list[0],how,()=>revealKits(list.slice(1),how,done),list.length>1);
+}
+/* kits earned by a deed on this run rise before the end screen */
+function revealThenShow(blk){
+  const ks=((run&&run.deeds)||[]).filter(k=>KITS[k]&&PORTRAIT_ART[k]);
+  revealKits(ks,'deed',()=>showModal(blk));
+}
 function openHall(msg){
   const m=meta();
   showModal({title:'The Ember Hall',wide:true,
@@ -2319,7 +2384,10 @@ function openHall(msg){
     note:msg||'',
     choices:HALL.map(h=>{const own=m.unlocked.includes(h.k);
       return {cls:own?'relic owned':(m.embers<h.cost?'off':''),tag:own?'Unlocked':h.cost+' embers',title:h.n,sub:h.d,
-        fn:()=>{if(own)return; if(m.embers<h.cost){openHall('Not enough embers yet.'); return;} m.embers-=h.cost; m.unlocked.push(h.k); saveMeta(m); AUDIO.buy(); openHall(h.n+' is yours.'); showTitleLine();}};}),
+        fn:()=>{if(own)return; if(m.embers<h.cost){openHall('Not enough embers yet.'); return;} m.embers-=h.cost; m.unlocked.push(h.k); saveMeta(m); AUDIO.buy(); showTitleLine();
+          /* a kit bought here gets the same reveal as one earned by a deed */
+          const kit=Object.keys(KITS).find(q=>KITS[q].lock===h.k), won=h.n+' is yours.';
+          if(kit&&PORTRAIT_ART[kit])revealKit(kit,'hall',()=>openHall(won)); else openHall(won);}};}),
     actions:[{label:'Close',primary:true,fn:closeModal}]});
 }
 function awardEmbers(won){
@@ -3331,7 +3399,7 @@ function victory(){
   F.phase='won'; paused=true; saveBest(true); clearSave(); AUDIO.win();
   F.blocking={kind:'end',title:'Morning',body:'The Primordial is still. Five floors of dark lie quiet over it, and the lamp is still burning. '+summary()+awardEmbers(true),
     actions:[{label:'Descend again',primary:true,fn:()=>{closeModal(); openKitPicker();}},{label:'Title',fn:()=>{closeModal(); showTitle();}}]};
-  showModal(F.blocking);
+  revealThenShow(F.blocking);
 }
 function defeat(){
   if(F.phase==='over')return;
@@ -3345,7 +3413,7 @@ function defeat(){
     F.blocking={kind:'end',title:'The lamp is out',bad:true,
       body:'It gutters on '+F.def.name+', wave '+F.wave+'. The dark closes over the flame. '+summary()+embers,
       actions:[{label:'Descend again',primary:true,fn:()=>{closeModal(); openKitPicker();}},{label:'Title',fn:()=>{closeModal(); showTitle();}}]};
-    showModal(F.blocking);
+    revealThenShow(F.blocking);
   },900);
 }
 let errShown=false;
