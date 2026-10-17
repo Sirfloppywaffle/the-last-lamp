@@ -49,7 +49,12 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     fresh(1); T.startWave(); T.F.queue=[]; const rel0=T.run.relics.length, k3=T.spawnFoe('lastkeeper',0,3); k3.spawnT=0; T.hurt(k3,1e7);
     out.relic=T.run.relics.length-rel0; out.heralds=T.run.heralds;
     /* the Tithe-taker takes 3 essence a second into its sack; slain, it pays it all back and half again */
-    fresh(1); T.startWave(); T.F.queue=[]; T.run.ess=100; const tt=T.spawnFoe('tithetaker',0,2); tt.spawnT=0; tt.stunT=1e6; tt.hp=tt.max=1e6;
+    fresh(1); T.startWave(); T.F.queue=[]; T.run.ess=100; const ttd=T.spawnFoe('tithetaker',0,.5); ttd.spawnT=0; ttd.stunT=1e6; ttd.hp=ttd.max=1e6;
+    for(let i=0;i<41;i++)T.update(.05); out.titheDark=100-T.run.ess; ttd.dead=true;
+    /* the rift is chosen once, marked in the break before, and is where it climbs out */
+    fresh(1); const hh=T.run.draw.herald; T.F.wave=hh.wave; T.F.phase='build'; const g0=T.heraldGate(hh); T.startWave(); const q=T.F.queue.find(x=>x.type===hh.type);
+    out.gate={marked:g0!==undefined,same:!!q&&q.gate===g0}; T.F.queue=[]; T.F.foes=[];
+    fresh(1); T.startWave(); T.F.queue=[]; T.run.ess=100; const tt=T.spawnFoe('tithetaker',0,T.F.paths[0].len-1.5); tt.spawnT=0; tt.stunT=1e6; tt.hp=tt.max=1e6;
     for(let i=0;i<41;i++)T.update(.05); out.tithe={ess:T.run.ess,sack:tt.sack};
     const e0=T.run.ess; T.hurt(tt,1e7); out.titheBack=T.run.ess-e0;
     /* the Bellfather tolls: wards near it reel and do nothing */
@@ -81,8 +86,10 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.relit,'the candle comes back when the snuff wears off');
   ok(r.arrive.drained===8&&r.arrive.alive,'at the lamp it drains 8 oil and the run goes on',r.arrive);
   ok(r.relic===1&&r.heralds===1,'slain, it pays a relic',[r.relic,r.heralds]);
-  ok(r.tithe.ess===94&&r.tithe.sack===6,'the Tithe-taker takes 3 essence a second into its sack',r.tithe);
-  ok(r.titheBack===9,'slain, its sack pays back half again',r.titheBack);
+  ok(r.tithe.ess===96&&r.tithe.sack===4,'the Tithe-taker takes 2 essence a second into its sack while it walks in your light',r.tithe);
+  ok(r.titheDark===0,'in the dark it takes nothing',r.titheDark);
+  ok(r.gate.marked&&r.gate.same,'the rift it will come from is marked, and that is where it climbs out',r.gate);
+  ok(r.titheBack===6,'slain, its sack pays back half again',r.titheBack);
   ok(r.daze.t>1.9&&r.daze.shotsWhileDazed===0,'the Bellfather’s toll leaves the wards near it reeling, doing nothing',r.daze);
   ok(r.bellRing,'for the Bellringer, its toll is a ring that hears');
   ok(!errs.length,'no page errors',errs);
