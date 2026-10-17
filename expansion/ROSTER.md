@@ -13,9 +13,9 @@ Everything below is a proposal. The bold calls are made so there's something to 
   - Unfolded and on wide screens they sit in one row of five.
   - In short landscape they're a single row that scrolls sideways.
 - **Tap a card** and it lifts: lamplight sweeps across the portrait, and the kit's wards, rites and "plays like" line appear beneath. **Descend as …** begins the run. Tapping another card switches; nothing jumps.
-- **Locked kits** are a figure in the dark: the silhouette with one detail catching light, set by each character below. Underneath is the deed in tallow and, if the kit has one, its Ember Hall cost. Tapping one says the deed. It never starts a run.
+- **Locked kits** are a figure in the dark: the silhouette with one detail catching light, set by each character below. Underneath, in tallow, is the deed (Whaler, Occultist) or the Ember Hall cost (Galvanist 70, Bellringer 110). Tapping one says the deed. It never starts a run.
 - **The Grimoire's Kits tab** shows the same portrait in place of the letter seal, with the backstory below.
-- **The reveal** (part 1): when a deed is done during a run, the end-of-run screen shows that portrait dark, then floods it with lamplight. Its name, its title, the deed and the reveal line follow.
+- **The reveal** (part 1): when a deed is done during a run, or a kit is bought in the Ember Hall, the end-of-run screen shows that portrait dark, then floods it with lamplight. Its name, its title, the deed and the reveal line follow.
 
 ---
 
@@ -48,9 +48,16 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
 ### The Occultist: the Nameless
 *"It gave its name to something below, and got this in return."*
 - **Who:** nobody remembers who it was, not even itself. It paid its name for the right to bind what climbs the stair. **Bold call:** it stays nameless, and the card says *The Nameless* where the others have names.
-- **Portrait:** a deep hood and a long robe gone green at the hem, with no face. Inside the hood is darkness and two pinpricks of violet. A skull candle burns on bones in one hand. **The eyes of its bound things are inside the hood**, peering out of the dark where a face should be: a Watcher's great pale eye, a Gnasher's red slits, two or three more, glossy and wet (Gemini: eyes floating around the robe clutter a small card). Two stay outside, as Criss asked in #36: one large pale eye low in the dark at its side, and one above its shoulder, few and big enough to read. **The eyes move.** That's the one animated detail besides Voss's arc (a slow drift; Lite freezes it).
+- **Portrait:** a deep hood and a long robe gone green at the hem, with no face. Inside the hood is darkness and two pinpricks of violet. A skull candle burns on bones in one hand. **The hood fills with what you have bound.** On a fresh save it holds only two violet pinpricks. Every kind of horror you bind, on any run with any kit, adds its own eyes inside the hood, for good, peering out of the dark where a face should be (Criss: a reason to play again):
+  - **Watcher:** one great pale eye, glossy, in the middle.
+  - **Gnasher:** two red slits, low.
+  - **Ichor Wretch:** a cluster of small green-yellow eyes, wet, to one side.
+  - **Shrieker:** two wide violet eyes, ringed white, that never blink.
+  - **The Drowned Choirmaster:** two drowned blue-white eyes that weep water down the inside of the hood.
+  - **The Keeper Below:** one huge red eye that opens last, behind all the others, and fills the hood. Bind it once and the Nameless looks finished.
+  The Galvanist's captures count, since a caught thing is held too. **The eyes move:** a slow drift, each kind at its own pace, and they glance toward the card you're choosing. That's the one animated detail besides Voss's arc (Lite freezes them). The roster card and the Grimoire say **"Eyes in the hood: 3 of 6"**, so there's always one more to go and find.
 - **Light source:** the corpse candle, a sickly green-white, and the violet of madness (`--madness`).
-- **Locked:** only the eyes, glinting inside a hood you can't see.
+- **Locked:** only the eyes you've already bound (or the two violet pinpricks), glinting inside a hood you can't see.
 - **Deed (as now):** break a wave with your madness at Slipping or deeper.
 - **Reveal line:** *Something below hears it ask, and answers.*
 - **Plays like:** *Madness is the price, and the weapon.*
@@ -61,7 +68,7 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
 - **Portrait:** a thin man in a scorched waistcoat, sleeves rolled, round smoked-glass goggles pushed up on his forehead. His hair stands up from static, and his grin is too wide. A bandolier of Leyden jars glows faintly blue across his chest, and a coil of copper wraps his left forearm to the fingertips. Two copper electrodes are bolted to his high collar, and **a blue arc jumps between them across his throat**. That arc lights him: a violent blue-white from below, on his goggles and his grin (Gemini: a spark at the fingertips is a few pixels under a thumb). Burn marks cover his hands.
 - **Light source:** the collar arc, blue-white, flickering. It's the one portrait whose light flickers (Lite: steady).
 - **Locked:** the jars' faint blue and the arc at the collar, with a man-shaped dark around them.
-- **Deed (new, proposed, revised):** *light a chain of five candles, each lit only through the one before it, back to the lamp.* His whole kit is a circuit that must reach the lamp. The Lamplighter (open from the start) and the Whaler build these chains already, so it needs no lucky drop. Counting candles, not tiles: the lamp sits at (6,7), so no tile is more than about 9 from it, and Gemini caught that a 12-tile deed couldn't be done. This replaces "three in salt with one Coil bolt", which Gemini rightly called double luck (a Coil gift, then salt). The Ember Hall cost (70) stays as the other way in.
+- **Unlock:** the Ember Hall, 70 embers (Criss: Ember Hall only, so there's a reason to keep playing).
 - **Reveal line:** *The circuit closes. Somewhere below, a man laughs.*
 - **Plays like:** *Wire the dark; don't let it run hot.*
 
@@ -71,7 +78,7 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
 - **Portrait:** a small woman in a drowned church-warden's cloak. A strip of linen is bound over her eyes, stained at the edges. She holds a hand bell up near her ear, and its clapper is cracked. Her head is tilted, listening. Bell rope is wrapped around her wrists like bandages. **There is no light on her at all.** She's drawn in **pale sound-rings**, as the game draws a Toll: bone-white outlines where the ring touches cloak, cheek and bell. Her body is a faint slate mass (`#101418`), never pure black, so the rings have a human form to trace and the card never looks blank on an OLED screen (Gemini). She's the one portrait drawn by echo instead of light.
 - **Light source:** none. Bone outlines over a slate shape.
 - **Locked:** a single faint ring expanding over nothing.
-- **Deed (new, proposed):** *kill ten Shades or Stalkers in one descent while they're unseen* (with Hook Traps, the Grasping Dead or a censer: anything that strikes what the light doesn't show). You learn to fight what you can't see before she arrives. Every kit can do it from the start: the Lamplighter and Whaler begin with Hook Traps, and the Occultist with the Grasping Dead. The Ember Hall cost (110) stays as the other way in. (Gemini proposed "survive the dark answering", but Noise only exists in her own kit, so nobody could earn her that way.)
+- **Unlock:** the Ember Hall, 110 embers (Criss: Ember Hall only).
 - **Reveal line:** *A bell rings under the water. She heard you.*
 - **Plays like:** *Light lets you build; sound lets you see.*
 
@@ -92,7 +99,7 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
 
 1. The end-of-run box (won or lost) shows, before its stats, **one reveal per kit unlocked this run**.
 2. The portrait shows dark, in its locked version. Over 1.2 s the lit version fades up from the light source outward: a radial wipe from the lantern, flame, candle or spark. For Agathe Vell, a ring sweeps out and draws her.
-3. Then come her name and the kit's title in `--f-display`, the deed in small caps, and the reveal line in italics.
+3. Then come the name and the kit's title in `--f-display`, how it was earned (the deed, or "Bought in the Ember Hall") in small caps, and the reveal line in italics.
 4. **Any tap snaps it to the finished card at once** (Gemini: never hold someone who wants to descend again), and a second tap continues. Both on `click` (rule 5). It shows **regardless of the tip setting**, since it's a reward. Reduce motion makes it a plain fade.
 
 ---
@@ -104,7 +111,7 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
 - **Rule 18:** Lite and reduce-motion paths as above.
 - **Rule 23:** a "How the dark works" line ("**The Roster.** Five went down the stair the night Saltmouth drowned. …"), a tip the first time the roster opens with a locked card, and the Grimoire's Kits tab shows portraits and backstories. New deeds get the existing "A deed is done" tip.
 - **Rule 24:** dev mode shows every portrait lit and every backstory, and records nothing.
-- **Saves:** no save shape changes for the roster. The two new deeds add keys to the existing deed list. A save that already has the Galvanist or Bellringer keeps them.
+- **Saves:** `ll-codex` gains a `bound` list (kinds of horror ever bound or caught), read like its other lists, so an old or damaged codex just starts it empty. Nothing else changes. Dev mode fills the hood while it's on and saves none of it (rule 24).
 - **Devices:** Fold portrait (~412×860), Fold landscape (~915×356), unfolded (~832×694) and the iPhone sizes, all in `devices.test.js`.
 
 ---
@@ -113,14 +120,12 @@ Each portrait is painted the way the creatures are: in unit space, "3D in the 2D
 
 1. **This PR:** the design, reviewed by Gemini, settled by Criss.
 2. **Roster PR:** `PORTRAIT_ART` for all five, the roster screen in place of the kit modal, and the Grimoire Kits portraits. Comes with tests and screenshots at the device sizes.
-3. **Reveal PR:** the end-of-run reveal and the two new deeds (if Criss takes them).
+3. **Reveal PR:** the end-of-run reveal, and the same reveal when a kit is bought in the Ember Hall.
 
 ---
 
 ## 7. Open questions (for Gemini and Criss)
 
-Settled with Gemini: names and Saltmouth stay; light at chest height; Agathe gets a slate body under her rings; the reveal skips on a tap.
-
-For Criss:
-1. **New deeds** for the Galvanist (a chain of five candles back to the lamp) and the Bellringer (ten Shades or Stalkers killed unseen in one descent), or keep both Ember Hall only?
-2. **The Nameless's eyes:** mostly inside the hood (Gemini), with two outside as in #36. Or all inside?
+Settled:
+- **With Gemini:** names and Saltmouth stay; every light sits at chest height; Agathe gets a slate body under her rings; the reveal skips on a tap; a chain is counted in candles, not tiles.
+- **By Criss:** the Galvanist and Bellringer stay **Ember Hall unlocks**, with no new deeds. The Nameless's eyes are open to better ideas, so the hood now fills with the eyes of every kind of horror you've bound across all your runs.
