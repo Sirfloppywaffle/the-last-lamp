@@ -68,6 +68,15 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* for the Bellringer, its toll is a ring: it hears what it touches */
     T.newRun('bellringer',0); T.run.floor=1; T.beginFloor(null); T.setP(false); T.startWave(); T.F.queue=[];
     const bf2=T.spawnFoe('bellfather',0,4); bf2.spawnT=0; bf2.hp=bf2.max=1e6; bf2.bellT=0; T.update(.05); out.bellRing=T.F.tolls.length>0;
+    /* no Herald can be held forever: re-stunned every 0.9s (a fast harpoon with Undertow), it still breaks free and walks */
+    fresh(1); T.startWave(); T.F.queue=[]; const hz=T.spawnFoe('tithetaker',0,2); hz.spawnT=0; hz.hp=hz.max=1e6;
+    let free=0, cd=0, sawFx=false; const hd0=hz.d;
+    for(let i=0;i<400;i++){cd-=.05; if(cd<=0){hz.stunT=Math.max(hz.stunT,1); cd=.9;} T.update(.05); if(hz.freeT>0)free++; if(T.F.fx.some(f=>f.txt==='breaks free'))sawFx=true;}
+    out.held={moved:+(hz.d-hd0).toFixed(2),freed:free>0,fx:sawFx};
+    /* a plain creature can still be held */
+    const sk=T.spawnFoe('skitter',0,2); sk.spawnT=0; sk.hp=sk.max=1e6; const sd0=sk.d; cd=0;
+    for(let i=0;i<200;i++){cd-=.05; if(cd<=0){sk.stunT=Math.max(sk.stunT,1); cd=.9;} T.update(.05);}
+    out.skHeld=+(sk.d-sd0).toFixed(2);
     T.render();
     out.lore=!!document.body&&true;
     return out;});
@@ -92,6 +101,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.titheBack===6,'slain, its sack pays back half again',r.titheBack);
   ok(r.daze.t>1.9&&r.daze.shotsWhileDazed===0,'the Bellfather’s toll leaves the wards near it reeling, doing nothing',r.daze);
   ok(r.bellRing,'for the Bellringer, its toll is a ring that hears');
+  ok(r.held.freed&&r.held.fx&&r.held.moved>1.5,'no Herald can be held forever: it breaks free and walks on',r.held);
+  ok(r.skHeld===0,'an ordinary creature can still be held',r.skHeld);
   ok(!errs.length,'no page errors',errs);
   await b.close();
   if(fails.length){console.log('FAIL\n- '+fails.join('\n- ')); process.exit(1);} console.log('herald ok');
