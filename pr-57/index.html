@@ -417,7 +417,7 @@ input[type=range]::-moz-range-track {
         <li><b>Call early.</b> Once a wave has finished arriving, you can call the next one while stragglers still walk, for bonus essence.</li>
         <li><b>Binding.</b> Some creatures leave a violet sigil when they die. Tap it before it fades and that creature joins your roster. Bound horrors are placed like wards and hit far harder. Slay the Keeper Below and its soul lingers longer than most. Bind it and it fights for you on the last floor. The Galvanist binds nothing by ritual: he captures with his Grounding Anchor instead.</li>
         <li><b>Forks.</b> On some floors the stair splits. They take the darker way, and only light you cast counts, never the lamp's. A gold chevron at the fork shows where they will go. Shades and Stalkers do the opposite and hunt your light. Gnashers and bosses keep the main way. A Weir built on the fork shuts one way; flip it between waves. Watchers fly over it, and a Behemoth breaks it. On these floors you also hold the Will-o’-Wisp: tap a way at a fork and, for eight seconds, everything but a boss follows it there.</li>
-        <li><b>Heralds.</b> Some floors send a Herald: a named terror in one wave, shown on the strip above the board in the break before it comes. It drains 8 oil if it reaches the lamp, but it is no boss and never ends the run by itself. Kill it and it pays a relic. Floors two to four each send one, and a descent never meets the same one twice. The Last Keeper carries a lamp of its own, and every candle it passes goes out for 6.5 seconds (a Tuning Fork falls silent). The Tithe-taker takes 2 essence a second while it walks in your light; kill it and the sack bursts, paying it all back and half again. In the break before a Herald's wave, a red ring marks the rift it will climb out of. The Bellfather strikes its great bell every 5 seconds, and wards within 2.2 tiles reel and do nothing for 2 seconds.</li>
+        <li><b>Heralds.</b> Some floors send a Herald: a named terror in one wave, shown on the strip above the board in the break before it comes. It drains 8 oil if it reaches the lamp, but it is no boss and never ends the run by itself. Kill it and it pays a relic. Floors two to four each send one, and a descent never meets the same one twice. The Last Keeper carries a lamp of its own, and every candle it passes goes out for 6.5 seconds (a Tuning Fork falls silent). The Tithe-taker takes 2 essence a second while it walks in your light; kill it and the sack bursts, paying it all back and half again. In the break before a Herald's wave, a red ring marks the rift it will climb out of. The Bellfather strikes its great bell every 5 seconds, and wards within 2.2 tiles reel and do nothing for 2 seconds. No Herald can be held for long: after 3 seconds stunned or pinned it breaks free, and shrugs off every hold for 3 seconds.</li>
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
         <li><b>Wards.</b> Your kit names the wards you start with: Candles, Harpoons, Salt, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, the Hex Effigy that makes everything near it take more damage, and its own. The Bone Chime, Tar Censer, Galvanic Coil and Whaling Gun are found on the stair: as gifts, from merchants, or in a pack. Only the Bellringer starts with the Chime.</li>
@@ -2039,6 +2039,16 @@ function updateHeralds(dt){
     for(const t of F.towers){if(t.kind!=='ward'||(t.type!=='candle'&&t.type!=='fork')||t.snuffT>0||dst(t.x,t.y,e.x,e.y)>SNUFF_R)continue;
       t.snuffT=SNUFF_T; F.fx.push({k:'snuff',x:t.x,y:t.y-.35,t:0,dur:1.4}); AUDIO.snuff(); F.L=lightsNow();}}
 }
+/* a Herald held too long breaks free: it shrugs off stuns and pins for a while, then can be held again.
+   Called before the stun and pin checks, so a Herald that breaks free walks on this same frame */
+function heraldHeld(e,dt){
+  if(e.freeT>0){e.freeT-=dt; e.stunT=0; e.pinT=0; return;}
+  if(e.stunT>0||e.pinT>0){e.heldT=(e.heldT||0)+dt;
+    if(e.heldT>=HELD_MAX){e.heldT=0; e.freeT=HELD_FREE; e.stunT=0; e.pinT=0;
+      F.fx.push({k:'ring',x:e.x,y:e.y,r0:.2,r1:1.1,t:0,dur:.5,col:'200,80,70'}); F.fx.push({k:'float',x:e.x,y:e.y-.8,txt:'breaks free',col:'#E0A090',t:0,dur:1.2,size:.24}); F.shake=Math.max(F.shake,.08);}
+    return;}
+  e.heldT=Math.max(0,(e.heldT||0)-HELD_EASE*dt);
+}
 /* an Arc Lamp shocks everything in its light each time it comes back on */
 function updateArcLamps(){
   if(kit()!=='galvanist')return;
@@ -2397,7 +2407,10 @@ const HERALDS={1:['lastkeeper','tithetaker','bellfather'],2:['lastkeeper','tithe
   /* the Tithe-taker takes essence every second it lives, into its sack; killed, the sack bursts and pays it back with interest */
   TITHE_TAKE=2, TITHE_BACK=1.5,
   /* the Bellfather tolls its great bell every few seconds; wards near it reel and do nothing for a moment */
-  BELLF_EVERY=5, BELLF_R=2.2, BELLF_DAZE=2;
+  BELLF_EVERY=5, BELLF_R=2.2, BELLF_DAZE=2,
+  /* no Herald can be held forever: HELD_MAX seconds stunned or pinned (easing HELD_EASE a second while it walks) and it
+     breaks free, and shrugs off every hold for HELD_FREE seconds */
+  HELD_MAX=3, HELD_EASE=1, HELD_FREE=3;
 function heraldDraw(fi){
   const pool=HERALDS[fi]; if(!pool)return null;
   const slots=FLOORS[fi].waves.map((w,i)=>i).filter(i=>!fixedWave(FLOORS[fi].waves[i])&&i>0);
@@ -3758,7 +3771,7 @@ function updateFoes(dt){
       if(h.dead||h.dark||h.tethered!==e||!hs||dst(e.x,e.y,h.x,h.y)>hs.range+hs.leash){e.tetherBy=null; e.tetherT=0;}
       else{const t0=e.tetherT; e.tetherT+=dt; slow=Math.max(slow,Math.min(hs.tMax,TETHER_RATE*e.tetherT));
         /* Into the Deep: in her water the line holds it still, for a while */
-        if(hasOff('deep')&&e.tetherT<3&&inWater(e)&&!e.def.boss&&!e.def.heavy)slow=1;
+        if(hasOff('deep')&&e.tetherT<3&&inWater(e)&&!e.def.boss&&!e.def.heavy&&!(e.freeT>0))slow=1;
         if(hs.haul&&!e.def.boss&&!e.def.heavy&&Math.floor(e.tetherT/HAUL_EVERY)>Math.floor(t0/HAUL_EVERY)){
           e.d=Math.max(0,e.d-1); const q=posAt(F.paths[e.gate],e.d); e.x=q[0]; e.y=q[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y);
           F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:.5,t:0,dur:.3,col:'201,194,178'});}}}
@@ -3768,6 +3781,7 @@ function updateFoes(dt){
     if(e.haulT>0){const step=Math.min(e.haulLeft,e.haulLeft*dt/e.haulT); e.haulT-=dt; e.haulLeft-=step; e.d=Math.max(0,e.d-step);
       const q=posAt(F.paths[e.gate],e.d); e.x=q[0]; e.y=q[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y); continue;}
     if(e.tangleT>0)e.tangleT-=dt;
+    if(e.def.herald)heraldHeld(e,dt);
     if(e.pinT>0){e.pinT-=dt; continue;}
     if(e.stunT>0){e.stunT-=dt; continue;}
 
@@ -6543,9 +6557,9 @@ document.addEventListener('click',ev=>{if(!$('#relTip').hidden&&!ev.target.close
 
 /* what the Grimoire says about each creature, beyond its numbers */
 const LORE={
-  tithetaker:'A Herald. A bloated collector with a ledger and a sack. While it walks in your light it takes 2 essence a second from you, into its sack. Kill it and the sack bursts: everything it took comes back, and half again. If it reaches the lamp, the sack goes with it. It drains 8 oil there, but it is no boss.',
-  bellfather:'A Herald. A hulking, hooded thing with the drowned church’s great bell on its back. Every 5 seconds it strikes it, and every ward within 2.2 tiles reels and does nothing for 2 seconds. It drains 8 oil at the lamp, but it is no boss. For the Bellringer its toll is a ring like her own: everything it touches is heard.',
-  lastkeeper:'A Herald. A dead lamp-tender who still walks its round, carrying the only lamp it will allow: every candle it passes goes out for a while, every Tuning Fork falls silent, and what they held up goes dark. It drains 8 oil if it reaches your lamp, but it is no boss. Kill it and it pays a relic.',
+  tithetaker:'A Herald. A bloated collector with a ledger and a sack. While it walks in your light it takes 2 essence a second from you, into its sack. Kill it and the sack bursts: everything it took comes back, and half again. If it reaches the lamp, the sack goes with it. It drains 8 oil there, but it is no boss. No stun or hold keeps it for long.',
+  bellfather:'A Herald. A hulking, hooded thing with the drowned church’s great bell on its back. Every 5 seconds it strikes it, and every ward within 2.2 tiles reels and does nothing for 2 seconds. It drains 8 oil at the lamp, but it is no boss. For the Bellringer its toll is a ring like her own: everything it touches is heard. No stun or hold keeps it for long.',
+  lastkeeper:'A Herald. A dead lamp-tender who still walks its round, carrying the only lamp it will allow: every candle it passes goes out for a while, every Tuning Fork falls silent, and what they held up goes dark. It drains 8 oil if it reaches your lamp, but it is no boss. Kill it and it pays a relic. No stun or hold keeps it for long.',
   crawler:'The most common thing on the stair. Slow and soft, and never alone.',
   skitter:'Small and quick. They come in swarms and slip past slow wards.',
   gnasher:'Slow and hard to kill, and it drains 2 oil if it arrives. At a fork it never leaves the main way.',
@@ -6765,7 +6779,7 @@ const TIPS={
     text:'The lamp now tolls on its own, a quieter heartbeat that reaches 5 tiles and makes no Noise, and a ring closes on it before each beat. It hears only the ordinary dark, and cracks nothing. Tap Toll as the ring lands, when the button glows, for a Perfect Toll: half again as far, two cracks, and half the Noise.',
     target:()=>coachBoard(F.lx,F.ly,1.2)},
   herald:{when:()=>F.phase==='build'&&!!heraldNext(),title:'A Herald comes',
-    text:'A Herald walks in the next wave: its name is on the strip, and a red ring marks the rift it will climb out of, so build for it there. Each is a named terror with its own way of hurting you (the Grimoire has them once met), and drains 8 oil if it reaches the lamp, but none is a boss. Kill it and it pays a relic.',
+    text:'A Herald walks in the next wave: its name is on the strip, and a red ring marks the rift it will climb out of, so build for it there. Each is a named terror with its own way of hurting you (the Grimoire has them once met), and drains 8 oil if it reaches the lamp, but none is a boss. Stuns and holds slow it, but none keeps it for long: held 3 seconds, it breaks free for a while. Kill it and it pays a relic.',
     target:()=>coachEl('#preview')},
   tuningfork:{when:()=>bellKit()&&F.phase==='build'&&run.wards.includes('fork'),title:'Tuning Forks',
     text:'She builds no candles. A Tuning Fork gives no light: it hums. It stands within 5 tiles of the lamp or 3.5 of another fork, lit or dark, and you can build inside its hum in the dark. But wards there are blind: they strike only what is heard. Keep the bell ringing.',
