@@ -98,6 +98,10 @@ if D.get('PATRONS'):
 w("\n## Omens (on stair doors)\n\n| Key | Name | Effect |\n|---|---|---|")
 for k,v in D['OMENS'].items(): w("| `%s` | %s | %s |"%(k,v['n'],esc(v['d'])))
 
+if 'TRIALS' in D:
+  w("\n## Trials (on stair doors, floors 2 and 3)\n\nOne door on each fork into floor %s carries a Trial; passing it pays a relic. Rationed allows %s wards beside the path; the Hallowed Ground marks %s patches of up to %s tiles.\n\n| Key | Name | Rule |\n|---|---|---|"%(' or '.join(str(f+1) for f in D['TRIAL_FLOORS']),D['RATION_MAX'],D['HALLOW_PATCHES'],D['HALLOW_SIZE']))
+  for k,v in D['TRIALS'].items(): w("| `%s` | %s | %s |"%(k,esc(v['n']),esc(v['d'])))
+
 w("\n## Rooms (behind stair doors)\n\n| Key | Name | Tag | Description |\n|---|---|---|---|")
 for k,v in D['ROOMS'].items(): w("| `%s` | %s | %s | %s |"%(k,esc(v['n']),v['tag'],esc(v['d'])))
 
