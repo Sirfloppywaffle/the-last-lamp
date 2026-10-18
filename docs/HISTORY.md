@@ -3,6 +3,7 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **Fix: the Drowned Mother's rising water never skips a rise** (#62, the flaky "Watched: the water rises one tile" check). Her two flooded stretches can stand end to end, and when one was told to grow into the other's tile, the wave began and no new tile flooded. That was about one rise in 25, which is also how often the check failed on `main`. A stretch now only grows into a dry tile, trying its far end, then its near end, then the other stretch. A new test pins the end-to-end case. No balance changes. (Claude)
 
 ## v17.0 — Trials
 A door on the way to floors two and three can carry a Trial, a floor with a rule that forces a different build, and a kit you earn on a run now rises out of the dark on the end screen.

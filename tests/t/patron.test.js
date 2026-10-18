@@ -62,6 +62,16 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(water.cap===14,'the rising water stops at 14 tiles',water.cap);
   ok(water.under&&water.inW&&!water.seen&&water.seenFlare,'Claimed: unseen under water, found by a Flare',water);
 
+  /* every rise adds a tile. Two stretches standing end to end used to swallow one (about 1 run in 25 of the check above) */
+  const rise=await p.evaluate(()=>{const T=__t, out={}; window.devNoDark=false;
+    const fresh=()=>{T.newRun('lamplighter',0); T.setP(false); T.takeOffer('milk'); T.addAtt('mother',2);};
+    fresh(); T.run.water={floor:0,str:[[0,15,17],[0,12,14]]}; T.waterSync();
+    out.steps=[]; for(let i=0;i<6;i++){const a=T.F.water.size; T.waterRise(); out.steps.push(T.F.water.size-a);}
+    out.bad=0; for(let i=0;i<300;i++){fresh(); const a=T.F.water.size; T.waterRise(); if(T.F.water.size-a!==1)out.bad++;}
+    return out;});
+  ok(rise.steps.every(n=>n===1),'stretches end to end: every rise still floods a new tile',rise.steps);
+  ok(rise.bad===0,'seeded at random, no rise is lost',rise.bad);
+
   /* every offering does what it says */
   const fx=await p.evaluate(()=>{const T=__t, out={}; window.devNoDark=false;
     const fresh=(k)=>{T.newRun(k,0); T.setP(false); T.run.ess=9999; T.addAtt('mother',1); return T.run.water.str[0];};
