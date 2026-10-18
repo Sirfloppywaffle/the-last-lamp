@@ -450,6 +450,15 @@ Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles;
 | `thickdark` | Thick Dark | Candles shine half a tile less. |
 | `starved` | Starved | Half the usual essence to start. The gift after it offers one more choice. |
 
+## Trials (on stair doors, floors 2 and 3)
+
+One door on each fork into floor 2 or 3 carries a Trial; passing it pays a relic. Rationed allows 6 wards beside the path; the Hallowed Ground marks 4 patches of up to 4 tiles.
+
+| Key | Name | Rule |
+|---|---|---|
+| `rationed` | Rationed | Six wards at most beside the path. What lies on the path doesn’t count, and neither do horrors. Upgrades are where the power goes. |
+| `hallowed` | The Hallowed Ground | You build only on four marked patches of ground, lit or dark; nothing stands anywhere else beside the path. Nothing there goes dark, and a candle there burns without the lamp. |
+
 ## Rooms (behind stair doors)
 
 | Key | Name | Tag | Description |
