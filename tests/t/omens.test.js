@@ -33,6 +33,9 @@ const {chromium}=require('playwright');
   await p.reload(); await p.waitForTimeout(300);
   await p.click('#hallBtn'); await p.waitForTimeout(150);
   await p.evaluate(()=>document.querySelectorAll('#mChoices .choice')[0].click()); await p.waitForTimeout(150);
+  // buying a kit now opens its reveal first (#36): tap it to the end, then on, and the Hall comes back
+  for(let i=0;i<2&&await p.$('#urvBox');i++){await p.waitForTimeout(450); await p.click('#urvBox');}
+  await p.waitForTimeout(150);
   const hall=await p.evaluate(()=>({note:document.querySelector('#mBody').innerText.slice(-60),first:document.querySelector('#mChoices .choice .tg').textContent}));
   await p.evaluate(()=>[...document.querySelectorAll('#mActions button')].find(b=>b.textContent==='Close').click());
   await p.click('#descendBtn'); await p.waitForTimeout(150);
