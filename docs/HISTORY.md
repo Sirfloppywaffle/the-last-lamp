@@ -4,7 +4,7 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
-## v17.1 — Rising Water
+## v17.1.1 — Rising Water
 The Drowned Mother's water now rises on every wave it should, instead of sitting still about one wave in 25.
 - **Fix: the Drowned Mother's rising water never skips a rise** (#62, the flaky "Watched: the water rises one tile" check). Her two flooded stretches can stand end to end, and when one was told to grow into the other's tile, the wave began and no new tile flooded. That was about one rise in 25, which is also how often the check failed on `main`. A stretch now only grows into a dry tile, trying its far end, then its near end, then the other stretch. A new test pins the end-to-end case. No balance changes. (Claude)
 
