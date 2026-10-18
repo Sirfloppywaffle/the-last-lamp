@@ -1058,11 +1058,19 @@ function waterSync(){
       F.waterPts.push(c+.5,r+.5);
     }}
 }
-/* Watched: as each wave begins the flood creeps one tile further up the path, until FLOOD_MAX tiles stand in water */
+/* Watched: as each wave begins the flood creeps one tile further up the path, until FLOOD_MAX tiles stand in water.
+   A stretch may only grow into a tile that is still dry. Two stretches can stand end to end, and growing one into the
+   other's tile used to add nothing, so about one rise in 25 did nothing at all */
 function waterRise(){
   if(patTier('mother')<2||!run.water||run.water.floor!==run.floor||!run.water.str.length||F.water.size>=FLOOD_MAX)return;
-  const s=pick(run.water.str), P=F.paths[s[0]];
-  if(s[2]+1<=Math.floor(P.len)-3)s[2]++; else if(s[1]>1)s[1]--; else return;
+  const dry=(P,d)=>{const p=posAt(P,d), c=Math.floor(p[0]), r=Math.floor(p[1]); return !F.water.has(c+','+r)&&!(c===F.lampC&&r===F.lampR);};
+  /* a random stretch first, then the others; each tries its far end, then its near end */
+  const first=pick(run.water.str), order=[first].concat(run.water.str.filter(x=>x!==first));
+  let grew=false;
+  for(const s of order){const P=F.paths[s[0]]; if(!P)continue;
+    if(s[2]+1<=Math.floor(P.len)-3&&dry(P,s[2]+1)){s[2]++; grew=true; break;}
+    if(s[1]>1&&dry(P,s[1]-1)){s[1]--; grew=true; break;}}
+  if(!grew)return;
   const before=new Set(F.water.keys());
   waterSync();
   for(const k of F.water.keys())if(!before.has(k)){const [c,r]=k.split(',').map(Number); F.fx.push({k:'ring',x:c+.5,y:r+.5,r0:.1,r1:.7,t:0,dur:.8,col:'106,169,159'});}
