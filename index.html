@@ -2334,7 +2334,7 @@ function revealKit(k,how,done,more){
   if(!K||!P||!lock||!lit){done(); return;}
   showModal({title:how==='hall'?'The Ember Hall':'A deed is done',
     html:'<div class="urv" id="urvBox"><canvas class="urv-port" id="urvCv" width="'+PORT_W+'" height="'+PORT_H+'"></canvas><div class="urv-txt" id="urvTxt"><span class="urv-kit">'+K.n+'</span><b class="urv-who">'+(K.who||K.n)+'</b><span class="urv-how">'+(how==='hall'?'Bought in the Ember Hall':K.deed||'')+'</span><i class="urv-line">'+(R.reveal||'')+'</i></div></div>',
-    actions:[{label:'Skip',primary:true,fn:()=>step()}]});
+    actions:[{label:'Skip',primary:true,fn:()=>{}}]});
   const cv=$('#urvCv'), c=cv.getContext('2d'), off=document.createElement('canvas'); off.width=PORT_W; off.height=PORT_H; const o=off.getContext('2d');
   const u=PORT_W/2, px=PORT_W/2+P.light[0]*u, py=PORT_H/2+P.light[1]*u, rmax=Math.hypot(Math.max(px,PORT_W-px),Math.max(py,PORT_H-py))*1.1, ms=reduceMotion?600:REVEAL_MS;
   const paint=p=>{
@@ -2357,15 +2357,16 @@ function revealKit(k,how,done,more){
   function step(){
     if(state==='play'){snapAt=performance.now(); finish(); return;}
     if(performance.now()-snapAt<350)return;
-    state='gone'; done();
+    state='gone'; box.removeEventListener('click',onTap); done();
   }
   const tick=now=>{
     if(state!=='play')return;
     if(!document.getElementById('urvCv')){state='gone'; return;}
-    const p=Math.max(0,Math.min(1,(now-t0)/ms)); paint(p);
+    const p=Math.max(0,Math.min(1,(now-t0)/ms)); paint(p); if(p>=.55){const t=$('#urvTxt'); if(t)t.classList.add('on');}
     if(p<1)raf=requestAnimationFrame(tick); else finish();
   };
-  $('#urvBox').addEventListener('click',step);
+  const box=$('#modal .box'), onTap=ev=>{if(!document.getElementById('urvBox')){box.removeEventListener('click',onTap); return;} if(ev.timeStamp<t0)return; /* the click that opened the reveal (a Hall purchase) is still bubbling */ if(state!=='gone')step();};
+  box.addEventListener('click',onTap);
   paint(0); raf=requestAnimationFrame(tick);
 }
 function revealKits(list,how,done){

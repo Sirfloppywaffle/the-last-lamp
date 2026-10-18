@@ -50,6 +50,25 @@ const file='file://'+process.argv[2], out=process.argv[3];
   ok(!s.reveal&&s.title==='Morning'&&!s.hidden,'then the end screen follows');
   await p.close();
 
+  // 1b. any tap in the box counts, not just the card; the name is already rising before the light has finished
+  p=await page(412,860);
+  await p.evaluate(()=>{const T=__t; T.newRun('lamplighter'); T.beginFloor(null); T.unlockDeed('whaler'); T.victory();});
+  await p.waitForTimeout(950);
+  s=await state(p);
+  ok(s.reveal&&s.on&&s.btn==='Skip','the name fades in before the light has finished');
+  await p.waitForTimeout(0);
+  await p.evaluate(()=>{window.__r=0; document.querySelector('#modal .box').addEventListener('click',()=>window.__r++);});
+  await p.click('#mTitle');
+  s=await state(p);
+  ok(s.reveal&&s.btn==='Continue','a tap on the title snaps it to the end');
+  await p.waitForTimeout(450); await p.click('#modal .box',{position:{x:6,y:6}});
+  s=await state(p);
+  ok(!s.reveal&&s.title==='Morning','a tap on the empty edge of the box goes on');
+  await p.waitForTimeout(450); await p.click('#modal .box',{position:{x:6,y:6}});
+  s=await state(p);
+  ok(s.title==='Morning'&&!s.hidden,'a stray tap on the end screen does nothing to it');
+  await p.close();
+
   // 2. a lost run: the end screen waits for the reveal, and the Skip button works like a tap
   p=await page(412,860);
   await p.evaluate(()=>{const T=__t; T.newRun('lamplighter'); T.beginFloor(null); T.unlockDeed('whaler'); T.defeat();});
