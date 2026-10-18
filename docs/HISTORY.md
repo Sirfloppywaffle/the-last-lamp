@@ -3,6 +3,9 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+
+## v17.0 — Trials
+A door on the way to floors two and three can carry a Trial, a floor with a rule that forces a different build, and a kit you earn on a run now rises out of the dark on the end screen.
 - **Trials: Rationed and the Hallowed Ground** (#31, Criss's idea: "limiting what wards you can use … or only being able to use certain parts of the map regardless if lit or not"). On the way to floors two and three, one door carries a Trial (never the Deep Stair's door), named on the door with its rule. Take it and the floor plays by that rule; pass it and a relic waits, as after an elite floor. A banner and hint name it as the floor begins, the HUD shows it beside the floor's name, and the pause menu and descent map say it too.
   - **Rationed:** six wards at most beside the path. What lies on the path (salt, traps, Bell Wires, Weirs, the Grasping Dead), the Risen and horrors don't count. The HUD keeps the count (Rationed 4/6), and at six the counted wards in the tray grey out; sell one to build another.
   - **The Hallowed Ground:** four patches marked in chalk, each the ground around one tile of the path (so a patch reaches both sides of it), one always around the lamp. Beside the path you build only there, lit or dark. Nothing on a patch goes dark: a candle there burns without the lamp, a Tuning Fork hums without the lamp's sound, a pylon powers the grid. Wards there still strike only what is seen or heard, so light still matters. The patches are kept with the save and turn with the board.
