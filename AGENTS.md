@@ -109,7 +109,7 @@ You tend **the last lamp** at the bottom of a drowned stair. Things climb out of
 - **Five floors:** the Cistern, the Ossuary, the Drowned Nave, the Throat (the Keeper Below), the Abyssal Heart (the Primordial).
 - **Roguelike layer:**
   - **Kits** choose your starting arsenal.
-  - After each floor comes **the landing**: a gift, then a relic if earned, then **forked stairs** with an **omen** on some doors, then the room behind the chosen door. One door on the way to floors 2 and 3 carries a **Trial** (`TRIALS`: Rationed, the Hallowed Ground), a floor rule that pays a relic when passed. Rooms can be a merchant, shrine, event, rest, reliquary, the **Knucklebones** (Cult of the Lamb's knucklebones against the hooded thing, for essence the stair would burn), or the **deep stair**, which makes the next floor elite.
+  - After each floor comes **the landing**: a gift, then a relic if earned, then **forked stairs** with an **omen** on some doors, then the room behind the chosen door. One door on the way to floors 2 and 3 carries a **Trial** (`TRIALS`: Rationed, the Hallowed Ground, Sealed, One of Each, Bare Hands, Unbranched, the Long Night), a floor rule that pays a relic when passed. Rooms can be a merchant, shrine, event, rest, reliquary, the **Knucklebones** (Cult of the Lamb's knucklebones against the hooded thing, for essence the stair would burn), or the **deep stair**, which makes the next floor elite.
   - **Relics** bend the rules; some are cursed.
   - **Embers**, earned on every run, unlock kits, relic packs and events in the **Ember Hall**.
   - Winning opens **the Deeper Dark**: depths 1–5, each adding a new cruelty.
@@ -130,7 +130,7 @@ Everything lives in one file: CSS, then markup, then one big script inside an II
 | CSS end | `#app.side` = the short-landscape three-column layout; safe-area rules; short-screen modal rules. |
 | Markup | `#app` → `header.hud#hud`, `main.stage#stage` (`canvas#board`, `#preview`, `#banner`, `#hint`, `#bossCard`, `#bossBar`, `#sheet`), `footer.cmdbar#cmdbar` (`#tray`, `#rites`, `#modebar`, `.calls`). Screens: `#title`, `#modal`, `#mapOverlay`. |
 | `data` | `PAL`, `FOES`, `SPAWNABLE`, `WARDS`, `BASE_WARDS`, `GIFT_WARDS`, `HORRORS`, `TREES` (branch upgrades), `TARGETS`, `RITES`, `RELICS`. |
-| `roguelike layer` | `KITS`, `OMENS`, `TRIALS` (floor rules on a door; `run.trial` → `F.trial`; the Hallowed Ground's patches in `run.hallow`, canonical like `FLOORS`, mapped into `F.hallow` by `hallowSync()` in `buildGeometry()`; Rationed's count is `rationN()`), `ROOMS`, `PACTS`, `HALL`, `DEPTHS`, `EVENTS`, `meta()` and `saveMeta()` (Ember Hall progress), `price()`. |
+| `roguelike layer` | `KITS`, `OMENS`, `TRIALS` (floor rules on a door; `run.trial` → `F.trial`; the Hallowed Ground's patches in `run.hallow`, canonical like `FLOORS`, mapped into `F.hallow` by `hallowSync()` in `buildGeometry()`; Rationed's count is `rationN()`; Sealed's two wards in `run.seal`, kept like `run.hallow`; `TRIAL_SPARE` is each kit's light, which no Trial locks or caps; `trialBarred()` marks the tray), `ROOMS`, `PACTS`, `HALL`, `DEPTHS`, `EVENTS`, `meta()` and `saveMeta()` (Ember Hall progress), `price()`. |
 | floors | `FLOORS` (paths, waves, stipend, hue), `COUNT_MUL`/`GAP_MUL`/`DELAY_MUL`, `scaledGroup()`. |
 | `sound` | `AUDIO` (synthesized SFX), `BGM` (procedural music). |
 | `state` | Globals: `run` (the whole run, saved), `F` (the current floor, rebuilt each floor), `sel` (selected tray item), `selTower`, `mode` (rite targeting), `paused`, `speed`, `uid`. |
