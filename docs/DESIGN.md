@@ -619,6 +619,11 @@ Maps (one is drawn as the floor begins, from a bag per floor; a saved floor keep
 
 Stipend **130** essence · 1 gate · hue 358
 
+Maps (one is drawn as the floor begins, from a bag per floor; a saved floor keeps its own):
+
+- **The Gullet**: road 72
+- **The Ribs**: road 63
+
 - Wave 1 · *Swallowed*: 14× Crawler + 6× Shade + 3× Gnasher
   - or *Eyes in the gullet*: 5× Watcher + 10× Crawler + 5× Shade + 1× Gnasher
   - or *The gullet*: 4× Gnasher + 10× Crawler + 4× Shade
@@ -630,6 +635,11 @@ Stipend **130** essence · 1 gate · hue 358
 ### 5. The Abyssal Heart
 
 Stipend **200** essence · 3 gates · hue 275
+
+Maps (one is drawn as the floor begins, from a bag per floor; a saved floor keeps its own):
+
+- **The Three Veins**: road 28, 17, 16
+- **The Whorl**: road 31, 17, 17
 
 - Wave 1 · *The hunt begins*: 4× Ichor Wretch + 4× Abyssal Stalker + 8× Crawler
   - or *Hunters*: 4× Abyssal Stalker + 3× Abyssal Stalker + 6× Crawler + 3× Shade + 2× Gnasher
