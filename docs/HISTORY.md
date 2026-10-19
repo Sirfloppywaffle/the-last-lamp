@@ -3,6 +3,9 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+
+## v18.0.0 — Trials Complete
+All seven Trials are in: five more join Rationed and the Hallowed Ground on the doors to floors two and three, and the Tuning Fork feedback loop and the lit-fork Weir rule are fixed.
 - **Fix: a Weir needs no light** (Criss: the Bellringer couldn't build one, because the fork of the stair was dark and she has no candles). A Weir is a floodgate, not a ward that strikes, so it now stands on its fork lit or dark, for every kit, and stays awake there. Its rules text and placement card say so. A new Bellringer test builds one on a dark fork. No other numbers change. (Claude)
 - **Fix: Tuning Forks no longer ring each other forever** (Criss: two forks "stuck in some kind of feedback loop"). A fork remembered only the last toll it passed on, so two tolls at once (a Toll and a Peal heartbeat) bounced between two forks without end. Every bounce cracked what stood near them again, which shattered whole waves and made two forks, a wire and Peal hold floors alone. Each toll now crosses each fork once. Played headless on floors one and two, the same build held both with no oil lost before the fix, and falls on wave 3 or 4 after it. A new test pins the overlap. No balance changes. (Claude)
 - **Five more Trials** (#31): Sealed, One of Each, Bare Hands, Unbranched and The Long Night join Rationed and the Hallowed Ground on the doors to floors two and three. Each is checked against all five kits.
