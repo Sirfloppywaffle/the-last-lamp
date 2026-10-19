@@ -33,7 +33,7 @@ Every table below is generated from the live code (`index.html`) by `tests/gen-d
 | `boss` | The Keeper Below | 2600 | 0.42 | 99 | 0 | 0.6 | boss, spawner |
 | `stalker` | Abyssal Stalker | 32 | 1.5 | 2 | 8 | 0.26 | veiled |
 | `behemoth` | Trench Behemoth | 420 | 0.35 | 6 | 35 | 0.55 | heavy |
-| `boss2` | The Primordial | 4200 | 0.38 | 99 | 0 | 0.75 | aura, boss, spawner |
+| `boss2` | The Primordial | 3400 | 0.38 | 99 | 0 | 0.75 | aura, boss, spawner |
 | `lastkeeper` | The Last Keeper | 440 | 0.42 | 8 | 40 | 0.52 |  |
 | `tithetaker` | The Tithe-taker | 400 | 0.5 | 8 | 0 | 0.5 |  |
 | `bellfather` | The Bellfather | 520 | 0.36 | 8 | 40 | 0.56 |  |
