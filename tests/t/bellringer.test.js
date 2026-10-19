@@ -117,6 +117,11 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     wave(); hold('crawler',1); T.castRite('toll'); T.update(.05); T.lampToll('peal'); run(.15); T.lampToll('peal');
     let most=0; for(let i=0;i<200&&most<200;i++){T.update(.05); most=Math.max(most,T.F.tolls.length);}
     out.loop={left:T.F.tolls.length,most};
+    /* a Weir needs no light: she has no candles, and the fork of the stair is dark, yet it stands, stays awake and turns walkers */
+    fresh(); {const fk=T.F.forks[0]; out.weirDark={lit:T.buildLit(fk.c,fk.r)};
+      out.weirDark.problem=T.placeProblem({kind:'ward',type:'weir'},fk.c,fk.r);
+      T.setSel({kind:'ward',type:'weir'}); T.tryPlace(fk.c,fk.r); T.setSel(null); T.update(.05);
+      const wt=T.F.towers.find(x=>x.type==='weir'); out.weirDark.built=!!wt; out.weirDark.asleep=wt?wt.dark:null;}
     /* echoes: a toll from the lamp returns off the walls */
     fresh(); wave(); hold('crawler',1); T.castRite('toll'); out.echoes=T.F.tolls.filter(R=>R.echo).length;
     /* footsteps: a crawler unseen in the dark treads red ripples; a Shade makes none */
@@ -215,6 +220,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   if(r.humBuild)ok(r.humWard.type==='harpoon'&&!r.humWard.dark,'a ward built in the dark inside a hum works',r.humWard);
   ok(r.cutFork,'take the first fork away and the second loses the sound');
   ok(r.relay.relayed,'a fork the toll reaches rings it again',r.relay);
+  ok(r.weirDark.lit===false&&r.weirDark.problem===''&&r.weirDark.built&&r.weirDark.asleep===false,'a Weir stands and works on a dark fork',r.weirDark);
   ok(r.loop.left===0,'overlapping tolls between two forks die out',r.loop);
   ok(r.echoes>=1,'a toll from the lamp echoes back off the walls',r.echoes);
   ok(r.steps>0&&r.shadeSteps===0,'unseen crawlers leave footsteps in the dark; Shades make none',[r.steps,r.shadeSteps]);
