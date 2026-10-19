@@ -5,6 +5,14 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 ## Unreleased
 - **Fix: a Weir needs no light** (Criss: the Bellringer couldn't build one, because the fork of the stair was dark and she has no candles). A Weir is a floodgate, not a ward that strikes, so it now stands on its fork lit or dark, for every kit, and stays awake there. Its rules text and placement card say so. A new Bellringer test builds one on a dark fork. No other numbers change. (Claude)
 - **Fix: Tuning Forks no longer ring each other forever** (Criss: two forks "stuck in some kind of feedback loop"). A fork remembered only the last toll it passed on, so two tolls at once (a Toll and a Peal heartbeat) bounced between two forks without end. Every bounce cracked what stood near them again, which shattered whole waves and made two forks, a wire and Peal hold floors alone. Each toll now crosses each fork once. Played headless on floors one and two, the same build held both with no oil lost before the fix, and falls on wave 3 or 4 after it. A new test pins the overlap. No balance changes. (Claude)
+- **Five more Trials** (#31): Sealed, One of Each, Bare Hands, Unbranched and The Long Night join Rationed and the Hallowed Ground on the doors to floors two and three. Each is checked against all five kits.
+  - **Sealed:** two of your wards are locked for the floor (named as it begins, kept with the save). Never your light (candles of every kind, Tuning Forks, pylons, Bell Wires, Try-pots) and never your harpoon.
+  - **One of Each:** each kind of ward stands once; sell it to build it elsewhere. Your light is spared, so candles, forks, pylons, Bell Wires and Try-pots stand as often as you like.
+  - **Bare Hands:** every rite is silent, the Will-o’-Wisp too. The Bellringer keeps her Toll, because it is how she sees.
+  - **Unbranched:** nothing can be upgraded, the lamp included.
+  - **The Long Night:** candles shine half as far, Tuning Forks hum half as wide, the lamp burns a tile smaller. Its door never carries Moonless or Thick Dark.
+  - A ward a Trial bars is now dashed with a lock on its icon, not greyed like one you can't afford (this also fixes the Rationed nit from #66). Silent rites are dashed and read *Silent*.
+  - Tips, rules lines, Grimoire entries, DESIGN, and the developer row lists all seven. No balance changes to existing numbers. (Claude)
 
 ## v17.1.1 — Rising Water
 The Drowned Mother's water now rises on every wave it should, instead of sitting still about one wave in 25.

@@ -458,6 +458,11 @@ One door on each fork into floor 2 or 3 carries a Trial; passing it pays a relic
 |---|---|---|
 | `rationed` | Rationed | Six wards at most beside the path. What lies on the path doesn’t count, and neither do horrors. Upgrades are where the power goes. |
 | `hallowed` | The Hallowed Ground | You build only on four marked patches of ground, lit or dark; nothing stands anywhere else beside the path. Nothing there goes dark, and a candle there burns without the lamp. |
+| `sealed` | Sealed | Two of your wards are locked for the floor. Never your light, and never your harpoon. |
+| `once` | One of Each | Each kind of ward stands only once. What makes your light is spared: build as many of those as you like. |
+| `bare` | Bare Hands | Your rites are silent this floor. Only a Bellringer’s Toll still rings. |
+| `unbranched` | Unbranched | Nothing can be upgraded this floor, not even the lamp. Spend on more wards instead. |
+| `night` | The Long Night | Candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller. |
 
 ## Rooms (behind stair doors)
 
