@@ -59,10 +59,11 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
           const cand={kind:'ward',type:'candle'}; let room=0;
           for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++)if(Math.hypot(c+.5-F.lx,r+.5-F.ly)<=3.7&&!F.pathTiles.has(key(c,r))&&!(c===F.lampC&&r===F.lampR))room++;
           o.room=room;
-          // dead ground: share of the open board more than three tiles from any road
-          const pts=[...F.pathTiles].map(k=>k.split(',').map(Number)); let open=0, far=0;
-          for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++){if(F.pathTiles.has(key(c,r)))continue; open++; if(!pts.some(([x,y])=>Math.hypot(x-c,y-r)<=3))far++;}
-          o.dead=+(far/open).toFixed(2);
+          // empty ground: open tiles more than two tiles from any road. Criss flagged the maps with 25 to 51 of them as
+          // "too much empty" (#75); the ones he liked have 1 to 16
+          const pts=[...F.pathTiles].map(k=>k.split(',').map(Number)); let far=0;
+          for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++){if(F.pathTiles.has(key(c,r)))continue; if(!pts.some(([x,y])=>Math.hypot(x-c,y-r)<=2))far++;}
+          o.empty=far;
           // a crawler from every mouth (and down every branch) reaches the lamp
           o.walk=[];
           for(let g=0;g<F.paths.length;g++){
@@ -126,7 +127,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       ok(o.lenOk,tag+': each road within 20% of map 0’s length',[o.lens,o.base]);
       ok(o.lampIn,tag+': the lamp’s light stays on the board');
       ok(o.room>=18,tag+': at least 18 open tiles in the lamp’s own light',o.room);
-      ok(o.dead<=.25,tag+': no more than a quarter of the open board lies over three tiles from any road',o.dead);
+      ok(o.empty<=16,tag+': no more than 16 open tiles lie over two tiles from any road',o.empty);
       ok(o.walk.every(Boolean),tag+': a creature from every mouth, and down every branch, reaches the lamp',o.walk);
       const k0=r.out.find(x=>x.floor===o.floor&&x.map===0).kits;
       ok(Object.keys(o.kits).every(k=>+o.kits[k].split('/')[0]>=+k0[k].split('/')[0]),tag+': every kit builds as many of its first wards by the lamp as on map 0',[o.kits,k0]);
@@ -134,7 +135,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       ok(o.bodies!==0,tag+': the Occultist starts the first floor with bodies on the road',o.bodies);
       ok(o.hallow>0,tag+': the Hallowed Ground marks its patches',o.hallow);
       ok(o.herald,tag+': a Herald’s rift is a real mouth');
-      console.log(tag.padEnd(48),'lens',o.lens.join('/'),'room',o.room,'dead',o.dead);
+      console.log(tag.padEnd(48),'lens',o.lens.join('/'),'room',o.room,'empty',o.empty);
     }
     ok(r.save.kept===2,'a resumed floor keeps its map',r.save);
     ok(r.save.old===0,'an old save without a map plays map 0',r.save);

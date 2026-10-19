@@ -1234,13 +1234,14 @@ const EVENTS={
 
 const FLOORS=[
   {name:'The Cistern',hue:188,mark:'puddle',lamp:[6,7],stipend:130,mapN:'The Spillway',
-   paths:[[[0,1],[9,1],[9,4],[2,4],[2,10],[6,10],[6,7]]],
+   /* in from the west, doubled back once along the top, then right round the floor (Criss: the old road left a third of
+      the board bare, so it now reaches every side) */
+   paths:[[[0,2],[8,2],[8,4],[2,4],[2,11],[10,11],[10,7],[6,7]]],
    variants:[
-     /* in from the far corner, once right around the lamp: kill at the corners, where one ward sees two sides */
-     {n:'The Ring Drain',paths:[[[11,13],[11,11],[2,11],[2,4],[10,4],[10,7],[6,7]]]},
-     /* in under the lamp, then three lanes against the west wall, two tiles apart: a ward between two strikes both, but
-        only the nearest lane is lit */
-     {n:'The Settling Beds',paths:[[[11,11],[0,11],[0,3],[2,3],[2,9],[4,9],[4,5],[6,5],[6,7]]]}],
+     /* in from the far corner and right round the floor, then up into the lamp from below */
+     {n:'The Ring Drain',paths:[[[11,12],[2,12],[2,2],[9,2],[9,9],[6,9],[6,7]]]},
+     /* in from the top corner, round the floor the other way, and down into the lamp from above */
+     {n:'The Overflow',paths:[[[11,2],[2,2],[2,11],[9,11],[9,5],[6,5],[6,7]]]}],
    waves:[
      [['crawler',8,1.5,0]],
      [['crawler',8,1.2,0],['skitter',6,.8,7]],
@@ -1255,8 +1256,9 @@ const FLOORS=[
      /* the fork splits the whole floor: up the west wall, or round by the east and the top. A Weir picks the half you hold */
      {n:'The Two Galleries',paths:[[[1,13],[1,12],[10,12],[10,10],[2,10],[2,3],[8,3],[8,7],[6,7]]],
       forks:[{gate:0,from:[10,10],via:[[10,1],[2,1]],to:[2,3]}]},
-     /* the fork at your doorstep: light the west wall and they turn in through the cloister, right past the lamp */
-     {n:'The Charnel Cloister',paths:[[[8,0],[8,1],[1,1],[1,12],[10,12],[10,10],[6,10],[6,7]]],
+     /* the fork at your doorstep: light the west wall and they turn in through the cloister, right past the lamp.
+        Then round by the bottom and the east, and down into the lamp from above */
+     {n:'The Charnel Cloister',paths:[[[8,0],[8,1],[1,1],[1,12],[10,12],[10,3],[6,3],[6,7]]],
       forks:[{gate:0,from:[1,4],via:[[4,4],[4,9]],to:[1,9]}]}],
    waves:[
      [['crawler',10,1.2,0],['shade',3,2.5,6]],

@@ -559,9 +559,9 @@ Stipend **130** essence · 1 gate · hue 188
 
 Maps (one is drawn as the floor begins, from a bag per floor; a saved floor keeps its own):
 
-- **The Spillway**: road 32
-- **The Ring Drain**: road 33
-- **The Settling Beds**: road 37
+- **The Spillway**: road 39
+- **The Ring Drain**: road 38
+- **The Overflow**: road 36
 
 - Wave 1 · *The first crawl*: 8× Crawler
   - or *A trickle*: 5× Crawler + 4× Skitterling
@@ -582,7 +582,7 @@ Maps (one is drawn as the floor begins, from a bag per floor; a saved floor keep
 
 - **The Upper Gallery**: road 40/46 · fork
 - **The Two Galleries**: road 39/43 · fork
-- **The Charnel Cloister**: road 37/43 · fork
+- **The Charnel Cloister**: road 45/51 · fork
 
 - Wave 1 · *Pale shapes*: 10× Crawler + 3× Shade
   - or *The pale ones*: 7× Shade + 5× Crawler
