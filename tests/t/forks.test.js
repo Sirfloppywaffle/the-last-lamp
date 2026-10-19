@@ -8,7 +8,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     await p.goto('file://'+process.argv[2]); await p.waitForTimeout(300);
     const r=await p.evaluate(()=>{
       const T=__t, out={};
-      const setup=(floor)=>{T.newRun(); T.run.floor=floor; T.beginFloor(null); T.run.ess=9000; T.run.oil=T.run.oilMax=999; T.run.lampBonus=30; T.setP(false); T.F.phase='wave'; T.F.queue=[{t:1e9,type:'crawler',gate:0}];};
+      const setup=(floor,v)=>{T.setMapV(v||0); T.newRun(); T.run.floor=floor; T.beginFloor(null); T.run.ess=9000; T.run.oil=T.run.oilMax=999; T.run.lampBonus=30; T.setP(false); T.F.phase='wave'; T.F.queue=[{t:1e9,type:'crawler',gate:0}];};
       // walk one creature through the first fork; report the path it ends on (0 = main, 1 = branch)
       const through=(type,pre)=>{
         const fk=T.F.forks[0];
@@ -27,22 +27,23 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       };
       const weir=(open)=>{const fk=T.F.forks[0]; const t={kind:'ward',type:'weir',id:99998,c:fk.c,r:fk.r,x:fk.x,y:fk.y,open,br:{},invested:0,fresh:0,cd:.3,ang:0,ring:0,echo:0}; T.F.towers.push(t); T.update(1/30); return t;};
 
-      for(const fl of [1,2]){
-        const o=out['floor'+fl]={};
-        setup(fl);
-        o.forks=T.F.forks.length; o.roots=T.F.nRoots; o.paths=T.F.paths.length;
+      // every map of floors 2 and 3 (#73): each fork must work the same way
+      for(const fl of [1,2])for(let mv=0;mv<T.floorMaps(fl).length;mv++){
+        const o=out['floor'+fl+'m'+mv]={};
+        setup(fl,mv);
+        o.forks=T.F.forks.length; o.map=T.F.def.mapN; o.roots=T.F.nRoots; o.paths=T.F.paths.length;
         const fk=T.F.forks[0];
         o.longer=T.F.paths[fk.opts[1]].len>T.F.paths[fk.opts[0]].len;
         // the prefix is shared, so switching paths at the fork does not move the creature
         const a=T.posAt(T.F.paths[fk.opts[0]],fk.d), c=T.posAt(T.F.paths[fk.opts[1]],fk.d); o.samePrefix=Math.hypot(a[0]-c[0],a[1]-c[1])<1e-6;
         o.untouched={crawler:through('crawler'),shade:through('shade'),gnasher:through('gnasher')};
-        setup(fl); lightMain();
+        setup(fl,mv); lightMain();
         o.lit={crawler:through('crawler'),shade:through('shade'),gnasher:through('gnasher'),boss:through('boss')};
         T.F.flareT=5; o.lit.flare=through('crawler'); T.F.flareT=0;
-        setup(fl); const w=weir(1);
+        setup(fl,mv); const w=weir(1);
         o.weir={crawler:through('crawler'),watcher:through('watcher'),still:T.F.towers.includes(w)};
         o.weir.behemoth=through('behemoth'); o.weir.smashed=!T.F.towers.includes(w);
-        setup(fl);
+        setup(fl,mv);
         o.placeOff=T.placeProblem({kind:'ward',type:'weir'},0,0);
         o.tray=T.F.forks.length>0;
         // a Wretch that bursts just before the fork sends one Skitterling each way
@@ -61,14 +62,17 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
         }
         T.render();
       }
+      T.setMapV(0);
       setup(0); out.floor0=T.F.forks.length;
       setup(3); out.floor3=T.F.forks.length;
       return out;
     });
     const tag=vp.width+'x'+vp.height+' ';
     ok(r.floor0===0&&r.floor3===0,tag+'floors 1 and 4 have no forks',[r.floor0,r.floor3]);
-    for(const fl of ['floor1','floor2']){
-      const o=r[fl], t=tag+fl+': ';
+    const keys=Object.keys(r).filter(k=>/^floor\dm\d$/.test(k));
+    ok(keys.length>=6,tag+'every map of floors 2 and 3 was walked',keys);
+    for(const fl of keys){
+      const o=r[fl], t=tag+fl+' ('+o.map+'): ';
       ok(o.forks===1&&o.paths===o.roots+1,t+'one fork, one extra path',o);
       ok(o.longer,t+'the branch is longer than the main way');
       ok(o.samePrefix,t+'branch and main share the prefix');
