@@ -1282,6 +1282,29 @@ const FLOORS=[
      [['boss2',1,1,0,0],['stalker',10,1,5,1],['wretch',6,1.6,9,2],['behemoth',1,1,16,1]]
    ]}
 ];
+/* ---------------- map variants (#73) ----------------
+   A floor's map 0 is the one written above (mapN names it). variants holds the others: each its own {n, paths, forks,
+   lamp}, written in the same canonical form and flipped the same way, with as many roots as map 0 so the waves' gates
+   still mean something. A map changes the shape of the floor, never its waves, stipend or name.
+   One is drawn as the floor begins and kept in run.mapv, so a resumed floor never re-rolls; an old save has none and
+   plays map 0. The draw comes from a bag per floor (ll-maps), so you meet every map of a floor before any comes back. */
+let MAPV_FORCE=null;   // tests pin a map here (tests/hook.js sets 0); nothing in play sets it
+function floorMaps(fi){const f=FLOORS[fi]; return [{n:f.mapN,lamp:f.lamp,paths:f.paths,forks:f.forks}].concat(f.variants||[]);}
+function mapOf(fi,v){const M=floorMaps(fi), m=M[v]||M[0]; return {mapN:m.n||'',mapv:M[v]?v:0,lamp:m.lamp||FLOORS[fi].lamp,paths:m.paths,forks:m.forks||[]};}
+function mapDraw(fi){
+  const n=floorMaps(fi).length;
+  if(n<2)return 0;
+  if(MAPV_FORCE!=null)return clamp(MAPV_FORCE|0,0,n-1);
+  const S=store.get('ll-maps',null)||{}, bags=S.b||{}, last=S.l||{};
+  let bag=(bags[fi]||[]).filter(v=>v<n);
+  if(!bag.length)bag=[...Array(n).keys()];
+  /* a fresh bag never opens on the map you just played */
+  let i=Math.floor(Math.random()*bag.length);
+  if(bag.length>1&&bag[i]===last[fi])i=(i+1+Math.floor(Math.random()*(bag.length-1)))%bag.length;
+  const v=bag.splice(i,1)[0];
+  bags[fi]=bag; last[fi]=v; store.set('ll-maps',{b:bags,l:last});
+  return v;
+}
 /* wave decks: each floor's waves above are its classic cards, one per slot, named here. Each floor also holds
    other cards for some slots; a run draws one card per slot when the floor begins. A wave with a boss or the
    Choirmaster keeps its slot. Alternatives use only creatures the floor already has, at about the same weight. */
@@ -2506,7 +2529,9 @@ function beginFloor(snap){
   /* a new floor draws its waves; a resumed one keeps its draw (an old save without one plays the classic waves) */
   if(!snap||!run.draw||run.draw.floor!==run.floor)run.draw={floor:run.floor,cards:snap?FLOORS[run.floor].waves.map(()=>'c'):drawWaves(run.floor),herald:snap?null:heraldDraw(run.floor)};
   const drawn=drawnWaves(run.floor,run.draw.cards);
-  const def=Object.assign({},FLOORS[run.floor],{waves:drawn.map(d=>d.w),wnames:drawn.map(d=>d.n),walt:drawn.map(d=>d.alt)});
+  /* the floor's map: drawn once as it begins; a resumed floor keeps its own, and an old save without one plays map 0 */
+  if(!run.mapv||run.mapv.floor!==run.floor)run.mapv={floor:run.floor,v:snap?0:mapDraw(run.floor)};
+  const def=Object.assign({},FLOORS[run.floor],mapOf(run.floor,run.mapv.v),{waves:drawn.map(d=>d.w),wnames:drawn.map(d=>d.n),walt:drawn.map(d=>d.alt)});
   if(!snap){
     let st=def.stipend;
     if(run.omen==='starved')st=Math.round(st*.5);
