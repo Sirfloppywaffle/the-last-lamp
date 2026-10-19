@@ -105,8 +105,18 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* a toll that reaches a fork rings again from it */
     fresh();
     T.setSel({kind:'ward',type:'fork'}); T.tryPlace(f1t[0],f1t[1]); T.setSel(null); const bc=T.F.towers[T.F.towers.length-1]; T.update(.01);
-    wave(); hold('crawler',1); T.castRite('toll'); run(.8);
-    out.relay={relayed:bc.relayId>0,rings:bc.ring>0||true};
+    wave(); hold('crawler',1); T.castRite('toll');
+    let fromFork=false; for(let i=0;i<30&&!fromFork;i++){T.update(.05); fromFork=T.F.tolls.some(R=>Math.abs(R.x-bc.x)<.01&&Math.abs(R.y-bc.y)<.01);}
+    out.relay={relayed:fromFork};
+    /* two tolls at once between two forks in each other's reach: every ring dies out (they once bounced between the forks forever) */
+    fresh();
+    const byLamp=tiles.filter(([c,rr])=>T.placeProblem({kind:'ward',type:'fork'},c,rr)==='').sort((a,b)=>Math.hypot(a[0]+.5-T.F.lamp.x,a[1]+.5-T.F.lamp.y)-Math.hypot(b[0]+.5-T.F.lamp.x,b[1]+.5-T.F.lamp.y));
+    const fa=byLamp[2]; T.setSel({kind:'ward',type:'fork'}); T.tryPlace(fa[0],fa[1]);
+    const fb=tiles.find(([c,rr])=>T.placeProblem({kind:'ward',type:'fork'},c,rr)===''&&Math.hypot(c-fa[0],rr-fa[1])>=1.9&&Math.hypot(c-fa[0],rr-fa[1])<=2.5);
+    T.setSel({kind:'ward',type:'fork'}); T.tryPlace(fb[0],fb[1]); T.setSel(null); T.update(.01);
+    wave(); hold('crawler',1); T.castRite('toll'); T.update(.05); T.lampToll('peal'); run(.15); T.lampToll('peal');
+    let most=0; for(let i=0;i<200&&most<200;i++){T.update(.05); most=Math.max(most,T.F.tolls.length);}
+    out.loop={left:T.F.tolls.length,most};
     /* echoes: a toll from the lamp returns off the walls */
     fresh(); wave(); hold('crawler',1); T.castRite('toll'); out.echoes=T.F.tolls.filter(R=>R.echo).length;
     /* footsteps: a crawler unseen in the dark treads red ripples; a Shade makes none */
@@ -205,6 +215,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   if(r.humBuild)ok(r.humWard.type==='harpoon'&&!r.humWard.dark,'a ward built in the dark inside a hum works',r.humWard);
   ok(r.cutFork,'take the first fork away and the second loses the sound');
   ok(r.relay.relayed,'a fork the toll reaches rings it again',r.relay);
+  ok(r.loop.left===0,'overlapping tolls between two forks die out',r.loop);
   ok(r.echoes>=1,'a toll from the lamp echoes back off the walls',r.echoes);
   ok(r.steps>0&&r.shadeSteps===0,'unseen crawlers leave footsteps in the dark; Shades make none',[r.steps,r.shadeSteps]);
   ok(r.clap&&r.clap.hear===2&&Math.abs(r.knock.back-.5)<.01&&r.knock.heard,'a Clapper bolt rings what it strikes and knocks it half a tile back',[r.clap,r.knock]);

@@ -3,6 +3,7 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **Fix: Tuning Forks no longer ring each other forever** (Criss: two forks "stuck in some kind of feedback loop"). A fork remembered only the last toll it passed on, so two tolls at once (a Toll and a Peal heartbeat) bounced between two forks without end. Every bounce cracked what stood near them again, which shattered whole waves and made two forks, a wire and Peal hold floors alone. Each toll now crosses each fork once. Played headless on floors one and two, the same build held both with no oil lost before the fix, and falls on wave 3 or 4 after it. A new test pins the overlap. No balance changes. (Claude)
 
 ## v17.1.1 — Rising Water
 The Drowned Mother's water now rises on every wave it should, instead of sitting still about one wave in 25.
