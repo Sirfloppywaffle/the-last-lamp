@@ -29,6 +29,7 @@ You're the engineer and QA on this project. Gemini, working through Jules, is yo
 - Open an issue with the **Task for Jules** template, or add the `jules` label. Write the goal, the constraints that matter (cite `AGENTS.md` rules), and how it'll be judged.
 
 ## Releases
+- **Version numbers** (details in `AGENTS.md` §3): three numbers, always. Last = bug fixes and small tweaks. Middle = a new part of an ongoing feature (last resets to 0). First = a finished arc or a big change (others reset to 0). Bump once per release; the biggest change in the batch wins.
 - When Criss merges, mirror `index.html` to the claude.ai artifact (`python3 tools/build-artifact.py` writes the artifact body to `tests/.build/artifact.html`; publish it to https://claude.ai/artifact/PP2gyEZiPauEoEpbuM5Se7), then move the Unreleased notes in `docs/HISTORY.md` under a new version.
 
 ## Talking to Criss
