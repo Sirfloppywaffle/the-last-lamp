@@ -113,7 +113,7 @@ You tend **the last lamp** at the bottom of a drowned stair. Things climb out of
 - **Horrors** are bound creatures you field like towers. They're strong, but every one fielded raises **madness**. Madness tiers (Calm → Whispers → Slipping → Leaning) flicker the lamp, shrink it, and make the dark worse.
 - **Forks** (floors 2 and 3): the stair splits. Creatures take the darker way, counting only the light you cast; Shades and Stalkers hunt it instead; Gnashers and bosses keep the main way. The **Weir** (built on a fork) shuts one way between waves, and the **Will-o’-Wisp** rite (on forked floors only) lures everything but bosses down a chosen way for 8 seconds, mid-wave.
 - **Rites** are cooldown spells (Flare, Pillar of Salt, Drowning Bell, Name the Thing).
-- **Five floors:** the Cistern, the Ossuary, the Drowned Nave, the Throat (the Keeper Below), the Abyssal Heart (the Primordial).
+- **Five floors:** the Cistern, the Ossuary, the Drowned Nave, the Throat (the Keeper Below), the Abyssal Heart (the Primordial). Floors 1 to 3 each have **three maps** (the shifting stair, #73), one drawn as the floor begins and named beside the floor's name; the waves are the same on every map.
 - **Roguelike layer:**
   - **Kits** choose your starting arsenal.
   - After each floor comes **the landing**: a gift, then a relic if earned, then **forked stairs** with an **omen** on some doors, then the room behind the chosen door. One door on the way to floors 2 and 3 carries a **Trial** (`TRIALS`: Rationed, the Hallowed Ground, Sealed, One of Each, Bare Hands, Unbranched, the Long Night), a floor rule that pays a relic when passed. Rooms can be a merchant, shrine, event, rest, reliquary, the **Knucklebones** (Cult of the Lamb's knucklebones against the hooded thing, for essence the stair would burn), or the **deep stair**, which makes the next floor elite.
@@ -138,7 +138,7 @@ Everything lives in one file: CSS, then markup, then one big script inside an II
 | Markup | `#app` → `header.hud#hud`, `main.stage#stage` (`canvas#board`, `#preview`, `#banner`, `#hint`, `#bossCard`, `#bossBar`, `#sheet`), `footer.cmdbar#cmdbar` (`#tray`, `#rites`, `#modebar`, `.calls`). Screens: `#title`, `#modal`, `#mapOverlay`. |
 | `data` | `PAL`, `FOES`, `SPAWNABLE`, `WARDS`, `BASE_WARDS`, `GIFT_WARDS`, `HORRORS`, `TREES` (branch upgrades), `TARGETS`, `RITES`, `RELICS`. |
 | `roguelike layer` | `KITS`, `OMENS`, `TRIALS` (floor rules on a door; `run.trial` → `F.trial`; the Hallowed Ground's patches in `run.hallow`, canonical like `FLOORS`, mapped into `F.hallow` by `hallowSync()` in `buildGeometry()`; Rationed's count is `rationN()`; Sealed's two wards in `run.seal`, kept like `run.hallow`; `TRIAL_SPARE` is each kit's light, which no Trial locks or caps; `trialBarred()` marks the tray), `ROOMS`, `PACTS`, `HALL`, `DEPTHS`, `EVENTS`, `meta()` and `saveMeta()` (Ember Hall progress), `price()`. |
-| floors | `FLOORS` (paths, waves, stipend, hue), `COUNT_MUL`/`GAP_MUL`/`DELAY_MUL`, `scaledGroup()`. |
+| floors | `FLOORS` (paths, waves, stipend, hue; `mapN` names map 0 and `variants` holds the other maps, each `{n, paths, forks, lamp}` with as many roots as map 0), `floorMaps()`/`mapOf()`, `mapDraw()` (a bag per floor in `ll-maps`; the first descent plays map 0), `run.mapv` (the floor's map, kept so a resume never re-rolls; an old save plays map 0), `COUNT_MUL`/`GAP_MUL`/`DELAY_MUL`, `scaledGroup()`. |
 | `sound` | `AUDIO` (synthesized SFX), `BGM` (procedural music). |
 | `state` | Globals: `run` (the whole run, saved), `F` (the current floor, rebuilt each floor), `sel` (selected tray item), `selTower`, `mode` (rite targeting), `paused`, `speed`, `uid`. |
 | `stats from branches` | `wstat(t)` (a ward's live stats from its branch levels), `lstat()` (the lamp's), madness: `tiers()`, `horrorMad()`, `madness()`, `madTier()`, `wardCost()`. |
@@ -163,7 +163,7 @@ Everything lives in one file: CSS, then markup, then one big script inside an II
 | `loop` | `watchPerf()` (auto-Lite if frames stay slow), `frame()` (sim in steps ≤ 50ms; `speed` 1/2/3; the map overlay runs on real time). |
 | `wiring` | Button handlers, `layout()` (calls `applyShape()` first), resize handling. |
 
-**Storage keys:** `ll-save-v2` (the run), `ll-meta` (embers/unlocks), `ll-best`, `ll-vol`, `ll-dev`, `ll-gfx-lite`, `ll-gfx-auto`, `ll-tut` (walkthrough and tips: `{walk, seen, off}`), `ll-codex` (the Grimoire: creatures met, relics found, offerings seen, and kinds of horror ever bound for the Nameless's hood, `{foes, relics, offs, bound}`). Changing a stored shape needs a migration in `resumeFrom()` or `meta()`.
+**Storage keys:** `ll-save-v2` (the run), `ll-meta` (embers/unlocks), `ll-best`, `ll-vol`, `ll-dev`, `ll-gfx-lite`, `ll-gfx-auto`, `ll-tut` (walkthrough and tips: `{walk, seen, off}`), `ll-maps` (the map bags: maps of each floor not yet met, and the last one played), `ll-codex` (the Grimoire: creatures met, relics found, offerings seen, and kinds of horror ever bound for the Nameless's hood, `{foes, relics, offs, bound}`). Changing a stored shape needs a migration in `resumeFrom()` or `meta()`.
 
 ---
 
@@ -227,6 +227,7 @@ npm run check                     # fast: syntax + lint rules only (no browser)
 - **CI runs `npm test` on every PR** (`.github/workflows/checks.yml`). A red check blocks the merge.
 - If a browser can't be installed in your environment, run `npm run check`, say so in the PR, and rely on CI for the rest.
 - `tests/t/devices.test.js` checks 14 screen sizes. With a ward selected, it confirms that nothing overlaps the board, nothing shifts, and no control sits in a notch zone. If you add UI, extend it.
+- Tests play **map 0** of every floor (`tests/hook.js` pins it); `maps.test.js` and `forks.test.js` walk every map. `LL_MAPV=2 node run.js --only <name>` runs any test on another map.
 - Add a test for every bug you fix, and for every new mechanic (e.g., spawn a creature, run `__t.update(1/30)` a few hundred times, assert the effect). Tests live in `tests/t/*.test.js`; a test fails by printing a line starting with `FAIL` or exiting non-zero, and any page error or `console.error` fails it automatically. `tests/t/mechanics.test.js` is the model to copy.
 - The static checks (`npm run check`) also enforce some section 6 rules: `hash()` arity, no inline handlers, no external scripts, overlays dismissed on `click`, and the placement card staying out of the stage.
 

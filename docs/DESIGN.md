@@ -557,6 +557,12 @@ Each floor draws one card per wave slot when it begins: the classic wave (listed
 
 Stipend **130** essence · 1 gate · hue 188
 
+Maps (one is drawn as the floor begins, from a bag per floor; a saved floor keeps its own):
+
+- **The Spillway**: road 32
+- **The Ring Drain**: road 33
+- **The Settling Beds**: road 37
+
 - Wave 1 · *The first crawl*: 8× Crawler
   - or *A trickle*: 5× Crawler + 4× Skitterling
 - Wave 2 · *Crawl and skitter*: 8× Crawler + 6× Skitterling
@@ -572,6 +578,12 @@ Stipend **130** essence · 1 gate · hue 188
 
 Stipend **110** essence · 1 gate · 1 fork · hue 36
 
+Maps (one is drawn as the floor begins, from a bag per floor; a saved floor keeps its own):
+
+- **The Upper Gallery**: road 40/46 · fork
+- **The Two Galleries**: road 39/43 · fork
+- **The Charnel Cloister**: road 37/43 · fork
+
 - Wave 1 · *Pale shapes*: 10× Crawler + 3× Shade
   - or *The pale ones*: 7× Shade + 5× Crawler
 - Wave 2 · *Wings in the bone*: 14× Skitterling + 3× Watcher
@@ -586,6 +598,12 @@ Stipend **110** essence · 1 gate · 1 fork · hue 36
 ### 3. The Drowned Nave
 
 Stipend **120** essence · 2 gates · 1 fork · hue 205
+
+Maps (one is drawn as the floor begins, from a bag per floor; a saved floor keeps its own):
+
+- **The Flooded Aisle**: road 25, 25/33 · fork
+- **The Transept**: road 24, 22/30 · fork
+- **The Side Chapel**: road 27, 24/30 · fork · lamp at [4, 8]
 
 - Wave 1 · *Twin tides*: 9× Crawler + 9× Crawler
   - or *Tide and shadow*: 10× Crawler + 4× Shade + 6× Skitterling

@@ -3,6 +3,11 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **The shifting stair: three maps for each of floors one to three** (#73, part 1; Criss: "replaying a lot, the floors themselves look the same"). One map is drawn as you reach the floor, named beside the floor's name in the banner, the pause menu and the descent map, and kept with the save. You meet every map of a floor before any comes back, and your first descent ever plays the first map. The waves, stipends and names don't change.
+  - **The Cistern:** the Spillway (today's), **the Ring Drain** (in from the far corner and right round the lamp; kill at the corners), **the Settling Beds** (in under the lamp, then three lanes against the west wall, two tiles apart: a ward between two strikes both, but only the nearest lane is lit).
+  - **The Ossuary:** the Upper Gallery (today's), **the Two Galleries** (the fork splits the whole floor: up the west, or round by the east and the top), **the Charnel Cloister** (the fork at your doorstep: light the west wall and they turn in past the lamp).
+  - **The Drowned Nave:** the Flooded Aisle (today's), **the Transept** (both veins from the west, at the lamp's two faces), **the Side Chapel** (the lamp stands by the west wall; both veins cross the dark from the east).
+  - A first-time tip, a rules line, a developer row to restart on any map, and DESIGN lists each map's roads. `maps.test.js` walks every map in both orientations, and `forks.test.js` now checks every fork. Brainstormed with Gemini on #75. No balance numbers change; road lengths are listed in the PR. (Claude)
 
 ## v18.0.0 — Trials Complete
 All seven Trials are in: five more join Rationed and the Hallowed Ground on the doors to floors two and three, and the Tuning Fork feedback loop and the lit-fork Weir rule are fixed.

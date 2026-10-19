@@ -5,8 +5,9 @@ const HOOK=`window.__t={get run(){return run},get F(){return F},get sel(){return
  get spriteBytes(){try{return spriteBytes}catch(e){return 0}}, get nSprites(){try{return SPRITES.size}catch(e){return 0}}, setLite(v){try{gfxLite=v}catch(e){}}};
 /* tests run with the walkthrough and tips switched off; tutorial.test.js turns them back on with __t.tutReset() */
 store.set('ll-tut',{walk:'done',seen:[],off:true});
-/* tests play map 0 of every floor unless they pick another with __t.setMapV(); maps.test.js walks them all */
-MAPV_FORCE=0;
+/* tests play map 0 of every floor unless they pick another with __t.setMapV(); maps.test.js walks them all.
+   LL_MAPV=1 node run.js … runs a whole test on another map */
+MAPV_FORCE=${JSON.stringify(+(process.env.LL_MAPV||0))};
 `;
 function build(){
   const src=path.join(__dirname,'..','index.html');

@@ -126,6 +126,20 @@ for i,f in enumerate(D['FLOORS']):
     w("### %d. %s\n"%(i+1,f['name']))
     nf=len(f.get('forks',[]))
     w("Stipend **%s** essence · %d gate%s%s · hue %s\n"%(f['stipend'],len(f['paths']),'s' if len(f['paths'])>1 else '',(' · %d fork%s'%(nf,'s' if nf>1 else '')) if nf else '',f.get('hue')))
+    if f.get('variants'):
+        # each map: road lengths (in tiles, the fork's branch after a slash), where the lamp stands if it moves
+        plen=lambda pts:sum(abs(b[0]-a[0])+abs(b[1]-a[1]) for a,b in zip(pts,pts[1:]))
+        def blen(m,fd):
+            root=m['paths'][fd['gate']]; seg=[fd['from']]+fd['via']+[fd['to']]
+            cut=lambda q:next(plen(root[:j+1])+abs(q[0]-root[j][0])+abs(q[1]-root[j][1]) for j in range(len(root)-1) if min(root[j][0],root[j+1][0])<=q[0]<=max(root[j][0],root[j+1][0]) and min(root[j][1],root[j+1][1])<=q[1]<=max(root[j][1],root[j+1][1]))
+            return plen(root)-(cut(fd['to'])-cut(fd['from']))+plen(seg)
+        maps=[dict(n=f.get('mapN','Map 1'),paths=f['paths'],forks=f.get('forks',[]),lamp=f['lamp'])]+[{'lamp':f['lamp'],'forks':[],**v} for v in f['variants']]
+        w("Maps (one is drawn as the floor begins, from a bag per floor; a saved floor keeps its own):\n")
+        for m in maps:
+            roads=[str(plen(p)) for p in m['paths']]
+            for fd in m.get('forks') or []: roads[fd['gate']]+='/%d'%blen(m,fd)
+            w("- **%s**: road %s%s%s"%(m['n'],', '.join(roads),' · fork' if m.get('forks') else '',(' · lamp at %s'%m['lamp']) if m['lamp']!=f['lamp'] else ''))
+        w("")
     names=(D.get('WAVE_NAMES') or [[]]*99)[i]
     deck=(D.get('DECKS') or [[]]*99)[i]
     grp=lambda wave:' + '.join('%s× %s'%(g[1],D['FOES'][g[0]]['n']) for g in wave)
