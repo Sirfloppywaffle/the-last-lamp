@@ -464,7 +464,7 @@ input[type=range]::-moz-range-track {
         <li><b>The Roster.</b> Five went down the stair the night Saltmouth drowned: Ambrose Fenn the lamplighter, Jonah Tolland the harpooner, the Nameless, Dr. Lucan Voss and Agathe Vell. Each carries the lamp their own way. Some are earned by a deed on the stair, some in the Ember Hall. Every kind of horror you bind or capture, on any descent, adds its eyes to the Nameless’s hood, for good: there are six to find.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
-        <li><b>The shifting stair.</b> The first three floors each have three maps, and one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. You meet every map of a floor before any comes back, and a saved floor keeps its own.</li>
+        <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. You meet every map of a floor before any comes back, and a saved floor keeps its own.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard. <i>Sealed:</i> two of your wards are locked for the floor, marked with a lock in the tray; never your light and never your harpoon. <i>One of Each:</i> each kind of ward stands only once, except what makes your light (candles of every kind, Tuning Forks, pylons, Bell Wires and Try-pots). <i>Bare Hands:</i> your rites are silent, all but the Bellringer's Toll. <i>Unbranched:</i> nothing can be upgraded, not even the lamp. <i>The Long Night:</i> candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller; it never comes with Moonless or Thick Dark.</li>
         <li><b>Patrons.</b> Old things below the stair make offerings. Half the time the landing's gift is the Drowned Mother's offering instead (a quarter, if she already reached out on that floor), and now and then she reaches out between waves. Take one gift, or refuse her. Her gifts change what your wards do, and some belong to one kit. Every gift raises her Attention, and Attention changes your floors: at 1 her water stands on the path, and its current carries creatures 30% faster; at 3 it rises a tile with every wave; at 5 whatever walks in it goes under, unseen unless something unveils it. Her sign sits beside the Grimoire; tap it to see where you stand.</li>
@@ -1285,18 +1285,33 @@ const FLOORS=[
      [['shade',8,1.1,0,1],['crawler',14,.75,0,0],['gnasher',3,4,8,1]],
      [['elite',1,1,0,0],['crawler',10,1,3,1],['skitter',10,.5,6,0],['shrieker',2,5,8,1]]
    ]},
-  {name:'The Throat',hue:358,mark:'rib',lamp:[6,7],stipend:130,
+  {name:'The Throat',hue:358,mark:'rib',lamp:[6,7],stipend:130,mapN:'The Gullet',
+   /* the gullet: right round the walls, then round the lamp again, closer */
    paths:[[[0,13],[0,0],[11,0],[11,13],[3,13],[3,3],[8,3],[8,10],[6,10],[6,7]]],
+   variants:[
+     /* two ribs across the whole top and two across the bottom, all far from the lamp, then in along the lowest rib and
+        into the lamp from the west. The long straight runs are where a line of wards, or light carried out, pays.
+        Shorter than the Gullet (63 against 72), but less of it passes the lamp: a greedy headless build fared the same */
+     {n:'The Ribs',paths:[[[0,0],[11,0],[11,3],[0,3],[0,13],[11,13],[11,10],[3,10],[3,7],[6,7]]]}],
    waves:[
      [['crawler',14,.8,0],['shade',6,1.2,4],['gnasher',3,3,8]],
      [['wretch',6,1.6,0],['shrieker',3,4,3],['watcher',4,2.5,6],['skitter',14,.4,10]],
      [['boss',1,1,0],['crawler',10,1.2,6],['gnasher',4,5,10]]
    ]},
-  {name:'The Abyssal Heart',hue:275,mark:'ripple',lamp:[6,7],stipend:200,
+  {name:'The Abyssal Heart',hue:275,mark:'ripple',lamp:[6,7],stipend:200,mapN:'The Three Veins',
    /* three veins into the heart: a long one from above, two winding up from the lower corners. None cross. */
    paths:[[[0,1],[10,1],[10,3],[2,3],[2,5],[6,5],[6,7]],
           [[0,12],[4,12],[4,9],[1,9],[1,7],[6,7]],
           [[11,12],[7,12],[7,9],[10,9],[10,7],[6,7]]],
+   variants:[
+     /* the veins turn about the heart like water down a drain, each curling the same way. The long one (the Primordial's)
+        runs the whole top and down the east wall in the dark, then curls back and drops into the lamp from above; one
+        climbs from the bottom edge into it from below; one runs up the west wall and curls in from the west.
+        A first try hooked the long vein in from the east and kept it all in the dark: a greedy headless Whaler lost
+        every run on wave 3 there, so it now curls closer. The same build now fares about as on the Three Veins, a shade better */
+     {n:'The Whorl',paths:[[[0,0],[11,0],[11,8],[9,8],[9,4],[6,4],[6,7]],
+                           [[11,13],[3,13],[3,10],[6,10],[6,7]],
+                           [[0,10],[0,3],[3,3],[3,7],[6,7]]]}],
    waves:[
      [['wretch',4,2,0,0],['stalker',4,1.6,3,1],['crawler',8,1.1,2,2]],
      [['behemoth',1,1,0,1],['skitter',14,.45,2,0],['shade',6,1.2,4,2]],

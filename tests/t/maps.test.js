@@ -1,4 +1,4 @@
-// Map variants (#73): every map of every floor, in both board orientations. Each one builds, keeps its roads apart,
+// Map variants (#73): every map of every floor (the boss floors too), in both board orientations. Each one builds, keeps its roads apart,
 // holds its length near map 0, leaves room to build by the lamp for every kit, walks a creature from every mouth to
 // the lamp, and survives the floor systems keyed to the path (water, bodies, chalk, forks, Heralds).
 // The draw: a resumed floor keeps its map, an old save plays map 0, the first descent plays map 0, and the bag
@@ -19,7 +19,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       const setup=(f,v,kit)=>{T.setMapV(v); T.newRun(kit); T.run.floor=f; T.beginFloor(null); T.run.ess=9000; T.run.oil=T.run.oilMax=999; T.setP(false);};
       // the tiles a path walks, in board order
       const tilesOf=(P)=>{const s=[]; for(let d=0;d<=P.len;d+=.25){const q=T.posAt(P,Math.min(d,P.len)); const k=key(Math.floor(q[0]),Math.floor(q[1])); if(s[s.length-1]!==k)s.push(k);} return s;};
-      for(let f=0;f<3;f++){
+      for(let f=0;f<T.FLOORS.length;f++){
         const maps=T.floorMaps(f);
         setup(f,0); const base=T.F.paths.map(P=>P.len);
         for(let v=0;v<maps.length;v++){
@@ -53,6 +53,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
           // lengths: each road within 20% of map 0's
           o.lens=F.paths.map(P=>+P.len.toFixed(1)); o.base=base.map(x=>+x.toFixed(1));
           o.lenOk=F.paths.every((P,i)=>i>=base.length||Math.abs(P.len-base[i])/base[i]<=.2);
+          // the boss floors: the boss walks gate 0, so gate 0 stays the longest way in, as on map 0
+          const fw=T.FLOORS[f].waves.flat(), bossGate=fw.filter(g=>g[0]==='boss'||g[0]==='boss2').map(g=>g[4]||0);
+          o.bossLong=!bossGate.length||bossGate.every(g=>F.paths.slice(0,F.nRoots).every((P,i)=>P.len<=F.paths[g].len+1e-6));
           // the lamp's light stays on the board
           o.lampIn=F.lx-3.7>=0&&F.ly-3.7>=0&&F.lx+3.7<=T.COLS&&F.ly+3.7<=T.ROWS;
           // room to build: free tiles in the lamp's own light
@@ -123,7 +126,8 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       ok(o.bounds&&o.ends,tag+': every road stays on the board and ends on the lamp',o);
       ok(!o.shared.length&&!o.selfCross.length,tag+': roots never share a tile but the lamp, nor cross themselves',[o.shared,o.selfCross]);
       ok(o.forkOk,tag+': each fork shares its root’s prefix, its branch is longer, a candle can steer it either way, one fork per root',o.forks);
-      ok(o.floor===1||o.hasFork,tag+': floors two and three always fork (the Weir and the Will-o’-Wisp need one)');
+      ok(o.floor===1||o.floor>3||o.hasFork,tag+': floors two and three always fork (the Weir and the Will-o’-Wisp need one)');
+      ok(o.bossLong,tag+': the boss’s gate is still the longest way in',o.lens);
       ok(o.lenOk,tag+': each road within 20% of map 0’s length',[o.lens,o.base]);
       ok(o.lampIn,tag+': the lamp’s light stays on the board');
       ok(o.room>=18,tag+': at least 18 open tiles in the lamp’s own light',o.room);
