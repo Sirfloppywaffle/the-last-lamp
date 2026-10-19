@@ -1906,7 +1906,9 @@ function addGhost(e){if(F.ghosts.length>=GHOST_MAX)F.ghosts.shift(); F.ghosts.pu
 function startToll(x,y,max,o){
   o=o||{};
   const id=o.id||++tollUid;
-  F.tolls.push({id,x,y,r:0,max,spd:o.spd||RING_SPD,hear:o.hear||HEAR_T,veil:!!o.veil,stun:o.stun||0,relay:o.relay!==false,big:!!o.big,gold:!!o.gold,echo:!!o.echo,cracks:o.cracks===undefined?1:o.cracks,hit:new Set()});
+  /* rung: every fork that has passed this toll on, shared by all the rings it spawns, so a toll crosses each fork once.
+     (A fork once remembered only the last toll; two tolls overlapping between two forks bounced back and forth forever, Criss) */
+  F.tolls.push({id,x,y,r:0,max,spd:o.spd||RING_SPD,hear:o.hear||HEAR_T,veil:!!o.veil,stun:o.stun||0,relay:o.relay!==false,big:!!o.big,gold:!!o.gold,echo:!!o.echo,cracks:o.cracks===undefined?1:o.cracks,hit:new Set(),rung:o.rung||new Set()});
   /* a toll from the lamp comes back off the walls: each wall it can reach returns a fainter ring, as if rung from its mirror image */
   if(o.walls)for(const [ix,iy] of [[-x,y],[2*COLS-x,y],[x,-y],[x,2*ROWS-y]]){
     if(dst(ix,iy,x,y)/2>=max)continue;
@@ -1916,7 +1918,8 @@ function startToll(x,y,max,o){
 /* a fork rings a toll on: the hum carries what reached it a little further */
 function forkRing(t,R){
   const st=wstat(t); t.ring=.5; AUDIO.fork();
-  startToll(t.x,t.y,st.ring,{id:R?R.id:undefined,veil:(R&&R.veil)||st.overtone,hear:(R?R.hear:HEAR_T)+st.hearPlus,stun:R?R.stun:0,gold:R&&R.gold,cracks:R&&!R.cracks?0:st.overtone?2:1});
+  if(R)R.rung.add(t);
+  startToll(t.x,t.y,st.ring,{id:R?R.id:undefined,rung:R?R.rung:new Set([t]),veil:(R&&R.veil)||st.overtone,hear:(R?R.hear:HEAR_T)+st.hearPlus,stun:R?R.stun:0,gold:R&&R.gold,cracks:R&&!R.cracks?0:st.overtone?2:1});
 }
 /* the forks the lamp's sound reaches, hop by hop, and the hums she can build in */
 function forkNet(){
@@ -1992,9 +1995,9 @@ function updateTolls(dt){
     }
     /* a Tuning Fork the ring reaches rings again, once a toll, and carries the sound on into the dark */
     if(R.relay)for(const t of F.towers){
-      if(t.type!=='fork'||t.dark||t.relayId===R.id)continue;
+      if(t.type!=='fork'||t.dark||R.rung.has(t))continue;
       const d=dst(t.x,t.y,R.x,R.y); if(d>R.r)continue;
-      t.relayId=R.id; if(d<.6)continue;
+      if(d<.6){R.rung.add(t); continue;}
       forkRing(t,R);
     }
     /* the sigils of what died in the dark ring faintly as the toll passes them */
