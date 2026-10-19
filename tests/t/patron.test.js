@@ -145,7 +145,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const still=await p.evaluate(()=>{const T=__t, out={}; window.devNoDark=false;
     T.newRun('lamplighter',0); T.setP(false);
     const P=T.F.paths[0], L=Math.floor(P.len);
-    T.run.att={mother:1}; T.run.water={floor:0,str:[[0,L-4,L-4],[0,2,2]]}; T.waterSync();
+    T.run.att={mother:1}; /* the near water two tiles short of the lamp, so it sits in the lamp's light on any map (#75 reshaped the Spillway) */
+    T.run.water={floor:0,str:[[0,L-2,L-2],[0,2,2]]}; T.waterSync();
     const wp=T.F.waterPts, spots=[];
     for(const i of [0,2]){let best=null;
       for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++){if(T.F.pathTiles.has(c+','+r)||(c===T.F.lampC&&r===T.F.lampR))continue; const d=Math.hypot(c+.5-wp[i],r+.5-wp[i+1]); if(d<=1.5&&(!best||d<best[2]))best=[c,r,d];}

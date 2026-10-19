@@ -90,7 +90,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.F.phase='wave';
     const foes=[T.spawnFoe('crawler',0,mid-2),T.spawnFoe('crawler',0,mid-4),T.spawnFoe('gnasher',0,mid+3)]; T.update(.001);
     const hp=foes.map(f=>f.hp);
-    T.castUnbind(g); for(let i=0;i<60;i++)T.update(.05);
+    /* it runs back to the mouth of the stair, so a longer road takes longer (the Spillway grew in #75): wait for it, up to 20s */
+    T.castUnbind(g); for(let i=0;i<400&&(i<60||T.F.charges.length);i++)T.update(.05);
     out.unbind={cd:T.F.cd.unbind>20, gone:!T.F.towers.includes(g), roster:T.run.roster.gnasher, hit:foes.map((f,i)=>f.dead||f.hp<hp[i]), charges:T.F.charges.length};
     /* Soul Spear: what a Bone Spear kills leaves its sigil */
     fresh(); window.devNoDark=true;
