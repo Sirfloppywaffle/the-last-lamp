@@ -3,6 +3,9 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+
+## v18.1.0 — The Shifting Stair
+Every floor now has more than one map: three for each of the Cistern, the Ossuary and the Drowned Nave, and two each for the Throat and the Abyssal Heart. One is drawn as you reach the floor, and you meet every map of a floor before any comes back.
 - **The shifting stair: three maps for each of floors one to three** (#73, part 1; Criss: "replaying a lot, the floors themselves look the same"). One map is drawn as you reach the floor, named beside the floor's name in the banner, the pause menu and the descent map, and kept with the save. You meet every map of a floor before any comes back, and your first descent ever plays the first map. The waves, stipends and names don't change.
   - **The Cistern:** **the Spillway** (today's, reshaped: Criss found it and the first new ones too bare, so it now doubles back along the top and runs round every side), **the Ring Drain** (in from the far corner, right round the floor, up into the lamp from below), **the Overflow** (in from the top corner, round the other way, down into the lamp from above).
   - **The Ossuary:** the Upper Gallery (today's), **the Two Galleries** (the fork splits the whole floor: up the west, or round by the east and the top), **the Charnel Cloister** (the fork at your doorstep: light the west wall and they turn in past the lamp; then round by the bottom and the east).
