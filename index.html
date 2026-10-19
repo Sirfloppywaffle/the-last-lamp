@@ -563,7 +563,7 @@ const WARDS={
   bellwire:{n:'Bell Wire',short:'Wire',cost:25,path:true,dark:true,kit:'bellringer',d:'A line of small bells strung across the path, and the one thing that can be strung in the dark. It does no harm: whatever crosses it is heard for 4 seconds, veiled or not, and its jangle hears whatever walks beside it. It rings again 2 seconds later. Three at most. Gnashers chew through it; fliers pass over.'},
   fork:{n:'Tuning Fork',short:'Fork',cost:35,kit:'bellringer',d:'A steel fork on a hollow box. It gives no light: it hums. It stands anywhere within 5 tiles of the lamp or 3.5 of another fork, lit or dark, and you can build inside its hum even in the dark. Wards there are blind: they strike only what is heard, so keep the bell ringing. A toll that reaches it rings again from it, carrying the sound further.'},
   tocsin:{n:'The Tocsin',short:'Tocsin',cost:60,kit:'bellringer',d:'An alarm bell cast as a mortar. It never aims at what is near it: when one of your Bell Wires jangles, there is a breath of silence, then it lobs a shell across the floor and bursts it on that wire, any distance away, in the dark or not. It reloads slowly, so where you string the wires is everything.'},
-  weir:{n:'Weir',short:'Weir',cost:45,path:true,fork:true,d:'A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it.'}
+  weir:{n:'Weir',short:'Weir',cost:45,path:true,fork:true,dark:true,d:'A rotten floodgate set where the stair forks, lit or dark: it needs no light. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it.'}
 };
 const BASE_WARDS=['candle','harpoon','salt','chime','trap','tithe','effigy'];
 const GIFT_WARDS=['chime','censer','coil','lance'];
@@ -2141,7 +2141,7 @@ function supported(t,C){
   /* nothing on the Hallowed Ground goes dark */
   if(hallowT(t))return true;
   /* the Grasping Dead need no light; a Signal Mirror needs the lamp's own */
-  if(t.type==='grasp'||t.type==='risen'||t.type==='pylon'||t.type==='bellwire')return true;
+  if(t.type==='grasp'||t.type==='risen'||t.type==='pylon'||t.type==='bellwire'||t.type==='weir')return true;
   /* a Tuning Fork works while the lamp's sound reaches it; a ward in a fork's hum works in the dark, blind but for what is heard */
   if(t.type==='fork')return !!(F.forkNet&&F.forkNet.has(t));
   if(bellKit()&&inHum(t.x,t.y))return true;
@@ -7370,7 +7370,7 @@ function coachWalkSteps(){
 const TIPS={
   fork:{when:()=>F.phase==='build'&&F.forks.length,steps:()=>{
     const out=[{title:'The stair forks',text:'Here the stair splits. They take the darker way, and only light you cast counts, never the lamp’s. The gold chevron shows where they will go. Shades and Stalkers hunt your light instead.',target:()=>F.forks[0]?coachBoard(F.forks[0].x,F.forks[0].y,.9):null}];
-    if(trayItems().some(i=>i.type==='weir'))out.push({title:'The Weir',enter:()=>coachShowTray('weir'),text:'Build a Weir on the fork and it shuts one way. Tap it between waves to flip it. Watchers fly over it, and a Behemoth breaks it.',target:()=>coachTray('weir')});
+    if(trayItems().some(i=>i.type==='weir'))out.push({title:'The Weir',enter:()=>coachShowTray('weir'),text:'Build a Weir on the fork, lit or dark, and it shuts one way. Tap it between waves to flip it. Watchers fly over it, and a Behemoth breaks it.',target:()=>coachTray('weir')});
     if(ritesNow().includes('wisp'))out.push({title:'The Will-o’-Wisp',text:'Mid-wave, tap the Wisp, then tap a way at the fork. For eight seconds everything but a boss follows it.',target:()=>coachEl('#rites [data-r="wisp"]')});
     return out;}},
   signal:{when:()=>signalKit()&&((sel&&sel.kind==='ward'&&sel.type==='candle')||F.towers.some(t=>t.kind==='ward'&&t.type==='candle'&&!t.dark)),title:'Signal Candles',
@@ -7768,7 +7768,7 @@ function renderModebar(){
   else if(mode==='raise'){title='Raise the Dead'; sub='Tap a pile of bones. Its dead stand up beside the path and bite until the wave breaks.';}
   else if(mode==='unbind'){title='Unbind'; sub='Tap one of your horrors. It charges down the stair through everything in its way, and is gone for good.';}
   else if(mode==='kindle'){title='Kindle'; sub='Tap a creature you can see. It burns and lights the dark around it for 8 seconds, and it runs.';}
-  else if(sel&&sel.kind==='ward'){const W=wdef(sel.type); title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(sel.type==='pylon'?' Tap a lit tile. One pylon must stand in the lamp’s own light to power the rest.':sel.type==='mirror'?' Tap a tile in the lamp’s own light, then tap the mirror to aim it.':sel.type==='grasp'?' Tap a full pile of bones on the path.':sel.type==='bellwire'?' Tap the path, lit or dark.':sel.type==='fork'?' Tap a tile within reach of the lamp or a fork, lit or dark.':W.path?' Tap a lit path tile.':sel.type==='candle'&&corpseKit()?' Tap a marked tile beside a body.':sel.type==='candle'&&signalKit()?' Tap a lit tile beside the path, or a dark one near a lit Signal Candle.':' Tap a lit tile beside the path.');}
+  else if(sel&&sel.kind==='ward'){const W=wdef(sel.type); title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(sel.type==='pylon'?' Tap a lit tile. One pylon must stand in the lamp’s own light to power the rest.':sel.type==='mirror'?' Tap a tile in the lamp’s own light, then tap the mirror to aim it.':sel.type==='grasp'?' Tap a full pile of bones on the path.':sel.type==='bellwire'?' Tap the path, lit or dark.':sel.type==='weir'?' Tap the fork, lit or dark.':sel.type==='fork'?' Tap a tile within reach of the lamp or a fork, lit or dark.':W.path?' Tap a lit path tile.':sel.type==='candle'&&corpseKit()?' Tap a marked tile beside a body.':sel.type==='candle'&&signalKit()?' Tap a lit tile beside the path, or a dark one near a lit Signal Candle.':' Tap a lit tile beside the path.');}
   else if(sel&&sel.kind==='horror'){const H=HORRORS[sel.type]; title=H.n+' · <i>'+H.cost+'</i> · <em>+'+horrorMad(sel.type)+' madness</em>'; sub=avail(sel.type)+' ready. '+H.d;}
   if(!title||!F||F.phase==='cleared'||F.phase==='draft'){if(!el.hidden){el.hidden=true; modeKey=''; modeTitle=''; $('#cmdbar').classList.remove('placing');} return;}
   const key=title+sub;

@@ -65,7 +65,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `bellwire` | Bell Wire | 25 | path | A line of small bells strung across the path, and the one thing that can be strung in the dark. It does no harm: whatever crosses it is heard for 4 seconds, veiled or not, and its jangle hears whatever walks beside it. It rings again 2 seconds later. Three at most. Gnashers chew through it; fliers pass over. |
 | `fork` | Tuning Fork | 35 | beside path | A steel fork on a hollow box. It gives no light: it hums. It stands anywhere within 5 tiles of the lamp or 3.5 of another fork, lit or dark, and you can build inside its hum even in the dark. Wards there are blind: they strike only what is heard, so keep the bell ringing. A toll that reaches it rings again from it, carrying the sound further. |
 | `tocsin` | The Tocsin | 60 | beside path | An alarm bell cast as a mortar. It never aims at what is near it: when one of your Bell Wires jangles, there is a breath of silence, then it lobs a shell across the floor and bursts it on that wire, any distance away, in the dark or not. It reloads slowly, so where you string the wires is everything. |
-| `weir` | Weir | 45 | path | A rotten floodgate set where the stair forks. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it. |
+| `weir` | Weir | 45 | path | A rotten floodgate set where the stair forks, lit or dark: it needs no light. It shuts one way; flip it between waves. Watchers fly over it. A Behemoth breaks it. |
 
 ### Upgrade trees (cost per tier; tier 3 is the capstone)
 
