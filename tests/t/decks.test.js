@@ -9,7 +9,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const T=__t, out={};
     const FL=T.FLOORS, DK=T.DECKS;
     // the data: every card fits its floor's gates and creatures, and alternatives weigh about what the classic wave does
-    const hp={crawler:26,skitter:12,gnasher:72,watcher:42,shade:30,wretch:34+24,shrieker:52,stalker:32,behemoth:420,elite:380,boss:2600,boss2:4200};
+    const hp={crawler:26,skitter:12,gnasher:72,watcher:42,shade:30,wretch:34+24,shrieker:52,stalker:32,behemoth:420,elite:380,boss:2600,boss2:3400};
     const weight=w=>w.reduce((a,g)=>a+(hp[g[0]]||0)*g[1],0);
     out.data=[];
     FL.forEach((f,fi)=>{

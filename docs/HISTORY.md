@@ -3,6 +3,7 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **The boss's rift is marked, and the Primordial has less health** (Criss, after two floor-5 runs: with 800+ essence to start he spent it guarding every road, and "couldn't get it down to half"). The boss always climbs out of one rift, but nothing said which. In the break before a boss's wave a wide red ring with two marks now shows it, the same sign a Herald gets, and the boss comes out there (the Keeper Below too). **The Primordial's health 4200 → 3400** (about a fifth less; the half-way mark falls at 1700 instead of 2100). A first-time tip and a rules line say so; DESIGN is regenerated. Balance changes: `boss2` hp 4200 → 3400, nothing else. (Claude)
 
 ## v18.1.0 — The Shifting Stair
 Every floor now has more than one map: three for each of the Cistern, the Ossuary and the Drowned Nave, and two each for the Throat and the Abyssal Heart. One is drawn as you reach the floor, and you meet every map of a floor before any comes back.

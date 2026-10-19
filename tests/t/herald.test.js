@@ -54,6 +54,17 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* the rift is chosen once, marked in the break before, and is where it climbs out */
     fresh(1); const hh=T.run.draw.herald; T.F.wave=hh.wave; T.F.phase='build'; const g0=T.heraldGate(hh); T.startWave(); const q=T.F.queue.find(x=>x.type===hh.type);
     out.gate={marked:g0!==undefined,same:!!q&&q.gate===g0}; T.F.queue=[]; T.F.foes=[];
+    /* a boss's rift is marked in the break before its wave, on every map, and is where it climbs out; nothing is marked before */
+    out.bossRift=[];
+    for(const [fl,mv] of [[3,0],[3,1],[4,0],[4,1]]){
+      T.setMapV(mv); fresh(fl); const last=T.F.def.waves.length-1; T.F.wave=last-1; T.F.phase='build';
+      const early=T.riftDue().filter(x=>x.boss).length;
+      T.F.wave=last; const due=T.riftDue().filter(x=>x.boss); T.startWave();
+      const mid=T.riftDue().filter(x=>x.boss), bq=T.F.queue.find(x=>T.F.def.waves[last].some(g=>g[0]===x.type&&x.type.indexOf('boss')===0));
+      out.bossRift.push({fl,mv,early,n:due.length,same:!!bq&&mid.length===1&&mid[0].gate===due[0].gate&&bq.gate===due[0].gate});
+      T.F.queue=[]; T.F.foes=[]; out.bossGone=T.riftDue().filter(x=>x.boss).length;
+    }
+    T.setMapV(0);
     fresh(1); T.startWave(); T.F.queue=[]; T.run.ess=100; const tt=T.spawnFoe('tithetaker',0,T.F.paths[0].len-1.5); tt.spawnT=0; tt.stunT=1e6; tt.hp=tt.max=1e6;
     for(let i=0;i<41;i++)T.update(.05); out.tithe={ess:T.run.ess,sack:tt.sack};
     const e0=T.run.ess; T.hurt(tt,1e7); out.titheBack=T.run.ess-e0;
@@ -98,6 +109,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.tithe.ess===96&&r.tithe.sack===4,'the Tithe-taker takes 2 essence a second into its sack while it walks in your light',r.tithe);
   ok(r.titheDark===0,'in the dark it takes nothing',r.titheDark);
   ok(r.gate.marked&&r.gate.same,'the rift it will come from is marked, and that is where it climbs out',r.gate);
+  ok(r.bossRift.every(x=>x.early===0&&x.n===1&&x.same)&&r.bossGone===0,'a boss’s rift is marked only in the break before its wave, on every map, and is where it climbs out',r.bossRift);
   ok(r.titheBack===6,'slain, its sack pays back half again',r.titheBack);
   ok(r.daze.t>1.9&&r.daze.shotsWhileDazed===0,'the Bellfather’s toll leaves the wards near it reeling, doing nothing',r.daze);
   ok(r.bellRing,'for the Bellringer, its toll is a ring that hears');
