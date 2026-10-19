@@ -189,6 +189,8 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .titem.on{border-color:var(--tallow);background:var(--slab)}
 .titem.horror.on{border-color:var(--madness)}
 .titem.poor{opacity:.5}
+/* a Trial bars it (Rationed full, Sealed, One of Each): dashed and dimmer than "can't afford", with a lock on its icon */
+.titem.is-barred{opacity:.4;border-style:dashed}
 .rites{display:flex;gap:6px;flex:0 1 auto;overflow-x:auto;min-width:0}
 .rite{position:relative;overflow:hidden;flex:0 0 auto;min-width:88px;padding:6px 9px;border-radius:8px;border:1px solid var(--seam);background:var(--stone);text-align:left}
 .rite::before{content:"";position:absolute;inset:0;background:var(--slab);transform-origin:left;transform:scaleX(var(--cd,0))}
@@ -201,6 +203,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .rite.onbeat{border-color:var(--tallow);box-shadow:0 0 0 2px var(--tallow-glow),0 0 14px rgba(237,180,90,.45)}
 .rite.warn span{color:var(--madness)}
 .rite:disabled{cursor:default}
+.rite.is-silent{opacity:.45;border-style:dashed}
 .calls{display:flex;gap:6px;flex:0 0 auto;margin-left:auto}
 .btn{padding:10px 14px;border-radius:8px;border:1px solid var(--seam);background:var(--slab);font-size:.9rem}
 .btn.call{background:var(--tallow);border-color:var(--tallow);color:var(--ink-on-tallow);font-family:var(--f-display);font-weight:700;font-size:1.1rem;line-height:1}
@@ -462,7 +465,7 @@ input[type=range]::-moz-range-track {
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
-        <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard.</li>
+        <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard. <i>Sealed:</i> two of your wards are locked for the floor, marked with a lock in the tray; never your light and never your harpoon. <i>One of Each:</i> each kind of ward stands only once, except what makes your light (candles of every kind, Tuning Forks, pylons, Bell Wires and Try-pots). <i>Bare Hands:</i> your rites are silent, all but the Bellringer's Toll. <i>Unbranched:</i> nothing can be upgraded, not even the lamp. <i>The Long Night:</i> candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller; it never comes with Moonless or Thick Dark.</li>
         <li><b>Patrons.</b> Old things below the stair make offerings. Half the time the landing's gift is the Drowned Mother's offering instead (a quarter, if she already reached out on that floor), and now and then she reaches out between waves. Take one gift, or refuse her. Her gifts change what your wards do, and some belong to one kit. Every gift raises her Attention, and Attention changes your floors: at 1 her water stands on the path, and its current carries creatures 30% faster; at 3 it rises a tile with every wave; at 5 whatever walks in it goes under, unseen unless something unveils it. Her sign sits beside the Grimoire; tap it to see where you stand.</li>
         <li><b>Embers.</b> Every descent, won or lost, leaves embers behind. Spend them in the Ember Hall on new kits, relics and stories. Carry the lamp to morning to open the Deeper Dark, where each depth adds a new cruelty.</li>
         <li><b>The Grimoire.</b> The book in the HUD holds every creature you have met, every ward and rite, and every relic you have found. The relics you carry sit beside it: tap one to read what it does.</li>
@@ -842,12 +845,21 @@ const OMENS={
 /* Trials (#31, Criss): a door can carry one, and the floor behind it plays by its rule. Pass it and take a relic.
    One door on each fork into floor two or three carries one (never the first floor, the Keeper's or the Primordial's).
    fits(kit) keeps a Trial off a kit it would leave unwinnable: it must never seal a kit's only light, or her forks.
-   Both of these were checked against all five kits (PR notes), so both fit every kit for now */
+   Each was checked against all five kits (PR notes). Sealed needs two wards it may take; the rest fit every kit */
 const TRIALS={
   rationed:{n:'Rationed',short:'Rationed',d:'Six wards at most beside the path. What lies on the path doesn’t count, and neither do horrors. Upgrades are where the power goes.',fits:()=>true},
-  hallowed:{n:'The Hallowed Ground',short:'Hallowed',d:'You build only on four marked patches of ground, lit or dark; nothing stands anywhere else beside the path. Nothing there goes dark, and a candle there burns without the lamp.',fits:()=>true}
+  hallowed:{n:'The Hallowed Ground',short:'Hallowed',d:'You build only on four marked patches of ground, lit or dark; nothing stands anywhere else beside the path. Nothing there goes dark, and a candle there burns without the lamp.',fits:()=>true},
+  sealed:{n:'Sealed',short:'Sealed',d:'Two of your wards are locked for the floor. Never your light, and never your harpoon.',fits:()=>sealable().length>=SEAL_N},
+  once:{n:'One of Each',short:'One of Each',d:'Each kind of ward stands only once. What makes your light is spared: build as many of those as you like.',fits:()=>true},
+  bare:{n:'Bare Hands',short:'Bare Hands',d:'Your rites are silent this floor. Only a Bellringer’s Toll still rings.',fits:()=>true},
+  unbranched:{n:'Unbranched',short:'Unbranched',d:'Nothing can be upgraded this floor, not even the lamp. Spend on more wards instead.',fits:()=>true},
+  night:{n:'The Long Night',short:'Long Night',d:'Candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller.',fits:()=>true}
 };
-const TRIAL_FLOORS=[1,2], RATION_MAX=6, HALLOW_PATCHES=4, HALLOW_SIZE=4;
+/* what makes each kit's light, or the Bellringer's hearing: Sealed never locks it and One of Each never caps it
+   (candles of every kind, Tuning Forks, pylons, Bell Wires, and the Try-pot that feeds Blubber Lamps).
+   Sealed also leaves the harpoon, so every kit keeps something that strikes. The Long Night halves candle light and fork hum */
+const TRIAL_FLOORS=[1,2], RATION_MAX=6, HALLOW_PATCHES=4, HALLOW_SIZE=4,
+  TRIAL_SPARE=['candle','fork','pylon','bellwire','trypot'], SEAL_N=2, NIGHT_DIM=.5, NIGHT_LAMP=1;
 const ROOMS={
   merchant:{n:'A Merchant’s Alcove',tag:'Merchant',d:'Something trades in the dark. Spend your essence on relics, wards and bindings before the stair burns it.'},
   shrine:{n:'A Bleeding Shrine',tag:'Shrine',d:'Make a pact: power, for a price.'},
@@ -1534,12 +1546,12 @@ function wstat(t){
   const b=t.br||{};
   if(t.type==='harpoon')return {range:2.6+.4*m2(b.sight),dmg:(10+(b.strength>=1?6:0)+(b.strength>=2?8:0))*(has('whetted')?1.3:1)*spearMul(b),spear:kit()==='occultist',soul:b.dread>=3,
     tether:kit()==='whaler',tMax:b.line>=1?.55:TETHER_MAX,clap:kit()==='bellringer'?{hear:CLAP_HEAR+(b.ring>=1?1:0),knock:CLAP_KNOCK+(b.ring>=2?.25:0),peal:b.ring>=3}:null,rod:kit()==='galvanist',rodT:ROD_T+(b.charge>=1?2:0),rodMax:ROD_MAX+(b.charge>=2?1:0),thunder:b.charge>=3,leash:b.line>=2?2:1,haul:b.line>=3,rate:1.1*Math.pow(1.25,m2(b.speed)),twin:b.speed>=3,pierce:b.strength>=3,deep:b.sight>=3,flare:kit()==='lamplighter',flareR:GLINT_R+(b.flare>=1?.5:0),flareT:GLINT_T+(b.flare>=2?1:0),star:b.flare>=3};
-  if(t.type==='candle')return {arc:kit()==='galvanist',flare:ARC_DMG+4*m2(b.spark),steady:b.spark>=3,light:2.3+.5*m2(b.glow)+(kit()==='whaler'?BLUBBER_LIGHT:0)+(kit()==='galvanist'?ARC_LIGHT:0)-(F&&F.omen==='thickdark'?.5:0),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)],beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3,reek:b.reek>=2?4:b.reek>=1?2:0,lure:b.reek>=3};
+  if(t.type==='candle')return {arc:kit()==='galvanist',flare:ARC_DMG+4*m2(b.spark),steady:b.spark>=3,light:(2.3+.5*m2(b.glow)+(kit()==='whaler'?BLUBBER_LIGHT:0)+(kit()==='galvanist'?ARC_LIGHT:0)-(F&&F.omen==='thickdark'?.5:0))*(trialOn('night')?NIGHT_DIM:1),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)],beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3,reek:b.reek>=2?4:b.reek>=1?2:0,lure:b.reek>=3};
   if(t.type==='chime')return {range:1.8+.25*m2(b.res),dmg:14+(b.marrow>=1?6:0)+(b.marrow>=2?8:0),stun:.6+.3*m2(b.toll)+(has('marrow')?.4:0),period:2,twice:b.res>=3,knell:b.toll>=3,shatter:b.marrow>=3};
   if(t.type==='censer')return {range:3.2,dmg:16,rate:.45*Math.pow(1.25,m2(b.swing)),splash:1+.25*m2(b.spread),volley:b.swing>=3,cluster:b.spread>=3,
     pool:b.pitch>=3?{dps:10,dur:4,r:1.4}:b.pitch>=1?{dps:b.pitch>=2?7:4,dur:b.pitch>=2?2.5:2,r:1}:null};
   if(t.type==='trap')return {dmg:60+(b.barbs>=1?20:0)+(b.barbs>=2?25:0),hold:1+.5*m2(b.chain),reset:3*Math.pow(.75,m2(b.spring)),bleed:b.barbs>=3,twin:b.spring>=3,drag:b.chain>=3};
-  if(t.type==='fork')return {hum:FORK_HUM+.5*m2(b.pitch),reach:FORK_REACH+(b.pitch>=3?2:0),ring:FORK_RING+.5*m2(b.overtone),hearPlus:[0,.5,1][m2(b.sustain)],drone:b.sustain>=3,overtone:b.overtone>=3};
+  if(t.type==='fork')return {hum:(FORK_HUM+.5*m2(b.pitch))*(trialOn('night')?NIGHT_DIM:1),reach:FORK_REACH+(b.pitch>=3?2:0),ring:FORK_RING+.5*m2(b.overtone),hearPlus:[0,.5,1][m2(b.sustain)],drone:b.sustain>=3,overtone:b.overtone>=3};
   if(t.type==='tocsin')return {dmg:TOCSIN_DMG+(b.powder>=1?15:0)+(b.powder>=2?20:0),r:TOCSIN_R+(b.powder>=3?.6:0),reload:TOCSIN_RELOAD*Math.pow(.8,m2(b.breech)),ammo:b.breech>=3?2:1,hear:b.clang>=1?2:0,stagger:b.clang>=2,cracks:b.clang>=3?2:1};
   if(t.type==='bellwire')return {echo:WIRE_ECHO+.5*m2(b.chord),ring:WIRE_RING-.5*m2(b.rope),hear:WIRE_HEAR+m2(b.linger),carillon:b.chord>=3,tarred:b.rope>=3,marked:b.linger>=3};
   if(t.type==='trypot')return {range:POT_R,every:POT_MEASURE,max:POT_MAX};
@@ -1563,6 +1575,7 @@ function spearMul(b){return kit()==='occultist'?1+(SPEAR_TIER+DREAD_TIER*m2(b.dr
 function branchState(o,bi){
   const tree=treeOf(o.type), B=tree[bi], lvl=o.br[B.k]||0;
   if(lvl>=3)return {max:true};
+  if(trialOn('unbranched'))return {lock:'Unbranched'};
   const active=tree.filter(b=>(o.br[b.k]||0)>0).length;
   if(lvl===0&&active>=2)return {lock:'Two branches already chosen'};
   if(lvl===2&&tree.some(b=>b.k!==B.k&&(o.br[b.k]||0)>=3))return {lock:'Another branch holds the capstone'};
@@ -1713,7 +1726,7 @@ function nearestPathPoint(x,y){
 
 /* ---------------- light ---------------- */
 function lampBase(){
-  let r=3.7+lstat().wickR+(has('tallow')?.8:0)+(has('blackwick')?1.2:0)+(run.lampBonus||0)-(F&&F.omen==='moonless'?1:0);
+  let r=3.7+lstat().wickR+(has('tallow')?.8:0)+(has('blackwick')?1.2:0)+(run.lampBonus||0)-(F&&F.omen==='moonless'?1:0)-(trialOn('night')?NIGHT_LAMP:0);
   if(madTier()>=3)r-=1;
   return Math.max(1.6,r);
 }
@@ -2194,6 +2207,17 @@ function trialOn(k){return !!(F&&F.trial===k);}
 function rationCounts(type){const W=WARDS[type]; return !!W&&!W.path&&!W.raised;}
 function rationN(){let n=0; for(const t of F.towers)if(t.kind==='ward'&&!t.dead&&rationCounts(t.type))n++; return n;}
 function rationFull(){return trialOn('rationed')&&rationN()>=RATION_MAX;}
+/* Sealed: two wards from your arsenal, drawn once as the floor begins and kept with the save (run.seal, like run.hallow) */
+function sealable(){return run.wards.filter(w=>WARDS[w]&&!WARDS[w].raised&&w!=='harpoon'&&!TRIAL_SPARE.includes(w));}
+function sealSeed(){run.seal={floor:run.floor,w:shuffle(sealable()).slice(0,SEAL_N)};}
+function sealedW(type){return trialOn('sealed')&&!!run.seal&&run.seal.floor===run.floor&&run.seal.w.includes(type);}
+/* One of Each: a kind that already stands can't stand again, except what makes your light (or what a rite raises) */
+function onceTaken(type){if(!trialOn('once')||TRIAL_SPARE.includes(type)||!WARDS[type]||WARDS[type].raised)return false;
+  for(const t of F.towers)if(t.kind==='ward'&&!t.dead&&t.type===type)return true; return false;}
+/* Bare Hands: every rite is silent but the Bellringer's Toll, which is how she sees */
+function riteSilent(k){return trialOn('bare')&&k!=='toll';}
+/* the tray: a ward the Trial bars right now */
+function trialBarred(i){return i.kind==='ward'&&((rationCounts(i.type)&&rationFull())||sealedW(i.type)||onceTaken(i.type));}
 /* the Hallowed Ground: four patches, each the ground around one tile of the path, so a patch holds wards on both sides of it
    (and a Galvanist's wire can cross it). One always lies around the lamp; the others are spread along the stair, one way
    after another. Worked out in the board's present orientation, kept the way FLOORS writes it (flipPt undoes itself) */
@@ -2285,7 +2309,7 @@ const DEV_ACTS={
   /* restart this floor under a Trial (or none), to try it without the doors. Nothing is saved but the run itself */
   trial(k){
     if(F.phase!=='build'&&F.phase!=='wave')return 'Only while a floor is being fought';
-    run.trial=TRIALS[k]?k:null; run.hallow=null;
+    run.trial=TRIALS[k]?k:null; run.hallow=null; run.seal=null;
     MAP_SYS.active=false; $('#mapOverlay').hidden=true;
     beginFloor(null); return null;
   },
@@ -2505,6 +2529,7 @@ function beginFloor(snap){
   /* the Hallowed Ground is marked once, as the floor begins, and kept with the save */
   if(F.trial==='hallowed'&&(!run.hallow||run.hallow.floor!==run.floor))hallowSeed();
   hallowSync();
+  if(F.trial==='sealed'&&(!run.seal||run.seal.floor!==run.floor))sealSeed();
   if(snap){
     F.wave=snap.wave||0;
     F.towers=(snap.towers||[]).map(t=>{
@@ -2535,7 +2560,8 @@ function beginFloor(snap){
     banner(def.name,F.omen||F.elite||F.trial?'mad':'',snap&&F.wave?'Wave '+F.wave+' of '+def.waves.length+' held':'Floor '+(run.floor+1)+' of '+FLOORS.length+(F.elite?' · Elite':'')+(F.omen?' · '+OMENS[F.omen].n:'')+(F.trial?' · Trial: '+TRIALS[F.trial].short:''));
     /* a Trial speaks first, and everything after it waits its turn (tl) */
     const tr=F.trial&&!(snap&&F.wave)?TRIALS[F.trial]:null, tl=tr?5000:0;
-    if(tr)setTimeout(()=>{if(F&&F.trial)hint('Trial: '+tr.n+'. '+tr.d+' Pass it and take a relic.',5200);},1600);
+    const sl=F.trial==='sealed'&&run.seal?' Locked: '+run.seal.w.map(w=>wdef(w).n).join(' and ')+'.':'';
+    if(tr)setTimeout(()=>{if(F&&F.trial)hint('Trial: '+tr.n+'. '+tr.d+sl+' Pass it and take a relic.',5200);},1600);
     if(F.omen&&!(snap&&F.wave))setTimeout(()=>{if(F&&F.omen)hint('Omen: '+OMENS[F.omen].n+'. '+OMENS[F.omen].d+(F.elite?' This floor is elite, too.':''),5000);},1600+tl);
     else if(F.elite&&!(snap&&F.wave))setTimeout(()=>hint('An elite floor: tougher creatures, and more of them. A relic waits at the end.',4200),1600+tl);
     if(run.floor===0&&!snap){
@@ -2789,7 +2815,9 @@ function makeDoors(){
   const doors=out.map(room=>({room,omen:(depthLvl()>=2||Math.random()<.5)?pick(Object.keys(OMENS)):null}));
   /* a Trial on one door (never the Deep Stair's: an elite floor under a Trial is two cruelties behind one choice) */
   const tk=Object.keys(TRIALS).filter(k=>TRIALS[k].fits(kit())), open=doors.filter(d=>d.room!=='deep');
-  if(TRIAL_FLOORS.includes(run.floor+1)&&tk.length&&open.length)pick(open).trial=pick(tk);
+  if(TRIAL_FLOORS.includes(run.floor+1)&&tk.length&&open.length){const d=pick(open); d.trial=pick(tk);
+    /* the Long Night already dims the lamp and the candles: no Moonless or Thick Dark on top of it */
+    if(d.trial==='night'&&(d.omen==='moonless'||d.omen==='thickdark'))d.omen=pick(Object.keys(OMENS).filter(k=>k!=='moonless'&&k!=='thickdark'));}
   return doors;
 }
 function makeRoom(type){
@@ -3527,6 +3555,8 @@ function placeProblem(item,c,r){
   const onPath=F.pathTiles.has(c+','+r);
   /* Rationed: six wards beside the path, no more (what lies on the path, and horrors, are free of it) */
   if(item.kind==='ward'&&rationCounts(item.type)&&rationFull())return 'Rationed: six wards stand already. Sell one to build another.';
+  if(item.kind==='ward'&&sealedW(item.type))return 'Sealed: the Trial has locked this ward for the floor.';
+  if(item.kind==='ward'&&onceTaken(item.type))return 'One of Each: that ward stands already. Sell it to build another.';
   if(item.kind==='ward'&&item.type==='weir'&&!F.forks.some(f=>f.c===c&&f.r===r))return 'A weir only fits where the stair forks.';
   if(item.kind==='ward'&&WARDS[item.type].path){if(!onPath)return item.type==='salt'?'Salt has to be poured on the path.':item.type==='grasp'?'The Grasping Dead rise from bones on the path.':item.type==='bellwire'?'A Bell Wire is strung across the path.':'Traps are set on the path.';}
   else if(onPath)return 'Nothing can stand on the path.';
@@ -3806,6 +3836,7 @@ function bindSoul(s){
 function castRite(k){
   if(!F||paused||F.phase==='over'||F.phase==='won')return;
   if(mode===k){mode=null; forceUI(); return;}
+  if(riteSilent(k)){hint('Bare Hands: your rites are silent this floor.'); return;}
   if(k==='name'){if(F.nameUsed)return;}
   else if((F.cd[k]||0)>0)return;
   if(k==='flare'){F.flareT=5; F.cd.flare=RITES.flare.cd; AUDIO.flare(); banner('Flare','rite','Everything is lit for five seconds');}
@@ -7459,6 +7490,21 @@ const TIPS={
   hallowed:{when:()=>F.phase==='build'&&trialOn('hallowed')&&!!F.hallowG,title:'Trial: The Hallowed Ground',
     text:'This floor, you build only on the four patches marked in chalk, lit or dark. Nothing there goes dark, and a candle there burns without the lamp; but your wards still strike only what is seen or heard. The path is yours as ever. Pass the floor and a relic waits.',
     target:()=>{const p=F.hallowG.tiles[0]; return p?coachBoard(p[0]+.5,p[1]+.5,1.6):null;}},
+  sealed:{when:()=>F.phase==='build'&&trialOn('sealed')&&!!run.seal,title:'Trial: Sealed',
+    text:'This floor, two of your wards are locked: they carry a lock in the tray, and nothing builds them. Your light and your harpoon are never sealed. Pass the floor and a relic waits.',
+    target:()=>coachEl('#tray')},
+  once:{when:()=>F.phase==='build'&&trialOn('once'),title:'Trial: One of Each',
+    text:'This floor, each kind of ward stands only once; once built, it carries a lock in the tray. What makes your light is spared, so build as many of those as you like. Choose where each one stands with care. Pass the floor and a relic waits.',
+    target:()=>coachEl('#tray')},
+  bare:{when:()=>F.phase==='build'&&trialOn('bare'),title:'Trial: Bare Hands',
+    text:'This floor, your rites are silent. Only a Bellringer’s Toll still rings, because it is how she sees. Your wards hold the stair alone. Pass the floor and a relic waits.',
+    target:()=>coachEl('#rites')},
+  unbranched:{when:()=>F.phase==='build'&&trialOn('unbranched'),title:'Trial: Unbranched',
+    text:'This floor, nothing can be upgraded, not even the lamp. Put your essence into more wards instead. Pass the floor and a relic waits.',
+    target:()=>coachEl('#tray')},
+  night:{when:()=>F.phase==='build'&&trialOn('night'),title:'Trial: The Long Night',
+    text:'This floor, candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller. Build close, and build more light. Pass the floor and a relic waits.',
+    target:()=>coachBoard(F.lx,F.ly,lampBase())},
   tuningfork:{when:()=>bellKit()&&F.phase==='build'&&run.wards.includes('fork'),title:'Tuning Forks',
     text:'She builds no candles. A Tuning Fork gives no light: it hums. It stands within 5 tiles of the lamp or 3.5 of another fork, lit or dark, and you can build inside its hum in the dark. But wards there are blind: they strike only what is heard. Keep the bell ringing.',
     target:()=>coachTray('fork')},
@@ -7632,12 +7678,12 @@ function costLabel(i){
 let trayKey='';
 function renderTray(){
   const items=trayItems();
-  /* Rationed: once six stand, the wards that count are greyed like ones you can't afford */
-  const full=rationFull(), capped=i=>full&&i.kind==='ward'&&rationCounts(i.type);
-  const key=items.map(i=>i.kind+i.type+':'+costLabel(i)+':'+(run.ess>=itemCost(i)?1:0)+':'+(isSel(i)?1:0)+':'+(capped(i)?1:0)).join('|');
+  /* a ward a Trial bars (Rationed full, Sealed, One of Each) is dashed and dim, with a lock on its icon, so it never reads as "can't afford" */
+  const bar=items.map(trialBarred);
+  const key=items.map((i,ix)=>i.kind+i.type+':'+costLabel(i)+':'+(run.ess>=itemCost(i)?1:0)+':'+(isSel(i)?1:0)+':'+(bar[ix]?1:0)).join('|');
   if(key===trayKey)return; trayKey=key;
   const el=$('#tray');
-  el.innerHTML=items.map((i,ix)=>'<button class="titem '+i.kind+(isSel(i)?' on':'')+(run.ess<itemCost(i)||(i.kind==='horror'&&avail(i.type)<=0)||capped(i)?' poor':'')+'" data-ix="'+ix+'" aria-pressed="'+isSel(i)+'"><canvas width="72" height="72"></canvas><span class="nm">'+itemName(i)+'</span><span class="ct">'+costLabel(i)+'</span></button>').join('');
+  el.innerHTML=items.map((i,ix)=>'<button class="titem '+i.kind+(isSel(i)?' on':'')+(bar[ix]?' is-barred':run.ess<itemCost(i)||(i.kind==='horror'&&avail(i.type)<=0)?' poor':'')+'" data-ix="'+ix+'" aria-pressed="'+isSel(i)+'"><canvas width="72" height="72"></canvas><span class="nm">'+itemName(i)+'</span><span class="ct">'+costLabel(i)+'</span></button>').join('');
   el.querySelectorAll('.titem').forEach(b=>{
     const i=items[+b.dataset.ix];
     b.onclick=()=>{
@@ -7646,7 +7692,17 @@ function renderTray(){
       mode=null; forceUI();
     };
     drawIcon(b.querySelector('canvas'),i);
+    if(bar[+b.dataset.ix])drawLock(b.querySelector('canvas'));
   });
+}
+/* a small padlock in the icon's lower right corner, for a ward a Trial bars */
+function drawLock(cvs){
+  const c=cvs.getContext('2d');
+  c.setTransform(cvs.width,0,0,cvs.height,0,0);
+  c.fillStyle='rgba(12,15,17,.85)'; c.beginPath(); c.arc(.76,.76,.2,0,TAU); c.fill();
+  c.strokeStyle=PAL.bone; c.lineWidth=.035; c.beginPath(); c.arc(.76,.71,.065,Math.PI,0); c.stroke();
+  c.fillStyle=PAL.bone; c.fillRect(.67,.71,.18,.13);
+  c.fillStyle='#0c0f11'; c.fillRect(.75,.75,.02,.05);
 }
 function drawIcon(cvs,i){
   const c=cvs.getContext('2d');
@@ -7692,7 +7748,7 @@ function statLine(o){
   return (hasOff('brine')?'Brine: drags each creature <b>1</b> tile back, once':'Slows <b>50%</b>')+' · Holds <b>'+(o.dur!=null?o.dur:14*(has('saltflats')?2:1))+'</b> crossings';
 }
 function treeHTML(o,B){
-  return '<p class="rulenote">Two branches per '+(o.isLamp?'lamp':'ward')+'. Only one can reach its capstone.</p><div class="tree">'+treeOf(o.type).map((br,bi)=>{
+  return '<p class="rulenote">'+(trialOn('unbranched')?'Trial: Unbranched. Nothing grows this floor.':'Two branches per '+(o.isLamp?'lamp':'ward')+'. Only one can reach its capstone.')+'</p><div class="tree">'+treeOf(o.type).map((br,bi)=>{
     const lvl=o.br[br.k]||0, s=branchState(o,bi);
     const pips='<span class="pips" aria-label="'+lvl+' of 3">'+[0,1,2].map(i=>'<i class="'+(i<lvl?'on':'')+(i===2?' cap':'')+'"></i>').join('')+'</span>';
     let body, btn='';
@@ -7830,7 +7886,9 @@ function renderRites(){
   el.querySelectorAll('.rite').forEach(b=>{
     const k=b.dataset.r, R=RITES[k];
     let frac=0, txt='Ready';
-    if(k==='name'){if(F.nameUsed){frac=1; txt=F.named?FOES[F.named].n:'Spent';}}
+    const mute=riteSilent(k); b.classList.toggle('is-silent',mute);
+    if(mute){frac=1; txt='Silent';}
+    else if(k==='name'){if(F.nameUsed){frac=1; txt=F.named?FOES[F.named].n:'Spent';}}
     else if(k==='toll'){const c=F.cd.toll||0, nz=Math.floor(F.noise||0), bo=beatOff(); b.classList.toggle('onbeat',c<=0&&bo!==null&&bo<=PERFECT_WIN+.1); frac=c/TOLL_SWING; txt=c>0?Math.ceil(c)+'s':nz+1>=NOISE_MAX?'Noise '+nz+' · calls them':'Noise '+nz+' of '+NOISE_MAX; b.classList.toggle('warn',c<=0&&nz+1>=NOISE_MAX);}
     else if(k==='greatbell'){const c=F.cd.greatbell||0; frac=c/R.cd; txt=c>0?Math.ceil(c)+'s':'+'+GREAT_NOISE+' Noise';}
     else if(k==='overload'){const n=overloadFry(); txt=run.oil<=OVER_OIL?'Too little oil':OVER_OIL+' oil · '+(n?'fries '+n:'heat '+Math.floor(F.heat||0)); if(run.oil<=OVER_OIL)frac=1;}
