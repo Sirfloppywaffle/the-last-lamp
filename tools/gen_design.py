@@ -91,6 +91,7 @@ if D.get('PATRONS'):
         w("**%s** (`%s`): %s\n"%(esc(P['n']),pk,esc(P['d'])))
         w("| Attention | Tier | What changes |\n|---|---|---|")
         for t in P['tiers']: w("| %s | %s | %s |"%(t['at'],t['n'],esc(t['d'])))
+    if 'MOUTH_DREAD' in D: w("\nMany-Mouthed numbers: Watched carries **%s** dread; each Gibberer alive adds **%s** (at most **%s**), and a ward within **%s** tiles of one waits **×%s** between shots. A Gorger takes **×%s** from horrors; every **%ss** (the first after %ss) it lashes a horror within **%s** tiles (once Watched, a candle or fork within **%s**), dazing or snuffing it **%ss** and healing **%s**. A Choir-Husk veils what walks within **%s** tiles (not itself, a boss or a Herald). Dread counts toward the madness tiers; only paid horrors' madness feeds the Occultist and opens Unpaid Teeth."%(D['MOUTH_DREAD'],D['GIB_DREAD'],D['GIB_DREAD_MAX'],D['GIB_R'],D['GIB_SLOW'],D['GORGE_RESIST'],D['GORGE_CD'],D['GORGE_FIRST'],D['GORGE_R'],D['GORGE_WARD_R'],D['GORGE_T'],D['GORGE_HEAL'],D['HUSK_R']))
     w("\nWater numbers: current **×%s**; a floor floods **%s** stretches of **%s** tiles; it rises to at most **%s** tiles; \"beside water\" is within **%s** tiles."%(D['CURRENT'],D['FLOOD_N'],D['FLOOD_LEN'],D['FLOOD_MAX'],D['NEAR_WATER']))
     w("\n| Key | Offering | Patron | Kit | Effect |\n|---|---|---|---|---|")
     for k,v in D['OFFERINGS'].items(): w("| `%s` | %s | %s | %s | %s |"%(k,esc(v['n']),v['p'],v.get('kit',''),esc(v['d'])))

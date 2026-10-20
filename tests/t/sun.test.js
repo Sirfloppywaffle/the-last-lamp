@@ -11,7 +11,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const keys=k=>{T.newRun(k,0); const s=new Set(); for(let i=0;i<200;i++)(T.offerSet('sun')||[]).forEach(x=>s.add(x)); return [...s].sort();};
     out.lamp=keys('lamplighter'); out.whaler=keys('whaler'); out.bell=keys('bellringer');
     T.newRun('lamplighter',0); T.addAtt('sun',3);
-    const n={mother:0,sun:0}; for(let i=0;i<300;i++){const o=T.patronOffer(); n[o.p]++; if(!o.o.every(k=>T.OFFERINGS[k].p===o.p))n.mixed=1;}
+    const n={mother:0,sun:0,mouths:0}; for(let i=0;i<300;i++){const o=T.patronOffer(); n[o.p]++; if(!o.o.every(k=>T.OFFERINGS[k].p===o.p))n.mixed=1;}
     out.pick=n;
     Object.keys(T.OFFERINGS).filter(k=>T.OFFERINGS[k].p==='sun').forEach(k=>T.run.offs=(T.run.offs||[]).concat(k));
     out.fallback=T.patronOffer().p;
@@ -20,8 +20,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(offers.lamp.includes('sun_signal')&&!offers.lamp.includes('sun_harpoon'),'the Lamplighter sees its own, not the Whaler’s',offers.lamp);
   ok(offers.whaler.includes('sun_harpoon')&&!offers.whaler.includes('sun_signal'),'the Whaler sees its own',offers.whaler);
   ok(offers.bell.includes('sun_chime'),'the Bellringer sees Resonant Glare',offers.bell);
-  ok(offers.pick.mother>90&&offers.pick.sun>90&&!offers.pick.mixed,'either patron reaches out at even odds, even at Attention 3, each with only its own',offers.pick);
-  ok(offers.fallback==='mother','a patron with nothing left gives way to the other',offers.fallback);
+  ok(offers.pick.mother>70&&offers.pick.sun>70&&offers.pick.mouths>70&&!offers.pick.mixed,'any patron reaches out at even odds (a third each, #83), even at Attention 3, each with only its own',offers.pick);
+  ok(offers.fallback&&offers.fallback!=='sun','a patron with nothing left gives way to another',offers.fallback);
 
   /* Noticed: three spots on the path, never the lamp, kept with the run; they see, they sight Stalkers, no burn yet */
   const spots=await p.evaluate(()=>{const T=__t, out={}; window.devNoDark=false;

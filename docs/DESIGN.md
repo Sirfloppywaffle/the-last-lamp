@@ -37,9 +37,12 @@ Every table below is generated from the live code (`index.html`) by `tests/gen-d
 | `lastkeeper` | The Last Keeper | 440 | 0.42 | 8 | 40 | 0.52 |  |
 | `tithetaker` | The Tithe-taker | 400 | 0.5 | 8 | 0 | 0.5 |  |
 | `bellfather` | The Bellfather | 520 | 0.36 | 8 | 40 | 0.56 |  |
+| `gibberer` | Gibberer | 22 | 1.25 | 1 | 0 | 0.24 |  |
+| `gorger` | Gorger | 56 | 0.8 | 2 | 0 | 0.36 |  |
+| `husk` | Choir-Husk | 95 | 0.7 | 2 | 0 | 0.4 |  |
 | `keeper` | Bound Keeper | 1 | 0 | 0 | 0 | 0.6 | bound |
 
-`bind` = can drop a sigil you can bind as a horror. `veiled` = invisible unless unveiled. `aura` = buffs nearby creatures. `spawner` = calls minions. `keeper` is the bound form of the Keeper Below; it never spawns as an enemy. Spawnable: `crawler`, `skitter`, `gnasher`, `watcher`, `shade`, `wretch`, `shrieker`, `elite`, `boss`, `stalker`, `behemoth`, `boss2`, `lastkeeper`, `tithetaker`, `bellfather`.
+`bind` = can drop a sigil you can bind as a horror. `veiled` = invisible unless unveiled. `aura` = buffs nearby creatures. `spawner` = calls minions. `keeper` is the bound form of the Keeper Below; it never spawns as an enemy. Spawnable: `crawler`, `skitter`, `gnasher`, `watcher`, `shade`, `wretch`, `shrieker`, `elite`, `boss`, `stalker`, `behemoth`, `boss2`, `lastkeeper`, `tithetaker`, `bellfather`, `gibberer`, `gorger`, `husk`.
 
 ## Wards
 
@@ -210,6 +213,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `toll` | Toll | 3s | The lamp tolls. A ring sweeps 7 tiles out from it, and everything it touches is heard for 1.5 seconds: outlined in the dark, veiled or not, and every ward can strike it. Each toll makes Noise. At 5 Noise the dark answers, and two Abyssal Stalkers climb toward the sound. With Peal, tap it on the lamp’s own beat for a Perfect Toll: half again as far, two cracks, and half the Noise. |
 | `greatbell` | The Great Bell | 30s | One huge toll across the whole floor. Everything is heard for 4 seconds, veiled or not, and staggered for half a second. It makes 3 Noise. |
 | `ebb` | The Ebb | 30s | The water draws back. Everything standing in it is dragged 2 tiles back down the path. Bosses and Behemoths hold their ground. |
+| `feed` | Feed the Dark | 22s | The lamp gutters for 2.5 seconds and burns 1.2 smaller. Everything within 3 tiles of it is dragged 1.5 tiles back (a Behemoth a third as far, never a boss), and your horrors strike twice as fast and into the dark. In a wave, you carry 4 dread until it breaks. |
 
 ## Kits
 
@@ -421,6 +425,15 @@ At the landing the gift is a patron's offering instead, half the time (a quarter
 | 1 | Noticed | Three bright spots burn on the path of every floor. Whatever stands in one is seen. But a Stalker that crosses one has seen the lamp, and runs 40% faster for 3 seconds. |
 | 3 | Watched | The glare spreads onto the stone beside each spot, and sears whatever stands in a spot, 3 a second. As each wave begins, another spot opens. |
 | 5 | Claimed | Your wards that stand in the glare fire 25% slower. |
+**The Many-Mouthed** (`mouths`): It gnaws at the roots of the stair, where the names were eaten. It lends you teeth, and comes up to count them.
+
+| Attention | Tier | What changes |
+|---|---|---|
+| 1 | Noticed | Its creatures climb with every wave, shaped by what you build: Gibberers for your wards, Gorgers for your horrors. Nothing it sends leaves essence, bones or sigils. |
+| 3 | Watched | You carry 3 dread on every floor, and one more of its creatures climbs each wave. Gorgers snuff candles and silence forks too. |
+| 5 | Claimed | A Choir-Husk climbs with every wave and veils whatever walks near it. Bindings may break at Whispers, and half the time at Slipping or deeper. |
+
+Many-Mouthed numbers: Watched carries **3** dread; each Gibberer alive adds **2** (at most **6**), and a ward within **1.6** tiles of one waits **×1.25** between shots. A Gorger takes **×0.65** from horrors; every **4.5s** (the first after 1.5s) it lashes a horror within **2** tiles (once Watched, a candle or fork within **1.8**), dazing or snuffing it **2s** and healing **8**. A Choir-Husk veils what walks within **1.8** tiles (not itself, a boss or a Herald). Dread counts toward the madness tiers; only paid horrors' madness feeds the Occultist and opens Unpaid Teeth.
 
 Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles; it rises to at most **14** tiles; "beside water" is within **1.5** tiles.
 
@@ -451,6 +464,20 @@ Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles;
 | `sun_chime` | Resonant Glare | sun | bellringer | Every time the lamp tolls, each bright spot flashes. Whatever stands in one is heard, and stunned for a moment. |
 | `sun_corpse` | Alien Ash | sun | occultist | A Corpse Candle that stands within a tile and a half of a bright spot shines a tile further and sears what walks in its light, 6 a second. |
 | `sun_harpoon` | Solar Tether | sun | whaler | Whatever is on your line takes half again from everything while it stands in a bright spot. |
+| `openears` | Open Your Ears | mouths |  | You carry 4 dread on every floor. While you are at Whispers or deeper your wards reload 20% faster, but the lamp flickers twice as often. |
+| `first_bite` | The Dark Bites First | mouths |  | The first time each creature walks out of a candle’s light into the dark, the dark bites it for 10 and drags it a tile back down the path. A Behemoth a third as far; a boss only bitten. Your lamp burns half a tile smaller. |
+| `feed` | Feed the Dark | mouths |  | A new rite. The lamp gutters for 2.5 seconds, 1.2 smaller: everything within 3 tiles of it is dragged 1.5 tiles back (a Behemoth a third as far, never a boss), and your horrors strike twice as fast and into the dark. Feed it in a wave and you carry 4 dread until the wave breaks. |
+| `famine` | Swallowed Sigils | mouths |  | Creatures you could bind leave their sigil twice as often. A sigil left to fade while a wave is fought hatches a Gibberer where it lay. |
+| `teeth` | Teeth in the Stair | mouths |  | The first creature to reach the lamp each wave is eaten whole, and costs no oil. Never a boss or a Herald. Every one after it costs 1 more oil. |
+| `unpaid` | Unpaid Teeth | mouths |  | For each tier of madness your paid horrors bring, one more horror costs nothing to field. It still brings its madness. If your paid madness falls, the free ones beyond it go back to your roster. |
+| `bloodsalt` | Salted Teeth | mouths |  | A Salt Circle within 1.5 tiles of a horror bites each creature that steps into it for 7 and takes half a second off that horror’s wait. It wears out twice as fast, and dissolves when the wave breaks. |
+| `baited` | Living Bait | mouths |  | A Hook Trap within 2 tiles of a horror resets twice as fast and drags its catch almost a tile back. Each snap, that horror strikes at once, and you take 1 dread until the wave breaks (3 at most). |
+| `holloweffigy` | Hollow Effigy | mouths |  | Each Hex Effigy adds 2 dread. What it hexes walks 25% slower, and your horrors reach it from half a tile further. |
+| `mouth_corpse` | Borrowed Flesh | mouths | occultist | Where one of your horrors breaks loose or is Unbound, it leaves a body on the path that remembers what it was. A Corpse Candle lit on that body raises its phantom on the candle, striking as it did while the candle burns, at no madness. |
+| `mouth_signal` | Teeth on the Thread | mouths | lamplighter | The light between your Signal Candles grows teeth: each link bites a creature the first time it crosses, for 8, and holds it a moment. Your horrors reach a Kindled creature from a tile further and hurt it a quarter more. |
+| `mouth_harpoon` | Blood in the Try-pot | mouths | whaler | A Try-pot renders twice as much from what your horrors kill. Your horrors strike what is held on a line 40% faster, and when one kills it there, the line snaps to the nearest creature and hauls it 1.5 tiles back. Never a boss, a Behemoth or a Herald. |
+| `mouth_arc` | Wired Specimens | mouths | galvanist | Your fielded specimens take wires from your pylons, if a pylon has a link to spare, and never fry. Each shock on a wire tied to one sheds half a second of its wait. |
+| `mouth_chime` | The Answering Choir | mouths | bellringer | A Perfect Toll makes every horror you field strike at once, into the dark, and crack what it hits. But at 5 Noise a Gorger climbs with the Stalkers. |
 
 ## Omens (on stair doors)
 
