@@ -8037,7 +8037,7 @@ function artDread(c,tm){
   c.strokeStyle='rgba(240,200,236,.55)'; c.lineWidth=.1; for(let k=-2;k<10;k++){c.beginPath(); c.moveTo(x+3.2+k*.3,y+h); c.lineTo(x+3.2+k*.3+.62,y); c.stroke();} c.restore();
   [[3.6,'Whispers'],[5.4,'Slipping'],[7.2,'Leaning']].forEach(([t,n])=>{c.fillStyle='#e8e0cc'; c.fillRect(x+t-.02,y-.12,.05,h+.24); artText(c,n,x+t,2.3,'#c9b9a8','center',.28);});
   artText(c,'madness from horrors',x+1.6,.7,'#e2a090'); artText(c,'dread',x+4.4,.7,'#d8a8d4');
-  artText(c,'only horrors you paid for feed the Occultist',ART_W/2,2.85,'#c9b9a8','center',.28);
+  artText(c,corpseKit()?'only horrors you paid for feed your madness bonuses':'only horrors you paid for open free horrors',ART_W/2,2.85,'#c9b9a8','center',.28);
 }
 function coachArtDraw(tm){
   const cv=$('#coachArt'), s=COACH.list&&COACH.list[COACH.i];
@@ -8240,7 +8240,7 @@ const TIPS={
     {title:'A Choir-Husk',art:artHusk,target:at(),text:'Tall and grey and hollow, with a column of black mouths. It climbs once each wave, and only because the Many-Mouthed has claimed you. And now your bindings may break even at Whispers.'},
     {title:'Its veil',art:artVeil,target:at(HUSK_R),text:'Everything inside the grey ring is veiled like a Shade: your wards cannot see or hit it, even in light. A Candle, a Flare or a bound Watcher shows it. Or kill the Husk, which can always be seen, and the veil lifts. Bosses and Heralds are never veiled.'+(run.wards.includes('effigy')?' A green ring under a creature is something else: an Effigy hex.':'')}];}},
   dread:{when:()=>dread()>0&&F.phase!=='draft',title:'Dread',art:artDread,
-    text:'You carry dread now. It counts with your madness toward Whispers, Slipping and Leaning, so the dark comes for you just the same, and the bar shows it striped. But only madness from horrors you paid for makes the Occultist stronger or opens free horrors. Dread brings only the dark.',
+    get text(){return 'You carry dread now. It counts with your madness toward Whispers, Slipping and Leaning, so the dark comes for you just the same, and the bar shows it striped. But only madness from horrors you paid for '+(corpseKit()?'makes your Bone Spears and horrors stronger':'opens free horrors')+'. Dread brings only the dark.';},
     target:()=>coachStat('#madV')},
   feed:{when:()=>run.rites.includes('feed')&&F.phase==='wave'&&F.foes.filter(e=>!e.dead&&dst(e.x,e.y,F.lx,F.ly)<=FEED_R).length>=2,title:'Feed the Dark',
     text:'Tap Feed the Dark when they crowd the lamp. It gutters: what is near is dragged back, and your horrors strike twice as fast and into the dark for a moment. The lamp burns smaller while it does, and you carry 4 dread until the wave breaks.',
