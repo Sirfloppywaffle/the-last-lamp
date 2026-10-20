@@ -287,6 +287,27 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(teach.rules,'the rules name it and teach dread',teach);
   ok(teach.husks===1,'Claimed sends a Choir-Husk with the wave',teach);
 
+  /* the first-sight lessons: a card for the pack, and two steps for each creature, each with a picture; seen once, then never again */
+  const les=await p.evaluate(()=>{const T=fresh(), out={}; T.run.att={mouths:5}; T.run.wards.push('effigy');
+    T.tutSet({walk:'done',seen:[],off:false}); T.setP(false);
+    T.F.phase='wave'; T.F.queue=[{t:9999,type:'crawler',gate:0}]; T.F.born=-9999;
+    const seen=[], steps={}, arts={};
+    for(const k of ['gibberer','gorger','husk']){
+      const e=T.spawnFoe(k,0,2.5); T.update(.001);
+      for(let n=0;n<6;n++){T.coachPoll(); if(T.COACH.on){seen.push(T.COACH.key); steps[T.COACH.key]=T.COACH.list.length; arts[T.COACH.key]=T.COACH.list.every(s=>typeof s.art==='function');
+        const cv=document.getElementById('coachArt'); arts[T.COACH.key+'_cv']=!cv.hidden&&cv.width>0;
+        document.getElementById('coach').hidden=true; T.COACH.on=false; const t=T.tut(); t.seen.push(T.COACH.key); T.tutSet(t); T.COACH.held=false; T.setP(false);}}
+      T.hurt(e,9999); T.update(.001);}
+    out.seen=seen.join(); out.steps=steps; out.arts=arts;
+    T.COACH.on=true; T.COACH.list=T.TIPS.husk.steps({def:{r:.4},x:1,y:1,dead:false}); out.effigy=/Effigy hex/.test(T.COACH.list[1].text); T.COACH.on=false;
+    T.run.wards=T.run.wards.filter(w=>w!=='effigy'); out.noEffigy=!/Effigy/.test(T.TIPS.husk.steps({def:{r:.4},x:1,y:1,dead:false})[1].text);
+    return out;});
+  console.log(JSON.stringify(les));
+  ok(les.seen==='mouths,gibberer,dread,gorger,husk','the pack card first, then one lesson per creature (and the dread card when it turns up), once each',les);
+  ok(les.steps.gibberer===2&&les.steps.gorger===2&&les.steps.husk===2&&les.steps.mouths===1&&les.steps.dread===1,'a creature has two cards; the pack has one',les.steps);
+  ok(Object.values(les.arts).every(Boolean),'every card carries a picture and the canvas draws it',les.arts);
+  ok(les.effigy&&les.noEffigy,'the Husk card explains the green hex ring only when you built an Effigy',les);
+
   if(errs.length)fails.push('page errors: '+errs.join(' | '));
   await b.close();
   if(fails.length){fails.forEach(f=>console.log('FAIL '+f)); process.exit(1);}
