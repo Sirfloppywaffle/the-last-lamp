@@ -806,15 +806,16 @@ const PATRONS={
   sun:{n:'The Wrong Sun',glyph:'☼',
     d:'An alien light that burns above the dark stair. It shines without heat and sears whatever stands beneath its glare.',
     tiers:[{at:1,n:'Noticed',d:'Three bright spots burn on the path of every floor. Whatever stands in one is seen. But a Stalker that crosses one has seen the lamp, and runs 40% faster for 3 seconds.'},
-           {at:3,n:'Watched',d:'The glare spreads onto the stone beside each spot, and sears whatever stands in a spot, 8 a second. As each wave begins, another spot opens.'},
+           {at:3,n:'Watched',d:'The glare spreads onto the stone beside each spot, and sears whatever stands in a spot, 3 a second. As each wave begins, another spot opens.'},
            {at:5,n:'Claimed',d:'Your wards that stand in the glare fire 25% slower.'}]}
 };
 /* the water: how fast its current carries them, how much floods at first, how far it can rise */
 const CURRENT=1.3, FLOOD_N=2, FLOOD_LEN=3, FLOOD_MAX=14, NEAR_WATER=1.5, PATRON_BREAK=.15;
 /* the Wrong Sun's spots: how many burn at first and at most; how far the glare reaches once Watched; its burn;
    how much faster a sighted Stalker runs, and for how long; how much slower a ward in the glare fires (cooldown ×);
-   Solar Glare's burst. 8 a second, not 15: at 15 a Skitterling (12 hp) died crossing one tile, before any ward fired */
-const SPOT_N=3, SPOT_MAX=12, SPOT_GLARE=1.5, SUN_DPS=8, SIGHT_RUN=1.4, SIGHT_T=3, SUN_SLOW=1/.75, GLARE_DMG=20, GLARE_R=.9, ALIEN_BURN=6;
+   Solar Glare's burst. 3 a second: measured with no wards, 8 let three spots take 25 of a floor-one Crawler's 30 health and
+   twelve kill anything before a ward fired (Gemini's first 15 was worse). At 3, three spots take about a third, and a floor has too few waves to reach eight */
+const SPOT_N=3, SPOT_MAX=8, SPOT_GLARE=1.5, SUN_DPS=3, SIGHT_RUN=1.4, SIGHT_T=3, SUN_SLOW=1/.75, SPEC_SLOW=1/.8, GLARE_DMG=20, GLARE_R=.9, ALIEN_BURN=6;
 /* offerings change what you do, not just a number. A kit's own (kit:) only reach that kit; an offer of three holds at most one */
 const OFFERINGS={
   brine:{p:'mother',n:'Brine Pools',need:()=>run.wards.includes('salt'),d:'Your Salt Circles turn to brine. They no longer slow: each pool drags whatever wades into it a tile back, once. Bosses and Behemoths wade on.'},
@@ -834,9 +835,9 @@ const OFFERINGS={
   souls:{p:'mother',kit:'occultist',n:'Drowned Souls',d:'Whatever dies in water leaves its sigil, if its kind can be bound.'},
   fat:{p:'mother',kit:'whaler',n:'Her Fat',d:'A Blubber Lamp that stands beside water drinks from it as a wave begins, not from your pots or your lamp.'},
   /* The Wrong Sun offerings */
-  aliencandle:{p:'sun',n:'Alien Spectrum',need:()=>run.wards.includes('candle'),d:'Your candles burn the wrong colour. Whatever walks in their light is seared, 6 a second, but your wards that stand in it fire 25% slower.'},
+  aliencandle:{p:'sun',n:'Alien Spectrum',need:()=>run.wards.includes('candle'),d:'Your candles burn the wrong colour. Whatever walks in their light is seared, 6 a second, but your wards that stand in it fire 20% slower.'},
   solarflare:{p:'sun',n:'Solar Glare',d:'When you cast Flare, every bright spot bursts: 20 to everything within a tile of it. An Arc Lamp’s flare bursts the spots in its light.'},
-  sunbeam:{p:'sun',n:'Searing Rays',d:'Whatever stands in a bright spot is seared, 8 a second. Once it has Watched you, twice that.'},
+  sunbeam:{p:'sun',n:'Searing Rays',d:'Whatever stands in a bright spot is seared, 3 a second, from the start. Doubled once it has Watched you.'},
   solartrap:{p:'sun',n:'Blinded Prey',d:'Whatever stands in a bright spot is dazzled and walks 20% slower. A Stalker dazzled there never sights the lamp.'},
   sun_signal:{p:'sun',kit:'lamplighter',n:'Alien Leaps',d:'Signal Candles leap 2 tiles further across the dark. But a Stalker that walks in their light has seen the lamp, and runs 40% faster for 3 seconds.'},
   sun_arc:{p:'sun',kit:'galvanist',n:'Disorienting Flare',d:'A creature an Arc Lamp’s flare stuns forgets the way and walks back down the path for 2 seconds. Once each. Not a boss, a Behemoth or a Herald.'},
@@ -1177,7 +1178,7 @@ function nearSpot(x,y){const s=F.spotPts; if(!s||!s.length)return false; for(let
 /* how much longer a ward waits between shots: Claimed, in the glare; or Alien Spectrum, in a candle's light. Never both */
 function sunCd(t){
   if(patTier('sun')>=3&&nearSpot(t.x,t.y))return SUN_SLOW;
-  if(hasOff('aliencandle'))for(const c of F.cands)if(c!==t&&dst(t.x,t.y,c.x,c.y)<=c.st.light)return SUN_SLOW;
+  if(hasOff('aliencandle'))for(const c of F.cands)if(c!==t&&dst(t.x,t.y,c.x,c.y)<=c.st.light)return SPEC_SLOW;
   return 1;
 }
 /* Solar Glare: the spots burst, all of them (Flare) or those within r of x,y (an Arc Lamp) */
