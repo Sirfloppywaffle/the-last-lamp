@@ -1166,10 +1166,10 @@ function spotRise(){
   run.spots.tiles.push([s.g,s.d]);
   spotSync();
   const [c,r]=s.key.split(',').map(Number);
-  F.fx.push({k:'ring',x:c+.5,y:r+.5,r0:.1,r1:.8,t:0,dur:.8,col:'255,226,150'});
+  F.fx.push({k:'ring',x:c+.5,y:r+.5,r0:.1,r1:.8,t:0,dur:.8,col:'190,150,255'});
 }
 /* a Stalker that has seen the lamp: it runs faster for a while, and a ring says so the moment it first sees */
-function sighted(e){if(!(e.sightT>0))F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:.55,t:0,dur:.35,col:'255,226,150'}); e.sightT=SIGHT_T;}
+function sighted(e){if(!(e.sightT>0))F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:.55,t:0,dur:.35,col:'190,150,255'}); e.sightT=SIGHT_T;}
 function inSpot(e){return !!(F.spots&&F.spots.size&&!e.def.fly&&F.spots.has(e.tile));}
 /* within reach of a spot's glare (a tile and a half): what a ward or a Corpse Candle beside the path stands in */
 function nearSpot(x,y){const s=F.spotPts; if(!s||!s.length)return false; for(let i=0;i<s.length;i+=2)if(dst(x,y,s[i],s[i+1])<=SPOT_GLARE)return true; return false;}
@@ -1183,7 +1183,7 @@ function sunCd(t){
 function sunBurst(x,y,r){
   if(!hasOff('solarflare')||!F.spotPts)return;
   const s=F.spotPts.slice();
-  for(let i=0;i<s.length;i+=2)if(r==null||dst(x,y,s[i],s[i+1])<=r)burst(s[i],s[i+1],GLARE_R,GLARE_DMG,'255,226,150');
+  for(let i=0;i<s.length;i+=2)if(r==null||dst(x,y,s[i],s[i+1])<=r)burst(s[i],s[i+1],GLARE_R,GLARE_DMG,'190,150,255');
 }
 /* ---------------- the Occultist: bodies, Corpse Candles, and Unbind ---------------- */
 function corpseKit(){return kit()==='occultist';}
@@ -2124,7 +2124,7 @@ function lampToll(kind){
      would hold what stands there for good); what stands in one is heard and stunned a moment */
   if(hasOff('sun_chime')&&(great||hand)&&F.spotPts&&F.spotPts.length){
     for(const e of F.foes)if(!e.dead&&inSpot(e)){hear(e,HEAR_T,true); if(!e.def.heavy)e.stunT=Math.max(e.stunT,e.def.boss?.3:.8);}
-    for(let i=0;i<F.spotPts.length;i+=2)F.fx.push({k:'ring',x:F.spotPts[i],y:F.spotPts[i+1],r0:.15,r1:.7,t:0,dur:.45,col:'255,226,150'});
+    for(let i=0;i<F.spotPts.length;i+=2)F.fx.push({k:'ring',x:F.spotPts[i],y:F.spotPts[i+1],r0:.15,r1:.7,t:0,dur:.45,col:'190,150,255'});
   }
   /* The Drowned Peal: her water carries the bell to everything standing in it */
   if(hasOff('drownedpeal')&&F.water.size)for(const e of F.foes)if(!e.dead&&inWater(e)&&hear(e,HEAR_T,true))F.fx.push({k:'ring',x:e.x,y:e.y,r0:.15,r1:.6,t:0,dur:.45,col:'106,169,159'});
@@ -6820,15 +6820,15 @@ function drawNet(f,p){
   for(const k of [5,19]){const q=rimPt(k); g.fillStyle='#c08a4a'; g.beginPath(); g.ellipse(q[0],q[1]-.03,.1,.06,.4,0,TAU); g.fill(); g.strokeStyle='#5a3a1c'; g.lineWidth=.02; g.stroke();}
   g.restore();
 }
-/* the Wrong Sun's bright spots: a pale, wrong-coloured glare on the path, painted once into a sprite and stamped per spot
+/* the Wrong Sun's bright spots: a violet glare, the wrong colour for light on the path, painted once into a sprite and stamped per spot
    (no gradients made per frame). Once it has Watched you, a fainter halo shows how far the glare reaches onto the stone */
 let spotCv=null;
 function spotSprite(){
   if(spotCv)return spotCv;
   const S=128, c=document.createElement('canvas'); c.width=c.height=S; const x=c.getContext('2d'), h=S/2;
   const gr=x.createRadialGradient(h,h,2,h,h,h);
-  gr.addColorStop(0,'rgba(255,252,236,.95)'); gr.addColorStop(.28,'rgba(255,236,170,.7)');
-  gr.addColorStop(.6,'rgba(214,190,255,.28)'); gr.addColorStop(1,'rgba(160,120,255,0)');
+  gr.addColorStop(0,'rgba(246,236,255,.95)'); gr.addColorStop(.28,'rgba(196,150,255,.72)');
+  gr.addColorStop(.6,'rgba(132,78,220,.3)'); gr.addColorStop(1,'rgba(90,40,170,0)');
   x.fillStyle=gr; x.fillRect(0,0,S,S);
   return spotCv=c;
 }
