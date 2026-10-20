@@ -3,6 +3,7 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **The Wrong Sun, the second patron** (#81; started by Jules, finished by Claude from Gemini's design). Either patron now reaches out, a toss each time, so one early gift never locks the run to one. Its Attention: **Noticed**, three violet bright spots burn on the path of every floor; whatever stands in one is seen, veiled or not, but a Stalker that crosses one has seen the lamp and runs 40% faster for 3 seconds. **Watched**, the glare spreads onto the stone beside each spot and sears what stands in one, 3 a second; another spot opens each wave, 8 at most. **Claimed**, your wards in the glare fire 25% slower. Nine offerings, all live: Alien Spectrum, Solar Glare, Searing Rays, Blinded Prey, and one for each kit (Alien Leaps, Disorienting Flare, Resonant Glare, Alien Ash, Solar Tether). The spots are kept with the save and turn with the board. Tips, a rules line, the Grimoire, DESIGN, developer rows, and `sun.test.js`. No existing balance numbers change. (Claude)
 
 ## v18.1.1 — The Marked Rift
 The boss's rift is marked in the break before its wave, and the Primordial has less health.

@@ -205,6 +205,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   /* between waves: she reaches out once a floor; refusing closes it and play goes on */
   const brk=await p.evaluate(async()=>{const T=__t, out={};
     T.newRun('lamplighter',0); T.setP(false); T.F.phase='build';
+    /* either patron can reach out (#81); with the Wrong Sun's gifts all taken, it is hers */
+    Object.keys(T.OFFERINGS).filter(k=>T.OFFERINGS[k].p==='sun').forEach(k=>T.run.offs=(T.run.offs||[]).concat(k));
     T.patronBreak(true); await new Promise(r=>setTimeout(r,80));
     out.open=!document.querySelector('#modal').hidden; out.title=document.querySelector('#mTitle').textContent;
     out.cards=document.querySelectorAll('#mChoices .choice.patron').length;

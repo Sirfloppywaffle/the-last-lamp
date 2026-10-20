@@ -467,7 +467,7 @@ input[type=range]::-moz-range-track {
         <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. You meet every map of a floor before any comes back, and a saved floor keeps its own.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard. <i>Sealed:</i> two of your wards are locked for the floor, marked with a lock in the tray; never your light and never your harpoon. <i>One of Each:</i> each kind of ward stands only once, except what makes your light (candles of every kind, Tuning Forks, pylons, Bell Wires and Try-pots). <i>Bare Hands:</i> your rites are silent, all but the Bellringer's Toll. <i>Unbranched:</i> nothing can be upgraded, not even the lamp. <i>The Long Night:</i> candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller; it never comes with Moonless or Thick Dark.</li>
-        <li><b>Patrons.</b> Old things below the stair make offerings. Half the time the landing's gift is the Drowned Mother's offering instead (a quarter, if she already reached out on that floor), and now and then she reaches out between waves. Take one gift, or refuse her. Her gifts change what your wards do, and some belong to one kit. Every gift raises her Attention, and Attention changes your floors: at 1 her water stands on the path, and its current carries creatures 30% faster; at 3 it rises a tile with every wave; at 5 whatever walks in it goes under, unseen unless something unveils it. Her sign sits beside the Grimoire; tap it to see where you stand.</li>
+        <li><b>Patrons.</b> Old things below the stair make offerings: the Drowned Mother, and the Wrong Sun. Half the time the landing's gift is one of theirs instead (a quarter, if one already reached out on that floor), and now and then one reaches out between waves; which one is a toss each time. Take one gift, or refuse. Every gift raises that patron's Attention, and Attention changes your floors. Her water speeds what walks in it, rises, and at last hides it. The Wrong Sun's bright spots show whatever stands in them, but a Stalker that crosses one has seen the lamp and runs; Watched, they sear, and the glare spreads to the stone beside them; Claimed, your wards in the glare fire slower. Their signs sit beside the Grimoire; tap one to see where you stand.</li>
         <li><b>Embers.</b> Every descent, won or lost, leaves embers behind. Spend them in the Ember Hall on new kits, relics and stories. Carry the lamp to morning to open the Deeper Dark, where each depth adds a new cruelty.</li>
         <li><b>The Grimoire.</b> The book in the HUD holds every creature you have met, every ward and rite, and every relic you have found. The relics you carry sit beside it: tap one to read what it does.</li>
         <li><b>Saving.</b> The run saves at every break between waves. Save and quit from the pause menu, then Continue from the title.</li>
@@ -801,10 +801,20 @@ const PATRONS={
     d:'She lies under all the water below the stair. She gives freely, and she remembers everything she gives.',
     tiers:[{at:1,n:'Noticed',d:'Water stands on the path of every floor. Its current carries creatures through it 30% faster.'},
            {at:3,n:'Watched',d:'The water rises: as each wave begins, the flood creeps one tile further up the path.'},
-           {at:5,n:'Claimed',d:'Whatever walks in her water goes under. It cannot be seen or struck there unless something unveils it.'}]}
+           {at:5,n:'Claimed',d:'Whatever walks in her water goes under. It cannot be seen or struck there unless something unveils it.'}]},
+  sun:{n:'The Wrong Sun',glyph:'☼',
+    d:'An alien light that burns above the dark stair. It shines without heat and sears whatever stands beneath its glare.',
+    tiers:[{at:1,n:'Noticed',d:'Three bright spots burn on the path of every floor. Whatever stands in one is seen. But a Stalker that crosses one has seen the lamp, and runs 40% faster for 3 seconds.'},
+           {at:3,n:'Watched',d:'The glare spreads onto the stone beside each spot, and sears whatever stands in a spot, 3 a second. As each wave begins, another spot opens.'},
+           {at:5,n:'Claimed',d:'Your wards that stand in the glare fire 25% slower.'}]}
 };
 /* the water: how fast its current carries them, how much floods at first, how far it can rise */
 const CURRENT=1.3, FLOOD_N=2, FLOOD_LEN=3, FLOOD_MAX=14, NEAR_WATER=1.5, PATRON_BREAK=.15;
+/* the Wrong Sun's spots: how many burn at first and at most; how far the glare reaches once Watched; its burn;
+   how much faster a sighted Stalker runs, and for how long; how much slower a ward in the glare fires (cooldown ×);
+   Solar Glare's burst. 3 a second: measured with no wards, 8 let three spots take 25 of a floor-one Crawler's 30 health and
+   twelve kill anything before a ward fired (Gemini's first 15 was worse). At 3, three spots take about a third, and a floor has too few waves to reach eight */
+const SPOT_N=3, SPOT_MAX=8, SPOT_GLARE=1.5, SUN_DPS=3, SIGHT_RUN=1.4, SIGHT_T=3, SUN_SLOW=1/.75, SPEC_SLOW=1/.8, GLARE_DMG=20, GLARE_R=.9, ALIEN_BURN=6;
 /* offerings change what you do, not just a number. A kit's own (kit:) only reach that kit; an offer of three holds at most one */
 const OFFERINGS={
   brine:{p:'mother',n:'Brine Pools',need:()=>run.wards.includes('salt'),d:'Your Salt Circles turn to brine. They no longer slow: each pool drags whatever wades into it a tile back, once. Bosses and Behemoths wade on.'},
@@ -822,7 +832,17 @@ const OFFERINGS={
   ground:{p:'mother',kit:'galvanist',n:'Grounded',d:'A pylon that stands beside water never fries, and while one does, your grid sheds Heat twice as fast.'},
   graves:{p:'mother',kit:'occultist',n:'Wet Graves',d:'A Corpse Candle that stands beside water does not go out when the wave ends.'},
   souls:{p:'mother',kit:'occultist',n:'Drowned Souls',d:'Whatever dies in water leaves its sigil, if its kind can be bound.'},
-  fat:{p:'mother',kit:'whaler',n:'Her Fat',d:'A Blubber Lamp that stands beside water drinks from it as a wave begins, not from your pots or your lamp.'}
+  fat:{p:'mother',kit:'whaler',n:'Her Fat',d:'A Blubber Lamp that stands beside water drinks from it as a wave begins, not from your pots or your lamp.'},
+  /* The Wrong Sun offerings */
+  aliencandle:{p:'sun',n:'Alien Spectrum',need:()=>run.wards.includes('candle'),d:'Your candles burn the wrong colour. Whatever walks in their light is seared, 6 a second, but your wards that stand in it fire 20% slower.'},
+  solarflare:{p:'sun',n:'Solar Glare',d:'When you cast Flare, every bright spot bursts: 20 to everything within a tile of it. An Arc Lamp’s flare bursts the spots in its light.'},
+  sunbeam:{p:'sun',n:'Searing Rays',d:'Whatever stands in a bright spot is seared, 3 a second, from the start. Doubled once it has Watched you.'},
+  solartrap:{p:'sun',n:'Blinded Prey',d:'Whatever stands in a bright spot is dazzled and walks 20% slower. A Stalker dazzled there never sights the lamp.'},
+  sun_signal:{p:'sun',kit:'lamplighter',n:'Alien Leaps',d:'Signal Candles leap 2 tiles further across the dark. But a Stalker that walks in their light has seen the lamp, and runs 40% faster for 3 seconds.'},
+  sun_arc:{p:'sun',kit:'galvanist',n:'Disorienting Flare',d:'A creature an Arc Lamp’s flare stuns forgets the way and walks back down the path for 2 seconds. Once each. Not a boss, a Behemoth or a Herald.'},
+  sun_chime:{p:'sun',kit:'bellringer',n:'Resonant Glare',d:'Every time the lamp tolls, each bright spot flashes. Whatever stands in one is heard, and stunned for a moment.'},
+  sun_corpse:{p:'sun',kit:'occultist',n:'Alien Ash',d:'A Corpse Candle that stands within a tile and a half of a bright spot shines a tile further and sears what walks in its light, 6 a second.'},
+  sun_harpoon:{p:'sun',kit:'whaler',n:'Solar Tether',d:'Whatever is on your line takes half again from everything while it stands in a bright spot.'}
 };
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
 const KITS={
@@ -973,11 +993,19 @@ function loseOil(n){run.oil=Math.max(1,run.oil-n);}
 function price(n){return Math.round(n*(has('key')?.7:1));}
 function bindable(){return ['gnasher','watcher','wretch','shrieker'];}
 
-/* ---------------- patrons: offerings, Attention, and the water it brings ---------------- */
+/* patrons: offerings, Attention, and the water/bright spots it brings ---------------- */
 function hasOff(k){return !!(run&&run.offs&&run.offs.includes(k));}
 function attOf(p){return (run&&run.att&&run.att[p])||0;}
-function patTier(p){const a=attOf(p); return PATRONS[p].tiers.filter(t=>a>=t.at).length;}
-/* three offerings, at most one of them the kit's own; null when she has nothing left to give */
+function patTier(p){const a=attOf(p); return PATRONS[p]?PATRONS[p].tiers.filter(t=>a>=t.at).length:0;}
+/* which patron reaches out: either, at even odds, every time (so one early gift never locks the run to one patron);
+   if that one has nothing left to give, the other. Returns {p, o} or null */
+function patronOffer(){
+  for(const p of shuffle(Object.keys(PATRONS))){const o=offerSet(p); if(o)return {p,o};}
+  return null;
+}
+/* she, or it */
+function patShe(p){return p==='sun'?'it':'her';}
+/* three offerings, at most one of them the kit's own; null when the patron has nothing left to give */
 function offerSet(p){
   p=p||'mother';
   const ok=k=>{const O=OFFERINGS[k]; return O.p===p&&!hasOff(k)&&(!O.kit||O.kit===kit())&&(!O.need||O.need());};
@@ -996,48 +1024,58 @@ function takeOffer(k){
 }
 /* a threshold crossed mid-floor takes hold at once; one crossed at the landing waits for the floor below */
 function addAtt(p,n){
+  p=p||'mother';
   run.att=Object.assign({},run.att); const before=patTier(p);
   run.att[p]=(run.att[p]||0)+n;
   const now=patTier(p);
   if(now<=before)return;
   const T=PATRONS[p].tiers[now-1];
   if(F&&(F.phase==='build'||F.phase==='wave')){
-    if(before<1&&now>=1)floodSeed();
-    if(now>=3)F.under=true;
+    if(p==='mother'){
+      if(before<1&&now>=1)floodSeed();
+      if(now>=3)F.under=true;
+    }else if(p==='sun'){
+      if(before<1&&now>=1)spotSeed(); else spotSync();
+    }
   }
   setTimeout(()=>{if(F&&(F.phase==='build'||F.phase==='wave'))banner(T.n,'rite',T.d.split('. ')[0].replace(/\.$/,''));},1100);
 }
 function offerNote(p){
-  const a=attOf(p), T=PATRONS[p].tiers, n=patTier(p), nx=T[n];
-  return 'Her Attention: <b>'+a+'</b>'+(n?' · '+T[n-1].n:'')+'. '+(nx?'At '+nx.at+', <b>'+nx.n+'</b>: '+nx.d:'She has claimed you.');
+  p=p||'mother';
+  const a=attOf(p), T=PATRONS[p].tiers, n=patTier(p), nx=T[n], name=PATRONS[p].n;
+  return (p==='sun'?'Its':'Her')+' Attention: <b>'+a+'</b>'+(n?' · '+T[n-1].n:'')+'. '+(nx?'At '+nx.at+', <b>'+nx.n+'</b>: '+nx.d:(p==='sun'?'It':'She')+' has claimed you.');
 }
 function offerChoice(k,fn){
   const O=OFFERINGS[k];
   return {cls:'patron',tag:(O.kit?KITS[O.kit].n.replace(/^The /,'')+'’s own':'Offering')+' · Attention +1',title:O.n,sub:O.d,fn};
 }
-/* mid-floor, at about one break in seven (once a floor), she reaches out: three offerings, take one or refuse */
+/* mid-floor, at about one break in seven (once a floor), a patron reaches out: three offerings, take one or refuse */
 function patronBreak(force){
   if(!F||F.phase!=='build'||F.patronCalled)return;
   if(!force&&(Math.random()>=PATRON_BREAK||(COACH.on&&COACH.kind==='walk')||tut().walk===''&&run.floor===0))return;
-  const opts=offerSet('mother'); if(!opts)return;
+  const po=patronOffer(); if(!po)return;
+  const p=po.p, opts=po.o;
   F.patronCalled=true;
   const myF=F; let tries=0;
   const go=()=>{
     if(F!==myF||F.phase!=='build')return;
     if(!$('#modal').hidden||COACH.on||F.intro||MAP_SYS.active||!$('#title').hidden){if(++tries<40)setTimeout(go,250); return;}
-    openOffer(opts);
+    openOffer(opts,p);
   };
   setTimeout(go,force?0:900);
 }
-function openOffer(opts){
+function openOffer(opts,p){
+  p=p||(opts[0]&&OFFERINGS[opts[0]]?OFFERINGS[opts[0]].p:'mother');
   paused=true;
   let done=false;
   const close=()=>{closeModal(); paused=false; forceUI();};
-  showModal({kind:'patron',wide:true,title:PATRONS.mother.n,
-    body:'The water at the edge of the path goes still, then leans toward the lamp. Something under it is offering. Take one gift, or refuse her.',
-    note:offerNote('mother'),
-    choices:opts.map(k=>offerChoice(k,()=>{if(done)return; done=true; takeOffer(k); close(); banner(OFFERINGS[k].n,'rite','The Drowned Mother is watching'); checkpoint();})),
-    actions:[{label:'Refuse her',fn:()=>{if(done)return; done=true; close();}}]});
+  const P=PATRONS[p];
+  const body=p==='sun'?'A light opens over the stair where no light should be, the wrong colour, and holds still on you. Something in it is offering. Take one gift, or refuse it.':'The water at the edge of the path goes still, then leans toward the lamp. Something under it is offering. Take one gift, or refuse her.';
+  showModal({kind:'patron',wide:true,title:P.n,
+    body:body,
+    note:offerNote(p),
+    choices:opts.map(k=>offerChoice(k,()=>{if(done)return; done=true; takeOffer(k); close(); banner(OFFERINGS[k].n,'rite',P.n+' is watching'); checkpoint();})),
+    actions:[{label:'Refuse '+patShe(p),fn:()=>{if(done)return; done=true; close();}}]});
 }
 /* her water: stretches of path, [path, from, to] in tiles along it. They live in the run, so a resumed floor or a
    turned board keeps the same water; the tiles are worked out again from them each time */
@@ -1091,6 +1129,63 @@ function waterRise(){
 function waterAt(x,y){return !!(F.water&&F.water.size&&F.water.has(Math.floor(x)+','+Math.floor(y)));}
 function inWater(e){return !e.def.fly&&!!(F.water&&F.water.size&&F.water.has(e.tile));}
 function nearWater(x,y){const w=F.waterPts; if(!w)return false; for(let i=0;i<w.length;i+=2)if(dst(x,y,w[i],w[i+1])<=NEAR_WATER)return true; return false;}
+
+/* the Wrong Sun's bright spots: tiles of the path, kept in the run as [path, tiles along it] like her water, so a resumed
+   floor or a turned board keeps the same spots; buildGeometry() works the tiles out again each time */
+function spotPick(used){
+  for(let n=0;n<40;n++){
+    const g=Math.floor(Math.random()*F.paths.length), P=F.paths[g]; if(!P||P.len<6)continue;
+    /* never the first two tiles (where they climb out) or the last three (the lamp's doorstep) */
+    const d=2+Math.floor(Math.random()*(Math.floor(P.len)-4)), p=posAt(P,d), c=Math.floor(p[0]), r=Math.floor(p[1]), key=c+','+r;
+    if(used.has(key)||(c===F.lampC&&r===F.lampR))continue;
+    return {g,d,key};
+  }
+  return null;
+}
+function spotSeed(){
+  if(!F||!run)return;
+  const tiles=[], used=new Set();
+  for(let i=0;i<SPOT_N;i++){const s=spotPick(used); if(!s)break; used.add(s.key); tiles.push([s.g,s.d]);}
+  run.spots={floor:run.floor,tiles};
+  spotSync();
+}
+function spotSync(){
+  if(!F)return;
+  F.spots=new Set(); F.spotPts=[];
+  const S=run&&run.spots; if(!S||S.floor!==run.floor)return;
+  for(const [g,d] of S.tiles){
+    const P=F.paths[g]; if(!P)continue;
+    const p=posAt(P,d), c=Math.floor(p[0]), r=Math.floor(p[1]), key=c+','+r;
+    if(F.spots.has(key)||(c===F.lampC&&r===F.lampR))continue;
+    F.spots.add(key); F.spotPts.push(c+.5,r+.5);
+  }
+}
+/* Watched: another spot opens as each wave begins, up to SPOT_MAX */
+function spotRise(){
+  if(patTier('sun')<2||!run.spots||run.spots.floor!==run.floor||!F.spots||F.spots.size>=SPOT_MAX)return;
+  const s=spotPick(F.spots); if(!s)return;
+  run.spots.tiles.push([s.g,s.d]);
+  spotSync();
+  const [c,r]=s.key.split(',').map(Number);
+  F.fx.push({k:'ring',x:c+.5,y:r+.5,r0:.1,r1:.8,t:0,dur:.8,col:'190,150,255'});
+}
+/* a Stalker that has seen the lamp: it runs faster for a while, and a ring says so the moment it first sees */
+function sighted(e){if(!(e.sightT>0))F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:.55,t:0,dur:.35,col:'190,150,255'}); e.sightT=SIGHT_T;}
+function inSpot(e){return !!(F.spots&&F.spots.size&&!e.def.fly&&F.spots.has(e.tile));}
+/* within reach of a spot's glare (a tile and a half): what a ward or a Corpse Candle beside the path stands in */
+function nearSpot(x,y){const s=F.spotPts; if(!s||!s.length)return false; for(let i=0;i<s.length;i+=2)if(dst(x,y,s[i],s[i+1])<=SPOT_GLARE)return true; return false;}
+/* how much longer a ward waits between shots: Claimed, in the glare; or Alien Spectrum, in a candle's light. Never both */
+function sunCd(t){
+  if(patTier('sun')>=3&&nearSpot(t.x,t.y))return SUN_SLOW;
+  if(hasOff('aliencandle'))for(const c of F.cands)if(c!==t&&dst(t.x,t.y,c.x,c.y)<=c.st.light)return SPEC_SLOW;
+  return 1;
+}
+/* Solar Glare: the spots burst, all of them (Flare) or those within r of x,y (an Arc Lamp) */
+function sunBurst(x,y,r){
+  if(!hasOff('solarflare')||!F.spotPts)return;
+  const s=F.spotPts.slice();
+  for(let i=0;i<s.length;i+=2)if(r==null||dst(x,y,s[i],s[i+1])<=r)burst(s[i],s[i+1],GLARE_R,GLARE_DMG,'190,150,255');
+}
 /* ---------------- the Occultist: bodies, Corpse Candles, and Unbind ---------------- */
 function corpseKit(){return kit()==='occultist';}
 /* every death leaves a body on the path for the rest of the floor, kept in the run as [path, distance along it] */
@@ -1607,11 +1702,13 @@ function avail(type){return (run.roster[type]||0)-F.towers.filter(t=>t.kind==='h
 
 /* ---------------- stats from branches ---------------- */
 const m2=n=>Math.min(n||0,2);
+/* Alien Ash: an Occultist's Corpse Candle within reach of a bright spot's glare */
+function ashLit(t){return corpseKit()&&hasOff('sun_corpse')&&!!F&&nearSpot(t.x,t.y);}
 function wstat(t){
   const b=t.br||{};
   if(t.type==='harpoon')return {range:2.6+.4*m2(b.sight),dmg:(10+(b.strength>=1?6:0)+(b.strength>=2?8:0))*(has('whetted')?1.3:1)*spearMul(b),spear:kit()==='occultist',soul:b.dread>=3,
     tether:kit()==='whaler',tMax:b.line>=1?.55:TETHER_MAX,clap:kit()==='bellringer'?{hear:CLAP_HEAR+(b.ring>=1?1:0),knock:CLAP_KNOCK+(b.ring>=2?.25:0),peal:b.ring>=3}:null,rod:kit()==='galvanist',rodT:ROD_T+(b.charge>=1?2:0),rodMax:ROD_MAX+(b.charge>=2?1:0),thunder:b.charge>=3,leash:b.line>=2?2:1,haul:b.line>=3,rate:1.1*Math.pow(1.25,m2(b.speed)),twin:b.speed>=3,pierce:b.strength>=3,deep:b.sight>=3,flare:kit()==='lamplighter',flareR:GLINT_R+(b.flare>=1?.5:0),flareT:GLINT_T+(b.flare>=2?1:0),star:b.flare>=3};
-  if(t.type==='candle')return {arc:kit()==='galvanist',flare:ARC_DMG+4*m2(b.spark),steady:b.spark>=3,light:(2.3+.5*m2(b.glow)+(kit()==='whaler'?BLUBBER_LIGHT:0)+(kit()==='galvanist'?ARC_LIGHT:0)-(F&&F.omen==='thickdark'?.5:0))*(trialOn('night')?NIGHT_DIM:1),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)],beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3,reek:b.reek>=2?4:b.reek>=1?2:0,lure:b.reek>=3};
+  if(t.type==='candle')return {arc:kit()==='galvanist',flare:ARC_DMG+4*m2(b.spark),steady:b.spark>=3,light:(2.3+(ashLit(t)?1:0)+.5*m2(b.glow)+(kit()==='whaler'?BLUBBER_LIGHT:0)+(kit()==='galvanist'?ARC_LIGHT:0)-(F&&F.omen==='thickdark'?.5:0))*(trialOn('night')?NIGHT_DIM:1),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)]+(hasOff('aliencandle')?ALIEN_BURN:0)+(ashLit(t)?ALIEN_BURN:0),beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3,reek:b.reek>=2?4:b.reek>=1?2:0,lure:b.reek>=3};
   if(t.type==='chime')return {range:1.8+.25*m2(b.res),dmg:14+(b.marrow>=1?6:0)+(b.marrow>=2?8:0),stun:.6+.3*m2(b.toll)+(has('marrow')?.4:0),period:2,twice:b.res>=3,knell:b.toll>=3,shatter:b.marrow>=3};
   if(t.type==='censer')return {range:3.2,dmg:16,rate:.45*Math.pow(1.25,m2(b.swing)),splash:1+.25*m2(b.spread),volley:b.swing>=3,cluster:b.spread>=3,
     pool:b.pitch>=3?{dps:10,dur:4,r:1.4}:b.pitch>=1?{dps:b.pitch>=2?7:4,dur:b.pitch>=2?2.5:2,r:1}:null};
@@ -1697,6 +1794,7 @@ function buildGeometry(){
     }
   });
   waterSync();
+  spotSync();
   corpseSync();
   hallowSync();
 }
@@ -1808,7 +1906,7 @@ const NO_THREADS=[];
 function segDist(px,py,ax,ay,bx,by){const dx=bx-ax, dy=by-ay, l=dx*dx+dy*dy||1, u=clamp(((px-ax)*dx+(py-ay)*dy)/l,0,1); return dst(px,py,ax+dx*u,ay+dy*u);}
 function signalKit(){return kit()==='lamplighter';}
 /* how far one Signal Candle's light leaps: its Signal branch adds a tile per tier (read straight from branches: this runs every tick) */
-function candleLeap(t){const n=t.br&&t.br.signal||0; return LEAP+Math.min(n,2);}
+function candleLeap(t){const n=t.br&&t.br.signal||0; return LEAP+Math.min(n,2)+(hasOff('sun_signal')?2:0);}
 function connectedLights(exclude){
   const src=[{x:F.lx,y:F.ly,r:lampBase()}], conn=new Set(), links=[];
   /* a kindled creature is a light of its own: what stands in it is lit, for as long as it burns */
@@ -2023,6 +2121,12 @@ function lampToll(kind){
     for(const e of F.foes){if(e.dead||e.def.heavy||dst(e.x,e.y,F.lx,F.ly)>CATH_R)continue; e.stunT=Math.max(e.stunT,e.def.boss?.2:CATH_STUN);}
     F.fx.push({k:'ring',x:F.lx,y:F.ly,r0:.3,r1:CATH_R,t:0,dur:.45,col:'226,196,140'});
   }
+  /* Resonant Glare: each bright spot flashes as the lamp tolls (a Toll or the Great Bell; not Peal's heartbeat, which
+     would hold what stands there for good); what stands in one is heard and stunned a moment */
+  if(hasOff('sun_chime')&&(great||hand)&&F.spotPts&&F.spotPts.length){
+    for(const e of F.foes)if(!e.dead&&inSpot(e)){hear(e,HEAR_T,true); if(!e.def.heavy)e.stunT=Math.max(e.stunT,e.def.boss?.3:.8);}
+    for(let i=0;i<F.spotPts.length;i+=2)F.fx.push({k:'ring',x:F.spotPts[i],y:F.spotPts[i+1],r0:.15,r1:.7,t:0,dur:.45,col:'190,150,255'});
+  }
   /* The Drowned Peal: her water carries the bell to everything standing in it */
   if(hasOff('drownedpeal')&&F.water.size)for(const e of F.foes)if(!e.dead&&inWater(e)&&hear(e,HEAR_T,true))F.fx.push({k:'ring',x:e.x,y:e.y,r0:.15,r1:.6,t:0,dur:.45,col:'106,169,159'});
   F.lampRing=1;
@@ -2192,7 +2296,8 @@ function updateArcLamps(){
   for(const t of F.towers){if(t.type!=='candle'||t.dead)continue;
     const ph=(F.time+hash(t.id,3,7)*ARC_PERIOD)%ARC_PERIOD;
     if(F.phase==='wave'&&t.arcPh!=null&&t.arcPh<ARC_OFF&&ph>=ARC_OFF&&!t.dark){const st=wstat(t);
-      for(const e of F.foes){if(e.dead||dst(e.x,e.y,t.x,t.y)>st.light)continue; hurt(e,st.flare,'arc'); if(!e.dead&&!e.def.heavy&&!e.def.boss)e.stunT=Math.max(e.stunT,ARC_STUN);}
+      for(const e of F.foes){if(e.dead||dst(e.x,e.y,t.x,t.y)>st.light)continue; hurt(e,st.flare,'arc'); if(!e.dead&&!e.def.heavy&&!e.def.boss){e.stunT=Math.max(e.stunT,ARC_STUN); if(hasOff('sun_arc')&&!e.def.herald&&!e.lost){e.lost=true; e.disorientT=2;}}}
+      sunBurst(t.x,t.y,st.light);
       F.fx.push({k:'ring',x:t.x,y:t.y-.3,r0:.2,r1:st.light,t:0,dur:.35,col:'150,200,255'}); t.ping=.3; AUDIO.arcflare();}
     t.arcPh=ph;}
 }
@@ -2263,6 +2368,8 @@ function canSee(e){if(window.devNoDark)return true; if(e.hex&&e.hex.unmask)retur
   if(e.heardT>0)return true;
   /* Claimed: what walks in her water has gone under, and only something that unveils can find it there */
   if(F.under&&inWater(e))return revealedAt(e.x,e.y);
+  /* the Wrong Sun: whatever stands in a bright spot is seen, veiled or not */
+  if(inSpot(e))return true;
   return e.def.veiled&&!has('veil')&&!has('eyes')?revealedAt(e.x,e.y):litAt(e.x,e.y);}
 function buildLit(c,r){if(window.devNoDark)return true; const x=c+.5,y=r+.5; for(const L of F.L) if(!L.temp&&dst(x,y,L.x,L.y)<=L.r) return true; return bellKit()&&inHum(x,y);}
 /* ---------------- Trials ---------------- */
@@ -2352,8 +2459,9 @@ const DEV_ACTS={
     Object.keys(RITES).forEach(k=>{if(!run.rites.includes(k))run.rites.push(k);});
     forceUI(); return 'Everything unlocked';
   },
-  patron(){F.patronCalled=false; if(F.phase!=='build')return 'Only between waves'; closeModal(); paused=false; const o=offerSet('mother'); if(!o)return 'She has nothing left to give'; openOffer(o); return null;},
+  patron(){F.patronCalled=false; if(F.phase!=='build')return 'Only between waves'; closeModal(); paused=false; const po=patronOffer(); if(!po)return 'They have nothing left to give'; openOffer(po.o,po.p); return null;},
   attention(){addAtt('mother',1); relKey=''; forceUI(); return 'Her Attention is '+attOf('mother');},
+  sunatt(){addAtt('sun',1); relKey=''; forceUI(); return 'Its Attention is '+attOf('sun');},
   kill(){F.foes.slice().forEach(e=>{if(!e.dead)hurt(e,99999);}); return 'Board cleared of creatures';},
   clear(){F.towers=[]; F.salt.clear(); F.L=lightsNow(); selTower=null; forceUI(); return 'All wards removed';},
   /* jump straight to a floor, keeping the run (relics, wards, essence); no landing, no toll. Returns null: the menu stays shut */
@@ -2396,7 +2504,7 @@ function openDevMode(msg){
   paused=true;
   const btn=(act,label,arg,cls)=>'<button class="btn'+(cls?' '+cls:'')+'" data-dev="'+act+'"'+(arg?' data-arg="'+arg+'"':'')+' style="padding:6px 10px;font-size:.8rem">'+label+'</button>';
   const html='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">'
-    +btn('dark',window.devNoDark?'Darkness: off':'Darkness: on')+btn('cheat','Max essence & oil')+btn('unlock','Unlock everything')+btn('patron','Mother: offer now')+btn('attention','Mother: Attention +1')+btn('kill','Kill all creatures')+btn('clear','Clear wards')+'</div>'
+    +btn('dark',window.devNoDark?'Darkness: off':'Darkness: on')+btn('cheat','Max essence & oil')+btn('unlock','Unlock everything')+btn('patron','A patron: offer now')+btn('attention','Mother: Attention +1')+btn('sunatt','Wrong Sun: Attention +1')+btn('kill','Kill all creatures')+btn('clear','Clear wards')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Floors</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+FLOORS.map((f,i)=>btn('floor',(i===run.floor?'● ':'')+(i+1)+' · '+f.name,String(i))).join('')+btn('skip','Clear this floor →')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Restart this floor under a Trial</h3>'
@@ -2601,6 +2709,8 @@ function beginFloor(snap){
   /* the Drowned Mother's water: a floor she has noticed you on floods as it begins (a resumed one keeps its water) */
   F.under=patTier('mother')>=3;
   if(patTier('mother')>=1&&(!run.water||run.water.floor!==run.floor))floodSeed();
+  /* The Wrong Sun's bright spots: a floor it has noticed you on burns with bright spots as it begins */
+  if(patTier('sun')>=1&&(!run.spots||run.spots.floor!==run.floor))spotSeed();
   if(!snap&&run.floor===0&&corpseKit())corpseSeed();
   /* the Hallowed Ground is marked once, as the floor begins, and kept with the save */
   if(F.trial==='hallowed'&&(!run.hallow||run.hallow.floor!==run.floor))hallowSeed();
@@ -2648,6 +2758,9 @@ function beginFloor(snap){
     if(F.forks.length&&!(snap&&F.wave)&&(tut().off||tut().seen.includes('fork')))setTimeout(()=>{if(F&&F.forks.length)hint('The stair forks here. They take the darker way, and only your own light counts. The chevron shows where they will go.',6000);},(F.omen?6800:2600)+tl);
     /* REVIEW(Claude) 3: copy the message first; the timer used to read it after the next line had cleared it */
     /* a floor she has noticed you on says so as it begins, so the water never just appears (Gemini, #43) */
+    const st=patTier('sun');
+    if(st&&!(snap&&F.wave)){const T=PATRONS.sun.tiers[st-1];
+      setTimeout(()=>{if(F&&F.spots&&F.spots.size&&F.phase==='build')hint(PATRONS.sun.n+' · '+T.n+'. '+T.d,5200);},(F.omen?11500:(F.forks.length?9000:4200))+(patTier('mother')?5600:0)+tl);}
     const pt=patTier('mother');
     if(pt&&!(snap&&F.wave)){const T=PATRONS.mother.tiers[pt-1];
       setTimeout(()=>{if(F&&F.water&&F.water.size&&F.phase==='build')hint(PATRONS.mother.n+' · '+T.n+'. '+T.d,5200);},(F.omen?11500:(F.forks.length?9000:4200))+tl);}
@@ -2687,6 +2800,7 @@ function startWave(sub){
   const hd=run.draw&&run.draw.herald;
   if(hd&&hd.wave===F.wave-1){heraldMet(hd.type); const mid=F.queue.reduce((m,q)=>Math.max(m,q.t),0)/2; F.queue.push({t:mid,type:hd.type,gate:heraldGate(hd)}); F.heraldWave=true;}
   waterRise();
+  spotRise();
   blubberToll();
   if(run.oil>0&&has('blackwick')){run.oil-=1; F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'−1 oil',col:PAL.wound,t:0,dur:1,size:.3}); if(run.oil<=0){run.oil=0; defeat();}}
   F.queue.sort((a,b)=>a.t-b.t);
@@ -2867,7 +2981,7 @@ function openDraft(salvage,healed){
   const n=3+(F.omen==='starved'?1:0)+(has('hollow')?1:0)+(F.elite?1:0);
   F.draft={step:'gift',salvage,healed,opts:draftOptions(n,F.elite),relics:(F.elite?1:0)+(F.omen==='hungering'?1:0)+(F.trial?1:0)};
   /* half the time the gift is a patron's offering instead; a quarter, if she already reached out on this floor */
-  if(Math.random()<(F.patronCalled?.25:.5))F.draft.patron=offerSet('mother');
+  if(Math.random()<(F.patronCalled?.25:.5)){const po=patronOffer(); F.draft.patron=po&&po.o;}
   showLanding();
 }
 function showLanding(){F.blocking=landingModal(); checkpoint(); showModal(F.blocking); forceUI();}
@@ -3510,11 +3624,15 @@ function landingStep(){
   const pause={label:'Pause menu',fn:openPause};
   if(d.pick)return {kind:'draft',wide:true,title:d.pick.title,body:d.pick.body+(d.pick.left>1?' ('+d.pick.left+' to choose)':''),choices:d.pick.opts.map(k=>relicChoice(k,step('pick',dd=>takePick(dd,k)))),actions:[pause]};
   if(d.step==='gift'&&d.patron){
-    return {kind:'draft',wide:true,title:PATRONS.mother.n,
-      body:'You strip your wards for '+d.salvage+' essence'+(d.healed?' and the lamp drinks '+d.healed+' oil':'')+'. Where the gift should be, the water is waiting, and something under it is offering instead. Take one, or refuse her and carry nothing down.',
-      note:offerNote('mother')+'<br>'+tollNote(d),
+    /* whose offer it is, from the offerings themselves (an old save's draft holds only hers) */
+    const pk=(d.patron[0]&&OFFERINGS[d.patron[0]]&&OFFERINGS[d.patron[0]].p)||'mother';
+    const P=PATRONS[pk];
+    const body=pk==='sun'?'You strip your wards for '+d.salvage+' essence'+(d.healed?' and the lamp drinks '+d.healed+' oil':'')+'. Where the gift should be, a light the wrong colour holds still on you, and something in it is offering instead. Take one, or refuse it and carry nothing down.':'You strip your wards for '+d.salvage+' essence'+(d.healed?' and the lamp drinks '+d.healed+' oil':'')+'. Where the gift should be, the water is waiting, and something under it is offering instead. Take one, or refuse her and carry nothing down.';
+    return {kind:'draft',wide:true,title:P.n,
+      body:body,
+      note:offerNote(pk)+'<br>'+tollNote(d),
       choices:d.patron.map(k=>offerChoice(k,step('gift',dd=>{takeOffer(k); afterGift(dd);}))),
-      actions:[{label:'Refuse her',fn:step('gift',dd=>afterGift(dd))},pause]};
+      actions:[{label:'Refuse '+patShe(pk),fn:step('gift',dd=>afterGift(dd))},pause]};
   }
   if(d.step==='gift'){
     return {kind:'draft',wide:true,title:'The stair goes down',
@@ -3772,6 +3890,7 @@ function hurt(e,amt,src,echo){
   if(e.markT>0&&amt>0)amt*=1.15;
   if(e.hex)amt*=e.hex.mul;
   if(e.flenseT>0)amt*=1.25;
+  if(e.tetherBy&&amt>0&&hasOff('sun_harpoon')&&inSpot(e))amt*=1.5;
   e.hp-=amt; if(amt>=2)e.hitT=.12;
   /* Voodoo: a real hit on a hexed creature echoes onto the nearest other hexed one */
   if(e.hex&&e.hex.voodoo&&!echo&&amt>=3){
@@ -3925,7 +4044,7 @@ function castRite(k){
   if(riteSilent(k)){hint('Bare Hands: your rites are silent this floor.'); return;}
   if(k==='name'){if(F.nameUsed)return;}
   else if((F.cd[k]||0)>0)return;
-  if(k==='flare'){F.flareT=5; F.cd.flare=RITES.flare.cd; AUDIO.flare(); banner('Flare','rite','Everything is lit for five seconds');}
+  if(k==='flare'){F.flareT=5; F.cd.flare=RITES.flare.cd; AUDIO.flare(); banner('Flare','rite','Everything is lit for five seconds'); sunBurst(0,0,null);}
   else if(k==='ebb'){if(!castEbb())return;}
   else if(k==='overload'){if(!castOverload())return;}
   else if(k==='toll'||k==='greatbell'){
@@ -4094,6 +4213,8 @@ function updateFoes(dt){
     if(e.flenseT>0)e.flenseT-=dt;
     if(F.threads.length&&!(e.kindleT>0)&&!e.def.fly)for(const [a,b] of F.threads)if(segDist(e.x,e.y,a.x,a.y,b.x,b.y)<=.35){e.kindleT=THREAD_T; break;}
     if(e.kindleT>0){e.kindleT-=dt; hurt(e,KINDLE_DPS*dt); if(e.dead)continue;}
+    /* the Wrong Sun's spots sear what stands in one (Watched, and Searing Rays), held or not */
+    if(inSpot(e)){const burn=(patTier('sun')>=2?SUN_DPS:0)+(hasOff('sunbeam')?SUN_DPS:0); if(burn){hurt(e,burn*dt,'sun'); if(e.dead)continue;}}
     if(e.def.spawner){
       e.spawnT-=dt;
       if(e.spawnT<=0){e.spawnT=5; spawnFoe('skitter',e.gate,Math.max(0,e.d-.3)); spawnFoe('skitter',e.gate,Math.max(0,e.d-.6));}
@@ -4105,6 +4226,7 @@ function updateFoes(dt){
       slow=Math.max(slow,cs.slow); inCand=true;
       if(cs.reek){e.reekT=cs.reek; e.reekS=Math.max(e.reekS||0,cs.slow);}
       if(cs.burn)hurt(e,cs.burn*dt);
+      if(hasOff('sun_signal')&&e.type==='stalker')sighted(e);
       if(cs.snare){
         e.snared=e.snared||[];
         if(!e.snared.includes(c.id)){e.snared.push(c.id); e.stunT=Math.max(e.stunT,e.def.boss?.4:1);}
@@ -4132,6 +4254,22 @@ function updateFoes(dt){
     if(e.pinT>0){e.pinT-=dt; continue;}
     if(e.stunT>0){e.stunT-=dt; continue;}
 
+    /* Disorienting Flare: it forgets the way, and walks back down the path for a while */
+    if(e.disorientT>0){
+      e.disorientT-=dt;
+      e.d=Math.max(0,e.d-e.def.spd*.8*dt);
+      const q=posAt(F.paths[e.gate],e.d);
+      e.x=q[0]; e.y=q[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y);
+      continue;
+    }
+    /* the Wrong Sun's spots: Blinded Prey dazzles what stands in one;
+       a Stalker that crosses one undazzled has seen the lamp */
+    if(inSpot(e)){
+      if(hasOff('solartrap'))slow=Math.max(slow,.2);
+      else if(e.type==='stalker')sighted(e);
+    }
+    if(e.sightT>0)e.sightT-=dt;
+
     const st=F.salt.get(e.tile); if(st&&!st.dead&&!st.dark){if(!hasOff('brine'))slow=Math.max(slow,has('witchsalt')?.65:.5); if(has('ledger'))hurt(e,6*dt);}
     for(const t of choirs)if(dst(e.x,e.y,t.x,t.y)<=HORRORS.elite.range)slow=Math.max(slow,HORRORS.elite.slow);
     for(const t of keepers)if(dst(e.x,e.y,t.x,t.y)<=HORRORS.keeper.range)slow=Math.max(slow,.45);
@@ -4141,7 +4279,7 @@ function updateFoes(dt){
     /* heavy: no stuns, and no slow deeper than 15%, whatever the source */
     if(e.def.heavy)slow=Math.min(slow,.15);
 
-    let sp=e.def.spd*(1-slow)*(F.omen==='flooded'?.9:1)*(F.omen==='frenzied'?1.15:1)*(inWater(e)?CURRENT:1);
+    let sp=e.def.spd*(1-slow)*(F.omen==='flooded'?.9:1)*(F.omen==='frenzied'?1.15:1)*(inWater(e)?CURRENT:1)*(e.sightT>0?SIGHT_RUN:1);
     for(const a of auras){if(a!==e&&!a.dead&&dst(a.x,a.y,e.x,e.y)<=1.6){sp*=1.3; break;}}
     if(leaning)sp*=1.2;
     if(e.kindleT>0&&!e.def.boss)sp*=KINDLE_RUN;
@@ -4224,7 +4362,7 @@ function updateTowers(dt){
             const dmg=st.dmg*beaconAt(t.x,t.y);
             fireBolt(t,e,st,dmg,0);
             if(st.twin){const e2=pickTarget(t.x,t.y,st.range,t.tgt,st.deep,e)||e; fireBolt(t,e2,st,dmg,1);}
-            t.cd=1/st.rate; AUDIO.bolt();
+            t.cd=sunCd(t)/st.rate; AUDIO.bolt();
           }else t.cd=.08;
         }
       }else if(t.type==='bellwire'){
@@ -4237,13 +4375,13 @@ function updateTowers(dt){
         if(t.echo>0){t.echo-=dt; if(t.echo<=0)chimePulse(t,st);}
         t.cd-=dt;
         if(t.cd<=0){
-          if(chimePulse(t,st)){t.cd=st.period; if(st.twice)t.echo=.35;}
+          if(chimePulse(t,st)){t.cd=st.period*sunCd(t); if(st.twice)t.echo=.35;}
           else t.cd=.1;
         }
       }else if(t.type==='risen'){
         /* the dead need no eyes: it bites in the dark too */
         t.cd-=dt;
-        if(t.cd<=0){const e=pickTarget(t.x,t.y,st.range,t.tgt,true); if(e){t.ang=Math.atan2(e.y-t.y,e.x-t.x); hurt(e,st.dmg,'risen'); F.fx.push({k:'bite',x:e.x,y:e.y,t:0,dur:.28}); t.cd=1/st.rate; t.snap=.3; AUDIO.bite();} else t.cd=.1;}
+        if(t.cd<=0){const e=pickTarget(t.x,t.y,st.range,t.tgt,true); if(e){t.ang=Math.atan2(e.y-t.y,e.x-t.x); hurt(e,st.dmg,'risen'); F.fx.push({k:'bite',x:e.x,y:e.y,t:0,dur:.28}); t.cd=sunCd(t)/st.rate; t.snap=.3; AUDIO.bite();} else t.cd=.1;}
       }else if(t.type==='grasp'){
         /* the dead take hold of each creature once, as it steps onto them */
         const key=t.c+','+t.r;
@@ -4296,7 +4434,7 @@ function updateTowers(dt){
             for(const r of F.rods){if(dst(t.x,t.y,r.x,r.y)>st.range+1)continue; let nx=null, bd=1.6;
               for(const o of F.foes){if(o.dead||hit.includes(o)||!canSee(o))continue; const dd=dst(o.x,o.y,r.x,r.y); if(dd<bd){bd=dd; nx=o;}}
               if(nx){hit.push(nx); zap(nx,d*.8,st); F.fx.push({k:'arc',pts:[[t.x,t.y-.5],[r.x,r.y-.3],[nx.x,nx.y]],t:0,dur:.24,seed:Math.random()*99});}}
-            t.cd=1/st.rate; t.ring=.25; AUDIO.zap();
+            t.cd=sunCd(t)/st.rate; t.ring=.25; AUDIO.zap();
           }else t.cd=.1;
         }
       }else if(t.type==='lance'){
@@ -4306,7 +4444,7 @@ function updateTowers(dt){
           if(e){
             t.ang=Math.atan2(e.y-t.y,e.x-t.x);
             F.shots.push({k:'lance',x:t.x+Math.cos(t.ang)*.5,y:t.y-.12+Math.sin(t.ang)*.5,sx:t.x,sy:t.y-.12,tg:e,tx:e.x,ty:e.y,spd:15,dmg:st.dmg*beaconAt(t.x,t.y),ang:t.ang,flense:st.flense,pin:st.pin});
-            t.cd=1/st.rate; t.recoil=.3; AUDIO.boom(); F.shake=Math.max(F.shake,.08);
+            t.cd=sunCd(t)/st.rate; t.recoil=.3; AUDIO.boom(); F.shake=Math.max(F.shake,.08);
           }else t.cd=.1;
         }
       }else if(t.type==='censer'){
@@ -4319,7 +4457,7 @@ function updateTowers(dt){
             if(st.volley){spots.push(posAt(P,lead+.9)); spots.push(posAt(P,Math.max(0,lead-.9)));}
             const dmg=st.dmg*beaconAt(t.x,t.y);
             spots.forEach((p,k)=>F.shots.push({k:'tar',sx:t.x,sy:t.y-.15,tx:p[0],ty:p[1],t:-k*.09,dur:.6,dmg,splash:st.splash,pool:st.pool,cluster:st.cluster}));
-            t.cd=1/st.rate; AUDIO.lob();
+            t.cd=sunCd(t)/st.rate; AUDIO.lob();
           }else t.cd=.1;
         }
       }
@@ -6683,6 +6821,27 @@ function drawNet(f,p){
   for(const k of [5,19]){const q=rimPt(k); g.fillStyle='#c08a4a'; g.beginPath(); g.ellipse(q[0],q[1]-.03,.1,.06,.4,0,TAU); g.fill(); g.strokeStyle='#5a3a1c'; g.lineWidth=.02; g.stroke();}
   g.restore();
 }
+/* the Wrong Sun's bright spots: a violet glare, the wrong colour for light on the path, painted once into a sprite and stamped per spot
+   (no gradients made per frame). Once it has Watched you, a fainter halo shows how far the glare reaches onto the stone */
+let spotCv=null;
+function spotSprite(){
+  if(spotCv)return spotCv;
+  const S=128, c=document.createElement('canvas'); c.width=c.height=S; const x=c.getContext('2d'), h=S/2;
+  const gr=x.createRadialGradient(h,h,2,h,h,h);
+  gr.addColorStop(0,'rgba(246,236,255,.95)'); gr.addColorStop(.28,'rgba(196,150,255,.72)');
+  gr.addColorStop(.6,'rgba(132,78,220,.3)'); gr.addColorStop(1,'rgba(90,40,170,0)');
+  x.fillStyle=gr; x.fillRect(0,0,S,S);
+  return spotCv=c;
+}
+function drawSpots(tm){
+  const s=F.spotPts; if(!s||!s.length)return;
+  const cv=spotSprite(), pulse=reduceMotion?0:Math.sin(tm*2.3)*.05, wide=patTier('sun')>=2;
+  g.save(); g.globalCompositeOperation='lighter';
+  for(let i=0;i<s.length;i+=2){const x=s[i], y=s[i+1];
+    if(wide){g.globalAlpha=.22; g.drawImage(cv,x-SPOT_GLARE,y-SPOT_GLARE,SPOT_GLARE*2,SPOT_GLARE*2);}
+    const r=.62+pulse; g.globalAlpha=.85; g.drawImage(cv,x-r,y-r,r*2,r*2);}
+  g.restore();
+}
 /* the Drowned Mother's water: one body of dark water poured along the path, banks and all, with the current
    drawn as streaks drifting toward the lamp. Each stretch is a single stroke, so a long flood reads as one channel */
 function waterStroke(pts,w,col){g.strokeStyle=col; g.lineWidth=w; g.beginPath(); g.moveTo(pts[0],pts[1]); for(let i=2;i<pts.length;i+=2)g.lineTo(pts[i],pts[i+1]); g.stroke();}
@@ -6815,7 +6974,7 @@ function render(){
   g.drawImage(floorCv,sx,sy);
   g.setTransform(s,0,0,s,sx,sy);
 
-  if(F.water.size)drawWater(tm,false);
+  if(F.water&&F.water.size)drawWater(tm,false);
   /* a Signal Mirror's beam, laid along the ground */
   if(F.beams&&F.beams.length){g.save(); g.globalCompositeOperation='lighter'; g.lineCap='round';
     for(const b of F.beams){g.strokeStyle='rgba(255,214,140,.13)'; g.lineWidth=.14; g.beginPath(); g.moveTo(F.lx,F.ly); g.lineTo(b.x0,b.y0); g.stroke();
@@ -7026,7 +7185,9 @@ function render(){
   g.setTransform(s,0,0,s,sx,sy);
 
   /* her water shows through the dark too, faintly, so you can plan around it */
-  if(F.water.size)drawWater(tm,true);
+  if(F.water&&F.water.size)drawWater(tm,true);
+  /* the Wrong Sun's spots are light: they burn through the dark */
+  if(F.spots&&F.spots.size)drawSpots(tm);
   /* the Occultist sees its dead: pale bones on the path, drawn over the dark so the candles can find them */
   if(corpseKit()&&F.bodies&&F.bodies.size)drawBodies(tm);
   /* the Galvanist's grid: rods, wires and their arcs, drawn over the dark because live current glows */
@@ -7304,10 +7465,12 @@ function codexSee(kind,k){if(devOn)return; const C=codex(); if(C[kind].has(k))re
 function relicGlyph(k){return RELICS[k].n.replace(/^(The|A) /,'').charAt(0);}
 let relKey='', relTipT=0, relTipK='';
 function renderRelics(){
-  const key=run.relics.join(',')+'|'+attOf('mother');
+  const key=run.relics.join(',')+'|'+attOf('mother')+'|'+attOf('sun');
   if(key===relKey)return; relKey=key;
-  /* a patron who has noticed you sits first, ringed by her Attention */
-  const pat=attOf('mother')?'<button class="relchip is-patron" data-rel="patron:mother" aria-label="'+PATRONS.mother.n+', Attention '+attOf('mother')+'" style="--att:'+Math.min(1,attOf('mother')/PATRONS.mother.tiers[2].at)+'">'+PATRONS.mother.glyph+'</button>':'';
+  /* patrons who have noticed you sit first, ringed by Attention */
+  let pat='';
+  if(attOf('mother'))pat+='<button class="relchip is-patron" data-rel="patron:mother" aria-label="'+PATRONS.mother.n+', Attention '+attOf('mother')+'" style="--att:'+Math.min(1,attOf('mother')/PATRONS.mother.tiers[2].at)+'">'+PATRONS.mother.glyph+'</button>';
+  if(attOf('sun'))pat+='<button class="relchip is-patron" data-rel="patron:sun" aria-label="'+PATRONS.sun.n+', Attention '+attOf('sun')+'" style="--att:'+Math.min(1,attOf('sun')/PATRONS.sun.tiers[2].at)+'">'+PATRONS.sun.glyph+'</button>';
   $('#relChips').innerHTML=pat+run.relics.map(k=>'<button class="relchip'+(RELICS[k].curse?' is-curse':'')+'" data-rel="'+k+'" aria-label="'+RELICS[k].n.replace(/"/g,'')+'">'+relicGlyph(k)+'</button>').join('');
 }
 function relicTip(k,btn){
@@ -7627,6 +7790,12 @@ const TIPS={
   under:{when:()=>F.under&&F.phase==='wave'&&F.foes.some(e=>!e.dead&&inWater(e)),title:'Gone under',
     text:'She has claimed you. Whatever walks in her water goes under, and your wards cannot see it there. A candle’s light, a Flare or a bound Watcher finds it. So does a trap.',
     target:()=>{const e=F.foes.find(e=>!e.dead&&inWater(e)); return e?coachBoard(e.x,e.y,.8):null;}},
+  spots:{when:()=>F.spots&&F.spots.size>0,title:'The Wrong Sun',
+    text:'It has noticed you. Its bright spots burn on the path: whatever stands in one is seen, veiled or not. But a Stalker that crosses one has seen the lamp, and runs. Tap its sign beside the Grimoire to see what its Attention does next.',
+    target:()=>{const s=F.spotPts; return s&&s.length?coachBoard(s[0],s[1],.8):null;}},
+  glare:{when:()=>patTier('sun')>=3&&F.towers.some(t=>t.kind==='ward'&&nearSpot(t.x,t.y)),title:'In the glare',
+    text:'It has claimed you. A ward that stands within the halo of a bright spot fires a quarter slower. Build back from the glare, or build there knowing it.',
+    target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&nearSpot(t.x,t.y)); return t?coachBoard(t.x,t.y,SPOT_GLARE):null;}},
   ebb:{when:()=>run.rites.includes('ebb')&&F.phase==='wave'&&F.foes.some(e=>!e.dead&&inWater(e)),title:'The Ebb',
     text:'Tap The Ebb and the water draws back, dragging everything in it two tiles down the path. Wait until it is full.',
     target:()=>coachEl('#rites [data-r="ebb"]')},
