@@ -414,6 +414,13 @@ At the landing the gift is a patron's offering instead, half the time (a quarter
 | 1 | Noticed | Water stands on the path of every floor. Its current carries creatures through it 30% faster. |
 | 3 | Watched | The water rises: as each wave begins, the flood creeps one tile further up the path. |
 | 5 | Claimed | Whatever walks in her water goes under. It cannot be seen or struck there unless something unveils it. |
+**The Wrong Sun** (`sun`): An alien light that burns above the dark stair. It shines without heat and sears whatever stands beneath its glare.
+
+| Attention | Tier | What changes |
+|---|---|---|
+| 1 | Noticed | Three bright spots burn on the path of every floor. Whatever stands in one is seen. But a Stalker that crosses one has seen the lamp, and runs 40% faster for 3 seconds. |
+| 3 | Watched | The glare spreads onto the stone beside each spot, and sears whatever stands in a spot, 8 a second. As each wave begins, another spot opens. |
+| 5 | Claimed | Your wards that stand in the glare fire 25% slower. |
 
 Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles; it rises to at most **14** tiles; "beside water" is within **1.5** tiles.
 
@@ -435,6 +442,15 @@ Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles;
 | `graves` | Wet Graves | mother | occultist | A Corpse Candle that stands beside water does not go out when the wave ends. |
 | `souls` | Drowned Souls | mother | occultist | Whatever dies in water leaves its sigil, if its kind can be bound. |
 | `fat` | Her Fat | mother | whaler | A Blubber Lamp that stands beside water drinks from it as a wave begins, not from your pots or your lamp. |
+| `aliencandle` | Alien Spectrum | sun |  | Your candles burn the wrong colour. Whatever walks in their light is seared, 6 a second, but your wards that stand in it fire 25% slower. |
+| `solarflare` | Solar Glare | sun |  | When you cast Flare, every bright spot bursts: 20 to everything within a tile of it. An Arc Lamp’s flare bursts the spots in its light. |
+| `sunbeam` | Searing Rays | sun |  | Whatever stands in a bright spot is seared, 8 a second. Once it has Watched you, twice that. |
+| `solartrap` | Blinded Prey | sun |  | Whatever stands in a bright spot is dazzled and walks 20% slower. A Stalker dazzled there never sights the lamp. |
+| `sun_signal` | Alien Leaps | sun | lamplighter | Signal Candles leap 2 tiles further across the dark. But a Stalker that walks in their light has seen the lamp, and runs 40% faster for 3 seconds. |
+| `sun_arc` | Disorienting Flare | sun | galvanist | A creature an Arc Lamp’s flare stuns forgets the way and walks back down the path for 2 seconds. Once each. Not a boss, a Behemoth or a Herald. |
+| `sun_chime` | Resonant Glare | sun | bellringer | Every time the lamp tolls, each bright spot flashes. Whatever stands in one is heard, and stunned for a moment. |
+| `sun_corpse` | Alien Ash | sun | occultist | A Corpse Candle that stands within a tile and a half of a bright spot shines a tile further and sears what walks in its light, 6 a second. |
+| `sun_harpoon` | Solar Tether | sun | whaler | Whatever is on your line takes half again from everything while it stands in a bright spot. |
 
 ## Omens (on stair doors)
 
