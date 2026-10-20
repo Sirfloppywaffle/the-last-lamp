@@ -59,6 +59,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .meter.low i{background:var(--wound)}
 .meter.madm{width:100px}
 .meter.madm i{background:var(--madness)}
+.meter.madm b{position:absolute;top:0;bottom:0;border-radius:3px;background:repeating-linear-gradient(90deg,var(--madness) 0 2px,var(--wound) 2px 4px);opacity:.85;transition:left .25s,width .25s}
 .meter.madm s{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--ash);opacity:.65}
 .pausebtn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1px solid var(--seam);background:var(--slab);font-size:.84rem}
 .bars{display:inline-block;width:11px;height:12px;border-left:3px solid currentColor;border-right:3px solid currentColor}
@@ -115,6 +116,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .coach{position:fixed;z-index:30;padding:10px 12px 10px;border-radius:10px;background:var(--stone);border:1px solid var(--tallow);box-shadow:0 8px 26px var(--shadow);pointer-events:none;color:var(--bone)}
 .coach-step{margin:0 0 2px;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tallow)}
 .coach b{display:block;font-family:var(--f-display);font-size:1.12rem;font-weight:400;color:var(--bone)}
+.coach-art{display:block;width:100%;height:120px;margin:5px 0 2px;border-radius:8px;background:#0c0e10;border:1px solid rgba(255,255,255,.06)}
 .coach-text{margin:3px 0 8px;font-size:.86rem;line-height:1.35;color:var(--bone)}
 .coach-acts{display:flex;flex-wrap:wrap;gap:8px;pointer-events:auto}
 .coach-acts .btn{padding:6px 12px;font-size:.82rem;min-height:34px}
@@ -351,7 +353,7 @@ input[type=range]::-moz-range-track {
   .pausebtn .pl{display:none}
   .calls .btn.call{min-width:0}
 }
-@media (prefers-reduced-motion:reduce){.banner,.hint,.meter i{transition:none}}
+@media (prefers-reduced-motion:reduce){.banner,.hint,.meter i,.meter b{transition:none}}
 #app.side{display:grid;grid-template-columns:minmax(128px,168px) minmax(0,1fr) minmax(178px,224px);grid-template-rows:minmax(0,1fr);gap:0 10px;max-width:none;
   padding:max(6px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(6px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
 .side .hud{flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;gap:9px;min-height:0;overflow-y:auto;border-bottom:0;border-right:1px solid var(--seam);padding:2px 10px 2px 0}
@@ -393,7 +395,7 @@ input[type=range]::-moz-range-track {
     <div class="where"><span id="floorName">The Cistern</span><small><b id="floorNo">Floor 1 of 5</b> · wave <b id="waveV">0 / 4</b></small></div>
     <div class="stat"><span class="lbl">Lamp oil</span><span class="val"><b id="oilV">20</b><small id="oilMax">/20</small></span><span class="meter" id="oilMeter"><i id="oilBar"></i></span></div>
     <div class="stat"><span class="lbl">Essence</span><span class="val ess" id="essV">0</span></div>
-    <div class="stat"><span class="lbl">Madness <em id="madTier">Calm</em></span><span class="val" id="madV">0</span><span class="meter madm"><i id="madBar"></i><s id="t1"></s><s id="t2"></s><s id="t3"></s></span></div>
+    <div class="stat"><span class="lbl">Madness <em id="madTier">Calm</em></span><span class="val" id="madV">0</span><span class="meter madm"><i id="madBar"></i><b id="dreadBar"></b><s id="t1"></s><s id="t2"></s><s id="t3"></s></span></div>
     <button class="pausebtn" id="pauseBtn" aria-label="Pause"><span class="bars"></span><span class="pl">Pause</span></button>
     <div class="relbar" id="relBar">
       <button class="relbook" id="bookBtn" aria-label="The Grimoire"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v15H5.5C4.7 19 4 18.3 4 17.5zM13 4h5.5c.8 0 1.5.7 1.5 1.5v12c0 .8-.7 1.5-1.5 1.5H13z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 8h2.5M6.5 11h2.5M15.5 8h2M15.5 11h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>
@@ -456,7 +458,8 @@ input[type=range]::-moz-range-track {
         <li><b>Forks.</b> On some floors the stair splits. They take the darker way, and only light you cast counts, never the lamp's. A gold chevron at the fork shows where they will go. Shades and Stalkers do the opposite and hunt your light. Gnashers and bosses keep the main way. A Weir built on the fork shuts one way; flip it between waves. Watchers fly over it, and a Behemoth breaks it. On these floors you also hold the Will-o’-Wisp: tap a way at a fork and, for eight seconds, everything but a boss follows it there.</li>
         <li><b>Heralds.</b> Some floors send a Herald: a named terror in one wave, shown on the strip above the board in the break before it comes. It drains 8 oil if it reaches the lamp, but it is no boss and never ends the run by itself. Kill it and it pays a relic. Floors two to four each send one, and a descent never meets the same one twice. The Last Keeper carries a lamp of its own, and every candle it passes goes out for 6.5 seconds (a Tuning Fork falls silent). The Tithe-taker takes 2 essence a second while it walks in your light; kill it and the sack bursts, paying it all back and half again. In the break before a Herald's wave, a red ring marks the rift it will climb out of. The Bellfather strikes its great bell every 5 seconds, and wards within 2.2 tiles reel and do nothing for 2 seconds. No Herald can be held for long: after 3 seconds stunned or pinned it breaks free, and shrugs off every hold for 3 seconds. A boss's rift is marked the same way in the break before its wave, with a wider, doubled ring and two marks: it always climbs out there.</li>
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
-        <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and they move faster.</li>
+        <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and everything but a boss moves faster.</li>
+        <li><b>Dread.</b> The Many-Mouthed adds dread, striped at the end of the madness bar. Dread counts with madness toward every tier, but only the madness of horrors you paid for makes the Occultist stronger or opens free horrors. Dread brings only the dark.</li>
         <li><b>Wards.</b> Your kit names the wards you start with: Candles, Harpoons, Salt, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, the Hex Effigy that makes everything near it take more damage, and its own. The Bone Chime, Tar Censer, Galvanic Coil and Whaling Gun are found on the stair: as gifts, from merchants, or in a pack. Only the Bellringer starts with the Chime.</li>
         <li><b>Chimes.</b> A Bone Chime stuns everything in its ring, but the ring spreads thin: the four nearest take its full strike, the rest half. A boss it stuns goes deaf to every chime for 4 seconds, and a dull grey ring shows it shrugging them off.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
@@ -467,7 +470,7 @@ input[type=range]::-moz-range-track {
         <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. You meet every map of a floor before any comes back, and a saved floor keeps its own.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard. <i>Sealed:</i> two of your wards are locked for the floor, marked with a lock in the tray; never your light and never your harpoon. <i>One of Each:</i> each kind of ward stands only once, except what makes your light (candles of every kind, Tuning Forks, pylons, Bell Wires and Try-pots). <i>Bare Hands:</i> your rites are silent, all but the Bellringer's Toll. <i>Unbranched:</i> nothing can be upgraded, not even the lamp. <i>The Long Night:</i> candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller; it never comes with Moonless or Thick Dark.</li>
-        <li><b>Patrons.</b> Old things below the stair make offerings: the Drowned Mother, and the Wrong Sun. Half the time the landing's gift is one of theirs instead (a quarter, if one already reached out on that floor), and now and then one reaches out between waves; which one is a toss each time. Take one gift, or refuse. Every gift raises that patron's Attention, and Attention changes your floors. Her water speeds what walks in it, rises, and at last hides it. The Wrong Sun's bright spots show whatever stands in them, but a Stalker that crosses one has seen the lamp and runs; Watched, they sear, and the glare spreads to the stone beside them; Claimed, your wards in the glare fire slower. Their signs sit beside the Grimoire; tap one to see where you stand.</li>
+        <li><b>Patrons.</b> Old things below the stair make offerings: the Drowned Mother, the Wrong Sun, and the Many-Mouthed. Half the time the landing's gift is one of theirs instead (a quarter, if one already reached out on that floor), and now and then one reaches out between waves; which one is a toss each time. Take one gift, or refuse. Every gift raises that patron's Attention, and Attention changes your floors. Her water speeds what walks in it, rises, and at last hides it. The Wrong Sun's bright spots show whatever stands in them, but a Stalker that crosses one has seen the lamp and runs; Watched, they sear, and the glare spreads to the stone beside them; Claimed, your wards in the glare fire slower. The Many-Mouthed reads what you built and sends its own up the stair as each wave begins, Gibberers for your wards and Gorgers for your horrors, and they leave nothing when they die; Watched, you carry dread and Gorgers snuff candles; Claimed, a Choir-Husk veils what walks near it, and bindings may break from Whispers. Their signs sit beside the Grimoire; tap one to see where you stand.</li>
         <li><b>Embers.</b> Every descent, won or lost, leaves embers behind. Spend them in the Ember Hall on new kits, relics and stories. Carry the lamp to morning to open the Deeper Dark, where each depth adds a new cruelty.</li>
         <li><b>The Grimoire.</b> The book in the HUD holds every creature you have met, every ward and rite, and every relic you have found. The relics you carry sit beside it: tap one to read what it does.</li>
         <li><b>Saving.</b> The run saves at every break between waves. Save and quit from the pause menu, then Continue from the title.</li>
@@ -486,6 +489,7 @@ input[type=range]::-moz-range-track {
 <div class="coach-ring" id="coachRing" hidden></div>
 <div class="coach" id="coach" hidden role="status" aria-live="polite">
   <p class="coach-step" id="coachStep"></p><b id="coachTitle"></b>
+  <canvas class="coach-art" id="coachArt" hidden aria-hidden="true"></canvas>
   <p class="coach-text" id="coachText"></p>
   <div class="coach-acts" id="coachActs"></div>
 </div>
@@ -514,7 +518,7 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='18.2.0';
+const GAME_VERSION='18.3.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -543,6 +547,10 @@ const FOES={
   lastkeeper:{n:'The Last Keeper',hp:440,spd:.42,oil:8,ess:40,col:'#C9A35A',r:.52,herald:true},
   tithetaker:{n:'The Tithe-taker',hp:400,spd:.5,oil:8,ess:0,col:'#9C8A4A',r:.5,herald:true},
   bellfather:{n:'The Bellfather',hp:520,spd:.36,oil:8,ess:40,col:'#8A6A44',r:.56,herald:true},
+  /* the Many-Mouthed's own (patron:'mouths'): they climb for what you built, and leave nothing when they die */
+  gibberer:{n:'Gibberer',hp:22,spd:1.25,oil:1,ess:0,col:'#B89A8C',r:.24,patron:'mouths'},
+  gorger:{n:'Gorger',hp:56,spd:.8,oil:2,ess:0,col:'#80586F',r:.36,patron:'mouths'},
+  husk:{n:'Choir-Husk',hp:95,spd:.7,oil:2,ess:0,col:'#8F9A86',r:.4,patron:'mouths'},
   /* never spawns: the look and name of the Keeper once it is bound to you */
   keeper:{n:'Bound Keeper',hp:1,spd:0,oil:0,ess:0,col:'#B0507A',r:.6,bound:true}
 };
@@ -763,7 +771,8 @@ const RITES={
   unbind:{n:'Unbind',cd:25,kit:'occultist',d:'Tap one of your horrors on the board. It breaks its binding and charges down the path toward where they come from, tearing through everything in its way. Then it is gone for good.'},
   toll:{n:'Toll',cd:TOLL_SWING,kit:'bellringer',d:'The lamp tolls. A ring sweeps 7 tiles out from it, and everything it touches is heard for 1.5 seconds: outlined in the dark, veiled or not, and every ward can strike it. Each toll makes Noise. At 5 Noise the dark answers, and two Abyssal Stalkers climb toward the sound. With Peal, tap it on the lamp’s own beat for a Perfect Toll: half again as far, two cracks, and half the Noise.'},
   greatbell:{n:'The Great Bell',cd:30,kit:'bellringer',d:'One huge toll across the whole floor. Everything is heard for 4 seconds, veiled or not, and staggered for half a second. It makes 3 Noise.'},
-  ebb:{n:'The Ebb',cd:30,patron:'mother',d:'The water draws back. Everything standing in it is dragged 2 tiles back down the path. Bosses and Behemoths hold their ground.'}
+  ebb:{n:'The Ebb',cd:30,patron:'mother',d:'The water draws back. Everything standing in it is dragged 2 tiles back down the path. Bosses and Behemoths hold their ground.'},
+  feed:{n:'Feed the Dark',cd:22,patron:'mouths',d:'The lamp gutters for 2.5 seconds and burns 1.2 smaller. Everything within 3 tiles of it is dragged 1.5 tiles back (a Behemoth a third as far, never a boss), and your horrors strike twice as fast and into the dark. In a wave, you carry 4 dread until it breaks.'}
 };
 const RELICS={
   tallow:{n:'Tallow of Saints',d:'The lamp burns wider: +0.8 light.'},
@@ -806,7 +815,13 @@ const PATRONS={
     d:'An alien light that burns above the dark stair. It shines without heat and sears whatever stands beneath its glare.',
     tiers:[{at:1,n:'Noticed',d:'Three bright spots burn on the path of every floor. Whatever stands in one is seen. But a Stalker that crosses one has seen the lamp, and runs 40% faster for 3 seconds.'},
            {at:3,n:'Watched',d:'The glare spreads onto the stone beside each spot, and sears whatever stands in a spot, 3 a second. As each wave begins, another spot opens.'},
-           {at:5,n:'Claimed',d:'Your wards that stand in the glare fire 25% slower.'}]}
+           {at:5,n:'Claimed',d:'Your wards that stand in the glare fire 25% slower.'}]},
+  /* the third (#83, from Gemini's design, reviewed by Claude): its price is creatures shaped by what you build, and dread */
+  mouths:{n:'The Many-Mouthed',glyph:'ᗯ',
+    d:'It gnaws at the roots of the stair, where the names were eaten. It lends you teeth, and comes up to count them.',
+    tiers:[{at:1,n:'Noticed',d:'Its creatures climb with every wave, shaped by what you build: Gibberers for your wards, Gorgers for your horrors. Nothing it sends leaves essence, bones or sigils.'},
+           {at:3,n:'Watched',d:'You carry 3 dread on every floor, and one more of its creatures climbs each wave. Gorgers snuff candles and silence forks too.'},
+           {at:5,n:'Claimed',d:'A Choir-Husk climbs with every wave and veils whatever walks near it. Bindings may break at Whispers, and half the time at Slipping or deeper.'}]}
 };
 /* the water: how fast its current carries them, how much floods at first, how far it can rise */
 const CURRENT=1.3, FLOOD_N=2, FLOOD_LEN=3, FLOOD_MAX=14, NEAR_WATER=1.5, PATRON_BREAK=.15;
@@ -815,6 +830,22 @@ const CURRENT=1.3, FLOOD_N=2, FLOOD_LEN=3, FLOOD_MAX=14, NEAR_WATER=1.5, PATRON_
    Solar Glare's burst. 3 a second: measured with no wards, 8 let three spots take 25 of a floor-one Crawler's 30 health and
    twelve kill anything before a ward fired (Gemini's first 15 was worse). At 3, three spots take about a third, and a floor has too few waves to reach eight */
 const SPOT_N=3, SPOT_MAX=8, SPOT_GLARE=1.5, SUN_DPS=3, SIGHT_RUN=1.4, SIGHT_T=3, SUN_SLOW=1/.75, SPEC_SLOW=1/.8, GLARE_DMG=20, GLARE_R=.9, ALIEN_BURN=6;
+/* the Many-Mouthed. Dread: Watched's 3, 2 for each Gibberer alive (6 at most). A Gibberer's chatter reaches 1.6 tiles, and a ward
+   there waits a quarter longer between shots. A Gorger lashes its tongue 2 tiles at a horror (1.8 at a candle or fork once
+   Watched) every 4.5 seconds: 2 seconds dazed or snuffed, 8 health back; horrors hurt it 35% less. A Choir-Husk veils what walks
+   within 1.8 tiles. Measured against floor one (wave 1 is 330 health): three Gibberers add 23%, two Gorgers 39% */
+const MOUTH_DREAD=3, GIB_DREAD=2, GIB_DREAD_MAX=6, GIB_R=1.6, GIB_SLOW=1.25, GORGE_R=2, GORGE_WARD_R=1.8, GORGE_CD=4.5, GORGE_FIRST=1.5, GORGE_T=2, GORGE_HEAL=8, GORGE_RESIST=.65, HUSK_R=1.8;
+/* its offerings. Open Your Ears: 4 dread, wards 20% quicker from Whispers, flickers twice as often. The Dark Bites First: 10 and a
+   tile back (a third for a Behemoth, none for a boss), the lamp half a tile smaller. Feed the Dark: 2.5 seconds, 1.2 light, 4 dread
+   once a wave, 1.5 tiles back within 3 of the lamp. Salted Teeth: 7 a step, 0.45s off the horror's wait, 2 salt a step, within
+   1.5 of a horror. Living Bait: within 2 of a horror, 0.8 tiles back, 1 dread a snap, 3 at most a wave. Hollow Effigy: 2 dread
+   each, a hexed creature walks 25% slower, horrors reach it half a tile further. Teeth on the Thread: 8 and a 0.3s hold a link;
+   horrors reach a Kindled creature a tile further and hurt it a quarter more. Blood in the Try-pot: twice the render, horrors
+   strike what is on the line 40% faster, the line snaps 1.5 tiles back. Wired Specimens: a shock sheds half a second.
+   The Answering Choir: a quarter second of striking into the dark */
+const EARS_DREAD=4, EARS_FAST=.8, BITE_DMG=10, BITE_BACK=1, BITE_LAMP=.5, FEED_T=2.5, FEED_LIGHT=1.2, FEED_DREAD=4, FEED_R=3, FEED_BACK=1.5,
+  SALT_TEETH=7, SALT_SHAVE=.45, SALT_R=1.5, BAIT_R=2, BAIT_BACK=.8, BAIT_DREAD_MAX=3, EFFIGY_DREAD=2, EFFIGY_SLOW=.75, EFFIGY_REACH=.5,
+  THREAD_BITE=8, THREAD_HOLD=.3, KINDLE_REACH=1, KINDLE_BITE=1.25, POT_BLOOD=2, LINE_FAST=1.4, LINE_SNAP=1.5, ARC_SHED=.5, CHOIR_DEEP=.25;
 /* offerings change what you do, not just a number. A kit's own (kit:) only reach that kit; an offer of three holds at most one */
 const OFFERINGS={
   brine:{p:'mother',n:'Brine Pools',need:()=>run.wards.includes('salt'),d:'Your Salt Circles turn to brine. They no longer slow: each pool drags whatever wades into it a tile back, once. Bosses and Behemoths wade on.'},
@@ -842,7 +873,22 @@ const OFFERINGS={
   sun_arc:{p:'sun',kit:'galvanist',n:'Disorienting Flare',d:'A creature an Arc Lamp’s flare stuns forgets the way and walks back down the path for 2 seconds. Once each. Not a boss, a Behemoth or a Herald.'},
   sun_chime:{p:'sun',kit:'bellringer',n:'Resonant Glare',d:'Every time the lamp tolls, each bright spot flashes. Whatever stands in one is heard, and stunned for a moment.'},
   sun_corpse:{p:'sun',kit:'occultist',n:'Alien Ash',d:'A Corpse Candle that stands within a tile and a half of a bright spot shines a tile further and sears what walks in its light, 6 a second.'},
-  sun_harpoon:{p:'sun',kit:'whaler',n:'Solar Tether',d:'Whatever is on your line takes half again from everything while it stands in a bright spot.'}
+  sun_harpoon:{p:'sun',kit:'whaler',n:'Solar Tether',d:'Whatever is on your line takes half again from everything while it stands in a bright spot.'},
+  /* The Many-Mouthed offerings: four need nothing, so every kit has four to be offered */
+  openears:{p:'mouths',n:'Open Your Ears',d:'You carry 4 dread on every floor. While you are at Whispers or deeper your wards reload 20% faster, but the lamp flickers twice as often.'},
+  first_bite:{p:'mouths',n:'The Dark Bites First',need:()=>run.wards.includes('candle'),d:'The first time each creature walks out of a candle’s light into the dark, the dark bites it for 10 and drags it a tile back down the path. A Behemoth a third as far; a boss only bitten. Your lamp burns half a tile smaller.'},
+  feed:{p:'mouths',n:'Feed the Dark',need:()=>!run.rites.includes('feed')&&run.rites.length<4,d:'A new rite. The lamp gutters for 2.5 seconds, 1.2 smaller: everything within 3 tiles of it is dragged 1.5 tiles back (a Behemoth a third as far, never a boss), and your horrors strike twice as fast and into the dark. Feed it in a wave and you carry 4 dread until the wave breaks.'},
+  famine:{p:'mouths',n:'Swallowed Sigils',need:()=>!gridKit(),d:'Creatures you could bind leave their sigil twice as often. A sigil left to fade while a wave is fought hatches a Gibberer where it lay.'},
+  teeth:{p:'mouths',n:'Teeth in the Stair',d:'The first creature to reach the lamp each wave is eaten whole, and costs no oil. Never a boss or a Herald. Every one after it costs 1 more oil.'},
+  unpaid:{p:'mouths',n:'Unpaid Teeth',need:()=>hasRoster()&&!has('choirwalls'),d:'For each tier of madness your paid horrors bring, one more horror costs nothing to field. It still brings its madness. If your paid madness falls, the free ones beyond it go back to your roster.'},
+  bloodsalt:{p:'mouths',n:'Salted Teeth',need:()=>run.wards.includes('salt')&&hasRoster(),d:'A Salt Circle within 1.5 tiles of a horror bites each creature that steps into it for 7 and takes half a second off that horror’s wait. It wears out twice as fast, and dissolves when the wave breaks.'},
+  baited:{p:'mouths',n:'Living Bait',need:()=>run.wards.includes('trap')&&hasRoster(),d:'A Hook Trap within 2 tiles of a horror resets twice as fast and drags its catch almost a tile back. Each snap, that horror strikes at once, and you take 1 dread until the wave breaks (3 at most).'},
+  holloweffigy:{p:'mouths',n:'Hollow Effigy',need:()=>run.wards.includes('effigy')&&hasRoster(),d:'Each Hex Effigy adds 2 dread. What it hexes walks 25% slower, and your horrors reach it from half a tile further.'},
+  mouth_corpse:{p:'mouths',kit:'occultist',n:'Borrowed Flesh',d:'Where one of your horrors breaks loose or is Unbound, it leaves a body on the path that remembers what it was. A Corpse Candle lit on that body raises its phantom on the candle, striking as it did while the candle burns, at no madness.'},
+  mouth_signal:{p:'mouths',kit:'lamplighter',n:'Teeth on the Thread',d:'The light between your Signal Candles grows teeth: each link bites a creature the first time it crosses, for 8, and holds it a moment. Your horrors reach a Kindled creature from a tile further and hurt it a quarter more.'},
+  mouth_harpoon:{p:'mouths',kit:'whaler',n:'Blood in the Try-pot',need:()=>hasRoster(),d:'A Try-pot renders twice as much from what your horrors kill. Your horrors strike what is held on a line 40% faster, and when one kills it there, the line snaps to the nearest creature and hauls it 1.5 tiles back. Never a boss, a Behemoth or a Herald.'},
+  mouth_arc:{p:'mouths',kit:'galvanist',n:'Wired Specimens',need:()=>hasRoster(),d:'Your fielded specimens take wires from your pylons, if a pylon has a link to spare, and never fry. Each shock on a wire tied to one sheds half a second of its wait.'},
+  mouth_chime:{p:'mouths',kit:'bellringer',n:'The Answering Choir',need:()=>hasRoster(),d:'A Perfect Toll makes every horror you field strike at once, into the dark, and crack what it hits. But at 5 Noise a Gorger climbs with the Stalkers.'}
 };
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
 const KITS={
@@ -933,7 +979,7 @@ function unlockDeed(k){
 /* the Occultist's deed: break a wave with the dark already Slipping (checked as each wave breaks) */
 function checkOccultistDeed(cleared){
   if(!cleared||!run||!F||devOn)return;
-  if(madTier()>=2)unlockDeed('occultist');
+  if(boundMadTier()>=2)unlockDeed('occultist');
 }
 function kit(){return run&&run.kit;}
 function depthLvl(){return (run&&run.depth)||0;}
@@ -997,14 +1043,14 @@ function bindable(){return ['gnasher','watcher','wretch','shrieker'];}
 function hasOff(k){return !!(run&&run.offs&&run.offs.includes(k));}
 function attOf(p){return (run&&run.att&&run.att[p])||0;}
 function patTier(p){const a=attOf(p); return PATRONS[p]?PATRONS[p].tiers.filter(t=>a>=t.at).length:0;}
-/* which patron reaches out: either, at even odds, every time (so one early gift never locks the run to one patron);
-   if that one has nothing left to give, the other. Returns {p, o} or null */
+/* which patron reaches out: any of them, at even odds, every time (so one early gift never locks the run to one patron);
+   if that one has nothing left to give, another. Returns {p, o} or null */
 function patronOffer(){
   for(const p of shuffle(Object.keys(PATRONS))){const o=offerSet(p); if(o)return {p,o};}
   return null;
 }
 /* she, or it */
-function patShe(p){return p==='sun'?'it':'her';}
+function patShe(p){return p==='mother'?'her':'it';}
 /* three offerings, at most one of them the kit's own; null when the patron has nothing left to give */
 function offerSet(p){
   p=p||'mother';
@@ -1020,6 +1066,7 @@ function takeOffer(k){
   const O=OFFERINGS[k]; if(!O||hasOff(k))return;
   run.offs=(run.offs||[]).concat(k);
   if(k==='ebb'&&!run.rites.includes('ebb'))run.rites.push('ebb');
+  if(k==='feed'&&!run.rites.includes('feed'))run.rites.push('feed');
   addAtt(O.p,1);
 }
 /* a threshold crossed mid-floor takes hold at once; one crossed at the landing waits for the floor below */
@@ -1036,14 +1083,14 @@ function addAtt(p,n){
       if(now>=3)F.under=true;
     }else if(p==='sun'){
       if(before<1&&now>=1)spotSeed(); else spotSync();
-    }
+    }else if(p==='mouths')warmArt(mouthTypes());
   }
   setTimeout(()=>{if(F&&(F.phase==='build'||F.phase==='wave'))banner(T.n,'rite',T.d.split('. ')[0].replace(/\.$/,''));},1100);
 }
 function offerNote(p){
   p=p||'mother';
   const a=attOf(p), T=PATRONS[p].tiers, n=patTier(p), nx=T[n], name=PATRONS[p].n;
-  return (p==='sun'?'Its':'Her')+' Attention: <b>'+a+'</b>'+(n?' · '+T[n-1].n:'')+'. '+(nx?'At '+nx.at+', <b>'+nx.n+'</b>: '+nx.d:(p==='sun'?'It':'She')+' has claimed you.');
+  return (p==='mother'?'Her':'Its')+' Attention: <b>'+a+'</b>'+(n?' · '+T[n-1].n:'')+'. '+(nx?'At '+nx.at+', <b>'+nx.n+'</b>: '+nx.d:(p==='mother'?'She':'It')+' has claimed you.');
 }
 function offerChoice(k,fn){
   const O=OFFERINGS[k];
@@ -1070,7 +1117,7 @@ function openOffer(opts,p){
   let done=false;
   const close=()=>{closeModal(); paused=false; forceUI();};
   const P=PATRONS[p];
-  const body=p==='sun'?'A light opens over the stair where no light should be, the wrong colour, and holds still on you. Something in it is offering. Take one gift, or refuse it.':'The water at the edge of the path goes still, then leans toward the lamp. Something under it is offering. Take one gift, or refuse her.';
+  const body=p==='mouths'?'Mouths open in the dark beside the stair, and speak in your own voice. Something below them is offering. Take one gift, or refuse it.':p==='sun'?'A light opens over the stair where no light should be, the wrong colour, and holds still on you. Something in it is offering. Take one gift, or refuse it.':'The water at the edge of the path goes still, then leans toward the lamp. Something under it is offering. Take one gift, or refuse her.';
   showModal({kind:'patron',wide:true,title:P.n,
     body:body,
     note:offerNote(p),
@@ -1174,11 +1221,189 @@ function sighted(e){if(!(e.sightT>0))F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:.5
 function inSpot(e){return !!(F.spots&&F.spots.size&&!e.def.fly&&F.spots.has(e.tile));}
 /* within reach of a spot's glare (a tile and a half): what a ward or a Corpse Candle beside the path stands in */
 function nearSpot(x,y){const s=F.spotPts; if(!s||!s.length)return false; for(let i=0;i<s.length;i+=2)if(dst(x,y,s[i],s[i+1])<=SPOT_GLARE)return true; return false;}
-/* how much longer a ward waits between shots: Claimed, in the glare; or Alien Spectrum, in a candle's light. Never both */
+/* how much longer a ward waits between shots: Claimed, in the glare; or Alien Spectrum, in a candle's light (never both);
+   then a Gibberer's chatter nearby, and Open Your Ears from Whispers, on top */
 function sunCd(t){
-  if(patTier('sun')>=3&&nearSpot(t.x,t.y))return SUN_SLOW;
-  if(hasOff('aliencandle'))for(const c of F.cands)if(c!==t&&dst(t.x,t.y,c.x,c.y)<=c.st.light)return SPEC_SLOW;
-  return 1;
+  let m=1;
+  if(patTier('sun')>=3&&nearSpot(t.x,t.y))m=SUN_SLOW;
+  else if(hasOff('aliencandle'))for(const c of F.cands)if(c!==t&&dst(t.x,t.y,c.x,c.y)<=c.st.light){m=SPEC_SLOW; break;}
+  if(F.gibs&&F.gibs.length)for(const g of F.gibs)if(!g.dead&&dst(t.x,t.y,g.x,g.y)<=GIB_R){m*=GIB_SLOW; break;}
+  if(hasOff('openears')&&madTier()>=1)m*=EARS_FAST;
+  return m;
+}
+
+/* ---------------- the Many-Mouthed ---------------- */
+function hasRoster(){return !!run&&Object.values(run.roster||{}).some(v=>v>0);}
+/* the sprites its creatures need on this floor */
+function mouthTypes(){
+  const t=[], n=patTier('mouths');
+  if(n>=1||hasOff('famine'))t.push('gibberer');
+  if(n>=1||hasOff('mouth_chime'))t.push('gorger');
+  if(n>=3)t.push('husk');
+  return t;
+}
+/* as each wave begins it reads the board. Gibberers for your wards: one for every three (two at most), and one more if you field
+   no horror, so it always sends something. Gorgers for your horrors: one each, two at most. Watched sends one more: a Gorger if
+   horrors are the heart of what you built, else a Gibberer. Claimed adds a Choir-Husk. Salt, Corpse Candles and the risen dead
+   are not wards it counts */
+function mouthPack(){
+  const tier=patTier('mouths'); if(tier<1||!F)return [];
+  let wardN=0, horrorN=0;
+  for(const t of F.towers){if(t.kind==='horror')horrorN++; else if(t.kind==='ward'&&t.type!=='salt'&&!t.corpse&&!t.risen&&!(WARDS[t.type]&&WARDS[t.type].raised))wardN++;}
+  let gib=Math.min(2,Math.floor(wardN/3))+(horrorN?0:1), gorg=Math.min(2,horrorN);
+  if(tier>=2){if(horrorN>=2||(horrorN===1&&wardN<3))gorg++; else gib++;}
+  const out=[];
+  for(let i=0;i<gib;i++)out.push('gibberer');
+  for(let i=0;i<gorg;i++)out.push('gorger');
+  if(tier>=3)out.push('husk');
+  return out;
+}
+/* they climb in the middle of the wave, spread across its second half; the Husk at the middle, with the crowd */
+function queueMouths(){
+  const pack=mouthPack(); if(!pack.length)return;
+  const mid=F.queue.reduce((m,q)=>Math.max(m,q.t),0)/2||4, n=pack.length;
+  pack.forEach((type,i)=>F.queue.push({t:type==='husk'?mid:mid*(.55+i/n*.9),type,gate:(i+F.wave)%F.nRoots}));
+}
+/* madness is what your horrors bring; dread is what the Many-Mouthed brings. Both push you through the same tiers (madTier), but
+   only the madness of horrors you paid for feeds the Occultist or opens free horrors (boundMadTier). Worked out live: a few
+   short loops, no allocation */
+function dread(){
+  if(!F||!run)return 0;
+  let d=(patTier('mouths')>=2?MOUTH_DREAD:0)+(hasOff('openears')?EARS_DREAD:0);
+  if(hasOff('holloweffigy'))for(const t of F.towers)if(t.kind==='ward'&&t.type==='effigy')d+=EFFIGY_DREAD;
+  let g=0; for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(!e.dead&&e.type==='gibberer')g+=GIB_DREAD;}
+  d+=Math.min(GIB_DREAD_MAX,g);
+  if(F.phase==='wave')d+=(F.feedMad||0)+(F.baitMad||0);
+  return d;
+}
+function horrorMadness(paidOnly){let m=0; if(!F)return 0; for(const t of F.towers)if(t.kind==='horror'&&!(paidOnly&&t.free))m+=horrorMad(t.type); return m;}
+function tierOf(m){const T=tiers(); return m>=T[2]?3:m>=T[1]?2:m>=T[0]?1:0;}
+function boundMadness(){return horrorMadness(true);}
+function boundMadTier(){return F?tierOf(boundMadness()):0;}
+/* the Gibberers and Choir-Husks alive, gathered once a frame into arrays that are reused, not rebuilt */
+function mouthsGather(){
+  F.gibs=F.gibs||[]; F.husks=F.husks||[]; F.gibs.length=0; F.husks.length=0;
+  for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(e.dead)continue; if(e.type==='gibberer')F.gibs.push(e); else if(e.type==='husk')F.husks.push(e);}
+}
+/* the Choir-Husk veils whatever walks within 1.8 tiles of it, like a Shade. Not itself, not a boss, not a Herald */
+function huskVeiled(e){
+  if(e.type==='husk'||e.def.boss||e.def.herald)return false;
+  for(const h of F.husks)if(!h.dead&&dst(e.x,e.y,h.x,h.y)<=HUSK_R)return true;
+  return false;
+}
+/* the Gorger lashes its tongue at the nearest horror within 2 tiles: dazed for 2 seconds, and it heals 8. Watched, with no horror
+   in reach, it snuffs a candle or silences a fork within 1.8. Then it rests 4.5 seconds */
+function gorgerLatch(e,dt){
+  if(e.latchCd===undefined)e.latchCd=GORGE_FIRST;
+  if(e.latchCd>0){e.latchCd-=dt; return;}
+  if(e.stunT>0||e.pinT>0)return;
+  let tgt=null, bd=GORGE_R;
+  for(const t of F.towers){if(t.kind!=='horror'||t.dead||t.dark||t.dazeT>0)continue; const d=dst(e.x,e.y,t.x,t.y); if(d<=bd){bd=d; tgt=t;}}
+  if(!tgt&&patTier('mouths')>=2){bd=GORGE_WARD_R;
+    for(const t of F.towers){if(t.kind!=='ward'||(t.type!=='candle'&&t.type!=='fork')||t.dead||t.snuffT>0)continue; const d=dst(e.x,e.y,t.x,t.y); if(d<=bd){bd=d; tgt=t;}}}
+  if(!tgt)return;
+  e.latchCd=GORGE_CD; e.hp=Math.min(e.max,e.hp+GORGE_HEAL);
+  if(tgt.kind==='ward'){tgt.snuffT=Math.max(tgt.snuffT||0,GORGE_T); F.fx.push({k:'snuff',x:tgt.x,y:tgt.y-.35,t:0,dur:1.4}); F.L=lightsNow();}
+  else tgt.dazeT=Math.max(tgt.dazeT||0,GORGE_T);
+  F.fx.push({k:'tongue',x:e.x,y:e.y,tx:tgt.x,ty:tgt.y-.2,t:0,dur:.5});
+  AUDIO.bite();
+}
+/* Unpaid Teeth: one free horror for each tier of paid madness. A free one still brings its madness, but never counts toward the
+   tiers that open more; if paid madness falls, the dearest free ones go back to the roster */
+function freeHorrors(){let n=0; if(F)for(const t of F.towers)if(t.kind==='horror'&&t.free)n++; return n;}
+function freeOpen(){return !!F&&hasOff('unpaid')&&!has('choirwalls')&&freeHorrors()<boundMadTier();}
+function horrorCost(type){return freeOpen()?0:HORRORS[type].cost;}
+function syncFree(){
+  if(!F||!freeHorrors())return;
+  const max=hasOff('unpaid')&&!has('choirwalls')?boundMadTier():0;
+  let n=freeHorrors(); if(n<=max)return;
+  const fr=F.towers.filter(t=>t.kind==='horror'&&t.free).sort((a,b)=>HORRORS[b.type].cost-HORRORS[a.type].cost);
+  while(n>max&&fr.length){const t=fr.shift(); removeTower(t); n--;
+    F.fx.push({k:'ring',x:t.x,y:t.y,r0:.5,r1:.05,t:0,dur:.6,col:'169,124,226'}); F.fx.push({k:'float',x:t.x,y:t.y-.4,txt:'back to your roster',col:PAL.mad,t:0,dur:1.2,size:.22});}
+  F.L=lightsNow();
+}
+/* the nearest working horror within r of x,y (for Salted Teeth and Living Bait) */
+function nearHorror(x,y,r){let best=null, bd=r; for(const t of F.towers){if(t.kind!=='horror'||t.dead||t.dark)continue; const d=dst(x,y,t.x,t.y); if(d<=bd){bd=d; best=t;}} return best;}
+/* what a horror can reach and how often it strikes, against one creature. Hollow Effigy reaches the hexed, Teeth on the Thread the
+   Kindled; Feed the Dark doubles the pace, and Blood in the Try-pot quickens it on what a line holds */
+function hReachOf(e){return (hasOff('holloweffigy')&&e.hex?EFFIGY_REACH:0)+(hasOff('mouth_signal')&&e.kindleT>0?KINDLE_REACH:0);}
+function hReach(){return hasOff('holloweffigy')||hasOff('mouth_signal')?hReachOf:null;}
+function onLine(e){return !!(e&&e.tetherBy&&e.tetherBy.tethered===e);}
+function hWait(H,e){let w=1/H.rate; if(F.feedT>0)w/=2; if(e&&hasOff('mouth_harpoon')&&onLine(e))w/=LINE_FAST; return w;}
+/* one horror (or a phantom on a Corpse Candle) takes its turn. Feed the Dark and the Answering Choir let it strike into the dark */
+function horrorAct(t,type,dt){
+  const H=HORRORS[type], mult=beaconAt(t.x,t.y)*horrorBoost(), blind=F.feedT>0||t.deepT>0;
+  if(t.deepT>0)t.deepT-=dt;
+  if(type==='elite'){for(const e of allIn(t.x,t.y,H.range,blind))hurt(e,H.dps*mult*dt*(F.feedT>0?2:1),'horror'); return;}
+  t.cd-=dt; if(t.cd>0)return;
+  if(type==='shrieker'){
+    const es=allIn(t.x,t.y,H.range,blind);
+    if(!es.length){t.cd=.15; return;}
+    for(const e of es){if(!e.def.boss&&!e.def.heavy)e.d=Math.max(0,e.d-H.push); hurt(e,H.dmg*mult,'horror'); hStruck(t,e);}
+    F.fx.push({k:'ring',x:t.x,y:t.y,r0:.3,r1:H.range,t:0,dur:.6,col:'194,120,207'});
+    t.cd=hWait(H,null); AUDIO.shriek(); return;
+  }
+  const e=pickTarget(t.x,t.y,H.range,t.tgt,blind,null,hReach());
+  if(!e){t.cd=type==='gnasher'?.08:.1; return;}
+  t.cd=hWait(H,e);
+  if(type==='wretch'){F.shots.push({k:'spit',x:t.x,y:t.y,tg:e,tx:e.x,ty:e.y,spd:7,dmg:H.dmg*mult,poison:H.poison,deep:t.deepT>0}); return;}
+  hurt(e,H.dmg*mult,'horror'); hStruck(t,e);
+  if(type==='gnasher'){F.fx.push({k:'bite',x:e.x,y:e.y,t:0,dur:.28}); AUDIO.bite();}
+  else if(type==='watcher')F.fx.push({k:'beam',x:t.x,y:t.y,tx:e.x,ty:e.y,t:0,dur:.2});
+  else if(type==='keeper'){F.fx.push({k:'burst',x:e.x,y:e.y,col:'#B8433A',r:.8,t:0,dur:.4}); F.fx.push({k:'kbeam',x:t.x,y:t.y-.1,tx:e.x,ty:e.y,t:0,dur:.3}); AUDIO.boom(); F.shake=Math.max(F.shake,.06);}
+}
+/* the Answering Choir: a horror striking in a Perfect Toll's answer cracks what it hits */
+function hStruck(t,e){if(t.deepT>0&&hasOff('mouth_chime'))crack(e,1);}
+/* Teeth on the Thread: each Signal Candle link bites a creature once, the first time it crosses */
+function threadBite(e){
+  for(const [a,b] of F.links){if(segDist(e.x,e.y,a.x,a.y,b.x,b.y)>.35)continue; const k=a.id*65536+b.id, bit=e.linkBit||(e.linkBit=[]); if(bit.includes(k))continue; bit.push(k);
+    hurt(e,THREAD_BITE,'thread'); if(!e.def.heavy)e.stunT=Math.max(e.stunT,e.def.boss?.1:THREAD_HOLD);
+    F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:.45,t:0,dur:.3,col:'255,190,110'}); if(e.dead)return;}
+}
+/* The Dark Bites First: once each, as a creature walks out of a candle's light */
+function darkBite(e){
+  e.bitten=true;
+  hurt(e,BITE_DMG,'dark');
+  F.fx.push({k:'tongue',x:e.x+.5,y:e.y-.5,tx:e.x,ty:e.y,t:0,dur:.4,dark:true});
+  if(e.dead||e.def.boss)return;
+  e.haulLeft=e.def.heavy?BITE_BACK/3:BITE_BACK; e.haulT=HAUL_TIME;
+}
+/* Feed the Dark: the lamp gutters; what is near it is dragged back, and your horrors feed */
+function castFeed(){
+  F.feedT=FEED_T; F.cd.feed=RITES.feed.cd;
+  if(F.phase==='wave')F.feedMad=FEED_DREAD;
+  let n=0;
+  for(let i=0,m=F.foes.length;i<m;i++){const e=F.foes[i]; if(e.dead||e.def.boss||dst(e.x,e.y,F.lx,F.ly)>FEED_R)continue;
+    e.haulLeft=e.def.heavy?FEED_BACK/3:FEED_BACK; e.haulT=HAUL_TIME; n++;}
+  F.L=lightsNow(); F.shake=Math.max(F.shake,.15);
+  F.fx.push({k:'ring',x:F.lx,y:F.ly,r0:FEED_R,r1:.3,t:0,dur:.7,col:'150,60,60'});
+  AUDIO.shriek(); banner('Feed the Dark','mad',n?n+' dragged back into the dark':'The lamp gutters');
+  return true;
+}
+/* Blood in the Try-pot: a horror kills what a line holds, and the line snaps to the nearest creature it may haul */
+function lineSnap(e){
+  const h=e.tetherBy; if(!h||h.dead||h.dark)return;
+  const hs=h.st||wstat(h); let nx=null, bd=hs.range+(hs.leash||0);
+  for(const o of F.foes){if(o.dead||o===e||o.def.boss||o.def.heavy||o.def.herald)continue; const d=dst(o.x,o.y,h.x,h.y); if(d<=bd){bd=d; nx=o;}}
+  if(!nx){h.tethered=null; return;}
+  h.tethered=nx; nx.tetherBy=h; nx.tetherT=0; nx.haulLeft=LINE_SNAP; nx.haulT=HAUL_TIME;
+  F.fx.push({k:'hline',x:h.x,y:h.y-.2,e:nx,t:0,dur:HAUL_TIME+.2});
+}
+/* Borrowed Flesh: a horror you lose leaves a body on the path that remembers its kind, [path, distance, kind] */
+function addHorrorCorpse(gate,d,type){
+  if(!corpseKit()||!hasOff('mouth_corpse')||!F||!F.paths[gate])return;
+  if(!run.corpses||run.corpses.floor!==run.floor)run.corpses={floor:run.floor,list:[]};
+  const L=run.corpses.list;
+  L.push([gate,Math.round(d*100)/100,type]);
+  /* past BODY_MAX the oldest plain body crumbles first; a remembered one only if nothing else is left */
+  while(L.length>BODY_MAX){const i=L.findIndex(x=>!x[2]); L.splice(i>=0?i:0,1);}
+  corpseSync();
+}
+/* the Answering Choir: a Perfect Toll, and every horror you field strikes at once, into the dark */
+function choirAnswers(){
+  let n=0;
+  for(const t of F.towers)if(t.kind==='horror'&&!t.dead&&!t.dark){t.cd=0; t.deepT=CHOIR_DEEP; n++; F.fx.push({k:'ring',x:t.x,y:t.y,r0:.1,r1:.6,t:0,dur:.35,col:'169,124,226'});}
+  return n;
 }
 /* Solar Glare: the spots burst, all of them (Flare) or those within r of x,y (an Arc Lamp) */
 function sunBurst(x,y,r){
@@ -1199,15 +1424,16 @@ function addCorpse(e){
   for(const b of F.bodies.values()){const d=dst(p[0],p[1],b.x,b.y); if(d<=bd){bd=d; pile=b;}}
   if(pile&&pile.n>=PILE_MAX)return;
   L.push(pile?pile.ref.slice():[e.gate,Math.round(e.d*100)/100]);
-  while(L.length>BODY_MAX)L.shift();
+  /* a body that remembers its kind (Borrowed Flesh) is the last to crumble */
+  while(L.length>BODY_MAX){const i=L.findIndex(x=>!x[2]); L.splice(i>=0?i:0,1);}
   corpseSync();
 }
 /* the bodies, gathered by tile, where the board can find them */
 function corpseSync(){
   F.bodies=new Map();
   const C=run&&run.corpses; if(!C||C.floor!==run.floor)return;
-  for(const [g,d] of C.list){const P=F.paths[g]; if(!P)continue; const p=posAt(P,d), c=Math.floor(p[0]), r=Math.floor(p[1]), key=c+','+r, b=F.bodies.get(key);
-    if(b)b.n++; else F.bodies.set(key,{x:c+.5,y:r+.5,n:1,ref:[g,d]});}
+  for(const [g,d,k] of C.list){const P=F.paths[g]; if(!P)continue; const p=posAt(P,d), c=Math.floor(p[0]), r=Math.floor(p[1]), key=c+','+r, b=F.bodies.get(key);
+    if(b){b.n++; if(k)b.typed=k;} else F.bodies.set(key,{x:c+.5,y:r+.5,n:1,ref:[g,d],typed:k||null});}
 }
 /* every Occultist descent begins with two piles of bones, left by whoever carried the lamp down here last */
 function corpseSeed(){
@@ -1217,9 +1443,12 @@ function corpseSeed(){
 }
 function bodyNear(c,r){let best=null, bd=CORPSE_REACH+1e-6; for(const [k,b] of F.bodies){const d=dst(c+.5,r+.5,b.x,b.y); if(d<=bd){bd=d; best=k;}} return best;}
 /* a Corpse Candle uses up one body on that tile; it is handed back if the candle is taken down */
-function takeBody(key){
+/* a remembered body (Borrowed Flesh, [path, distance, kind]) goes to a Corpse Candle first (typed), and last to everything else */
+function takeBody(key,typed){
   const L=run.corpses&&run.corpses.list; if(!L||!key)return null;
-  const i=L.findIndex(([g,d])=>{const p=posAt(F.paths[g],d); return Math.floor(p[0])+','+Math.floor(p[1])===key;});
+  const at=x=>{const p=posAt(F.paths[x[0]],x[1]); return Math.floor(p[0])+','+Math.floor(p[1])===key;};
+  let i=L.findIndex(x=>at(x)&&!!x[2]===!!typed);
+  if(i<0)i=L.findIndex(at);
   const out=i>=0?L.splice(i,1)[0]:null; corpseSync(); return out;
 }
 /* when a wave breaks, the Corpse Candles go out (Wet Graves keeps the ones beside water) */
@@ -1267,6 +1496,7 @@ function castRaise(x,y){
 function castUnbind(t){
   const H=HORRORS[t.type], near=nearestPathPoint(t.x,t.y);
   removeTower(t); run.roster[t.type]=Math.max(0,(run.roster[t.type]||0)-1);
+  addHorrorCorpse(near.gate,near.d,t.type);
   F.charges.push({type:t.type,gate:near.gate,d:near.d,x:t.x,y:t.y,dmg:UNBIND_BASE+UNBIND_PER*H.mad,hit:[]});
   F.cd.unbind=RITES.unbind.cd; mode=null;
   F.fx.push({k:'ring',x:t.x,y:t.y,r0:.1,r1:1.4,t:0,dur:.6,col:'169,124,226'}); F.shake=Math.max(F.shake,.2);
@@ -1693,9 +1923,11 @@ function has(k){return run.relics.includes(k);}
 function tiers(){const b=(has('quiet')?3:0)-(F&&F.omen==='whispering'?3:0)-(run.madPen||0)-(has('eyes')?2:0); return [Math.max(2,6+b),Math.max(3,10+b),Math.max(4,14+b)];}
 function horrorMad(type){if(has('choirwalls'))return 0; return Math.max(1,HORRORS[type].mad-(has('wax')?1:0));}
 /* the Occultist's madness feeds its horrors */
-function horrorBoost(){return kit()==='occultist'?1+HORROR_TIER*madTier():1;}
-function madness(){let m=0; if(!F)return 0; for(const t of F.towers) if(t.kind==='horror') m+=horrorMad(t.type); return m;}
-function madTier(){const m=madness(), T=tiers(); return m>=T[2]?3:m>=T[1]?2:m>=T[0]?1:0;}
+/* the Occultist is fed by the madness of horrors he paid for, never by dread or a free horror (boundMadTier) */
+function horrorBoost(){return kit()==='occultist'?1+HORROR_TIER*boundMadTier():1;}
+/* everything that pushes you through the tiers: your horrors' madness and the Many-Mouthed's dread */
+function madness(){if(!F)return 0; return horrorMadness(false)+dread();}
+function madTier(){return tierOf(madness());}
 function wardCost(type){if(type==='candle'&&kit()==='occultist')return 0; if(type==='salt')return has('saltflats')?10:WARDS.salt.cost; return WARDS[type].cost;}
 function refillCost(){return has('saltflats')?5:10;}
 function avail(type){return (run.roster[type]||0)-F.towers.filter(t=>t.kind==='horror'&&t.type===type).length;}
@@ -1733,7 +1965,7 @@ function lstat(){
     fire:b.fire>=3?{dps:16,r:2.2}:b.fire>=1?{dps:b.fire>=2?10:6,r:1.5}:null};
 }
 /* a Bone Spear hits harder with every tier of madness; its Dread branch adds more per tier */
-function spearMul(b){return kit()==='occultist'?1+(SPEAR_TIER+DREAD_TIER*m2(b.dread))*(F?madTier():0):1;}
+function spearMul(b){return kit()==='occultist'?1+(SPEAR_TIER+DREAD_TIER*m2(b.dread))*(F?boundMadTier():0):1;}
 function branchState(o,bi){
   const tree=treeOf(o.type), B=tree[bi], lvl=o.br[B.k]||0;
   if(lvl>=3)return {max:true};
@@ -1889,14 +2121,16 @@ function nearestPathPoint(x,y){
 
 /* ---------------- light ---------------- */
 function lampBase(){
-  let r=3.7+lstat().wickR+(has('tallow')?.8:0)+(has('blackwick')?1.2:0)+(run.lampBonus||0)-(F&&F.omen==='moonless'?1:0)-(trialOn('night')?NIGHT_LAMP:0);
+  let r=3.7+lstat().wickR+(has('tallow')?.8:0)+(has('blackwick')?1.2:0)+(run.lampBonus||0)-(F&&F.omen==='moonless'?1:0)-(trialOn('night')?NIGHT_LAMP:0)-(hasOff('first_bite')?BITE_LAMP:0);
   if(madTier()>=3)r-=1;
   return Math.max(1.6,r);
 }
-function flickering(){return F.arcOff||(madTier()>=1&&F.flickT>0);}
+function flickering(){return F.arcOff||F.feedT>0||(madTier()>=1&&F.flickT>0);}
 function lampRadius(){
   let r=lampBase();
   if(madTier()>=1&&F.flickT>0)r-=.6;
+  /* Feed the Dark: the lamp gutters */
+  if(F.feedT>0)r-=FEED_LIGHT;
   return Math.max(1.6,r);
 }
 function isLightTower(t){return (t.kind==='ward'&&t.type==='candle')||(t.kind==='horror'&&t.type==='watcher');}
@@ -1951,10 +2185,14 @@ function gridBuild(ex){
   const nodes=[];
   for(const t of F.towers)if(t.type==='pylon'&&!t.dead&&t!==ex)nodes.push({id:t.id,x:t.x,y:t.y,t,st:wstat(t),mains:dst(t.x,t.y,F.lx,F.ly)<=lampBase()||hallowT(t)});
   for(const r of F.rods)nodes.push({id:r.id,x:r.x,y:r.y,rod:r,st:null,mains:false});
+  /* Wired Specimens: your fielded horrors join the grid. They carry current but never make it (no mains), never fry, and only
+     take a wire from a pylon, after the pylons have linked to each other, so a horror never cuts a pylon off */
+  if(hasOff('mouth_arc'))for(const t of F.towers)if(t.kind==='horror'&&!t.dead&&t!==ex)nodes.push({id:t.id,x:t.x,y:t.y,horror:t,st:null,mains:false});
   const cap=n=>n.st?n.st.links:PYLON_LINKS, reach=n=>n.st?n.st.link:PYLON_LINK, deg=new Map(), pairs=[], edges=[];
   for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const a=nodes[i], b=nodes[j]; if(a.rod&&b.rod)continue;
-    const d=dst(a.x,a.y,b.x,b.y); if(d<=Math.max(reach(a),reach(b)))pairs.push([d,a,b]);}
-  pairs.sort((p,q)=>p[0]-q[0]);
+    const hz=!!(a.horror||b.horror); if(hz&&!(a.t||b.t))continue;
+    const d=dst(a.x,a.y,b.x,b.y); if(d<=Math.max(reach(a),reach(b)))pairs.push([d,a,b,hz?1:0]);}
+  pairs.sort((p,q)=>p[3]-q[3]||p[0]-q[0]);
   for(const [d,a,b] of pairs){if((deg.get(a)||0)>=cap(a)||(deg.get(b)||0)>=cap(b))continue;
     deg.set(a,(deg.get(a)||0)+1); deg.set(b,(deg.get(b)||0)+1); edges.push({a,b,key:Math.min(a.id,b.id)+'|'+Math.max(a.id,b.id)});}
   const on=new Set(nodes.filter(n=>n.mains)); let grew=true;
@@ -2002,7 +2240,7 @@ function updateGrid(dt){
     if(!e.live||e.anchor)continue;
     let cd=F.wireCd.get(e.key)||0; if(cd>0){cd-=dt; F.wireCd.set(e.key,cd);}
     for(let i=0,n=F.foes.length;i<n;i++){const f=F.foes[i];
-      if(f.dead||f.def.fly||segDist(f.x,f.y,e.a.x,e.a.y,e.b.x,e.b.y)>.3||(e.a.t&&e.a.t.dazeT>0)||(e.b.t&&e.b.t.dazeT>0))continue;
+      if(f.dead||f.def.fly||segDist(f.x,f.y,e.a.x,e.a.y,e.b.x,e.b.y)>.3||(e.a.t&&e.a.t.dazeT>0)||(e.b.t&&e.b.t.dazeT>0)||(e.a.horror&&e.a.horror.dazeT>0)||(e.b.horror&&e.b.horror.dazeT>0))continue;
       f.revealT=WIRE_REVEAL;
       /* a Behemoth snaps the wire for the rest of the wave */
       if(f.def.heavy){F.wireBroken.add(e.key); e.live=false; hurt(f,e.dmg,'grid'); F.fx.push({k:'fry',x:(e.a.x+e.b.x)/2,y:(e.a.y+e.b.y)/2,t:0,dur:.7}); AUDIO.fry(); break;}
@@ -2010,7 +2248,9 @@ function updateGrid(dt){
       gridShock(f,e.dmg,e.stun);
       /* Live Water: a wire that touches water shocks everything standing in it */
       if(hasOff('livewater')&&F.water.size)for(const w of F.foes)if(w!==f&&!w.dead&&inWater(w)&&wireWet(e))gridShock(w,e.dmg,e.stun);
-      for(const nd of [e.a,e.b])if(nd.t)nd.t.zaps=(nd.t.zaps||0)+1;
+      for(const nd of [e.a,e.b]){if(nd.t)nd.t.zaps=(nd.t.zaps||0)+1;
+        /* Wired Specimens: a shock on a horror's wire sheds half a second of its wait */
+        if(nd.horror)nd.horror.cd=Math.max(0,(nd.horror.cd||0)-ARC_SHED);}
       cd=e.recharge; F.wireCd.set(e.key,cd);
       F.fx.push({k:'arc',pts:[[e.a.x,e.a.y-.35],[f.x,f.y],[e.b.x,e.b.y-.35]],t:0,dur:.22,seed:Math.random()*99});
       AUDIO.wire();
@@ -2143,7 +2383,10 @@ function addNoise(n){
 /* too much noise, and the dark comes to see what is ringing */
 function darkAnswers(){
   for(let i=0;i<NOISE_CALL;i++){const e=spawnFoe('stalker',i%F.paths.length,0); e.answered=true;}
-  banner('The dark answers','mad','Two Stalkers climb toward the sound');
+  /* the Answering Choir's price: something comes up to feed on the horrors that answered */
+  const gorge=hasOff('mouth_chime');
+  if(gorge){const e=spawnFoe('gorger',NOISE_CALL%F.paths.length,0); e.answered=true;}
+  banner('The dark answers','mad',gorge?'Two Stalkers and a Gorger climb toward the sound':'Two Stalkers climb toward the sound');
   AUDIO.answer(); F.shake=Math.max(F.shake,.2);
   for(const P of F.paths){const q=posAt(P,0); F.fx.push({k:'ring',x:q[0],y:q[1],r0:.9,r1:.1,t:0,dur:.8,col:'169,124,226'}); caption(q[0],q[1]-.5,'something answers',.24);}
 }
@@ -2370,7 +2613,8 @@ function canSee(e){if(window.devNoDark)return true; if(e.hex&&e.hex.unmask)retur
   if(F.under&&inWater(e))return revealedAt(e.x,e.y);
   /* the Wrong Sun: whatever stands in a bright spot is seen, veiled or not */
   if(inSpot(e))return true;
-  return e.def.veiled&&!has('veil')&&!has('eyes')?revealedAt(e.x,e.y):litAt(e.x,e.y);}
+  /* a Choir-Husk veils what walks near it, like a Shade */
+  return (e.def.veiled||(F.husks&&F.husks.length&&huskVeiled(e)))&&!has('veil')&&!has('eyes')?revealedAt(e.x,e.y):litAt(e.x,e.y);}
 function buildLit(c,r){if(window.devNoDark)return true; const x=c+.5,y=r+.5; for(const L of F.L) if(!L.temp&&dst(x,y,L.x,L.y)<=L.r) return true; return bellKit()&&inHum(x,y);}
 /* ---------------- Trials ---------------- */
 function trialOn(k){return !!(F&&F.trial===k);}
@@ -2462,6 +2706,7 @@ const DEV_ACTS={
   patron(){F.patronCalled=false; if(F.phase!=='build')return 'Only between waves'; closeModal(); paused=false; const po=patronOffer(); if(!po)return 'They have nothing left to give'; openOffer(po.o,po.p); return null;},
   attention(){addAtt('mother',1); relKey=''; forceUI(); return 'Her Attention is '+attOf('mother');},
   sunatt(){addAtt('sun',1); relKey=''; forceUI(); return 'Its Attention is '+attOf('sun');},
+  mouthatt(){addAtt('mouths',1); relKey=''; forceUI(); return 'Its Attention is '+attOf('mouths');},
   kill(){F.foes.slice().forEach(e=>{if(!e.dead)hurt(e,99999);}); return 'Board cleared of creatures';},
   clear(){F.towers=[]; F.salt.clear(); F.L=lightsNow(); selTower=null; forceUI(); return 'All wards removed';},
   /* jump straight to a floor, keeping the run (relics, wards, essence); no landing, no toll. Returns null: the menu stays shut */
@@ -2504,7 +2749,7 @@ function openDevMode(msg){
   paused=true;
   const btn=(act,label,arg,cls)=>'<button class="btn'+(cls?' '+cls:'')+'" data-dev="'+act+'"'+(arg?' data-arg="'+arg+'"':'')+' style="padding:6px 10px;font-size:.8rem">'+label+'</button>';
   const html='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">'
-    +btn('dark',window.devNoDark?'Darkness: off':'Darkness: on')+btn('cheat','Max essence & oil')+btn('unlock','Unlock everything')+btn('patron','A patron: offer now')+btn('attention','Mother: Attention +1')+btn('sunatt','Wrong Sun: Attention +1')+btn('kill','Kill all creatures')+btn('clear','Clear wards')+'</div>'
+    +btn('dark',window.devNoDark?'Darkness: off':'Darkness: on')+btn('cheat','Max essence & oil')+btn('unlock','Unlock everything')+btn('patron','A patron: offer now')+btn('attention','Mother: Attention +1')+btn('sunatt','Wrong Sun: Attention +1')+btn('mouthatt','Many-Mouthed: Attention +1')+btn('kill','Kill all creatures')+btn('clear','Clear wards')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Floors</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+FLOORS.map((f,i)=>btn('floor',(i===run.floor?'● ':'')+(i+1)+' · '+f.name,String(i))).join('')+btn('skip','Clear this floor →')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Restart this floor under a Trial</h3>'
@@ -2702,7 +2947,7 @@ function beginFloor(snap){
   F=null;
   setDims(bestOrient());
   F={def,time:0,towers:[],salt:new Map(),foes:[],shots:[],fx:[],souls:[],pools:[],glints:[],links:[],threads:[],cands:[],charges:[],rods:[],wireCd:new Map(),tolls:[],ghosts:[],noise:0,pealT:0,lampRing:0,shatterQ:[],tocsinCalls:[],steps:[],wireBroken:new Set(),heat:0,knell:false,wave:0,phase:'build',queue:[],waveT:0,
-     flareT:0,cd:{},nameUsed:false,named:null,hurtFlash:0,shake:0,flickT:0,flickNext:6,lastTier:0,omen:run.omen||null,elite:!!run.elite,trial:TRIALS[run.trial]?run.trial:null};
+     flareT:0,cd:{},nameUsed:false,named:null,hurtFlash:0,shake:0,flickT:0,flickNext:6,lastTier:0,gibs:[],husks:[],feedT:0,feedMad:0,baitMad:0,omen:run.omen||null,elite:!!run.elite,trial:TRIALS[run.trial]?run.trial:null};
   F.born=performance.now();
   F.lamp={isLamp:true,type:'lamp',x:0,y:0,br:newBranches('lamp'),invested:0,fresh:0};
   buildGeometry();
@@ -2761,6 +3006,10 @@ function beginFloor(snap){
     const st=patTier('sun');
     if(st&&!(snap&&F.wave)){const T=PATRONS.sun.tiers[st-1];
       setTimeout(()=>{if(F&&F.spots&&F.spots.size&&F.phase==='build')hint(PATRONS.sun.n+' · '+T.n+'. '+T.d,5200);},(F.omen?11500:(F.forks.length?9000:4200))+(patTier('mother')?5600:0)+tl);}
+    /* the Many-Mouthed speaks last, after the others */
+    const mt=patTier('mouths');
+    if(mt&&!(snap&&F.wave)){const T=PATRONS.mouths.tiers[mt-1];
+      setTimeout(()=>{if(F&&F.phase==='build')hint(PATRONS.mouths.n+' · '+T.n+'. '+T.d,5200);},(F.omen?11500:(F.forks.length?9000:4200))+(patTier('mother')?5600:0)+(st?5600:0)+tl);}
     const pt=patTier('mother');
     if(pt&&!(snap&&F.wave)){const T=PATRONS.mother.tiers[pt-1];
       setTimeout(()=>{if(F&&F.water&&F.water.size&&F.phase==='build')hint(PATRONS.mother.n+' · '+T.n+'. '+T.d,5200);},(F.omen?11500:(F.forks.length?9000:4200))+tl);}
@@ -2789,6 +3038,8 @@ function callWave(){
 function startWave(sub){
   if(mode==='aim')mode=null;
   F.wave++; F.phase='wave'; F.waveT=0; F.queue=[];
+  /* the wave's own dread and the Teeth in the Stair begin again */
+  F.feedMad=0; F.baitMad=0; F.ate=false;
   const groups=F.def.waves[F.wave-1].slice();
   if(F.omen==='swarm')groups.push(['skitter',8,.35,2.5,Math.floor(Math.random()*F.nRoots)]);
   for(const raw of groups){
@@ -2799,6 +3050,7 @@ function startWave(sub){
   /* the Herald walks in the middle of its wave */
   const hd=run.draw&&run.draw.herald;
   if(hd&&hd.wave===F.wave-1){heraldMet(hd.type); const mid=F.queue.reduce((m,q)=>Math.max(m,q.t),0)/2; F.queue.push({t:mid,type:hd.type,gate:heraldGate(hd)}); F.heraldWave=true;}
+  queueMouths();
   waterRise();
   spotRise();
   blubberToll();
@@ -2808,18 +3060,27 @@ function startWave(sub){
   F.lamp.fresh=0;
   AUDIO.wave();
   const last=F.wave===F.def.waves.length;
+  F.peakTier=madTier();
   banner('Wave '+F.wave+' of '+F.def.waves.length,'',sub||(last&&run.floor===FLOORS.length-1?'Something enormous stirs below':(last?'The last wave of this floor':'They are coming')));
   slipCheck();
   forceUI();
 }
+/* Slipping: a binding may break as a wave begins (35%). Claimed by the Many-Mouthed, from Whispers (20%), and half the time
+   at Slipping or deeper */
+function slipChance(){
+  const tier=madTier();
+  if(patTier('mouths')>=3)return tier>=2?.5:tier>=1?.2:0;
+  return tier>=2?.35:0;
+}
 function slipCheck(){
-  if(madTier()<2)return;
+  const ch=slipChance(); if(!ch)return;
   const hs=F.towers.filter(t=>t.kind==='horror');
-  if(!hs.length||Math.random()>.35)return;
+  if(!hs.length||Math.random()>=ch)return;
   const t=pick(hs);
   removeTower(t);
   run.roster[t.type]=Math.max(0,(run.roster[t.type]||0)-1);
   const near=nearestPathPoint(t.x,t.y);
+  addHorrorCorpse(near.gate,near.d,t.type);
   spawnFoe(t.type,near.gate,near.d,1.5);
   F.fx.push({k:'ring',x:t.x,y:t.y,r0:.1,r1:1.6,t:0,dur:.7,col:'169,124,226'});
   AUDIO.slip();
@@ -2916,6 +3177,9 @@ function gainOil(n){
 }
 function waveCleared(){
   checkOccultistDeed(true);
+  F.feedMad=0; F.baitMad=0;
+  /* Salted Teeth: the salt beside your horrors dissolves when the wave breaks */
+  if(hasOff('bloodsalt'))for(const t of F.towers.slice())if(t.kind==='ward'&&t.type==='salt'&&nearHorror(t.x,t.y,SALT_R)){removeTower(t); F.fx.push({k:'ring',x:t.x,y:t.y,r0:.1,r1:.6,t:0,dur:.4,col:'236,232,222'});}
   F.wireBroken.clear(); F.rods=[]; F.anchor=null;
   for(const t of F.towers)if(t.type==='bellwire')t.cut=false;
   const gutter=F.wave<F.def.waves.length?corpseBurnOut():0;
@@ -3627,7 +3891,7 @@ function landingStep(){
     /* whose offer it is, from the offerings themselves (an old save's draft holds only hers) */
     const pk=(d.patron[0]&&OFFERINGS[d.patron[0]]&&OFFERINGS[d.patron[0]].p)||'mother';
     const P=PATRONS[pk];
-    const body=pk==='sun'?'You strip your wards for '+d.salvage+' essence'+(d.healed?' and the lamp drinks '+d.healed+' oil':'')+'. Where the gift should be, a light the wrong colour holds still on you, and something in it is offering instead. Take one, or refuse it and carry nothing down.':'You strip your wards for '+d.salvage+' essence'+(d.healed?' and the lamp drinks '+d.healed+' oil':'')+'. Where the gift should be, the water is waiting, and something under it is offering instead. Take one, or refuse her and carry nothing down.';
+    const body=pk==='mouths'?'You strip your wards for '+d.salvage+' essence'+(d.healed?' and the lamp drinks '+d.healed+' oil':'')+'. Where the gift should be, teeth chatter in the dark stone, and something behind them is offering instead. Take one, or refuse it and carry nothing down.':pk==='sun'?'You strip your wards for '+d.salvage+' essence'+(d.healed?' and the lamp drinks '+d.healed+' oil':'')+'. Where the gift should be, a light the wrong colour holds still on you, and something in it is offering instead. Take one, or refuse it and carry nothing down.':'You strip your wards for '+d.salvage+' essence'+(d.healed?' and the lamp drinks '+d.healed+' oil':'')+'. Where the gift should be, the water is waiting, and something under it is offering instead. Take one, or refuse her and carry nothing down.';
     return {kind:'draft',wide:true,title:P.n,
       body:body,
       note:offerNote(pk)+'<br>'+tollNote(d),
@@ -3793,11 +4057,14 @@ function tryPlace(c,r){
   if(prob){hint(prob); return;}
   let cost;
   if(it.kind==='ward')cost=wardCost(it.type);
-  else{cost=HORRORS[it.type].cost; if(avail(it.type)<=0){hint('No more of those are bound to you.'); return;}}
+  else{cost=horrorCost(it.type); if(avail(it.type)<=0){hint('No more of those are bound to you.'); return;}}
   if(run.ess<cost){hint('Not enough essence. You need '+cost+'.'); return;}
   const t={kind:it.kind,type:it.type,id:++uid,c,r,x:c+.5,y:r+.5,br:newBranches(it.type),tgt:'first',invested:0,fresh:0,cd:.3,ang:-.7,ring:0,echo:0};
+  /* Unpaid Teeth: a free horror is marked, so it never counts toward the tiers that open more */
+  if(it.kind==='horror'&&!cost&&freeOpen())t.free=true;
   spend(t,cost);
-  if(it.kind==='ward'&&it.type==='candle'&&corpseKit()){t.corpse=true; t.body=takeBody(bodyNear(c,r));}
+  /* a Corpse Candle takes a remembered body first, and Borrowed Flesh raises its phantom on the candle */
+  if(it.kind==='ward'&&it.type==='candle'&&corpseKit()){t.corpse=true; t.body=takeBody(bodyNear(c,r),true); if(t.body&&t.body[2]&&HORRORS[t.body[2]])t.ph=t.body[2];}
   if(it.kind==='ward'&&it.type==='mirror')t.rot=Math.atan2(t.y-F.ly,t.x-F.lx)+Math.PI/4;
   if(it.kind==='ward'&&it.type==='grasp'){t.bones=[]; for(let i=0;i<PILE_MAX;i++){const b=takeBody(c+','+r); if(b)t.bones.push(b);} t.grips=GRASP_GRIPS;}
   if(it.kind==='ward'&&it.type==='salt'){t.max=t.dur=14*(has('saltflats')?2:1); F.salt.set(c+','+r,t);}
@@ -3867,10 +4134,10 @@ function refillSalt(t){
 }
 
 /* ---------------- combat ---------------- */
-function pickTarget(x,y,range,mode2,blind,exclude){
+function pickTarget(x,y,range,mode2,blind,exclude,reach){
   let best=null, score=-Infinity;
   for(const e of F.foes){
-    if(e.dead||e===exclude||dst(x,y,e.x,e.y)>range)continue;
+    if(e.dead||e===exclude||dst(x,y,e.x,e.y)>range+(reach?reach(e):0))continue;
     if(!blind&&!canSee(e))continue;
     const prog=e.d/F.paths[e.gate].len;
     const sc=mode2==='last'?-prog:mode2==='strong'?e.hp+prog*.01:prog;
@@ -3878,7 +4145,7 @@ function pickTarget(x,y,range,mode2,blind,exclude){
   }
   return best;
 }
-function allIn(x,y,range){return F.foes.filter(e=>!e.dead&&dst(x,y,e.x,e.y)<=range&&canSee(e));}
+function allIn(x,y,range,blind){return F.foes.filter(e=>!e.dead&&dst(x,y,e.x,e.y)<=range&&(blind||canSee(e)));}
 function hurt(e,amt,src,echo){
   if(typeof src==='boolean'){echo=src; src=undefined;}
   if(e.dead)return;
@@ -3891,6 +4158,9 @@ function hurt(e,amt,src,echo){
   if(e.hex)amt*=e.hex.mul;
   if(e.flenseT>0)amt*=1.25;
   if(e.tetherBy&&amt>0&&hasOff('sun_harpoon')&&inSpot(e))amt*=1.5;
+  /* a Gorger is made for your horrors; Teeth on the Thread lets them feed on what burns */
+  if(src==='horror'){if(e.type==='gorger')amt*=GORGE_RESIST; if(e.kindleT>0&&hasOff('mouth_signal'))amt*=KINDLE_BITE;}
+  if(amt>0)e.lastSrc=src;
   e.hp-=amt; if(amt>=2)e.hitT=.12;
   /* Voodoo: a real hit on a hexed creature echoes onto the nearest other hexed one */
   if(e.hex&&e.hex.voodoo&&!echo&&amt>=3){
@@ -3925,11 +4195,15 @@ function killFoe(e){
   e.dead=true;
   /* bounties thin out the deeper you go; only the richest Tithe Bowl in reach takes its cut */
   let gain=Math.round(e.def.ess*[.9,.8,.7,.6,.5][Math.min(4,run.floor)]*(has('bounty')?1.3:1)*(F.omen==='ironhide'?1.3:1))+(has('gilded')?2:0);
-  let bowl=null; for(const t of (F.bowls||[]))if(dst(e.x,e.y,t.x,t.y)<=t.st.range&&(!bowl||t.st.per>bowl.st.per))bowl=t;
+  /* what the Many-Mouthed sends leaves nothing: no essence, no tithe, no render, no bones, no sigil */
+  const none=e.def.patron==='mouths';
+  let bowl=null; if(!none)for(const t of (F.bowls||[]))if(dst(e.x,e.y,t.x,t.y)<=t.st.range&&(!bowl||t.st.per>bowl.st.per))bowl=t;
+  if(none)gain=0;
   if(bowl){gain+=bowl.st.per; bowl.ping=.6; AUDIO.coin(); if(bowl.st.oilEvery){bowl.kills=(bowl.kills||0)+1; if(bowl.kills>=bowl.st.oilEvery){bowl.kills=0; gainOil(1);}}}
   if(F.omen==='hungering')gain=0;
-  potRender(e);
-  addCorpse(e);
+  if(!none){potRender(e); addCorpse(e);}
+  /* Blood in the Try-pot: a horror kills what a line holds, and the line snaps to the next */
+  if(e.lastSrc==='horror'&&hasOff('mouth_harpoon')&&onLine(e))lineSnap(e);
   if(hasOff('milk')&&inWater(e)){run.milk=(run.milk||0)+1; if(run.milk>=4){run.milk=0; gainOil(1);}}
   if(e.def.boss)run.bosses=(run.bosses||0)+1;
   /* a Herald slain pays a relic */
@@ -3953,7 +4227,7 @@ function killFoe(e){
   if(key&&gridKit())cageCatch(e,key);
   else if(key){
     /* Soul Spear and Drowned Souls make the sigil certain */
-    const ch=e.def.elite||e.soulDrop||(hasOff('souls')&&inWater(e))?1:(has('binder')?.64:.32);
+    const ch=e.def.elite||e.soulDrop||(hasOff('souls')&&inWater(e))?1:Math.min(1,(has('binder')?.64:.32)*(hasOff('famine')?2:1));
     if(Math.random()<ch)F.souls.push({x:e.x,y:e.y,type:key,t:5.5,max:5.5});
   }
   if(e.type==='boss' && !run.roster.keeper && !F.towers.some(t=>t.type==='keeper')){
@@ -3977,7 +4251,7 @@ function potRender(e){
   let pot=null, bd=1e9;
   for(const t of F.towers){if(t.type!=='trypot'||t.dark||t.dead)continue; const d=dst(e.x,e.y,t.x,t.y); if(d<=POT_R&&d<bd){bd=d; pot=t;}}
   if(!pot)return;
-  pot.render=(pot.render||0)+Math.min(e.def.oil,POT_MEASURE); pot.ping=.5;
+  pot.render=(pot.render||0)+Math.min(e.def.oil,POT_MEASURE)*(e.lastSrc==='horror'&&hasOff('mouth_harpoon')?POT_BLOOD:1); pot.ping=.5;
   while(pot.render>=POT_MEASURE){
     pot.render-=POT_MEASURE;
     if((pot.meas||0)<POT_MAX){pot.meas=(pot.meas||0)+1; F.fx.push({k:'float',x:pot.x,y:pot.y-.5,txt:'a measure',col:PAL.tallow,t:0,dur:1.2,size:.24});}
@@ -4007,10 +4281,16 @@ function potsPour(){
   if(n)gainOil(n); return n;
 }
 function lampHit(e){
-  run.oil-=e.def.oil;
+  /* Teeth in the Stair: the first to reach the lamp each wave is eaten whole; every one after costs 1 more */
+  const teeth=hasOff('teeth');
+  if(teeth&&!F.ate&&!e.def.boss&&!e.def.herald){F.ate=true;
+    F.fx.push({k:'ring',x:F.lx,y:F.ly,r0:.2,r1:1.2,t:0,dur:.6,col:'150,60,60'}); F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'eaten whole',col:PAL.mad,t:0,dur:1.2,size:.28});
+    AUDIO.bite(); F.shake=Math.max(F.shake,.15); return;}
+  const oil=e.def.oil+(teeth&&F.ate&&!e.def.boss?1:0);
+  run.oil-=oil;
   F.hurtFlash=.6; F.shake=.35;
   AUDIO.hurt();
-  F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'−'+Math.min(e.def.oil,99)+' oil',col:PAL.wound,t:0,dur:1,size:.3});
+  F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'−'+Math.min(oil,99)+' oil',col:PAL.wound,t:0,dur:1,size:.3});
   /* The Cradle: once, she catches a lamp a creature would put out. Never a boss's */
   if(run.oil<=0&&hasOff('cradle')&&!run.cradled&&!e.def.boss){
     run.cradled=true; run.oil=Math.min(5,run.oilMax);
@@ -4021,7 +4301,7 @@ function lampHit(e){
   if(run.oil<=0){run.oil=0; defeat();}
 }
 function bindSoul(s){
-  s.t=0;
+  s.t=0; s.taken=true;
   run.roster[s.type]=(run.roster[s.type]||0)+1; run.bound++;
   /* every kind ever bound or caught adds its eyes to the Nameless's hood on the roster, for good */
   if(!devOn&&!codex().bound.has(s.type)&&HOOD_EYES.includes(s.type))run.newEye=s.type;
@@ -4046,13 +4326,14 @@ function castRite(k){
   else if((F.cd[k]||0)>0)return;
   if(k==='flare'){F.flareT=5; F.cd.flare=RITES.flare.cd; AUDIO.flare(); banner('Flare','rite','Everything is lit for five seconds'); sunBurst(0,0,null);}
   else if(k==='ebb'){if(!castEbb())return;}
+  else if(k==='feed'){if(!castFeed())return;}
   else if(k==='overload'){if(!castOverload())return;}
   else if(k==='toll'||k==='greatbell'){
     if(F.phase!=='wave'){hint('The bell has nothing to hear until the dark comes.'); return;}
     if(k==='toll'){
       /* on the lamp's own beat it is a Perfect Toll: it takes the beat's place, and makes half the Noise */
       const pr=beatOff(); F.cd.toll=TOLL_SWING;
-      if(pr!==null&&pr<=PERFECT_WIN){if(lstat().peal-(F.pealT||0)<=PERFECT_WIN)F.pealT=0; lampToll('perfect'); F.perfects=(F.perfects||0)+1; addNoise(PERFECT_NOISE);}
+      if(pr!==null&&pr<=PERFECT_WIN){if(lstat().peal-(F.pealT||0)<=PERFECT_WIN)F.pealT=0; lampToll('perfect'); F.perfects=(F.perfects||0)+1; if(hasOff('mouth_chime'))choirAnswers(); addNoise(PERFECT_NOISE);}
       else{lampToll('toll'); addNoise(1);}
     }
     else{lampToll('great'); F.cd.greatbell=RITES.greatbell.cd; F.shake=Math.max(F.shake,.3); banner('The Great Bell','rite','Everything is heard'); addNoise(GREAT_NOISE);}
@@ -4112,14 +4393,21 @@ function update(dt){
     return;
   }
   F.time+=dt;
+  mouthsGather();
+  syncFree();
+  if(F.feedT>0)F.feedT-=dt;
   const tier=madTier();
-  if(tier>=1){F.flickNext-=dt; if(F.flickNext<=0){F.flickT=1.2; F.flickNext=rnd(4,8);}}
+  /* Open Your Ears: the lamp flickers twice as often */
+  if(tier>=1){F.flickNext-=dt; if(F.flickNext<=0){F.flickT=1.2; F.flickNext=rnd(4,8)/(hasOff('openears')?2:1);}}
   if(F.flickT>0)F.flickT-=dt;
-  if(tier>F.lastTier){
+  /* a tier speaks once as you reach it. Mid-wave, dread comes and goes with the Gibberers, so a wave only speaks of a tier
+     deeper than any it has already reached */
+  if(tier>F.lastTier&&(F.phase!=='wave'||tier>(F.peakTier||0))){
     const lines=['','The lamp starts to flicker','Bindings may break when a wave begins','The lamp shrinks and they move faster'];
     banner(TIERNAMES[tier],'mad',lines[tier]);
     AUDIO.slip();
   }
+  if(F.phase==='wave')F.peakTier=Math.max(F.peakTier||0,tier);
   F.lastTier=tier;
   run.peakMad=Math.max(run.peakMad,madness());
   for(const k in F.cd)F.cd[k]=Math.max(0,F.cd[k]-dt);
@@ -4186,8 +4474,12 @@ function update(dt){
 
   let soulOut=0;
   for(let i=0; i<F.souls.length; i++){
-    F.souls[i].t -= dt;
-    if(F.souls[i].t > 0) F.souls[soulOut++] = F.souls[i];
+    const so=F.souls[i];
+    so.t -= dt;
+    if(so.t > 0){F.souls[soulOut++] = so; continue;}
+    /* Swallowed Sigils: a sigil left to fade in a wave hatches a Gibberer where it lay */
+    if(!so.taken&&!so.big&&!so.cage&&!so.core&&F.phase==='wave'&&hasOff('famine')){const nr=nearestPathPoint(so.x,so.y); spawnFoe('gibberer',nr.gate,nr.d);
+      F.fx.push({k:'ring',x:so.x,y:so.y,r0:.6,r1:.1,t:0,dur:.5,col:'184,154,140'});}
   }
   F.souls.length = soulOut;
 
@@ -4208,10 +4500,11 @@ function updateFoes(dt){
     if(e.crackT>0){e.crackT-=dt; if(e.crackT<=0&&e.cracks>0){e.cracks--; e.crackT=e.cracks?RES_FADE:0;}}
     /* the echo fades; what it showed leaves a ghost where it last was */
     if(e.heardT>0){e.heardT-=dt; if(e.heardT<=0){e.heardT=0; if(bellKit()&&!canSee(e))addGhost(e);}}
-    if(e.poisonT>0){e.poisonT-=dt; hurt(e,e.poisonDps*dt); if(e.dead)continue;}
+    if(e.poisonT>0){e.poisonT-=dt; hurt(e,e.poisonDps*dt,e.poisonH?'horror':undefined); if(e.dead)continue;}
     if(e.bleedT>0){e.bleedT-=dt; hurt(e,10*dt); if(e.dead)continue;}
     if(e.flenseT>0)e.flenseT-=dt;
     if(F.threads.length&&!(e.kindleT>0)&&!e.def.fly)for(const [a,b] of F.threads)if(segDist(e.x,e.y,a.x,a.y,b.x,b.y)<=.35){e.kindleT=THREAD_T; break;}
+    if(F.links.length&&!e.def.fly&&hasOff('mouth_signal')){threadBite(e); if(e.dead)continue;}
     if(e.kindleT>0){e.kindleT-=dt; hurt(e,KINDLE_DPS*dt); if(e.dead)continue;}
     /* the Wrong Sun's spots sear what stands in one (Watched, and Searing Rays), held or not */
     if(inSpot(e)){const burn=(patTier('sun')>=2?SUN_DPS:0)+(hasOff('sunbeam')?SUN_DPS:0); if(burn){hurt(e,burn*dt,'sun'); if(e.dead)continue;}}
@@ -4219,11 +4512,12 @@ function updateFoes(dt){
       e.spawnT-=dt;
       if(e.spawnT<=0){e.spawnT=5; spawnFoe('skitter',e.gate,Math.max(0,e.d-.3)); spawnFoe('skitter',e.gate,Math.max(0,e.d-.6));}
     }
-    let slow=0, inCand=false;
+    if(e.type==='gorger')gorgerLatch(e,dt);
+    let slow=0, inCand=false, cIn=null;
     for(const c of F.cands){
       const cs=c.st;
       if(dst(e.x,e.y,c.x,c.y)>cs.light)continue;
-      slow=Math.max(slow,cs.slow); inCand=true;
+      slow=Math.max(slow,cs.slow); inCand=true; if(!cIn)cIn=c;
       if(cs.reek){e.reekT=cs.reek; e.reekS=Math.max(e.reekS||0,cs.slow);}
       if(cs.burn)hurt(e,cs.burn*dt);
       if(hasOff('sun_signal')&&e.type==='stalker')sighted(e);
@@ -4233,6 +4527,11 @@ function updateFoes(dt){
       }
     }
     if(e.dead)continue;
+    /* The Dark Bites First: it walked out of a candle's light, and the candle still burns (not hauled, not snuffed, not cut off) */
+    if(hasOff('first_bite')){
+      if(cIn)e.cIn=cIn;
+      else if(e.cIn){const c=e.cIn; e.cIn=null; if(!e.bitten&&!c.dead&&!c.dark&&!(c.snuffT>0)&&!(e.haulT>0)){darkBite(e); if(e.dead)continue;}}
+    }
     /* Reek: the smoke clings for a while after they leave the light */
     if(!inCand&&e.reekT>0){e.reekT-=dt; slow=Math.max(slow,e.reekS||0); if(e.reekT<=0)e.reekS=0;}
     /* the line: it tightens while the harpoon holds it, and lets go if the harpoon is lost, dark, or fires elsewhere */
@@ -4281,7 +4580,10 @@ function updateFoes(dt){
 
     let sp=e.def.spd*(1-slow)*(F.omen==='flooded'?.9:1)*(F.omen==='frenzied'?1.15:1)*(inWater(e)?CURRENT:1)*(e.sightT>0?SIGHT_RUN:1);
     for(const a of auras){if(a!==e&&!a.dead&&dst(a.x,a.y,e.x,e.y)<=1.6){sp*=1.3; break;}}
-    if(leaning)sp*=1.2;
+    /* Hollow Effigy: what it hexes walks a quarter slower (never past a Behemoth's 15%) */
+    if(e.hex&&!e.def.heavy&&hasOff('holloweffigy'))sp*=EFFIGY_SLOW;
+    /* Leaning hastens what climbs, but never a boss: dread can lean you in mid-wave, and a boss is all-or-nothing */
+    if(leaning&&!e.def.boss)sp*=1.2;
     if(e.kindleT>0&&!e.def.boss)sp*=KINDLE_RUN;
     const d0=e.d;
     e.d+=sp*dt;
@@ -4301,7 +4603,12 @@ function updateFoes(dt){
       if(s2&&!s2.dead&&!s2.dark&&hasOff('brine')&&!e.def.boss&&!e.def.heavy&&!(e.brined||(e.brined=[])).includes(s2.id)){
         e.brined.push(s2.id); e.d=Math.max(0,e.d-1); const q=posAt(P,e.d); e.x=q[0]; e.y=q[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y);
         F.fx.push({k:'ring',x:s2.x,y:s2.y,r0:.5,r1:.1,t:0,dur:.4,col:'106,169,159'});}
-      if(s2&&!s2.dead&&!s2.dark){s2.dur-=F.omen==='flooded'?2:1; if(s2.dur<=0){removeTower(s2); F.fx.push({k:'ring',x:s2.x,y:s2.y,r0:.1,r1:.6,t:0,dur:.4,col:'236,232,222'});}}
+      if(s2&&!s2.dead&&!s2.dark){let wear=F.omen==='flooded'?2:1;
+        /* Salted Teeth: salt beside a horror bites, and feeds the horror's next strike; it wears twice as fast */
+        const sh=hasOff('bloodsalt')?nearHorror(s2.x,s2.y,SALT_R):null;
+        if(sh){hurt(e,SALT_TEETH,'salt'); sh.cd=Math.max(0,(sh.cd||0)-SALT_SHAVE); wear*=2; F.fx.push({k:'bite',x:e.x,y:e.y,t:0,dur:.22});}
+        s2.dur-=wear; if(s2.dur<=0){removeTower(s2); F.fx.push({k:'ring',x:s2.x,y:s2.y,r0:.1,r1:.6,t:0,dur:.4,col:'236,232,222'});}}
+      if(e.dead)continue;
     }
     if(e.d>=P.len-.4){e.dead=true; lampHit(e);}
   }
@@ -4350,6 +4657,8 @@ function updateTowers(dt){
   for(const t of F.towers.slice()){
     if(t.dead||t.dark||t.dazeT>0)continue;
     if(t.kind==='ward'){
+      /* Borrowed Flesh: a phantom horror on a Corpse Candle strikes as it did, while the candle burns */
+      if(t.ph){if(!(t.snuffT>0)&&HORRORS[t.ph])horrorAct(t,t.ph,dt); continue;}
       if(t.type==='candle'||t.type==='salt'||t.type==='tithe'||t.type==='effigy'||t.type==='weir'||t.type==='trypot'||t.type==='mirror'||t.type==='tocsin')continue;
       const st=wstat(t);
       if(t.type==='harpoon'){
@@ -4403,14 +4712,19 @@ function updateTowers(dt){
         }
         const vs=st.twin&&b2?[b1,b2]:(b1?[b1]:[]);
         if(!vs.length)continue;
+        /* Living Bait: a trap beside a horror is bait. It drags its catch back, and the horror strikes at once */
+        const bait=hasOff('baited')?nearHorror(t.x,t.y,BAIT_R):null;
         for(const e of vs){
           hurt(e,st.dmg*beaconAt(t.x,t.y));
           if(e.dead)continue;
           if(!e.def.heavy)e.stunT=Math.max(e.stunT,e.def.boss?st.hold*.35:st.hold);
           if(st.bleed)e.bleedT=4;
           if(st.drag&&!e.def.boss&&!e.def.heavy){e.d=Math.max(0,e.d-1.5); const q=posAt(F.paths[e.gate],e.d); e.x=q[0]; e.y=q[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y);}
+          if(bait&&!e.def.boss&&!e.def.heavy){e.haulLeft=BAIT_BACK; e.haulT=HAUL_TIME;}
         }
-        t.cd=st.reset; t.snap=.4; AUDIO.trap();
+        t.cd=st.reset*(bait?.5:1); t.snap=.4; AUDIO.trap();
+        if(bait){bait.cd=0; if(F.phase==='wave')F.baitMad=Math.min(BAIT_DREAD_MAX,(F.baitMad||0)+1);
+          F.fx.push({k:'tongue',x:bait.x,y:bait.y,tx:t.x,ty:t.y,t:0,dur:.35});}
         F.fx.push({k:'ring',x:t.x,y:t.y,r0:.1,r1:.55,t:0,dur:.3,col:'210,196,170'});
       }else if(t.type==='coil'){
         if(st.field)for(const e of allIn(t.x,t.y,st.range))hurt(e,st.field*dt);
@@ -4461,42 +4775,7 @@ function updateTowers(dt){
           }else t.cd=.1;
         }
       }
-    }else{
-      const H=HORRORS[t.type], mult=beaconAt(t.x,t.y)*horrorBoost();
-      if(t.type==='gnasher'){
-        t.cd-=dt;
-        if(t.cd<=0){const e=pickTarget(t.x,t.y,H.range,t.tgt,false); if(e){hurt(e,H.dmg*mult); F.fx.push({k:'bite',x:e.x,y:e.y,t:0,dur:.28}); t.cd=1/H.rate; AUDIO.bite();} else t.cd=.08;}
-      }else if(t.type==='watcher'){
-        t.cd-=dt;
-        if(t.cd<=0){const e=pickTarget(t.x,t.y,H.range,t.tgt,false); if(e){hurt(e,H.dmg*mult); F.fx.push({k:'beam',x:t.x,y:t.y,tx:e.x,ty:e.y,t:0,dur:.2}); t.cd=1/H.rate;} else t.cd=.1;}
-      }else if(t.type==='wretch'){
-        t.cd-=dt;
-        if(t.cd<=0){const e=pickTarget(t.x,t.y,H.range,t.tgt,false); if(e){F.shots.push({k:'spit',x:t.x,y:t.y,tg:e,tx:e.x,ty:e.y,spd:7,dmg:H.dmg*mult,poison:H.poison}); t.cd=1/H.rate;} else t.cd=.1;}
-      }else if(t.type==='shrieker'){
-        t.cd-=dt;
-        if(t.cd<=0){
-          const es=allIn(t.x,t.y,H.range);
-          if(es.length){
-            for(const e of es){if(!e.def.boss&&!e.def.heavy)e.d=Math.max(0,e.d-H.push); hurt(e,H.dmg*mult);}
-            F.fx.push({k:'ring',x:t.x,y:t.y,r0:.3,r1:H.range,t:0,dur:.6,col:'194,120,207'});
-            t.cd=1/H.rate; AUDIO.shriek();
-          }else t.cd=.15;
-        }
-      }else if(t.type==='elite'){
-        for(const e of allIn(t.x,t.y,H.range))hurt(e,H.dps*mult*dt);
-      }else if(t.type==='keeper'){
-        t.cd-=dt;
-        if(t.cd<=0){
-          const e=pickTarget(t.x,t.y,H.range,t.tgt,false); 
-          if(e){
-            hurt(e,H.dmg*mult); 
-            F.fx.push({k:'burst',x:e.x,y:e.y,col:'#B8433A',r:.8,t:0,dur:.4}); 
-            F.fx.push({k:'kbeam',x:t.x,y:t.y-.1,tx:e.x,ty:e.y,t:0,dur:.3});
-            t.cd=1/H.rate; AUDIO.boom(); F.shake=Math.max(F.shake,.06);
-          } else t.cd=.1;
-        }
-      }
-    }
+    }else horrorAct(t,t.type,dt);
   }
 }
 function zap(e,d,st){
@@ -4523,14 +4802,14 @@ function updateShots(dt){
       if(d<=step||d<.12){
         s.done=true;
         if(s.tg&&!s.tg.dead){
-          if(s.k==='spit'){s.tg.poisonT=3; s.tg.poisonDps=s.poison;}
+          if(s.k==='spit'){s.tg.poisonT=3; s.tg.poisonDps=s.poison; s.tg.poisonH=true; if(s.deep&&hasOff('mouth_chime'))crack(s.tg,1);}
           if(s.k==='lance'){
             const big=s.tg.def.heavy||s.tg.def.elite||s.tg.def.boss;
             hurt(s.tg,s.dmg*(big?2:1),'lance');
             F.fx.push({k:'burst',x:s.tx,y:s.ty,col:'#C9C2B2',r:.5,t:0,dur:.35}); F.shake=Math.max(F.shake,.12);
             if(!s.tg.dead){if(s.flense)s.tg.flenseT=5; if(s.pin)s.tg.pinT=s.tg.def.boss?.5:1.5;}
           }else
-          {if(s.soul)s.tg.soulDrop=true; hurt(s.tg,s.dmg,'harpoon'); if(!s.tg.dead)s.tg.soulDrop=false; if(s.k==='bolt')undertow(s.tg); if(s.clap)clapHit(s.tg,s.clap);}
+          {if(s.soul)s.tg.soulDrop=true; hurt(s.tg,s.dmg,s.k==='spit'?'horror':'harpoon'); if(!s.tg.dead)s.tg.soulDrop=false; if(s.k==='bolt')undertow(s.tg); if(s.clap)clapHit(s.tg,s.clap);}
           if(s.from&&!s.tg.dead){if(s.tg.tetherBy!==s.from){s.tg.tetherBy=s.from; s.tg.tetherT=0;} s.from.tethered=s.tg;}
         }
         if(s.flare)addGlint(s.tx,s.ty,s.fr,s.ft*drownedFlare(s.tx,s.ty),s.star);
@@ -5152,6 +5431,64 @@ behemoth:{ext:1.6,period:2.2,frames:12,flip:true,draw(c,w,M){
 }},
 
 /* ---------- bosses paint live, so they can move continuously ---------- */
+/* The Many-Mouthed's own. The Gibberer: a pale sack of a head on spider-thin legs, all mouths, opening and shutting out of time */
+gibberer:{ext:2,period:.5,frames:10,flip:true,draw(c,w,M){
+  const SK=[188,156,142];
+  for(let i=0;i<4;i++){const s=i<2?-1:1, p=i*1.9, sw=Math.sin(w+p)*.14, lift=Math.max(0,Math.cos(w+p))*.12, hx=-.22+(i%2)*.44;
+    leg(c,M,hx,.3,hx+s*.28+sw,.5-lift,hx+s*.55+sw*1.4,1.0,.1,lit(SK,-.45));}
+  occl(c,M,0,.95,.9,.25,.4);
+  blob(c,M,SK,0,-.1,.82,.7,{hi:.45});
+  blob(c,M,lit(SK,-.06),-.36,-.46,.32,.26,{hi:.5});
+  blob(c,M,lit(SK,-.04),.4,.22,.28,.22,{hi:.5});
+  spec(c,M,-.32,-.52,.2,.08,.6,-.3);
+  const MO=[[.36,-.16,.3],[-.32,.14,.24],[.06,-.56,.2],[.2,.36,.2]];
+  for(let i=0;i<MO.length;i++){const [x,y,r0]=MO[i], op=.4+.6*Math.max(0,Math.sin(w*2+i*1.7)), ry=r0*.25+r0*.5*op;
+    if(!M.sil){c.fillStyle=rgba(lit(SK,-.55),.75); ell(c,x,y,r0*1.15,ry*1.25+.03); c.fill();}
+    maw(c,M,x,y,r0,ry,{inner:'#2a0406',rim:'#8a2a2a'});
+    fangs(c,M,x-r0*.85,y-ry*.75,x+r0*.85,y-ry*.75,5,.07+.07*op,0,1,{vary:true});
+    fangs(c,M,x-r0*.8,y+ry*.75,x+r0*.8,y+ry*.75,5,.06+.06*op,0,-1,{vary:true});}
+  eyeG(c,M,.2,-.74,.07,{iris:[200,60,50],pupil:'slit'});
+}},
+/* The Gorger: a bloated, bruise-coloured gut on stubby legs. Its mouth is the whole front of its belly, and its tongue never stops tasting */
+gorger:{ext:1.7,period:1.4,frames:12,flip:true,draw(c,w,M){
+  const FL=[128,88,111];
+  for(let i=0;i<4;i++){const x=-.62+i*.38, l=Math.max(0,Math.sin(w+i*1.6))*.08; tendril(c,M,[[x,.5],[x+.04,.78-l],[x+.1,.96]],.26,.18,lit(FL,-.3));}
+  occl(c,M,0,.95,1.15,.32,.5);
+  blob(c,M,FL,-.05,0,1,.8,{hi:.4});
+  blob(c,M,lit(FL,-.1),-.55,-.46,.4,.3,{hi:.45});
+  if(!M.sil){c.strokeStyle='rgba(60,20,40,.4)'; c.lineWidth=.03; c.lineCap='round';
+    for(let i=0;i<5;i++){const a=-2.5+i*.45; c.beginPath(); c.moveTo(Math.cos(a)*.95-.05,Math.sin(a)*.75); c.quadraticCurveTo(Math.cos(a+.3)*.6,Math.sin(a+.3)*.45,Math.cos(a+.1)*.3-.1,Math.sin(a+.1)*.3); c.stroke();}}
+  spec(c,M,-.42,-.56,.3,.12,.5,-.3);
+  const op=.5+.5*Math.sin(w), mx=.44, my=.12, rx=.18+.12*op, ry=.5;
+  maw(c,M,mx,my,rx,ry,{inner:'#30060c',rim:'#6a1a26'});
+  fangs(c,M,mx-rx*.75,my-ry*.85,mx-rx*.75,my+ry*.85,7,.11+.08*op,1,0,{vary:true});
+  fangs(c,M,mx+rx*.75,my-ry*.85,mx+rx*.75,my+ry*.85,7,.11+.08*op,-1,0,{vary:true});
+  tendril(c,M,swayPath(mx+.04,my+.24,.5,1.05,8,t=>Math.sin(w*1.3+t*4)*.22-.06),.2,.07,[196,96,110],{base:-.05,ridge:.4});
+  eyeG(c,M,-.16,-.68,.08,{iris:[240,200,90],pupil:'slit'});
+  eyeG(c,M,.14,-.75,.07,{iris:[240,200,90],pupil:'slit'});
+}},
+/* The Choir-Husk: what is left of a chorister, hollowed out and stood up again. Mouths open down its whole front, singing one
+   note in turn; the air thickens round it and hides what walks there */
+husk:{ext:2,period:2.6,frames:14,flip:false,draw(c,w,M){
+  const AS=[143,154,134], RAG=[70,74,66], sway=Math.sin(w)*.05;
+  c.save(); c.translate(sway,0);
+  c.beginPath(); c.moveTo(-.5,-.6); c.bezierCurveTo(-.7,-.1,-.6,.5,-.62,1);
+  for(let i=0;i<=6;i++){const x=-.62+i*(1.24/6), y=1+(i%2?.08:-.04)+Math.sin(w*2+i)*.04; c.lineTo(x,y);}
+  c.bezierCurveTo(.6,.5,.7,-.1,.5,-.6); c.closePath();
+  if(M.sil)c.fillStyle=rgba(SILC); else{const gr=c.createLinearGradient(0,-.6,0,1.05); gr.addColorStop(0,rgba(lit(RAG,.1))); gr.addColorStop(1,rgba(lit(RAG,-.6),.6)); c.fillStyle=gr;}
+  c.fill();
+  tendril(c,M,[[-.42,-.5],[-.62,-.05],[-.56,.45+sway]],.13,.06,lit(AS,-.2),{base:-.1});
+  blob(c,M,AS,0,-.15,.42,.62,{hi:.35});
+  if(!M.sil){c.strokeStyle=rgba(lit(AS,-.5),.55); c.lineWidth=.03; for(let k=0;k<5;k++){const y=-.55+k*.18; c.beginPath(); c.moveTo(-.36,y); c.quadraticCurveTo(0,y+.07,.36,y); c.stroke();}}
+  for(let k=0;k<4;k++){const y=-.5+k*.24, op=.35+.65*(.5+.5*Math.sin(w*2-k*.9)); maw(c,M,0,y,.13-k*.01,.035+.07*op,{inner:'#060406',rim:'#3c3a36'});}
+  tendril(c,M,[[.42,-.5],[.64,-.05],[.57,.45-sway]],.13,.06,lit(AS,-.2),{base:-.1});
+  blob(c,M,lit(AS,.05),0,-.92,.26,.3,{hi:.4});
+  maw(c,M,.02,-.84,.11,.14,{inner:'#000',rim:'#2c2a26'});
+  eyeG(c,M,-.09,-1.03,.04,{emissive:true,glow:[200,214,190]});
+  eyeG(c,M,.1,-1.03,.04,{emissive:true,glow:[200,214,190]});
+  c.restore();
+}},
+
 boss:{ext:2.1,period:6,frames:0,live:true,flip:false,draw(c,w,M){
   const P=M.pal||{fl:[184,64,52],bone:[226,214,186],in:'#2a0303'};
   const FL=P.fl;
@@ -6648,6 +6985,7 @@ function floorTypes(){
   const set=new Set(['skitter']);
   for(const wv of F.def.waves)for(const gq of wv)set.add(gq[0]);
   for(const k in run.roster)if(run.roster[k]>0)set.add(k);
+  for(const k of mouthTypes())set.add(k);
   return [...set];
 }
 const MOTES=[]; for(let i=0;i<48;i++)MOTES.push({x:Math.random(),y:Math.random(),s:.3+Math.random()*.9,ph:Math.random()*TAU2,z:.4+Math.random()*.6});
@@ -6904,7 +7242,7 @@ function drawGrid(tm){
     g.strokeStyle='rgba(170,215,255,.7)'; g.lineWidth=.03; g.beginPath(); g.ellipse(an.x,an.y+.02,.3,.12,0,-Math.PI/2,-Math.PI/2+TAU*an.t/an.max); g.stroke();
     g.globalCompositeOperation='source-over'; g.globalAlpha=1;}
   if(F.grid)for(const e of F.grid.edges){
-    const top=n=>[n.x+(n.rod?.05:0), n.y-(n.rod?.34:n.anchor?.72:.68)], A=top(e.a), B=top(e.b), cd=F.wireCd.get(e.key)||0;
+    const top=n=>[n.x+(n.rod?.05:0), n.y-(n.rod?.34:n.anchor?.72:n.horror?.42:.68)], A=top(e.a), B=top(e.b), cd=F.wireCd.get(e.key)||0;
     /* the Anchor's wires are a cage, not a weapon: steady cold lines, no crackle */
     if(e.anchor){g.globalCompositeOperation='lighter'; g.strokeStyle='rgba(120,175,255,.25)'; g.lineWidth=.12; g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke();
       g.strokeStyle='rgba(215,235,255,.75)'; g.lineWidth=.022; g.setLineDash([.14,.08]); g.lineDashOffset=-tm*1.2; g.beginPath(); g.moveTo(A[0],A[1]); g.lineTo(B[0],B[1]); g.stroke(); g.setLineDash([]);
@@ -6956,7 +7294,14 @@ function drawBodies(tm){
       g.fillStyle='rgba(232,224,202,.85)'; for(const sg of [-1,1]){g.beginPath(); g.arc(cx+sg*Math.cos(a)*l,cy+sg*Math.sin(a)*l,.04,0,TAU); g.fill();}}
     /* a faint pallor shows where a Corpse Candle could draw on them */
     g.fillStyle='rgba(170,200,160,'+(.06+.04*Math.sin(tm*2+h*6))+')'; g.beginPath(); g.arc(b.x,b.y,.42,0,TAU); g.fill();
+    /* Borrowed Flesh: a body that remembers what it was glows violet */
+    if(b.typed){g.strokeStyle='rgba(169,124,226,'+(.45+.2*Math.sin(tm*3+h*6))+')'; g.lineWidth=.03; g.setLineDash([.07,.07]); g.beginPath(); g.arc(b.x,b.y,.36,0,TAU); g.stroke(); g.setLineDash([]);}
   }
+}
+/* Borrowed Flesh: the phantom horror stands pale over its Corpse Candle */
+function drawPhantom(t,tm){
+  const f=FOES[t.ph]; if(!f)return;
+  drawCreature(g,t.ph,t.x,t.y-.4+Math.sin(tm*1.6+t.id)*.03,Math.min(.27,f.r*.72),tm,{ph:t.id*.37,alpha:t.snuffT>0?.18:.5,face:t.x<F.lx?-1:1});
 }
 function drawWake(e,tm){
   const a=.45+.2*Math.sin(tm*5+e.wob);
@@ -7008,6 +7353,11 @@ function render(){
     if(canSee(e))seen.add(e);
   }
   for(const e of seen)drawGroundShadow(g,e.x,e.y,e.def.r*foeScale(e),F.lx,F.ly,e.def.fly);
+  /* the Many-Mouthed's own, when seen: the reach of a Choir-Husk's veil, and of a Gibberer's chatter */
+  for(const h of F.husks)if(seen.has(h)){g.strokeStyle='rgba(150,160,140,'+(.22+.08*Math.sin(tm*2+h.wob))+')'; g.lineWidth=.035; g.setLineDash([.09,.13]);
+    g.beginPath(); g.ellipse(h.x,h.y+.05,HUSK_R,HUSK_R*.62,0,tm*.25,tm*.25+TAU); g.stroke(); g.setLineDash([]);}
+  for(const gb of F.gibs)if(seen.has(gb)){g.strokeStyle='rgba(214,150,136,'+(.32+.1*Math.sin(tm*9+gb.wob))+')'; g.lineWidth=.03; g.setLineDash([.09,.13]);
+    g.beginPath(); g.ellipse(gb.x,gb.y+.04,GIB_R,GIB_R*.62,0,tm*.3,tm*.3+TAU); g.stroke(); g.setLineDash([]);}
   const ts=F.towers.slice().sort((a,b)=>a.y-b.y);
   const items=[];
   for(const t of ts){
@@ -7021,7 +7371,10 @@ function render(){
   for(const e of fs)if(seen.has(e))items.push({y:e.y,k:2,o:e});
   items.sort((a,b)=>a.y-b.y);
   for(const it of items){
-    if(it.k===0){const t=it.o; if(t.kind==='ward')drawWard(g,t,tm,false); else drawHorror(g,t,tm);}
+    if(it.k===0){const t=it.o; if(t.kind==='ward'){drawWard(g,t,tm,false); if(t.ph)drawPhantom(t,tm);
+        /* a ward a seen Gibberer is slowing is ringed in pink */
+        for(const gb of F.gibs)if(seen.has(gb)&&dst(t.x,t.y,gb.x,gb.y)<=GIB_R){g.strokeStyle='rgba(224,140,124,'+(.7+.2*Math.sin(tm*6))+')'; g.lineWidth=.035; g.setLineDash([.07,.06]); g.beginPath(); g.ellipse(t.x,t.y+.1,.34,.2,0,-tm,-tm+TAU); g.stroke(); g.setLineDash([]); break;}}
+        else drawHorror(g,t,tm);}
     else if(it.k===1){drawLamp(g,F.lx,F.ly,tm,1,kit());}
     else{
       const e=it.o;
@@ -7325,6 +7678,11 @@ function render(){
       for(const [w,col] of [[.22,'rgba(200,40,40,'+(.3*(1-p))+')'],[.08,'rgba(255,90,70,'+(.75*(1-p))+')'],[.025,'rgba(255,220,200,'+(1-p)+')']]){g.strokeStyle=col; g.lineWidth=w; g.beginPath(); g.moveTo(f.x,f.y); g.lineTo(f.tx,f.ty); g.stroke();}
       g.restore();
     }
+    /* a tongue lashing out and back: a Gorger at your horror or candle, Living Bait, the dark biting first */
+    else if(f.k==='tongue'){const reach=p<.4?p/.4:1-(p-.4)/.6, tx=f.x+(f.tx-f.x)*reach, ty=f.y+(f.ty-f.y)*reach, mx=(f.x+tx)/2, my=(f.y+ty)/2-.25*reach;
+      g.save(); g.lineCap='round';
+      for(const [w,col] of [[.09,f.dark?'rgba(4,2,4,.75)':'rgba(40,10,18,.6)'],[.05,f.dark?'rgba(60,20,30,.9)':'rgba(176,82,96,.95)']]){g.strokeStyle=col; g.lineWidth=w; g.beginPath(); g.moveTo(f.x,f.y-.1); g.quadraticCurveTo(mx,my,tx,ty); g.stroke();}
+      g.fillStyle=f.dark?'rgba(90,30,40,.9)':'rgba(210,120,130,.95)'; g.beginPath(); g.arc(tx,ty,.05,0,TAU); g.fill(); g.restore();}
     else if(f.k==='hexlink'){g.save(); g.globalCompositeOperation='lighter'; g.strokeStyle='rgba(150,230,120,'+(.8*(1-p))+')'; g.lineWidth=.03; g.setLineDash([.05,.05]); g.beginPath(); g.moveTo(f.x,f.y); g.lineTo(f.tx,f.ty); g.stroke(); g.setLineDash([]); g.restore();}
     else if(f.k==='net'){drawNet(f,p);}
     else if(f.k==='surge'){/* Overload: every wire blazes at once, and the floor flashes cold */
@@ -7465,12 +7823,12 @@ function codexSee(kind,k){if(devOn)return; const C=codex(); if(C[kind].has(k))re
 function relicGlyph(k){return RELICS[k].n.replace(/^(The|A) /,'').charAt(0);}
 let relKey='', relTipT=0, relTipK='';
 function renderRelics(){
-  const key=run.relics.join(',')+'|'+attOf('mother')+'|'+attOf('sun');
+  const key=run.relics.join(',')+'|'+Object.keys(PATRONS).map(attOf).join(',');
   if(key===relKey)return; relKey=key;
   /* patrons who have noticed you sit first, ringed by Attention */
   let pat='';
-  if(attOf('mother'))pat+='<button class="relchip is-patron" data-rel="patron:mother" aria-label="'+PATRONS.mother.n+', Attention '+attOf('mother')+'" style="--att:'+Math.min(1,attOf('mother')/PATRONS.mother.tiers[2].at)+'">'+PATRONS.mother.glyph+'</button>';
-  if(attOf('sun'))pat+='<button class="relchip is-patron" data-rel="patron:sun" aria-label="'+PATRONS.sun.n+', Attention '+attOf('sun')+'" style="--att:'+Math.min(1,attOf('sun')/PATRONS.sun.tiers[2].at)+'">'+PATRONS.sun.glyph+'</button>';
+  for(const pk of Object.keys(PATRONS)){const P=PATRONS[pk], a=attOf(pk); if(!a)continue;
+    pat+='<button class="relchip is-patron" data-rel="patron:'+pk+'" aria-label="'+P.n+', Attention '+a+'" style="--att:'+Math.min(1,a/P.tiers[2].at)+'">'+P.glyph+'</button>';}
   $('#relChips').innerHTML=pat+run.relics.map(k=>'<button class="relchip'+(RELICS[k].curse?' is-curse':'')+'" data-rel="'+k+'" aria-label="'+RELICS[k].n.replace(/"/g,'')+'">'+relicGlyph(k)+'</button>').join('');
 }
 function relicTip(k,btn){
@@ -7481,7 +7839,7 @@ function relicTip(k,btn){
     const p=k.slice(7), P=PATRONS[p], n=patTier(p), offs=(run.offs||[]).filter(o=>OFFERINGS[o].p===p).map(o=>OFFERINGS[o].n);
     tip.classList.remove('is-curse'); tip.classList.add('is-patron');
     tip.innerHTML='<span class="reltag">Patron · Attention '+attOf(p)+(n?' · '+P.tiers[n-1].n:'')+'</span><b>'+P.n+'</b><span>'
-      +(n?P.tiers.slice(0,n).map(t=>t.d).join(' '):P.d)+(P.tiers[n]?' <i>At '+P.tiers[n].at+': '+P.tiers[n].n+'.</i>':'')+(offs.length?' Her gifts: '+offs.join(', ')+'.':'')+'</span>';
+      +(n?P.tiers.slice(0,n).map(t=>t.d).join(' '):P.d)+(P.tiers[n]?' <i>At '+P.tiers[n].at+': '+P.tiers[n].n+'.</i>':'')+(offs.length?' '+(p==='mother'?'Her':'Its')+' gifts: '+offs.join(', ')+'.':'')+'</span>';
   }else{
     const R=RELICS[k];
     tip.classList.remove('is-patron'); tip.classList.toggle('is-curse',!!R.curse);
@@ -7514,7 +7872,10 @@ const LORE={
   boss:'The boss of the fourth floor. It calls things up out of the dark. If it reaches the lamp, the run is over. Slain, its soul lingers: bind it and it fights for you on the last floor.',
   stalker:'Veiled and fast, and it drains 2 oil. At a fork it hunts your light.',
   behemoth:'Heavy: it cannot be stunned or pushed back, and nothing slows it by more than 15%. It drains 6 oil and breaks a Weir. Whaling Guns do double damage to it.',
-  boss2:'The heart of the dark, on the last floor. It hastens what walks with it and calls more. If it reaches the lamp, the run is over.'
+  boss2:'The heart of the dark, on the last floor. It hastens what walks with it and calls more. If it reaches the lamp, the run is over.',
+  gibberer:'Small, pale and round, covered in mouths. Sent by the Many-Mouthed for your wards. While it lives you carry 2 dread (6 at most), and any ward inside the pink ring at its feet waits a quarter longer between shots. Weak: kill it first. It leaves nothing when it dies.',
+  gorger:'Big and purple, with a gaping mouth and a long tongue; not the red, round Gnasher. Sent by the Many-Mouthed for your horrors. Horrors hurt it 35% less, so use wards. Every few seconds it lashes its tongue at a horror within 2 tiles, dazing it for 2 seconds, and heals. Watched, it snuffs candles and silences forks the same way. It leaves nothing when it dies.',
+  husk:'Tall, grey and hollow, with a column of black mouths. Sent once the Many-Mouthed has claimed you. Everything inside the grey ring at its feet (1.8 tiles) is veiled like a Shade, until a Candle, a Flare or a bound Watcher shows it. Not a boss, not a Herald. The Husk itself can be seen; kill it and the veil lifts.'
 };
 const BOOK={tab:'foes',from:''};
 function openBook(from,tab){
@@ -7541,7 +7902,7 @@ function showBook(){
     intro='Creatures met: <b>'+seen+' of '+foes.length+'</b>. The rest are still in the dark.';
     list=foes.map(k=>{const f=FOES[k];
       if(!hasSeen('foes',k))return bookEntry('<canvas width="72" height="72" data-icon="foe:'+k+':1"></canvas>','???','','Not yet met.','is-locked');
-      const tags=[f.boss?'Boss':'',f.elite?'Elite':'',f.veiled?'Veiled':'',f.fly?'Flies':'',f.heavy?'Heavy':'',f.bind?'Can be bound':''].filter(Boolean).join(' · ');
+      const tags=[f.boss?'Boss':'',f.elite?'Elite':'',f.veiled?'Veiled':'',f.fly?'Flies':'',f.heavy?'Heavy':'',f.bind?'Can be bound':'',f.patron?'Sent by '+PATRONS[f.patron].n:''].filter(Boolean).join(' · ');
       const H=HORRORS[k];
       return bookEntry('<canvas width="72" height="72" data-icon="foe:'+k+':0"></canvas>',f.n,'Life '+f.hp+' · Speed '+f.spd+' · Oil '+(f.oil>=99?'all':f.oil)+(f.ess?' · Essence '+f.ess:'')+(tags?' · '+tags:''),
         (LORE[k]||'')+(H&&f.bind?' <i>Bound:</i> '+H.d:''));}).join('');
@@ -7620,6 +7981,75 @@ function coachTray(type){return coachEl(coachTrayBtn(type));}
 /* the tray scrolls sideways on a narrow screen: bring the item a step talks about into view */
 function coachShowTray(type){const b=coachTrayBtn(type); if(b)b.scrollIntoView({block:'nearest',inline:'center'});}
 function coachStat(id){const e=$(id); return e?coachEl(e.closest('.stat')):null;}
+/* the picture on a lesson card: a small canvas drawn in tiles, 9.2 across and 3 high, so a sprite, a ring and a few words can say
+   what a paragraph can't. A step gives it as art:(c,tm)=>{...} */
+const ART_W=9.2, ART_ICONS={};
+function artIcon(kind,type){const k=kind+':'+type; if(!ART_ICONS[k]){const cv=document.createElement('canvas'); cv.width=cv.height=72; drawIcon(cv,{kind,type}); ART_ICONS[k]=cv;} return ART_ICONS[k];}
+function artIc(c,kind,type,x,y,sz){c.drawImage(artIcon(kind,type),x-sz/2,y-sz/2,sz,sz);}
+function artFoe(c,type,x,y,r,tm,o){drawCreature(c,type,x,y,r,tm,Object.assign({ph:0,face:1},o||{}));}
+function artText(c,txt,x,y,col,al,sz){c.fillStyle=col||'#e8e0cc'; c.font='bold '+(sz||.34)+'px sans-serif'; c.textAlign=al||'center'; c.fillText(txt,x,y);}
+function artRing(c,x,y,r,col,tm){c.strokeStyle=col; c.lineWidth=.05; c.setLineDash([.12,.14]); c.beginPath(); c.ellipse(x,y,r,r*.62,0,tm*.25,tm*.25+TAU); c.stroke(); c.setLineDash([]);}
+function artPill(c,txt,x,y,w,col){c.fillStyle=col; c.beginPath(); c.roundRect?c.roundRect(x,y-.27,w,.54,.27):c.rect(x,y-.27,w,.54); c.fill(); artText(c,txt,x+w/2,y+.12,'#f4ecd8','center',.32);}
+const ART_NAME={gibberer:['Gibberer','hunts wards'],gorger:['Gorger','hunts horrors'],husk:['Choir-Husk','veils its pack']};
+function artLineup(c,tm){
+  const ts=['gibberer','gorger'].concat(patTier('mouths')>=3?['husk']:[]), n=ts.length;
+  ts.forEach((t,i)=>{const x=ART_W*(i+.5)/n; artFoe(c,t,x,1.05,t==='gibberer'?.8:t==='gorger'?.85:1,tm); artText(c,ART_NAME[t][0],x,2.25,'#f4ecd8'); artText(c,ART_NAME[t][1],x,2.72,'#c9b9a8','center',.3);});
+}
+function artGibberer(c,tm){
+  artFoe(c,'gibberer',2.1,1.35,.95,tm); artText(c,'Gibberer',2.1,2.7,'#f4ecd8');
+  artPill(c,'22 life, quick',4.5,.75,4.3,'#5a3a58'); artPill(c,'drops nothing',4.5,1.5,4.3,'#4f5a44'); artPill(c,'1 oil at the lamp',4.5,2.25,4.3,'#6a5530');
+}
+function artChatter(c,tm){
+  artRing(c,2.3,1.35,GIB_R,'rgba(214,150,136,.9)',tm); artFoe(c,'gibberer',2.3,1.4,.7,tm);
+  artIc(c,'ward','candle',3.15,1.2,1); artText(c,'slowed',3.15,2.45,'#e6a898','center',.3);
+  artIc(c,'ward','candle',5.1,1.2,1); artText(c,'normal',5.1,2.45,'#c9b9a8','center',.3);
+  artPill(c,'25% slower',6.2,.8,2.9,'#7e4a40'); artPill(c,'+2 dread each',6.2,1.7,2.9,'#5a3a58'); artText(c,'(6 at most)',7.65,2.5,'#c9b9a8','center',.28);
+}
+function artGorger(c,tm){
+  artFoe(c,'gnasher',2.2,1.45,.85,tm); artText(c,'Gnasher',2.2,2.75,'#c9b9a8','center',.32); artText(c,'red and round',2.2,.4,'#c9b9a8','center',.3);
+  artFoe(c,'gorger',6.5,1.45,.95,tm); artText(c,'Gorger',6.5,2.75,'#f4ecd8','center',.32); artText(c,'purple, with a tongue',6.5,.4,'#e6c0e0','center',.3);
+}
+function artTongue(c,tm){
+  const gx=1.5, hx=3.9, y=1.55, w=Math.sin(tm*5)*.12;
+  artFoe(c,'gorger',gx,y,.95,tm);
+  artIc(c,'horror',Object.keys(HORRORS)[0],hx,y-.05,1.15); artText(c,'your horror',hx,2.75,'#c9b9a8','center',.28);
+  c.strokeStyle='#d98aa4'; c.lineWidth=.1; c.lineCap='round'; c.beginPath(); c.moveTo(gx+.55,y+.1); c.quadraticCurveTo((gx+hx)/2,y+.6+w,hx-.5,y); c.stroke();
+  artText(c,'dazed 2s',hx,.45,'#9fc8d8'); artText(c,'+8 life',gx,.45,'#9fd89a');
+  artPill(c,'horrors hit it 35% less',5.1,.85,4.1,'#5a3a58');
+  if(patTier('mouths')>=2)artPill(c,'Watched: candles too',5.1,1.75,4.1,'#7e4a40');
+}
+function artHusk(c,tm){
+  artFoe(c,'husk',2.1,1.35,1.05,tm); artText(c,'Choir-Husk',2.1,2.75,'#f4ecd8');
+  artPill(c,'95 life, slow',4.5,.75,4.3,'#5a3a58'); artPill(c,'one each wave',4.5,1.5,4.3,'#4f5a44'); artPill(c,'2 oil at the lamp',4.5,2.25,4.3,'#6a5530');
+}
+function artVeil(c,tm){
+  artRing(c,2.3,1.4,HUSK_R,'rgba(170,182,158,.95)',tm); artFoe(c,'husk',2.3,1.1,.75,tm);
+  artFoe(c,'crawler',3.2,1.95,.55,tm,{alpha:.28}); artText(c,'hidden',3.2,2.8,'#c9b9a8','center',.28);
+  artFoe(c,'crawler',5.1,1.55,.55,tm); artText(c,'seen',5.1,2.5,'#c9b9a8','center',.28);
+  artPill(c,'Candle shows it',6.1,.8,3,'#4f5a44'); artPill(c,'kill the Husk',6.1,1.7,3,'#7e4a40');
+}
+/* the madness bar, with dread laid over it in stripes: what a horror brings, and what the Many-Mouthed brings */
+function artDread(c,tm){
+  const x=.5, y=1.1, w=8.2, h=.62;
+  c.fillStyle='#1c1f22'; c.fillRect(x,y,w,h);
+  c.fillStyle='#a8503e'; c.fillRect(x,y,3.2,h);
+  c.save(); c.beginPath(); c.rect(x+3.2,y,2.4,h); c.clip(); c.fillStyle='#7a4a78'; c.fillRect(x+3.2,y,2.4,h);
+  c.strokeStyle='rgba(240,200,236,.55)'; c.lineWidth=.1; for(let k=-2;k<10;k++){c.beginPath(); c.moveTo(x+3.2+k*.3,y+h); c.lineTo(x+3.2+k*.3+.62,y); c.stroke();} c.restore();
+  [[3.6,'Whispers'],[5.4,'Slipping'],[7.2,'Leaning']].forEach(([t,n])=>{c.fillStyle='#e8e0cc'; c.fillRect(x+t-.02,y-.12,.05,h+.24); artText(c,n,x+t,2.3,'#c9b9a8','center',.28);});
+  artText(c,'madness from horrors',x+1.6,.7,'#e2a090'); artText(c,'dread',x+4.4,.7,'#d8a8d4');
+  artText(c,'only horrors you paid for feed the Occultist',ART_W/2,2.85,'#c9b9a8','center',.28);
+}
+function coachArtDraw(tm){
+  const cv=$('#coachArt'), s=COACH.list&&COACH.list[COACH.i];
+  if(!cv)return; if(!s||!s.art){cv.hidden=true; return;}
+  cv.hidden=false;
+  const dpr=Math.min(2,window.devicePixelRatio||1), W=Math.max(1,Math.round(cv.clientWidth*dpr)), H=Math.round(120*dpr);
+  if(cv.width!==W||cv.height!==H){cv.width=W; cv.height=H;}
+  const c=cv.getContext('2d'), u=Math.min(H/3,W/ART_W);
+  c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,W,H);
+  c.setTransform(u,0,0,u,(W-ART_W*u)/2,(H-3*u)/2);
+  try{s.art(c,tm);}catch(err){reportError(err);}
+}
 const SIGNAL_LESSON='Your Signal Candles pass light to one another. Build one in the dark, up to 4 tiles from a lit one, and the light leaps across. A dotted thread shows each leap. Take away a link and everything past it goes dark.';
 /* the rites lesson names rites this kit really holds */
 function riteLesson(){
@@ -7647,6 +8077,8 @@ function coachWalkSteps(){
   ];
 }
 /* first-time tips: when each turns up, and what it says */
+/* a ring on the creature a lesson is about, while it lives and can be seen */
+function foeTarget(e){return rad=>()=>e&&!e.dead&&canSee(e)?coachBoard(e.x,e.y,rad||Math.max(.6,e.def.r*1.6)):null;}
 const TIPS={
   fork:{when:()=>F.phase==='build'&&F.forks.length,steps:()=>{
     const out=[{title:'The stair forks',text:'Here the stair splits. They take the darker way, and only light you cast counts, never the lamp’s. The gold chevron shows where they will go. Shades and Stalkers hunt your light instead.',target:()=>F.forks[0]?coachBoard(F.forks[0].x,F.forks[0].y,.9):null}];
@@ -7775,8 +8207,8 @@ const TIPS={
   raise:{when:()=>ritesNow().includes('raise')&&(F.phase==='wave'||F.phase==='build')&&F.wave>=1&&[...F.bodies.values()].some(b=>b.n>=2)&&!(F.cd.raise>0),title:'Raise the Dead',
     text:'Tap Raise the Dead, then a pile of bones. Its dead stand up beside the path and bite whatever comes near, even in the dark, until the wave breaks. A full pile bites three times as hard as one bone.',
     target:()=>coachEl('#rites [data-r="raise"]')},
-  madfeeds:{when:()=>corpseKit()&&madTier()>=1&&F.towers.some(t=>t.kind==='horror'),title:'Madness feeds you',
-    text:'Your madness is rising, and you are stronger for it: each tier makes your Bone Spears hit 25% harder and your horrors 20% harder. The dark still gets worse with every tier.',
+  madfeeds:{when:()=>corpseKit()&&boundMadTier()>=1&&F.towers.some(t=>t.kind==='horror'),title:'Madness feeds you',
+    text:'Your madness is rising, and you are stronger for it: each tier your paid horrors bring makes your Bone Spears hit 25% harder and your horrors 20% harder. The dark still gets worse with every tier.',
     target:()=>coachStat('#madV')},
   unbind:{when:()=>ritesNow().includes('unbind')&&F.phase==='wave'&&F.towers.some(t=>t.kind==='horror')&&F.foes.filter(e=>!e.dead).length>=4,title:'Unbind',
     text:'Tap Unbind, then one of your horrors. It breaks free and charges down the path toward where they come from, tearing through everything in its way. Then it is gone for good, and so is its madness.',
@@ -7796,6 +8228,29 @@ const TIPS={
   glare:{when:()=>patTier('sun')>=3&&F.towers.some(t=>t.kind==='ward'&&nearSpot(t.x,t.y)),title:'In the glare',
     text:'It has claimed you. A ward that stands within the halo of a bright spot fires a quarter slower. Build back from the glare, or build there knowing it.',
     target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&nearSpot(t.x,t.y)); return t?coachBoard(t.x,t.y,SPOT_GLARE):null;}},
+  mouths:{foe:e=>e.def.patron==='mouths',title:'The Many-Mouthed sends its own',art:artLineup,
+    text:'As each wave begins it reads what you built, and sends a few creatures of its own up the stair, in the second half of the wave. They are not like the others: when they die they leave no essence, bones or sigils. You will meet each one as it climbs.'},
+  gibberer:{foe:e=>e.type==='gibberer',steps:e=>{const at=foeTarget(e);return [
+    {title:'A Gibberer',art:artGibberer,target:at(),text:'The small pale one, covered in mouths. It is sent for your wards. It is weak and dies fast, but while it lives it does two things, and the next card shows them.'},
+    {title:'Its chatter',art:artChatter,target:at(GIB_R),text:'The faint pink ring at its feet is its chatter. Any ward inside it waits 25% longer between shots, and is ringed in pink while it does. And every Gibberer alive adds 2 dread (up to 6), which counts toward your madness. Kill it first.'}];}},
+  gorger:{foe:e=>e.type==='gorger',steps:e=>{const at=foeTarget(e);return [
+    {title:'A Gorger',art:artGorger,target:at(),text:'The big purple one with a gaping mouth and a long tongue. It is not a Gnasher: the Gnasher is red and round. In the dark both are only eyes and teeth. It is sent for your horrors.'},
+    {title:'Its tongue',art:artTongue,target:at(GORGE_R),text:'When a horror is within 2 tiles, it lashes its tongue every few seconds: the horror is dazed and does nothing for 2 seconds, and the Gorger heals 8. Horrors hurt it 35% less, so use your wards and your harpoon.'+(patTier('mouths')>=2?' Watched: with no horror in reach it snuffs a candle or silences a fork instead.':'')}];}},
+  husk:{foe:e=>e.type==='husk',steps:e=>{const at=foeTarget(e);return [
+    {title:'A Choir-Husk',art:artHusk,target:at(),text:'Tall and grey and hollow, with a column of black mouths. It climbs once each wave, and only because the Many-Mouthed has claimed you. And now your bindings may break even at Whispers.'},
+    {title:'Its veil',art:artVeil,target:at(HUSK_R),text:'Everything inside the grey ring is veiled like a Shade: your wards cannot see or hit it, even in light. A Candle, a Flare or a bound Watcher shows it. Or kill the Husk, which can always be seen, and the veil lifts. Bosses and Heralds are never veiled.'+(run.wards.includes('effigy')?' A green ring under a creature is something else: an Effigy hex.':'')}];}},
+  dread:{when:()=>dread()>0&&F.phase!=='draft',title:'Dread',art:artDread,
+    text:'You carry dread now. It counts with your madness toward Whispers, Slipping and Leaning, so the dark comes for you just the same, and the bar shows it striped. But only madness from horrors you paid for makes the Occultist stronger or opens free horrors. Dread brings only the dark.',
+    target:()=>coachStat('#madV')},
+  feed:{when:()=>run.rites.includes('feed')&&F.phase==='wave'&&F.foes.filter(e=>!e.dead&&dst(e.x,e.y,F.lx,F.ly)<=FEED_R).length>=2,title:'Feed the Dark',
+    text:'Tap Feed the Dark when they crowd the lamp. It gutters: what is near is dragged back, and your horrors strike twice as fast and into the dark for a moment. The lamp burns smaller while it does, and you carry 4 dread until the wave breaks.',
+    target:()=>coachEl('#rites [data-r="feed"]')},
+  unpaid:{when:()=>F.phase==='build'&&freeOpen()&&trayItems().some(i=>i.kind==='horror'&&avail(i.type)>0),title:'Unpaid Teeth',
+    text:'Your paid horrors have opened a free one: the next horror you field costs nothing, though it still brings its madness. If your paid madness falls, it goes back to your roster.',
+    target:()=>{const i=trayItems().find(i=>i.kind==='horror'&&avail(i.type)>0); return i?coachTray(i.type):null;}},
+  phantom:{when:()=>F.towers.some(t=>t.ph),title:'Borrowed Flesh',
+    text:'A Corpse Candle lit on a body that remembers what it was raises its phantom. It strikes as that horror did, at no madness, until the candle goes out.',
+    target:()=>{const t=F.towers.find(t=>t.ph); return t?coachBoard(t.x,t.y,.8):null;}},
   ebb:{when:()=>run.rites.includes('ebb')&&F.phase==='wave'&&F.foes.some(e=>!e.dead&&inWater(e)),title:'The Ebb',
     text:'Tap The Ebb and the water draws back, dragging everything in it two tiles down the path. Wait until it is full.',
     target:()=>coachEl('#rites [data-r="ebb"]')},
@@ -7840,7 +8295,7 @@ function coachEnter(){
   const next=s.until?'':'<button class="btn call" data-coach="next">'+(last?'Got it':'Next')+'</button>';
   $('#coachActs').innerHTML=next+'<button class="btn" data-coach="skip">'+(COACH.kind==='walk'?'Skip walkthrough':'No more tips')+'</button>';
   $('#coach').hidden=false;
-  coachPlace();
+  coachPlace(); coachArtDraw(performance.now()/1000);
   if(!COACH.raf)COACH.raf=requestAnimationFrame(coachFrame);
 }
 function coachDone(skip){
@@ -7863,6 +8318,7 @@ function coachNext(){
 function coachFrame(now){
   if(!COACH.on){COACH.raf=0; return;}
   COACH.raf=requestAnimationFrame(coachFrame);
+  coachArtDraw(now/1000);
   if(now-COACH.last<100)return; COACH.last=now;
   if(!F||!run||!$('#title').hidden){coachStop(); return;}
   const s=COACH.list[COACH.i];
@@ -7911,7 +8367,7 @@ function coachPoll(){
       if(e.dead){e=null; for(let i=0;i<F.foes.length;i++){const o=F.foes[i]; if(!o.dead&&tip.foe(o)){e=o; break;}}}
     }
     else if(!tip.when())continue;
-    const list=tip.steps?tip.steps():[{title:tip.title,text:tip.text,target:e?(()=>e.dead?null:coachBoard(e.x,e.y,Math.max(.6,e.def.r*1.6))):tip.target}];
+    const list=tip.steps?tip.steps(e):[{title:tip.title,text:tip.text,art:tip.art,target:e?(()=>e.dead?null:coachBoard(e.x,e.y,Math.max(.6,e.def.r*1.6))):tip.target}];
     coachRun('tip',k,list);
     return;
   }
@@ -7928,7 +8384,7 @@ function trayItems(){
   it.push({kind:'lamp',type:'lamp'});
   return it;
 }
-function itemCost(i){return i.kind==='ward'?wardCost(i.type):i.kind==='horror'?HORRORS[i.type].cost:0;}
+function itemCost(i){return i.kind==='ward'?wardCost(i.type):i.kind==='horror'?horrorCost(i.type):0;}
 function isSel(i){return i.kind==='lamp'?selTower===F.lamp:(!!sel&&sel.kind===i.kind&&sel.type===i.type);}
 function itemName(i){return i.kind==='ward'?wdef(i.type).short:i.kind==='horror'?(FOES[i.type]||HORRORS[i.type]).n.replace('Drowned ','').replace('Ichor ','').replace('Bound ',''):'Lamp';}
 function costLabel(i){
@@ -8086,7 +8542,7 @@ function renderModebar(){
   else if(mode==='unbind'){title='Unbind'; sub='Tap one of your horrors. It charges down the stair through everything in its way, and is gone for good.';}
   else if(mode==='kindle'){title='Kindle'; sub='Tap a creature you can see. It burns and lights the dark around it for 8 seconds, and it runs.';}
   else if(sel&&sel.kind==='ward'){const W=wdef(sel.type); title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(sel.type==='pylon'?' Tap a lit tile. One pylon must stand in the lamp’s own light to power the rest.':sel.type==='mirror'?' Tap a tile in the lamp’s own light, then tap the mirror to aim it.':sel.type==='grasp'?' Tap a full pile of bones on the path.':sel.type==='bellwire'?' Tap the path, lit or dark.':sel.type==='weir'?' Tap the fork, lit or dark.':sel.type==='fork'?' Tap a tile within reach of the lamp or a fork, lit or dark.':W.path?' Tap a lit path tile.':sel.type==='candle'&&corpseKit()?' Tap a marked tile beside a body.':sel.type==='candle'&&signalKit()?' Tap a lit tile beside the path, or a dark one near a lit Signal Candle.':' Tap a lit tile beside the path.');}
-  else if(sel&&sel.kind==='horror'){const H=HORRORS[sel.type]; title=H.n+' · <i>'+H.cost+'</i> · <em>+'+horrorMad(sel.type)+' madness</em>'; sub=avail(sel.type)+' ready. '+H.d;}
+  else if(sel&&sel.kind==='horror'){const H=HORRORS[sel.type], hc=horrorCost(sel.type); title=H.n+' · <i>'+(hc?hc:'free')+'</i> · <em>+'+horrorMad(sel.type)+' madness</em>'; sub=avail(sel.type)+' ready. '+(hc?'':'Unpaid Teeth: this one costs nothing. ')+H.d;}
   if(!title||!F||F.phase==='cleared'||F.phase==='draft'){if(!el.hidden){el.hidden=true; modeKey=''; modeTitle=''; $('#cmdbar').classList.remove('placing');} return;}
   const key=title+sub;
   if(key===modeKey)return;
@@ -8172,9 +8628,11 @@ function renderHUD(){
   $('#oilBar').style.width=clamp(run.oil/run.oilMax*100,0,100)+'%';
   $('#oilMeter').classList.toggle('low',run.oil<=6);
   $('#essV').textContent=run.ess;
-  const m=madness(), Tt=tiers(), cap=Tt[2]+6;
+  /* the dread the Many-Mouthed adds is striped onto the end of the madness bar */
+  const m=madness(), dr=dread(), Tt=tiers(), cap=Tt[2]+6;
   $('#madV').textContent=m;
-  $('#madBar').style.width=Math.min(100,m/cap*100)+'%';
+  $('#madBar').style.width=Math.min(100,(m-dr)/cap*100)+'%';
+  $('#dreadBar').style.left=Math.min(100,(m-dr)/cap*100)+'%'; $('#dreadBar').style.width=Math.max(0,Math.min(100,m/cap*100)-Math.min(100,(m-dr)/cap*100))+'%';
   ['#t1','#t2','#t3'].forEach((id,i)=>$(id).style.left=(Tt[i]/cap*100)+'%');
   $('#madTier').textContent=TIERNAMES[madTier()];
   const cb=$('#callBtn'), n=F.def.waves.length;
