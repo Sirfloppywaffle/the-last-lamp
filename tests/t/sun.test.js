@@ -48,7 +48,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(spots.noBurn,'Noticed alone does not burn',spots);
   ok(spots.turned===3&&spots.turnedOnPath,'turning the board keeps the spots on the path',spots);
 
-  /* Watched: spots sear 8 a second (16 with Searing Rays), another opens each wave up to 12; Blinded Prey slows and
+  /* Watched: spots sear 3 a second (6 with Searing Rays), another opens each wave up to 12; Blinded Prey slows and
      spares the Stalker; Claimed: a ward in the glare waits a third longer between shots */
   const tiers=await p.evaluate(()=>{const T=__t, out={};
     T.newRun('lamplighter',0); T.setP(false); T.addAtt('sun',3); out.tier=T.patTier('sun');
@@ -68,9 +68,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     return out;});
   console.log(JSON.stringify(tiers));
   ok(tiers.tier===2,'Attention 3 is Watched',tiers.tier);
-  ok(Math.abs(tiers.burn-4)<.3,'Watched sears 8 a second',tiers.burn);
-  ok(Math.abs(tiers.burn2-8)<.4,'Searing Rays doubles it',tiers.burn2);
-  ok(tiers.rose===1&&tiers.cap===12,'another spot opens each wave, twelve at most',[tiers.rose,tiers.cap]);
+  ok(Math.abs(tiers.burn-1.5)<.2,'Watched sears 3 a second',tiers.burn);
+  ok(Math.abs(tiers.burn2-3)<.3,'Searing Rays doubles it',tiers.burn2);
+  ok(tiers.rose===1&&tiers.cap===8,'another spot opens each wave, eight at most',[tiers.rose,tiers.cap]);
   ok(tiers.dazzled,'a dazzled Stalker never sights the lamp',tiers);
   ok(tiers.slowRatio>.7&&tiers.slowRatio<.9,'Blinded Prey slows what stands in a spot by a fifth',tiers.slowRatio);
   ok(tiers.cdBefore===1,'Watched does not slow your wards',tiers.cdBefore);
@@ -97,6 +97,36 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(Math.abs(offs.tether-15)<.1&&Math.abs(offs.free-10)<.1,'Solar Tether: half again on the line in a spot, nothing off it',offs);
   ok(!offs.peal&&offs.toll,'Resonant Glare: a Toll stuns and hears what stands in a spot; a Peal beat does not',offs);
   ok(offs.spectrum2-offs.spectrum===6,'Alien Spectrum: candles sear 6 a second more',offs);
+
+  /* Disorienting Flare: an Arc Lamp's flare makes a stunned creature walk back for 2s, once each, never a boss or a Herald */
+  const arc=type=>p.evaluate(type=>{const T=__t, out={};
+    T.newRun('galvanist',0); T.setP(false); T.run.offs=['sun_arc']; T.F.phase='wave';
+    /* by the lamp, so its light reaches the candle (a dark candle never flares) */
+    const L0=T.F.paths[0].len-3.2, pt=T.posAt(T.F.paths[0],L0);
+    T.F.towers.push({kind:'ward',type:'candle',id:9001,c:Math.floor(pt[0]),r:Math.floor(pt[1]),x:pt[0],y:pt[1]+.3,br:{glow:0,spark:0,signal:0,ember:0},cd:0,ang:0});
+    const e=T.spawnFoe(type,0,L0); e.hp=1e6; let back=0, stunned=0;
+    /* hold it in the lamp's light until the flare comes (every 4s); once lost, let it walk */
+    for(let i=0;i<260;i++){if(!(e.disorientT>0)&&!e.lost)e.d=L0; const before=e.d; T.update(.05); if(e.stunT>0)stunned++; if(e.lost&&e.d<before-1e-6)back++;}
+    return {lost:!!e.lost,back,stunned};},type);
+  const lost={crawler:await arc('crawler'),herald:await arc('tithetaker'),boss:await arc('boss')};
+  console.log(JSON.stringify(lost));
+  ok(lost.crawler.stunned>0&&lost.crawler.lost&&lost.crawler.back>=20,'Disorienting Flare: a stunned creature forgets the way and walks back',lost.crawler);
+  ok(lost.herald.stunned>0&&!lost.herald.lost&&!lost.boss.lost,'a Herald (struck by the flare, so stunned) and a boss are never disoriented',lost);
+
+  /* Alien Ash: an Occultist's Corpse Candle by a spot shines a tile further and sears; away from one, it does not */
+  const ash=await p.evaluate(()=>{const T=__t, out={};
+    T.newRun('occultist',0); T.setP(false); T.run.offs=['sun_corpse']; T.addAtt('sun',1);
+    const [g,d]=T.run.spots.tiles[0], pt=T.posAt(T.F.paths[g],d);
+    const near={kind:'ward',type:'candle',id:9101,x:pt[0]+.8,y:pt[1],br:{}}, far={kind:'ward',type:'candle',id:9102,x:-20,y:-20,br:{}};
+    const a=T.wstat(near), b=T.wstat(far);
+    out.lightGain=+(a.light-b.light).toFixed(2); out.burnGain=a.burn-b.burn;
+    T.newRun('lamplighter',0); T.setP(false); T.run.offs=['sun_corpse']; T.addAtt('sun',1);
+    const [g2,d2]=T.run.spots.tiles[0], q=T.posAt(T.F.paths[g2],d2);
+    out.otherKit=T.wstat({kind:'ward',type:'candle',id:9103,x:q[0]+.8,y:q[1],br:{}}).burn;
+    return out;});
+  console.log(JSON.stringify(ash));
+  ok(ash.lightGain===1&&ash.burnGain===6,'Alien Ash: a Corpse Candle by a spot shines a tile further and sears 6 a second',ash);
+  ok(ash.otherKit===0,'Alien Ash does nothing for another kit',ash);
 
   /* an offer from it reads as its own, and refusing it says so */
   const modal=await p.evaluate(()=>{const T=__t; T.newRun('lamplighter',0); T.openOffer(T.offerSet('sun'),'sun');
