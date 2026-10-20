@@ -22,7 +22,7 @@ const {chromium}=require('playwright');
   await btn('[data-dev="skip"]','Clear this floor');
   await p.waitForTimeout(2600);
   s=await p.evaluate(()=>({phase:__t.F.phase,title:document.querySelector('#mTitle').textContent,modal:!document.querySelector('#modal').hidden}));
-  if(s.phase!=='draft'||!s.modal||!/stair|Drowned Mother/i.test(s.title))fail('clearing the floor should open the landing '+JSON.stringify(s));
+  if(s.phase!=='draft'||!s.modal||!/stair|Drowned Mother|Wrong Sun/i.test(s.title))fail('clearing the floor should open the landing '+JSON.stringify(s));
 
   await openDev();
   await btn('[data-dev="floor"]','5 · '); await p.waitForTimeout(400);
