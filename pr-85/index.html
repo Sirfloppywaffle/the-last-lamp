@@ -117,6 +117,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .coach{position:fixed;z-index:30;padding:10px 12px 10px;border-radius:10px;background:var(--stone);border:1px solid var(--tallow);box-shadow:0 8px 26px var(--shadow);pointer-events:none;color:var(--bone)}
 .coach-step{margin:0 0 2px;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tallow)}
 .coach b{display:block;font-family:var(--f-display);font-size:1.12rem;font-weight:400;color:var(--bone)}
+.coach-art{display:block;width:100%;height:120px;margin:5px 0 2px;border-radius:8px;background:#0c0e10;border:1px solid rgba(255,255,255,.06)}
 .coach-text{margin:3px 0 8px;font-size:.86rem;line-height:1.35;color:var(--bone)}
 .coach-acts{display:flex;flex-wrap:wrap;gap:8px;pointer-events:auto}
 .coach-acts .btn{padding:6px 12px;font-size:.82rem;min-height:34px}
@@ -489,6 +490,7 @@ input[type=range]::-moz-range-track {
 <div class="coach-ring" id="coachRing" hidden></div>
 <div class="coach" id="coach" hidden role="status" aria-live="polite">
   <p class="coach-step" id="coachStep"></p><b id="coachTitle"></b>
+  <canvas class="coach-art" id="coachArt" hidden aria-hidden="true"></canvas>
   <p class="coach-text" id="coachText"></p>
   <div class="coach-acts" id="coachActs"></div>
 </div>
@@ -7355,8 +7357,8 @@ function render(){
   /* the Many-Mouthed's own, when seen: the reach of a Choir-Husk's veil, and of a Gibberer's chatter */
   for(const h of F.husks)if(seen.has(h)){g.strokeStyle='rgba(150,160,140,'+(.22+.08*Math.sin(tm*2+h.wob))+')'; g.lineWidth=.035; g.setLineDash([.09,.13]);
     g.beginPath(); g.ellipse(h.x,h.y+.05,HUSK_R,HUSK_R*.62,0,tm*.25,tm*.25+TAU); g.stroke(); g.setLineDash([]);}
-  for(const gb of F.gibs)if(seen.has(gb)){g.strokeStyle='rgba(196,150,138,'+(.12+.06*Math.sin(tm*9+gb.wob))+')'; g.lineWidth=.02;
-    g.beginPath(); g.ellipse(gb.x,gb.y+.04,GIB_R,GIB_R*.62,0,0,TAU); g.stroke();}
+  for(const gb of F.gibs)if(seen.has(gb)){g.strokeStyle='rgba(214,150,136,'+(.32+.1*Math.sin(tm*9+gb.wob))+')'; g.lineWidth=.03; g.setLineDash([.09,.13]);
+    g.beginPath(); g.ellipse(gb.x,gb.y+.04,GIB_R,GIB_R*.62,0,tm*.3,tm*.3+TAU); g.stroke(); g.setLineDash([]);}
   const ts=F.towers.slice().sort((a,b)=>a.y-b.y);
   const items=[];
   for(const t of ts){
@@ -7370,7 +7372,10 @@ function render(){
   for(const e of fs)if(seen.has(e))items.push({y:e.y,k:2,o:e});
   items.sort((a,b)=>a.y-b.y);
   for(const it of items){
-    if(it.k===0){const t=it.o; if(t.kind==='ward'){drawWard(g,t,tm,false); if(t.ph)drawPhantom(t,tm);} else drawHorror(g,t,tm);}
+    if(it.k===0){const t=it.o; if(t.kind==='ward'){drawWard(g,t,tm,false); if(t.ph)drawPhantom(t,tm);
+        /* a ward a seen Gibberer is slowing is ringed in pink */
+        for(const gb of F.gibs)if(seen.has(gb)&&dst(t.x,t.y,gb.x,gb.y)<=GIB_R){g.strokeStyle='rgba(224,140,124,'+(.7+.2*Math.sin(tm*6))+')'; g.lineWidth=.035; g.setLineDash([.07,.06]); g.beginPath(); g.ellipse(t.x,t.y+.1,.34,.2,0,-tm,-tm+TAU); g.stroke(); g.setLineDash([]); break;}}
+        else drawHorror(g,t,tm);}
     else if(it.k===1){drawLamp(g,F.lx,F.ly,tm,1,kit());}
     else{
       const e=it.o;
@@ -7869,9 +7874,9 @@ const LORE={
   stalker:'Veiled and fast, and it drains 2 oil. At a fork it hunts your light.',
   behemoth:'Heavy: it cannot be stunned or pushed back, and nothing slows it by more than 15%. It drains 6 oil and breaks a Weir. Whaling Guns do double damage to it.',
   boss2:'The heart of the dark, on the last floor. It hastens what walks with it and calls more. If it reaches the lamp, the run is over.',
-  gibberer:'Sent by the Many-Mouthed for your wards. While it lives you carry 2 dread, and any ward within its chatter waits a quarter longer between shots. It leaves nothing when it dies.',
-  gorger:'Sent by the Many-Mouthed for your horrors. Horrors hurt it 35% less. Every few seconds it lashes its tongue at a horror within 2 tiles, dazing it for 2 seconds, and heals. Watched, it snuffs candles and silences forks the same way. It leaves nothing when it dies.',
-  husk:'Sent once the Many-Mouthed has claimed you. Everything that walks within 1.8 tiles of it is veiled like a Shade, until a Candle, a Flare or a bound Watcher shows it. Not a boss, not a Herald. The Husk itself can be seen; kill it and the veil lifts.'
+  gibberer:'Small, pale and round, covered in mouths. Sent by the Many-Mouthed for your wards. While it lives you carry 2 dread (6 at most), and any ward inside the pink ring at its feet waits a quarter longer between shots. Weak: kill it first. It leaves nothing when it dies.',
+  gorger:'Big and purple, with a gaping mouth and a long tongue; not the red, round Gnasher. Sent by the Many-Mouthed for your horrors. Horrors hurt it 35% less, so use wards. Every few seconds it lashes its tongue at a horror within 2 tiles, dazing it for 2 seconds, and heals. Watched, it snuffs candles and silences forks the same way. It leaves nothing when it dies.',
+  husk:'Tall, grey and hollow, with a column of black mouths. Sent once the Many-Mouthed has claimed you. Everything inside the grey ring at its feet (1.8 tiles) is veiled like a Shade, until a Candle, a Flare or a bound Watcher shows it. Not a boss, not a Herald. The Husk itself can be seen; kill it and the veil lifts.'
 };
 const BOOK={tab:'foes',from:''};
 function openBook(from,tab){
@@ -7977,6 +7982,75 @@ function coachTray(type){return coachEl(coachTrayBtn(type));}
 /* the tray scrolls sideways on a narrow screen: bring the item a step talks about into view */
 function coachShowTray(type){const b=coachTrayBtn(type); if(b)b.scrollIntoView({block:'nearest',inline:'center'});}
 function coachStat(id){const e=$(id); return e?coachEl(e.closest('.stat')):null;}
+/* the picture on a lesson card: a small canvas drawn in tiles, 9.2 across and 3 high, so a sprite, a ring and a few words can say
+   what a paragraph can't. A step gives it as art:(c,tm)=>{...} */
+const ART_W=9.2, ART_ICONS={};
+function artIcon(kind,type){const k=kind+':'+type; if(!ART_ICONS[k]){const cv=document.createElement('canvas'); cv.width=cv.height=72; drawIcon(cv,{kind,type}); ART_ICONS[k]=cv;} return ART_ICONS[k];}
+function artIc(c,kind,type,x,y,sz){c.drawImage(artIcon(kind,type),x-sz/2,y-sz/2,sz,sz);}
+function artFoe(c,type,x,y,r,tm,o){drawCreature(c,type,x,y,r,tm,Object.assign({ph:0,face:1},o||{}));}
+function artText(c,txt,x,y,col,al,sz){c.fillStyle=col||'#e8e0cc'; c.font='bold '+(sz||.34)+'px sans-serif'; c.textAlign=al||'center'; c.fillText(txt,x,y);}
+function artRing(c,x,y,r,col,tm){c.strokeStyle=col; c.lineWidth=.05; c.setLineDash([.12,.14]); c.beginPath(); c.ellipse(x,y,r,r*.62,0,tm*.25,tm*.25+TAU); c.stroke(); c.setLineDash([]);}
+function artPill(c,txt,x,y,w,col){c.fillStyle=col; c.beginPath(); c.roundRect?c.roundRect(x,y-.27,w,.54,.27):c.rect(x,y-.27,w,.54); c.fill(); artText(c,txt,x+w/2,y+.12,'#f4ecd8','center',.32);}
+const ART_NAME={gibberer:['Gibberer','hunts wards'],gorger:['Gorger','hunts horrors'],husk:['Choir-Husk','veils its pack']};
+function artLineup(c,tm){
+  const ts=['gibberer','gorger'].concat(patTier('mouths')>=3?['husk']:[]), n=ts.length;
+  ts.forEach((t,i)=>{const x=ART_W*(i+.5)/n; artFoe(c,t,x,1.05,t==='gibberer'?.8:t==='gorger'?.85:1,tm); artText(c,ART_NAME[t][0],x,2.25,'#f4ecd8'); artText(c,ART_NAME[t][1],x,2.72,'#c9b9a8','center',.3);});
+}
+function artGibberer(c,tm){
+  artFoe(c,'gibberer',2.1,1.35,.95,tm); artText(c,'Gibberer',2.1,2.7,'#f4ecd8');
+  artPill(c,'22 life, quick',4.5,.75,4.3,'#5a3a58'); artPill(c,'drops nothing',4.5,1.5,4.3,'#4f5a44'); artPill(c,'1 oil at the lamp',4.5,2.25,4.3,'#6a5530');
+}
+function artChatter(c,tm){
+  artRing(c,2.3,1.35,GIB_R,'rgba(214,150,136,.9)',tm); artFoe(c,'gibberer',2.3,1.4,.7,tm);
+  artIc(c,'ward','candle',3.15,1.2,1); artText(c,'slowed',3.15,2.45,'#e6a898','center',.3);
+  artIc(c,'ward','candle',5.1,1.2,1); artText(c,'normal',5.1,2.45,'#c9b9a8','center',.3);
+  artPill(c,'25% slower',6.2,.8,2.9,'#7e4a40'); artPill(c,'+2 dread each',6.2,1.7,2.9,'#5a3a58'); artText(c,'(6 at most)',7.65,2.5,'#c9b9a8','center',.28);
+}
+function artGorger(c,tm){
+  artFoe(c,'gnasher',2.2,1.45,.85,tm); artText(c,'Gnasher',2.2,2.75,'#c9b9a8','center',.32); artText(c,'red and round',2.2,.4,'#c9b9a8','center',.3);
+  artFoe(c,'gorger',6.5,1.45,.95,tm); artText(c,'Gorger',6.5,2.75,'#f4ecd8','center',.32); artText(c,'purple, with a tongue',6.5,.4,'#e6c0e0','center',.3);
+}
+function artTongue(c,tm){
+  const gx=1.5, hx=3.9, y=1.55, w=Math.sin(tm*5)*.12;
+  artFoe(c,'gorger',gx,y,.95,tm);
+  artIc(c,'horror',Object.keys(HORRORS)[0],hx,y-.05,1.15); artText(c,'your horror',hx,2.75,'#c9b9a8','center',.28);
+  c.strokeStyle='#d98aa4'; c.lineWidth=.1; c.lineCap='round'; c.beginPath(); c.moveTo(gx+.55,y+.1); c.quadraticCurveTo((gx+hx)/2,y+.6+w,hx-.5,y); c.stroke();
+  artText(c,'dazed 2s',hx,.45,'#9fc8d8'); artText(c,'+8 life',gx,.45,'#9fd89a');
+  artPill(c,'horrors hit it 35% less',5.1,.85,4.1,'#5a3a58');
+  if(patTier('mouths')>=2)artPill(c,'Watched: candles too',5.1,1.75,4.1,'#7e4a40');
+}
+function artHusk(c,tm){
+  artFoe(c,'husk',2.1,1.35,1.05,tm); artText(c,'Choir-Husk',2.1,2.75,'#f4ecd8');
+  artPill(c,'95 life, slow',4.5,.75,4.3,'#5a3a58'); artPill(c,'one each wave',4.5,1.5,4.3,'#4f5a44'); artPill(c,'2 oil at the lamp',4.5,2.25,4.3,'#6a5530');
+}
+function artVeil(c,tm){
+  artRing(c,2.3,1.4,HUSK_R,'rgba(170,182,158,.95)',tm); artFoe(c,'husk',2.3,1.1,.75,tm);
+  artFoe(c,'crawler',3.2,1.95,.55,tm,{alpha:.28}); artText(c,'hidden',3.2,2.8,'#c9b9a8','center',.28);
+  artFoe(c,'crawler',5.1,1.55,.55,tm); artText(c,'seen',5.1,2.5,'#c9b9a8','center',.28);
+  artPill(c,'Candle shows it',6.1,.8,3,'#4f5a44'); artPill(c,'kill the Husk',6.1,1.7,3,'#7e4a40');
+}
+/* the madness bar, with dread laid over it in stripes: what a horror brings, and what the Many-Mouthed brings */
+function artDread(c,tm){
+  const x=.5, y=1.1, w=8.2, h=.62;
+  c.fillStyle='#1c1f22'; c.fillRect(x,y,w,h);
+  c.fillStyle='#a8503e'; c.fillRect(x,y,3.2,h);
+  c.save(); c.beginPath(); c.rect(x+3.2,y,2.4,h); c.clip(); c.fillStyle='#7a4a78'; c.fillRect(x+3.2,y,2.4,h);
+  c.strokeStyle='rgba(240,200,236,.55)'; c.lineWidth=.1; for(let k=-2;k<10;k++){c.beginPath(); c.moveTo(x+3.2+k*.3,y+h); c.lineTo(x+3.2+k*.3+.62,y); c.stroke();} c.restore();
+  [[3.6,'Whispers'],[5.4,'Slipping'],[7.2,'Leaning']].forEach(([t,n])=>{c.fillStyle='#e8e0cc'; c.fillRect(x+t-.02,y-.12,.05,h+.24); artText(c,n,x+t,2.3,'#c9b9a8','center',.28);});
+  artText(c,'madness from horrors',x+1.6,.7,'#e2a090'); artText(c,'dread',x+4.4,.7,'#d8a8d4');
+  artText(c,'only horrors you paid for feed the Occultist',ART_W/2,2.85,'#c9b9a8','center',.28);
+}
+function coachArtDraw(tm){
+  const cv=$('#coachArt'), s=COACH.list&&COACH.list[COACH.i];
+  if(!cv)return; if(!s||!s.art){cv.hidden=true; return;}
+  cv.hidden=false;
+  const dpr=Math.min(2,window.devicePixelRatio||1), W=Math.max(1,Math.round(cv.clientWidth*dpr)), H=Math.round(120*dpr);
+  if(cv.width!==W||cv.height!==H){cv.width=W; cv.height=H;}
+  const c=cv.getContext('2d'), u=Math.min(H/3,W/ART_W);
+  c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,W,H);
+  c.setTransform(u,0,0,u,(W-ART_W*u)/2,(H-3*u)/2);
+  try{s.art(c,tm);}catch(err){reportError(err);}
+}
 const SIGNAL_LESSON='Your Signal Candles pass light to one another. Build one in the dark, up to 4 tiles from a lit one, and the light leaps across. A dotted thread shows each leap. Take away a link and everything past it goes dark.';
 /* the rites lesson names rites this kit really holds */
 function riteLesson(){
@@ -8004,6 +8078,8 @@ function coachWalkSteps(){
   ];
 }
 /* first-time tips: when each turns up, and what it says */
+/* a ring on the creature a lesson is about, while it lives and can be seen */
+function foeTarget(e){return rad=>()=>e&&!e.dead&&canSee(e)?coachBoard(e.x,e.y,rad||Math.max(.6,e.def.r*1.6)):null;}
 const TIPS={
   fork:{when:()=>F.phase==='build'&&F.forks.length,steps:()=>{
     const out=[{title:'The stair forks',text:'Here the stair splits. They take the darker way, and only light you cast counts, never the lamp’s. The gold chevron shows where they will go. Shades and Stalkers hunt your light instead.',target:()=>F.forks[0]?coachBoard(F.forks[0].x,F.forks[0].y,.9):null}];
@@ -8153,15 +8229,20 @@ const TIPS={
   glare:{when:()=>patTier('sun')>=3&&F.towers.some(t=>t.kind==='ward'&&nearSpot(t.x,t.y)),title:'In the glare',
     text:'It has claimed you. A ward that stands within the halo of a bright spot fires a quarter slower. Build back from the glare, or build there knowing it.',
     target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&nearSpot(t.x,t.y)); return t?coachBoard(t.x,t.y,SPOT_GLARE):null;}},
-  mouths:{when:()=>patTier('mouths')>=1&&F.phase==='wave'&&F.foes.some(e=>!e.dead&&e.def.patron==='mouths'&&canSee(e)),title:'The Many-Mouthed',
-    text:'It has noticed you. As each wave begins it reads what you built and sends its own: Gibberers for your wards (they slow the wards near them, and add dread), Gorgers for your horrors (they daze them). Nothing it sends leaves essence, bones or sigils. Tap its sign beside the Grimoire to see what its Attention does next.',
-    target:()=>{const e=F.foes.find(e=>!e.dead&&e.def.patron==='mouths'&&canSee(e)); return e?coachBoard(e.x,e.y,.8):null;}},
-  dread:{when:()=>dread()>0&&F.phase!=='draft',title:'Dread',
+  mouths:{foe:e=>e.def.patron==='mouths',title:'The Many-Mouthed sends its own',art:artLineup,
+    text:'As each wave begins it reads what you built, and sends a few creatures of its own up the stair, in the second half of the wave. They are not like the others: when they die they leave no essence, bones or sigils. You will meet each one as it climbs.'},
+  gibberer:{foe:e=>e.type==='gibberer',steps:e=>{const at=foeTarget(e);return [
+    {title:'A Gibberer',art:artGibberer,target:at(),text:'The small pale one, covered in mouths. It is sent for your wards. It is weak and dies fast, but while it lives it does two things, and the next card shows them.'},
+    {title:'Its chatter',art:artChatter,target:at(GIB_R),text:'The faint pink ring at its feet is its chatter. Any ward inside it waits 25% longer between shots, and is ringed in pink while it does. And every Gibberer alive adds 2 dread (up to 6), which counts toward your madness. Kill it first.'}];}},
+  gorger:{foe:e=>e.type==='gorger',steps:e=>{const at=foeTarget(e);return [
+    {title:'A Gorger',art:artGorger,target:at(),text:'The big purple one with a gaping mouth and a long tongue. It is not a Gnasher: the Gnasher is red and round. In the dark both are only eyes and teeth. It is sent for your horrors.'},
+    {title:'Its tongue',art:artTongue,target:at(GORGE_R),text:'When a horror is within 2 tiles, it lashes its tongue every few seconds: the horror is dazed and does nothing for 2 seconds, and the Gorger heals 8. Horrors hurt it 35% less, so use your wards and your harpoon.'+(patTier('mouths')>=2?' Watched: with no horror in reach it snuffs a candle or silences a fork instead.':'')}];}},
+  husk:{foe:e=>e.type==='husk',steps:e=>{const at=foeTarget(e);return [
+    {title:'A Choir-Husk',art:artHusk,target:at(),text:'Tall and grey and hollow, with a column of black mouths. It climbs once each wave, and only because the Many-Mouthed has claimed you. And now your bindings may break even at Whispers.'},
+    {title:'Its veil',art:artVeil,target:at(HUSK_R),text:'Everything inside the grey ring is veiled like a Shade: your wards cannot see or hit it, even in light. A Candle, a Flare or a bound Watcher shows it. Or kill the Husk, which can always be seen, and the veil lifts. Bosses and Heralds are never veiled.'+(run.wards.includes('effigy')?' A green ring under a creature is something else: an Effigy hex.':'')}];}},
+  dread:{when:()=>dread()>0&&F.phase!=='draft',title:'Dread',art:artDread,
     text:'You carry dread now. It counts with your madness toward Whispers, Slipping and Leaning, so the dark comes for you just the same, and the bar shows it striped. But only madness from horrors you paid for makes the Occultist stronger or opens free horrors. Dread brings only the dark.',
     target:()=>coachStat('#madV')},
-  husk:{when:()=>F.phase==='wave'&&F.husks.some(h=>!h.dead&&canSee(h)),title:'The Choir-Husk',
-    text:'It has claimed you. Whatever walks near the Choir-Husk is veiled like a Shade until a Candle, a Flare or a bound Watcher shows it. The Husk itself can be seen: kill it and the veil lifts. And now your bindings may break even at Whispers.',
-    target:()=>{const h=F.husks.find(h=>!h.dead&&canSee(h)); return h?coachBoard(h.x,h.y,HUSK_R):null;}},
   feed:{when:()=>run.rites.includes('feed')&&F.phase==='wave'&&F.foes.filter(e=>!e.dead&&dst(e.x,e.y,F.lx,F.ly)<=FEED_R).length>=2,title:'Feed the Dark',
     text:'Tap Feed the Dark when they crowd the lamp. It gutters: what is near is dragged back, and your horrors strike twice as fast and into the dark for a moment. The lamp burns smaller while it does, and you carry 4 dread until the wave breaks.',
     target:()=>coachEl('#rites [data-r="feed"]')},
@@ -8215,7 +8296,7 @@ function coachEnter(){
   const next=s.until?'':'<button class="btn call" data-coach="next">'+(last?'Got it':'Next')+'</button>';
   $('#coachActs').innerHTML=next+'<button class="btn" data-coach="skip">'+(COACH.kind==='walk'?'Skip walkthrough':'No more tips')+'</button>';
   $('#coach').hidden=false;
-  coachPlace();
+  coachPlace(); coachArtDraw(performance.now()/1000);
   if(!COACH.raf)COACH.raf=requestAnimationFrame(coachFrame);
 }
 function coachDone(skip){
@@ -8238,6 +8319,7 @@ function coachNext(){
 function coachFrame(now){
   if(!COACH.on){COACH.raf=0; return;}
   COACH.raf=requestAnimationFrame(coachFrame);
+  coachArtDraw(now/1000);
   if(now-COACH.last<100)return; COACH.last=now;
   if(!F||!run||!$('#title').hidden){coachStop(); return;}
   const s=COACH.list[COACH.i];
@@ -8286,7 +8368,7 @@ function coachPoll(){
       if(e.dead){e=null; for(let i=0;i<F.foes.length;i++){const o=F.foes[i]; if(!o.dead&&tip.foe(o)){e=o; break;}}}
     }
     else if(!tip.when())continue;
-    const list=tip.steps?tip.steps():[{title:tip.title,text:tip.text,target:e?(()=>e.dead?null:coachBoard(e.x,e.y,Math.max(.6,e.def.r*1.6))):tip.target}];
+    const list=tip.steps?tip.steps(e):[{title:tip.title,text:tip.text,art:tip.art,target:e?(()=>e.dead?null:coachBoard(e.x,e.y,Math.max(.6,e.def.r*1.6))):tip.target}];
     coachRun('tip',k,list);
     return;
   }
