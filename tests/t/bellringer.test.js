@@ -179,12 +179,18 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     run(.3); out.fired={shells:T.F.shots.filter(x=>x.k==='tocsin').length,ammo:toc.ammo};
     const vhp=victim.hp; run(1.6); out.landed={hurt:Math.round(vhp-victim.hp),reloading:toc.ammo===0&&toc.cd>0};
     T.render();
-    /* a Perfect Toll: on the lamp's beat it reaches half again as far and makes half the Noise; it cracks once, like any Toll (Criss: two cracks a beat let five Clappers carry the Keeper); off the beat it is a plain Toll */
+    /* a Perfect Toll: on the lamp's beat it reaches half again as far and makes full Noise (at half, a Toll on every beat was free forever); it cracks once, like any Toll (Criss: two cracks a beat let five Clappers carry the Keeper); off the beat it is a plain Toll */
     fresh(); T.buyBranch(T.F.lamp,2); wave(); hold('crawler',1); T.F.noise=0;
     T.F.pealT=T.lstat().peal-.1; out.beatOff=+T.beatOff().toFixed(2); T.F.cd.toll=0; T.castRite('toll');
     const pt=T.F.tolls.filter(R=>!R.echo).pop(); out.perfect={noise:T.F.noise,max:pt.max,cracks:pt.cracks,gold:pt.gold,pealReset:T.F.pealT};
     T.F.pealT=1.5; T.F.cd.toll=0; T.castRite('toll'); out.offbeat={noise:T.F.noise,max:T.F.tolls.filter(R=>!R.echo).pop().max};
     T.render();
+    /* a Toll on every beat is no longer free: the Noise climbs until the dark answers (Criss, v18.5.2: two Clappers held a floor) */
+    fresh(); T.buyBranch(T.F.lamp,2); wave(); hold('crawler',1); T.F.noise=0;
+    {let answered=0, perfects=0; for(let i=0;i<Math.round(60/.05);i++){const o=T.beatOff(); if(!(T.F.cd.toll>0)&&o!==null&&o<=.15){const before=T.F.perfects||0; T.castRite('toll'); perfects+=(T.F.perfects||0)-before;} T.update(.05);}
+     answered=T.F.foes.filter(e=>e.answered).length; out.everyBeat={perfects,answered};}
+    /* Dead Reckoning, whose price falls on light, is never offered to her; it still is to a kit that builds light */
+    fresh(); out.reckonBell=T.relicFits('witchsalt'); T.newRun('lamplighter',0); out.reckonLamp=T.relicFits('witchsalt');
 
     /* the path she hears, and captions for playing without sound */
     fresh(); out.edges=T.pathEdges().length;
@@ -246,8 +252,10 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.fired.shells===1&&r.fired.ammo===0,'then it fires its shell',r.fired);
   ok(r.landed.hurt>=40&&r.landed.reloading,'the shell bursts on the wire, and the Tocsin reloads',r.landed);
   ok(Math.abs(r.beatOff-.1)<.02,'the beat is measured from the lamp’s own toll',r.beatOff);
-  ok(r.perfect.noise===.5&&r.perfect.max===10.5&&r.perfect.cracks===1&&r.perfect.gold&&r.perfect.pealReset===0,'a Perfect Toll: half again as far, one crack, half the Noise, and it takes the beat’s place',r.perfect);
-  ok(r.offbeat.noise===1.5&&r.offbeat.max===7,'off the beat it is a plain Toll',r.offbeat);
+  ok(r.perfect.noise===1&&r.perfect.max===10.5&&r.perfect.cracks===1&&r.perfect.gold&&r.perfect.pealReset===0,'a Perfect Toll: half again as far, one crack, full Noise, and it takes the beat’s place',r.perfect);
+  ok(r.everyBeat.perfects>=10&&r.everyBeat.answered>=2,'a Perfect Toll on every beat for a minute wakes the dark',r.everyBeat);
+  ok(r.reckonBell===false&&r.reckonLamp===true,'Dead Reckoning is never offered to the Bellringer',[r.reckonBell,r.reckonLamp]);
+  ok(r.offbeat.noise===2&&r.offbeat.max===7,'off the beat it is a plain Toll',r.offbeat);
   ok(r.edges>10,'she hears the path: its edges are traced in the dark',r.edges);
   ok(r.caption,'with Show sounds on, the toll writes itself on the board');
   ok(!errs.length,'no page errors',errs);

@@ -22,7 +22,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   console.log(JSON.stringify(r));
   const K=r.kits, all=Object.values(K);
   ok(r.resting.every(k=>all.some(pool=>pool.includes(k))),'every relic that rested is offered again',r.resting);
-  ok(['tallow','reserve','whetted','quiet','wax','bounty','key','leech','witchsalt','marrow'].every(k=>all.every(pool=>pool.includes(k))),'the universal relics (and Thunder Marrow) reach all five kits',K);
+  ok(['tallow','reserve','whetted','quiet','wax','bounty','key','leech','marrow'].every(k=>all.every(pool=>pool.includes(k))),'the universal relics (and Thunder Marrow) reach all five kits',K);
+  /* Dead Reckoning reaches every kit but the Bellringer: its price falls on light, and she sees by sound (Criss, v18.5.2) */
+  ok(Object.entries(K).every(([k,pool])=>pool.includes('witchsalt')===(k!=='bellringer')),'Dead Reckoning reaches every kit but the Bellringer',K);
   ok(K.lamplighter.includes('saltflats')&&K.whaler.includes('saltflats')&&K.galvanist.includes('saltflats'),'Salt Flats for the kits with Salt');
   ok(!K.occultist.includes('saltflats')&&!K.bellringer.includes('saltflats')&&!K.occultist.includes('ledger')&&!K.bellringer.includes('ledger'),'no salt relic for a kit without Salt',[K.occultist,K.bellringer]);
   ok(K.occultist.includes('shadow')&&!['lamplighter','whaler','galvanist','bellringer'].some(k=>K[k].includes('shadow')),'Second Shadow only with an Effigy');

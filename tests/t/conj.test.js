@@ -103,7 +103,10 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     clearFoes();
     out.cur=+T.currentOf(T.spawnFoe('gorger',g,d0+.5)).toFixed(2); clearFoes();
     holdWave(); T.F.gorgeRise=0; const w0=T.F.water.size;
-    for(let k=0;k<3;k++){const go=at('gorger',g,Math.max(0,d0-1.2)); for(let i=0;i<120&&!T.inWater(go);i++)T.update(1/30); go.dead=true; T.update(.001);}
+    /* each Gorger starts a tile and more short of the water as it stands now: a rise can grow the water's near end toward
+       where the last one started, and one born already wet raises nothing (this failed about 1 run in 12) */
+    const dryBefore=()=>{let d=d0; for(;d>0;d-=.1){const q=T.posAt(T.F.paths[g],d); if(!T.F.water.has(Math.floor(q[0])+','+Math.floor(q[1])))break;} return Math.max(0,d-1.2);};
+    for(let k=0;k<3;k++){const go=at('gorger',g,dryBefore()); for(let i=0;i<120&&!T.inWater(go);i++)T.update(1/30); go.dead=true; T.update(.001);}
     out.rose=T.F.water.size-w0;
     clearFoes(); return out;});
   console.log(JSON.stringify(drag));
