@@ -98,6 +98,12 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T=fresh('lamplighter'); const lb=T.lampBase(); T.addRelic('witchsalt'); const lr=T.lampRadius();
     const out1=place('harpoon',d=>d>lr+.6), in1=place('harpoon',d=>d<lr-.6);
     out.reckon={drop:lb-T.lampBase(),out:out1&&T.reckoned(out1),in:in1&&T.reckoned(in1),mul:out1&&T.wardMul(out1)/T.wardMul(in1),curse:!!T.RELICS.witchsalt.curse};
+    /* 11b. Dead Reckoning's price: every light costs double; the Occultist's free candles shine 40% less far past the lamp's own light */
+    T=fresh('lamplighter'); const rc0=T.wardCost('candle'), rh0=T.wardCost('harpoon'); T.addRelic('witchsalt');
+    out.reckonCost={c0:rc0,c1:T.wardCost('candle'),h0:rh0,h1:T.wardCost('harpoon')};
+    T=fresh('occultist',['witchsalt']); const LR=T.lampRadius(), cin={kind:'ward',type:'candle',br:{},x:T.F.lx+.5,y:T.F.ly}, cout={kind:'ward',type:'candle',br:{},x:T.F.lx+LR+1,y:T.F.ly};
+    const lin=T.wstat(cin).light, lout=T.wstat(cout).light; T.removeRelic('witchsalt');
+    out.reckonOcc={cost:(T.addRelic('witchsalt'),T.wardCost('candle')),lin,lout,plain:(T.removeRelic('witchsalt'),T.wstat(cout).light)};
     /* 12. Choir in the Walls: no madness; a horror fielded under it leaves the roster when recalled or carried to the stair. One fielded before it stays */
     T=fresh('occultist'); T.run.roster={gnasher:2,watcher:1,wretch:1};
     const pre=place('wretch',null,'horror'); T.addRelic('choirwalls');
@@ -134,6 +140,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.leech.fed0===0&&r.leech.leech===0&&r.leech.oil===13&&r.leech.bleed===3,'Leech Jar: only slow blood feeds it; at 8 it bursts for 1 oil and a bleed',r.leech);
   ok(r.marrow.dist<=2.5&&r.marrow.cd1===0&&r.marrow.cd2===5&&near1(r.marrow.boost,1.25),'Thunder Marrow: the nearest striking ward fires at once, 25% harder, every 3 seconds',r.marrow);
   ok(near1(r.reckon.drop,1.5)&&r.reckon.out&&!r.reckon.in&&near1(r.reckon.mul,1.25)&&r.reckon.curse,'Dead Reckoning: a smaller lamp; wards beyond it hit harder',r.reckon);
+  ok(r.reckonCost.c1===r.reckonCost.c0*2&&r.reckonCost.h1===r.reckonCost.h0,'Dead Reckoning: lights cost double, other wards do not',r.reckonCost);
+  ok(r.reckonOcc.cost===0&&near1(r.reckonOcc.lin,r.reckonOcc.plain)&&near1(r.reckonOcc.lout,r.reckonOcc.plain*.6),'Dead Reckoning: Occultist candles stay free but shine 40% less past the lamp',r.reckonOcc);
   ok(r.choir.mad===0,'Choir in the Walls: fielded horrors cost no madness',r.choir);
   ok(r.choir.afterRecall===1&&r.choir.gnasher===0&&r.choir.watcher===0,'Choir in the Walls: recalled or carried to the stair, a horror goes into the walls',r.choir);
   ok(r.choir.pre&&r.choir.wretch===1,'Choir in the Walls: a horror fielded before you held it is kept',r.choir);
