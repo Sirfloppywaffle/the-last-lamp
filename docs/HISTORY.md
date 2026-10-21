@@ -4,6 +4,25 @@ What changed, who did it, and why. Newest first. Add your PR's line under **Unre
 
 ## Unreleased
 
+## v18.5.0 — The Relics Return
+The eleven relics that only changed a number come back to the stair, each with a rule that changes how you build, and you are only offered relics your kit can use.
+- **The Relic Overhaul** (#89, #90; Gemini's design, reviewed by Claude, answered by Gemini through the reviewer workflow, built by Claude; Criss: "Go", and the Leech Jar at 8). `RELICS_RESTING` is off.
+  - **Tallow of Saints:** wards in the outermost tile of the lamp's own light fire 25% faster (two thin gold rings show the edge; madness pulls it in).
+  - **Oil Reserve:** restores 4 oil; oil gained past the brim spills (8 at most, the number on its seal) and burns in a wave, 0.4 a second, as fire (14 a second for 3 seconds) under the foremost creature in the lamp's light.
+  - **Whetted Barbs:** your harpoon (every kit's) and Whaling Gun leave barbs, three at most, 10% slower each, never in a boss; on death they tear into the nearest seen creature within 2.5 tiles for half the blow.
+  - **Salt Flats** (needs Salt): two Salt Circles within 2.5 tiles salt the path between them; a bridge wears the nearer circle; refilling one refills both.
+  - **Quiet Mind:** 10 seconds of a wave with nothing built, upgraded or cast (a Toll is free) and you are still: madness counts 3 lower and your next ward or upgrade costs 30% less, until you act. The madness bar glows.
+  - **Sealing Wax** (now cursed): as a floor's first wave begins, the striking ward nearest the lamp and one more per horror fielded (3 at most) are sealed for the floor: −1 madness each, what they hit takes 25% more for 4 seconds, but they fire 30% slower and can't be sold.
+  - **Bounty of the Deep** (now cursed): kills on the far half of the path pay 40% more, the near half 25% less; water counts as far.
+  - **Ossuary Key:** the merchant sells on credit down to −25 essence (the stair's toll leaves a debt alone; the next purse pays it). For the next two waves, kills within 2.5 tiles of the lamp pay 3 more.
+  - **Leech Jar:** only a kill held, stunned, on a line, tangled, in salt or in water feeds it; at 8 it bursts for 1 oil and bleeds everything in the lamp's light (15 over 3 seconds, 30% slower). The count shows on its seal. Criss wants to playtest the 8.
+  - **Thunder Marrow** (needs a Bone Chime, Hook Trap, Grasping Dead, Pylon or Galvanic Coil, so every kit has one): a stun, shock or hold leaps to the nearest striking ward within 2.5 tiles; it fires at once and deals 25% more for 3 seconds; each ward sends it once every 3 seconds, to two wards in the Wrong Sun's glare.
+  - **Dead Reckoning** (replaces Witch Salt and keeps its key; cursed): the lamp burns 1.5 tiles smaller; wards outside its own light reach 40% farther and deal 25% more.
+  - **The kit filter:** a relic with `needs` is offered only if the run holds one of those wards or rites (bought and gifted wards count): the Brined Ledger and Salt Flats need Salt, Second Shadow the Hex Effigy. The Pray event now gives Salt Flats, then the Brined Ledger.
+  - A first-time tip for each, a Relics rules line, a lore line and what each needs in the Grimoire, DESIGN (with a Needs column and every number), and `relicrules.test.js`. Gemini's design is kept in `expansion/RELICS.md`.
+  - **Saves:** relics keep their keys, so a run carrying Witch Salt now carries Dead Reckoning. A run that already held Oil Reserve keeps the 4 capacity it gave. A Leech Jar count saved under the old rule is clamped to 7.
+  - **Balance changes to existing rules:** the eleven relics' old effects are gone (listed in #90). Merchant prices no longer drop 30% with the Ossuary Key, Salt Circles cost 20 and refill for 10 even with Salt Flats, Bone Chime stuns, Salt Circle slows and horror madness are back to their base numbers. Eleven more relics in the pool dilute every relic offer. Nothing else changes. (Claude)
+
 ## v18.4.0 — Conjunctions
 Two patrons who have both noticed you can now offer one gift together.
 - **Conjunction offerings** (#87; Gemini's design, reviewed by Claude, built by Claude; Criss: "I like the duos"). When two patrons have both noticed you (Attention 1 to 4, neither Claimed), an offer may hold a conjunction in place of its last card: 25% of the time, 40% with one of them Watched, 60% with both. It never replaces the kit's own offering. A run takes one per pair, two at most. The **Caller** (the pair's lower Attention) takes +1 Attention; the **Witness** takes none, but the next wave her water rises a tile, the Sun opens another spot, or one more Gibberer climbs.

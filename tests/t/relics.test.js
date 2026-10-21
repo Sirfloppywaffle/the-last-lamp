@@ -9,10 +9,10 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   const r=await p.evaluate(()=>{
     const T=__t, out={};
 
-    // 1. Oil Reserve test: adding adds 4 capacity, removing takes back 4
+    // 1. Oil Reserve (#89): no capacity any more. At full oil, its 4 spill instead of being lost
     T.newRun('lamplighter', 0);
     T.addRelic('reserve');
-    out.reserveAdded={oilMax:T.run.oilMax};
+    out.reserveAdded={oilMax:T.run.oilMax,oil:T.run.oil,spill:T.run.spill};
     T.removeRelic('reserve');
     out.reserveRemoved={oilMax:T.run.oilMax};
 
@@ -60,7 +60,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   });
 
   console.log(JSON.stringify(r));
-  ok(r.reserveAdded.oilMax===24,'Oil Reserve adds +4 oilMax',r.reserveAdded);
+  ok(r.reserveAdded.oilMax===20&&r.reserveAdded.oil===20&&r.reserveAdded.spill===4,'Oil Reserve leaves capacity alone and spills its 4 oil at full',r.reserveAdded);
   ok(r.reserveRemoved.oilMax===20,'Oil Reserve removal restores oilMax to 20',r.reserveRemoved);
 
   ok(r.doubleGlassFirstAddedGlass.oilMax===6&&r.doubleGlassFirstAddedHollow.oilMax===6,'Double curse order 1: glass and hollow both clamp oilMax to 6',r.doubleGlassFirstAddedHollow);
@@ -73,8 +73,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
 
   ok(r.unheldRemoved.oilMax===20,'Removing a relic not held does nothing',r.unheldRemoved);
 
-  ok(r.legacyReserveRemoved.oilMax===18,'Legacy save without deltas subtracts default 4 for reserve',r.legacyReserveRemoved);
-  ok(r.legacyGlassRemoved.oilMax===24,'Legacy save without deltas adds default 6 for glass',r.legacyGlassRemoved);
+  // the old Oil Reserve's +4 stays in a legacy save's base (it no longer counts as the relic's), so removing it changes nothing
+  ok(r.legacyReserveRemoved.oilMax===22,'Legacy save keeps the capacity the old Oil Reserve gave',r.legacyReserveRemoved);
+  ok(r.legacyGlassRemoved.oilMax===28,'Legacy save without deltas adds default 6 for glass',r.legacyGlassRemoved);
 
   for(const f of fails)console.log('FAIL '+f);
   if(fails.length)process.exitCode=1; else console.log('all relic tests ok');
