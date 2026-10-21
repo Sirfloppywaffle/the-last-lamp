@@ -99,6 +99,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const gib=at('gibberer',g,d0+.5); out.dread=T.dread(); gib.dead=true; T.update(.001);
     const v=at('crawler',g,d0+.5), n1=at('crawler',g,d0+1.5), bs=at('boss',g,d0+1.2);
     const dn=n1.d, db=bs.d; T.hurt(v,9999); out.back=+(dn-n1.d).toFixed(2); out.boss=+(db-bs.d).toFixed(2);
+    for(let i=0;i<3;i++)T.hurt(at('crawler',g,n1.d-.3),9999); out.capped=+(dn-n1.d).toFixed(2);
     clearFoes();
     out.cur=+T.currentOf(T.spawnFoe('gorger',g,d0+.5)).toFixed(2); clearFoes();
     holdWave(); T.F.gorgeRise=0; const w0=T.F.water.size;
@@ -108,6 +109,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   console.log(JSON.stringify(drag));
   ok(drag.dread===1,'a Gibberer in water brings 1 dread, not 2',drag.dread);
   ok(drag.back===1&&drag.boss===0,'a death in water drags a neighbour a tile back; never a boss',drag);
+  ok(drag.capped===2,'a creature is dragged twice at most',drag.capped);
   ok(drag.cur===1.4,'Gorgers ride her current at 1.4',drag.cur);
   ok(drag.rose===2,'three Gorgers stepping into water raise it twice (two a wave)',drag.rose);
 
@@ -131,11 +133,15 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.stun=+e.stunT.toFixed(2); out.inSpot=T.inSpot(e);
     for(let i=0;i<300&&T.inSpot(e);i++)T.update(1/30);
     out.run=e.drunkRunT>0; out.dread=T.conjDread();
+    /* a second spot further on: it does not stare again, and cries out only once */
+    T.run.spots.tiles.push([g,d+3]); T.spotSync(); for(let i=0;i<300&&!T.inSpot(e);i++)T.update(1/30); out.again=e.stunT;
+    for(let i=0;i<300&&T.inSpot(e);i++)T.update(1/30); out.dread2=T.conjDread();
     const c=at('crawler',g,d-1.3); for(let i=0;i<300&&!T.inSpot(c);i++)T.update(1/30); out.crawlerStun=c.stunT;
     clearFoes(); return out;});
   console.log(JSON.stringify(drunk));
   ok(drunk.inSpot&&drunk.stun>.9,'a Gibberer stepping into a spot stands still for a second',drunk);
   ok(drunk.run&&drunk.dread===1,'walking out alive, it runs faster and brings 1 dread',drunk);
+  ok(!(drunk.again>0)&&drunk.dread2===1,'once each: no second stare, no second cry',drunk);
   ok(!(drunk.crawlerStun>0),'only the Many-Mouthed\'s creatures stare',drunk);
 
   /* Violet Husking: a dead Gorger burns violet; it shows what stands in it; unfed, it leaves 1 dread for 6 seconds */
