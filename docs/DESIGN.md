@@ -380,32 +380,34 @@ Numbers: Signal Candle light leaps **4** tiles. A flare bolt lights **1.3** tile
 
 ## Relics
 
-| Key | Name | Cursed | Pack | Effect |
-|---|---|---|---|---|
-| `tallow` | Tallow of Saints |  | base | The lamp burns wider: +0.8 light. |
-| `reserve` | Oil Reserve |  | base | Refill 6 oil and raise the lamp’s capacity by 4. |
-| `whetted` | Whetted Barbs |  | base | Brine Harpoons deal 30% more damage. |
-| `saltflats` | Salt Flats |  | base | Salt Circles cost 10, refills cost 5, and they last twice as long. |
-| `quiet` | Quiet Mind |  | base | Every madness threshold sits 3 higher. |
-| `wax` | Sealing Wax |  | base | Each bound horror costs 1 less madness (minimum 1). |
-| `bounty` | Bounty of the Deep |  | base | Creatures leave 30% more essence. |
-| `binder` | Binder’s Thread |  | base | Bindable creatures leave their sigil twice as often. |
-| `ledger` | Brined Ledger |  | base | Salt Circles also burn whatever stands in them, 6 damage a second. |
-| `veil` | Mourning Veil |  | base | Shades and Abyssal Stalkers can be seen wherever there is light. |
-| `key` | Ossuary Key |  | base | Merchants charge 30% less. |
-| `compass` | Drowned Compass |  | base | The stair forks into four doors instead of three. |
-| `blackwick` | Black Wick | yes | base | The lamp burns 1.2 tiles wider, but loses 1 oil at the start of every wave. |
-| `glass` | Glass Lantern | yes | base | The lamp holds 6 less oil, but everything you field deals 15% more damage. |
-| `leech` | Leech Jar |  | relics_deep | Every 30 kills restore 1 oil. |
-| `shadow` | Second Shadow |  | relics_deep | Hexes linger twice as long after leaving an Effigy. |
-| `marrow` | Thunder Marrow |  | relics_deep | Bone Chime stuns last 0.4s longer. |
-| `witchsalt` | Witch Salt |  | relics_deep | Salt Circles slow by 65% instead of 50%. |
-| `choirwalls` | Choir in the Walls | yes | relics_forbidden | Horrors cost no madness, but one of your bound horrors slips away at every stair. |
-| `gilded` | Gilded Teeth | yes | relics_forbidden | Every kill pays 2 more essence, but the stair burns all essence except your salvage. |
-| `hollow` | Hollow Crown | yes | relics_forbidden | Every gift offers one more choice, but the lamp holds 4 less oil. |
-| `eyes` | A Thousand Eyes | yes | relics_forbidden | Everything in light can be seen, veiled or not, but every madness threshold sits 2 lower. |
+| Key | Name | Cursed | Pack | Needs | Effect |
+|---|---|---|---|---|---|
+| `tallow` | Tallow of Saints |  | base |  | Your wards that stand in the outermost tile of the lamp’s own light fire 25% faster. When the lamp shrinks, the edge moves in with it. |
+| `reserve` | Oil Reserve |  | base |  | Restore 4 oil. Oil you gain past the brim is not lost: it spills, 8 at most. In a wave, the spill burns on the path under the foremost creature in the lamp’s light. |
+| `whetted` | Whetted Barbs |  | base |  | Your harpoon and Whaling Gun leave a barb in what they strike, three at most, each slowing it 10%. When it dies, each barb tears free into the nearest thing you can see within 2.5 tiles, for half the blow. |
+| `saltflats` | Salt Flats |  | base | `salt` | Two Salt Circles within 2.5 tiles of each other salt the path between them. A bridge wears the nearer circle, and refilling one refills both. |
+| `quiet` | Quiet Mind |  | base |  | Build, upgrade and cast nothing for 10 seconds of a wave and you are still: madness counts 3 lower, and your next ward or upgrade costs 30% less. Acting ends it. A Toll does not. |
+| `wax` | Sealing Wax | yes | base |  | As each floor’s first wave begins, your striking ward nearest the lamp is sealed, and one more for each horror you field (three at most). Each lowers madness by 1, and what it strikes takes 25% more for 4 seconds. But it fires 30% slower and cannot be sold. |
+| `bounty` | Bounty of the Deep | yes | base |  | Kills on the far half of the path, toward where they climb out, pay 40% more essence. Kills on the near half pay 25% less. Water always counts as far. |
+| `binder` | Binder’s Thread |  | base |  | Bindable creatures leave their sigil twice as often. |
+| `ledger` | Brined Ledger |  | base | `salt` | Salt Circles also burn whatever stands in them, 6 damage a second. |
+| `veil` | Mourning Veil |  | base |  | Shades and Abyssal Stalkers can be seen wherever there is light. |
+| `key` | Ossuary Key |  | base |  | Merchants sell on bone credit, down to −25 essence, paid out of the next floor’s purse. For the first two waves after you buy, kills within 2.5 tiles of the lamp pay 3 more. |
+| `compass` | Drowned Compass |  | base |  | The stair forks into four doors instead of three. |
+| `blackwick` | Black Wick | yes | base |  | The lamp burns 1.2 tiles wider, but loses 1 oil at the start of every wave. |
+| `glass` | Glass Lantern | yes | base |  | The lamp holds 6 less oil, but everything you field deals 15% more damage. |
+| `leech` | Leech Jar |  | relics_deep |  | A kill feeds the jar only if it dies held, stunned, on a line, tangled, in salt or in water. At 8 the jar bursts: 1 oil, and everything in the lamp’s light bleeds 15 over 3 seconds and walks 30% slower. |
+| `shadow` | Second Shadow |  | relics_deep | `effigy` | Hexes linger twice as long after leaving an Effigy. |
+| `marrow` | Thunder Marrow |  | relics_deep | `chime`, `trap`, `grasp`, `pylon`, `coil` | When a ward of yours stuns, shocks or seizes a creature, thunder leaps to your nearest striking ward within 2.5 tiles of it: that ward fires at once and deals 25% more for 3 seconds. Each ward sends it once every 3 seconds. In the Wrong Sun’s glare it leaps to two. |
+| `witchsalt` | Dead Reckoning | yes | relics_deep |  | The lamp burns 1.5 tiles smaller, and every light you build costs double: candles, forks, pylons, wires, try-pots, mirrors. A ward past the edge of the lamp's own light, where only your lights reach, strikes 40% farther and deals 25% more. The Occultist's candles stay free, but shine 40% less far out there. Tap a ward to see if it counts. |
+| `choirwalls` | Choir in the Walls | yes | relics_forbidden |  | Horrors cost no madness, but a horror you field is never yours again. Recall it, or carry it to the stair, and it goes into the walls: your roster loses it. |
+| `gilded` | Gilded Teeth | yes | relics_forbidden |  | Every kill pays 2 more essence, but the stair burns all essence except your salvage. |
+| `hollow` | Hollow Crown | yes | relics_forbidden |  | Every gift offers one more choice, but the lamp holds 4 less oil. |
+| `eyes` | A Thousand Eyes | yes | relics_forbidden |  | Everything in light can be seen, veiled or not, but every madness threshold sits 2 lower. |
 
-**Resting while patrons are tested** (#29, `RELICS_RESTING`): Tallow of Saints, Whetted Barbs, Bounty of the Deep, Oil Reserve, Quiet Mind, Sealing Wax, Ossuary Key, Salt Flats, Thunder Marrow, Witch Salt, Leech Jar. They are never offered; a run that carries one keeps it.
+**Offered only if you can use it** (#89): a relic with needs is offered only to a run holding one of those wards or rites (its kit's, or one bought, gifted or found).
+
+Numbers (#89): Oil Reserve restores **4**, spills up to **8**, burns **0.4** spill a second as fire of **14**/s for **3s**. Tallow of Saints: edge **1** tile, wait ×**0.8**. Whetted Barbs: **3** barbs, **0.1** slow each, torn **2.5** tiles for **0.5** of the blow. Salt Flats bridges circles within **2.5**. Quiet Mind: still after **10s**, madness **−3**, next build ×**0.7**. Sealing Wax: **3** at most, wait ×**1.43**, mark ×**1.25** for **4s**. Bounty of the Deep: far ×**1.4**, near ×**0.75**. Ossuary Key: credit **25**, **2** waves, within **2.5** tiles, **+3**. Leech Jar: **8** kills, **1** oil, bleed **15** over **3s**, slow **0.3**. Thunder Marrow: **2.5** tiles, every **3s** per ward, ×**1.25** for **3s**. Dead Reckoning: lamp **−1.5**, range ×**1.4**, damage ×**1.25**.
 
 ## Patrons
 
@@ -566,7 +568,7 @@ One door on each fork into floor 2 or 3 carries a Trial; passing it pays a relic
 
 **A Salt-crusted Altar** (`altar`): *An old altar furred white with salt. Something was sacrificed here, and the salt kept it.*
 
-- **Pray:** Gain the Brined Ledger, and learn Salt if you have not.
+- **Pray:** Gain Salt Flats, or the Brined Ledger if you have it, and learn Salt if you have not.
 - **Pocket the salt:** +70 essence.
 - **Smash it:** The lamp holds 3 more oil, but you lose 2 oil now.
 
@@ -601,7 +603,7 @@ One door on each fork into floor 2 or 3 carries a Trial; passing it pays a relic
 |---|---|---|---|
 | `kit_galvanist` | The Galvanist | 70 | A new kit: a mad scientist’s power grid of pylons, arc lamps and lightning. |
 | `kit_bellringer` | The Bellringer | 110 | A new kit: Agathe Vell, the blind bellringer, who sees the dark by its echoes. |
-| `relics_deep` | Relics of the Deep | 50 | Second Shadow joins the relic pool, and Leech Jar, Thunder Marrow and Witch Salt when they return to the stair. |
+| `relics_deep` | Relics of the Deep | 50 | Leech Jar, Second Shadow, Thunder Marrow and Dead Reckoning join the relic pool. |
 | `relics_forbidden` | Forbidden Relics | 90 | Four cursed relics with great power join the pool: Choir in the Walls, Gilded Teeth, Hollow Crown, A Thousand Eyes. |
 | `events_more` | Older Stories | 60 | Three more things can happen off the stair. |
 | `merchant_plus` | A Regular Customer | 60 | Merchants stock one more relic. |

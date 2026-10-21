@@ -242,6 +242,7 @@ Three patrons of our own: **the Drowned Mother** (water, slow, oil), **the Wrong
 
 Behind one switch, the **number-only relics leave the pool** (they are not deleted): Tallow of Saints, Whetted Barbs, Bounty of the Deep, Oil Reserve, Quiet Mind, Sealing Wax, Ossuary Key, Salt Flats, Thunder Marrow, Witch Salt, Leech Jar.
 **Kept** (they change rules): Mourning Veil, Drowned Compass, Binder's Thread, Brined Ledger, Second Shadow, Black Wick, Glass Lantern, and the four Forbidden relics. Relics already in a saved run keep working. Once patrons settle, the pulled relics come back as merchant stock or patron rewards.
+**Done (#89, v18.5.0):** the Relic Overhaul gave all eleven a rule instead of a number and turned the switch off. Slot 11 is now **Dead Reckoning** (Witch Salt's key). A relic that needs a ward or rite is only offered to a run that has one. Gemini's design is in `RELICS.md`; Claude's review and Gemini's answer are on #89 and #90.
 
 ### 13.5 Heralds (mini-bosses)
 
