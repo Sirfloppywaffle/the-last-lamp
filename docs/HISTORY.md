@@ -3,6 +3,8 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **Fix: the Bellringer is never offered a Candle Ward** (Criss: one turned up as a floor's gift). She builds no candles, but the gift, the merchant and Search the pack offered any common ward the run lacked, and she is the only kit without one. A run that already took one keeps it. No balance numbers change. (Claude)
+- **The Bellringer: a Perfect Toll cracks once, not twice** (Criss, playing v18.5.1: five Clapper Harpoons beside the lamp, Peal and on-beat tolls cleared the Throat with 358 essence unspent, under Dead Reckoning). Every beat cracked the whole floor twice for free (its half Noise fades as fast as it builds), so one Clapper hit shattered anything. Headless, that 260–435 essence build held floors 1–4 with no oil lost; now it loses oil on floors 2 and 3 and the Keeper reaches the lamp. A full Bellringer build (Bell Wires, Tocsin, Censers, Clappers) fares the same as before. A Perfect Toll still reaches half again as far and makes half the Noise. **Balance:** `PERFECT_CRACKS` 2 → 1 (new lever). (Claude)
 - **Developer: take or drop any relic** (Criss: the curses are hard to come by in a normal run, so Dead Reckoning couldn't be tried). A new section in the Developer menu lists every relic; tap to take it, tap again to drop it. Cursed relics are marked †, held ones ●. Shows, never saves (rule 24). No game rules or numbers change. (Claude)
 
 ## v18.5.0 — The Relics Return

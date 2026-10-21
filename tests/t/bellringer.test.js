@@ -179,7 +179,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     run(.3); out.fired={shells:T.F.shots.filter(x=>x.k==='tocsin').length,ammo:toc.ammo};
     const vhp=victim.hp; run(1.6); out.landed={hurt:Math.round(vhp-victim.hp),reloading:toc.ammo===0&&toc.cd>0};
     T.render();
-    /* a Perfect Toll: on the lamp's beat it reaches twice as far, cracks twice and makes no Noise; off the beat it is a plain Toll */
+    /* a Perfect Toll: on the lamp's beat it reaches half again as far and makes half the Noise; it cracks once, like any Toll (Criss: two cracks a beat let five Clappers carry the Keeper); off the beat it is a plain Toll */
     fresh(); T.buyBranch(T.F.lamp,2); wave(); hold('crawler',1); T.F.noise=0;
     T.F.pealT=T.lstat().peal-.1; out.beatOff=+T.beatOff().toFixed(2); T.F.cd.toll=0; T.castRite('toll');
     const pt=T.F.tolls.filter(R=>!R.echo).pop(); out.perfect={noise:T.F.noise,max:pt.max,cracks:pt.cracks,gold:pt.gold,pealReset:T.F.pealT};
@@ -191,10 +191,16 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     localStorage.setItem('ll-captions','true'); wave(); hold('crawler',1); T.castRite('toll'); out.caption=T.F.fx.some(f=>f.cap);
     localStorage.removeItem('ll-captions');
     T.render();
+    /* she builds no candles, so the stair never offers her one: not as a gift, not at the merchant (Criss) */
+    fresh(); let candle=0, wards=0;
+    for(let i=0;i<300;i++)for(const o of T.draftOptions(30)){if(o.kind==='ward'){wards++; if(o.key==='candle')candle++;}}
+    for(let i=0;i<100;i++){const m=T.makeRoom('merchant'); for(const it of (m.stock||[]))if(it.kind==='ward'&&it.key==='candle')candle++;}
+    out.noCandle={candle,wards};
     return out;});
   console.log(JSON.stringify(r));
   ok(r.kit.wards==='fork,harpoon,bellwire,tocsin,chime,censer'&&r.kit.rites==='toll,greatbell','her wards and rites',r.kit);
   ok(r.kit.who==='Agathe Vell'&&r.kit.fork==='Tuning Fork'&&r.kit.harpoon==='Clapper Harpoon','Agathe Vell builds Tuning Forks and Clapper Harpoons',r.kit);
+  ok(r.noCandle.candle===0&&r.noCandle.wards>0,'no Candle Ward is ever offered to her',r.noCandle);
   ok(r.kit.lamp==='Votive,Font,Peal','her lamp trades Fire for Peal',r.kit.lamp);
   ok(r.buildToll.tolls===0&&r.buildToll.noise===0,'Toll does nothing between waves',r.buildToll);
   ok(r.darkD!==null,'a dark stretch of path within reach of the toll');
@@ -240,7 +246,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.fired.shells===1&&r.fired.ammo===0,'then it fires its shell',r.fired);
   ok(r.landed.hurt>=40&&r.landed.reloading,'the shell bursts on the wire, and the Tocsin reloads',r.landed);
   ok(Math.abs(r.beatOff-.1)<.02,'the beat is measured from the lamp’s own toll',r.beatOff);
-  ok(r.perfect.noise===.5&&r.perfect.max===10.5&&r.perfect.cracks===2&&r.perfect.gold&&r.perfect.pealReset===0,'a Perfect Toll: half again as far, two cracks, half the Noise, and it takes the beat’s place',r.perfect);
+  ok(r.perfect.noise===.5&&r.perfect.max===10.5&&r.perfect.cracks===1&&r.perfect.gold&&r.perfect.pealReset===0,'a Perfect Toll: half again as far, one crack, half the Noise, and it takes the beat’s place',r.perfect);
   ok(r.offbeat.noise===1.5&&r.offbeat.max===7,'off the beat it is a plain Toll',r.offbeat);
   ok(r.edges>10,'she hears the path: its edges are traced in the dark',r.edges);
   ok(r.caption,'with Show sounds on, the toll writes itself on the board');
