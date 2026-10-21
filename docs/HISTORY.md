@@ -3,6 +3,7 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **Developer: take or drop any relic** (Criss: the curses are hard to come by in a normal run, so Dead Reckoning couldn't be tried). A new section in the Developer menu lists every relic; tap to take it, tap again to drop it. Cursed relics are marked †, held ones ●. Shows, never saves (rule 24). No game rules or numbers change. (Claude)
 
 ## v18.5.0 — The Relics Return
 The eleven relics that only changed a number come back to the stair, each with a rule that changes how you build, and you are only offered relics your kit can use.
