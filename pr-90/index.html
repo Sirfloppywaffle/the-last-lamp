@@ -799,7 +799,7 @@ const RELICS={
   shadow:{n:'Second Shadow',pack:'relics_deep',needs:['effigy'],d:'Hexes linger twice as long after leaving an Effigy.'},
   marrow:{n:'Thunder Marrow',pack:'relics_deep',needs:['chime','trap','grasp','pylon','coil'],d:'When a ward of yours stuns, shocks or seizes a creature, thunder leaps to your nearest striking ward within 2.5 tiles of it: that ward fires at once and deals 25% more for 3 seconds. Each ward sends it once every 3 seconds. In the Wrong Sun’s glare it leaps to two.',lore:'The split femur of a storm-struck whale, still humming. Strike it and the iron beside it answers.'},
   /* Dead Reckoning keeps Witch Salt's key, so a saved run that carried Witch Salt carries this */
-  witchsalt:{n:'Dead Reckoning',curse:true,pack:'relics_deep',d:'The lamp burns 1.5 tiles smaller. A ward built past the edge of its light, where only a candle, a fork or another of your lights reaches, strikes 40% farther and deals 25% more. Wards inside the lamp\'s own light gain nothing. Tap a ward to see if it counts.',lore:'A brass octant with its mirrors smoked black. You chart the shoals by what strikes the hull.'},
+  witchsalt:{n:'Dead Reckoning',curse:true,pack:'relics_deep',d:'The lamp burns 1.5 tiles smaller, and every light you build costs double: candles, forks, pylons, wires, try-pots, mirrors. A ward past the edge of the lamp\'s own light, where only your lights reach, strikes 40% farther and deals 25% more. The Occultist\'s candles stay free, but shine 40% less far out there. Tap a ward to see if it counts.',lore:'A brass octant with its mirrors smoked black. You chart the shoals by what strikes the hull.'},
   choirwalls:{n:'Choir in the Walls',curse:true,pack:'relics_forbidden',d:'Horrors cost no madness, but a horror you field is never yours again. Recall it, or carry it to the stair, and it goes into the walls: your roster loses it.',lore:'Plaster over a hollow wall, warm to the touch. Lay your ear to it and something you bound is humming, a little out of tune.'},
   gilded:{n:'Gilded Teeth',curse:true,pack:'relics_forbidden',d:'Every kill pays 2 more essence, but the stair burns all essence except your salvage.'},
   hollow:{n:'Hollow Crown',curse:true,pack:'relics_forbidden',d:'Every gift offers one more choice, but the lamp holds 4 less oil.'},
@@ -816,13 +816,15 @@ function resting(k){return RELICS_RESTING&&RESTING.includes(k);}
    long you wait, how much lower madness counts, what your next build costs. Sealing Wax: how many seal, how much longer a sealed ward waits,
    its mark and how long it lasts. Bounty of the Deep: far half, near half. Ossuary Key: credit, for how many waves, how near the lamp, how
    much more. Leech Jar: kills to burst, oil, its bleed, how long, its slow. Thunder Marrow: how far it leaps, each ward's wait, how long the
-   struck ward hits harder and by how much. Dead Reckoning: how much smaller the lamp, how much farther and harder beyond its light */
+   struck ward hits harder and by how much. Dead Reckoning: how much smaller the lamp, how much farther and harder beyond its light,
+   what your lights cost (×), and how far the Occultist's free Corpse Candles shine beyond the lamp's light (×) */
 const RESERVE_OIL=4, SPILL_MAX=8, SPILL_DRAIN=.4, SPILL_DPS=14, SPILL_T=3,
   TALLOW_RIM=1, TALLOW_CD=.8, BARB_MAX=3, BARB_SLOW=.1, BARB_R=2.5, BARB_HIT=.5, BRIDGE_R=2.5,
   STILL_T=10, STILL_MAD=3, STILL_DISC=.7, WAX_MAX=3, WAX_CD=1/.7, WAX_MARK=1.25, WAX_MARK_T=4,
   BOUNTY_FAR=1.4, BOUNTY_NEAR=.75, KEY_CREDIT=25, KEY_WAVES=2, KEY_R=2.5, KEY_ESS=3,
   LEECH_N=8, LEECH_OIL=1, LEECH_DMG=15, LEECH_T=3, LEECH_SLOW=.3,
-  MARROW_R=2.5, MARROW_CD=3, MARROW_T=3, MARROW_DMG=1.25, RECKON_LAMP=1.5, RECKON_RANGE=1.4, RECKON_DMG=1.25;
+  MARROW_R=2.5, MARROW_CD=3, MARROW_T=3, MARROW_DMG=1.25, RECKON_LAMP=1.5, RECKON_RANGE=1.4, RECKON_DMG=1.25,
+  RECKON_COST=2, RECKON_CORPSE=.6;
 /* the wards that strike: what Sealing Wax seals and where Thunder Marrow's thunder lands */
 const STRIKERS=['harpoon','lance','coil','censer','chime'];
 /* patrons: old things below the stair that offer gifts, and remember every one (#30). Each offering raises that patron's
@@ -2120,7 +2122,11 @@ function horrorBoost(){return kit()==='occultist'?1+HORROR_TIER*boundMadTier():1
 /* everything that pushes you through the tiers: your horrors' madness and the Many-Mouthed's dread */
 function madness(){if(!F)return 0; return Math.max(0,horrorMadness(false)-waxN())+dread();}
 function madTier(){return tierOf(madness());}
-function wardCost(type){if(type==='candle'&&kit()==='occultist')return 0; return stillCost(WARDS[type].cost);}
+function wardCost(type){if(type==='candle'&&kit()==='occultist')return 0; return stillCost(WARDS[type].cost*(reckonLight(type)?RECKON_COST:1));}
+/* Dead Reckoning's price falls on the light that reaches out past the lamp: every light you build costs double */
+function reckonLight(type){return !!run&&has('witchsalt')&&(TRIAL_SPARE.includes(type)||type==='mirror');}
+/* the Occultist's Corpse Candles are free, so instead they shine less far past the lamp's own light */
+function reckonDim(t){return !!F&&has('witchsalt')&&corpseKit()&&dst(t.x,t.y,F.lx,F.ly)>lampRadius();}
 /* Quiet Mind: while you are still, the next ward or upgrade costs less */
 function stillCost(c){return stillNow()?Math.round(c*STILL_DISC):c;}
 function refillCost(){return 10;}
@@ -2134,7 +2140,7 @@ function wstat(t){
   const b=t.br||{};
   if(t.type==='harpoon')return {range:2.6+.4*m2(b.sight),dmg:(10+(b.strength>=1?6:0)+(b.strength>=2?8:0))*spearMul(b),spear:kit()==='occultist',soul:b.dread>=3,
     tether:kit()==='whaler',tMax:b.line>=1?.55:TETHER_MAX,clap:kit()==='bellringer'?{hear:CLAP_HEAR+(b.ring>=1?1:0),knock:CLAP_KNOCK+(b.ring>=2?.25:0),peal:b.ring>=3}:null,rod:kit()==='galvanist',rodT:ROD_T+(b.charge>=1?2:0),rodMax:ROD_MAX+(b.charge>=2?1:0),thunder:b.charge>=3,leash:b.line>=2?2:1,haul:b.line>=3,rate:1.1*Math.pow(1.25,m2(b.speed)),twin:b.speed>=3,pierce:b.strength>=3,deep:b.sight>=3,flare:kit()==='lamplighter',flareR:GLINT_R+(b.flare>=1?.5:0),flareT:GLINT_T+(b.flare>=2?1:0),star:b.flare>=3};
-  if(t.type==='candle')return {arc:kit()==='galvanist',flare:ARC_DMG+4*m2(b.spark),steady:b.spark>=3,light:(2.3+(ashLit(t)?1:0)+.5*m2(b.glow)+(kit()==='whaler'?BLUBBER_LIGHT:0)+(kit()==='galvanist'?ARC_LIGHT:0)-(F&&F.omen==='thickdark'?.5:0))*(trialOn('night')?NIGHT_DIM:1),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)]+(hasOff('aliencandle')?ALIEN_BURN:0)+(ashLit(t)?ALIEN_BURN:0),beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3,reek:b.reek>=2?4:b.reek>=1?2:0,lure:b.reek>=3};
+  if(t.type==='candle')return {arc:kit()==='galvanist',flare:ARC_DMG+4*m2(b.spark),steady:b.spark>=3,light:(2.3+(ashLit(t)?1:0)+.5*m2(b.glow)+(kit()==='whaler'?BLUBBER_LIGHT:0)+(kit()==='galvanist'?ARC_LIGHT:0)-(F&&F.omen==='thickdark'?.5:0))*(trialOn('night')?NIGHT_DIM:1)*(reckonDim(t)?RECKON_CORPSE:1),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)]+(hasOff('aliencandle')?ALIEN_BURN:0)+(ashLit(t)?ALIEN_BURN:0),beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3,reek:b.reek>=2?4:b.reek>=1?2:0,lure:b.reek>=3};
   if(t.type==='chime')return {range:1.8+.25*m2(b.res),dmg:14+(b.marrow>=1?6:0)+(b.marrow>=2?8:0),stun:.6+.3*m2(b.toll),period:2,twice:b.res>=3,knell:b.toll>=3,shatter:b.marrow>=3};
   if(t.type==='censer')return {range:3.2,dmg:16,rate:.45*Math.pow(1.25,m2(b.swing)),splash:1+.25*m2(b.spread),volley:b.swing>=3,cluster:b.spread>=3,
     pool:b.pitch>=3?{dps:10,dur:4,r:1.4}:b.pitch>=1?{dps:b.pitch>=2?7:4,dur:b.pitch>=2?2.5:2,r:1}:null};
@@ -8604,7 +8610,9 @@ const TIPS={
     text:'This horror costs no madness, but it is spent. Recall it, or carry it down the stair, and the walls keep it. Bind more, or field only what the floor needs.',
     target:()=>{const t=F.towers.find(t=>t.sung); return t?coachBoard(t.x,t.y,1):null;}},
   r_reckon:{when:()=>has('witchsalt')&&F.phase==='build',title:'Dead Reckoning',
-    text:'Your lamp burns 1.5 tiles smaller. Light the dark past its edge with a candle or a fork, and build there: a ward standing out past the lamp\'s own light reaches 40% farther and deals 25% more. Tap a ward to see if it counts.',
+    text:'Your lamp burns 1.5 tiles smaller, and every light you build costs double. Pay to light the dark past its edge, and build there: a ward standing out past the lamp\'s own light reaches 40% farther and deals 25% more. Tap a ward to see if it counts.',
+    /* the Occultist's candles are free, so his card names what he pays instead */
+    steps:()=>[{title:'Dead Reckoning',text:corpseKit()?'Your lamp burns 1.5 tiles smaller. Your candles stay free, but out past the lamp\'s own light they shine 40% less far: it takes more of them to reach out. A ward standing out there reaches 40% farther and deals 25% more. Tap a ward to see if it counts.':TIPS.r_reckon.text,target:()=>coachBoard(F.lx,F.ly,lampRadius())}],
     target:()=>coachBoard(F.lx,F.ly,lampRadius())},
   glare:{when:()=>patTier('sun')>=3&&F.towers.some(t=>t.kind==='ward'&&nearSpot(t.x,t.y)),title:'In the glare',
     text:'It has claimed you. A ward that stands within the halo of a bright spot fires a quarter slower. Build back from the glare, or build there knowing it.',
