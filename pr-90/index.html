@@ -90,6 +90,9 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .relchips::-webkit-scrollbar{display:none}
 .relchip{flex:0 0 auto;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid var(--tallow);background:radial-gradient(circle at 35% 30%,#3d3224,#15110c 70%);color:var(--tallow);font-family:var(--f-display);font-size:1.05rem;line-height:1;display:grid;place-items:center}
 .relchip.is-patron{border-color:var(--brine);color:var(--brine);background:radial-gradient(circle at 35% 30%,#1d3533,#0a1312 70%);box-shadow:0 0 0 2px rgba(106,169,159,calc(var(--att,0)*.55))}
+.relchip{position:relative}
+.relchip .relct{position:absolute;right:-2px;bottom:-2px;min-width:14px;height:14px;padding:0 2px;border-radius:7px;background:var(--abyss);border:1px solid currentColor;font:600 .58rem/12px var(--f-num);pointer-events:none}
+.meter.madm.is-still{box-shadow:0 0 0 1px #B9C4D6,0 0 6px rgba(185,196,214,.55)}
 .relchip.is-curse{border-color:var(--wound);color:var(--wound);background:radial-gradient(circle at 35% 30%,#3a1f1c,#140b0a 70%)}
 .relbook{flex:0 0 auto;width:36px;height:36px;padding:0;border-radius:8px;border:1px solid var(--seam);background:var(--slab);color:var(--bone);display:grid;place-items:center}
 .reltip{position:fixed;z-index:31;width:max-content;max-width:min(300px,calc(100vw - 16px));padding:9px 12px 10px;border-radius:8px;background:var(--stone);border:1px solid var(--tallow);box-shadow:0 8px 24px var(--shadow);pointer-events:none;font-size:.85rem;line-height:1.35;color:var(--bone)}
@@ -471,6 +474,7 @@ input[type=range]::-moz-range-track {
         <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. You meet every map of a floor before any comes back, and a saved floor keeps its own.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard. <i>Sealed:</i> two of your wards are locked for the floor, marked with a lock in the tray; never your light and never your harpoon. <i>One of Each:</i> each kind of ward stands only once, except what makes your light (candles of every kind, Tuning Forks, pylons, Bell Wires and Try-pots). <i>Bare Hands:</i> your rites are silent, all but the Bellringer's Toll. <i>Unbranched:</i> nothing can be upgraded, not even the lamp. <i>The Long Night:</i> candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller; it never comes with Moonless or Thick Dark.</li>
+        <li><b>Relics.</b> Relics bend the rules, and a cursed one takes as much as it gives. You are only offered a relic you can use: one that needs a ward, such as Salt or the Hex Effigy, waits until you can build it. Tap a relic's seal to read it; a number on a seal is what it holds.</li>
         <li><b>Patrons.</b> Old things below the stair make offerings: the Drowned Mother, the Wrong Sun, and the Many-Mouthed. Half the time the landing's gift is one of theirs instead (a quarter, if one already reached out on that floor), and now and then one reaches out between waves; which one is a toss each time. Take one gift, or refuse. Every gift raises that patron's Attention, and Attention changes your floors. Her water speeds what walks in it, rises, and at last hides it. The Wrong Sun's bright spots show whatever stands in them, but a Stalker that crosses one has seen the lamp and runs; Watched, they sear, and the glare spreads to the stone beside them; Claimed, your wards in the glare fire slower. The Many-Mouthed reads what you built and sends its own up the stair as each wave begins, Gibberers for your wards and Gorgers for your horrors, and they leave nothing when they die; Watched, you carry dread and Gorgers snuff candles; Claimed, a Choir-Husk veils what walks near it, and bindings may break from Whispers. Their signs sit beside the Grimoire; tap one to see where you stand.</li>
         <li><b>Conjunctions.</b> Two patrons who have both noticed you, neither yet claiming you, may offer one gift together in place of the last of three. It is not shaped by your kit. The one whose Attention lags pays for it, and the other watches: the next wave, her water rises a tile, the Sun opens another spot, or one more Gibberer climbs. A descent takes one conjunction from each pair, and two at most. The Drowned Mother and the Wrong Sun: Phosphor Tide. The Drowned Mother and the Many-Mouthed: Gorger’s Undertow, Brine-Choir. The Wrong Sun and the Many-Mouthed: Sun-Drunk Chorus, Violet Husking.</li>
         <li><b>Embers.</b> Every descent, won or lost, leaves embers behind. Spend them in the Ember Hall on new kits, relics and stories. Carry the lamp to morning to open the Deeper Dark, where each depth adds a new cruelty.</li>
@@ -520,7 +524,7 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='18.4.0';
+const GAME_VERSION='18.5.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -777,34 +781,50 @@ const RITES={
   feed:{n:'Feed the Dark',cd:22,patron:'mouths',d:'The lamp gutters for 2.5 seconds and burns 1.2 smaller. Everything within 3 tiles of it is dragged 1.5 tiles back (a Behemoth a third as far, never a boss), and your horrors strike twice as fast and into the dark. In a wave, you carry 4 dread until it breaks.'}
 };
 const RELICS={
-  tallow:{n:'Tallow of Saints',d:'The lamp burns wider: +0.8 light.'},
-  reserve:{n:'Oil Reserve',d:'Refill 6 oil and raise the lamp’s capacity by 4.'},
-  whetted:{n:'Whetted Barbs',d:'Brine Harpoons deal 30% more damage.'},
-  saltflats:{n:'Salt Flats',d:'Salt Circles cost 10, refills cost 5, and they last twice as long.'},
-  quiet:{n:'Quiet Mind',d:'Every madness threshold sits 3 higher.'},
-  wax:{n:'Sealing Wax',d:'Each bound horror costs 1 less madness (minimum 1).'},
-  bounty:{n:'Bounty of the Deep',d:'Creatures leave 30% more essence.'},
+  tallow:{n:'Tallow of Saints',d:'Your wards that stand in the outermost tile of the lamp’s own light fire 25% faster. When the lamp shrinks, the edge moves in with it.',lore:'Rendered from three drowned saints. Its flame blesses only the edge, where the light meets the dark.'},
+  reserve:{n:'Oil Reserve',d:'Restore 4 oil. Oil you gain past the brim is not lost: it spills, 8 at most. In a wave, the spill burns on the path under the foremost creature in the lamp’s light.',lore:'A copper cistern strapped under the burner. Overfill it and it weeps fire down the steps.'},
+  whetted:{n:'Whetted Barbs',d:'Your harpoon and Whaling Gun leave a barb in what they strike, three at most, each slowing it 10%. When it dies, each barb tears free into the nearest thing you can see within 2.5 tiles, for half the blow.',lore:'Filed backward on sharkskin, so the iron goes in smooth and comes out only through another body.'},
+  saltflats:{n:'Salt Flats',d:'Two Salt Circles within 2.5 tiles of each other salt the path between them. A bridge wears the nearer circle, and refilling one refills both.',needs:['salt'],lore:'Cut from the bed of a sea that dried before the stair was dug. Two grains remember the bed that joined them.'},
+  quiet:{n:'Quiet Mind',d:'Build, upgrade and cast nothing for 10 seconds of a wave and you are still: madness counts 3 lower, and your next ward or upgrade costs 30% less. Acting ends it. A Toll does not.',lore:'Ear-plugs of cold lead and beeswax. The sea still roars, but outside your skull.'},
+  wax:{n:'Sealing Wax',curse:true,d:'As each floor’s first wave begins, your striking ward nearest the lamp is sealed, and one more for each horror you field (three at most). Each lowers madness by 1, and what it strikes takes 25% more for 4 seconds. But it fires 30% slower and cannot be sold.',lore:'Red tallow and powdered bone. What it shuts stays shut until the floor is done.'},
+  bounty:{n:'Bounty of the Deep',curse:true,d:'Kills on the far half of the path, toward where they climb out, pay 40% more essence. Kills on the near half pay 25% less. Water always counts as far.',lore:'A grappling iron tangled in kelp and coin. The deep pays those who go down to meet it.'},
   binder:{n:'Binder’s Thread',d:'Bindable creatures leave their sigil twice as often.'},
-  ledger:{n:'Brined Ledger',d:'Salt Circles also burn whatever stands in them, 6 damage a second.'},
+  ledger:{n:'Brined Ledger',needs:['salt'],d:'Salt Circles also burn whatever stands in them, 6 damage a second.'},
   veil:{n:'Mourning Veil',d:'Shades and Abyssal Stalkers can be seen wherever there is light.'},
-  key:{n:'Ossuary Key',d:'Merchants charge 30% less.'},
+  key:{n:'Ossuary Key',d:'Merchants sell on bone credit, down to −25 essence, paid out of the next floor’s purse. For the first two waves after you buy, kills within 2.5 tiles of the lamp pay 3 more.',lore:'Carved from a debtor’s collarbone. The vault opens on a promise and collects at the bottom step.'},
   compass:{n:'Drowned Compass',d:'The stair forks into four doors instead of three.'},
   blackwick:{n:'Black Wick',curse:true,d:'The lamp burns 1.2 tiles wider, but loses 1 oil at the start of every wave.'},
   glass:{n:'Glass Lantern',curse:true,d:'The lamp holds 6 less oil, but everything you field deals 15% more damage.'},
-  leech:{n:'Leech Jar',pack:'relics_deep',d:'Every 30 kills restore 1 oil.'},
-  shadow:{n:'Second Shadow',pack:'relics_deep',d:'Hexes linger twice as long after leaving an Effigy.'},
-  marrow:{n:'Thunder Marrow',pack:'relics_deep',d:'Bone Chime stuns last 0.4s longer.'},
-  witchsalt:{n:'Witch Salt',pack:'relics_deep',d:'Salt Circles slow by 65% instead of 50%.'},
+  leech:{n:'Leech Jar',pack:'relics_deep',d:'A kill feeds the jar only if it dies held, stunned, on a line, tangled, in salt or in water. At 8 the jar bursts: 1 oil, and everything in the lamp’s light bleeds 15 over 3 seconds and walks 30% slower.',lore:'Stoppered with pitch and full of blind black ribbons. They will not drink from blood that runs fast.'},
+  shadow:{n:'Second Shadow',pack:'relics_deep',needs:['effigy'],d:'Hexes linger twice as long after leaving an Effigy.'},
+  marrow:{n:'Thunder Marrow',pack:'relics_deep',needs:['chime','trap','grasp','pylon','coil'],d:'When a ward of yours stuns, shocks or seizes a creature, thunder leaps to your nearest striking ward within 2.5 tiles of it: that ward fires at once and deals 25% more for 3 seconds. Each ward sends it once every 3 seconds. In the Wrong Sun’s glare it leaps to two.',lore:'The split femur of a storm-struck whale, still humming. Strike it and the iron beside it answers.'},
+  /* Dead Reckoning keeps Witch Salt's key, so a saved run that carried Witch Salt carries this */
+  witchsalt:{n:'Dead Reckoning',curse:true,pack:'relics_deep',d:'The lamp burns 1.5 tiles smaller. Your wards that stand outside its own light reach 40% farther and deal 25% more.',lore:'A brass octant with its mirrors smoked black. You chart the shoals by what strikes the hull.'},
   choirwalls:{n:'Choir in the Walls',curse:true,pack:'relics_forbidden',d:'Horrors cost no madness, but one of your bound horrors slips away at every stair.'},
   gilded:{n:'Gilded Teeth',curse:true,pack:'relics_forbidden',d:'Every kill pays 2 more essence, but the stair burns all essence except your salvage.'},
   hollow:{n:'Hollow Crown',curse:true,pack:'relics_forbidden',d:'Every gift offers one more choice, but the lamp holds 4 less oil.'},
   eyes:{n:'A Thousand Eyes',curse:true,pack:'relics_forbidden',d:'Everything in light can be seen, veiled or not, but every madness threshold sits 2 lower.'}
 };
-/* while patrons are tested, the relics that only change a number stay off the stair (#29). They are not gone:
-   a run that already carries one keeps it, and they come back (as merchant stock or patron rewards) when this is turned off */
-const RELICS_RESTING=true;
+/* while patrons were tested, the relics that only changed a number rested off the stair (#29). The Relic Overhaul (#89)
+   gave each a rule instead, so they are back. Turn this on again to rest the keys in RESTING */
+const RELICS_RESTING=false;
 const RESTING=['tallow','whetted','bounty','reserve','quiet','wax','key','saltflats','marrow','witchsalt','leech'];
 function resting(k){return RELICS_RESTING&&RESTING.includes(k);}
+/* the overhauled relics (#89). Oil Reserve: what it restores, how much spill it holds, how fast the spill burns (oil a second) and the fire it
+   lays (damage a second, for how long). Tallow of Saints: how deep its edge, how much shorter a ward's wait there. Whetted Barbs: how many
+   barbs, each one's slow, how far a torn barb flies and for how much of the blow. Salt Flats: how near two circles bridge. Quiet Mind: how
+   long you wait, how much lower madness counts, what your next build costs. Sealing Wax: how many seal, how much longer a sealed ward waits,
+   its mark and how long it lasts. Bounty of the Deep: far half, near half. Ossuary Key: credit, for how many waves, how near the lamp, how
+   much more. Leech Jar: kills to burst, oil, its bleed, how long, its slow. Thunder Marrow: how far it leaps, each ward's wait, how long the
+   struck ward hits harder and by how much. Dead Reckoning: how much smaller the lamp, how much farther and harder beyond its light */
+const RESERVE_OIL=4, SPILL_MAX=8, SPILL_DRAIN=.4, SPILL_DPS=14, SPILL_T=3,
+  TALLOW_RIM=1, TALLOW_CD=.8, BARB_MAX=3, BARB_SLOW=.1, BARB_R=2.5, BARB_HIT=.5, BRIDGE_R=2.5,
+  STILL_T=10, STILL_MAD=3, STILL_DISC=.7, WAX_MAX=3, WAX_CD=1/.7, WAX_MARK=1.25, WAX_MARK_T=4,
+  BOUNTY_FAR=1.4, BOUNTY_NEAR=.75, KEY_CREDIT=25, KEY_WAVES=2, KEY_R=2.5, KEY_ESS=3,
+  LEECH_N=8, LEECH_OIL=1, LEECH_DMG=15, LEECH_T=3, LEECH_SLOW=.3,
+  MARROW_R=2.5, MARROW_CD=3, MARROW_T=3, MARROW_DMG=1.25, RECKON_LAMP=1.5, RECKON_RANGE=1.4, RECKON_DMG=1.25;
+/* the wards that strike: what Sealing Wax seals and where Thunder Marrow's thunder lands */
+const STRIKERS=['harpoon','lance','coil','censer','chime'];
 /* patrons: old things below the stair that offer gifts, and remember every one (#30). Each offering raises that patron's
    Attention; at each threshold it changes your floors. The Drowned Mother is the first: her price is water on the path */
 const PATRONS={
@@ -965,7 +985,7 @@ const PACTS={
 const HALL=[
   {k:'kit_galvanist',n:'The Galvanist',d:'A new kit: a mad scientist’s power grid of pylons, arc lamps and lightning.',cost:70},
   {k:'kit_bellringer',n:'The Bellringer',d:'A new kit: Agathe Vell, the blind bellringer, who sees the dark by its echoes.',cost:110},
-  {k:'relics_deep',n:'Relics of the Deep',d:RELICS_RESTING?'Second Shadow joins the relic pool, and Leech Jar, Thunder Marrow and Witch Salt when they return to the stair.':'Leech Jar, Second Shadow, Thunder Marrow and Witch Salt join the relic pool.',cost:50},
+  {k:'relics_deep',n:'Relics of the Deep',d:RELICS_RESTING?'Second Shadow joins the relic pool, and Leech Jar, Thunder Marrow and Dead Reckoning when they return to the stair.':'Leech Jar, Second Shadow, Thunder Marrow and Dead Reckoning join the relic pool.',cost:50},
   {k:'relics_forbidden',n:'Forbidden Relics',d:'Four cursed relics with great power join the pool: Choir in the Walls, Gilded Teeth, Hollow Crown, A Thousand Eyes.',cost:90},
   {k:'events_more',n:'Older Stories',d:'Three more things can happen off the stair.',cost:60},
   {k:'merchant_plus',n:'A Regular Customer',d:'Merchants stock one more relic.',cost:60}
@@ -1002,15 +1022,16 @@ function checkOccultistDeed(cleared){
 function kit(){return run&&run.kit;}
 function depthLvl(){return (run&&run.depth)||0;}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
+/* a relic that needs a ward or rite is only offered to a run that has one (its kit's, or one bought, gifted or found) */
+function relicFits(k){const N=RELICS[k].needs; return !N||N.some(w=>run.wards.includes(w)||run.rites.includes(w));}
 function relicPool(curses){
   const m=meta();
-  return Object.keys(RELICS).filter(k=>!run.relics.includes(k)&&!resting(k)&&(!RELICS[k].pack||m.unlocked.includes(RELICS[k].pack))&&(curses===undefined||!!RELICS[k].curse===curses));
+  return Object.keys(RELICS).filter(k=>!run.relics.includes(k)&&!resting(k)&&relicFits(k)&&(!RELICS[k].pack||m.unlocked.includes(RELICS[k].pack))&&(curses===undefined||!!RELICS[k].curse===curses));
 }
 function relicOpts(n){return shuffle(relicPool(false)).slice(0,n);}
 function relicOilMod(relics){
   if(!relics)return 0;
   let m=0;
-  if(relics.includes('reserve'))m+=4;
   if(relics.includes('glass'))m-=6;
   if(relics.includes('hollow'))m-=4;
   return m;
@@ -1030,13 +1051,15 @@ function updateOilMax(){
   run.oilMax=Math.max(6,run.baseOilMax+mod);
   run.oil=Math.min(run.oil,run.oilMax);
 }
+/* Oil Reserve once raised the lamp's capacity by 4 (#89 took that away). A run saved with it keeps the 4 it had */
+function reserveMigrate(){if(run.relics&&run.relics.includes('reserve')&&!run.spillV&&run.baseOilMax!=null)run.baseOilMax+=4; run.spillV=1;}
 function addRelic(k){
   if(!k||run.relics.includes(k))return;
   codexSee('relics',k);
   if(run.relics.length===0)run.baseOilMax=run.oilMax;
   run.relics.push(k);
   updateOilMax();
-  if(k==='reserve')run.oil=Math.min(run.oilMax,run.oil+6);
+  if(k==='reserve')addOil(RESERVE_OIL);
 }
 function removeRelic(k){
   if(!k||!run.relics.includes(k))return;
@@ -1052,9 +1075,11 @@ function removeRelic(k){
   run.relics=run.relics.filter(x=>x!==k);
   updateOilMax();
 }
-function addOil(n){run.oil=Math.min(run.oilMax,run.oil+n);}
+function addOil(n){spillIn(run.oil+n-run.oilMax); run.oil=Math.min(run.oilMax,run.oil+n);}
+/* Oil Reserve: oil gained past the brim spills, to burn in a wave */
+function spillIn(over){if(over>0&&has('reserve'))run.spill=Math.min(SPILL_MAX,(run.spill||0)+over);}
 function loseOil(n){run.oil=Math.max(1,run.oil-n);}
-function price(n){return Math.round(n*(has('key')?.7:1));}
+function price(n){return Math.round(n);}
 function bindable(){return ['gnasher','watcher','wretch','shrieker'];}
 
 /* patrons: offerings, Attention, and the water/bright spots it brings ---------------- */
@@ -1290,12 +1315,41 @@ function inSpot(e){return !!(F.spots&&F.spots.size&&!e.def.fly&&F.spots.has(e.ti
 function nearSpot(x,y){const s=F.spotPts; if(!s||!s.length)return false; for(let i=0;i<s.length;i+=2)if(dst(x,y,s[i],s[i+1])<=SPOT_GLARE)return true; return false;}
 /* how much longer a ward waits between shots: Claimed, in the glare; or Alien Spectrum, in a candle's light (never both);
    then a Gibberer's chatter nearby, and Open Your Ears from Whispers, on top */
+/* Tallow of Saints: a ward in the outermost tile of the lamp's own light. Dead Reckoning: a ward outside it */
+/* the salt under a tile: a circle there, or (Salt Flats) the bridge between two circles, which wears the nearer one */
+function saltAt(key){
+  const s=F.salt.get(key); if(s&&!s.dead&&!s.dark)return s;
+  if(F.bridge){const b=F.bridge.get(key); if(b&&!b.dead&&!b.dark)return b;}
+  return null;
+}
+function bridgeSync(){
+  F.bridgeT=.25;
+  if(!has('saltflats')){F.bridge=null; F.bridgePairs=null; return;}
+  const ss=[], m=new Map(), pairs=[];
+  for(const t of F.towers)if(t.kind==='ward'&&t.type==='salt'&&!t.dead&&!t.dark)ss.push(t);
+  for(let i=0;i<ss.length;i++)for(let j=i+1;j<ss.length;j++){
+    const a=ss[i], b=ss[j], d=dst(a.x,a.y,b.x,b.y); if(d>BRIDGE_R)continue;
+    pairs.push([a,b]);
+    const n=Math.ceil(d/.2);
+    for(let k=1;k<n;k++){const x=a.x+(b.x-a.x)*k/n, y=a.y+(b.y-a.y)*k/n, c=Math.floor(x), r=Math.floor(y), key=c+','+r;
+      if(!F.pathTiles.has(key)||F.salt.has(key)||m.has(key))continue;
+      m.set(key,dst(c+.5,r+.5,a.x,a.y)<=dst(c+.5,r+.5,b.x,b.y)?a:b);}
+  }
+  F.bridge=m; F.bridgePairs=pairs;
+}
+function onRim(t){const d=dst(t.x,t.y,F.lx,F.ly), R=lampRadius(); return d<=R&&d>R-TALLOW_RIM;}
+function reckoned(t){return has('witchsalt')&&dst(t.x,t.y,F.lx,F.ly)>lampRadius();}
+/* what a ward's blow is worth beyond its own stats: a beacon's light, Thunder Marrow's thunder, Dead Reckoning */
+function wardMul(t){return beaconAt(t.x,t.y)*(t.marrowT>F.time?MARROW_DMG:1)*(reckoned(t)?RECKON_DMG:1);}
 function sunCd(t){
   let m=1;
   if(patTier('sun')>=3&&nearSpot(t.x,t.y))m=SUN_SLOW;
   else if(hasOff('aliencandle'))for(const c of F.cands)if(c!==t&&dst(t.x,t.y,c.x,c.y)<=c.st.light){m=SPEC_SLOW; break;}
   if(F.gibs&&F.gibs.length)for(const g of F.gibs)if(!g.dead&&dst(t.x,t.y,g.x,g.y)<=GIB_R){m*=GIB_SLOW; break;}
   if(hasOff('openears')&&madTier()>=1)m*=EARS_FAST;
+  /* Tallow of Saints blesses the lamp's edge; Sealing Wax slows what it seals */
+  if(has('tallow')&&onRim(t))m*=TALLOW_CD;
+  if(t.sealed&&has('wax'))m*=WAX_CD;
   return m;
 }
 
@@ -1672,7 +1726,7 @@ const EVENTS={
     {l:'Fill it in',d:'The lamp holds 2 more oil.',fn:()=>{run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+2; updateOilMax(); addOil(2); return {text:'Whatever it was for, it will not be you. The lamp steadies. +2 capacity.'};}},
     {l:'Walk on',d:'Nothing happens.',fn:()=>({text:'You do not look back. You hear dirt moving.'})}]},
   altar:{n:'A Salt-crusted Altar',body:'An old altar furred white with salt. Something was sacrificed here, and the salt kept it.',opts:[
-    {l:'Pray',d:RELICS_RESTING?'Gain the Brined Ledger, and learn Salt if you have not.':'Gain Salt Flats, or Witch Salt if you have it.',fn:()=>{const k=RELICS_RESTING?(!has('ledger')?'ledger':null):!has('saltflats')?'saltflats':(!has('witchsalt')?'witchsalt':null); if(k){addRelic(k); if(!run.wards.includes('salt'))run.wards.push('salt'); return {text:'The salt answers. You carry '+RELICS[k].n+'.'};} run.ess+=60; return {text:'The salt has nothing more for you. +60 essence.'};}},
+    {l:'Pray',d:RELICS_RESTING?'Gain the Brined Ledger, and learn Salt if you have not.':'Gain Salt Flats, or the Brined Ledger if you have it, and learn Salt if you have not.',fn:()=>{const k=RELICS_RESTING?(!has('ledger')?'ledger':null):!has('saltflats')?'saltflats':(!has('ledger')?'ledger':null); if(k){addRelic(k); if(!run.wards.includes('salt'))run.wards.push('salt'); return {text:'The salt answers. You carry '+RELICS[k].n+'.'};} run.ess+=60; return {text:'The salt has nothing more for you. +60 essence.'};}},
     {l:'Pocket the salt',d:'+70 essence.',fn:()=>{run.ess+=70; return {text:'It sells. +70 essence.'};}},
     {l:'Smash it',d:'The lamp holds 3 more oil, but you lose 2 oil now.',fn:()=>{run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+3; updateOilMax(); loseOil(2); return {text:'Brine pours out and runs toward the lamp. +3 capacity, −2 oil.'};}}]},
   door:{n:'A Door That Was Not There',pack:'events_more',body:'Set into the wall of the stair. The hinges are still wet.',opts:[
@@ -2052,16 +2106,22 @@ let run=null, F=null, lastSave=store.get(SAVEKEY,null);
 let sel=null, selTower=null, mode=null, paused=true, speed=1, uid=0, pauseOpen=false, fsNote='';
 
 function has(k){return run.relics.includes(k);}
-function tiers(){const b=(has('quiet')?3:0)-(F&&F.omen==='whispering'?3:0)-(run.madPen||0)-(has('eyes')?2:0); return [Math.max(2,6+b),Math.max(3,10+b),Math.max(4,14+b)];}
-function horrorMad(type){if(has('choirwalls'))return 0; return Math.max(1,HORRORS[type].mad-(has('wax')?1:0));}
+function tiers(){const b=(stillNow()?STILL_MAD:0)-(F&&F.omen==='whispering'?3:0)-(run.madPen||0)-(has('eyes')?2:0); return [Math.max(2,6+b),Math.max(3,10+b),Math.max(4,14+b)];}
+function horrorMad(type){if(has('choirwalls'))return 0; return HORRORS[type].mad;}
+/* Quiet Mind: still, after STILL_T seconds of a wave with nothing built, upgraded or cast */
+function stillNow(){return !!(F&&F.still&&has('quiet'));}
+/* Sealing Wax: each sealed ward lowers the madness of your horrors by 1 (never below none) */
+function waxN(){if(!F||!has('wax'))return 0; let n=0; for(const t of F.towers)if(t.sealed&&!t.dead)n++; return n;}
 /* the Occultist's madness feeds its horrors */
 /* the Occultist is fed by the madness of horrors he paid for, never by dread or a free horror (boundMadTier) */
 function horrorBoost(){return kit()==='occultist'?1+HORROR_TIER*boundMadTier():1;}
 /* everything that pushes you through the tiers: your horrors' madness and the Many-Mouthed's dread */
-function madness(){if(!F)return 0; return horrorMadness(false)+dread();}
+function madness(){if(!F)return 0; return Math.max(0,horrorMadness(false)-waxN())+dread();}
 function madTier(){return tierOf(madness());}
-function wardCost(type){if(type==='candle'&&kit()==='occultist')return 0; if(type==='salt')return has('saltflats')?10:WARDS.salt.cost; return WARDS[type].cost;}
-function refillCost(){return has('saltflats')?5:10;}
+function wardCost(type){if(type==='candle'&&kit()==='occultist')return 0; return stillCost(WARDS[type].cost);}
+/* Quiet Mind: while you are still, the next ward or upgrade costs less */
+function stillCost(c){return stillNow()?Math.round(c*STILL_DISC):c;}
+function refillCost(){return 10;}
 function avail(type){return (run.roster[type]||0)-F.towers.filter(t=>t.kind==='horror'&&t.type===type).length;}
 
 /* ---------------- stats from branches ---------------- */
@@ -2070,10 +2130,10 @@ const m2=n=>Math.min(n||0,2);
 function ashLit(t){return corpseKit()&&hasOff('sun_corpse')&&!!F&&nearSpot(t.x,t.y);}
 function wstat(t){
   const b=t.br||{};
-  if(t.type==='harpoon')return {range:2.6+.4*m2(b.sight),dmg:(10+(b.strength>=1?6:0)+(b.strength>=2?8:0))*(has('whetted')?1.3:1)*spearMul(b),spear:kit()==='occultist',soul:b.dread>=3,
+  if(t.type==='harpoon')return {range:2.6+.4*m2(b.sight),dmg:(10+(b.strength>=1?6:0)+(b.strength>=2?8:0))*spearMul(b),spear:kit()==='occultist',soul:b.dread>=3,
     tether:kit()==='whaler',tMax:b.line>=1?.55:TETHER_MAX,clap:kit()==='bellringer'?{hear:CLAP_HEAR+(b.ring>=1?1:0),knock:CLAP_KNOCK+(b.ring>=2?.25:0),peal:b.ring>=3}:null,rod:kit()==='galvanist',rodT:ROD_T+(b.charge>=1?2:0),rodMax:ROD_MAX+(b.charge>=2?1:0),thunder:b.charge>=3,leash:b.line>=2?2:1,haul:b.line>=3,rate:1.1*Math.pow(1.25,m2(b.speed)),twin:b.speed>=3,pierce:b.strength>=3,deep:b.sight>=3,flare:kit()==='lamplighter',flareR:GLINT_R+(b.flare>=1?.5:0),flareT:GLINT_T+(b.flare>=2?1:0),star:b.flare>=3};
   if(t.type==='candle')return {arc:kit()==='galvanist',flare:ARC_DMG+4*m2(b.spark),steady:b.spark>=3,light:(2.3+(ashLit(t)?1:0)+.5*m2(b.glow)+(kit()==='whaler'?BLUBBER_LIGHT:0)+(kit()==='galvanist'?ARC_LIGHT:0)-(F&&F.omen==='thickdark'?.5:0))*(trialOn('night')?NIGHT_DIM:1),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)]+(hasOff('aliencandle')?ALIEN_BURN:0)+(ashLit(t)?ALIEN_BURN:0),beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3,reek:b.reek>=2?4:b.reek>=1?2:0,lure:b.reek>=3};
-  if(t.type==='chime')return {range:1.8+.25*m2(b.res),dmg:14+(b.marrow>=1?6:0)+(b.marrow>=2?8:0),stun:.6+.3*m2(b.toll)+(has('marrow')?.4:0),period:2,twice:b.res>=3,knell:b.toll>=3,shatter:b.marrow>=3};
+  if(t.type==='chime')return {range:1.8+.25*m2(b.res),dmg:14+(b.marrow>=1?6:0)+(b.marrow>=2?8:0),stun:.6+.3*m2(b.toll),period:2,twice:b.res>=3,knell:b.toll>=3,shatter:b.marrow>=3};
   if(t.type==='censer')return {range:3.2,dmg:16,rate:.45*Math.pow(1.25,m2(b.swing)),splash:1+.25*m2(b.spread),volley:b.swing>=3,cluster:b.spread>=3,
     pool:b.pitch>=3?{dps:10,dur:4,r:1.4}:b.pitch>=1?{dps:b.pitch>=2?7:4,dur:b.pitch>=2?2.5:2,r:1}:null};
   if(t.type==='trap')return {dmg:60+(b.barbs>=1?20:0)+(b.barbs>=2?25:0),hold:1+.5*m2(b.chain),reset:3*Math.pow(.75,m2(b.spring)),bleed:b.barbs>=3,twin:b.spring>=3,drag:b.chain>=3};
@@ -2105,7 +2165,7 @@ function branchState(o,bi){
   const active=tree.filter(b=>(o.br[b.k]||0)>0).length;
   if(lvl===0&&active>=2)return {lock:'Two branches already chosen'};
   if(lvl===2&&tree.some(b=>b.k!==B.k&&(o.br[b.k]||0)>=3))return {lock:'Another branch holds the capstone'};
-  return {cost:B.t[lvl][0],desc:B.t[lvl][1],cap:lvl===2};
+  return {cost:stillCost(B.t[lvl][0]),desc:B.t[lvl][1],cap:lvl===2};
 }
 function newBranches(type){const o={}; (treeOf(type)||[]).forEach(b=>o[b.k]=0); return o;}
 
@@ -2253,7 +2313,7 @@ function nearestPathPoint(x,y){
 
 /* ---------------- light ---------------- */
 function lampBase(){
-  let r=3.7+lstat().wickR+(has('tallow')?.8:0)+(has('blackwick')?1.2:0)+(run.lampBonus||0)-(F&&F.omen==='moonless'?1:0)-(trialOn('night')?NIGHT_LAMP:0)-(hasOff('first_bite')?BITE_LAMP:0);
+  let r=3.7+lstat().wickR-(has('witchsalt')?RECKON_LAMP:0)+(has('blackwick')?1.2:0)+(run.lampBonus||0)-(F&&F.omen==='moonless'?1:0)-(trialOn('night')?NIGHT_LAMP:0)-(hasOff('first_bite')?BITE_LAMP:0);
   if(madTier()>=3)r-=1;
   return Math.max(1.6,r);
 }
@@ -2378,6 +2438,7 @@ function updateGrid(dt){
       if(f.def.heavy){F.wireBroken.add(e.key); e.live=false; hurt(f,e.dmg,'grid'); F.fx.push({k:'fry',x:(e.a.x+e.b.x)/2,y:(e.a.y+e.b.y)/2,t:0,dur:.7}); AUDIO.fry(); break;}
       if(cd>0)continue;
       gridShock(f,e.dmg,e.stun);
+      if(!f.dead)thunder(e.a.t||e.b.t,f);
       /* Live Water: a wire that touches water shocks everything standing in it */
       if(hasOff('livewater')&&F.water.size)for(const w of F.foes)if(w!==f&&!w.dead&&inWater(w)&&wireWet(e))gridShock(w,e.dmg,e.stun);
       for(const nd of [e.a,e.b]){if(nd.t)nd.t.zaps=(nd.t.zaps||0)+1;
@@ -2614,7 +2675,7 @@ function updateTocsin(dt){
     const t=guns[0], st=wstat(t); if(t.ammo>=st.ammo)t.cd=st.reload; t.ammo--;
     t.ang=Math.atan2(c.y-t.y,c.x-t.x); t.recoil=.35;
     const fl=TOCSIN_FLIGHT+dst(t.x,t.y,c.x,c.y)*.04;
-    F.shots.push({k:'tocsin',sx:t.x,sy:t.y-.3,tx:c.x,ty:c.y,t:0,dur:fl,dmg:st.dmg*beaconAt(t.x,t.y),r:st.r,hear:st.hear,stagger:st.stagger,cracks:st.cracks});
+    F.shots.push({k:'tocsin',sx:t.x,sy:t.y-.3,tx:c.x,ty:c.y,t:0,dur:fl,dmg:st.dmg*wardMul(t),r:st.r,hear:st.hear,stagger:st.stagger,cracks:st.cracks});
     AUDIO.tocsin(); F.fx.push({k:'ring',x:t.x,y:t.y-.3,r0:.1,r1:.6,t:0,dur:.3,col:'226,196,140'}); caption(t.x,t.y-.7,'BOOM',.26);
   }
 }
@@ -2821,7 +2882,7 @@ function checkpoint(){
   store.set(SAVEKEY,lastSave);
 }
 function clearSave(){lastSave=null; store.set(SAVEKEY,null);}
-function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; if(run.kit==='occultist'&&!run.wards.includes('grasp'))run.wards.splice(2,0,'grasp'); updateOilMax(); beginFloor(s);}
+function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); reserveMigrate(); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; if(run.leech>=LEECH_N)run.leech=LEECH_N-1; if(run.kit==='occultist'&&!run.wards.includes('grasp'))run.wards.splice(2,0,'grasp'); updateOilMax(); beginFloor(s);}
 
 /* ---------------- dev mode ----------------
    Hidden: tap the "The Last Lamp" heading on the title screen 7 times quickly to switch it on or off.
@@ -2926,7 +2987,7 @@ function openDevMode(msg){
 /* ---------------- run & floors ---------------- */
 function newRun(k,depth){
   k=KITS[k]?k:'lamplighter'; const K=KITS[k];
-  run={floor:0,oil:20,oilMax:20,baseOilMax:20,ess:0,kit:k,depth:depth||0,wards:K.wards.slice(),rites:K.rites.slice(),relics:[],roster:Object.assign({},K.roster),
+  run={floor:0,oil:20,oilMax:20,baseOilMax:20,spillV:1,ess:0,kit:k,depth:depth||0,wards:K.wards.slice(),rites:K.rites.slice(),relics:[],roster:Object.assign({},K.roster),
     bound:0,kills:0,peakMad:0,omen:null,elite:false,trial:null,next:null,bosses:0,elites:0,seenEvents:[],madPen:0,lampBonus:0,bonusStipend:0};
   if(run.depth>=5){run.baseOilMax-=5; updateOilMax(); run.oil=run.oilMax;}
   beginFloor(null);
@@ -3176,6 +3237,7 @@ function callWave(){
 function startWave(sub){
   if(mode==='aim')mode=null;
   F.wave++; F.phase='wave'; F.waveT=0; F.queue=[];
+  if(F.wave===1&&has('wax'))waxSeal();
   /* the wave's own dread and the Teeth in the Stair begin again */
   F.feedMad=0; F.baitMad=0; F.ate=false; F.drunkMad=0; F.gorgeRise=0;
   const groups=F.def.waves[F.wave-1].slice();
@@ -3311,11 +3373,13 @@ function spawnFoe(type,gate,d,hpMul){
 }
 function gainOil(n){
   const before=run.oil;
+  spillIn(run.oil+n-run.oilMax);
   run.oil=Math.min(run.oilMax,run.oil+n);
   if(run.oil>before)F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'+'+(run.oil-before)+' oil',col:PAL.tallow,t:0,dur:1,size:.3});
 }
 function waveCleared(){
   checkOccultistDeed(true);
+  if(run.keyLeft>0)run.keyLeft--;
   F.feedMad=0; F.baitMad=0; F.drunkMad=0;
   /* Salted Teeth: the salt beside your horrors dissolves when the wave breaks */
   if(hasOff('bloodsalt'))for(const t of F.towers.slice())if(t.kind==='ward'&&t.type==='salt'&&nearHorror(t.x,t.y,SALT_R)){removeTower(t); F.fx.push({k:'ring',x:t.x,y:t.y,r0:.1,r1:.6,t:0,dur:.4,col:'236,232,222'});}
@@ -3994,11 +4058,14 @@ function doPact(d,k){
   const said={flame:'The lamp gutters, then steadies smaller.',blood:'You bleed the lamp. 150 essence pools on the altar.',curse:'The curse settles on you like wet cloth.',name:'You whisper it. Something answers, and follows you down. A Drowned Choir is bound to you.',forget:'You forget. It is surprisingly easy.',burn:'Your essence burns on the altar, and the flame drinks it. The lamp holds 6 more oil.'};
   r.res=said[k]; showLanding();
 }
+/* Ossuary Key: the merchant sells on bone credit; the next floor's purse pays it */
+function keyCredit(){return has('key')?KEY_CREDIT:0;}
 function buyStock(d,i){
   const it=d.room.stock[i];
   if(!it||it.sold)return;
-  if(run.ess<it.cost){d.room.msg='Not enough essence for that.'; showLanding(); return;}
+  if(run.ess+keyCredit()<it.cost){d.room.msg='Not enough essence for that.'; showLanding(); return;}
   run.ess-=it.cost; it.sold=true; d.room.msg='';
+  if(has('key'))run.keyLeft=KEY_WAVES;
   if(it.kind==='relic')addRelic(it.key);
   else if(it.kind==='ward'){if(!run.wards.includes(it.key))run.wards.push(it.key);}
   else if(it.kind==='bind'){run.roster[it.key]=(run.roster[it.key]||0)+1; run.bound++; checkOccultistDeed();}
@@ -4007,7 +4074,7 @@ function buyStock(d,i){
   AUDIO.coin(); showLanding();
 }
 function stockChoice(d,it,i){
-  const t=it.sold?'Sold':it.cost+' essence', off=it.sold||run.ess<it.cost, fn=step('room',dd=>buyStock(dd,i));
+  const t=it.sold?'Sold':it.cost+' essence', off=it.sold||run.ess+keyCredit()<it.cost, fn=step('room',dd=>buyStock(dd,i));
   if(it.kind==='relic'){const c=relicChoice(it.key,fn,' · '+t); if(off)c.cls+=' off'; return c;}
   if(it.kind==='ward')return {cls:off?'off':'',tag:'Ward · '+t,title:wdef(it.key).n,sub:wdef(it.key).d,fn};
   if(it.kind==='bind')return {cls:'bind'+(off?' off':''),tag:'Binding · '+t,title:HORRORS[it.key].n,sub:HORRORS[it.key].d,fn};
@@ -4206,8 +4273,10 @@ function tryPlace(c,r){
   if(it.kind==='ward'&&it.type==='candle'&&corpseKit()){t.corpse=true; t.body=takeBody(bodyNear(c,r),true); if(t.body&&t.body[2]&&HORRORS[t.body[2]])t.ph=t.body[2];}
   if(it.kind==='ward'&&it.type==='mirror')t.rot=Math.atan2(t.y-F.ly,t.x-F.lx)+Math.PI/4;
   if(it.kind==='ward'&&it.type==='grasp'){t.bones=[]; for(let i=0;i<PILE_MAX;i++){const b=takeBody(c+','+r); if(b)t.bones.push(b);} t.grips=GRASP_GRIPS;}
-  if(it.kind==='ward'&&it.type==='salt'){t.max=t.dur=14*(has('saltflats')?2:1); F.salt.set(c+','+r,t);}
+  if(it.kind==='ward'&&it.type==='salt'){t.max=t.dur=14; F.salt.set(c+','+r,t);}
   F.towers.push(t);
+  if(it.kind==='ward'&&it.type==='salt')bridgeSync();
+  quietAct();
   F.L=lightsNow();
   F.fx.push({k:'ring',x:t.x,y:t.y,r0:.1,r1:.6,t:0,dur:.35,col:it.kind==='horror'?'169,124,226':'237,180,90'});
   AUDIO.place();
@@ -4218,7 +4287,7 @@ function tryPlace(c,r){
 function removeTower(t){
   t.dead=true;
   F.towers=F.towers.filter(x=>x!==t);
-  if(t.kind==='ward'&&t.type==='salt')F.salt.delete(t.c+','+t.r);
+  if(t.kind==='ward'&&t.type==='salt'){F.salt.delete(t.c+','+t.r); bridgeSync();}
   if(selTower===t)selTower=null;
   F.L=lightsNow();
 }
@@ -4228,6 +4297,7 @@ function refund(t){
 }
 function towerName(v){return v.kind==='ward'?wdef(v.type).n:HORRORS[v.type].n;}
 function sellTower(t,confirmed){
+  if(t.sealed&&has('wax')){hint('Sealing Wax holds it. It cannot be sold this floor.'); return;}
   const victims=cutVictims(t);
   if(victims.length&&!confirmed){
     paused=true;
@@ -4257,7 +4327,7 @@ function buyBranch(o,bi){
   if(s.max||s.lock)return;
   if(run.ess<s.cost){hint('Not enough essence.'); return;}
   const B=treeOf(o.type)[bi];
-  spend(o,s.cost);
+  spend(o,s.cost); quietAct();
   o.br[B.k]=(o.br[B.k]||0)+1;
   if(o.isLamp&&B.k==='reservoir'&&o.br.reservoir<=2)gainOil(3);
   F.L=lightsNow();
@@ -4269,7 +4339,10 @@ function refillSalt(t){
   const c=refillCost();
   if(t.dur>=t.max)return;
   if(run.ess<c){hint('Not enough essence.'); return;}
-  spend(t,c); t.dur=t.max; AUDIO.place(); forceUI();
+  spend(t,c); t.dur=t.max;
+  /* Salt Flats: a bridged pair is refilled together */
+  if(F.bridgePairs)for(const [a,b] of F.bridgePairs){if(a===t)b.dur=b.max; else if(b===t)a.dur=a.max;}
+  AUDIO.place(); forceUI();
 }
 
 /* ---------------- combat ---------------- */
@@ -4294,6 +4367,7 @@ function hurt(e,amt,src,echo){
   if(F.named===e.type)amt*=1.6;
   if(F.knell&&(e.stunT>0||e.pinT>0))amt*=1.3;
   if(e.markT>0&&amt>0)amt*=1.15;
+  if(e.waxT>0&&amt>0)amt*=WAX_MARK;
   if(e.hex)amt*=e.hex.mul;
   if(e.flenseT>0)amt*=1.25;
   if(e.tetherBy&&amt>0&&hasOff('sun_harpoon')&&inSpot(e))amt*=1.5;
@@ -4328,6 +4402,46 @@ function applyHex(e,dt){
   e.hex=h;
   if(h&&h.bleed)hurt(e,h.bleed*dt);
 }
+/* Bounty of the Deep: the far half of the path (where they climb out) pays more, the near half less; water counts as far */
+function bountyMul(e){if(!has('bounty'))return 1; const P=F.paths[e.gate]; return inWater(e)||!P||e.d<P.len*.5?BOUNTY_FAR:BOUNTY_NEAR;}
+/* a ward's blow lands: Sealing Wax marks it, Whetted Barbs leave a barb (never in a boss) */
+function struck(t,e,dmg){
+  if(!t||!e||e.dead)return;
+  if(t.sealed&&has('wax'))e.waxT=WAX_MARK_T;
+  if(dmg&&has('whetted')&&(t.type==='harpoon'||t.type==='lance')&&!e.def.boss){e.barbs=Math.min(BARB_MAX,(e.barbs||0)+1); e.barbDmg=Math.max(e.barbDmg||0,dmg);}
+}
+/* Whetted Barbs: as it dies, its barbs tear free into the nearest thing you can see. A torn barb lodges in nothing */
+function barbsTear(e){
+  const n=e.barbs, dmg=(e.barbDmg||0)*BARB_HIT; e.barbs=0;
+  let o=null, bd=BARB_R;
+  for(let i=0,m=F.foes.length;i<m;i++){const f=F.foes[i]; if(f===e||f.dead||!canSee(f))continue; const d=dst(f.x,f.y,e.x,e.y); if(d<=bd){bd=d; o=f;}}
+  if(!o||!(dmg>0))return;
+  for(let k=0;k<n;k++){const a=Math.atan2(o.y-e.y,o.x-e.x)+(k-(n-1)/2)*.35; F.shots.push({k:'bolt',x:e.x+Math.cos(a)*.2,y:e.y+Math.sin(a)*.2,tg:o,tx:o.x,ty:o.y,spd:11,dmg,ang:a});}
+}
+/* Leech Jar: only blood that runs slow feeds it: held, stunned, on a line, tangled, in salt or in water */
+function leechFed(e){return e.stunT>0||e.pinT>0||e.tangleT>0||(e.tetherBy&&e.tetherBy.tethered===e)||!!saltAt(e.tile)||inWater(e);}
+function leechBurst(){
+  gainOil(LEECH_OIL);
+  const R=lampRadius();
+  for(let i=0,n=F.foes.length;i<n;i++){const o=F.foes[i]; if(!o.dead&&dst(o.x,o.y,F.lx,F.ly)<=R)o.leechT=LEECH_T;}
+  F.fx.push({k:'ring',x:F.lx,y:F.ly,r0:.3,r1:R,t:0,dur:.7,col:'150,40,48'});
+  banner(RELICS.leech.n,'relic','The jar bursts');
+}
+/* Thunder Marrow: a stun, shock or hold leaps to your nearest striking ward within reach of the creature; it fires at once and hits
+   harder. Each ward sends it once every few seconds. In the Wrong Sun's glare it leaps to two */
+function thunder(src,e){
+  if(!has('marrow')||!src||!e||(src.marrowCd||0)>F.time)return;
+  let a=null, ad=MARROW_R, b=null, bd=MARROW_R;
+  for(const w of F.towers){
+    if(w===src||w.dead||w.dark||w.kind!=='ward'||!STRIKERS.includes(w.type))continue;
+    const d=dst(w.x,w.y,e.x,e.y);
+    if(d<=ad){b=a; bd=ad; a=w; ad=d;} else if(d<=bd){b=w; bd=d;}
+  }
+  if(!a)return;
+  src.marrowCd=F.time+MARROW_CD;
+  const two=b&&(nearSpot(src.x,src.y)||nearSpot(a.x,a.y));
+  for(const w of two?[a,b]:[a]){w.cd=0; w.marrowT=F.time+MARROW_T; F.fx.push({k:'arc',pts:[[e.x,e.y],[w.x,w.y-.3]],t:0,dur:.24,seed:Math.random()*99});}
+}
 function burst(x,y,r,dmg,col,except){
   F.fx.push({k:'ring',x,y,r0:.1,r1:r,t:0,dur:.35,col});
   for(let i=0,n=F.foes.length;i<n;i++){const o=F.foes[i]; if(o!==except&&!o.dead&&dst(o.x,o.y,x,y)<=r) hurt(o,dmg);}
@@ -4336,12 +4450,15 @@ function killFoe(e){
   if(e.dead)return;
   e.dead=true;
   /* bounties thin out the deeper you go; only the richest Tithe Bowl in reach takes its cut */
-  let gain=Math.round(e.def.ess*[.9,.8,.7,.6,.5][Math.min(4,run.floor)]*(has('bounty')?1.3:1)*(F.omen==='ironhide'?1.3:1))+(has('gilded')?2:0);
+  let gain=Math.round(e.def.ess*[.9,.8,.7,.6,.5][Math.min(4,run.floor)]*bountyMul(e)*(F.omen==='ironhide'?1.3:1))+(has('gilded')?2:0);
+  if(e.barbs)barbsTear(e);
   /* what the Many-Mouthed sends leaves nothing: no essence, no tithe, no render, no bones, no sigil */
   const none=e.def.patron==='mouths';
   let bowl=null; if(!none)for(const t of (F.bowls||[]))if(dst(e.x,e.y,t.x,t.y)<=t.st.range&&(!bowl||t.st.per>bowl.st.per))bowl=t;
   if(none)gain=0;
   if(bowl){gain+=bowl.st.per; bowl.ping=.6; AUDIO.coin(); if(bowl.st.oilEvery){bowl.kills=(bowl.kills||0)+1; if(bowl.kills>=bowl.st.oilEvery){bowl.kills=0; gainOil(1);}}}
+  /* Ossuary Key: a debt collected at the bottom step */
+  if(!none&&run.keyLeft>0&&F.phase==='wave'&&dst(e.x,e.y,F.lx,F.ly)<=KEY_R)gain+=KEY_ESS;
   if(F.omen==='hungering')gain=0;
   if(!none){potRender(e); addCorpse(e);}
   /* Blood in the Try-pot: a horror kills what a line holds, and the line snaps to the next */
@@ -4355,7 +4472,7 @@ function killFoe(e){
   if(e.def.herald&&e.hp<=0){run.heralds=(run.heralds||0)+1; const pool=relicPool(false), k=pool.length?pick(pool):null;
     if(k){addRelic(k); setTimeout(()=>banner(e.def.n+' falls','rite','You take '+RELICS[k].n),300);} else{run.ess+=60; setTimeout(()=>banner(e.def.n+' falls','rite','+60 essence'),300);}
     F.fx.push({k:'ring',x:e.x,y:e.y,r0:.2,r1:1.6,t:0,dur:.7,col:'237,180,90'});}
-  if(has('leech')){run.leech=(run.leech||0)+1; if(run.leech>=30){run.leech=0; gainOil(1);}}
+  if(has('leech')&&leechFed(e)){run.leech=(run.leech||0)+1; if(run.leech>=LEECH_N){run.leech=0; leechBurst();}}
   if(gain>0){run.ess+=gain; F.fx.push({k:'float',x:e.x,y:e.y-.3,txt:'+'+gain,col:PAL.tallow,t:0,dur:.8,size:.24});}
   if(e.hex&&e.hex.doom){
     F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:1,t:0,dur:.4,col:'150,230,120'});
@@ -4468,6 +4585,8 @@ function castRite(k){
   if(riteSilent(k)){hint('Bare Hands: your rites are silent this floor.'); return;}
   if(k==='name'){if(F.nameUsed)return;}
   else if((F.cd[k]||0)>0)return;
+  /* Quiet Mind: a rite ends stillness, but her Toll is how she sees, so it never does */
+  if(k!=='toll')quietAct();
   if(k==='flare'){F.flareT=5; F.cd.flare=RITES.flare.cd; AUDIO.flare(); banner('Flare','rite','Everything is lit for five seconds'); sunBurst(0,0,null);}
   else if(k==='ebb'){if(!castEbb())return;}
   else if(k==='feed'){if(!castFeed())return;}
@@ -4527,6 +4646,33 @@ function castName(e){
 }
 
 /* ---------------- update ---------------- */
+/* Quiet Mind: nothing built, upgraded or cast for a while in a wave, and you are still until you act */
+function stillTick(dt){
+  if(!has('quiet')||F.phase!=='wave'||F.still)return;
+  F.stillT=(F.stillT||0)+dt;
+  if(F.stillT>=STILL_T){F.still=true; F.fx.push({k:'float',x:F.lx,y:F.ly-.7,txt:'Still',col:'#B9C4D6',t:0,dur:1.6,size:.3}); forceUI();}
+}
+function quietAct(){if(!F)return; F.stillT=0; if(F.still){F.still=false; forceUI();}}
+/* Oil Reserve: in a wave, the spill burns a little at a time on the path under the foremost creature in the lamp's light */
+function spillTick(dt){
+  if(!(run.spill>0)||F.phase!=='wave'||!has('reserve'))return;
+  F.spillCd=(F.spillCd||0)-dt; if(F.spillCd>0)return;
+  F.spillCd=1;
+  const R=lampRadius(); let lead=null, best=-1;
+  for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(e.dead||e.def.fly||dst(e.x,e.y,F.lx,F.ly)>R)continue;
+    const P=F.paths[e.gate], p=P?e.d/P.len:0; if(p>best){best=p; lead=e;}}
+  if(!lead)return;
+  run.spill=Math.max(0,run.spill-SPILL_DRAIN);
+  let pool=null; for(const q of F.pools)if(q.spill&&dst(q.x,q.y,lead.x,lead.y)<.6){pool=q; break;}
+  if(pool)pool.t=pool.max; else F.pools.push({x:lead.x,y:lead.y,r:.55,dps:SPILL_DPS,t:SPILL_T,max:SPILL_T,spill:true});
+}
+/* Sealing Wax: as a floor's first wave begins, the striking wards nearest the lamp are sealed, one and one more per horror you field */
+function waxSeal(){
+  let hz=0; for(const t of F.towers)if(t.kind==='horror'&&!t.dead)hz++;
+  const ws=F.towers.filter(t=>t.kind==='ward'&&!t.dead&&!t.sealed&&STRIKERS.includes(t.type)).sort((a,b)=>dst(a.x,a.y,F.lx,F.ly)-dst(b.x,b.y,F.lx,F.ly)).slice(0,Math.min(WAX_MAX,1+hz));
+  for(const t of ws){t.sealed=true; F.fx.push({k:'ring',x:t.x,y:t.y,r0:.6,r1:.15,t:0,dur:.5,col:'170,40,40'});}
+  if(ws.length)banner(RELICS.wax.n,'relic',ws.length===1?'One ward is sealed':ws.length+' wards are sealed');
+}
 function update(dt){
   if(F.intro){
     const I=F.intro; I.t+=dt; F.time+=dt*.35;
@@ -4556,6 +4702,9 @@ function update(dt){
   F.lastTier=tier;
   run.peakMad=Math.max(run.peakMad,madness());
   for(const k in F.cd)F.cd[k]=Math.max(0,F.cd[k]-dt);
+  stillTick(dt);
+  spillTick(dt);
+  if(has('saltflats')||F.bridge){F.bridgeT=(F.bridgeT||0)-dt; if(F.bridgeT<=0)bridgeSync();}
   if(F.flareT>0)F.flareT-=dt;
   if(F.wisp){F.wisp.t-=dt; if(F.wisp.t<=0)F.wisp=null;}
   if(F.hurtFlash>0)F.hurtFlash-=dt;
@@ -4648,6 +4797,8 @@ function updateFoes(dt){
     if(e.poisonT>0){e.poisonT-=dt; hurt(e,e.poisonDps*dt,e.poisonH?'horror':undefined); if(e.dead)continue;}
     if(e.bleedT>0){e.bleedT-=dt; hurt(e,10*dt); if(e.dead)continue;}
     if(e.flenseT>0)e.flenseT-=dt;
+    if(e.waxT>0)e.waxT-=dt;
+    if(e.leechT>0){e.leechT-=dt; hurt(e,LEECH_DMG/LEECH_T*dt); if(e.dead)continue;}
     if(F.threads.length&&!(e.kindleT>0)&&!e.def.fly)for(const [a,b] of F.threads)if(segDist(e.x,e.y,a.x,a.y,b.x,b.y)<=.35){e.kindleT=THREAD_T; break;}
     if(F.links.length&&!e.def.fly&&hasOff('mouth_signal')){threadBite(e); if(e.dead)continue;}
     if(e.kindleT>0){e.kindleT-=dt; hurt(e,KINDLE_DPS*dt); if(e.dead)continue;}
@@ -4715,11 +4866,13 @@ function updateFoes(dt){
     if(e.sightT>0)e.sightT-=dt;
     if(e.drunkRunT>0)e.drunkRunT-=dt;
 
-    const st=F.salt.get(e.tile); if(st&&!st.dead&&!st.dark){if(!hasOff('brine'))slow=Math.max(slow,has('witchsalt')?.65:.5); if(has('ledger'))hurt(e,6*dt);}
+    const st=saltAt(e.tile); if(st){if(!hasOff('brine'))slow=Math.max(slow,.5); if(has('ledger'))hurt(e,6*dt);}
     for(const t of choirs)if(dst(e.x,e.y,t.x,t.y)<=HORRORS.elite.range)slow=Math.max(slow,HORRORS.elite.slow);
     for(const t of keepers)if(dst(e.x,e.y,t.x,t.y)<=HORRORS.keeper.range)slow=Math.max(slow,.45);
     if(e.hex)slow=Math.max(slow,e.hex.slow);
     if(e.tangleT>0)slow=Math.max(slow,TANGLE_SLOW);
+    if(e.barbs)slow=Math.max(slow,e.barbs*BARB_SLOW);
+    if(e.leechT>0)slow=Math.max(slow,LEECH_SLOW);
     /* Violet Husking: a Gibberer slows near a burning husk */
     if(e.type==='gibberer'&&F.hlights&&F.hlights.length&&huskLightAt(e.x,e.y,HUSKL_GIB_R))slow=Math.max(slow,HUSKL_SLOW);
     for(const t of F.bowls)if(t.st.slow&&dst(e.x,e.y,t.x,t.y)<=t.st.range)slow=Math.max(slow,t.st.slow);
@@ -4750,7 +4903,7 @@ function updateFoes(dt){
       if(hasOff('sundrunk'))sunDrunk(e,wasSpot);
       /* Gorger's Undertow: a Gorger stepping into her water raises it, twice a wave at most */
       if(e.type==='gorger'&&!wasWet&&hasOff('gorgedrag')&&inWater(e)&&F.phase==='wave'&&(F.gorgeRise||0)<DRAG_RISE){F.gorgeRise=(F.gorgeRise||0)+1; waterRise(true);}
-      const s2=F.salt.get(key);
+      const s2=saltAt(key);
       /* Brine Pools: the pool drags each creature a tile back, once */
       if(s2&&!s2.dead&&!s2.dark&&hasOff('brine')&&!e.def.boss&&!e.def.heavy&&!(e.brined||(e.brined=[])).includes(s2.id)){
         e.brined.push(s2.id); e.d=Math.max(0,e.d-1); const q=posAt(P,e.d); e.x=q[0]; e.y=q[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y);
@@ -4770,8 +4923,8 @@ function fireBolt(t,e,st,dmg,k){
   if(st.tether&&!k&&t.tethered&&t.tethered!==e)t.tethered=null;
   const ang=Math.atan2(e.y-t.y,e.x-t.x), off=k?.13:0;
   const sx=t.x+Math.cos(ang)*.4-Math.sin(ang)*off, sy=t.y+Math.sin(ang)*.4+Math.cos(ang)*off;
-  if(st.pierce)F.shots.push({k:'pierce',x:sx,y:sy,dx:Math.cos(ang),dy:Math.sin(ang),ang,spd:14,trav:0,max:st.range+.8,dmg,hit:[],flare:st.flare,fr:st.flareR,ft:st.flareT,from:st.tether?t:null,soul:st.soul,rodBy:st.rod?t:null,clap:st.clap});
-  else F.shots.push({k:'bolt',x:sx,y:sy,tg:e,tx:e.x,ty:e.y,spd:13,dmg,ang,flare:st.flare,fr:st.flareR,ft:st.flareT,from:st.tether?t:null,soul:st.soul,rodBy:st.rod?t:null,clap:st.clap});
+  if(st.pierce)F.shots.push({k:'pierce',x:sx,y:sy,dx:Math.cos(ang),dy:Math.sin(ang),ang,spd:14,trav:0,max:st.range+.8,dmg,hit:[],w:t,flare:st.flare,fr:st.flareR,ft:st.flareT,from:st.tether?t:null,soul:st.soul,rodBy:st.rod?t:null,clap:st.clap});
+  else F.shots.push({k:'bolt',x:sx,y:sy,tg:e,tx:e.x,ty:e.y,spd:13,dmg,ang,w:t,flare:st.flare,fr:st.flareR,ft:st.flareT,from:st.tether?t:null,soul:st.soul,rodBy:st.rod?t:null,clap:st.clap});
   /* Starshell: every fourth bolt from this harpoon lights a wide circle */
   if(st.star){t.shots=(t.shots||0)+1; if(t.shots%4===0){const sh=F.shots[F.shots.length-1]; sh.fr=STAR_R; sh.ft=STAR_T; sh.star=true;}}
 }
@@ -4792,15 +4945,16 @@ function chimePulse(t,st){
   /* Hymn Under the Water: whatever stands in water hears every ring, wherever it is */
   if(hasOff('hymn')&&F.water.size)for(const e of F.foes)if(!e.dead&&inWater(e)&&!es.includes(e)&&canSee(e)){es.push(e); F.fx.push({k:'ring',x:e.x,y:e.y,r0:.15,r1:.6,t:0,dur:.45,col:'106,169,159'});}
   if(!es.length)return false;
-  const mult=beaconAt(t.x,t.y);
+  const mult=wardMul(t);
   es.sort((a,b)=>dst(a.x,a.y,t.x,t.y)-dst(b.x,b.y,t.x,t.y));
   es.forEach((e,i)=>{
     if(!e.def.boss)e.stunT=Math.max(e.stunT,st.stun);
     else if(!(e.deafT>0)){e.stunT=Math.max(e.stunT,st.stun*.4); e.deafT=CHIME_DEAF;}
     else F.fx.push({k:'ring',x:e.x,y:e.y,r0:e.def.r+.1,r1:e.def.r+.3,t:0,dur:.4,col:'120,116,108'});
-    hurt(e,st.dmg*mult*(i<CHIME_FULL?1:CHIME_FAR));
+    hurt(e,st.dmg*mult*(i<CHIME_FULL?1:CHIME_FAR)); struck(t,e);
     if(e.dead&&st.shatter)burst(e.x,e.y,.9,10,'236,232,222',e);
   });
+  thunder(t,es.find(e=>!e.def.heavy));
   F.fx.push({k:'ring',x:t.x,y:t.y,r0:.2,r1:st.range,t:0,dur:.5,col:'236,232,222'});
   t.ring=.4; AUDIO.chime();
   return true;
@@ -4813,6 +4967,8 @@ function updateTowers(dt){
       if(t.ph){if(!(t.snuffT>0)&&HORRORS[t.ph])horrorAct(t,t.ph,dt); continue;}
       if(t.type==='candle'||t.type==='salt'||t.type==='tithe'||t.type==='effigy'||t.type==='weir'||t.type==='trypot'||t.type==='mirror'||t.type==='tocsin')continue;
       const st=wstat(t);
+      /* Dead Reckoning: a ward beyond the lamp's own light reaches farther */
+      if(st.range&&reckoned(t))st.range*=RECKON_RANGE;
       if(t.type==='harpoon'){
         t.st=st;
         t.cd-=dt;
@@ -4820,7 +4976,7 @@ function updateTowers(dt){
           const e=pickTarget(t.x,t.y,st.range,t.tgt,st.deep);
           if(e){
             t.ang=Math.atan2(e.y-t.y,e.x-t.x);
-            const dmg=st.dmg*beaconAt(t.x,t.y);
+            const dmg=st.dmg*wardMul(t);
             fireBolt(t,e,st,dmg,0);
             if(st.twin){const e2=pickTarget(t.x,t.y,st.range,t.tgt,st.deep,e)||e; fireBolt(t,e2,st,dmg,1);}
             t.cd=sunCd(t)/st.rate; AUDIO.bolt();
@@ -4850,7 +5006,7 @@ function updateTowers(dt){
           const e=F.foes[i]; if(e.dead||e.def.fly||e.tile!==key)continue;
           const seen=e.grasped||(e.grasped=[]); if(seen.includes(t.id))continue; seen.push(t.id);
           if(e.def.heavy)continue;
-          e.stunT=Math.max(e.stunT,e.def.boss?GRASP_BOSS:GRASP_HOLD); t.grips--; t.snap=.6;
+          e.stunT=Math.max(e.stunT,e.def.boss?GRASP_BOSS:GRASP_HOLD); t.grips--; t.snap=.6; thunder(t,e);
           F.fx.push({k:'ring',x:t.x,y:t.y,r0:.45,r1:.1,t:0,dur:.35,col:'222,214,192'}); AUDIO.trap();
         }
         if(t.grips<=0){removeTower(t); F.fx.push({k:'burst',x:t.x,y:t.y,col:'#D8CCAA',r:.4,t:0,dur:.5}); hint('The Grasping Dead crumble.');}
@@ -4867,9 +5023,10 @@ function updateTowers(dt){
         /* Living Bait: a trap beside a horror is bait. It drags its catch back, and the horror strikes at once */
         const bait=hasOff('baited')?nearHorror(t.x,t.y,BAIT_R):null;
         for(const e of vs){
-          hurt(e,st.dmg*beaconAt(t.x,t.y));
+          hurt(e,st.dmg*wardMul(t));
           if(e.dead)continue;
-          if(!e.def.heavy)e.stunT=Math.max(e.stunT,e.def.boss?st.hold*.35:st.hold);
+          struck(t,e);
+          if(!e.def.heavy){e.stunT=Math.max(e.stunT,e.def.boss?st.hold*.35:st.hold); thunder(t,e);}
           if(st.bleed)e.bleedT=4;
           if(st.drag&&!e.def.boss&&!e.def.heavy){e.d=Math.max(0,e.d-1.5); const q=posAt(F.paths[e.gate],e.d); e.x=q[0]; e.y=q[1]; e.tile=Math.floor(e.x)+','+Math.floor(e.y);}
           if(bait&&!e.def.boss&&!e.def.heavy){e.haulLeft=BAIT_BACK; e.haulT=HAUL_TIME;}
@@ -4885,15 +5042,15 @@ function updateTowers(dt){
           const e=pickTarget(t.x,t.y,st.range,t.tgt,false);
           if(e){
             t.shots=(t.shots||0)+1;
-            let d=st.dmg*beaconAt(t.x,t.y); if(st.over&&t.shots%4===0)d*=3;
+            let d=st.dmg*wardMul(t); if(st.over&&t.shots%4===0)d*=3;
             const hit=[e], pts=[[t.x,t.y-.5],[e.x,e.y]];
-            zap(e,d,st);
+            zap(e,d,st); struck(t,e); thunder(t,e);
             let cur=e;
             for(let j=0;j<st.jumps;j++){
               let nx=null, bd=1e9;
               for(const o of F.foes){if(o.dead||hit.includes(o)||!canSee(o))continue; const dd=dst(o.x,o.y,cur.x,cur.y); if(dd<=st.leap&&dd<bd){bd=dd; nx=o;}}
               if(!nx)break;
-              d*=st.falloff; hit.push(nx); pts.push([nx.x,nx.y]); zap(nx,d,st); cur=nx;
+              d*=st.falloff; hit.push(nx); pts.push([nx.x,nx.y]); zap(nx,d,st); struck(t,nx); cur=nx;
             }
             F.fx.push({k:'arc',pts,t:0,dur:.24,seed:Math.random()*99,big:st.over&&t.shots%4===0});
             /* coil lightning leaps through any Lightning Rod in reach, to the nearest thing beside it */
@@ -4909,7 +5066,7 @@ function updateTowers(dt){
           const e=pickTarget(t.x,t.y,st.range,t.tgt,st.deep);
           if(e){
             t.ang=Math.atan2(e.y-t.y,e.x-t.x);
-            F.shots.push({k:'lance',x:t.x+Math.cos(t.ang)*.5,y:t.y-.12+Math.sin(t.ang)*.5,sx:t.x,sy:t.y-.12,tg:e,tx:e.x,ty:e.y,spd:15,dmg:st.dmg*beaconAt(t.x,t.y),ang:t.ang,flense:st.flense,pin:st.pin});
+            F.shots.push({k:'lance',x:t.x+Math.cos(t.ang)*.5,y:t.y-.12+Math.sin(t.ang)*.5,sx:t.x,sy:t.y-.12,tg:e,tx:e.x,ty:e.y,spd:15,dmg:st.dmg*wardMul(t),ang:t.ang,flense:st.flense,pin:st.pin,w:t});
             t.cd=sunCd(t)/st.rate; t.recoil=.3; AUDIO.boom(); F.shake=Math.max(F.shake,.08);
           }else t.cd=.1;
         }
@@ -4921,8 +5078,8 @@ function updateTowers(dt){
             const P=F.paths[e.gate], lead=e.d+e.def.spd*.45;
             const spots=[posAt(P,lead)];
             if(st.volley){spots.push(posAt(P,lead+.9)); spots.push(posAt(P,Math.max(0,lead-.9)));}
-            const dmg=st.dmg*beaconAt(t.x,t.y);
-            spots.forEach((p,k)=>F.shots.push({k:'tar',sx:t.x,sy:t.y-.15,tx:p[0],ty:p[1],t:-k*.09,dur:.6,dmg,splash:st.splash,pool:st.pool,cluster:st.cluster}));
+            const dmg=st.dmg*wardMul(t);
+            spots.forEach((p,k)=>F.shots.push({k:'tar',sx:t.x,sy:t.y-.15,tx:p[0],ty:p[1],t:-k*.09,dur:.6,dmg,splash:st.splash,pool:st.pool,cluster:st.cluster,w:t}));
             t.cd=sunCd(t)/st.rate; AUDIO.lob();
           }else t.cd=.1;
         }
@@ -4931,12 +5088,11 @@ function updateTowers(dt){
   }
 }
 function zap(e,d,st){
-  const sl=F.salt.get(e.tile);
-  hurt(e,d*(sl&&!sl.dead&&!sl.dark?2:1));
+  hurt(e,d*(saltAt(e.tile)?2:1));
   if(st.storm&&!e.dead&&!e.def.heavy)e.stunT=Math.max(e.stunT,e.def.boss?.15:.4);
 }
-function tarLand(x,y,dmg,splash,pool,cluster,mini){
-  for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(!e.dead&&dst(e.x,e.y,x,y)<=splash)hurt(e,dmg);}
+function tarLand(x,y,dmg,splash,pool,cluster,mini,w){
+  for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(!e.dead&&dst(e.x,e.y,x,y)<=splash){hurt(e,dmg); if(w)struck(w,e);}}
   F.fx.push({k:'splash',x,y,r:splash,t:0,dur:.45});
   if(pool)F.pools.push({x,y,r:splash*pool.r*(mini?.6:1),dps:pool.dps,t:pool.dur,max:pool.dur});
   if(cluster&&!mini){
@@ -4957,11 +5113,11 @@ function updateShots(dt){
           if(s.k==='spit'){s.tg.poisonT=3; s.tg.poisonDps=s.poison; s.tg.poisonH=true; if(s.deep&&hasOff('mouth_chime'))crack(s.tg,1);}
           if(s.k==='lance'){
             const big=s.tg.def.heavy||s.tg.def.elite||s.tg.def.boss;
-            hurt(s.tg,s.dmg*(big?2:1),'lance');
+            hurt(s.tg,s.dmg*(big?2:1),'lance'); struck(s.w,s.tg,s.dmg);
             F.fx.push({k:'burst',x:s.tx,y:s.ty,col:'#C9C2B2',r:.5,t:0,dur:.35}); F.shake=Math.max(F.shake,.12);
             if(!s.tg.dead){if(s.flense)s.tg.flenseT=5; if(s.pin)s.tg.pinT=s.tg.def.boss?.5:1.5;}
           }else
-          {if(s.soul)s.tg.soulDrop=true; hurt(s.tg,s.dmg,s.k==='spit'?'horror':'harpoon'); if(!s.tg.dead)s.tg.soulDrop=false; if(s.k==='bolt')undertow(s.tg); if(s.clap)clapHit(s.tg,s.clap);}
+          {if(s.soul)s.tg.soulDrop=true; hurt(s.tg,s.dmg,s.k==='spit'?'horror':'harpoon'); struck(s.w,s.tg,s.dmg); if(!s.tg.dead)s.tg.soulDrop=false; if(s.k==='bolt')undertow(s.tg); if(s.clap)clapHit(s.tg,s.clap);}
           if(s.from&&!s.tg.dead){if(s.tg.tetherBy!==s.from){s.tg.tetherBy=s.from; s.tg.tetherT=0;} s.from.tethered=s.tg;}
         }
         if(s.flare)addGlint(s.tx,s.ty,s.fr,s.ft*drownedFlare(s.tx,s.ty),s.star);
@@ -4975,7 +5131,7 @@ function updateShots(dt){
         const e=F.foes[i];
         if(e.dead||s.hit.includes(e.id))continue;
         const u=clamp((e.x-ox)*s.dx+(e.y-oy)*s.dy,0,step);
-        if(dst(e.x,e.y,ox+s.dx*u,oy+s.dy*u)<=e.def.r+.12){s.hit.push(e.id); if(s.flare)addGlint(e.x,e.y,s.fr,s.ft*drownedFlare(e.x,e.y),s.star&&!s.starDone); if(s.star)s.starDone=true; if(s.soul)e.soulDrop=true; hurt(e,s.dmg,'harpoon'); if(!e.dead)e.soulDrop=false; undertow(e); if(s.clap)clapHit(e,s.clap); if(s.rodBy&&s.hit.length===1&&!s.rodBy.dead)plantRod(e.x,e.y,s.rodBy);
+        if(dst(e.x,e.y,ox+s.dx*u,oy+s.dy*u)<=e.def.r+.12){s.hit.push(e.id); if(s.flare)addGlint(e.x,e.y,s.fr,s.ft*drownedFlare(e.x,e.y),s.star&&!s.starDone); if(s.star)s.starDone=true; if(s.soul)e.soulDrop=true; hurt(e,s.dmg,'harpoon'); struck(s.w,e,s.dmg); if(!e.dead)e.soulDrop=false; undertow(e); if(s.clap)clapHit(e,s.clap); if(s.rodBy&&s.hit.length===1&&!s.rodBy.dead)plantRod(e.x,e.y,s.rodBy);
           /* a piercing line holds the first thing it runs through */
           if(s.from&&!e.dead&&s.hit.length===1){if(e.tetherBy!==s.from){e.tetherBy=s.from; e.tetherT=0;} s.from.tethered=e;}}
       }
@@ -4984,7 +5140,7 @@ function updateShots(dt){
       s.t+=dt; if(s.t>=s.dur){s.done=true; tocsinLand(s);}
     }else if(s.k==='tar'){
       s.t+=dt;
-      if(s.t>=s.dur){s.done=true; tarLand(s.tx,s.ty,s.dmg,s.splash,s.pool,s.cluster,false);}
+      if(s.t>=s.dur){s.done=true; tarLand(s.tx,s.ty,s.dmg,s.splash,s.pool,s.cluster,false,s.w);}
     }
   }
   
@@ -7495,6 +7651,16 @@ function render(){
     pg.addColorStop(0,'rgba(255,200,90,'+(.45*a*fl)+')'); pg.addColorStop(.5,'rgba(224,90,30,'+(.32*a)+')'); pg.addColorStop(1,'rgba(120,30,10,0)');
     g.fillStyle=pg; g.beginPath(); g.ellipse(p.x,p.y,p.r,p.r*.8,0,0,TAU); g.fill();
   }
+  /* Salt Flats: a pale crust between two bridged circles. Tallow of Saints: the blessed edge of the lamp's light.
+     Sealing Wax: a red seal under each sealed ward */
+  if(F.bridgePairs&&F.bridgePairs.length){g.save(); g.lineCap='round';
+    for(const [a,b] of F.bridgePairs){if(a.dead||b.dead)continue;
+      g.strokeStyle='rgba(236,232,222,.16)'; g.lineWidth=.34; g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke();
+      g.strokeStyle='rgba(236,232,222,.4)'; g.lineWidth=.04; g.setLineDash([.06,.09]); g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke(); g.setLineDash([]);}
+    g.restore();}
+  if(has('tallow')){const R=lampRadius(); g.strokeStyle='rgba(255,214,140,.2)'; g.lineWidth=.03;
+    g.beginPath(); g.arc(F.lx,F.ly,R,0,TAU); g.stroke(); g.beginPath(); g.arc(F.lx,F.ly,Math.max(.2,R-TALLOW_RIM),0,TAU); g.stroke();}
+  if(has('wax'))for(const t of F.towers)if(t.sealed&&!t.dead){g.strokeStyle='rgba(170,40,40,.75)'; g.lineWidth=.05; g.beginPath(); g.ellipse(t.x,t.y+.22,.36,.17,0,0,TAU); g.stroke();}
   if(selTower){
     const R=towerRange(selTower);
     if(R){g.strokeStyle='rgba(237,180,90,.55)'; g.lineWidth=.035; g.setLineDash([.12,.1]); g.beginPath(); g.arc(selTower.x,selTower.y,R,0,TAU); g.stroke(); g.setLineDash([]);}
@@ -7984,13 +8150,24 @@ function codexSee(kind,k){if(devOn)return; const C=codex(); if(C[kind].has(k))re
 function relicGlyph(k){return RELICS[k].n.replace(/^(The|A) /,'').charAt(0);}
 let relKey='', relTipT=0, relTipK='';
 function renderRelics(){
-  const key=run.relics.join(',')+'|'+Object.keys(PATRONS).map(attOf).join(',');
+  const key=run.relics.join(',')+'|'+Object.keys(PATRONS).map(attOf).join(',')+'|'+(run.leech||0)+'|'+Math.ceil(run.spill||0);
   if(key===relKey)return; relKey=key;
   /* patrons who have noticed you sit first, ringed by Attention */
   let pat='';
   for(const pk of Object.keys(PATRONS)){const P=PATRONS[pk], a=attOf(pk); if(!a)continue;
     pat+='<button class="relchip is-patron" data-rel="patron:'+pk+'" aria-label="'+P.n+', Attention '+a+'" style="--att:'+Math.min(1,a/P.tiers[2].at)+'">'+P.glyph+'</button>';}
-  $('#relChips').innerHTML=pat+run.relics.map(k=>'<button class="relchip'+(RELICS[k].curse?' is-curse':'')+'" data-rel="'+k+'" aria-label="'+RELICS[k].n.replace(/"/g,'')+'">'+relicGlyph(k)+'</button>').join('');
+  $('#relChips').innerHTML=pat+run.relics.map(k=>'<button class="relchip'+(RELICS[k].curse?' is-curse':'')+'" data-rel="'+k+'" aria-label="'+RELICS[k].n.replace(/"/g,'')+'">'+relicGlyph(k)+relicCount(k)+'</button>').join('');
+}
+/* a count on a relic's seal: the Leech Jar's kills, the Oil Reserve's spill */
+function relicCount(k){
+  const n=k==='leech'?(run.leech||0):k==='reserve'?Math.ceil(run.spill||0):0;
+  return n?'<i class="relct">'+n+'</i>':'';
+}
+function relicNote(k){
+  if(k==='leech')return ' The jar holds '+(run.leech||0)+' of '+LEECH_N+'.';
+  if(k==='reserve')return ' Spilled: '+(run.spill||0).toFixed(1)+' of '+SPILL_MAX+'.';
+  if(k==='key'&&run.keyLeft>0)return ' The debt is collected for '+run.keyLeft+' more wave'+(run.keyLeft>1?'s':'')+'.';
+  return '';
 }
 function relicTip(k,btn){
   const tip=$('#relTip');
@@ -8004,7 +8181,7 @@ function relicTip(k,btn){
   }else{
     const R=RELICS[k];
     tip.classList.remove('is-patron'); tip.classList.toggle('is-curse',!!R.curse);
-    tip.innerHTML=(R.curse?'<span class="reltag">Cursed relic</span>':'<span class="reltag">Relic</span>')+'<b>'+R.n+'</b><span>'+R.d+'</span>';
+    tip.innerHTML=(R.curse?'<span class="reltag">Cursed relic</span>':'<span class="reltag">Relic</span>')+'<b>'+R.n+'</b><span>'+R.d+relicNote(k)+'</span>';
   }
   tip.hidden=false;
   const r=btn.getBoundingClientRect(), w=tip.offsetWidth, h=tip.offsetHeight;
@@ -8109,7 +8286,7 @@ function showBook(){
     list=relics.map(k=>{const R=RELICS[k];
       if(!hasSeen('relics',k))return bookEntry(bookSeal('?'),'???','','Not yet found.','is-locked');
       const now=held.includes(k);
-      return bookEntry(bookSeal(relicGlyph(k),R.curse),R.n,(R.curse?'Cursed':'Relic')+(now?' · Carried now':resting(k)?' · Not on the stair for now':''),R.d,now?'is-held':'');}).join('');
+      return bookEntry(bookSeal(relicGlyph(k),R.curse),R.n,(R.curse?'Cursed':'Relic')+(now?' · Carried now':resting(k)?' · Not on the stair for now':'')+(R.needs?' · Needs '+R.needs.map(w=>wdef(w).n).join(' or '):''),(R.lore?'<i>'+R.lore+'</i> ':'')+R.d,now?'is-held':'');}).join('');
   }
   const html='<div class="book-tabs">'+tabs.map(([k,n])=>'<button class="btn'+(k===t?' call':'')+'" data-book="'+k+'" aria-pressed="'+(k===t)+'">'+n+'</button>').join('')+'</div>'
     +'<p class="book-intro">'+intro+'</p><div class="book-list">'+list+'</div>';
@@ -8386,6 +8563,40 @@ const TIPS={
   spots:{when:()=>F.spots&&F.spots.size>0,title:'The Wrong Sun',
     text:'It has noticed you. Its bright spots burn on the path: whatever stands in one is seen, veiled or not. But a Stalker that crosses one has seen the lamp, and runs. Tap its sign beside the Grimoire to see what its Attention does next.',
     target:()=>{const s=F.spotPts; return s&&s.length?coachBoard(s[0],s[1],.8):null;}},
+  /* the relics that came back (#89): each says what it does the first time it matters */
+  r_tallow:{when:()=>has('tallow')&&F.phase==='build'&&F.towers.some(t=>t.kind==='ward'),title:'Tallow of Saints',
+    text:'The two thin gold rings mark the outermost tile of the lamp’s light. A ward standing between them fires a quarter faster. When madness shrinks the lamp, the edge moves in, and a ward out there can go dark.',
+    target:()=>coachBoard(F.lx,F.ly,lampRadius())},
+  r_reserve:{when:()=>has('reserve')&&run.spill>0,title:'Spilled oil',
+    text:'Your lamp was full, so the oil spilled. The number on the Oil Reserve’s seal is the spill. In a wave it burns, a little each second, on the path under whatever is nearest the lamp.',
+    target:()=>coachEl('#relChips [data-rel="reserve"]')},
+  r_whetted:{when:()=>has('whetted')&&F.phase==='wave'&&F.foes.some(e=>!e.dead&&e.barbs),title:'Whetted Barbs',
+    text:'Your harpoons leave barbs in what they strike, and each barb slows it. When it dies, the barbs tear free into the nearest thing beside it. Strike the leaders early.',
+    target:()=>{const e=F.foes.find(e=>!e.dead&&e.barbs); return e?coachBoard(e.x,e.y,1):null;}},
+  r_salt:{when:()=>has('saltflats')&&F.bridgePairs&&F.bridgePairs.length>0,title:'A salt bridge',
+    text:'Two Salt Circles this close salt the path between them. The bridge wears the nearer circle, and refilling one refills both.',
+    target:()=>{const [a,b]=F.bridgePairs[0]; return coachBoard((a.x+b.x)/2,(a.y+b.y)/2,1.5);}},
+  r_quiet:{when:()=>stillNow(),title:'Still',
+    text:'You have held still for ten seconds. Madness counts three lower until you build, upgrade or cast, and your next ward or upgrade costs less. Spend it on something that matters.',
+    target:()=>coachStat('#madV')},
+  r_wax:{when:()=>has('wax')&&F.towers.some(t=>t.sealed),title:'Sealing Wax',
+    text:'The red seal marks a ward the wax holds for this floor. It fires slower and cannot be sold, but what it strikes takes more from everything else, and each seal eases your madness. On the next floor, choose what stands nearest the lamp with care.',
+    target:()=>{const t=F.towers.find(t=>t.sealed); return t?coachBoard(t.x,t.y,.8):null;}},
+  r_bounty:{when:()=>has('bounty')&&F.phase==='build',title:'Bounty of the Deep',
+    text:'Kills on the far half of the path, toward where they climb out, pay more. Kills on the near half pay less. Reach into the dark to meet them.',
+    target:()=>coachEl('#relChips [data-rel="bounty"]')},
+  r_key:{when:()=>has('key')&&run.keyLeft>0&&F.phase==='build',title:'The bone debt',
+    text:'You bought on the Ossuary Key. For two waves, kills within two and a half tiles of the lamp pay three more. Let a few come close.',
+    target:()=>coachBoard(F.lx,F.ly,KEY_R)},
+  r_leech:{when:()=>has('leech')&&(run.leech||0)>0,title:'Leech Jar',
+    text:'The jar fed. Only what dies held, stunned, on a line, tangled, in salt or in water feeds it. At eight it bursts: oil for the lamp, and a bleed on everything in its light.',
+    target:()=>coachEl('#relChips [data-rel="leech"]')},
+  r_marrow:{when:()=>has('marrow')&&F.towers.some(t=>t.marrowT>F.time),title:'Thunder Marrow',
+    text:'Thunder leapt from a stunned creature to the nearest ward that strikes, and it fired at once. Build your stuns beside your slowest, hardest ward.',
+    target:()=>{const t=F.towers.find(t=>t.marrowT>F.time); return t?coachBoard(t.x,t.y,1):null;}},
+  r_reckon:{when:()=>has('witchsalt')&&F.phase==='build',title:'Dead Reckoning',
+    text:'Your lamp burns smaller. A ward that stands beyond its own light, where your other lights reach, strikes farther and harder. Build out in the dark.',
+    target:()=>coachBoard(F.lx,F.ly,lampRadius())},
   glare:{when:()=>patTier('sun')>=3&&F.towers.some(t=>t.kind==='ward'&&nearSpot(t.x,t.y)),title:'In the glare',
     text:'It has claimed you. A ward that stands within the halo of a bright spot fires a quarter slower. Build back from the glare, or build there knowing it.',
     target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&nearSpot(t.x,t.y)); return t?coachBoard(t.x,t.y,SPOT_GLARE):null;}},
@@ -8641,7 +8852,7 @@ function statLine(o){
   if(o.type==='weir')return 'Open: <b>'+(o.open?'the long way':'the main stair')+'</b> · Watchers fly over · A Behemoth breaks it';
   if(o.type==='coil')return 'Damage <b>'+st.dmg+'</b> · Leaps <b>'+st.jumps+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s · Double on salt';
   if(o.type==='lance')return 'Damage <b>'+st.dmg+'</b> (<b>×2</b> on heavy, elite, boss) · Range <b>'+st.range.toFixed(1)+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s';
-  return (hasOff('brine')?'Brine: drags each creature <b>1</b> tile back, once':'Slows <b>50%</b>')+' · Holds <b>'+(o.dur!=null?o.dur:14*(has('saltflats')?2:1))+'</b> crossings';
+  return (hasOff('brine')?'Brine: drags each creature <b>1</b> tile back, once':'Slows <b>50%</b>')+' · Holds <b>'+(o.dur!=null?o.dur:14)+'</b> crossings';
 }
 function treeHTML(o,B){
   return '<p class="rulenote">'+(trialOn('unbranched')?'Trial: Unbranched. Nothing grows this floor.':'Two branches per '+(o.isLamp?'lamp':'ward')+'. Only one can reach its capstone.')+'</p><div class="tree">'+treeOf(o.type).map((br,bi)=>{
@@ -8690,7 +8901,7 @@ function renderSheet(){
       else html+=B('Aim the beam',()=>{mode='aim'; F.aimT=t; forceUI();},{cls:'call'})+B('⟲',()=>turnMirror(t,-MIRROR_STEP))+B('⟳',()=>turnMirror(t,MIRROR_STEP));
     }
     if(t.type==='weir')html+=B(F.phase==='wave'?'Locked until the wave ends':'Flip the weir',()=>{t.open=t.open?0:1; forceUI();},{cls:'call',disabled:F.phase==='wave'});
-    html+=B('Dismantle · +'+back+(full?' (full refund)':'')+(cut?' · cuts light to '+cut:''),()=>sellTower(t))+'</div>';
+    html+=(t.sealed&&has('wax')?B('Sealed with wax',()=>{},{disabled:true}):B('Dismantle · +'+back+(full?' (full refund)':'')+(cut?' · cuts light to '+cut:''),()=>sellTower(t)))+'</div>';
   }else{
     const H=HORRORS[t.type], back=refund(t), full=t.fresh>0&&t.fresh>=t.invested, cut=cutVictims(t).length;
     html='<div class="shead"><h3>'+H.n+'<small>'+t.invested+' spent</small></h3>'+closeB+'</div>'
@@ -8814,6 +9025,7 @@ function renderHUD(){
   $('#dreadBar').style.left=Math.min(100,(m-dr)/cap*100)+'%'; $('#dreadBar').style.width=Math.max(0,Math.min(100,m/cap*100)-Math.min(100,(m-dr)/cap*100))+'%';
   ['#t1','#t2','#t3'].forEach((id,i)=>$(id).style.left=(Tt[i]/cap*100)+'%');
   $('#madTier').textContent=TIERNAMES[madTier()];
+  $('#madBar').parentElement.classList.toggle('is-still',stillNow());
   const cb=$('#callBtn'), n=F.def.waves.length;
   if(F.phase==='build'){cb.disabled=false; cb.textContent='Call the dark';}
   else if(F.phase==='wave'&&!F.queue.length&&F.wave<n){cb.disabled=false; cb.textContent='Call early · +'+earlyBonus();}
