@@ -1722,7 +1722,7 @@ const EVENTS={
     {l:'Walk past',d:'Nothing happens.',fn:()=>({text:'You keep your head down. The singing follows you a long way.'})}]},
   corpse:{n:'A Lantern-bearer’s Corpse',body:'Someone made it this far. Their lamp is cracked and dry, but their pack is still full.',opts:[
     {l:'Take their oil',d:'+5 oil.',fn:()=>{addOil(5); return {text:'There is a little left in the bottom of the reservoir. +5 oil.'};}},
-    {l:'Search the pack',d:'Learn a ward you do not have.',fn:()=>{const w=pick(Object.keys(WARDS).filter(x=>!run.wards.includes(x)&&!WARDS[x].fork&&!WARDS[x].kit)||[]); if(w){run.wards.push(w); return {text:'Drawings of a '+wdef(w).n+', and how to build one. You can build it now.'};} run.ess+=80; return {text:'Nothing you do not already know. You take 80 essence instead.'};}},
+    {l:'Search the pack',d:'Learn a ward you do not have.',fn:()=>{const w=pick(Object.keys(WARDS).filter(learnable)||[]); if(w){run.wards.push(w); return {text:'Drawings of a '+wdef(w).n+', and how to build one. You can build it now.'};} run.ess+=80; return {text:'Nothing you do not already know. You take 80 essence instead.'};}},
     {l:'Bury them',d:'The next floor starts with 60 more essence.',fn:()=>{run.bonusStipend=(run.bonusStipend||0)+60; return {text:'You do it properly. Something in the dark seems to approve.'};}}]},
   grave:{n:'An Open Grave',body:'It is freshly dug and exactly your size. Something at the bottom glints.',opts:[
     {l:'Climb in',d:'Take a cursed relic, then choose a relic.',fn:()=>{const c=pick(relicPool(true)); addRelic(c); return {text:c?'You climb out holding '+RELICS[c].n+'. It is warm.':'The grave is empty after all.',pick:1};}},
@@ -2519,6 +2519,9 @@ function updateStatic(dt){
    reaches them, carrying it outward. Tolling makes Noise, and at NOISE_MAX the dark answers. */
 let tollUid=0;
 function bellKit(){return kit()==='bellringer';}
+/* a ward the stair can teach you (a gift, the merchant, Search the pack): not one you have, not a Weir, not another kit's own.
+   The Bellringer builds no candles, so a plain Candle Ward is never offered to her (Criss: one turned up as a floor's gift) */
+function learnable(w){return !run.wards.includes(w)&&!WARDS[w].fork&&!WARDS[w].kit&&!(w==='candle'&&bellKit());}
 function hear(e,t,veil){if(!e||e.dead||(e.def.veiled&&!veil))return false; e.heardT=Math.max(e.heardT||0,t); return true;}
 function addGhost(e){if(F.ghosts.length>=GHOST_MAX)F.ghosts.shift(); F.ghosts.push({x:e.x,y:e.y+(e.def.fly?-.14:0),type:e.type,r:e.def.r*foeScale(e),face:e.face||1,ph:e.wob,t:GHOST_T});}
 function startToll(x,y,max,o){
@@ -3442,7 +3445,7 @@ function floorCleared(){
 function draftOptions(n,elite){
   n=n||3;
   const pool=[];
-  Object.keys(WARDS).forEach(w=>{if(!run.wards.includes(w)&&!WARDS[w].fork&&!WARDS[w].kit)pool.push({kind:'ward',key:w});});
+  Object.keys(WARDS).forEach(w=>{if(learnable(w))pool.push({kind:'ward',key:w});});
   if(run.rites.length<4)Object.keys(RITES).forEach(k=>{if(!run.rites.includes(k)&&!RITES[k].fork&&!RITES[k].patron&&!RITES[k].kit)pool.push({kind:'rite',key:k});});
   relicPool(false).forEach(k=>pool.push({kind:'relic',key:k}));
   pool.push({kind:'bind',key:pick(bindable())});
@@ -4042,7 +4045,7 @@ function makeStock(){
   const st=[], m=meta();
   const nr=3+(m.unlocked.includes('merchant_plus')?1:0);
   shuffle(relicPool(false)).slice(0,nr).forEach((k,i)=>st.push({kind:'relic',key:k,cost:price(120+i*25+run.floor*12)}));
-  shuffle(Object.keys(WARDS).filter(w=>!run.wards.includes(w)&&!WARDS[w].fork&&!WARDS[w].kit)).slice(0,2).forEach(w=>st.push({kind:'ward',key:w,cost:price(90+run.floor*12)}));
+  shuffle(Object.keys(WARDS).filter(learnable)).slice(0,2).forEach(w=>st.push({kind:'ward',key:w,cost:price(90+run.floor*12)}));
   st.push({kind:'bind',key:pick(bindable()),cost:price(80)});
   st.push({kind:'oil',key:'oil',cost:price(60)});
   if(run.relics.some(k=>RELICS[k].curse))st.push({kind:'cleanse',key:'cleanse',cost:price(110)});
