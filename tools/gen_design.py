@@ -94,7 +94,15 @@ if D.get('PATRONS'):
     if 'MOUTH_DREAD' in D: w("\nMany-Mouthed numbers: Watched carries **%s** dread; each Gibberer alive adds **%s** (at most **%s**), and a ward within **%s** tiles of one waits **×%s** between shots. A Gorger takes **×%s** from horrors; every **%ss** (the first after %ss) it lashes a horror within **%s** tiles (once Watched, a candle or fork within **%s**), dazing or snuffing it **%ss** and healing **%s**. A Choir-Husk veils what walks within **%s** tiles (not itself, a boss or a Herald). Dread counts toward the madness tiers; only paid horrors' madness feeds the Occultist and opens Unpaid Teeth."%(D['MOUTH_DREAD'],D['GIB_DREAD'],D['GIB_DREAD_MAX'],D['GIB_R'],D['GIB_SLOW'],D['GORGE_RESIST'],D['GORGE_CD'],D['GORGE_FIRST'],D['GORGE_R'],D['GORGE_WARD_R'],D['GORGE_T'],D['GORGE_HEAL'],D['HUSK_R']))
     w("\nWater numbers: current **×%s**; a floor floods **%s** stretches of **%s** tiles; it rises to at most **%s** tiles; \"beside water\" is within **%s** tiles."%(D['CURRENT'],D['FLOOD_N'],D['FLOOD_LEN'],D['FLOOD_MAX'],D['NEAR_WATER']))
     w("\n| Key | Offering | Patron | Kit | Effect |\n|---|---|---|---|---|")
-    for k,v in D['OFFERINGS'].items(): w("| `%s` | %s | %s | %s | %s |"%(k,esc(v['n']),v['p'],v.get('kit',''),esc(v['d'])))
+    for k,v in D['OFFERINGS'].items():
+        if not v.get('pair'): w("| `%s` | %s | %s | %s | %s |"%(k,esc(v['n']),v['p'],v.get('kit',''),esc(v['d'])))
+    conj=[(k,v) for k,v in D['OFFERINGS'].items() if v.get('pair')]
+    if conj and 'CONJ_CHANCE' in D:
+        ch=D['CONJ_CHANCE']
+        w("\n### Conjunctions\n\nTwo patrons who have both noticed you (Attention 1 to 4 each, neither Claimed) may put one in the third card of an offer: **%d%%** of offers when neither is Watched, **%d%%** with one, **%d%%** with both. It never replaces the kit's own offering. A run takes one per pair, **%s** at most. The **Caller** (the pair's lower Attention; the first of the pair on a tie) takes +1 Attention; the **Witness** takes none, but the next wave its water rises a tile, it opens another spot, or one more Gibberer climbs.\n"%(round(ch[0]*100),round(ch[1]*100),round(ch[2]*100),D['CONJ_MAX']))
+        w("Numbers: Phosphor Tide glow **%ss**, **×%s** damage, current **×%s**. Gorger's Undertow drags **%s** tile within **%s**, **%s** rises a wave, Gorgers **×%s**. Brine-Choir echo **×%s**, dread at most **%s**. Sun-Drunk Chorus **%ss** still, **×%s** for **%ss**, dread at most **%s**. Violet Husking **%ss**, light **%s** tile, Gibberers **%s%%** slower within **%s**, every **%s**rd Gibberer, unfed: 1 dread for **%ss** (at most **%s**).\n"%(D['PHOS_T'],D['PHOS_DMG'],D['PHOS_CURRENT'],D['DRAG_BACK'],D['DRAG_R'],D['DRAG_RISE'],D['GORGE_CURRENT'],D['CHOIR_ECHO'],D['CHOIR_DREAD_MAX'],D['DRUNK_T'],D['DRUNK_RUN'],D['DRUNK_RUN_T'],D['DRUNK_DREAD_MAX'],D['HUSKL_T'],D['HUSKL_R'],round(D['HUSKL_SLOW']*100),D['HUSKL_GIB_R'],D['HUSKL_EVERY'],D['HUSKL_DREAD_T'],D['HUSKL_DREAD_MAX']))
+        w("| Key | Conjunction | Patrons | Effect |\n|---|---|---|---|")
+        for k,v in conj: w("| `%s` | %s | %s | %s |"%(k,esc(v['n']),' + '.join(v['pair']),esc(v['d'])))
 
 w("\n## Omens (on stair doors)\n\n| Key | Name | Effect |\n|---|---|---|")
 for k,v in D['OMENS'].items(): w("| `%s` | %s | %s |"%(k,v['n'],esc(v['d'])))

@@ -471,6 +471,7 @@ input[type=range]::-moz-range-track {
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard. <i>Sealed:</i> two of your wards are locked for the floor, marked with a lock in the tray; never your light and never your harpoon. <i>One of Each:</i> each kind of ward stands only once, except what makes your light (candles of every kind, Tuning Forks, pylons, Bell Wires and Try-pots). <i>Bare Hands:</i> your rites are silent, all but the Bellringer's Toll. <i>Unbranched:</i> nothing can be upgraded, not even the lamp. <i>The Long Night:</i> candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller; it never comes with Moonless or Thick Dark.</li>
         <li><b>Patrons.</b> Old things below the stair make offerings: the Drowned Mother, the Wrong Sun, and the Many-Mouthed. Half the time the landing's gift is one of theirs instead (a quarter, if one already reached out on that floor), and now and then one reaches out between waves; which one is a toss each time. Take one gift, or refuse. Every gift raises that patron's Attention, and Attention changes your floors. Her water speeds what walks in it, rises, and at last hides it. The Wrong Sun's bright spots show whatever stands in them, but a Stalker that crosses one has seen the lamp and runs; Watched, they sear, and the glare spreads to the stone beside them; Claimed, your wards in the glare fire slower. The Many-Mouthed reads what you built and sends its own up the stair as each wave begins, Gibberers for your wards and Gorgers for your horrors, and they leave nothing when they die; Watched, you carry dread and Gorgers snuff candles; Claimed, a Choir-Husk veils what walks near it, and bindings may break from Whispers. Their signs sit beside the Grimoire; tap one to see where you stand.</li>
+        <li><b>Conjunctions.</b> Two patrons who have both noticed you, neither yet claiming you, may offer one gift together in place of the last of three. It is not shaped by your kit. The one whose Attention lags pays for it, and the other watches: the next wave, her water rises a tile, the Sun opens another spot, or one more Gibberer climbs. A descent takes one conjunction from each pair, and two at most. The Drowned Mother and the Wrong Sun: Phosphor Tide. The Drowned Mother and the Many-Mouthed: Gorger’s Undertow, Brine-Choir. The Wrong Sun and the Many-Mouthed: Sun-Drunk Chorus, Violet Husking.</li>
         <li><b>Embers.</b> Every descent, won or lost, leaves embers behind. Spend them in the Ember Hall on new kits, relics and stories. Carry the lamp to morning to open the Deeper Dark, where each depth adds a new cruelty.</li>
         <li><b>The Grimoire.</b> The book in the HUD holds every creature you have met, every ward and rite, and every relic you have found. The relics you carry sit beside it: tap one to read what it does.</li>
         <li><b>Saving.</b> The run saves at every break between waves. Save and quit from the pause menu, then Continue from the title.</li>
@@ -518,7 +519,7 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='18.3.0';
+const GAME_VERSION='18.4.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -888,8 +889,24 @@ const OFFERINGS={
   mouth_signal:{p:'mouths',kit:'lamplighter',n:'Teeth on the Thread',d:'The light between your Signal Candles grows teeth: each link bites a creature the first time it crosses, for 8, and holds it a moment. Your horrors reach a Kindled creature from a tile further and hurt it a quarter more.'},
   mouth_harpoon:{p:'mouths',kit:'whaler',n:'Blood in the Try-pot',need:()=>hasRoster(),d:'A Try-pot renders twice as much from what your horrors kill. Your horrors strike what is held on a line 40% faster, and when one kills it there, the line snaps to the nearest creature and hauls it 1.5 tiles back. Never a boss, a Behemoth or a Herald.'},
   mouth_arc:{p:'mouths',kit:'galvanist',n:'Wired Specimens',need:()=>hasRoster(),d:'Your fielded specimens take wires from your pylons, if a pylon has a link to spare, and never fry. Each shock on a wire tied to one sheds half a second of its wait.'},
-  mouth_chime:{p:'mouths',kit:'bellringer',n:'The Answering Choir',need:()=>hasRoster(),d:'A Perfect Toll makes every horror you field strike at once, into the dark, and crack what it hits. But at 5 Noise a Gorger climbs with the Stalkers.'}
+  mouth_chime:{p:'mouths',kit:'bellringer',n:'The Answering Choir',need:()=>hasRoster(),d:'A Perfect Toll makes every horror you field strike at once, into the dark, and crack what it hits. But at 5 Noise a Gorger climbs with the Stalkers.'},
+  /* conjunctions (#87, from Gemini's design, reviewed by Claude): two patrons who have both noticed you offer one gift
+     together. pair: who offers it; p is only the first of them. None of them is kit-shaped: each works through the water,
+     the bright spots and the Many-Mouthed's own creatures, so every kit can take every one */
+  phosphor:{p:'mother',pair:['mother','sun'],n:'Phosphor Tide',d:'One bright spot always burns in her water. When a blow lands on something in her water within a tile and a half of a bright spot, that stretch of water glows violet for 6 seconds. Whatever stands in it is seen, veiled or not, and takes a quarter more. Her current runs faster: 45%, not 30%.'},
+  gorgedrag:{p:'mother',pair:['mother','mouths'],n:'Gorger’s Undertow',d:'A Gibberer in water brings 1 dread, not 2. When anything dies in water, what walks within 2 tiles of it is dragged a tile back. Never a boss or a Behemoth. But a Gorger that steps into water raises it a tile, twice a wave at most, and her current carries Gorgers 40% faster.'},
+  brinechoir:{p:'mother',pair:['mother','mouths'],n:'Brine-Choir',d:'A blow that lands on something in water rings through it: everything else in the same water takes a fifth as much. Each tile her water gains on a floor brings you 1 dread, 3 at most.'},
+  sundrunk:{p:'sun',pair:['sun','mouths'],n:'Sun-Drunk Chorus',d:'Its creatures stop to stare at the Wrong Sun: the first time one steps into a bright spot, it stands still for a second. But one that walks out of a spot alive runs 20% faster for 3 seconds and brings you 1 dread until the wave breaks, 3 at most.'},
+  husking:{p:'sun',pair:['sun','mouths'],n:'Violet Husking',d:'A Gorger or Choir-Husk you kill, and every third Gibberer, burns violet where it fell for 6 seconds. Whatever stands in that light is seen, and a Gibberer within a tile and a half of it walks 30% slower. A husk that burns out before anything else dies in its light leaves you 1 dread for 6 seconds.'}
 };
+/* conjunctions: how often one takes the third card (neither, one or both of the pair Watched), and how many a run may take
+   (one a pair). Phosphor Tide: 6 seconds of glow, a quarter more, her current at 1.45. Gorger's Undertow: 2 tiles, a tile back,
+   1 dread a wet Gibberer, two rises a wave, Gorgers at 1.4. Brine-Choir: a fifth, 3 dread at most. Sun-Drunk Chorus: a second
+   still, 20% faster for 3 seconds, 3 dread at most. Violet Husking: 6 seconds, a tile of light, Gibberers 30% slower within a
+   tile and a half, every third Gibberer, 1 dread for 6 seconds (3 at most) */
+const CONJ_CHANCE=[.25,.4,.6], CONJ_MAX=2, PHOS_T=6, PHOS_DMG=1.25, PHOS_CURRENT=1.45, DRAG_R=2, DRAG_BACK=1, DRAG_RISE=2, GORGE_CURRENT=1.4,
+  CHOIR_ECHO=.2, CHOIR_DREAD_MAX=3, DRUNK_T=1, DRUNK_RUN=1.2, DRUNK_RUN_T=3, DRUNK_DREAD_MAX=3,
+  HUSKL_T=6, HUSKL_R=1, HUSKL_GIB_R=1.5, HUSKL_SLOW=.3, HUSKL_EVERY=3, HUSKL_DREAD_T=6, HUSKL_DREAD_MAX=3;
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
 const KITS={
   lamplighter:{n:'The Lamplighter',who:'Ambrose Fenn',d:'Your Signal Candles pass light to one another across the dark, up to 4 tiles apart. Your harpoons fire flare bolts. Kindle a creature and it becomes a running torch. A Signal Mirror throws the lamp’s light down the path in a burning beam.',wards:['candle','harpoon','mirror','salt','trap','tithe'],rites:['kindle','pillar'],roster:{}},
@@ -1052,22 +1069,55 @@ function patronOffer(){
 /* she, or it */
 function patShe(p){return p==='mother'?'her':'it';}
 /* three offerings, at most one of them the kit's own; null when the patron has nothing left to give */
-function offerSet(p){
+function offerSet(p,forceConj){
   p=p||'mother';
-  const ok=k=>{const O=OFFERINGS[k]; return O.p===p&&!hasOff(k)&&(!O.kit||O.kit===kit())&&(!O.need||O.need());};
+  const ok=k=>{const O=OFFERINGS[k]; return O.p===p&&!O.pair&&!hasOff(k)&&(!O.kit||O.kit===kit())&&(!O.need||O.need());};
   const keys=Object.keys(OFFERINGS).filter(ok), gen=shuffle(keys.filter(k=>!OFFERINGS[k].kit)), own=shuffle(keys.filter(k=>OFFERINGS[k].kit));
   const out=[];
   if(own.length&&(Math.random()<.5||gen.length<3))out.push(own[0]);
   for(const k of gen){if(out.length>=3)break; out.push(k);}
-  shuffle(out).forEach(k=>codexSee('offs',k));
-  return out.length?out:null;
+  if(!out.length)return null;
+  shuffle(out);
+  /* a conjunction takes the third card, never the kit's own, and is always shown last */
+  const cj=conjFor(p,forceConj);
+  if(cj){if(out.length<3)out.push(cj); else{let i=2; while(i>0&&OFFERINGS[out[i]].kit)i--; out.splice(i,1); out.push(cj);}}
+  out.forEach(k=>codexSee('offs',k));
+  return out;
 }
+/* conjunctions: a patron reaching out may bring another who has also noticed you. Both must be at Noticed or Watched, not
+   Claimed; a run takes one a pair and two in all. Returns an offering key or null */
+function isConj(k){return !!(OFFERINGS[k]&&OFFERINGS[k].pair);}
+function conjOk(q){const n=patTier(q); return n>=1&&n<3;}
+function conjFor(p,force){
+  if(!run||!conjOk(p))return null;
+  const mine=(run.offs||[]).filter(isConj);
+  if(mine.length>=CONJ_MAX)return null;
+  const ks=Object.keys(OFFERINGS).filter(k=>{const O=OFFERINGS[k];
+    if(!O.pair||!O.pair.includes(p)||hasOff(k)||!O.pair.every(conjOk))return false;
+    return !mine.some(m=>OFFERINGS[m].pair.every(q=>O.pair.includes(q)));});
+  if(!ks.length)return null;
+  const k=pick(ks), w=OFFERINGS[k].pair.filter(q=>patTier(q)>=2).length;
+  return force||Math.random()<CONJ_CHANCE[w]?k:null;
+}
+/* the Caller pays: the one of the pair whose Attention lags (the first of the pair on a tie) takes +1. The other is the
+   Witness: it takes nothing, but the next wave it makes itself felt (conjWitness, from startWave) */
+function conjCaller(k){const [a,b]=OFFERINGS[k].pair; return attOf(b)<attOf(a)?b:a;}
 function takeOffer(k){
   const O=OFFERINGS[k]; if(!O||hasOff(k))return;
   run.offs=(run.offs||[]).concat(k);
   if(k==='ebb'&&!run.rites.includes('ebb'))run.rites.push('ebb');
   if(k==='feed'&&!run.rites.includes('feed'))run.rites.push('feed');
-  addAtt(O.p,1);
+  if(k==='phosphor'&&F)phosSpot();
+  if(O.pair){const c=conjCaller(k); run.witness=O.pair[0]===c?O.pair[1]:O.pair[0]; addAtt(c,1);}
+  else addAtt(O.p,1);
+}
+/* the Witness's next wave: her water rises a tile, the Sun opens another spot, or one more Gibberer climbs */
+function conjWitness(){
+  const w=run.witness; if(!w)return;
+  run.witness=null;
+  if(w==='mother')waterRise(true);
+  else if(w==='sun')spotRise(true);
+  else if(w==='mouths'){warmArt(['gibberer']); const mid=F.queue.reduce((m,q)=>Math.max(m,q.t),0)/2||4; F.queue.push({t:mid,type:'gibberer',gate:F.wave%F.nRoots});}
 }
 /* a threshold crossed mid-floor takes hold at once; one crossed at the landing waits for the floor below */
 function addAtt(p,n){
@@ -1094,6 +1144,8 @@ function offerNote(p){
 }
 function offerChoice(k,fn){
   const O=OFFERINGS[k];
+  if(O.pair){const c=conjCaller(k), w=O.pair.find(q=>q!==c);
+    return {cls:'patron',tag:'Conjunction · '+PATRONS[c].n.replace(/^The /,'')+' +1 · '+PATRONS[w].n.replace(/^The /,'')+' watches',title:O.n,sub:O.d,fn};}
   return {cls:'patron',tag:(O.kit?KITS[O.kit].n.replace(/^The /,'')+'’s own':'Offering')+' · Attention +1',title:O.n,sub:O.d,fn};
 }
 /* mid-floor, at about one break in seven (once a floor), a patron reaches out: three offerings, take one or refuse */
@@ -1141,26 +1193,28 @@ function floodSeed(){
   waterSync();
 }
 function waterSync(){
-  F.water=new Map(); F.waterPts=[]; F.waterLines=[];
+  /* waterStr: which stretch each wet tile belongs to (Phosphor Tide and Brine-Choir work a stretch at a time) */
+  F.water=new Map(); F.waterStr=new Map(); F.waterPts=[]; F.waterLines=[];
   const W=run&&run.water; if(!W||W.floor!==run.floor)return;
-  for(const [g,d0,d1] of W.str){const P=F.paths[g]; if(!P)continue;
+  for(let si=0;si<W.str.length;si++){const [g,d0,d1]=W.str[si], P=F.paths[g]; if(!P)continue;
     /* the channel it is drawn along: the path's centre line, and a lane either side of it */
     const c=[], l=[], r=[], a0=Math.max(0,d0-.1), a1=Math.min(P.len-.6,d1+.1);
     for(let d=a0;d<=a1+1e-6;d+=.25){const p=posAt(P,d), q=posAt(P,Math.min(P.len,d+.2)), o=posAt(P,Math.max(0,d-.2)), dx=q[0]-o[0], dy=q[1]-o[1], n=Math.hypot(dx,dy)||1;
       c.push(p[0],p[1]); l.push(p[0]-dy/n*.24,p[1]+dx/n*.24); r.push(p[0]+dy/n*.24,p[1]-dx/n*.24);}
-    if(c.length>=4)F.waterLines.push({c,l,r,seed:g*7.3+d0*1.7,n:Math.max(1,Math.round((d1-d0+1)/2))});
+    if(c.length>=4)F.waterLines.push({c,l,r,si,seed:g*7.3+d0*1.7,n:Math.max(1,Math.round((d1-d0+1)/2))});
     for(let d=d0;d<=d1;d++){
       const p=posAt(P,d), q=posAt(P,Math.min(P.len,d+.5)), c=Math.floor(p[0]), r=Math.floor(p[1]), key=c+','+r;
       if(F.water.has(key)||(c===F.lampC&&r===F.lampR))continue;
-      F.water.set(key,[Math.sign(Math.round((q[0]-p[0])*2)),Math.sign(Math.round((q[1]-p[1])*2))]);
+      F.water.set(key,[Math.sign(Math.round((q[0]-p[0])*2)),Math.sign(Math.round((q[1]-p[1])*2))]); F.waterStr.set(key,si);
       F.waterPts.push(c+.5,r+.5);
     }}
 }
 /* Watched: as each wave begins the flood creeps one tile further up the path, until FLOOD_MAX tiles stand in water.
    A stretch may only grow into a tile that is still dry. Two stretches can stand end to end, and growing one into the
    other's tile used to add nothing, so about one rise in 25 did nothing at all */
-function waterRise(){
-  if(patTier('mother')<2||!run.water||run.water.floor!==run.floor||!run.water.str.length||F.water.size>=FLOOD_MAX)return;
+/* force: a conjunction's Witness or a Gorger (Gorger's Undertow) raises it whatever her tier */
+function waterRise(force){
+  if((!force&&patTier('mother')<2)||!run.water||run.water.floor!==run.floor||!run.water.str.length||F.water.size>=FLOOD_MAX)return;
   const dry=(P,d)=>{const p=posAt(P,d), c=Math.floor(p[0]), r=Math.floor(p[1]); return !F.water.has(c+','+r)&&!(c===F.lampC&&r===F.lampR);};
   /* a random stretch first, then the others; each tries its far end, then its near end */
   const first=pick(run.water.str), order=[first].concat(run.water.str.filter(x=>x!==first));
@@ -1171,7 +1225,9 @@ function waterRise(){
   if(!grew)return;
   const before=new Set(F.water.keys());
   waterSync();
-  for(const k of F.water.keys())if(!before.has(k)){const [c,r]=k.split(',').map(Number); F.fx.push({k:'ring',x:c+.5,y:r+.5,r0:.1,r1:.7,t:0,dur:.8,col:'106,169,159'});}
+  for(const k of F.water.keys())if(!before.has(k)){const [c,r]=k.split(',').map(Number); F.fx.push({k:'ring',x:c+.5,y:r+.5,r0:.1,r1:.7,t:0,dur:.8,col:'106,169,159'});
+    /* Brine-Choir counts each tile the water gains on this floor; it lives with the water, so a resume keeps it */
+    run.water.gain=(run.water.gain||0)+1;}
 }
 function waterAt(x,y){return !!(F.water&&F.water.size&&F.water.has(Math.floor(x)+','+Math.floor(y)));}
 function inWater(e){return !e.def.fly&&!!(F.water&&F.water.size&&F.water.has(e.tile));}
@@ -1195,6 +1251,16 @@ function spotSeed(){
   for(let i=0;i<SPOT_N;i++){const s=spotPick(used); if(!s)break; used.add(s.key); tiles.push([s.g,s.d]);}
   run.spots={floor:run.floor,tiles};
   spotSync();
+  phosSpot();
+}
+/* Phosphor Tide: one bright spot always burns in her water. Water and spots are drawn apart, and only about half of floors
+   would bring them within reach of each other, so the first spot is moved onto a stretch of her water */
+function phosSpot(){
+  if(!hasOff('phosphor')||!run.spots||run.spots.floor!==run.floor||!run.water||run.water.floor!==run.floor||!run.water.str.length)return;
+  for(const k of F.spots)if(F.water.has(k))return;
+  const [g,d0,d1]=pick(run.water.str), d=d0+Math.floor(Math.random()*(d1-d0+1));
+  if(run.spots.tiles.length)run.spots.tiles[0]=[g,d]; else run.spots.tiles.push([g,d]);
+  spotSync();
 }
 function spotSync(){
   if(!F)return;
@@ -1208,8 +1274,8 @@ function spotSync(){
   }
 }
 /* Watched: another spot opens as each wave begins, up to SPOT_MAX */
-function spotRise(){
-  if(patTier('sun')<2||!run.spots||run.spots.floor!==run.floor||!F.spots||F.spots.size>=SPOT_MAX)return;
+function spotRise(force){
+  if((!force&&patTier('sun')<2)||!run.spots||run.spots.floor!==run.floor||!F.spots||F.spots.size>=SPOT_MAX)return;
   const s=spotPick(F.spots); if(!s)return;
   run.spots.tiles.push([s.g,s.d]);
   spotSync();
@@ -1264,6 +1330,67 @@ function queueMouths(){
   const mid=F.queue.reduce((m,q)=>Math.max(m,q.t),0)/2||4, n=pack.length;
   pack.forEach((type,i)=>F.queue.push({t:type==='husk'?mid:mid*(.55+i/n*.9),type,gate:(i+F.wave)%F.nRoots}));
 }
+/* ---------------- conjunctions: what two patrons do together ---------------- */
+/* her current: Phosphor Tide quickens it, and Gorger's Undertow carries Gorgers faster still */
+function currentOf(e){let c=hasOff('phosphor')?PHOS_CURRENT:CURRENT; if(e.type==='gorger'&&hasOff('gorgedrag'))c=Math.max(c,GORGE_CURRENT); return c;}
+/* Phosphor Tide: a blow that lands in water near a bright spot lights that whole stretch; F.glowT holds each stretch's time */
+function glowAt(e){if(!F.glowT||!inWater(e))return false; const si=F.waterStr.get(e.tile); return si!==undefined&&F.glowT[si]>0;}
+function phosphorHit(e){
+  if(!inWater(e)||!nearSpot(e.x,e.y))return;
+  const si=F.waterStr.get(e.tile); if(si===undefined)return;
+  if(!F.glowT)F.glowT=[];
+  if((F.glowT[si]||0)>PHOS_T-1)return;
+  if(!(F.glowT[si]>0))F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:1.1,t:0,dur:.5,col:'190,150,255'});
+  F.glowT[si]=PHOS_T;
+}
+/* Brine-Choir: the blow rings through the same stretch of water, a fifth as hard. An echo never rings on */
+function brineEcho(e,amt,src){
+  const si=F.waterStr.get(e.tile); if(si===undefined)return;
+  const a=amt*CHOIR_ECHO;
+  for(let i=0,n=F.foes.length;i<n;i++){const o=F.foes[i]; if(o!==e&&!o.dead&&inWater(o)&&F.waterStr.get(o.tile)===si)hurt(o,a,src,true);}
+}
+/* Gorger's Undertow: a death in water drags what walks near it a tile back */
+function undertowDrag(e){
+  let n2=0;
+  for(let i=0,n=F.foes.length;i<n;i++){const o=F.foes[i];
+    if(o===e||o.dead||o.def.boss||o.def.heavy||o.def.fly||dst(o.x,o.y,e.x,e.y)>DRAG_R)continue;
+    o.d=Math.max(0,o.d-DRAG_BACK); const q=posAt(F.paths[o.gate],o.d); o.x=q[0]; o.y=q[1]; o.tile=Math.floor(o.x)+','+Math.floor(o.y); n2++;}
+  if(n2)F.fx.push({k:'ring',x:e.x,y:e.y,r0:DRAG_R,r1:.1,t:0,dur:.45,col:'106,169,159'});
+}
+/* Violet Husking: the bodies burn violet a while. F.hlights is floor state only, never saved */
+function huskLightAt(x,y,r){const L=F.hlights; if(!L)return false; for(let i=0;i<L.length;i++)if(dst(x,y,L[i].x,L[i].y)<=r)return true; return false;}
+function huskingKill(e){
+  if(e.def.boss)return;
+  const L=F.hlights||(F.hlights=[]);
+  for(let i=0;i<L.length;i++)if(dst(e.x,e.y,L[i].x,L[i].y)<=HUSKL_R)L[i].fed=true;
+  let burn=e.type==='gorger'||e.type==='husk';
+  if(e.type==='gibberer'){F.huskN=(F.huskN||0)+1; burn=F.huskN%HUSKL_EVERY===0;}
+  if(!burn)return;
+  L.push({x:e.x,y:e.y,t:HUSKL_T,fed:false});
+  F.fx.push({k:'ring',x:e.x,y:e.y,r0:.1,r1:HUSKL_R,t:0,dur:.5,col:'190,150,255'});
+}
+/* Sun-Drunk Chorus: as one of its creatures changes tile. wasSpot: the tile it left was a bright spot */
+function sunDrunk(e,wasSpot){
+  if(e.def.patron!=='mouths'||e.def.boss)return;
+  if(inSpot(e)){if(e.drunkK!==e.tile){e.drunkK=e.tile; if(!e.def.heavy)e.stunT=Math.max(e.stunT,DRUNK_T); F.fx.push({k:'ring',x:e.x,y:e.y,r0:.55,r1:.15,t:0,dur:.4,col:'190,150,255'});}}
+  else if(wasSpot&&e.drunkK){e.drunkRunT=DRUNK_RUN_T; if(F.phase==='wave')F.drunkMad=Math.min(DRUNK_DREAD_MAX,(F.drunkMad||0)+1);}
+}
+/* the clocks: glowing water, burning husks, and the dread an unfed husk leaves behind */
+function conjTick(dt){
+  if(F.glowT)for(let i=0;i<F.glowT.length;i++)if(F.glowT[i]>0)F.glowT[i]-=dt;
+  const M=F.huskMad;
+  if(M&&M.length)for(let i=M.length-1;i>=0;i--){M[i]-=dt; if(M[i]<=0)M.splice(i,1);}
+  const L=F.hlights;
+  if(L&&L.length)for(let i=L.length-1;i>=0;i--){L[i].t-=dt; if(L[i].t<=0){if(!L[i].fed)(F.huskMad||(F.huskMad=[])).push(HUSKL_DREAD_T); L.splice(i,1);}}
+}
+/* the dread conjunctions bring: Brine-Choir's risen water, Sun-Drunk Chorus's escapes, unfed husks */
+function conjDread(){
+  let d=0;
+  if(hasOff('brinechoir')&&run.water&&run.water.floor===run.floor)d+=Math.min(CHOIR_DREAD_MAX,run.water.gain||0);
+  if(F.phase==='wave')d+=F.drunkMad||0;
+  if(F.huskMad)d+=Math.min(HUSKL_DREAD_MAX,F.huskMad.length);
+  return d;
+}
 /* madness is what your horrors bring; dread is what the Many-Mouthed brings. Both push you through the same tiers (madTier), but
    only the madness of horrors you paid for feeds the Occultist or opens free horrors (boundMadTier). Worked out live: a few
    short loops, no allocation */
@@ -1271,10 +1398,12 @@ function dread(){
   if(!F||!run)return 0;
   let d=(patTier('mouths')>=2?MOUTH_DREAD:0)+(hasOff('openears')?EARS_DREAD:0);
   if(hasOff('holloweffigy'))for(const t of F.towers)if(t.kind==='ward'&&t.type==='effigy')d+=EFFIGY_DREAD;
-  let g=0; for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(!e.dead&&e.type==='gibberer')g+=GIB_DREAD;}
+  /* Gorger's Undertow: the water muffles a Gibberer to half */
+  const muffle=hasOff('gorgedrag');
+  let g=0; for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(!e.dead&&e.type==='gibberer')g+=muffle&&inWater(e)?GIB_DREAD/2:GIB_DREAD;}
   d+=Math.min(GIB_DREAD_MAX,g);
   if(F.phase==='wave')d+=(F.feedMad||0)+(F.baitMad||0);
-  return d;
+  return d+conjDread();
 }
 function horrorMadness(paidOnly){let m=0; if(!F)return 0; for(const t of F.towers)if(t.kind==='horror'&&!(paidOnly&&t.free))m+=horrorMad(t.type); return m;}
 function tierOf(m){const T=tiers(); return m>=T[2]?3:m>=T[1]?2:m>=T[0]?1:0;}
@@ -2609,6 +2738,8 @@ function canSee(e){if(window.devNoDark)return true; if(e.hex&&e.hex.unmask)retur
   if(e.revealT>0)return true;
   /* the Bellringer hears it: outlined in the dark, veiled or not, for as long as the echo lasts */
   if(e.heardT>0)return true;
+  /* Phosphor Tide's glowing water and Violet Husking's burning husks show what stands in them, veiled or not */
+  if(glowAt(e)||(F.hlights&&F.hlights.length&&huskLightAt(e.x,e.y,HUSKL_R)))return true;
   /* Claimed: what walks in her water has gone under, and only something that unveils can find it there */
   if(F.under&&inWater(e))return revealedAt(e.x,e.y);
   /* the Wrong Sun: whatever stands in a bright spot is seen, veiled or not */
@@ -2704,6 +2835,10 @@ const DEV_ACTS={
     forceUI(); return 'Everything unlocked';
   },
   patron(){F.patronCalled=false; if(F.phase!=='build')return 'Only between waves'; closeModal(); paused=false; const po=patronOffer(); if(!po)return 'They have nothing left to give'; openOffer(po.o,po.p); return null;},
+  /* a conjunction in the third card, from any patron who can bring one */
+  conj(){F.patronCalled=false; if(F.phase!=='build')return 'Only between waves';
+    for(const p of shuffle(Object.keys(PATRONS))){const o=offerSet(p,true); if(o&&o.some(isConj)){closeModal(); paused=false; openOffer(o,p); return null;}}
+    return 'Two patrons must both have noticed you, neither claiming you';},
   attention(){addAtt('mother',1); relKey=''; forceUI(); return 'Her Attention is '+attOf('mother');},
   sunatt(){addAtt('sun',1); relKey=''; forceUI(); return 'Its Attention is '+attOf('sun');},
   mouthatt(){addAtt('mouths',1); relKey=''; forceUI(); return 'Its Attention is '+attOf('mouths');},
@@ -2749,7 +2884,7 @@ function openDevMode(msg){
   paused=true;
   const btn=(act,label,arg,cls)=>'<button class="btn'+(cls?' '+cls:'')+'" data-dev="'+act+'"'+(arg?' data-arg="'+arg+'"':'')+' style="padding:6px 10px;font-size:.8rem">'+label+'</button>';
   const html='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">'
-    +btn('dark',window.devNoDark?'Darkness: off':'Darkness: on')+btn('cheat','Max essence & oil')+btn('unlock','Unlock everything')+btn('patron','A patron: offer now')+btn('attention','Mother: Attention +1')+btn('sunatt','Wrong Sun: Attention +1')+btn('mouthatt','Many-Mouthed: Attention +1')+btn('kill','Kill all creatures')+btn('clear','Clear wards')+'</div>'
+    +btn('dark',window.devNoDark?'Darkness: off':'Darkness: on')+btn('cheat','Max essence & oil')+btn('unlock','Unlock everything')+btn('patron','A patron: offer now')+btn('conj','A conjunction: offer now')+btn('attention','Mother: Attention +1')+btn('sunatt','Wrong Sun: Attention +1')+btn('mouthatt','Many-Mouthed: Attention +1')+btn('kill','Kill all creatures')+btn('clear','Clear wards')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Floors</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+FLOORS.map((f,i)=>btn('floor',(i===run.floor?'● ':'')+(i+1)+' · '+f.name,String(i))).join('')+btn('skip','Clear this floor →')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Restart this floor under a Trial</h3>'
@@ -3039,7 +3174,7 @@ function startWave(sub){
   if(mode==='aim')mode=null;
   F.wave++; F.phase='wave'; F.waveT=0; F.queue=[];
   /* the wave's own dread and the Teeth in the Stair begin again */
-  F.feedMad=0; F.baitMad=0; F.ate=false;
+  F.feedMad=0; F.baitMad=0; F.ate=false; F.drunkMad=0; F.gorgeRise=0;
   const groups=F.def.waves[F.wave-1].slice();
   if(F.omen==='swarm')groups.push(['skitter',8,.35,2.5,Math.floor(Math.random()*F.nRoots)]);
   for(const raw of groups){
@@ -3053,6 +3188,7 @@ function startWave(sub){
   queueMouths();
   waterRise();
   spotRise();
+  conjWitness();
   blubberToll();
   if(run.oil>0&&has('blackwick')){run.oil-=1; F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'−1 oil',col:PAL.wound,t:0,dur:1,size:.3}); if(run.oil<=0){run.oil=0; defeat();}}
   F.queue.sort((a,b)=>a.t-b.t);
@@ -3177,7 +3313,7 @@ function gainOil(n){
 }
 function waveCleared(){
   checkOccultistDeed(true);
-  F.feedMad=0; F.baitMad=0;
+  F.feedMad=0; F.baitMad=0; F.drunkMad=0;
   /* Salted Teeth: the salt beside your horrors dissolves when the wave breaks */
   if(hasOff('bloodsalt'))for(const t of F.towers.slice())if(t.kind==='ward'&&t.type==='salt'&&nearHorror(t.x,t.y,SALT_R)){removeTower(t); F.fx.push({k:'ring',x:t.x,y:t.y,r0:.1,r1:.6,t:0,dur:.4,col:'236,232,222'});}
   F.wireBroken.clear(); F.rods=[]; F.anchor=null;
@@ -4158,10 +4294,13 @@ function hurt(e,amt,src,echo){
   if(e.hex)amt*=e.hex.mul;
   if(e.flenseT>0)amt*=1.25;
   if(e.tetherBy&&amt>0&&hasOff('sun_harpoon')&&inSpot(e))amt*=1.5;
+  /* Phosphor Tide: a real blow in water near a bright spot lights the stretch; what stands in lit water takes a quarter more */
+  if(hasOff('phosphor')&&amt>0){if(!echo&&amt>=2)phosphorHit(e); if(glowAt(e))amt*=PHOS_DMG;}
   /* a Gorger is made for your horrors; Teeth on the Thread lets them feed on what burns */
   if(src==='horror'){if(e.type==='gorger')amt*=GORGE_RESIST; if(e.kindleT>0&&hasOff('mouth_signal'))amt*=KINDLE_BITE;}
   if(amt>0)e.lastSrc=src;
   e.hp-=amt; if(amt>=2)e.hitT=.12;
+  if(!echo&&amt>=2&&hasOff('brinechoir')&&inWater(e))brineEcho(e,amt,src);
   /* Voodoo: a real hit on a hexed creature echoes onto the nearest other hexed one */
   if(e.hex&&e.hex.voodoo&&!echo&&amt>=3){
     let o=null, bd=1e9;
@@ -4204,6 +4343,8 @@ function killFoe(e){
   if(!none){potRender(e); addCorpse(e);}
   /* Blood in the Try-pot: a horror kills what a line holds, and the line snaps to the next */
   if(e.lastSrc==='horror'&&hasOff('mouth_harpoon')&&onLine(e))lineSnap(e);
+  if(hasOff('gorgedrag')&&inWater(e))undertowDrag(e);
+  if(hasOff('husking'))huskingKill(e);
   if(hasOff('milk')&&inWater(e)){run.milk=(run.milk||0)+1; if(run.milk>=4){run.milk=0; gainOil(1);}}
   if(e.def.boss)run.bosses=(run.bosses||0)+1;
   /* a Herald slain pays a relic */
@@ -4393,6 +4534,7 @@ function update(dt){
     return;
   }
   F.time+=dt;
+  conjTick(dt);
   mouthsGather();
   syncFree();
   if(F.feedT>0)F.feedT-=dt;
@@ -4568,17 +4710,20 @@ function updateFoes(dt){
       else if(e.type==='stalker')sighted(e);
     }
     if(e.sightT>0)e.sightT-=dt;
+    if(e.drunkRunT>0)e.drunkRunT-=dt;
 
     const st=F.salt.get(e.tile); if(st&&!st.dead&&!st.dark){if(!hasOff('brine'))slow=Math.max(slow,has('witchsalt')?.65:.5); if(has('ledger'))hurt(e,6*dt);}
     for(const t of choirs)if(dst(e.x,e.y,t.x,t.y)<=HORRORS.elite.range)slow=Math.max(slow,HORRORS.elite.slow);
     for(const t of keepers)if(dst(e.x,e.y,t.x,t.y)<=HORRORS.keeper.range)slow=Math.max(slow,.45);
     if(e.hex)slow=Math.max(slow,e.hex.slow);
     if(e.tangleT>0)slow=Math.max(slow,TANGLE_SLOW);
+    /* Violet Husking: a Gibberer slows near a burning husk */
+    if(e.type==='gibberer'&&F.hlights&&F.hlights.length&&huskLightAt(e.x,e.y,HUSKL_GIB_R))slow=Math.max(slow,HUSKL_SLOW);
     for(const t of F.bowls)if(t.st.slow&&dst(e.x,e.y,t.x,t.y)<=t.st.range)slow=Math.max(slow,t.st.slow);
     /* heavy: no stuns, and no slow deeper than 15%, whatever the source */
     if(e.def.heavy)slow=Math.min(slow,.15);
 
-    let sp=e.def.spd*(1-slow)*(F.omen==='flooded'?.9:1)*(F.omen==='frenzied'?1.15:1)*(inWater(e)?CURRENT:1)*(e.sightT>0?SIGHT_RUN:1);
+    let sp=e.def.spd*(1-slow)*(F.omen==='flooded'?.9:1)*(F.omen==='frenzied'?1.15:1)*(inWater(e)?currentOf(e):1)*(e.sightT>0?SIGHT_RUN:1)*(e.drunkRunT>0?DRUNK_RUN:1);
     for(const a of auras){if(a!==e&&!a.dead&&dst(a.x,a.y,e.x,e.y)<=1.6){sp*=1.3; break;}}
     /* Hollow Effigy: what it hexes walks a quarter slower (never past a Behemoth's 15%) */
     if(e.hex&&!e.def.heavy&&hasOff('holloweffigy'))sp*=EFFIGY_SLOW;
@@ -4597,7 +4742,11 @@ function updateFoes(dt){
     e.x=p[0]; e.y=p[1];
     const key=Math.floor(e.x)+','+Math.floor(e.y);
     if(key!==e.tile){
+      const wasSpot=!!(F.spots&&F.spots.has(e.tile)), wasWet=!!(F.water&&F.water.has(e.tile));
       e.tile=key;
+      if(hasOff('sundrunk'))sunDrunk(e,wasSpot);
+      /* Gorger's Undertow: a Gorger stepping into her water raises it, twice a wave at most */
+      if(e.type==='gorger'&&!wasWet&&hasOff('gorgedrag')&&inWater(e)&&F.phase==='wave'&&(F.gorgeRise||0)<DRAG_RISE){F.gorgeRise=(F.gorgeRise||0)+1; waterRise(true);}
       const s2=F.salt.get(key);
       /* Brine Pools: the pool drags each creature a tile back, once */
       if(s2&&!s2.dead&&!s2.dark&&hasOff('brine')&&!e.def.boss&&!e.def.heavy&&!(e.brined||(e.brined=[])).includes(s2.id)){
@@ -7172,12 +7321,17 @@ function spotSprite(){
   return spotCv=c;
 }
 function drawSpots(tm){
-  const s=F.spotPts; if(!s||!s.length)return;
+  const s=F.spotPts, L=F.hlights; if((!s||!s.length)&&(!L||!L.length))return;
   const cv=spotSprite(), pulse=reduceMotion?0:Math.sin(tm*2.3)*.05, wide=patTier('sun')>=2;
   g.save(); g.globalCompositeOperation='lighter';
-  for(let i=0;i<s.length;i+=2){const x=s[i], y=s[i+1];
+  if(s)for(let i=0;i<s.length;i+=2){const x=s[i], y=s[i+1];
     if(wide){g.globalAlpha=.22; g.drawImage(cv,x-SPOT_GLARE,y-SPOT_GLARE,SPOT_GLARE*2,SPOT_GLARE*2);}
     const r=.62+pulse; g.globalAlpha=.85; g.drawImage(cv,x-r,y-r,r*2,r*2);}
+  /* Violet Husking: a body burning where it fell, smaller and gutters as it goes; a dashed ring marks its reach */
+  if(L)for(let i=0;i<L.length;i++){const h=L[i], a=Math.min(1,h.t/1.5), r=(HUSKL_R*.8+pulse)*(.7+.3*a);
+    g.globalAlpha=.7*a; g.drawImage(cv,h.x-r,h.y-r,r*2,r*2);
+    g.globalAlpha=.5*a; g.strokeStyle='rgb(196,150,255)'; g.lineWidth=.025; g.setLineDash([.1,.12]); g.lineDashOffset=reduceMotion?0:-tm*.5;
+    g.beginPath(); g.arc(h.x,h.y,HUSKL_R,0,TAU); g.stroke(); g.setLineDash([]);}
   g.restore();
 }
 /* the Drowned Mother's water: one body of dark water poured along the path, banks and all, with the current
@@ -7193,6 +7347,10 @@ function drawWater(tm,top){
       waterStroke(W.c,.66,'rgba(34,86,88,.62)');
       waterStroke(W.c,.3,'rgba(64,132,128,.22)');
     }else waterStroke(W.c,.82,'rgba(60,130,130,.07)');
+    /* Phosphor Tide: a lit stretch burns violet under the current, fading in its last second */
+    const gl=F.glowT&&F.glowT[W.si];
+    if(gl>0&&!top){const a=Math.min(1,gl)*(.55+(reduceMotion?0:.12*Math.sin(tm*4)));
+      g.globalCompositeOperation='lighter'; waterStroke(W.c,.86,'rgba(132,78,220,'+(a*.45)+')'); waterStroke(W.c,.4,'rgba(196,150,255,'+(a*.5)+')'); g.globalCompositeOperation='source-over';}
     /* the current: broken streaks on three lanes, each drifting at its own pace */
     const lanes=[[W.l,.55,.5,[.07,.41,.13,.66]],[W.c,.8,0,[.15,.52,.05,.38]],[W.r,.65,.33,[.1,.7,.08,.29]]];
     for(const [pts,sp,ph,dash] of lanes){
@@ -7540,7 +7698,7 @@ function render(){
   /* her water shows through the dark too, faintly, so you can plan around it */
   if(F.water&&F.water.size)drawWater(tm,true);
   /* the Wrong Sun's spots are light: they burn through the dark */
-  if(F.spots&&F.spots.size)drawSpots(tm);
+  if((F.spots&&F.spots.size)||(F.hlights&&F.hlights.length))drawSpots(tm);
   /* the Occultist sees its dead: pale bones on the path, drawn over the dark so the candles can find them */
   if(corpseKit()&&F.bodies&&F.bodies.size)drawBodies(tm);
   /* the Galvanist's grid: rods, wires and their arcs, drawn over the dark because live current glows */
@@ -7836,7 +7994,7 @@ function relicTip(k,btn){
   if(relTipK===k&&!tip.hidden){relicTipHide(); return;}
   relTipK=k;
   if(k.startsWith('patron:')){
-    const p=k.slice(7), P=PATRONS[p], n=patTier(p), offs=(run.offs||[]).filter(o=>OFFERINGS[o].p===p).map(o=>OFFERINGS[o].n);
+    const p=k.slice(7), P=PATRONS[p], n=patTier(p), offs=(run.offs||[]).filter(o=>OFFERINGS[o].pair?OFFERINGS[o].pair.includes(p):OFFERINGS[o].p===p).map(o=>OFFERINGS[o].n);
     tip.classList.remove('is-curse'); tip.classList.add('is-patron');
     tip.innerHTML='<span class="reltag">Patron · Attention '+attOf(p)+(n?' · '+P.tiers[n-1].n:'')+'</span><b>'+P.n+'</b><span>'
       +(n?P.tiers.slice(0,n).map(t=>t.d).join(' '):P.d)+(P.tiers[n]?' <i>At '+P.tiers[n].at+': '+P.tiers[n].n+'.</i>':'')+(offs.length?' '+(p==='mother'?'Her':'Its')+' gifts: '+offs.join(', ')+'.':'')+'</span>';
@@ -7922,13 +8080,13 @@ function showBook(){
   }else if(t==='patrons'){
     /* the patrons, the thresholds of their Attention, and every offering you have been shown */
     const offs=Object.keys(OFFERINGS), seen=offs.filter(k=>hasSeen('offs',k)).length, mine=run&&run.offs||[];
-    intro='Old things below the stair offer gifts in place of the landing’s gift, and sometimes between waves. Every gift raises that patron’s Attention, and Attention changes your floors. Offerings seen: <b>'+seen+' of '+offs.length+'</b>.';
+    intro='Old things below the stair offer gifts in place of the landing’s gift, and sometimes between waves. Every gift raises that patron’s Attention, and Attention changes your floors. Two who have both noticed you may offer one gift together, a conjunction: the one whose Attention lags pays for it, and the other makes itself felt the next wave. Offerings seen: <b>'+seen+' of '+offs.length+'</b>.';
     list=Object.keys(PATRONS).map(p=>{const P=PATRONS[p];
       return bookEntry('<span class="book-seal is-patron">'+P.glyph+'</span>',P.n,'Patron'+(run&&attOf(p)?' · Attention '+attOf(p)+' now':''),P.d+' '+P.tiers.map(T=>'<i>'+T.n+' (Attention '+T.at+'):</i> '+T.d).join(' '));}).join('')
       +offs.map(k=>{const O=OFFERINGS[k];
         if(!hasSeen('offs',k))return bookEntry(bookSeal('?'),'???','','Not yet offered.','is-locked');
         const now=mine.includes(k);
-        return bookEntry('<span class="book-seal is-patron">'+O.n.replace(/^(The|Her|Into the) /,'').charAt(0)+'</span>',O.n,'Offering of '+PATRONS[O.p].n+(O.kit?' · '+KITS[O.kit].n+' only':'')+(now?' · Taken this descent':''),O.d,now?'is-held':'');}).join('');
+        return bookEntry('<span class="book-seal is-patron">'+O.n.replace(/^(The|Her|Into the) /,'').charAt(0)+'</span>',O.n,(O.pair?'Conjunction of '+PATRONS[O.pair[0]].n+' and '+PATRONS[O.pair[1]].n.replace(/^The /,'the '):'Offering of '+PATRONS[O.p].n)+(O.kit?' · '+KITS[O.kit].n+' only':'')+(now?' · Taken this descent':''),O.d,now?'is-held':'');}).join('');
   }else if(t==='trials'){
     intro='On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule. Pass it and take a relic.';
     list=Object.keys(TRIALS).map(k=>{const T=TRIALS[k], now=!!(run&&F&&F.trial===k);
@@ -8228,6 +8386,24 @@ const TIPS={
   glare:{when:()=>patTier('sun')>=3&&F.towers.some(t=>t.kind==='ward'&&nearSpot(t.x,t.y)),title:'In the glare',
     text:'It has claimed you. A ward that stands within the halo of a bright spot fires a quarter slower. Build back from the glare, or build there knowing it.',
     target:()=>{const t=F.towers.find(t=>t.kind==='ward'&&nearSpot(t.x,t.y)); return t?coachBoard(t.x,t.y,SPOT_GLARE):null;}},
+  /* conjunctions (#87): the Witness, then each one the first time it shows on the board */
+  witness:{when:()=>!!run.witness&&F.phase==='build',title:'A witness',
+    text:'Two of them offered that gift together. The one whose Attention lagged paid for it. The other watched, and as the next wave begins it makes itself felt: her water rises a tile, the Sun opens another spot, or one more Gibberer climbs.'},
+  phosphor:{when:()=>hasOff('phosphor')&&!!F.glowT&&F.glowT.some(t=>t>0),title:'Phosphor Tide',
+    text:'Your blow landed in her water beside a bright spot, and the whole stretch glows violet. For 6 seconds whatever stands in it is seen, veiled or not, and takes a quarter more. Her current runs faster than it did.',
+    target:()=>{const e=F.foes.find(e=>!e.dead&&glowAt(e)); return e?coachBoard(e.x,e.y,1):null;}},
+  gorgedrag:{when:()=>hasOff('gorgedrag')&&F.phase==='wave'&&F.foes.some(e=>!e.dead&&inWater(e)),title:'Gorger’s Undertow',
+    text:'Kill them in her water. Each death there drags what walks within 2 tiles of it a tile back, and a Gibberer in water brings half the dread. But a Gorger that steps into water raises it, and rides her current faster.',
+    target:()=>{const e=F.foes.find(e=>!e.dead&&inWater(e)); return e?coachBoard(e.x,e.y,DRAG_R):null;}},
+  brinechoir:{when:()=>hasOff('brinechoir')&&F.phase==='wave'&&F.foes.filter(e=>!e.dead&&inWater(e)).length>=2,title:'Brine-Choir',
+    text:'A blow on anything in her water rings through that stretch: everything else in it takes a fifth as much. Every tile her water gains on this floor brings you 1 dread, 3 at most.',
+    target:()=>{const e=F.foes.find(e=>!e.dead&&inWater(e)); return e?coachBoard(e.x,e.y,1):null;}},
+  sundrunk:{when:()=>hasOff('sundrunk')&&F.foes.some(e=>!e.dead&&e.def.patron==='mouths'&&inSpot(e)),title:'Sun-Drunk Chorus',
+    text:'It stopped to stare at the Wrong Sun. Each of the Many-Mouthed’s creatures stands still a second in the first bright spot it reaches. Kill it there: one that walks out alive runs faster and brings you 1 dread until the wave breaks.',
+    target:()=>{const e=F.foes.find(e=>!e.dead&&e.def.patron==='mouths'&&inSpot(e)); return e?coachBoard(e.x,e.y,.8):null;}},
+  husking:{when:()=>hasOff('husking')&&!!F.hlights&&F.hlights.length>0,title:'Violet Husking',
+    text:'The body burns violet where it fell, for 6 seconds. Whatever stands in its light is seen, and Gibberers near it slow. Kill something else in that light before it gutters, or it leaves you 1 dread for a while.',
+    target:()=>{const h=F.hlights[0]; return h?coachBoard(h.x,h.y,HUSKL_R):null;}},
   mouths:{foe:e=>e.def.patron==='mouths',title:'The Many-Mouthed sends its own',art:artLineup,
     text:'As each wave begins it reads what you built, and sends a few creatures of its own up the stair, in the second half of the wave. They are not like the others: when they die they leave no essence, bones or sigils. You will meet each one as it climbs.'},
   gibberer:{foe:e=>e.type==='gibberer',steps:e=>{const at=foeTarget(e);return [
