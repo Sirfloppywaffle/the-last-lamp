@@ -191,10 +191,16 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     localStorage.setItem('ll-captions','true'); wave(); hold('crawler',1); T.castRite('toll'); out.caption=T.F.fx.some(f=>f.cap);
     localStorage.removeItem('ll-captions');
     T.render();
+    /* she builds no candles, so the stair never offers her one: not as a gift, not at the merchant (Criss) */
+    fresh(); let candle=0, wards=0;
+    for(let i=0;i<300;i++)for(const o of T.draftOptions(30)){if(o.kind==='ward'){wards++; if(o.key==='candle')candle++;}}
+    for(let i=0;i<100;i++){const m=T.makeRoom('merchant'); for(const it of (m.stock||[]))if(it.kind==='ward'&&it.key==='candle')candle++;}
+    out.noCandle={candle,wards};
     return out;});
   console.log(JSON.stringify(r));
   ok(r.kit.wards==='fork,harpoon,bellwire,tocsin,chime,censer'&&r.kit.rites==='toll,greatbell','her wards and rites',r.kit);
   ok(r.kit.who==='Agathe Vell'&&r.kit.fork==='Tuning Fork'&&r.kit.harpoon==='Clapper Harpoon','Agathe Vell builds Tuning Forks and Clapper Harpoons',r.kit);
+  ok(r.noCandle.candle===0&&r.noCandle.wards>0,'no Candle Ward is ever offered to her',r.noCandle);
   ok(r.kit.lamp==='Votive,Font,Peal','her lamp trades Fire for Peal',r.kit.lamp);
   ok(r.buildToll.tolls===0&&r.buildToll.noise===0,'Toll does nothing between waves',r.buildToll);
   ok(r.darkD!==null,'a dark stretch of path within reach of the toll');
