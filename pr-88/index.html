@@ -895,17 +895,17 @@ const OFFERINGS={
      together. pair: who offers it; p is only the first of them. None of them is kit-shaped: each works through the water,
      the bright spots and the Many-Mouthed's own creatures, so every kit can take every one */
   phosphor:{p:'mother',pair:['mother','sun'],n:'Phosphor Tide',d:'One bright spot always burns in her water. When a blow lands on something in her water within a tile and a half of a bright spot, that stretch of water glows violet for 6 seconds. Whatever stands in it is seen, veiled or not, and takes a quarter more. Her current runs faster: 45%, not 30%.'},
-  gorgedrag:{p:'mother',pair:['mother','mouths'],n:'Gorger’s Undertow',d:'A Gibberer in water brings 1 dread, not 2. When anything dies in water, what walks within 2 tiles of it is dragged a tile back. Never a boss or a Behemoth. But a Gorger that steps into water raises it a tile, twice a wave at most, and her current carries Gorgers 40% faster.'},
+  gorgedrag:{p:'mother',pair:['mother','mouths'],n:'Gorger’s Undertow',d:'A Gibberer in water brings 1 dread, not 2. When anything dies in water, what walks within 2 tiles of it is dragged a tile back, twice at most. Never a boss or a Behemoth. But a Gorger that steps into water raises it a tile, twice a wave at most, and her current carries Gorgers 40% faster.'},
   brinechoir:{p:'mother',pair:['mother','mouths'],n:'Brine-Choir',d:'A blow that lands on something in water rings through it: everything else in the same water takes a fifth as much. Each tile her water gains on a floor brings you 1 dread, 3 at most.'},
   sundrunk:{p:'sun',pair:['sun','mouths'],n:'Sun-Drunk Chorus',d:'Its creatures stop to stare at the Wrong Sun: the first time one steps into a bright spot, it stands still for a second. But one that walks out of a spot alive runs 20% faster for 3 seconds and brings you 1 dread until the wave breaks, 3 at most.'},
   husking:{p:'sun',pair:['sun','mouths'],n:'Violet Husking',d:'A Gorger or Choir-Husk you kill, and every third Gibberer, burns violet where it fell for 6 seconds. Whatever stands in that light is seen, and a Gibberer within a tile and a half of it walks 30% slower. A husk that burns out before anything else dies in its light leaves you 1 dread for 6 seconds.'}
 };
 /* conjunctions: how often one takes the third card (neither, one or both of the pair Watched), and how many a run may take
    (one a pair). Phosphor Tide: 6 seconds of glow, a quarter more, her current at 1.45. Gorger's Undertow: 2 tiles, a tile back,
-   1 dread a wet Gibberer, two rises a wave, Gorgers at 1.4. Brine-Choir: a fifth, 3 dread at most. Sun-Drunk Chorus: a second
+   twice each, 1 dread a wet Gibberer, two rises a wave, Gorgers at 1.4. Brine-Choir: a fifth, 3 dread at most. Sun-Drunk Chorus: a second
    still, 20% faster for 3 seconds, 3 dread at most. Violet Husking: 6 seconds, a tile of light, Gibberers 30% slower within a
    tile and a half, every third Gibberer, 1 dread for 6 seconds (3 at most) */
-const CONJ_CHANCE=[.25,.4,.6], CONJ_MAX=2, PHOS_T=6, PHOS_DMG=1.25, PHOS_CURRENT=1.45, DRAG_R=2, DRAG_BACK=1, DRAG_RISE=2, GORGE_CURRENT=1.4,
+const CONJ_CHANCE=[.25,.4,.6], CONJ_MAX=2, PHOS_T=6, PHOS_DMG=1.25, PHOS_CURRENT=1.45, DRAG_R=2, DRAG_BACK=1, DRAG_MAX=2, DRAG_RISE=2, GORGE_CURRENT=1.4,
   CHOIR_ECHO=.2, CHOIR_DREAD_MAX=3, DRUNK_T=1, DRUNK_RUN=1.2, DRUNK_RUN_T=3, DRUNK_DREAD_MAX=3,
   HUSKL_T=6, HUSKL_R=1, HUSKL_GIB_R=1.5, HUSKL_SLOW=.3, HUSKL_EVERY=3, HUSKL_DREAD_T=6, HUSKL_DREAD_MAX=3;
 /* ---------------- the roguelike layer: kits, omens, rooms, pacts, events, embers ---------------- */
@@ -1350,12 +1350,13 @@ function brineEcho(e,amt,src){
   const a=amt*CHOIR_ECHO;
   for(let i=0,n=F.foes.length;i<n;i++){const o=F.foes[i]; if(o!==e&&!o.dead&&inWater(o)&&F.waterStr.get(o.tile)===si)hurt(o,a,src,true);}
 }
-/* Gorger's Undertow: a death in water drags what walks near it a tile back */
+/* Gorger's Undertow: a death in water drags what walks near it a tile back. Twice each at most, or a kill zone in the water
+   could hold a whole wave below it */
 function undertowDrag(e){
   let n2=0;
   for(let i=0,n=F.foes.length;i<n;i++){const o=F.foes[i];
-    if(o===e||o.dead||o.def.boss||o.def.heavy||o.def.fly||dst(o.x,o.y,e.x,e.y)>DRAG_R)continue;
-    o.d=Math.max(0,o.d-DRAG_BACK); const q=posAt(F.paths[o.gate],o.d); o.x=q[0]; o.y=q[1]; o.tile=Math.floor(o.x)+','+Math.floor(o.y); n2++;}
+    if(o===e||o.dead||o.def.boss||o.def.heavy||o.def.fly||(o.dragN||0)>=DRAG_MAX||dst(o.x,o.y,e.x,e.y)>DRAG_R)continue;
+    o.dragN=(o.dragN||0)+1; o.d=Math.max(0,o.d-DRAG_BACK); const q=posAt(F.paths[o.gate],o.d); o.x=q[0]; o.y=q[1]; o.tile=Math.floor(o.x)+','+Math.floor(o.y); n2++;}
   if(n2)F.fx.push({k:'ring',x:e.x,y:e.y,r0:DRAG_R,r1:.1,t:0,dur:.45,col:'106,169,159'});
 }
 /* Violet Husking: the bodies burn violet a while. F.hlights is floor state only, never saved */
@@ -1373,8 +1374,9 @@ function huskingKill(e){
 /* Sun-Drunk Chorus: as one of its creatures changes tile. wasSpot: the tile it left was a bright spot */
 function sunDrunk(e,wasSpot){
   if(e.def.patron!=='mouths'||e.def.boss)return;
-  if(inSpot(e)){if(e.drunkK!==e.tile){e.drunkK=e.tile; if(!e.def.heavy)e.stunT=Math.max(e.stunT,DRUNK_T); F.fx.push({k:'ring',x:e.x,y:e.y,r0:.55,r1:.15,t:0,dur:.4,col:'190,150,255'});}}
-  else if(wasSpot&&e.drunkK){e.drunkRunT=DRUNK_RUN_T; if(F.phase==='wave')F.drunkMad=Math.min(DRUNK_DREAD_MAX,(F.drunkMad||0)+1);}
+  /* once each: it stares in the first spot it reaches, and cries out once as it walks out of that spot */
+  if(inSpot(e)){if(!e.drunkK){e.drunkK=e.tile; if(!e.def.heavy)e.stunT=Math.max(e.stunT,DRUNK_T); F.fx.push({k:'ring',x:e.x,y:e.y,r0:.55,r1:.15,t:0,dur:.4,col:'190,150,255'});}}
+  else if(wasSpot&&e.drunkK&&!e.drunkOut){e.drunkOut=true; e.drunkRunT=DRUNK_RUN_T; if(F.phase==='wave')F.drunkMad=Math.min(DRUNK_DREAD_MAX,(F.drunkMad||0)+1);}
 }
 /* the clocks: glowing water, burning husks, and the dread an unfed husk leaves behind */
 function conjTick(dt){
