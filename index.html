@@ -798,8 +798,8 @@ const RELICS={
   shadow:{n:'Second Shadow',pack:'relics_deep',needs:['effigy'],d:'Hexes linger twice as long after leaving an Effigy.'},
   marrow:{n:'Thunder Marrow',pack:'relics_deep',needs:['chime','trap','grasp','pylon','coil'],d:'When a ward of yours stuns, shocks or seizes a creature, thunder leaps to your nearest striking ward within 2.5 tiles of it: that ward fires at once and deals 25% more for 3 seconds. Each ward sends it once every 3 seconds. In the Wrong Sun’s glare it leaps to two.',lore:'The split femur of a storm-struck whale, still humming. Strike it and the iron beside it answers.'},
   /* Dead Reckoning keeps Witch Salt's key, so a saved run that carried Witch Salt carries this */
-  witchsalt:{n:'Dead Reckoning',curse:true,pack:'relics_deep',d:'The lamp burns 1.5 tiles smaller. Your wards that stand outside its own light reach 40% farther and deal 25% more.',lore:'A brass octant with its mirrors smoked black. You chart the shoals by what strikes the hull.'},
-  choirwalls:{n:'Choir in the Walls',curse:true,pack:'relics_forbidden',d:'Horrors cost no madness, but one of your bound horrors slips away at every stair.'},
+  witchsalt:{n:'Dead Reckoning',curse:true,pack:'relics_deep',d:'The lamp burns 1.5 tiles smaller. A ward built past the edge of its light, where only a candle, a fork or another of your lights reaches, strikes 40% farther and deals 25% more. Wards inside the lamp\'s own light gain nothing. Tap a ward to see if it counts.',lore:'A brass octant with its mirrors smoked black. You chart the shoals by what strikes the hull.'},
+  choirwalls:{n:'Choir in the Walls',curse:true,pack:'relics_forbidden',d:'Horrors cost no madness, but a horror you field is never yours again. Recall it, or carry it to the stair, and it goes into the walls: your roster loses it.',lore:'Plaster over a hollow wall, warm to the touch. Lay your ear to it and something you bound is humming, a little out of tune.'},
   gilded:{n:'Gilded Teeth',curse:true,pack:'relics_forbidden',d:'Every kill pays 2 more essence, but the stair burns all essence except your salvage.'},
   hollow:{n:'Hollow Crown',curse:true,pack:'relics_forbidden',d:'Every gift offers one more choice, but the lamp holds 4 less oil.'},
   eyes:{n:'A Thousand Eyes',curse:true,pack:'relics_forbidden',d:'Everything in light can be seen, veiled or not, but every madness threshold sits 2 lower.'}
@@ -2107,6 +2107,8 @@ let sel=null, selTower=null, mode=null, paused=true, speed=1, uid=0, pauseOpen=f
 function has(k){return run.relics.includes(k);}
 function tiers(){const b=(stillNow()?STILL_MAD:0)-(F&&F.omen==='whispering'?3:0)-(run.madPen||0)-(has('eyes')?2:0); return [Math.max(2,6+b),Math.max(3,10+b),Math.max(4,14+b)];}
 function horrorMad(type){if(has('choirwalls'))return 0; return HORRORS[type].mad;}
+/* Choir in the Walls: a sung horror leaving the board leaves your roster too. Once only: the flag is cleared. Returns its name */
+function wallsTake(t){if(!t||t.kind!=='horror'||!t.sung)return null; t.sung=false; run.roster[t.type]=Math.max(0,(run.roster[t.type]||0)-1); return HORRORS[t.type].n.replace('Bound ','');}
 /* Quiet Mind: still, after STILL_T seconds of a wave with nothing built, upgraded or cast */
 function stillNow(){return !!(F&&F.still&&has('quiet'));}
 /* Sealing Wax: each sealed ward lowers the madness of your horrors by 1 (never below none) */
@@ -4168,12 +4170,13 @@ function descend(){
   const keep=prot+Math.floor(loose*(has('gilded')?0:.3)), burned=run.ess-keep;
   run.ess=keep;
   run.omen=(run.next&&run.next.omen)||null; run.elite=!!(run.next&&run.next.elite); run.trial=(run.next&&run.next.trial)||null; run.next=null;
-  let lost=null;
-  if(has('choirwalls')){const hs=Object.keys(run.roster).filter(k=>run.roster[k]>0); if(hs.length){lost=pick(hs); run.roster[lost]--;}}
+  /* Choir in the Walls: every sung horror still on the board goes into the walls at the stair */
+  let lost=0;
+  if(F.towers)for(const t of F.towers)if(wallsTake(t))lost++;
   closeModal();
   const f0 = run.floor;
   run.floor++;
-  const msg=(burned>0?'The stair takes its toll: '+burned+' essence burns away.':'')+(lost?' A bound '+HORRORS[lost].n.replace('Bound ','')+' slipped away on the stair.':'');
+  const msg=(burned>0?'The stair takes its toll: '+burned+' essence burns away.':'')+(lost?' '+(lost>1?lost+' of your horrors go':'One of your horrors goes')+' into the walls.':'');
   showMap(true, f0, run.floor, msg.trim());
   beginFloor(null);
 }
@@ -4267,6 +4270,8 @@ function tryPlace(c,r){
   const t={kind:it.kind,type:it.type,id:++uid,c,r,x:c+.5,y:r+.5,br:newBranches(it.type),tgt:'first',invested:0,fresh:0,cd:.3,ang:-.7,ring:0,echo:0};
   /* Unpaid Teeth: a free horror is marked, so it never counts toward the tiers that open more */
   if(it.kind==='horror'&&!cost&&freeOpen())t.free=true;
+  /* Choir in the Walls: a horror fielded under it is sung, and goes into the walls when it leaves the board (wallsTake) */
+  if(it.kind==='horror'&&has('choirwalls'))t.sung=true;
   spend(t,cost);
   /* a Corpse Candle takes a remembered body first, and Borrowed Flesh raises its phantom on the candle */
   if(it.kind==='ward'&&it.type==='candle'&&corpseKit()){t.corpse=true; t.body=takeBody(bodyNear(c,r),true); if(t.body&&t.body[2]&&HORRORS[t.body[2]])t.ph=t.body[2];}
@@ -4312,10 +4317,11 @@ function sellTower(t,confirmed){
   const back=refund(t);
   if(t.corpse&&t.body&&run.corpses){run.corpses.list.push(t.body); corpseSync();}
   if(t.bones&&t.bones.length&&run.corpses&&t.grips===GRASP_GRIPS){run.corpses.list.push(...t.bones); corpseSync();}
-  run.ess+=back; removeTower(t);
+  run.ess+=back; removeTower(t); const walled=wallsTake(t);
   F.fx.push({k:'float',x:t.x,y:t.y-.2,txt:'+'+back,col:PAL.tallow,t:0,dur:.9,size:.3});
+  if(walled)hint('The '+walled+' goes into the walls. It is not yours to field again.');
   for(const v of victims){
-    removeTower(v);
+    removeTower(v); wallsTake(v);
     F.fx.push({k:'ring',x:v.x,y:v.y,r0:.45,r1:.05,t:0,dur:.6,col:'218,90,75'});
   }
   if(victims.length){banner('The light is cut','',victims.length+' lost to the dark'); AUDIO.slip();}
@@ -8593,8 +8599,11 @@ const TIPS={
   r_marrow:{when:()=>has('marrow')&&F.towers.some(t=>t.marrowT>F.time),title:'Thunder Marrow',
     text:'Thunder leapt from a stunned creature to the nearest ward that strikes, and it fired at once. Build your stuns beside your slowest, hardest ward.',
     target:()=>{const t=F.towers.find(t=>t.marrowT>F.time); return t?coachBoard(t.x,t.y,1):null;}},
+  r_choir:{when:()=>has('choirwalls')&&F.towers.some(t=>t.sung),title:'Choir in the Walls',
+    text:'This horror costs no madness, but it is spent. Recall it, or carry it down the stair, and the walls keep it. Bind more, or field only what the floor needs.',
+    target:()=>{const t=F.towers.find(t=>t.sung); return t?coachBoard(t.x,t.y,1):null;}},
   r_reckon:{when:()=>has('witchsalt')&&F.phase==='build',title:'Dead Reckoning',
-    text:'Your lamp burns smaller. A ward that stands beyond its own light, where your other lights reach, strikes farther and harder. Build out in the dark.',
+    text:'Your lamp burns 1.5 tiles smaller. Light the dark past its edge with a candle or a fork, and build there: a ward standing out past the lamp\'s own light reaches 40% farther and deals 25% more. Tap a ward to see if it counts.',
     target:()=>coachBoard(F.lx,F.ly,lampRadius())},
   glare:{when:()=>patTier('sun')>=3&&F.towers.some(t=>t.kind==='ward'&&nearSpot(t.x,t.y)),title:'In the glare',
     text:'It has claimed you. A ward that stands within the halo of a bright spot fires a quarter slower. Build back from the glare, or build there knowing it.',
@@ -8890,7 +8899,7 @@ function renderSheet(){
     const W=wdef(t.type), back=refund(t), full=t.fresh>0&&t.fresh>=t.invested, cut=cutVictims(t).length;
     html='<div class="shead"><h3>'+W.n+'<small>'+t.invested+' spent</small></h3>'+closeB+'</div>'
       +(t.dark?'<p class="darknote">Cut off from the lamp. It does nothing until light reaches it again.</p>':'')
-      +'<div class="st">'+statLine(t)+'</div>';
+      +'<div class="st">'+statLine(t)+(has('witchsalt')&&wstat(t).range?(reckoned(t)?' · <b>Dead Reckoning</b>: past the lamp\'s light, '+Math.round((RECKON_RANGE-1)*100)+'% farther, '+Math.round((RECKON_DMG-1)*100)+'% harder':' · Dead Reckoning: inside the lamp\'s light, no gain'):'')+'</div>';
     if(W.aim)html+=segHTML(t,B);
     if((treeOf(t.type)||[]).length)html+=treeHTML(t,B);
     html+='<div class="ibtns">';
@@ -8905,9 +8914,10 @@ function renderSheet(){
     const H=HORRORS[t.type], back=refund(t), full=t.fresh>0&&t.fresh>=t.invested, cut=cutVictims(t).length;
     html='<div class="shead"><h3>'+H.n+'<small>'+t.invested+' spent</small></h3>'+closeB+'</div>'
       +(t.dark?'<p class="darknote">Cut off from the lamp. It does nothing until light reaches it again.</p>':'')
+      +(t.sung?'<p class="darknote">Choir in the Walls: recalled, or carried to the stair, it goes into the walls.</p>':'')
       +'<p>'+H.d+'</p><div class="st">'+statLine(t)+' · <span class="mad">+'+horrorMad(t.type)+' madness while fielded</span></div>';
     if(H.aim)html+=segHTML(t,B);
-    html+='<div class="ibtns">'+B('Recall to roster · +'+back+(full?' (full refund)':'')+(cut?' · cuts light to '+cut:''),()=>sellTower(t))+'</div>';
+    html+='<div class="ibtns">'+B((t.sung?'Give to the walls · +':'Recall to roster · +')+back+(full?' (full refund)':'')+(cut?' · cuts light to '+cut:''),()=>sellTower(t))+'</div>';
   }
   const side=sheetSide(t);
   const key=side+html;
@@ -8931,7 +8941,7 @@ function renderModebar(){
   else if(mode==='unbind'){title='Unbind'; sub='Tap one of your horrors. It charges down the stair through everything in its way, and is gone for good.';}
   else if(mode==='kindle'){title='Kindle'; sub='Tap a creature you can see. It burns and lights the dark around it for 8 seconds, and it runs.';}
   else if(sel&&sel.kind==='ward'){const W=wdef(sel.type); title=W.n+' · <i>'+wardCost(sel.type)+'</i>'; sub=W.d+(sel.type==='pylon'?' Tap a lit tile. One pylon must stand in the lamp’s own light to power the rest.':sel.type==='mirror'?' Tap a tile in the lamp’s own light, then tap the mirror to aim it.':sel.type==='grasp'?' Tap a full pile of bones on the path.':sel.type==='bellwire'?' Tap the path, lit or dark.':sel.type==='weir'?' Tap the fork, lit or dark.':sel.type==='fork'?' Tap a tile within reach of the lamp or a fork, lit or dark.':W.path?' Tap a lit path tile.':sel.type==='candle'&&corpseKit()?' Tap a marked tile beside a body.':sel.type==='candle'&&signalKit()?' Tap a lit tile beside the path, or a dark one near a lit Signal Candle.':' Tap a lit tile beside the path.');}
-  else if(sel&&sel.kind==='horror'){const H=HORRORS[sel.type], hc=horrorCost(sel.type); title=H.n+' · <i>'+(hc?hc:'free')+'</i> · <em>+'+horrorMad(sel.type)+' madness</em>'; sub=avail(sel.type)+' ready. '+(hc?'':'Unpaid Teeth: this one costs nothing. ')+H.d;}
+  else if(sel&&sel.kind==='horror'){const H=HORRORS[sel.type], hc=horrorCost(sel.type); title=H.n+' · <i>'+(hc?hc:'free')+'</i> · <em>+'+horrorMad(sel.type)+' madness</em>'; sub=avail(sel.type)+' ready. '+(hc?'':'Unpaid Teeth: this one costs nothing. ')+(has('choirwalls')?'Choir in the Walls: once fielded, it is lost at the stair. ':'')+H.d;}
   if(!title||!F||F.phase==='cleared'||F.phase==='draft'){if(!el.hidden){el.hidden=true; modeKey=''; modeTitle=''; $('#cmdbar').classList.remove('placing');} return;}
   const key=title+sub;
   if(key===modeKey)return;

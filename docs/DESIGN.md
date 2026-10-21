@@ -399,8 +399,8 @@ Numbers: Signal Candle light leaps **4** tiles. A flare bolt lights **1.3** tile
 | `leech` | Leech Jar |  | relics_deep |  | A kill feeds the jar only if it dies held, stunned, on a line, tangled, in salt or in water. At 8 the jar bursts: 1 oil, and everything in the lamp’s light bleeds 15 over 3 seconds and walks 30% slower. |
 | `shadow` | Second Shadow |  | relics_deep | `effigy` | Hexes linger twice as long after leaving an Effigy. |
 | `marrow` | Thunder Marrow |  | relics_deep | `chime`, `trap`, `grasp`, `pylon`, `coil` | When a ward of yours stuns, shocks or seizes a creature, thunder leaps to your nearest striking ward within 2.5 tiles of it: that ward fires at once and deals 25% more for 3 seconds. Each ward sends it once every 3 seconds. In the Wrong Sun’s glare it leaps to two. |
-| `witchsalt` | Dead Reckoning | yes | relics_deep |  | The lamp burns 1.5 tiles smaller. Your wards that stand outside its own light reach 40% farther and deal 25% more. |
-| `choirwalls` | Choir in the Walls | yes | relics_forbidden |  | Horrors cost no madness, but one of your bound horrors slips away at every stair. |
+| `witchsalt` | Dead Reckoning | yes | relics_deep |  | The lamp burns 1.5 tiles smaller. A ward built past the edge of its light, where only a candle, a fork or another of your lights reaches, strikes 40% farther and deals 25% more. Wards inside the lamp's own light gain nothing. Tap a ward to see if it counts. |
+| `choirwalls` | Choir in the Walls | yes | relics_forbidden |  | Horrors cost no madness, but a horror you field is never yours again. Recall it, or carry it to the stair, and it goes into the walls: your roster loses it. |
 | `gilded` | Gilded Teeth | yes | relics_forbidden |  | Every kill pays 2 more essence, but the stair burns all essence except your salvage. |
 | `hollow` | Hollow Crown | yes | relics_forbidden |  | Every gift offers one more choice, but the lamp holds 4 less oil. |
 | `eyes` | A Thousand Eyes | yes | relics_forbidden |  | Everything in light can be seen, veiled or not, but every madness threshold sits 2 lower. |

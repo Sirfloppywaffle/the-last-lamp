@@ -98,8 +98,17 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T=fresh('lamplighter'); const lb=T.lampBase(); T.addRelic('witchsalt'); const lr=T.lampRadius();
     const out1=place('harpoon',d=>d>lr+.6), in1=place('harpoon',d=>d<lr-.6);
     out.reckon={drop:lb-T.lampBase(),out:out1&&T.reckoned(out1),in:in1&&T.reckoned(in1),mul:out1&&T.wardMul(out1)/T.wardMul(in1),curse:!!T.RELICS.witchsalt.curse};
+    /* 12. Choir in the Walls: no madness; a horror fielded under it leaves the roster when recalled or carried to the stair. One fielded before it stays */
+    T=fresh('occultist'); T.run.roster={gnasher:2,watcher:1,wretch:1};
+    const pre=place('wretch',null,'horror'); T.addRelic('choirwalls');
+    const g1=place("gnasher",null,"horror"); place("gnasher",null,"horror"); place("watcher",null,"horror");
+    const mad=T.madness(); T.sellTower(g1); const afterRecall=T.run.roster.gnasher;
+    T.checkpoint(); const savedSung=JSON.parse(localStorage.getItem(Object.keys(localStorage).find(k=>k.endsWith('ll-save-v2')))||'{}').towers;
+    T.F.draft={done:false,salvage:0}; T.descend();
+    out.choir={mad,afterRecall,gnasher:T.run.roster.gnasher,watcher:T.run.roster.watcher,wretch:T.run.roster.wretch,pre:!!(pre&&!pre.sung),
+      sungSaved:Array.isArray(savedSung)?savedSung.filter(t=>t.sung).length:-1,tip:!!T.TIPS.r_choir};
     /* every relic's first-time tip can be asked, and shows somewhere, with all eleven carried mid-wave */
-    T=fresh('lamplighter',['tallow','reserve','whetted','saltflats','quiet','wax','bounty','key','leech','marrow','witchsalt']); T.forceUI();
+    T=fresh('lamplighter',['tallow','reserve','whetted','saltflats','quiet','wax','bounty','key','leech','marrow','witchsalt','choirwalls']); T.forceUI();
     out.tips={}; for(const k of Object.keys(T.TIPS).filter(k=>k.startsWith('r_'))){let w, tg; try{w=!!T.TIPS[k].when(); tg=w?!!T.TIPS[k].target():null;}catch(e){w='threw '+e.message;} out.tips[k]=[w,tg];}
     window.devNoDark=false;
     return out;});
@@ -125,7 +134,11 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.leech.fed0===0&&r.leech.leech===0&&r.leech.oil===13&&r.leech.bleed===3,'Leech Jar: only slow blood feeds it; at 8 it bursts for 1 oil and a bleed',r.leech);
   ok(r.marrow.dist<=2.5&&r.marrow.cd1===0&&r.marrow.cd2===5&&near1(r.marrow.boost,1.25),'Thunder Marrow: the nearest striking ward fires at once, 25% harder, every 3 seconds',r.marrow);
   ok(near1(r.reckon.drop,1.5)&&r.reckon.out&&!r.reckon.in&&near1(r.reckon.mul,1.25)&&r.reckon.curse,'Dead Reckoning: a smaller lamp; wards beyond it hit harder',r.reckon);
-  ok(Object.keys(r.tips).length===11&&Object.values(r.tips).every(([w])=>typeof w==='boolean'),'every relic tip can be asked without error',r.tips);
+  ok(r.choir.mad===0,'Choir in the Walls: fielded horrors cost no madness',r.choir);
+  ok(r.choir.afterRecall===1&&r.choir.gnasher===0&&r.choir.watcher===0,'Choir in the Walls: recalled or carried to the stair, a horror goes into the walls',r.choir);
+  ok(r.choir.pre&&r.choir.wretch===1,'Choir in the Walls: a horror fielded before you held it is kept',r.choir);
+  ok(r.choir.sungSaved===2,'Choir in the Walls: a save remembers which horrors are sung',r.choir);
+  ok(Object.keys(r.tips).length===12&&Object.values(r.tips).every(([w])=>typeof w==='boolean'),'every relic tip can be asked without error',r.tips);
   ok(!errs.length,'no page errors',errs);
   fails.forEach(f=>console.log('FAIL '+f)); await b.close(); process.exitCode=fails.length?1:0;
 })();
