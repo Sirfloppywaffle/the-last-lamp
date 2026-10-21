@@ -523,7 +523,7 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='18.5.0';
+const GAME_VERSION='18.5.1';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -2944,6 +2944,8 @@ const DEV_ACTS={
     MAP_SYS.active=false; $('#mapOverlay').hidden=true;
     beginFloor(null); return null;
   },
+  /* take or drop any relic, cursed ones too (Unlock everything skips those). It shows, never saves: codexSee is silent in dev mode (rule 24) */
+  relic(k){if(!RELICS[k])return 'No such relic'; if(run.relics.includes(k)){removeRelic(k); forceUI(); return RELICS[k].n+' dropped';} addRelic(k); forceUI(); return RELICS[k].n+' taken';},
   reveal(k){revealKit(k,KITS[k].deed?'deed':'hall',()=>openDevMode(),false); return null;},
   spawn(k){
     if(F.phase==='build'){hint('Call the wave first, then spawn.',2200); return 'Spawns only during a wave';}
@@ -2964,6 +2966,8 @@ function openDevMode(msg){
       +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+floorMaps(run.floor).map((m,v)=>btn('mapv',(F.def.mapv===v?'● ':'')+m.n,String(v))).join('')+'</div>':'')
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Reveal a kit</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+Object.keys(KITS).filter(k=>k!=='lamplighter').map(k=>btn('reveal',KITS[k].who||KITS[k].n,k)).join('')+'</div>'
+    +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Take or drop a relic (● held, † cursed)</h3>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+Object.keys(RELICS).map(k=>btn('relic',(run.relics.includes(k)?'● ':'')+RELICS[k].n+(RELICS[k].curse?' †':''),k)).join('')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Spawn on a random path</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px">'+SPAWNABLE.map(k=>btn('spawn',FOES[k].n,k)).join('')+'</div>';
   showModal({kind:'dev',title:'Developer',body:msg?'<span class="note">'+msg+'</span>':'Test tools. Nothing here is saved as a normal run would be.',html,

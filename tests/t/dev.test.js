@@ -31,6 +31,14 @@ const {chromium}=require('playwright');
   await p.screenshot({path:(process.argv[3]||'.')+'/dev-floor5.png'});
 
   await openDev(); await p.screenshot({path:(process.argv[3]||'.')+'/dev-menu.png'});
+  /* take or drop a relic, a cursed one too; the Grimoire stays as it was (rule 24) */
+  const before=await p.evaluate(()=>JSON.stringify([...__t.codex().relics]));
+  if(!await btn('[data-dev="relic"]','Dead Reckoning'))fail('no Dead Reckoning button in the Developer menu');
+  s=await p.evaluate(()=>({held:__t.run.relics.includes('witchsalt'),codex:JSON.stringify([...__t.codex().relics])}));
+  if(!s.held)fail('tapping a relic should take it '+JSON.stringify(s));
+  if(s.codex!==before)fail('dev mode must not write the Grimoire '+JSON.stringify([before,s.codex]));
+  if(!await btn('[data-dev="relic"]','Dead Reckoning'))fail('no Dead Reckoning button after taking it');
+  if(await p.evaluate(()=>__t.run.relics.includes('witchsalt')))fail('tapping a held relic should drop it');
   await b.close();
   if(fails)process.exitCode=1;
 })();
