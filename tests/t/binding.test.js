@@ -66,6 +66,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(door.galv===0,'the Galvanist is never offered The Binding',door.galv);
   ok(door.lamp>0,'the Lamplighter is offered The Binding',door);
   ok(Object.keys(door.kinds).every(k=>['gnasher','watcher','wretch','shrieker','elite'].includes(k))&&Object.keys(door.kinds).length>=3,'the door names a creature it can bind, and they vary',door.kinds);
+  ok((door.kinds.elite||0)<=door.lamp*.2,'the Choirmaster is a rare draw, not a fifth of the doors',door.kinds);
   ok(!door.impure,'the same landing names the same creature',door.impure);
   ok(door.gatedPoor===0&&door.poorAlt>0,'with nothing to pledge, its door carries another descent instead',door);
   ok(/Descent: The Binding/.test(door.text)&&/Ichor Wretch|Wretch/.test(door.text)&&/pledge/.test(door.text),'the door says The Binding, the creature and the pledge',door.text);
