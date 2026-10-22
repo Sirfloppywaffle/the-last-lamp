@@ -209,6 +209,8 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .rite.warn span{color:var(--madness)}
 .rite:disabled{cursor:default}
 .rite.is-silent{opacity:.45;border-style:dashed}
+.rite.is-charged{border-color:var(--tallow)}
+.rite.is-charged span{color:var(--tallow)}
 .calls{display:flex;gap:6px;flex:0 0 auto;margin-left:auto}
 .btn{padding:10px 14px;border-radius:8px;border:1px solid var(--seam);background:var(--slab);font-size:.9rem}
 .btn.call{background:var(--tallow);border-color:var(--tallow);color:var(--ink-on-tallow);font-family:var(--f-display);font-weight:700;font-size:1.1rem;line-height:1}
@@ -507,7 +509,7 @@ input[type=range]::-moz-range-track {
         <li><b>Every stair has a name.</b> A descent is drawn from a seed: its maps, waves, Heralds, gifts, doors, omens, rooms and offers. The pause, death and morning screens name the stair and show its code; tap Copy to keep it. When the lamp goes out you can descend the same stair again, drawn the same way, though what the dark does in a fight is never the same twice. A stair walked twice leaves no embers.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard. <i>Sealed:</i> two of your wards are locked for the floor, marked with a lock in the tray; never your light and never your harpoon. <i>One of Each:</i> each kind of ward stands only once, except what makes your light (candles of every kind, Tuning Forks, pylons, Bell Wires and Try-pots). <i>Bare Hands:</i> your rites are silent, all but the Bellringer's Toll. <i>Unbranched:</i> nothing can be upgraded, not even the lamp. <i>The Long Night:</i> candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller; it never comes with Moonless or Thick Dark.</li>
-        <li><b>Descents.</b> On the landings after floors two, three and four, one door may carry a descent, marked with a cupped flame: the way down, played after the toll, before the next floor begins. Each pays and each costs. Failing one never ends the run, none leaves embers, and once walked it is not offered again that descent. <i>The Carry:</i> hold your thumb down anywhere to cup a small flame past a gallery of sleepers. A sleeper inside your light stirs; hidden, it settles. Hold too long and you stumble, spill the flask and flare. It pays the oil you carry down; every sleeper you wake adds dread on the next floor, and waking three loses the flask. <i>The Mirror Stair:</i> hold either side and drag up or down to swing that side's mirror, and hold its light on a cold sconce, following it up, until it catches. Each sconce lit widens the lamp below until its first wave breaks; each that rises out of reach unlit stays dark and narrows it. <i>The Binding:</i> the lantern sinks past a creature held in its light, named on the door. Before it, the stone asks a pledge from what the toll left: a share of your essence, or one of your relics, picked from three it draws (never a cursed one). Trace three sigils on a field of dots, dot to dot from the bright one; a wrong dot or a lift starts that sigil again. Draw all three in time and the creature is bound to you and the pledge comes back; fail and the stone keeps it. The Galvanist is never offered it.</li>
+        <li><b>Descents.</b> On the landings after floors two, three and four, one door may carry a descent, marked with a cupped flame: the way down, played after the toll, before the next floor begins. Each pays and each costs. Failing one never ends the run, none leaves embers, and once walked it is not offered again that descent. <i>The Carry:</i> hold your thumb down anywhere to cup a small flame past a gallery of sleepers. A sleeper inside your light stirs; hidden, it settles. Hold too long and you stumble, spill the flask and flare. It pays the oil you carry down; every sleeper you wake adds dread on the next floor, and waking three loses the flask. <i>The Mirror Stair:</i> hold either side and drag up or down to swing that side's mirror, and hold its light on a cold sconce, following it up, until it catches. Each sconce lit widens the lamp below until its first wave breaks; each that rises out of reach unlit stays dark and narrows it. <i>The Binding:</i> the lantern sinks past a creature held in its light, named on the door. Before it, the stone asks a pledge from what the toll left: a share of your essence, or one of your relics, picked from three it draws (never a cursed one). Trace three sigils on a field of dots, dot to dot from the bright one; a wrong dot or a lift starts that sigil again. Draw all three in time and the creature is bound to you and the pledge comes back; fail and the stone keeps it. The Galvanist is never offered it. <i>The Cast:</i> iron rings hang on the walls, seen only in the lantern’s light, and the lantern swings as it sinks. Drag back and let go to cast a weighted line; it flies the other way, carried on by the swing, while the rings rise. Four lines, five rings. Each line costs a tenth of the essence you arrive with, never under 5 or over 20, caught or not. Each ring caught is a rite charge on the next floor, three at most, and a fourth gives back its line’s weight: tap a rite still cooling and it casts at once, its own wait running on as it was.</li>
         <li><b>Relics.</b> Relics bend the rules, and a cursed one takes as much as it gives. You are only offered a relic you can use: one that needs a ward, such as Salt or the Hex Effigy, waits until you can build it. Dead Reckoning, whose price falls on light, never comes to the Bellringer, who sees by sound. Tap a relic's seal to read it; a number on a seal is what it holds.</li>
         <li><b>Patrons.</b> Old things below the stair make offerings: the Drowned Mother, the Wrong Sun, and the Many-Mouthed. Half the time the landing's gift is one of theirs instead (a quarter, if one already reached out on that floor), and now and then one reaches out between waves; which one is a toss each time. Take one gift, or refuse. Every gift raises that patron's Attention, and Attention changes your floors. Her water speeds what walks in it, rises, and at last hides it. The Wrong Sun's bright spots show whatever stands in them, but a Stalker that crosses one has seen the lamp and runs; Watched, they sear, and the glare spreads to the stone beside them; Claimed, your wards in the glare fire slower. The Many-Mouthed reads what you built and sends its own up the stair as each wave begins, Gibberers for your wards and Gorgers for your horrors, and they leave nothing when they die; Watched, you carry dread and Gorgers snuff candles; Claimed, a Choir-Husk veils what walks near it, and bindings may break from Whispers. Their signs sit beside the Grimoire; tap one to see where you stand.</li>
         <li><b>Conjunctions.</b> Two patrons who have both noticed you, neither yet claiming you, may offer one gift together in place of the last of three. It is not shaped by your kit. The one whose Attention lags pays for it, and the other watches: the next wave, her water rises a tile, the Sun opens another spot, or one more Gibberer climbs. A descent takes one conjunction from each pair, and two at most. The Drowned Mother and the Wrong Sun: Phosphor Tide. The Drowned Mother and the Many-Mouthed: Gorger’s Undertow, Brine-Choir. The Wrong Sun and the Many-Mouthed: Sun-Drunk Chorus, Violet Husking.</li>
@@ -1034,7 +1036,12 @@ const DESCENTS={
     pays:'The creature is bound to you, a horror to field like any other.',
     doorPays:h=>'A '+HORRORS[h].n.replace('Bound ','')+' is held in the light below. Bind it and it is yours.',
     costs:'It asks a pledge first: essence or a relic, laid on the stone and given back if the binding holds.',
-    fail:'Let the lantern pass with a sigil undrawn and it slips back into the dark. The stone keeps your pledge.'}
+    fail:'Let the lantern pass with a sigil undrawn and it slips back into the dark. The stone keeps your pledge.'},
+  cast:{n:'The Cast',short:'The Cast',verb:'Aim',
+    d:'Iron rings hang on the walls of the shaft, seen only in the lantern’s light, and the cable sways as it sinks. Drag back and let go to cast a weighted line at a ring. The shaft keeps sinking and the lantern keeps swinging, so lead it.',
+    pays:'Every ring you catch is a rite charge on the next floor: tap a rite still cooling and it casts at once. Three at most; a fourth gives back its line’s weight.',
+    costs:'Every line you cast is weighted with a tenth of the essence you arrive with, never under 5 or over 20, caught or not.',
+    fail:'Catch nothing and the weights are gone all the same.'}
 };
 const DESCENT_LANDINGS=[1,2,3], DESCENT_CHANCE=.7;
 /* The Carry, in tiles of the gallery and seconds: you walk CARRY_SPEED tiles a second past CARRY_N sleepers. A sleeper in your
@@ -1064,6 +1071,19 @@ const MIR_N=7, MIR_SPEED=1, MIR_W=2.1, MIR_ARM=[.55,-.55], MIR_SPOT=[-1,3.4], MI
 const BIND_N=3, BIND_SEGS=[3,4,5], BIND_TIME=27, BIND_SNAP=.36, BIND_KINDS=['gnasher','watcher','wretch','shrieker','elite'],
   BIND_SHARE=.25, BIND_MIN=20, BIND_PULL=3,
   BIND_RARE='elite', BIND_RARE_P=.08, BIND_COMMON=BIND_KINDS.filter(k=>k!==BIND_RARE);
+/* The Cast, in tiles of the shaft and seconds: the lantern sinks CAST_SPEED tiles a second past CAST_RINGS iron rings hung
+   CAST_RX out from the middle (the walls stand at CAST_W), the first CAST_FIRST tiles down and CAST_GAP apart. Its cable
+   swings CAST_SWAY either way every CAST_SWAY_P seconds. You have CAST_LINES lines. Drag back and let go: the weight flies the
+   other way at CAST_POW tiles a second for every tile pulled (CAST_PULL at most; under CAST_SLACK it is no throw), plus the
+   lantern's own swing, and falls at CAST_G. It catches a ring it passes within CAST_CATCH of. It is lost on the stone, at the
+   end of its CAST_LINE of line, or after CAST_FLY seconds; either way it takes CAST_REEL to wind back. A ring shows only within
+   CAST_GLOW of the lantern. Each ring caught is a rite charge on the next floor, CAST_MAX at most, and one caught past that gives
+   back its line's weight; each line cast costs CAST_TITHE of the essence you arrive with, never under CAST_TITHE_MIN or over
+   CAST_TITHE_MAX (Criss: a share alone swings too far between a poor run and a rich one), and never more in all than you arrived
+   with. The walk lasts the whole shaft, unless your lines run out first (Criss and Gemini, #103: it ended too soon) */
+const CAST_RINGS=5, CAST_LINES=4, CAST_MAX=3, CAST_TITHE=.1, CAST_TITHE_MIN=5, CAST_TITHE_MAX=20, CAST_SPEED=.85, CAST_W=2, CAST_RX=1.68,
+  CAST_FIRST=3.6, CAST_GAP=[3,3.8], CAST_TAIL=3, CAST_CAP=34, CAST_SWAY=.55, CAST_SWAY_P=2.1, CAST_HAND=.32, CAST_PULL=2.2, CAST_SLACK=.35,
+  CAST_POW=3.4, CAST_G=7, CAST_CATCH=.26, CAST_LINE=3.2, CAST_FLY=1.4, CAST_REEL=.45, CAST_GLOW=3, CAST_FY=.46;
 const ROOMS={
   merchant:{n:'A Merchant’s Alcove',tag:'Merchant',d:'Something trades in the dark. Spend your essence on relics, wards and bindings before the stair burns it.'},
   shrine:{n:'A Bleeding Shrine',tag:'Shrine',d:'Make a pact: power, for a price.'},
@@ -3158,7 +3178,7 @@ function openDevMode(msg){
 const SALT={map:1,waves:2,herald:3,heraldGate:4,gift:5,giftPatron:6,relics:7,doors:8,merchant:9,shrine:10,event:11,reliquary:12,
   pick:13,pact:14,eventRoll:15,seal:16,hallow:17,water:18,spots:19,phos:20,swarm:21,patronBreak:22,cleanse:23,
   /* the descents (Expansion 2): sub 0 is which door and which descent, sub 1 lays out the gallery, sub 2 the Mirror Stair,
-     sub 3 The Binding's sigils, sub 4 the creature it holds, sub 5 the relics pulled for its pledge */
+     sub 3 The Binding's sigils, sub 4 the creature it holds, sub 5 the relics pulled for its pledge, sub 6 The Cast's rings */
   descent:24};
 /* a decision that is made more than once a floor (a wave's break, a second relic) passes which one as sub */
 const SEED_SUB=4096;
@@ -4795,6 +4815,7 @@ function descIcon(cv,k){
   c.fillStyle='#0c0f11'; c.beginPath(); c.arc(n/2,n/2,n*.48,0,TAU); c.fill();
   if(k==='mirror'){mirrorIcon(c,n); return;}
   if(k==='binding'){bindIcon(c,n); return;}
+  if(k==='cast'){castIcon(c,n); return;}
   c.setTransform(n*.78,0,0,n*.78,n*.42,n*.56); paintSleeper(c,0);
   c.setTransform(1,0,0,1,0,0);
   const S=n*.78, E=SLEEPER_EYES[0];
@@ -5311,6 +5332,218 @@ function bindIcon(c,n){
   bindPaint(c,[6,4,2,5,8],null,x0,y0,sz,n*.04,.95);
   c.fillStyle='#EDB45A'; c.beginPath(); c.arc(x0,y0+2*sz,n*.045,0,TAU); c.fill();
 }
+/* ---------------- The Cast (Expansion 2, the fourth descent) ----------------
+   expansion/SEEDS-AND-MINI-FLOORS.md §5.3. Iron rings hang on the walls of the shaft, seen only in the lantern's light, and the
+   lantern swings on its cable as it sinks. Drag back anywhere and let go: a weighted line flies the other way from the lantern's
+   foot, carried on by the swing, and falls as it goes. An arc shows where it would go if nothing moved; the rings rise while it
+   flies and the lantern swings while you aim, so you lead both. A ring it passes close to is caught. Each line costs a tenth of
+   the essence you arrive with, paid when the shaft is done (so a reload costs nothing), and each ring caught is a rite charge
+   on the next floor (run.charge, chargesNow): tap a rite still cooling and it casts at once, its own wait running on as it was.
+   Everything here is in tiles of the shaft. x runs out from the middle; y runs down from the lantern, which the camera follows,
+   so a ring's y is its depth less how far the lantern has sunk (C.pos) */
+/* what a line weighs: a tenth of what you arrive with, between CAST_TITHE_MIN and CAST_TITHE_MAX; nothing in debt or with none */
+function castTithe(a){return a>0?clamp(Math.round(a*CAST_TITHE),CAST_TITHE_MIN,CAST_TITHE_MAX):0;}
+function castLayout(){
+  const rg=[], ph=RNG()*TAU; let y=CAST_FIRST, side=RNG()<.5?-1:1;
+  for(let i=0;i<CAST_RINGS;i++){
+    rg.push({side,y,caught:false,lt:0,sw:RNG()*TAU});
+    if(i<CAST_RINGS-1){y+=rnd(CAST_GAP[0],CAST_GAP[1]); if(RNG()<.65)side=-side;}
+  }
+  return {rg,ph,len:y+CAST_TAIL};
+}
+function castFresh(lay){const a=run?run.ess:0;
+  return {rg:lay.rg,ph:lay.ph,left:CAST_LINES,cast:0,caught:0,wt:null,aim:null,geo:null,arrive:a,tithe:castTithe(a)};}
+/* the swing: where the lantern hangs across the shaft, and how fast it is going, at time t */
+function castSway(t){return CAST_SWAY*Math.sin(t*TAU/CAST_SWAY_P+DESC.ph);}
+function castSwayV(t){return CAST_SWAY*TAU/CAST_SWAY_P*Math.cos(t*TAU/CAST_SWAY_P+DESC.ph);}
+/* the tile in px, and where the lantern hangs on screen. A narrow screen gives the shaft its width; a wide one its height */
+function castU(w,h){return Math.min(w/(CAST_W*2+.8),h/8.6);}
+function castGeo(){const C=DESC; if(C.geo)return C.geo; const o=$('#dscOverlay'), w=o.clientWidth||innerWidth, h=o.clientHeight||innerHeight;
+  return (C.geo={u:castU(w,h),cx:w/2,fy:h*CAST_FY});}
+/* the throw a pull gives: away from the thumb, CAST_POW for every tile pulled, never past CAST_PULL. Under CAST_SLACK, none */
+function castVel(px,py){const l=Math.hypot(px,py); if(l<CAST_SLACK)return null; const k=Math.min(l,CAST_PULL)/l*CAST_POW; return [px*k,py*k];}
+/* loose a line: the weight leaves the lantern's foot with the throw, and the swing it had */
+function castThrow(vx,vy){
+  const C=DESC; if(C.wt||C.left<=0||C.phase!=='walk')return false;
+  C.left--; C.cast++;
+  C.wt={x:castSway(C.t),y:CAST_HAND,vx:vx+castSwayV(C.t),vy,t:0,st:'fly',rt:0,ring:null};
+  AUDIO.lob(); return true;
+}
+function castDown(ev){
+  const C=DESC; if(C.phase!=='walk'||C.wt||C.aim||C.left<=0)return false;
+  const xy=dscXY(ev); C.aim={id:ev.pointerId,x0:xy[0],y0:xy[1],px:0,py:0};
+  return true;
+}
+function castMove(ev){const C=DESC, A=C.aim; if(!A||ev.pointerId!==A.id)return; const g=castGeo(), xy=dscXY(ev);
+  A.px=(A.x0-xy[0])/g.u; A.py=(A.y0-xy[1])/g.u;}
+/* a lift looses the line, if the pull was enough; a cancel (a palm, a fold) or a slack pull looses nothing and costs nothing */
+function castUp(ev,cancel){const C=DESC, A=C.aim; if(!A||(ev&&ev.pointerId!==A.id))return; C.aim=null;
+  if(cancel)return; const v=castVel(A.px,A.py); if(v)castThrow(v[0],v[1]);}
+/* where the weight is caught, lost, or wound back. Small steps, so a fast weight never flies through a ring */
+function castFly(dt){
+  const C=DESC, W=C.wt; if(!W)return;
+  if(W.st!=='fly'){W.rt+=dt; if(W.st!=='hook'){W.vy+=CAST_G*dt; W.y+=W.vy*dt;} if(W.rt>=CAST_REEL)C.wt=null; return;}
+  const n=Math.max(1,Math.ceil(dt*240)), h=dt/n;
+  for(let s=0;s<n;s++){
+    W.x+=W.vx*h; W.vy+=CAST_G*h; W.y+=W.vy*h; W.t+=h;
+    for(const r of C.rg){if(r.caught)continue;
+      if(Math.hypot(W.x-r.side*CAST_RX,W.y-(r.y-C.pos))<=CAST_CATCH){r.caught=true; r.lt=0; C.caught++; W.st='hook'; W.ring=r; C.flash=1;
+        AUDIO.perfect(); try{if(navigator.vibrate)navigator.vibrate(30);}catch(e){} return;}}
+    if(Math.abs(W.x)>=CAST_W-.08){W.x=Math.sign(W.x)*(CAST_W-.08); W.st='stone'; W.vx=0; W.vy=Math.max(0,W.vy)*.2; C.shake=reduceMotion?0:.4; AUDIO.trap(); return;}
+    if(Math.hypot(W.x-castSway(C.t),W.y-CAST_HAND)>=CAST_LINE||W.t>=CAST_FLY||W.y>6){W.st='lost'; W.vx*=.3; W.vy=Math.max(0,W.vy)*.3; AUDIO.snuff(); return;}
+  }
+}
+/* one step of The Cast, dt ≤ 0.05 of real time */
+function castStep(dt){
+  const C=DESC; if(!C.active||(C.phase!=='walk'&&C.phase!=='out'))return;
+  C.t+=dt; C.flash=Math.max(0,C.flash-dt*2.5); C.shake=Math.max(0,C.shake-dt*3);
+  C.pos+=CAST_SPEED*dt*(C.phase==='out'?.6:1);
+  for(const r of C.rg)if(r.caught)r.lt+=dt;
+  castFly(dt);
+  if(C.phase!=='walk')return;
+  /* the walk ends with every line spent, once the last is wound in; or at the shaft's foot, once no weight is in the air (one
+     still flying may yet catch) */
+  const flying=C.wt&&C.wt.st==='fly';
+  if((!C.wt&&C.left<=0)||((C.pos>=C.len||C.t>=CAST_CAP)&&!flying)){C.phase='out'; C.endAt=C.t; C.aim=null;}
+}
+/* what it comes to. o (tests) gives the rings caught and the lines cast; DESCENT_AUTO's walk, with none given, catches three
+   with three lines. A ring past CAST_MAX gives back its line's weight. The weights never take more than you arrived with */
+function castResult(o){const C=DESC, caught=o.caught==null?CAST_MAX:clamp(o.caught|0,0,Math.min(CAST_RINGS,CAST_LINES)),
+  lines=o.cast==null?Math.min(CAST_LINES,Math.max(caught,0)):clamp(o.cast|0,caught,CAST_LINES), tithe=C.tithe|0,
+  back=Math.max(0,caught-CAST_MAX)*tithe, spent=Math.max(0,Math.min(lines*tithe-back,Math.max(0,C.arrive|0)));
+  return {caught,lines,charges:Math.min(caught,CAST_MAX),back,spent,fail:caught<=0};}
+function castLine(r,long){
+  const ch=r.charges===1?'a rite charge':(MIR_WORDS[r.charges]||r.charges)+' rite charges', sp=r.spent?r.spent+' essence':'';
+  if(!long){
+    if(r.fail)return r.lines?'Your lines caught nothing. The weights took '+sp+' with them.':'You let the rings go by.';
+    return 'You carry '+ch+' down: tap a rite still cooling and it casts at once.'+(sp?' The weights took '+sp+'.':'');
+  }
+  if(!r.lines)return 'You let the rings go by. No line, no charge, no essence spent.';
+  const ln=r.lines===1?'one line':(MIR_WORDS[r.lines]||r.lines)+' lines';
+  if(r.fail)return 'You cast '+ln+', and every one fell short of the rings.'+(sp?' '+sp.charAt(0).toUpperCase()+sp.slice(1)+' went down the shaft with the weights.':'');
+  return 'You caught '+(r.caught===1?'one ring':(MIR_WORDS[r.caught]||r.caught)+' rings')+' with '+ln+'. '+(r.caught===1?'Its':'Their')+' note follows you down: '+ch+' on the next floor. Tap a rite still cooling and it casts at once.'
+    +(r.back?' The last ring gave back its line’s weight.':'')+(sp?' The weights took '+sp+'.':' The weights took nothing.');
+}
+/* the weights are paid now, from what you arrived with (so a reload mid-shaft pays nothing), and the charges go down with you */
+function castPay(r){run.ess-=r.spent|0; run.charge=r.charges>0?{floor:run.floor,n:r.charges}:null;}
+function castCounts(C){
+  const key=C.caught+'|'+C.left+'|'+C.phase; if(key===C.hudKey)return; C.hudKey=key;
+  $('#dscRing').textContent=Math.min(C.caught,CAST_MAX); $('#dscLines').textContent=C.left;
+  $('#dscStatL').classList.toggle('is-bad',C.left<=0&&C.caught<CAST_MAX);
+}
+/* rite charges, on the floor below the shaft: a rite still cooling casts at once, and the charge is spent only if the cast
+   lands. Never the Toll (her beat is her own), Name the Thing (once a floor by its nature) or Overload (paid in oil, not time) */
+function chargesNow(){return run&&run.charge&&run.charge.floor===run.floor?run.charge.n|0:0;}
+function chargeable(k){const R=RITES[k]; return !!R&&R.cd>0&&k!=='toll';}
+/* a charged cast in waiting (F.chg): the rite was cooling, so its wait is set aside while it casts. When the cast lands (its wait
+   is set again), the old wait comes back, run on by the time that passed, and the charge is spent. If it never lands (the
+   target is cancelled, or nothing is there to cast at), the wait comes back as it was and the charge is kept */
+function chargeSettle(){
+  const g=F&&F.chg; if(!g)return; const k=g.k;
+  if((F.cd[k]||0)>0){F.cd[k]=Math.max(0,g.left); F.chg=null;
+    if(run.charge){run.charge.n--; if(run.charge.n<=0)run.charge=null;}
+    F.fx.push({k:'ring',x:F.lx,y:F.ly,r0:.2,r1:1.3,t:0,dur:.55,col:'237,180,90'}); AUDIO.perfect(); forceUI();}
+  else if(mode!==k){F.cd[k]=g.left; F.chg=null; forceUI();}
+}
+
+/* ---- The Cast, painted: the shaft, its rings, the lantern swinging on its cable, the line and its weight. The dark is one mask,
+   holed at the lantern, so a ring shows only as it comes into the light; past it, a ring is a faint glint, almost seen. A caught
+   ring glows warm over the dark. While you pull, a dotted arc shows where the weight would go if nothing moved. Lite drops the
+   stone joints and the glows; reduceMotion stills the flicker and the rings' swing (never the cable's: that is the game) */
+function paintRing(c,x,y,u,a,lit,alpha){
+  c.save(); c.translate(x,y); c.globalAlpha=alpha;
+  c.strokeStyle='#2a2521'; c.lineWidth=Math.max(1.5,u*.05); c.beginPath(); c.moveTo(0,-u*.42); c.lineTo(0,-u*.26); c.stroke();
+  c.rotate(a);
+  c.strokeStyle=lit?'#e8b464':'#4a4038'; c.lineWidth=Math.max(2,u*.075); c.beginPath(); c.ellipse(0,0,u*.22,u*.24,0,0,TAU); c.stroke();
+  c.strokeStyle=lit?'rgba(255,240,200,.85)':'rgba(190,175,150,.55)'; c.lineWidth=Math.max(1,u*.025); c.beginPath(); c.ellipse(0,0,u*.22,u*.24,0,-2.4,-.9); c.stroke();
+  c.restore();
+}
+function drawCast(c,w,h,tm){
+  const C=DESC, u=castU(w,h), cx=w/2, fy=h*CAST_FY, still=reduceMotion, lite=gfxLite, sp=dscSprites(u);
+  const X=x=>cx+x*u, Y=y=>fy+y*u, wallX=CAST_W*u, px=Math.max(1,u*.03);
+  const sw=castSway(C.t), lx=X(sw), hx=lx, hy=Y(CAST_HAND);
+  c.setTransform(1,0,0,1,0,0); c.globalAlpha=1; c.globalCompositeOperation='source-over';
+  c.fillStyle='#050607'; c.fillRect(0,0,w,h);
+  if(C.shake>0&&!still){const a=C.shake*u*.05; c.translate(Math.sin(tm*61)*a,Math.cos(tm*47)*a);}
+  /* the shaft: courses on its back wall and blocks in its sides, rising as the lantern sinks */
+  const y0=-fy/u-1, y1=(h-fy)/u+1, crs=.62;
+  c.fillStyle='#14181a'; c.fillRect(cx-wallX,0,wallX*2,h);
+  c.fillStyle='rgba(0,0,0,.42)';
+  for(let k=Math.floor((y0+C.pos)/crs);k*crs<y1+C.pos;k++){const yy=Y(k*crs-C.pos); c.fillRect(cx-wallX,yy,wallX*2,px);
+    if(!lite){const off=(k&1)?.5:0; for(let j=-3;j<=3;j++){const xx=cx+(j+off)*1.15*u; if(xx>cx-wallX&&xx<cx+wallX)c.fillRect(xx,yy,px,crs*u);}}}
+  c.fillStyle='#1d2225'; c.fillRect(0,0,cx-wallX,h); c.fillRect(cx+wallX,0,w-cx-wallX,h);
+  c.fillStyle='rgba(0,0,0,.4)'; c.fillRect(cx-wallX,0,u*.14,h); c.fillRect(cx+wallX-u*.14,0,u*.14,h);
+  if(!lite){c.fillStyle='rgba(6,8,9,.7)'; const blk=.7;
+    for(let k=Math.floor((y0+C.pos)/blk);k*blk<y1+C.pos;k++){const yy=Y(k*blk-C.pos); c.fillRect(0,yy,cx-wallX,px); c.fillRect(cx+wallX,yy,w-cx-wallX,px);}}
+  /* the rings and their staples */
+  for(const r of C.rg){const ry=Y(r.y-C.pos); if(ry<-u||ry>h+u)continue;
+    c.fillStyle='#2e2a26'; c.fillRect(X(r.side*CAST_W)-(r.side>0?u*.12:0),ry-u*.48,u*.12,u*.1);
+    c.strokeStyle='#2e2a26'; c.lineWidth=Math.max(1.5,u*.05); c.beginPath(); c.moveTo(X(r.side*CAST_W),ry-u*.43); c.lineTo(X(r.side*CAST_RX),ry-u*.43); c.stroke();
+    paintRing(c,X(r.side*CAST_RX),ry,u,still?0:Math.sin(tm*1.3+r.sw)*.14,r.caught,1);}
+  /* the dark, holed at the lantern: past CAST_GLOW a ring is lost in it */
+  const Rv=CAST_GLOW*u*(still?1:1+Math.sin(tm*7)*.02), Rm=Rv*1.15, mL=Math.floor(lx-Rm), mT=Math.floor(fy-Rm), mS=Math.ceil(Rm*2)+1;
+  c.drawImage(sp.dark,mL,mT,mS,mS); c.fillStyle='rgba(3,4,5,.97)';
+  c.fillRect(-w,-h,w*3,mT+h); c.fillRect(-w,mT+mS,w*3,h*2); c.fillRect(-w,mT,mL+w,mS); c.fillRect(mL+mS,mT,w*2,mS);
+  c.save(); c.globalCompositeOperation='lighter';
+  let gw=u*1.6; c.globalAlpha=.55; c.drawImage(sp.warm,lx-gw,fy-gw,gw*2,gw*2);
+  /* a caught ring keeps its light as it rises away */
+  if(!lite)for(const r of C.rg){if(!r.caught)continue; const ry=Y(r.y-C.pos); if(ry<-u||ry>h+u)continue; gw=u*(.5+Math.min(1,r.lt*3)*.3); c.globalAlpha=.8; c.drawImage(sp.warm,X(r.side*CAST_RX)-gw,ry-gw,gw*2,gw*2);}
+  c.restore();
+  /* over the dark: a caught ring, gold; one beyond the light, a faint glint */
+  for(const r of C.rg){const ry=Y(r.y-C.pos); if(ry<-u||ry>h+u)continue; const rx=X(r.side*CAST_RX), d=Math.hypot(rx-lx,ry-fy)/u;
+    if(r.caught)paintRing(c,rx,ry,u,0,true,1);
+    else if(d>CAST_GLOW*.8)paintRing(c,rx,ry,u,0,false,.16);}
+  /* the line and its weight: in the air a slack curve from the lantern's foot; caught, taut to the ring, then wound in */
+  const W=C.wt;
+  if(W){const wx=X(W.x), wy=Y(W.y);
+    const k=W.st==='fly'?1:Math.max(0,1-W.rt/CAST_REEL);
+    c.strokeStyle='rgba(214,200,170,'+(.75*k)+')'; c.lineWidth=Math.max(1,u*.018); c.beginPath(); c.moveTo(hx,hy);
+    if(W.st==='hook'){const rr=W.ring, ex=X(rr.side*CAST_RX), ey=Y(rr.y-C.pos)-u*.2; c.lineTo(hx+(ex-hx)*k,hy+(ey-hy)*k);}
+    else{const sag=W.st==='fly'?u*.35:u*.8; c.quadraticCurveTo((hx+wx)/2,Math.max(hy,wy)+sag,wx,wy);}
+    c.stroke();
+    if(W.st!=='hook'){c.fillStyle='#2b2723'; c.beginPath(); c.arc(wx,wy,Math.max(3,u*.09),0,TAU); c.fill();
+      c.strokeStyle='rgba(237,180,90,.55)'; c.lineWidth=Math.max(1,u*.02); c.beginPath(); c.arc(wx,wy,Math.max(3,u*.09),-2.6,-.6); c.stroke();}
+    if(W.st==='stone'&&W.rt<.25){c.fillStyle='rgba(255,210,150,'+(1-W.rt*4)+')'; for(let q=0;q<4;q++){const a=q*1.7+W.x; c.fillRect(wx-W.x/Math.abs(W.x||1)*u*.06+Math.cos(a)*u*.12*W.rt*6,wy+Math.sin(a)*u*.1*W.rt*6,Math.max(1,u*.03),Math.max(1,u*.03));}}
+  }
+  /* while you pull: the weight drawn back toward the thumb, and the arc it would fly if nothing moved */
+  const A=C.aim;
+  if(A&&C.phase==='walk'){const v=castVel(A.px,A.py), pl=Math.min(Math.hypot(A.px,A.py),CAST_PULL), back=pl*.16;
+    const bx=hx-(pl?A.px/Math.hypot(A.px,A.py):0)*back*u, by=hy-(pl?A.py/Math.hypot(A.px,A.py):0)*back*u;
+    c.strokeStyle='rgba(214,200,170,.7)'; c.lineWidth=Math.max(1,u*.018); c.beginPath(); c.moveTo(hx,hy); c.lineTo(bx,by); c.stroke();
+    c.fillStyle='#2b2723'; c.beginPath(); c.arc(bx,by,Math.max(3,u*.09),0,TAU); c.fill();
+    /* the arc leaves out the swing the weight will carry: that, and the ring's rise, are yours to lead */
+    if(v){let x=sw, y=CAST_HAND, vx=v[0], vy=v[1]; const st=1/30;
+      c.fillStyle='rgba(237,180,90,.85)';
+      for(let i=1;i<=27;i++){x+=vx*st; vy+=CAST_G*st; y+=vy*st;
+        if(Math.abs(x)>=CAST_W-.08||Math.hypot(x-sw,y-CAST_HAND)>=CAST_LINE)break;
+        if(i%2)continue; c.globalAlpha=1-i/30; c.beginPath(); c.arc(X(x),Y(y),Math.max(1.5,u*.035),0,TAU); c.fill();}
+      c.globalAlpha=1;}}
+  else if(!W&&C.left>0&&C.phase==='walk'){c.strokeStyle='rgba(214,200,170,.6)'; c.lineWidth=Math.max(1,u*.018); c.beginPath(); c.moveTo(hx,hy); c.lineTo(hx,hy+u*.22); c.stroke();
+    c.fillStyle='#2b2723'; c.beginPath(); c.arc(hx,hy+u*.26,Math.max(3,u*.08),0,TAU); c.fill();}
+  /* the floor below, near the end */
+  const fl=FLOORS[C.f1], ey=Y(C.len+2-C.pos);
+  if(ey<h+u&&fl){c.save(); c.globalAlpha=clamp(1-(ey-fy)/(h*.5),0,1)*.9; c.textAlign='center'; c.textBaseline='middle';
+    c.font='700 '+Math.round(u*.42)+'px "Grenze Gotisch", Georgia, serif'; c.fillStyle='#EDB45A'; c.fillText(fl.name,cx,ey);
+    c.font='500 '+Math.round(u*.2)+'px "DM Mono", monospace'; c.fillStyle='#8B9294'; c.fillText(('Floor '+(C.f1+1)+' of '+FLOORS.length).toUpperCase(),cx,ey+u*.4); c.restore();}
+  /* the cable, and the lantern swinging on it */
+  c.strokeStyle='#3a342e'; c.lineWidth=Math.max(1,u*.04); c.beginPath(); c.moveTo(cx,-u); c.lineTo(lx,fy-u*.24); c.stroke();
+  c.save(); c.translate(lx,fy); c.rotate(Math.atan2(cx-lx,fy+u));
+  c.fillStyle='#1c1814'; c.fillRect(-u*.16,-u*.24,u*.32,u*.06); c.fillStyle='#e8b464'; c.fillRect(-u*.11,-u*.18,u*.22,u*.3);
+  c.fillStyle='#fff3d6'; c.fillRect(-u*.04,-u*.1,u*.08,u*.14); c.fillStyle='#211b16'; for(const bx of [-.11,-.02,.07])c.fillRect(bx*u,-u*.18,u*.03,u*.3);
+  c.fillStyle='#1c1814'; c.fillRect(-u*.16,u*.12,u*.32,u*.06); c.restore();
+  c.setTransform(1,0,0,1,0,0);
+  if(lite){const vw=Math.max(w,h)*1.1; c.globalAlpha=.5; c.drawImage(sp.vig,cx-vw,fy-vw,vw*2,vw*2); c.globalAlpha=1;}
+  if(C.flash>0){c.fillStyle='rgba(255,200,120,'+(.14*C.flash)+')'; c.fillRect(0,0,w,h);}
+}
+/* the Grimoire's picture of The Cast: a lit ring on its staple, and the line flying to it */
+function castIcon(c,n){
+  const rx=n*.66, ry=n*.4, lx=n*.3, ly=n*.66;
+  c.save(); c.globalCompositeOperation='lighter'; const s=dscSprites(n/2).warm; c.globalAlpha=.6; c.drawImage(s,rx-n*.24,ry-n*.24,n*.48,n*.48);
+  c.globalAlpha=.5; c.drawImage(s,lx-n*.18,ly-n*.18,n*.36,n*.36); c.restore();
+  c.strokeStyle='rgba(214,200,170,.85)'; c.lineWidth=Math.max(1,n*.02); c.setLineDash([n*.03,n*.03]); c.beginPath(); c.moveTo(lx,ly); c.quadraticCurveTo(n*.38,n*.3,rx-n*.08,ry); c.stroke(); c.setLineDash([]);
+  paintRing(c,rx,ry,n*.5,.2,true,1);
+  c.fillStyle='#e8b464'; c.fillRect(lx-n*.05,ly-n*.06,n*.1,n*.12); c.fillStyle='#1c1814'; c.fillRect(lx-n*.07,ly-n*.09,n*.14,n*.03);
+}
 /* each descent's game, for the frame: its layout (a pure roll on sub-stream sub of SALT.descent), its per-play state, a step on
    real time, what it comes to and pays, its counts, its painter and its touch. A new descent adds a row, and a new sub */
 const DSC_GAME={
@@ -5327,7 +5560,13 @@ const DSC_GAME={
     title:r=>r.fail?'It slips away':'Bound',pay:bindPay,counts:bindCounts,draw:drawBinding,down:bindDown,move:bindMove,up:bindUp,go:'Tap to begin',
     /* the pledge stays in sight while you draw: what the stone holds */
     get hud(){const P=DESC.pledge; return '<span class="dsc-stat">Sigils <b id="dscSig">0</b> of <b>'+BIND_N+'</b></span><span class="dsc-stat dsc-pledge">'+(P?'Pledged <b>'+pledgeName(P)+'</b>':'Practice')+'</span>';},
-    prompt:'Trace the sigil from its bright dot',label:'The Binding: trace each sigil dot to dot, from its bright dot, before the lantern sinks past the creature'}
+    prompt:'Trace the sigil from its bright dot',label:'The Binding: trace each sigil dot to dot, from its bright dot, before the lantern sinks past the creature'},
+  cast:{sub:6,tip:'cast',layout:castLayout,fresh:castFresh,step:castStep,result:castResult,line:castLine,
+    title:r=>r.fail?(r.lines?'Nothing caught':'The rings go by'):r.caught>CAST_MAX?'Every line rang':r.caught>1?(r.caught===2?'Two':'Three')+' rings caught':'One ring caught',pay:castPay,counts:castCounts,draw:drawCast,
+    down:castDown,move:castMove,up:castUp,go:'Tap to sink',
+    /* what each line weighs stays in sight while you aim */
+    get hud(){return '<span class="dsc-stat">Rings <b id="dscRing">0</b> of <b>'+CAST_MAX+'</b></span><span class="dsc-stat" id="dscStatL">Lines <b id="dscLines">'+CAST_LINES+'</b> · <b>'+(DESC.tithe|0)+'</b> each</span>';},
+    prompt:'Drag back and let go to cast',label:'The Cast: drag back and let go to cast a weighted line at the iron rings as the lantern swings and sinks'}
 };
 
 function saveBest(won){
@@ -5737,7 +5976,15 @@ function bindSoul(s){
 }
 
 /* ---------------- rites ---------------- */
+/* a rite charge (The Cast): a rite still cooling casts at once. Its wait is set aside while the cast is made, and chargeSettle()
+   puts it back and spends the charge once the cast lands, or puts it back and keeps the charge if it never does */
 function castRite(k){
+  if(!F||paused||F.phase==='over'||F.phase==='won')return;
+  if(F.chg&&F.chg.k!==k&&mode===F.chg.k){mode=null; chargeSettle();}
+  if(!F.chg&&mode!==k&&chargeable(k)&&(F.cd[k]||0)>0&&chargesNow()>0&&!riteSilent(k)){F.chg={k,left:F.cd[k]}; F.cd[k]=0;}
+  castRiteNow(k); chargeSettle();
+}
+function castRiteNow(k){
   if(!F||paused||F.phase==='over'||F.phase==='won')return;
   if(mode===k){mode=null; forceUI(); return;}
   if(riteSilent(k)){hint('Bare Hands: your rites are silent this floor.'); return;}
@@ -5859,6 +6106,8 @@ function update(dt){
   if(F.phase==='wave')F.peakTier=Math.max(F.peakTier||0,tier);
   F.lastTier=tier;
   run.peakMad=Math.max(run.peakMad,madness());
+  /* a charged cast in waiting: its own wait runs on underneath, and it settles when the cast lands or is let go */
+  if(F.chg){F.chg.left-=dt; chargeSettle();}
   for(const k in F.cd)F.cd[k]=Math.max(0,F.cd[k]-dt);
   stillTick(dt);
   spillTick(dt);
@@ -9590,6 +9839,11 @@ const TIPS={
   carry:{where:'descent',when:()=>false,title:'The Carry',get text(){return 'Hold your thumb down anywhere to cup the flame. A sleeper inside its light begins to stir, and its eyes start to open; hidden, it settles again. Hold too long and you stumble: the flask spills and the flame flares. Lift between sleepers. Wake '+(['one','two','three','four','five'][CARRY_FAIL-1]||CARRY_FAIL)+' and you lose the flask.';}},
   binding:{where:'descent',when:()=>false,title:'The Binding',get text(){return 'Three sigils hold the thing in the light. Trace each on the dots below, from its bright dot, one stroke, dot to dot; the strip at the top shows it too, out from under your thumb. Touch a dot that is not next and that sigil starts again. Lift before it closes and it starts again. Draw all three before the bar runs out.';}},
   pledge:{where:'descent',when:()=>false,title:'The pledge',text:'What you lay on the stone comes back if the binding holds, and stays there if it breaks. It is taken from what the toll left you, so it is never income, only risk. A pledged relic keeps working until then. The plain stair asks nothing.'},
+  cast:{where:'descent',when:()=>false,title:'The Cast',get text(){return 'Iron rings hang on the walls, seen only in the lantern’s light. Drag back anywhere and let go: the weight flies the other way, and the dotted arc shows where it would go if nothing moved. But the lantern swings while you aim and the rings rise while it flies, so lead them. Each line weighs a tenth of what you arrived with, 5 to 20 essence, caught or not. Each ring is a rite charge, three at most; a fourth gives its line back.';}},
+  /* on the floor below The Cast, the first time a rite cools while a charge is held */
+  charge:{when:()=>chargesNow()>0&&ritesNow().some(k=>chargeable(k)&&(F.cd[k]||0)>0&&!riteSilent(k)),title:'A rite charge',
+    text:'You carry a rite charge down from The Cast. Tap a rite that is still cooling and it casts at once; its own wait goes on as it was. Charges last this floor only.',
+    target:()=>{const k=ritesNow().find(k=>chargeable(k)&&(F.cd[k]||0)>0); return k?coachEl('#rites [data-r="'+k+'"]'):null;}},
   mirrorstair:{where:'descent',when:()=>false,title:'The Mirror Stair',text:'A mirror swings on each side of the lantern, one for each wall. Hold either side of the screen and drag up or down: that mirror turns, and its light runs up or down the wall. Hold the light on a cold sconce until it catches. The shaft keeps sinking, so follow the sconce up. One that rises out of reach unlit stays dark.'},
   fork:{when:()=>F.phase==='build'&&F.forks.length,steps:()=>{
     const out=[{title:'The stair forks',text:'Here the stair splits. They take the darker way, and only light you cast counts, never the lamp’s. The gold chevron shows where they will go. Shades and Stalkers hunt your light instead.',target:()=>F.forks[0]?coachBoard(F.forks[0].x,F.forks[0].y,.9):null}];
@@ -10183,12 +10437,16 @@ function renderRites(){
     else if(k==='greatbell'){const c=F.cd.greatbell||0; frac=c/R.cd; txt=c>0?Math.ceil(c)+'s':'+'+GREAT_NOISE+' Noise';}
     else if(k==='overload'){const n=overloadFry(); txt=run.oil<=OVER_OIL?'Too little oil':OVER_OIL+' oil · '+(n?'fries '+n:'heat '+Math.floor(F.heat||0)); if(run.oil<=OVER_OIL)frac=1;}
     else{const c=F.cd[k]||0; frac=R.cd?c/R.cd:0; if(c>0)txt=Math.ceil(c)+'s';}
+    /* a rite charge from The Cast: a rite still cooling can be cast at once */
+    const chg=frac>0&&!mute&&chargeable(k)&&chargesNow()>0;
+    if(chg)txt='Charge · '+txt;
     if(mode===k)txt='Choose a target';
     b.style.setProperty('--cd',frac);
     b.querySelector('span').textContent=txt;
     b.classList.toggle('ready',frac===0&&mode!==k);
     b.classList.toggle('armed',mode===k);
-    b.disabled=frac>0&&mode!==k;
+    b.classList.toggle('is-charged',chg&&mode!==k);
+    b.disabled=frac>0&&mode!==k&&!chg;
   });
 }
 function renderHUD(){
