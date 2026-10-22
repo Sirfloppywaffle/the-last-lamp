@@ -39,7 +39,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
        thumb lets go this long after it judged the throw; err: how far off the pull is. Each throw stays inside the pull */
     window.__thumb=o=>{
       const K=T.CASTK, C=T.DESC, vmax=K.POW*K.PULL;
-      if(C.phase!=='walk'||C.wt||C.left<=0||C.caught>=K.MAX)return null;
+      if(C.phase!=='walk'||C.wt||C.left<=0)return null;
       const t=C.t+(o.lag||0), x0=T.castSway(t), y0=K.HAND, sv=T.castSwayV(t);
       const live=C.rg.filter(r=>!r.caught&&r.y-C.pos>-2.3&&r.y-C.pos<2.2).sort((a,b)=>a.y-b.y);
       for(const r of live){
@@ -90,9 +90,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     return out;
   });
   ok(take.active&&take.k==='cast'&&take.overlay&&take.floor===2,'taking the door starts The Cast on the way to the next floor',take);
-  ok(/Rings\s*0\s*of\s*2/.test(take.hud)&&/Lines\s*3/.test(take.hud)&&new RegExp(take.tithe+'\\s*each').test(take.hud)&&/Drag back/.test(take.prompt),'its counts show the rings, the lines and what each weighs',[take.hud,take.prompt]);
-  ok(take.tollPaid&&take.tithe===Math.round(take.essMid*.1)&&take.saved.descent&&take.saved.descent.k==='cast'&&take.saved.ess===take.essMid&&take.saved.towers===0&&take.saved.draft===null,
-    'the toll is paid first, a line weighs a tenth of what is left, and the checkpoint is at its start',{take:take.saved,tithe:take.tithe,mid:take.essMid});
+  ok(/Rings\s*0\s*of\s*3/.test(take.hud)&&/Lines\s*4/.test(take.hud)&&new RegExp(take.tithe+'\\s*each').test(take.hud)&&/Drag back/.test(take.prompt),'its counts show the rings, the lines and what each weighs',[take.hud,take.prompt]);
+  ok(take.tollPaid&&take.tithe===Math.min(20,Math.max(5,Math.round(take.essMid*.1)))&&take.saved.descent&&take.saved.descent.k==='cast'&&take.saved.ess===take.essMid&&take.saved.towers===0&&take.saved.draft===null,
+    'the toll is paid first, a line weighs a tenth of what is left (5 to 20), and the checkpoint is at its start',{take:take.saved,tithe:take.tithe,mid:take.essMid});
   ok(take.descents.join()==='cast','The Cast is marked walked',take.descents);
   ok(!take.after.active&&take.after.floor===2&&take.after.phase==='build'&&take.after.descent===null,'after the shaft the next floor begins',take.after);
   ok(take.after.charge&&take.after.charge.n===2&&take.after.charges===2,'two rings caught: two rite charges on the next floor',take.after);
@@ -103,15 +103,19 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
 
   const res=await p.evaluate(()=>{const T=__t; __takeCast(32,2,200); const tithe=T.DESC.tithe, mid=T.run.ess, oil=T.run.oil;
     const R=T.castResult, L=T.castLine;
-    const r={r:[R({caught:0,cast:3}),R({caught:3,cast:3}),R({caught:1,cast:0}),R({}),R({woke:0,spilt:0}),R({caught:0,cast:0})]};
+    const r={r:[R({caught:0,cast:3}),R({caught:3,cast:3}),R({caught:1,cast:0}),R({}),R({woke:0,spilt:0}),R({caught:0,cast:0}),R({caught:4,cast:4})],tithe};
+    r.clamp=[T.castTithe(0),T.castTithe(-30),T.castTithe(12),T.castTithe(90),T.castTithe(150),T.castTithe(4000)];
+    T.DESC.arrive=12; r.capped=R({caught:0,cast:4}).spent; T.DESC.arrive=mid;
     r.lines=[L(r.r[0],true),L(r.r[1],true),L(r.r[5],true),L(r.r[0],false),L(r.r[1],false),L(R({caught:1,cast:2}),false),L(r.r[5],false)];
     T.descentFinish({caught:0,cast:3});
     r.fail={charge:T.run.charge,ess:T.run.ess-T.F.def.stipend,want:mid-3*tithe,floor:T.run.floor,phase:T.F.phase,oil:T.run.oil===oil};
     return r;});
   ok(res.fail.charge===null&&res.fail.ess===res.fail.want&&res.fail.floor===3&&res.fail.phase==='build'&&res.fail.oil,'three lines and nothing caught: the weights are paid, no charge, and the run goes on',res.fail);
-  ok(res.r[0].fail&&res.r[0].spent>0&&res.r[1].charges===2&&res.r[1].caught===3&&res.r[2].lines===1&&res.r[3].charges===2&&res.r[3].lines===2&&res.r[4].charges===2&&res.r[5].fail&&res.r[5].spent===0,
-    'castResult: two charges at most; a ring caught took a line; a clean settle catches two with two; casting nothing costs nothing',res.r);
-  ok(res.lines.every(l=>!/undefined|NaN/.test(l))&&/fell short/.test(res.lines[0])&&/two rite charges/.test(res.lines[1])&&/let the rings go by/.test(res.lines[2])&&/caught nothing/.test(res.lines[3])&&/a rite charge/.test(res.lines[5]),'its lines read right',res.lines);
+  ok(res.r[0].fail&&res.r[0].spent>0&&res.r[1].charges===3&&res.r[1].caught===3&&res.r[2].lines===1&&res.r[3].charges===3&&res.r[3].lines===3&&res.r[4].charges===3&&res.r[5].fail&&res.r[5].spent===0
+    &&res.r[6].charges===3&&res.r[6].back===res.tithe&&res.r[6].spent===3*res.tithe,
+    'castResult: three charges at most, and a fourth ring gives back its line; a ring caught took a line; a clean settle catches three with three; casting nothing costs nothing',res.r);
+  ok(res.clamp.join()==='0,0,5,9,15,20'&&res.capped===12,'a line weighs a tenth of what you arrive with, 5 to 20, and the weights never take more than you arrived with',{clamp:res.clamp,capped:res.capped});
+  ok(res.lines.every(l=>!/undefined|NaN/.test(l))&&/fell short/.test(res.lines[0])&&/three rite charges/.test(res.lines[1])&&/let the rings go by/.test(res.lines[2])&&/caught nothing/.test(res.lines[3])&&/a rite charge/.test(res.lines[5]),'its lines read right',res.lines);
 
   /* 3. the game, step by step: idle, skilled, decent and straight-at-it thumbs, over many stairs */
   const sim=await p.evaluate(()=>{
@@ -137,9 +141,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   });
   const avg=(a,k)=>a.reduce((s,x)=>s+x[k],0)/a.length;
   ok(sim.idle.every(r=>r.caught===0&&r.cast===0),'an idle thumb casts nothing, catches nothing and pays nothing',sim.idle.slice(0,3));
-  ok(avg(sim.skilled,'caught')>=1.9,'a thumb that leads the swing and the rise catches two nearly every time',avg(sim.skilled,'caught'));
-  ok(avg(sim.decent,'caught')>=1.4,'a thumb a little late and a little off still catches most',avg(sim.decent,'caught'));
-  ok(avg(sim.naive,'caught')<=avg(sim.skilled,'caught')-.6,'a thumb that throws straight at a ring catches clearly fewer: you have to lead it',{naive:avg(sim.naive,'caught'),skilled:avg(sim.skilled,'caught')});
+  ok(avg(sim.skilled,'caught')>=3.5,'a thumb that leads the swing and the rise catches with nearly every line',avg(sim.skilled,'caught'));
+  ok(avg(sim.decent,'caught')>=2.8,'a thumb a little late and a little off still catches most',avg(sim.decent,'caught'));
+  ok(avg(sim.naive,'caught')<=avg(sim.skilled,'caught')-1.5,'a thumb that throws straight at a ring catches clearly fewer: you have to lead it',{naive:avg(sim.naive,'caught'),skilled:avg(sim.skilled,'caught')});
   const all=sim.idle.concat(sim.skilled,sim.decent,sim.naive);
   ok(all.every(r=>r.t<=40),'every Cast lasts no more than 40 seconds (never over 45); one ends early when its lines are spent or two rings are caught',all.map(r=>r.t).filter(t=>t>40));
   ok(sim.idle.every(r=>r.t>=15),'the whole shaft, with nothing caught, lasts 15 seconds or more',sim.idle.map(r=>r.t));
@@ -163,8 +167,8 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   await shot('cast-aim');
   await touch('touchEnd'); await p.waitForTimeout(60);
   const loosed=await p.evaluate(()=>{const C=__t.DESC; return {aim:!!C.aim,left:C.left,cast:C.cast,wt:C.wt&&{st:C.wt.st,vx:+C.wt.vx.toFixed(2),vy:+C.wt.vy.toFixed(2)}};});
-  ok(aiming.aim&&Math.sign(aiming.px)===side&&aiming.py<0&&/is-gone/.test(aiming.prompt)&&aiming.left===3,'a drag back is a pull, away from the thumb; no line is spent while you aim',aiming);
-  ok(!loosed.aim&&loosed.left===2&&loosed.cast===1&&loosed.wt&&loosed.wt.vy<0,'letting go looses the line: the weight flies up and the other way, and one line is spent',loosed);
+  ok(aiming.aim&&Math.sign(aiming.px)===side&&aiming.py<0&&/is-gone/.test(aiming.prompt)&&aiming.left===4,'a drag back is a pull, away from the thumb; no line is spent while you aim',aiming);
+  ok(!loosed.aim&&loosed.left===3&&loosed.cast===1&&loosed.wt&&loosed.wt.vy<0,'letting go looses the line: the weight flies up and the other way, and one line is spent',loosed);
   await p.waitForTimeout(200); await shot('cast-fly');
   await p.waitForFunction(()=>!__t.DESC.wt,null,{timeout:4000});
   /* a slack pull and a cancel cost nothing */
@@ -172,20 +176,20 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   const slack=await p.evaluate(()=>({left:__t.DESC.left,wt:!!__t.DESC.wt}));
   await touch('touchStart',sx,sy); await touch('touchMove',sx+g.u,sy+g.u); await p.waitForTimeout(40); await touch('touchCancel'); await p.waitForTimeout(60);
   const cancel=await p.evaluate(()=>({left:__t.DESC.left,wt:!!__t.DESC.wt,aim:!!__t.DESC.aim,held:__t.DESC.held,phase:__t.DESC.phase}));
-  ok(slack.left===2&&!slack.wt,'a slack pull (a tap, a twitch) looses nothing',slack);
-  ok(cancel.left===2&&!cancel.wt&&!cancel.aim&&!cancel.held&&cancel.phase==='walk','a cancelled touch looses nothing and fails nothing',cancel);
+  ok(slack.left===3&&!slack.wt,'a slack pull (a tap, a twitch) looses nothing',slack);
+  ok(cancel.left===3&&!cancel.wt&&!cancel.aim&&!cancel.held&&cancel.phase==='walk','a cancelled touch looses nothing and fails nothing',cancel);
   await touch('touchStart',8,sy); await p.waitForTimeout(60);
   const edge=await p.evaluate(()=>!!__t.DESC.aim); await touch('touchEnd'); await p.waitForTimeout(50);
   ok(!edge,'a touch at the very edge (the back swipe) aims nothing');
   /* a line in the air takes no second pull */
   const busy=await p.evaluate(()=>{const T=__t, C=T.DESC; T.castThrow(0,-3); const a=T.castThrow(0,-3); const o={second:a,left:C.left}; return o;});
-  ok(busy.second===false&&busy.left===1,'one line at a time',busy);
+  ok(busy.second===false&&busy.left===2,'one line at a time',busy);
   /* caught: a weight sent through a ring catches it, the ring glows and the count goes up */
-  const hook=await p.evaluate(()=>{const T=__t, K=T.CASTK, C=T.DESC; C.wt=null;
+  const hook=await p.evaluate(()=>{const T=__t, K=T.CASTK, C=T.DESC; C.wt=null; const n0=C.caught;
     const r=C.rg.find(x=>!x.caught); C.pos=r.y; const x0=T.castSway(C.t), sv=T.castSwayV(C.t), F=.4, ty=-K.SPEED*F;
     T.castThrow((r.side*K.RX-x0)/F-sv,(ty-K.HAND-.5*K.G*F*F)/F);
     for(let i=0;i<40&&!r.caught;i++)T.castStep(1/60);
-    return {caught:r.caught,n:C.caught,st:C.wt&&C.wt.st};});
+    return {caught:r.caught,n:C.caught-n0,st:C.wt&&C.wt.st};});
   ok(hook.caught&&hook.n===1&&hook.st==='hook','a weight that meets a ring catches it',hook);
   await p.waitForTimeout(250); await shot('cast-caught');
   /* the walk ends when the lines are spent; with a thumb still down, no card until it lifts, then 600 ms */
@@ -199,13 +203,13 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(Date.now()-lifted>=580,'the result card shows 600 ms or more after the last lift',Date.now()-lifted);
   await shot('cast-card');
   const card=await p.evaluate(()=>({text:document.getElementById('dscCard').textContent,caught:__t.DESC.caught,cast:__t.DESC.cast,tithe:__t.DESC.tithe}));
-  ok(card.caught===1&&card.cast===3&&/one ring/.test(card.text)&&/a rite charge/.test(card.text)&&new RegExp((3*card.tithe)+' essence').test(card.text)&&/Tap to go down to/.test(card.text),'the card says what was caught, what it pays and what the weights took',card);
+  ok(card.caught>=1&&card.cast===3&&/rings? caught/.test(card.text)&&/rite charge/.test(card.text)&&new RegExp((3*card.tithe)+' essence').test(card.text)&&/Tap to go down to/.test(card.text),'the card says what was caught, what it pays and what the weights took',card);
   const box=await p.evaluate(()=>{const r=document.getElementById('dscCard').getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);});
   await touch('touchStart',(box[0]+box[2])/2,(box[1]+box[3])/2); await p.waitForTimeout(80);
   const onDown=await p.evaluate(()=>__t.DESC.active);
   await touch('touchEnd'); await p.waitForTimeout(200);
-  const onClick=await p.evaluate(()=>({active:__t.DESC.active,floor:__t.run.floor,phase:__t.F.phase,charge:__t.run.charge}));
-  ok(onDown&&!onClick.active&&onClick.floor===2&&onClick.phase==='build'&&onClick.charge&&onClick.charge.n===1,'the card stays through pointerdown and goes on click; the floor begins with one charge',onClick);
+  const onClick=await p.evaluate(n=>({active:__t.DESC.active,floor:__t.run.floor,phase:__t.F.phase,charge:__t.run.charge,want:n}),card.caught);
+  ok(onDown&&!onClick.active&&onClick.floor===2&&onClick.phase==='build'&&onClick.charge&&onClick.charge.n===Math.min(3,onClick.want),'the card stays through pointerdown and goes on click; the floor begins with a charge for each ring caught',onClick);
 
   /* 5. the charge: a rite still cooling casts at once, its own wait runs on, and only a cast that lands spends it */
   const chg=await p.evaluate(()=>{
@@ -278,7 +282,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     out.old={active:T.DESC.active,phase:T.F.phase,charges:T.chargesNow()};
     return out;
   });
-  ok(resume.restart.active&&resume.restart.k==='cast'&&resume.restart.pos===0&&!resume.restart.caught&&resume.restart.left===3&&resume.restart.same&&resume.restart.free&&resume.restart.tithe,'a reload mid-shaft starts it again from the top: the same rings, all free, three lines',resume.restart);
+  ok(resume.restart.active&&resume.restart.k==='cast'&&resume.restart.pos===0&&!resume.restart.caught&&resume.restart.left===4&&resume.restart.same&&resume.restart.free&&resume.restart.tithe,'a reload mid-shaft starts it again from the top: the same rings, all free, four lines',resume.restart);
   ok(resume.restart.ess&&resume.restart.floor===3&&resume.restart.charge===null,'nothing is lost or paid on the reload',resume.restart);
   ok(resume.done.floor===3&&resume.done.ess===resume.done.want&&resume.done.charge&&resume.done.charge.n===2&&resume.done.descents==='cast'&&resume.done.phase==='build','after three reloads, the toll, weights, stipend and charges each landed once',resume.done);
   ok(!resume.old.active&&resume.old.phase==='build'&&resume.old.charges===0,'an old save without charges loads and plays',resume.old);
