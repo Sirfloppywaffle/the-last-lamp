@@ -86,7 +86,7 @@ Landings after floors **2, 3 and 4** (the gaps 2→3, 3→4, 4→5). Floor 1→2
 | 2 | **The Carry** | **pilot** | hide | Hold your thumb to cup a small flame through a gallery of sleepers. Show light too long and they stir; hold too long and you stumble. | oil | madness for every sleeper woken |
 | 3 | **The Winch** | candidate (Gemini) | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch a falling flask or purse. | oil, or an essence purse | a snag costs oil |
 | 4 | **The Smothering** | candidate (Gemini) | order | Black fumes rise the tube. Snuff three wicks in the order of their brightness, dimmest first, before they reach the lamp. | oil refilled | madness for a wrong snuff |
-| 5 | **The Binding** | candidate (Criss) | draw | Trace three different sigils, each a short connect-the-dots path, before the lantern sinks past the creature it holds. A wrong stroke resets only that sigil. | a bound horror, named on the door | the **pledge**: what you put up is forfeit on failure (5.2) |
+| 5 | **The Binding** | **chosen (Criss)** | draw | Trace three different sigils, each a short connect-the-dots path, before the lantern sinks past the creature it holds. A wrong stroke resets only that sigil. | a bound horror, named on the door | the **pledge**: what you put up is forfeit on failure (5.2) |
 | 6 | **The Cast** | **chosen (Criss)** | aim | Drag back and loose a weighted line at three iron rings on the swaying shaft wall; the cable sways, so lead it. Each ring caught is kept. | a rite charge | each line cast is weighted with a tenth of your essence, caught or not (5.3) |
 
 Gemini's **Snare Line** (a timing tap) and **Black Tide** (no clear challenge) stay out; The Cast takes the one verb nothing else uses (aim).
@@ -98,7 +98,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 ### 2.5 Risks
 
 - **The Smothering** needs brightness to be distinguishable on a phone in a dark scene. Test it on a Fold, not a headless screenshot.
-- **Reward order.** The toll cuts everything but salvage to 30% when you descend. A mini-floor reward granted **after** the toll skips the cut, which would make a purse the best essence in the game. Decide the order before balance (section 4). The Binding pays no essence and takes its pledge from post-toll essence, so the order does not matter for it (5.2).
+- **Reward order.** The toll cuts everything but salvage to 30% when you descend. A mini-floor reward granted **after** the toll skips the cut, which would make a purse the best essence in the game. Criss decided it (section 4): rewards land after the toll, and balance keeps essence rewards small. The Binding pays no essence and takes its pledge from post-toll essence, so the order does not matter for it (5.2).
 - **Do not become a minigame collection.** A player should leave a mini floor hungrier for the lamp, not relieved to be out of the tower defense.
 - **Mirror Stair needs the Signal Mirror's beam logic** (`mirror` ward). Reuse it, don't copy it.
 - **Tests:** each mini floor needs a headless hook (run it, set the outcome, assert the reward and cost), and a 14-size layout check.
@@ -114,7 +114,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 | 3 | **Build seeds:** name, copy button, same-stair replay, no embers on replays, dev paste, tests, tip, rules line | Claude, Opus 5.5 | high |
 | 4 | **Build the descent mini-floor frame and The Carry** | Claude, Opus 5.5 | high |
 | 5 | **Build The Mirror Stair** | Claude, Opus 5.5 | high |
-| 6 | Criss plays both on the PR previews; decide on The Winch, The Smothering and The Binding (The Cast is chosen) | Criss | |
+| 6 | Criss plays both on the PR previews; decide on The Winch and The Smothering (The Binding and The Cast are chosen) | Criss | |
 | 7 | Balance numbers, in their own PR | Claude, Opus 5.5 | high |
 
 Each build is a normal feature PR against `index.html`, reviewed as usual (a self-review while Gemini is paused, or `/gemini re-review` when Criss asks), with tests, tips, rules lines and Grimoire entries (rule 23). Criss says when an idea graduates.
@@ -124,14 +124,14 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 ## 4. Still open
 
 **Closed by Criss (round 3)**
-- **Mini floor 6** is **The Cast** (5.3).
+- **Mini floor 5** is **The Binding** (5.1) and **mini floor 6** is **The Cast** (5.3).
+- **Reward order:** rewards land **after the toll**; essence rewards stay capped small so the stair's price still bites. The Binding sidesteps it (5.2). Balance numbers come later.
 - **The pledge (5.2):** (a) the two kinds, an essence share and a relic, are right; (b) the word is **pledge**; (c) the relic is **a random pull of 3 non-cursed relics, and you pick which one**, and the **pledge card** lets you choose the kind, greying out a kind you cannot pay (5.2); (d) a reload mid-mini-floor restarts it with the pledge still out: **accepted**.
 
 **Still open**
-1. **Reward order:** do mini-floor rewards land before or after the toll? [Claude's call: after the toll, but essence rewards are capped small, so the stair's price still bites. The Binding sidesteps it (5.2). Revisit at balance.]
-2. **Mini floor 5 (The Binding):** Criss did not name it in round 3. It is his own idea, so it is treated as chosen. Criss to confirm, or swap.
-3. **Relic pledge, to revisit after a playtest:** a pull of 3 where you pick one lets a player with several relics offer the least-loved. Tune the pull then.
-4. **Criss's additions** (section 5): The Binding is folded in. More still welcome.
+1. **Relic pledge, to revisit after a playtest:** a pull of 3 where you pick one lets a player with several relics offer the least-loved. Tune the pull then.
+2. **Mini floors 3 and 4** (The Winch, The Smothering): candidates, to decide after Criss plays the pilots.
+3. **Criss's additions** (section 5): The Binding is folded in. More still welcome.
 
 ## 5. Criss's additions
 
