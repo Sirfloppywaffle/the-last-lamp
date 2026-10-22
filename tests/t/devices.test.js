@@ -108,7 +108,7 @@ const DEV=[
       const stats=[...document.querySelectorAll('.dsc-stat')].map(q), prompt=q(document.querySelector('#dscPrompt span'));
       o.u=+u.toFixed(1); o.stats=stats; o.prompt=prompt; o.statsIn=stats.length===2&&stats.every(inside)&&inside(prompt);
       o.clear=stats.every(r=>r[3]<=fy+(K.SPOT[0]-K.TOL)*u-u*.25)&&prompt[1]>=fy+(K.SPOT[1]+K.TOL)*u;
-      o.shaft=+(K.W*2*u/ov.width).toFixed(2); o.wide=ov.width>500||o.shaft>=.8;
+      o.shaft=+(T.mirrorWall(ov.width,ov.height)*2*u/ov.width).toFixed(2); o.wide=ov.width>500||o.shaft>=.8;
       o.pivots=[-1,1].every(sd=>{const x=cx+sd*K.ARM[0]*u; return x-u*.3>=Math.max(24,ins.left)&&x+u*.3<=innerWidth-Math.max(24,ins.right)&&fy+K.ARM[1]*u-u*.2>=ins.top;});
       const s=C.sc[0]; C.pos=s.y-1.2; C.ms[s.side>0?1:0].spot=1.2; s.lit=true; s.lt=1; C.lit=1;
       C.sc[1].dark=true; C.sc[1].lt=2; C.dark=1; C.hudKey=''; T.descentFrame(0);
