@@ -171,7 +171,41 @@ const DEV=[
     await p.evaluate(()=>{const T=__t; T.descentFinish({}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
     const bndOk=bnd.cardIn&&!bnd.sideways&&bnd.active&&bnd.statsIn&&bnd.dotsIn&&bnd.gap&&bnd.stripOk&&bnd.still&&bcard.shown&&bcard.in&&bcard.thumb&&bcard.fits;
     if(!bndOk)console.log('FAIL '+nm+': The Binding, its pledge card and its result card',JSON.stringify({bnd,bcard}));
-    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk&&bndOk;
+    /* The Cast (Expansion 2, step 8): its counts and prompt sit inside the safe area, the counts above the highest ring a line can
+       reach and the prompt below the lowest, so neither covers a ring in play; on a phone (500 px wide or less) the shaft fills
+       at least two thirds of the width (the rings hang where they do on every screen, so a short phone gets a narrower shaft than
+       The Mirror Stair's); the counts don't move as they change; the card fits */
+    const cst=await p.evaluate(ins=>{
+      const T=__t; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      T.tutSet({walk:'done',seen:['cast'],off:false}); T.setDescentAuto(null);
+      T.newRun('lamplighter',0,{seed:4242}); T.run.floor=2; T.run.ess=1234; T.run.descent={k:'cast',f0:1,msg:''}; T.startDescent();
+      const C=T.DESC, K=T.CASTK, o={active:C.active&&C.phase==='walk'&&C.k==='cast'};
+      const ov=document.getElementById('dscOverlay').getBoundingClientRect(), u=T.castU(ov.width,ov.height), fy=ov.height*K.FY;
+      const stats=[...document.querySelectorAll('.dsc-stat')].map(q), prompt=q(document.querySelector('#dscPrompt span'));
+      const reach=Math.sqrt(K.LINE*K.LINE-K.RX*K.RX);
+      o.u=+u.toFixed(1); o.stats=stats; o.prompt=prompt; o.statsIn=stats.length===2&&stats.every(inside)&&inside(prompt)&&stats[0][2]<stats[1][0];
+      o.clear=stats.every(r=>r[3]<=fy-(reach+.48)*u+2)&&prompt[1]>=fy+(reach+.3)*u;
+      o.shaft=+(K.W*2*u/ov.width).toFixed(2); o.wide=ov.width>500||o.shaft>=.66;
+      C.caught=1; C.left=1; C.hudKey=''; T.descentFrame(0);
+      o.still=JSON.stringify(stats)===JSON.stringify([...document.querySelectorAll('.dsc-stat')].map(q));
+      C.pos=C.rg[0].y-.8; C.aim={id:9,x0:ov.width/2,y0:fy+3*u,px:-C.rg[0].side*.9,py:-1}; T.descentFrame(0);
+      return o;},ins);
+    await p.waitForTimeout(250);
+    await p.screenshot({path:(process.argv[3]||'.')+'/cast-'+nm+'.png'});
+    const ccard=await p.evaluate(ins=>{
+      const T=__t, C=T.DESC; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      C.aim=null; C.wt=null; C.left=0; C.held=false; C.liftT=0; T.castStep(.05); C.t+=1; T.descentFrame(.05);
+      const el=document.getElementById('dscCard'), r=el.getBoundingClientRect();
+      const o={shown:!document.getElementById('dscCardWrap').hidden,thumb:r.height>=44&&r.width>=200,fits:el.scrollHeight<=el.clientHeight+1||r.height>=120};
+      o.in=r.left>=ins.left-1&&r.right<=innerWidth-ins.right+1&&r.top>=ins.top-1&&r.bottom<=innerHeight-ins.bottom+1;
+      return o;},ins);
+    await p.screenshot({path:(process.argv[3]||'.')+'/cast-card-'+nm+'.png'});
+    await p.evaluate(()=>{const T=__t; T.descentFinish({}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
+    const cstOk=cst.active&&cst.statsIn&&cst.clear&&cst.wide&&cst.still&&ccard.shown&&ccard.in&&ccard.thumb&&ccard.fits;
+    if(!cstOk)console.log('FAIL '+nm+': The Cast and its card',JSON.stringify({cst,ccard}));
+    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk&&bndOk&&cstOk;
     if(!ok)bad++;
     console.log((ok?'OK  ':'BAD ')+nm.padEnd(17),'side',c.side,'tile',c.tile,'boardMoved',moved,'barMoved',cmdMoved,'over',c.over,'unsafe',c.offs,'hint',c.hint,errs.length?errs:'');
     await ctx.close();
