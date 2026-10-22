@@ -3,6 +3,7 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **Seeds: every stair has a name** (#95; Claude and Gemini's design in `expansion/SEEDS-AND-MINI-FLOORS.md`, built by Claude). Every new run carries a seed, and every stair roll is a pure function of it: maps, wave cards, Heralds and their rifts, gifts, patron offers, doors, omens, Trials, rooms, events, the Hallowed Ground, Sealed, her water and the Sun's spots. Fights stay random. The pause, death and morning screens name the stair (the Brine-Hollow stair) and show its code (`BRINE-HOLLOW-7F2A`) with a Copy button. The death screen offers **Descend the same stair**, which leaves no embers. Developer mode has a box to descend a pasted code (shows, never saves). Seeded runs never touch `ll-maps`, so maps can now repeat run to run; old saves play unseeded. A first-time tip and a rules line. Also: a modal no longer slides 4px sideways when it scrolls on short screens. No balance changes.
 
 ## v18.5.3 — The Bellringer's Beat
 The Bellringer can no longer toll every beat for free, never meets Dead Reckoning or a Candle Ward, and the Developer menu takes or drops any relic. Folds in v18.5.1 and v18.5.2.

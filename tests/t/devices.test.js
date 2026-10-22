@@ -27,7 +27,29 @@ const DEV=[
     const c=await snap();
     await p.screenshot({path:(process.argv[3]||'.')+'/fit-'+nm+'.png'});
     const moved=JSON.stringify(a.board)!==JSON.stringify(c.board), cmdMoved=JSON.stringify(a.cmd)!==JSON.stringify(c.cmd);
-    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card;
+    /* seeds (#95): the stair's name, code and Copy on the pause screen, and Descend the same stair on the death screen, fit
+       inside the safe area without scrolling sideways, stay big enough for a thumb, and leave the board where it was */
+    const seedChk=()=>p.evaluate(ins=>{
+      const box=document.querySelector('#modal .box');
+      const q=x=>{if(!x)return null; x.scrollIntoView({block:'nearest'}); const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=-1&&r[3]<=innerHeight+1;
+      const copy=q(document.querySelector('#mBody [data-seedcopy]')), code=q(document.querySelector('#mBody .seed-code')), bx=box.getBoundingClientRect();
+      const same=q([...document.querySelectorAll('#mActions button')].find(x=>x.textContent==='Descend the same stair'));
+      return {copy,code,same,copyIn:inside(copy),sameIn:same?inside(same):null,codeIn:!!code&&code[2]<=bx.right+1,thumb:!!copy&&copy[3]-copy[1]>=40&&copy[2]-copy[0]>=56&&(!same||same[3]-same[1]>=40),
+        sideways:getComputedStyle(box).overflowX!=='hidden'&&box.scrollWidth>box.clientWidth+1};},Object.assign({top:0,bottom:0,left:0,right:0},ins));
+    await p.evaluate(()=>{__t.setSel(null); __t.forceUI();}); await p.waitForTimeout(250);
+    const b0=(await snap()).board;
+    await p.evaluate(()=>{document.getElementById('pauseBtn').click();}); await p.waitForTimeout(250);
+    const sp=await seedChk();
+    await p.screenshot({path:(process.argv[3]||'.')+'/seed-pause-'+nm+'.png'});
+    await p.evaluate(()=>{document.querySelector('#mActions button.call').click();}); await p.waitForTimeout(250);
+    const b1=(await snap()).board;
+    await p.evaluate(()=>{__t.defeat();}); await p.waitForTimeout(1600);
+    const sd=await seedChk();
+    await p.screenshot({path:(process.argv[3]||'.')+'/seed-death-'+nm+'.png'});
+    const seedOk=sp.copyIn&&sp.codeIn&&sp.thumb&&!sp.sideways&&sd.copyIn&&sd.codeIn&&sd.sameIn===true&&sd.thumb&&!sd.sideways&&JSON.stringify(b0)===JSON.stringify(b1);
+    if(!seedOk)console.log('FAIL '+nm+': the stair’s name and code on the pause and death screens',JSON.stringify({sp,sd,b0,b1}));
+    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk;
     if(!ok)bad++;
     console.log((ok?'OK  ':'BAD ')+nm.padEnd(17),'side',c.side,'tile',c.tile,'boardMoved',moved,'barMoved',cmdMoved,'over',c.over,'unsafe',c.offs,'hint',c.hint,errs.length?errs:'');
     await ctx.close();

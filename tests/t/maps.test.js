@@ -102,12 +102,15 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       const old=JSON.parse(JSON.stringify(snap)); delete old.run.mapv; T.setMapV(1); T.resumeFrom(old); save.old=T.F.def.mapv;
       // the next floor draws afresh
       T.setMapV(2); T.run.floor=2; T.beginFloor(null); save.next=T.run.mapv.floor===2&&T.F.def.mapv===2;
-      // the bag: every map once before any repeats, and never the same map twice in a row
-      T.setMapV(null); localStorage.removeItem('ll-maps');
+      // the bag: every map once before any repeats, and never the same map twice in a row. Since seeds (#95) only an old,
+      // unseeded run draws from it: a seeded run takes its map from the seed (seeds.test.js)
+      T.setMapV(null); localStorage.removeItem('ll-maps'); delete T.run.seed;
       const runs=[]; for(let i=0;i<30;i++)runs.push(T.mapDraw(1));
       const bag={firstThree:[...new Set(runs.slice(0,3))].length, repeats:runs.filter((x,i)=>i&&x===runs[i-1]).length, seen:[...new Set(runs)].sort().join()};
       // the first descent ever plays map 0
       T.tutSet({walk:'',seen:[],off:true}); localStorage.removeItem('ll-maps'); const first=[0,1,2,3,4].map(()=>T.mapDraw(0));
+      // and a new run on the first descent is given a seed whose Cistern is map 0
+      for(let i=0;i<5;i++){T.newRun('lamplighter'); first.push(T.run.mapv.v);}
       T.tutSet({walk:'done',seen:[],off:true}); T.setMapV(0);
       // the pause menu and the banner name the map
       setup(0,1); T.F.showHints(); const banner=document.getElementById('banner').textContent;
