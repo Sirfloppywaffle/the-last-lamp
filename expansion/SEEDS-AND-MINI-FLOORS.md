@@ -125,12 +125,12 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 
 **Closed by Criss (round 3)**
 - **Mini floor 6** is **The Cast** (5.3).
-- **The pledge (5.2):** (a) the two kinds, an essence share and a relic, are right; (b) the word is **pledge**; (c) the relic is **a random pull of 3 non-cursed relics, and you pick which one**; (d) a reload mid-mini-floor restarts it with the pledge still out: **accepted**.
+- **The pledge (5.2):** (a) the two kinds, an essence share and a relic, are right; (b) the word is **pledge**; (c) the relic is **a random pull of 3 non-cursed relics, and you pick which one**, and the **pledge card** lets you choose the kind, greying out a kind you cannot pay (5.2); (d) a reload mid-mini-floor restarts it with the pledge still out: **accepted**.
 
 **Still open**
 1. **Reward order:** do mini-floor rewards land before or after the toll? [Claude's call: after the toll, but essence rewards are capped small, so the stair's price still bites. The Binding sidesteps it (5.2). Revisit at balance.]
 2. **Mini floor 5 (The Binding):** Criss did not name it in round 3. It is his own idea, so it is treated as chosen. Criss to confirm, or swap.
-3. **The relic pick (5.2), new from (c), for Criss to veto:** the pull of 3 needs a small card, the one new screen in the pledge. Claude's calls are in 5.2 (which door gets which kind, fewer than 3 relics, effects while pledged). Veto any.
+3. **Relic pledge, to revisit after a playtest:** a pull of 3 where you pick one lets a player with several relics offer the least-loved. Tune the pull then.
 4. **Criss's additions** (section 5): The Binding is folded in. More still welcome.
 
 ## 5. Criss's additions
@@ -163,13 +163,18 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 1. **An essence share** of what you arrive with (one table number, say a quarter). It scales with the build, and a poor run pledges little, so it cannot spiral. Not offered if it would be under the Knucklebones floor of 20, or if essence is in debt (the Ossuary Key's credit).
 2. **A relic**, for when you hold one that is not cursed. This is the tooth that stops it being dull. **Criss's call (round 3):** the game pulls **3 of your non-cursed relics at random and you pick which one** to put up. Build order: **essence first**; the relic pledge second, because losing a relic needs a lose-relic path that undoes side effects (below).
 
-**Which door gets which kind (Claude's call).** A pure roll picks the kind per door; then state gates it. If the rolled kind cannot be paid (no essence over the floor, or no non-cursed relic), the door takes the other kind; if neither, it shows as the plain stair. So the door never asks you to choose a kind, and one seed still shows the same door glyph (roll purely, then gate by state; 5.5).
+**The pledge card (Criss and Claude, round 3).** Taking the Binding door opens one card with two buttons: **Essence (N)** and **A relic**. The player chooses the kind.
+- **Essence is greyed** if what you would arrive with is under 20, or essence is in debt.
+- **Relic is greyed** if you hold no relic, or only cursed ones, with a line saying why ("Only cursed relics. The stone won't take them."). It stays visible when greyed, so players learn it exists. Cursed relics never count, so a failure cannot shed a curse (rejected costs, above).
+- **If both are greyed,** the door shows as the plain stair and cannot be taken as the Binding.
+- **Back out:** the card has a way back to the plain stair.
+- One seed still shows the same door glyph; whether it is the Binding or the plain stair is gated by state after a pure roll (5.5).
 
-**The relic pick (Claude's call).** Taking a relic-pledge door opens one small card with the pulled relics (rule 23 voice: "You lay one on the stone."). It is the only new screen in the pledge, and it has a way out: back to the plain stair. The pull is drawn when the door is taken and kept in `run.mini`, so a reload shows the same three. With three or more non-cursed relics it is a pull of 3; with two or one it shows what you hold (one is take it or leave it); with none the door cannot carry a relic pledge. Cursed relics never appear, so a failure cannot shed a curse (5.2, rejected costs).
+**The relic pick (Criss's call, round 3).** Tapping **A relic** pulls **3 non-cursed relics at random**, and you pick which one to put up (voice, rule 23: "You lay one on the stone."). There is **no reroll**, so you cannot fish for a spare one. The pull is drawn when you tap and kept in `run.mini`, so a reload shows the same three. With two or one it shows what you hold. **To revisit after a playtest:** with several relics you can offer your least-loved, so the stake costs less the more you hold; tune the pull then, not before.
 
 **A pledged relic stays in `run.relics`, marked, with its effects on, until the floor resolves (Claude's call).** Do not take it out at the start and give it back on a win. In `index.html`, `addRelic()` pays Oil Reserve's oil on every add, so removing then re-adding that relic would pay it twice. Only a failure calls `removeRelic()` (it already undoes the oil cap, but not Oil Reserve's oil; the failure path still has to handle that). A win does nothing to the relic.
 
-**No stall for essence.** The door names the pledge in its sub-line, so taking the door is accepting it: no new screen. The plain stair stays the default. The essence pledge is deducted at the mini floor's start, as Knucklebones does (`run.ess-=r.stake`), kept as `run.mini={id,pot}` (old saves have none; for a relic pledge `pot` holds the relic and the pulled three), and refunded on a win. If the pledge would be empty, the door shows as the plain stair.
+**Stall, on purpose.** Essence no longer skips a screen: every Binding door opens the pledge card, one tap, because one consistent card reads better on a phone than two door behaviours. The door's sub-line still names the Binding and that it asks a pledge. The plain stair stays the default. The essence pledge is deducted at the mini floor's start, as Knucklebones does (`run.ess-=r.stake`), kept as `run.mini={id,pot}` (old saves have none; for a relic pledge `pot` holds the relic and the pulled three), and refunded on a win. If the pledge would be empty, the door shows as the plain stair.
 
 **Reload (Criss, round 3: accepted).** A reload mid-mini-floor restarts it with the pledge still out. That means an app-kill buys a retry, and Criss accepts it, because a folded Fold can reload the tab and a forfeit for that is cruel. For a relic pledge the restart keeps the same three and the same pick.
 
