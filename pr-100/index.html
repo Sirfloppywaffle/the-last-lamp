@@ -4773,7 +4773,9 @@ function descIcon(cv,k){
    the screen and drag up or down to swing that side's mirror; its spot of light runs up or down the wall. Held on a sconce long
    enough, the sconce catches and is kept. The shaft keeps sinking, so the spot has to follow a sconce up as it rises. One thumb,
    one mirror at a time; a cancelled touch puts the mirror back where it was, and fails nothing */
-const MIR_FY=.3;
+/* MIR_FY: the lantern's height on screen. The walls stand MIR_W tiles out on a narrow screen and spread toward the edges of a
+   wide one, up to MIR_WALL tiles: only how steep the beams fall changes, since a sconce is caught by its height alone */
+const MIR_FY=.3, MIR_WALL=4;
 /* the shaft: MIR_N sconces, the first MIR_FIRST tiles down. One gap is a close pair on the same wall, so one mirror has to catch
    the first and swing on to the second */
 function mirrorLayout(){
@@ -4791,14 +4793,16 @@ function mirrorFresh(lay){return {sc:lay.sc,lit:0,dark:0,drag:null,geo:null,
 /* where the shaft lies on screen, in CSS px: u a tile, the middle at cx, the lantern at fy. The walls stand near the edges of a
    narrow screen; a wide one gives the shaft as much height as it can (worked out once a frame) */
 function mirrorU(w,h){return Math.min(w/(MIR_W*2+.7),h/7.4);}
+function mirrorWall(w,h){return clamp(w/2/mirrorU(w,h)-.35,MIR_W,MIR_WALL);}
 function mirGeo(){const C=DESC; if(C.geo)return C.geo; const o=$('#dscOverlay'), w=o.clientWidth||innerWidth, h=o.clientHeight||innerHeight;
   return (C.geo={u:mirrorU(w,h),cx:w/2,fy:h*MIR_FY});}
 /* a mirror's turn: the lantern's light comes out from the flame to the glass, and leaves for the spot on the wall. mirrorTurn
    gives the glass that sends it there, and mirrorOut (the Signal Mirror's rule) gives back the way it goes, which the beam is
    drawn along */
-function mirrorAim(m){
+function mirrorAim(m,W){
+  W=W||MIR_W;
   const ax=m.side*MIR_ARM[0], ay=MIR_ARM[1], il=Math.hypot(ax,ay), ix=ax/il, iy=ay/il;
-  const dx=m.side*MIR_W-ax, dy=m.spot-ay, dl=Math.hypot(dx,dy);
+  const dx=m.side*W-ax, dy=m.spot-ay, dl=Math.hypot(dx,dy);
   m.rot=mirrorTurn(ix,iy,dx/dl,dy/dl); const o=mirrorOut(ix,iy,m.rot); m.ox=o[0]; m.oy=o[1];
 }
 /* the touch: the side of the screen picks the mirror, and the drag moves its spot */
@@ -4872,6 +4876,8 @@ function mirSprites(){
     const strip=(col,vert)=>dscMk(64,(g,n)=>{const r=vert?g.createLinearGradient(0,0,0,n):g.createLinearGradient(0,0,n,0); r.addColorStop(0,'rgba('+col+',0)'); r.addColorStop(.5,'rgba('+col+',1)'); r.addColorStop(1,'rgba('+col+',0)'); g.fillStyle=r; g.fillRect(0,0,n,n);});
     MIR_SPR.cut=strip('0,0,0',false); MIR_SPR.cutV=strip('0,0,0',true);
     MIR_SPR.beam=strip('255,222,150',false); MIR_SPR.beamV=strip('255,222,150',true);
+    /* a fade from the dark to nothing, top to bottom: under the counts and the prompt */
+    MIR_SPR.fade=dscMk(64,(g,n)=>{const r=g.createLinearGradient(0,0,0,n); r.addColorStop(0,'rgba(5,6,7,.92)'); r.addColorStop(1,'rgba(5,6,7,0)'); g.fillStyle=r; g.fillRect(0,0,n,n);});
   }
   return MIR_SPR;
 }
@@ -4905,14 +4911,14 @@ function paintSconce(c,wx,y,side,u,s,tm,still){
       c.fillStyle='rgba(255,170,90,'+(.4+.6*k)+')'; c.beginPath(); c.arc(cx,y-u*.26,u*(.02+.03*k),0,TAU); c.fill();
       c.strokeStyle='rgba(237,180,90,.85)'; c.lineWidth=Math.max(1.5,u*.035); c.beginPath(); c.arc(cx,y-u*.08,u*.3,-Math.PI/2,-Math.PI/2+k*TAU); c.stroke();}
   }else if(s.lt>.5){
-    const a=Math.min(1,(s.lt-.5)*1.5)*.75, bl=still||hash(Math.floor(tm*1.4+s.y*7),3,1)>.07?1:.1, ex=wx-d*u*.42, ey=y-u*.3;
+    const a=Math.min(1,(s.lt-.5)*1.5)*.75, bl=still||hash(Math.floor(tm*1.4+s.y*7),3,1)>.07?1:.1, ex=wx-d*Math.min(u*.42,(side<0?wx:c.canvas.width-wx)*.5), ey=y-u*.3;
     c.fillStyle='rgba(242,134,74,'+(a*bl)+')';
     c.beginPath(); c.ellipse(ex-u*.075,ey,u*.028,u*.02,0,0,TAU); c.moveTo(ex+u*.103,ey); c.ellipse(ex+u*.075,ey,u*.028,u*.02,0,0,TAU); c.fill();
   }
 }
 function drawMirror(c,w,h,tm){
-  const C=DESC, u=mirrorU(w,h), sp=dscSprites(u), M=mirSprites(), cx=w/2, fy=h*MIR_FY, still=reduceMotion, lite=gfxLite;
-  const Y=y=>fy+(y-C.pos)*u, X=x=>cx+x*u, wallX=MIR_W*u, px=Math.max(1,u*.03), held=C.drag&&C.drag.m;
+  const C=DESC, u=mirrorU(w,h), Wv=mirrorWall(w,h), sp=dscSprites(u), M=mirSprites(), cx=w/2, fy=h*MIR_FY, still=reduceMotion, lite=gfxLite;
+  const Y=y=>fy+(y-C.pos)*u, X=x=>cx+x*u, wallX=Wv*u, px=Math.max(1,u*.03), held=C.drag&&C.drag.m;
   c.setTransform(1,0,0,1,0,0); c.globalAlpha=1; c.globalCompositeOperation='source-over';
   c.fillStyle='#050607'; c.fillRect(0,0,w,h);
   /* the shaft: courses of stone on its back wall and blocks in its sides, scrolling up as the lantern sinks */
@@ -4928,7 +4934,7 @@ function drawMirror(c,w,h,tm){
       const off=(k&1)?.55:0; for(let j=0;j<4;j++){const xx=(j+off)*1.1*u; c.fillRect(cx-wallX-xx,yy,px,blk*u); c.fillRect(cx+wallX+xx,yy,px,blk*u);}}}
   /* each mirror's beam, from its glass along mirrorOut to the stone; it always ends on the wall, in a spot of light */
   const on=C.phase==='walk'||C.phase==='tip', bw=u*.3;
-  for(const m of C.ms){mirrorAim(m); const k=(MIR_W-MIR_ARM[0])/Math.max(.05,Math.abs(m.ox)); m.len=k*u; m.px=X(m.side*MIR_ARM[0]); m.py=fy+MIR_ARM[1]*u;
+  for(const m of C.ms){mirrorAim(m,Wv); const k=(Wv-MIR_ARM[0])/Math.max(.05,Math.abs(m.ox)); m.len=k*u; m.px=X(m.side*MIR_ARM[0]); m.py=fy+MIR_ARM[1]*u;
     m.ex=m.px+m.ox*k*u; m.ey=m.py+m.oy*k*u; m.ang=Math.atan2(m.oy,m.ox);}
   /* the dark, holed where light falls */
   if(!lite){
@@ -4939,7 +4945,7 @@ function drawMirror(c,w,h,tm){
     let R=1.5*u; g.drawImage(M.hole,cx-R,fy-R,R*2,R*2);
     if(on)for(const m of C.ms){g.save(); g.translate(m.px,m.py); g.rotate(m.ang); g.globalAlpha=.8; g.drawImage(M.cutV,0,-bw*1.4,m.len,bw*2.8); g.restore();
       R=u*.85; g.globalAlpha=.9; g.drawImage(M.hole,m.ex-R,m.ey-R,R*2,R*2); g.globalAlpha=1;}
-    for(const s of C.sc){const sy=Y(s.y); if(sy<-2*u||sy>h+2*u)continue; const sx=X(s.side*(MIR_W-.3));
+    for(const s of C.sc){const sy=Y(s.y); if(sy<-2*u||sy>h+2*u)continue; const sx=X(s.side*(Wv-.3));
       if(s.lit){R=u*(1.1+Math.min(1,s.lt*2)*.6)*(still?1:1+Math.sin(tm*5+s.y)*.03); g.drawImage(M.hole,sx-R,sy-R,R*2,R*2);}
       else if(s.heat>0){R=u*.7*s.heat/MIR_KINDLE; g.drawImage(M.hole,sx-R,sy-R,R*2,R*2);}}
     c.drawImage(M.mask,0,0);
@@ -4952,7 +4958,7 @@ function drawMirror(c,w,h,tm){
       c.globalAlpha=.5*fl; c.drawImage(M.beamV,0,-u*.12,m.len,u*.24); c.globalAlpha=.2*fl; c.drawImage(M.beamV,0,-bw,m.len,bw*2); c.restore();
       gw=u*.55; c.globalAlpha=.7*fl; c.drawImage(sp.warm,m.ex-gw,m.ey-gw,gw*2,gw*2);}}
   for(const s of C.sc){if(!s.lit)continue; const sy=Y(s.y); if(sy<-2*u||sy>h+2*u)continue; gw=u*(.7+Math.min(1,s.lt*2)*.3);
-    c.globalAlpha=.75; c.drawImage(sp.warm,X(s.side*(MIR_W-.3))-gw,sy-u*.2-gw,gw*2,gw*2);}
+    c.globalAlpha=.75; c.drawImage(sp.warm,X(s.side*(Wv-.3))-gw,sy-u*.2-gw,gw*2,gw*2);}
   c.restore();
   /* dust turning in the beams */
   if(on&&!lite&&!still){c.fillStyle='rgba(255,226,170,.7)';
@@ -4960,7 +4966,7 @@ function drawMirror(c,w,h,tm){
       c.globalAlpha=.3+.4*hash(q,4,7); c.fillRect(m.px+(m.ex-m.px)*f-Math.sin(m.ang)*off,m.py+(m.ey-m.py)*f+Math.cos(m.ang)*off,Math.max(1,u*.025),Math.max(1,u*.025));}
     c.globalAlpha=1;}
   /* the sconces, over the dark */
-  for(const s of C.sc){const sy=Y(s.y); if(sy<-u||sy>h+u)continue; paintSconce(c,X(s.side*MIR_W),sy,s.side,u,s,tm,still);}
+  for(const s of C.sc){const sy=Y(s.y); if(sy<-u||sy>h+u)continue; paintSconce(c,X(s.side*Wv),sy,s.side,u,s,tm,still);}
   /* where each beam strikes: a thin ring on the stone, so the aim reads even where the light is faint */
   if(on)for(const m of C.ms){c.strokeStyle=m===held?'rgba(255,214,140,.9)':'rgba(237,180,90,.45)'; c.lineWidth=Math.max(1.5,u*.03);
     c.beginPath(); c.arc(m.ex-m.side*u*.12,m.ey,u*MIR_TOL,0,TAU); c.stroke();}
@@ -4987,6 +4993,11 @@ function drawMirror(c,w,h,tm){
     if(m===held){c.strokeStyle='rgba(237,180,90,.6)'; c.lineWidth=Math.max(1,u*.025); c.beginPath(); c.arc(m.px,m.py,u*.38,0,TAU); c.stroke();}
   }
   if(lite){const vw=Math.max(w,h)*1.1; c.globalAlpha=.6; c.drawImage(sp.vig,cx-vw,fy-vw,vw*2,vw*2); c.globalAlpha=1;}
+  /* what has risen past reach fades under the counts, and the very bottom under the prompt; never a sconce you can reach, and the
+     ones still coming stay clear to see */
+  const top=Math.max(0,fy+(MIR_SPOT[0]-MIR_TOL-.3)*u), bot=Math.min(h,Math.max(fy+(MIR_SPOT[1]+MIR_TOL+.3)*u,h-u*1.1));
+  c.drawImage(M.fade,0,0,w,top);
+  c.save(); c.translate(0,h); c.scale(1,-1); c.drawImage(M.fade,0,0,w,h-bot); c.restore();
   if(C.flash>0){c.fillStyle='rgba(255,200,120,'+(.14*C.flash)+')'; c.fillRect(0,0,w,h);}
 }
 /* the Grimoire's picture of The Mirror Stair: the lantern's light caught by a mirror on its arm and thrown onto a sconce */
