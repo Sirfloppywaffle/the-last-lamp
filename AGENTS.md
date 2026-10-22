@@ -92,7 +92,8 @@ Rules for reviewers:
 ### Previews and releases
 - **Every pull request gets a playable preview** at `https://<owner>.github.io/the-last-lamp/pr-<number>/`. The `site` workflow posts the link on the PR and updates it on every push. Previews use their own save space (`window.LL_STORE_NS`) and show a "PREVIEW" badge, so Criss's real run is never touched. Mention anything he should try in the PR description.
 - `main` is live. A merge republishes `https://<owner>.github.io/the-last-lamp/` within a minute or two, and the PR's preview is removed.
-- Claude also mirrors each release to the claude.ai artifact (unless Criss has said to skip it), bumps `GAME_VERSION` (shown on the title screen), and notes the version in `docs/HISTORY.md`.
+- Claude also mirrors each release to the claude.ai artifact (unless Criss has said to skip it; see the next line), bumps `GAME_VERSION` (shown on the title screen), and notes the version in `docs/HISTORY.md`.
+- **Artifact mirroring is paused until Criss says otherwise.**
 
 ### Version numbers
 Three numbers, always (`17.1.1`, `18.0.0`; never `17.1`).
