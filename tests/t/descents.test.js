@@ -51,10 +51,12 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
         if(JSON.stringify(again)!==JSON.stringify(d.doors))out.impure++;
       }
     }
-    /* never a descent already walked */
-    T.newRun('lamplighter',0,{seed:5}); T.run.floor=1; T.run.descents=['carry']; let walked=0;
-    for(let i=0;i<60;i++){const dd=[{room:'merchant'},{room:'shrine'},{room:'rest'}]; T.seeded(T.SALT.descent,i,()=>T.descentDoor(dd)); if(dd.some(x=>x.descent))walked++;}
-    out.walked=walked;
+    /* never a descent already walked: with The Carry walked only the others are offered, and with all walked, none */
+    T.newRun('lamplighter',0,{seed:5}); T.run.floor=1; T.run.descents=['carry']; let walked=0, other=0;
+    for(let i=0;i<60;i++){const dd=[{room:'merchant'},{room:'shrine'},{room:'rest'}]; T.seeded(T.SALT.descent,i,()=>T.descentDoor(dd)); if(dd.some(x=>x.descent==='carry'))walked++; if(dd.some(x=>x.descent&&x.descent!=='carry'))other++;}
+    T.run.descents=Object.keys(T.DESCENTS); let any=0;
+    for(let i=0;i<60;i++){const dd=[{room:'merchant'},{room:'shrine'},{room:'rest'}]; T.seeded(T.SALT.descent,i,()=>T.descentDoor(dd)); if(dd.some(x=>x.descent))any++;}
+    out.walked=walked; out.other=other; out.allWalked=any;
     out.salt=T.SALT.descent===Math.max(...Object.values(T.SALT));
     return out;
   });
@@ -62,7 +64,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   for(const f of [1,2,3])ok(roll.byFloor[f][1]>0&&roll.byFloor[f][0]>0,`the landing after floor ${f+1} sometimes carries a descent, and sometimes doesn't`,roll.byFloor[f]);
   ok(!roll.two&&!roll.trialClash,'at most one descent door, and never on the Trial door',roll);
   ok(!roll.impure,'the descent roll is pure',roll.impure);
-  ok(roll.walked===0,'a descent already walked is never offered again',roll.walked);
+  ok(roll.walked===0&&roll.other>0&&roll.allWalked===0,'a descent already walked is never offered again; the others still are',roll);
   ok(roll.salt,'the descent salt is the newest, at the end of SALT');
 
   /* 2. the door says so, with its glyph */

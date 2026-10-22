@@ -3,6 +3,7 @@
 // - Walk floors 1 to 5 twice with one seed (several seeds, kits and depths, every map of every floor met) and compare
 //   everything: the run at each floor's start, the gift, the patron, the relics, the doors, omens and Trials, the rooms.
 // - A resume at each landing step, and at a floor's start, gives the same next floor.
+// - Descent doors stand where v18.7.0 put them for the same seeds; a walk is never offered a descent it already walked.
 // - Seeded runs never read or write ll-maps; an old save without a seed still plays, unseeded.
 // - The pause, death and morning screens name the stair and copy its code; Descend the same stair walks it again and
 //   leaves no embers; the developer box descends a pasted code and saves nothing.
@@ -120,7 +121,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       /* the descent doors each walk was offered (Expansion 2): which landing, which door, which descent */
       const dsc=w=>w.flatMap((r,f)=>Array.isArray(r)?r.filter(x=>Array.isArray(x)&&x[0]==='doors').flatMap(x=>x[1].map((d,i)=>d.descent?[f+1,i,d.descent]:null).filter(Boolean)):[]);
       const dA=dsc(a), dB=dsc(b2);
-      out.push({sd:c.sd,kit:c.kit,depth:c.depth,same:A===B,first,reached,doors,sig:A.length,dA,dsame:JSON.stringify(dA)===JSON.stringify(dB),key:JSON.stringify(a.map(r=>r&&r[0]&&r[0].map))+JSON.stringify(a[0]&&a[0][0]&&a[0][0].run.draw)});
+      /* the descents walked before each landing are in the run at the start of the floor above it */
+      const repeat=a.reduce((n,r,f)=>n+(Array.isArray(r)&&r[0]&&r[0].run?r.filter(x=>Array.isArray(x)&&x[0]==='doors').flatMap(x=>x[1]).filter(d=>d.descent&&(r[0].run.descents||[]).includes(d.descent)).length:0),0);
+      out.push({sd:c.sd,kit:c.kit,depth:c.depth,same:A===B,first,reached,doors,sig:A.length,dA,dsame:JSON.stringify(dA)===JSON.stringify(dB),repeat,walked:a.map(r=>Array.isArray(r)&&r[0]&&r[0].run?r[0].run.descents||[]:null),key:JSON.stringify(a.map(r=>r&&r[0]&&r[0].map))+JSON.stringify(a[0]&&a[0][0]&&a[0][0].run.draw)});
     }
     const counts=T.FLOORS.map((f,i)=>T.floorMaps(i).length), met=counts.map((n,f)=>maps[f]?[...maps[f]].sort().join():'');
     return {out,counts,met,bag:localStorage.getItem('ll-maps')};
@@ -133,6 +136,20 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   for(const w of walks.out)ok(w.dsame,`seed ${w.sd}: both walks offered the same descent doors`,w.dA);
   const offered=walks.out.flatMap(w=>w.dA);
   ok(offered.length>0&&offered.every(x=>x[0]>=2&&x[0]<=4),'descent doors were offered, and only after floors 2, 3 and 4',offered);
+  /* The Mirror Stair (Expansion 2, step 5) joined the pool: old seeds still put a descent on every landing and door v18.7.0 did
+     (recorded from that build, when The Carry was the only one); only which descent may differ. The one new door allowed is on
+     a landing where v18.7.0 had none left to offer, because a descent (then always The Carry) had already been walked */
+  const DOORS_1870={1:[[3,0]],2:[[2,0],[3,0]],3:[[3,0]],42:[[2,1],[3,2],[4,0]],1234:[[3,2],[4,1]],99999:[[2,0],[4,1]],48879:[[2,2],[3,0]],
+    12648430:[[3,0]],3735928559:[[4,3]],305419896:[[2,2],[3,0]],77777:[[2,2],[3,0]],31337:[[2,0],[3,2],[4,0]],271828:[[2,2]],
+    314159:[[2,1],[4,3]],8675309:[[2,2],[4,2]],4000000000:[[3,1]]};
+  for(const w of walks.out){
+    const now=w.dA.map(x=>x[0]+':'+x[1]), was=DOORS_1870[w.sd].map(x=>x[0]+':'+x[1]);
+    const extra=w.dA.filter(x=>!was.includes(x[0]+':'+x[1]));
+    ok(was.every(k=>now.includes(k))&&extra.every(x=>(w.walked[x[0]-1]||[]).length>0),`seed ${w.sd}: the descent doors stand where v18.7.0 put them`,[w.dA,DOORS_1870[w.sd],w.walked]);
+  }
+  const kinds=new Set(offered.map(x=>x[2]));
+  ok(kinds.has('carry')&&kinds.has('mirror'),'both descents were offered across the seeds',[...kinds]);
+  ok(walks.out.every(w=>w.repeat===0),'a walk is never offered a descent it already walked',walks.out.filter(w=>w.repeat).map(w=>w.sd));
   console.log('descent doors offered in',offered.length,'landings of',walks.out.length*4);
   ok(new Set(walks.out.map(w=>w.key)).size===walks.out.length,'different seeds draw different stairs',walks.out.map(w=>w.key));
   walks.counts.forEach((n,f)=>ok(walks.met[f]===[...Array(n).keys()].join(),`floor ${f+1}: the walks met every one of its ${n} maps`,walks.met[f]));
