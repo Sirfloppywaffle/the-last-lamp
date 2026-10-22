@@ -1,8 +1,8 @@
 # Expansion 2, first pass: seeds and mini floors
 
-**Status (22 Oct 2026):** seeds (v18.6.0), the descent frame and The Carry (v18.7.0) and The Mirror Stair (v18.8.0) are **built and on `main`** (#97, #98, #100). **The Binding and the pledge** (step 7) are on `main` too (#102). **The Cast** (step 8) is built on `claude/descent-cast`, waiting on Criss's play. Still design only: the candidates The Winch and The Smothering. This doc's own PR changes no code (no `index.html`, `tests/`, `tools/` or `.github/`; see `README.md`).
+**Status (22 Oct 2026):** seeds (v18.6.0), the descent frame and The Carry (v18.7.0) and The Mirror Stair (v18.8.0) are **built and on `main`** (#97, #98, #100). **The Binding and the pledge** (step 7) are on `main` too (#102). **The Cast** (step 8) is on `main` too (#103). **The Winch and The Smothering are chosen by Criss** (round 4) and designed at 5.5 and 5.6; not built yet. This doc's own PR changes no code (no `index.html`, `tests/`, `tools/` or `.github/`; see `README.md`).
 **From Criss:** this is the second expansion, so right now we only brainstorm. Two ideas so far: a **seed system** (#95) and **mini-game floors** between the main floors. More ideas get added here (see section 5).
-**Who:** Claude drafted it, Gemini reviewed it (round 1, below), Criss steers. Round 1 is settled. Round 2 (Criss's **Binding** idea, the failure cost, and mini floor 6) is folded in at section 5 by Claude, Sonnet 5.5, and has not been reviewed by Gemini. Round 3 folds in Criss's answers on the pledge and picks mini floor 6 (The Cast); it is Claude's too, and equally unreviewed. What remains open is in section 4.
+**Who:** Claude drafted it, Gemini reviewed it (round 1, below), Criss steers. Round 1 is settled. Round 2 (Criss's **Binding** idea, the failure cost, and mini floor 6) is folded in at section 5 by Claude, Sonnet 5.5, and has not been reviewed by Gemini. Round 3 folds in Criss's answers on the pledge and picks mini floor 6 (The Cast); it is Claude's too, and equally unreviewed. Round 4 designs Criss's last two picks, The Winch and The Smothering (5.5, 5.6), by Claude, Opus 5.5, with a self-review on its PR; Gemini has not seen it. What remains open is in section 4.
 
 ---
 
@@ -84,8 +84,8 @@ Landings after floors **2, 3 and 4** (the gaps 2→3, 3→4, 4→5). Floor 1→2
 |---|---|---|---|---|---|---|
 | 1 | **The Mirror Stair** | **pilot** | route | As the lantern sinks, drag 2 or 3 mirrors to bounce its beam onto wall sconces. Each one lit is kept. | light: the next floor's lamp burns wider for its first wave | each missed sconce stays dark |
 | 2 | **The Carry** | **pilot** | hide | Hold your thumb to cup a small flame through a gallery of sleepers. Show light too long and they stir; hold too long and you stumble. | oil | madness for every sleeper woken |
-| 3 | **The Winch** | candidate (Gemini) | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch a falling flask or purse. | oil, or an essence purse | a snag costs oil |
-| 4 | **The Smothering** | candidate (Gemini) | order | Black fumes rise the tube. Snuff three wicks in the order of their brightness, dimmest first, before they reach the lamp. | oil refilled | madness for a wrong snuff |
+| 3 | **The Winch** | **chosen (Criss)** | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch falling purses (5.5). | essence: three small purses (the flask is cut, 5.5) | a snag costs the lamp oil |
+| 4 | **The Smothering** | **chosen (Criss)** | order | Black fumes rise the tube. Snuff three wicks in the order of their brightness, dimmest first, before they reach the lamp (5.6). | depth: the lamp holds more oil for the run (not a refill, 5.6) | dread for a wrong snuff |
 | 5 | **The Binding** | **chosen (Criss)** | draw | Trace three different sigils, each a short connect-the-dots path, before the lantern sinks past the creature it holds. A wrong stroke resets only that sigil. | a bound horror, named on the door | the **pledge**: what you put up is forfeit on failure (5.2) |
 | 6 | **The Cast** | **chosen (Criss)** | aim | Drag back and loose a weighted line at three iron rings on the swaying shaft wall; the cable sways, so lead it. Each ring caught is kept. | a rite charge | each line cast is weighted with a tenth of your essence, caught or not (5.3) |
 
@@ -98,7 +98,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 ### 2.5 Risks
 
 - **The Smothering** needs brightness to be distinguishable on a phone in a dark scene. Test it on a Fold, not a headless screenshot.
-- **Reward order.** The toll cuts everything but salvage to 30% when you descend. A mini-floor reward granted **after** the toll skips the cut, which would make a purse the best essence in the game. Criss decided it (section 4): rewards land after the toll, and balance keeps essence rewards small. The Binding pays no essence and takes its pledge from post-toll essence, so the order does not matter for it (5.2).
+- **Reward order.** The toll cuts everything but salvage to 30% when you descend. A mini-floor reward granted **after** the toll skips the cut, which would make a purse the best essence in the game. Criss decided it (section 4): rewards land after the toll, and balance keeps essence rewards small. The Binding pays no essence and takes its pledge from post-toll essence, so the order does not matter for it (5.2). The Winch's purses are the case this warns of: each is a tenth of what you arrive with, capped at 12 (5.5).
 - **Do not become a minigame collection.** A player should leave a mini floor hungrier for the lamp, not relieved to be out of the tower defense.
 - **Mirror Stair needs the Signal Mirror's beam logic** (`mirror` ward). Reuse it, don't copy it.
 - **Tests:** each mini floor needs a headless hook (run it, set the outcome, assert the reward and cost), and a 14-size layout check.
@@ -114,10 +114,12 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 | 3 | **Build seeds** (**done**, v18.6.0, #97) | Claude, Opus 5.5 | high |
 | 4 | **Build the descent mini-floor frame and The Carry** (**done**, v18.7.0, #98) | Claude, Opus 5.5 | high |
 | 5 | **Build The Mirror Stair** (**done**, v18.8.0, #100; reworked after Criss's first playtest) | Claude, Opus 5.5 | high |
-| 6 | Criss decides on The Winch and The Smothering (The Binding and The Cast are chosen) | Criss | |
+| 6 | Criss decides on The Winch and The Smothering (**done**, round 4: both chosen; designed at 5.5 and 5.6) | Criss | |
 | 7 | **Built: The Binding and the pledge** (**done**, #102; 5.1, 5.2, 5.4): the pledge card, `run.mini`, the relic pull, the sigil field, the kit filter, tests, tips, Grimoire | Claude, Opus 5.5 | high |
-| 8 | **Built, in review: The Cast** (5.3): the aim and line, the rite charge, the essence tenth, tests, tips, Grimoire | Claude, Opus 5.5 | high |
-| 9 | Balance numbers, in their own PR | Claude, Opus 5.5 | high |
+| 8 | **Built: The Cast** (**done**, #103; 5.3): the aim and line, the rite charge, the essence tenth, tests, tips, Grimoire | Claude, Opus 5.5 | high |
+| 9 | **Build The Winch** (5.5): the steer, ribs and arms, the purses, the snag's oil, tests, tips, Grimoire | Claude, Opus 5.5 | high |
+| 10 | **Build The Smothering** (5.6): the wicks and their drift, the fumes, dread, the lamp's depth, tests, tips, Grimoire. **Fold test first:** Criss plays a one-screen brightness check before the full build | Claude, Opus 5.5 | high |
+| 11 | Balance numbers for all six, in their own PR | Claude, Opus 5.5 | high |
 
 Each build is a normal feature PR against `index.html`, reviewed as usual (a self-review while Gemini is paused, or `/gemini re-review` when Criss asks), with tests, tips, rules lines and Grimoire entries (rule 23). Criss says when an idea graduates.
 
@@ -132,7 +134,7 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 
 **Still open**
 1. **Relic pledge, to revisit after a playtest:** a pull of 3 where you pick one lets a player with several relics offer the least-loved. Tune the pull then.
-2. **Mini floors 3 and 4** (The Winch, The Smothering): candidates, to decide after Criss plays the pilots.
+2. **Mini floors 3 and 4: chosen** (round 4). Two calls in 5.5 and 5.6 change Gemini's table and wait on Criss (each marked **Decision needed**): the Winch drops the flask, and the Smothering pays depth, not a refill.
 3. **Criss's additions** (section 5): The Binding is folded in. More still welcome.
 
 ## 5. Criss's additions
@@ -170,7 +172,7 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 - **Relic is greyed** if you hold no relic, or only cursed ones, with a line saying why ("Only cursed relics. The stone won't take them."). It stays visible when greyed, so players learn it exists. Cursed relics never count, so a failure cannot shed a curse (rejected costs, above).
 - **If both are greyed,** the door shows as the plain stair and cannot be taken as the Binding.
 - **Back out:** the card has a way back to the plain stair.
-- One seed still shows the same door glyph; whether it is the Binding or the plain stair is gated by state after a pure roll (5.5).
+- One seed still shows the same door glyph; whether it is the Binding or the plain stair is gated by state after a pure roll (5.7).
 
 **The relic pick (Criss's call, round 3).** Tapping **A relic** pulls **3 non-cursed relics at random**, and you pick which one to put up (voice, rule 23: "You lay one on the stone."). There is **no reroll**, so you cannot fish for a spare one. The pull is drawn when you tap and kept in `run.mini`, so a reload shows the same three. With two or one it shows what you hold. **To revisit after a playtest:** with several relics you can offer your least-loved, so the stake costs less the more you hold; tune the pull then, not before.
 
@@ -202,9 +204,105 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 - **Rule 6:** touch only; `touch-action:none` on the field; no hover.
 - **Pace:** at about 8 seconds a sigil, 5 segments is the limit.
 
-### 5.5 Checked, touches, riskiest part
+### 5.5 Mini floor 3: The Winch (chosen by Criss, round 4)
+
+- **Verb: steer.** Sideways, the one way no other descent drags (the Mirror Stair drags up and down, the Cast drags back).
+- **What you do.** The cable snags and pays out in jerks as the lantern sinks. Drag anywhere, left or right: the lantern follows your thumb's sideways travel (relative, not under the thumb), a beat behind on its cable. Black ribs jut from both walls and narrow the shaft to a gap; arms reach out of slits in the stone and draw back on a rhythm, fingers first. Three purses are knocked loose above you, one at a time; a glint at the top edge marks where each will fall a second before it does. Be under it when it reaches the lantern and the hook takes it. Touch a rib or an arm and you snag. About 25 seconds.
+- **Pays: essence.** Each purse caught is a tenth of what you arrive with (after the toll), never under 4 or over 12: 36 at most. The Cast's mirror (a line costs a tenth, 5 to 20): the Cast spends essence for charges, the Winch earns it at the lamp's risk. Capped small because it lands after the toll (2.5).
+- **Costs: the lamp's oil.** Each snag is 1 oil, 3 at most. It also jerks the lantern still for 0.6 s and dims its glow a step for the rest of the shaft, so you see the next rib later: one snag invites the next. After a snag, 1 s of grace, so leaning on one rib is one snag, not thirty. Paid when the shaft ends, so a reload costs nothing (as the Cast). Through `loseOil()`, which never takes the last oil: it cannot end the run. No descent takes the lamp's oil yet (the Carry spills its own flask), so the cost is the Winch's alone.
+- **Light (pillar 1).** Ribs and arms show only inside the lantern's glow, and the arms reach for the light. The glow is how you read ahead; a snag shrinks it. The dark below the glow is where the thumb rests, so it covers nothing you need.
+- **Fail:** no purse caught. The snags are paid all the same. No lump forfeit (5.2: the Winch keeps its per-try cost).
+
+**Pure roll (sub 7 of `SALT.descent`).** `winchLayout()`, inside `seeded(SALT.descent,7,…)`, draws once and in a fixed order: each rib (wall, depth, how far it juts), each arm (wall, depth, reach, its phase on the rhythm), each purse (when it falls, its x). The arms move as a function of time and their rolled phase, never `Math.random`, so a reload replays the same shaft. **Every purse is catchable:** its x lies in a gap no rib or arm closes when it arrives, at least the catch radius from a wall, and reachable from the last purse at the lantern's top speed. A purse that fails this rerolls inside the stream a fixed number of times, then takes the widest gap, so the draw count never changes. A row in `DSC_GAME`: `winch:{sub:7,tip:'winch',…}`.
+
+**Shape numbers** (shape, not balance; rule 22): sink 0.9 tiles/s; walls ±2; 6 ribs jutting 0.8 to 1.3; 3 arms, reach 1.2, out 0.9 s in every 2.4 s, fingers shown 0.5 s first; 3 purses, glint 1 s ahead; catch radius 0.35; cable lag 0.12 s; top sideways speed 3 tiles/s; glow 2.6 tiles, −0.3 a snag, never under 1.7; lurch 0.6 s, grace 1 s; snag 1 oil, 3 at most; purse 0.1 of arrival, 4 to 12; cap 40 s.
+
+**Tests** (`tests/t/winch.test.js`; `DESCENT_AUTO` settles it in the rest of the suite):
+- One seed lays out the same shaft twice; `Math.random` stubbed to throw while `winchLayout()` runs.
+- Over 200 seeds, a scripted lantern can reach every purse (the catchable rule holds).
+- Result table: 0 to 3 caught × 0 to 5 snags → essence and oil; snags cap at 3; purse at 4 and 12 for arrivals of 0, 60 and 500.
+- At 1 oil, three snags leave the lamp at 1 and the floor begins.
+- Pressed against one rib for 3 s: one snag per grace window.
+- Reload mid-shaft replays it with nothing paid; the end pays once.
+- The pool holds six descents (five for the Galvanist); a seed's descent doors stand where they did.
+- 14 sizes: glint and HUD strip clear of notches; nothing shifts when a purse falls.
+
+**Rule 23:** a first-time tip (`TIPS.winch`: "Drag left or right to steer. Ribs and arms show only in the light. Be under a purse when it falls."), a clause in the Descents line of "How the dark works", its Grimoire Descents page (from its `DESCENTS` row), and a practice button in the Developer menu. Nothing new for the Grimoire's other tabs.
+
+**Checked.**
+- **Pillar 1:** fits, middling. The glow is read, and a snag shrinks it. Stronger than the Cast, weaker than the Mirror Stair.
+- **Pillar 2:** fits. Essence in, the lamp's oil out, capped and never the last drop.
+- **Pillar 3:** fits. Arms from slits, fingers first, ribs as silhouettes.
+- **Pillar 4:** fits on paper: one sideways drag from anywhere. The worry is short landscape (915×356, 852×342): few tiles of shaft above and below the lantern. Size the tile to the stage's height, lantern at mid-stage, as the Cast does.
+- **Pillar 5:** fits. The only descent that pays essence and the only one that takes the lamp's oil.
+- **§1:** touch only; cannot end a run; bosses untouched; hard (a purse behind a closing gap); dark art.
+- **Does not fit as Gemini wrote it: the flask.** A flask pays oil against an oil cost, a wash, and it is the Carry's reward (2.2: a different currency each). **Call: purses only; the flask is cut. Decision needed (Criss):** keep the flask as a rarer drop if you want it, at the cost of 2.2.
+
+**Risks.**
+- **Essence after the toll:** 36 at most, and a Knucklebones room can sit behind the same door. Balance PR.
+- **A snag at 1 oil costs nothing,** so a dry lamp plays it free. Accepted: it helps a weak run, not a strong one.
+- **Relative steering:** a player may expect the lantern under the thumb. Too much cable lag reads as input delay. Criss's play settles both.
+
+### 5.6 Mini floor 4: The Smothering (chosen by Criss, round 4)
+
+- **Verb: order.**
+- **What you do.** The lantern sinks down a narrow tube. Three wicks burn in niches across it, at the lantern's height, each a different brightness. Black fumes climb from below. Tap them out dimmest first, then the middle, then the brightest, before the fumes reach the lantern. Three plumes, three new wicks each. In the second and third the wicks gutter: their brightness drifts, so the order can change as you watch. You read the light now, not a moment ago. About 25 seconds.
+- **The tap.** A wick is snuffed on the lift, on the same wick (`pointerup`); a slide off it or a `pointercancel` snuffs nothing, so a palm or a fold never costs madness. Targets at least 48 px, wicks at least 1.2 tiles apart.
+- **Pays: depth.** Each plume snuffed clean (all three, in order, before the fumes arrive) deepens the lamp: it holds 1 more oil for the rest of the run, 3 at most. Through `run.baseOilMax` and `updateOilMax()`, the path the Rest room and events use, so relic oil mods stay right. Paid at the end.
+- **Costs: dread.** Each wrong snuff, and each plume that reaches the lantern with a wick still lit, is 1 dread on the next floor, 3 at most. A wrong snuff still puts that wick out; the plume can't be clean, but you finish it. Kept as `run.fume={floor,n}`, read in `dread()` beside the Carry's `wokeDread()`. Paid at the end, so a reload costs nothing.
+- **Fail:** no plume clean. Nothing paid; the dread stands.
+
+**Pure roll (sub 8 of `SALT.descent`).** `smotherLayout()`, inside `seeded(SALT.descent,8,…)`, draws per plume: which niche holds which brightness, each wick's drift (a slow swing with a rolled phase and size; plumes 2 and 3 only) and the plume's rise. A wick's brightness is a function of the layout and time only. **Fair by construction:** at most one crossing a plume, never in its first 1.5 s; and two wicks within a tie band of each other both count as the dimmest, so a crossing can never make a right read wrong. Every plume leaves time for three taps with a reaction margin. A row in `DSC_GAME`: `smother:{sub:8,tip:'smothering',…}`.
+
+**Shape numbers:** 3 plumes of 3 wicks; brightness levels 1, 1.7 and 2.8 (at least 1.6× apart); rise 8, 7 and 6 s; drift 0, 0.5 and 0.8 of a level, over 5 s; tie band 0.15 of a level; 1.5 s between plumes; 1 dread a mistake, 3 at most; 1 depth a clean plume, 3 at most; cap 40 s.
+
+**Reading brightness on a phone.** Never colour or glow alone: three cues together, the flame's height, its halo's radius and the pool it throws on the tube wall. The Lite path draws the same sizes without the additive glow. `reduceMotion` keeps the drift (it is the game) but drops the flicker. The dimmest wick stays well clear of black, because phone auto-brightness crushes the dark end first.
+
+**Tests** (`tests/t/smothering.test.js`):
+- One seed lays out the same tube twice; `Math.random` stubbed to throw while `smotherLayout()` runs.
+- Over 200 seeds: at most one crossing a plume, none in its first 1.5 s; a perfect tapper clears every plume in time.
+- The tie rule: inside the band, either wick is right.
+- A wrong snuff: 1 dread, that wick out, the plume not clean. A plume reaching the lantern: 1 dread. Dread caps at 3 and lasts the next floor only; an old save with no `run.fume` reads 0.
+- Depth: +1 capacity a clean plume through `baseOilMax`; it survives adding and removing an oil-cap relic, and a save and resume.
+- `pointercancel` and a slide off snuff nothing.
+- 14 sizes: three targets of 48 px or more, 24 px clear of the edges, at 915×356 and 852×342 too (a row across the tube fits the short height).
+
+**Rule 23:** a first-time tip (`TIPS.smothering`: "Tap the wicks out, dimmest first, before the fumes reach the lantern. Out of order, the smoke comes down with you."), a clause in the Descents rules line, its Grimoire Descents page, a practice button. Depth needs no tip of its own: the Rest room already teaches it.
+
+**Checked.**
+- **Pillar 1:** the strongest of the six. Reading light is the whole game.
+- **Pillar 2:** fits. Dread for every mistake.
+- **Pillar 3:** fits. Black fumes, faint wicks, nothing seen in full.
+- **Pillar 4: the real risk** (2.5 flagged it). Brightness in a dark scene on a phone is hard to read, and only Criss's Fold settles it. So step 10 starts with a one-screen prototype (`expansion/proto/`, its own `LL_STORE_NS`) for Criss to play before the full build. If it fails, the fallback reads the flame's height alone, which is less about light.
+- **Pillar 5: does not fit as Gemini wrote it.** "Oil refilled" for madness is the Carry's trade exactly (oil in, dread out), so two of six descents would be one bargain with two verbs, and 2.2 asks a different currency each. **Call: pay depth.** The Carry tops the lamp up now; the Smothering makes it hold more for the rest of the run. The cost stays Criss's (madness, as dread; 2.2 asks only the pay to differ). **Decision needed (Criss):** keep the refill if you'd rather, knowing it is the Carry's trade.
+- **§1:** touch only; dread cannot end a run; bosses untouched; hard (the drift); dark art.
+- **Length:** one plume alone is about 5 s, under the 15 s floor (2.2). That is why there are three.
+
+**Risks.**
+- **Depth overlaps the Rest room** ("Deepen the reservoir", +3). A Rest room and a Smothering can be one door, so +6 is possible. Balance PR.
+- **Dread feeds the Occultist:** madness tiers sharpen his Bone Spears, so a wrong snuff is a small gain for him. The Carry already does this; noted, not fixed.
+- **`run.fume` is a new saved field:** old saves have none (reads 0), and it counts only on its floor, as `run.woke` does.
+- **A tap game can feel thin** beside the others. The drift is what makes it a game; if it is too easy, tighten the rise, not the wick count (Criss said three).
+
+### 5.7 Checked, touches, riskiest part (The Binding and the pledge)
 
 - **§1:** touch only; bosses stay all-or-nothing and a failed mini floor never ends a run (the pledge cannot kill: it is essence or a relic, never oil); hard on purpose; the sigil is painted violet, glowing, silhouetted. **§9:** pillars 2, 4 and 5 hold. Pillar 1 is thin (the creature and the rings show only in the lantern's glow). **Rule 23:** each mini floor ships a first-time tip, a "How the dark works" line and a Grimoire **Descents** page, and the pledge gets its own tip and line.
 - **Systems touched:** `descend()` and `showMap()` (the frame), `makeDoors()` (the glyph and the pledge line), `run` and `resumeFrom()` (`run.mini`), `run.ess` (HUD, merchant, Ossuary Key credit), `run.relics` (relic pledge), `run.roster` and `HORRORS` (the reward, madness tiers, the Many-Mouthed's Gorger count), the kit filter, `tests/hook.js` (a headless hook for each mini floor), and the 14-size device test.
 - **Riskiest part: the pledge pot.** Essence leaves `run.ess` at the start and has to come back on every exit: a win, a failure, a reload mid-floor, quit to title and Continue. Miss one and essence vanishes or doubles. A relic pledge has its own two ways to go wrong: a failure that forfeits the relic but leaves Oil Reserve's oil in place, and a reload that re-pulls the three (so the pull belongs in `run.mini`, not in a fresh roll). Second: a pure roll (seeds) picks the door, but whether the pledge exists depends on what you hold, so two plays of one seed can show a plain door where the other shows The Binding. Roll purely, then gate by state.
 - **Balance** (later PR): the pledge share, the reward's worth against it, the Cast's essence tenth.
+
+### 5.8 Door odds with six descents
+
+Today each landing after floors 2 to 4 rolls once (`DESCENT_CHANCE` 0.7) for one door to carry a descent, drawn evenly from those not yet walked that fit the kit (`descentDoor()`, `descentPool()`). Simulated over 200,000 runs that reach all three landings:
+
+| Pool | Descent doors a run | Runs with none | A given descent offered in a run |
+|---|---|---|---|
+| 4 (today) | 2.1 | 2.7% | 0.53 |
+| **6, at 0.7** | **2.1** | **2.7%** | **0.35** |
+| 6, at 0.8 | 2.4 | 0.8% | 0.40 |
+| 5 (the Galvanist), at 0.7 | 2.1 | 2.7% | 0.42 |
+
+- **Call: keep 0.7.** Six descents don't change how many doors carry one (about two a run, and the plain stair stands on every landing). They spread those doors over more kinds, which is pillar 5, at the price of each showing about one run in three. Raising it to 0.8 buys little (0.35 → 0.40) and makes a descent near certain on every landing: section 2.5's warning about a minigame collection.
+- **No weighting toward descents you haven't seen.** It would read `ll-codex`, which differs per phone, so one seed would offer different doors on two phones (rule 11b). The roll stays pure.
+- **Seeds:** two new `DESCENTS` rows change the pool's length, so a code made before the build keeps its descent doors where they stood but may carry a different descent, as happened with the Mirror Stair, the Binding and the Cast. Append the rows after `cast` and never reorder: `Object.keys` order is the pool's order.
+- The Binding's fallback (`descentGate()`: nothing to pledge, so the next open descent) almost never comes up empty with six.
