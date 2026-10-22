@@ -1,6 +1,6 @@
 # Expansion 2, first pass: seeds and mini floors
 
-**Status (22 Oct 2026):** seeds (v18.6.0), the descent frame and The Carry (v18.7.0) and The Mirror Stair (v18.8.0) are **built and on `main`** (#97, #98, #100). **The Binding and the pledge** (step 7) are on `main` too (#102). **The Cast** (step 8) is on `main` too (#103). **The Winch and The Smothering are chosen by Criss** (round 4) and designed at 5.5 and 5.6; not built yet. This doc's own PR changes no code (no `index.html`, `tests/`, `tools/` or `.github/`; see `README.md`).
+**Status (22 Oct 2026):** seeds (v18.6.0), the descent frame and The Carry (v18.7.0) and The Mirror Stair (v18.8.0) are **built and on `main`** (#97, #98, #100). **The Binding and the pledge** (step 7) are on `main` too (#102). **The Cast** (step 8) is on `main` too (#103). **The Winch and The Smothering are chosen by Criss** (round 4) and designed at 5.5 and 5.6, agreed as the final draft; not built yet (steps 9 and 10). This doc's own PR changes no code (no `index.html`, `tests/`, `tools/` or `.github/`; see `README.md`).
 **From Criss:** this is the second expansion, so right now we only brainstorm. Two ideas so far: a **seed system** (#95) and **mini-game floors** between the main floors. More ideas get added here (see section 5).
 **Who:** Claude drafted it, Gemini reviewed it (round 1, below), Criss steers. Round 1 is settled. Round 2 (Criss's **Binding** idea, the failure cost, and mini floor 6) is folded in at section 5 by Claude, Sonnet 5.5, and has not been reviewed by Gemini. Round 3 folds in Criss's answers on the pledge and picks mini floor 6 (The Cast); it is Claude's too, and equally unreviewed. Round 4 designs Criss's last two picks, The Winch and The Smothering (5.5, 5.6), by Claude, Opus 5.5, with a self-review on its PR; Gemini has not seen it. What remains open is in section 4.
 
@@ -134,7 +134,7 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 
 **Still open**
 1. **Relic pledge, to revisit after a playtest:** a pull of 3 where you pick one lets a player with several relics offer the least-loved. Tune the pull then.
-2. **Mini floors 3 and 4: chosen** (round 4). The Winch's pay is settled (Criss, round 4: purses, the flask cut, and a drowned man's purse that sometimes holds a relic). One call still waits on Criss (**Decision needed**, 5.6): the Smothering pays depth, not a refill.
+2. **Mini floors 3 and 4: chosen** (round 4). The Winch's pay is settled (Criss, round 4: purses, the flask cut, and a drowned man's purse that sometimes holds a relic). The Smothering pays depth, not a refill (Criss, round 4). Nothing about the six is open now except balance (step 11).
 3. **Criss's additions** (section 5): The Binding is folded in. More still welcome.
 
 ## 5. Criss's additions
@@ -279,7 +279,7 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 - **Pillar 2:** fits. Dread for every mistake.
 - **Pillar 3:** fits. Black fumes, faint wicks, nothing seen in full.
 - **Pillar 4: the real risk** (2.5 flagged it). Brightness in a dark scene on a phone is hard to read, and only Criss's Fold settles it. So step 10 starts with a one-screen prototype (`expansion/proto/`, its own `LL_STORE_NS`) for Criss to play before the full build. If it fails, the fallback reads the flame's height alone, which is less about light.
-- **Pillar 5: does not fit as Gemini wrote it.** "Oil refilled" for madness is the Carry's trade exactly (oil in, dread out), so two of six descents would be one bargain with two verbs, and 2.2 asks a different currency each. **Call: pay depth.** The Carry tops the lamp up now; the Smothering makes it hold more for the rest of the run. The cost stays Criss's (madness, as dread; 2.2 asks only the pay to differ). **Decision needed (Criss):** keep the refill if you'd rather, knowing it is the Carry's trade.
+- **Pillar 5: does not fit as Gemini wrote it.** "Oil refilled" for madness is the Carry's trade exactly (oil in, dread out), so two of six descents would be one bargain with two verbs, and 2.2 asks a different currency each. **Settled (Criss, round 4): pay depth.** The Carry tops the lamp up now; the Smothering makes it hold more for the rest of the run. The cost stays Criss's (madness, as dread; 2.2 asks only the pay to differ).
 - **§1:** touch only; dread cannot end a run; bosses untouched; hard (the drift); dark art.
 - **Pillar 2 for the Occultist:** fails, so he is never offered it (above).
 - **Length:** one plume alone is about 5 s, under the 15 s floor (2.2). That is why there are three.
