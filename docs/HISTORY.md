@@ -3,6 +3,9 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+
+## v18.8.0 — The Mirror Stair
+The second descent: the lantern sinks past seven cold sconces, and two mirrors you drag light them for a wider lamp on the next floor.
 - **The Mirror Stair: the second descent** (Expansion 2, step 5; `expansion/SEEDS-AND-MINI-FLOORS.md` §2.4; built by Claude; reworked on Criss's first playtest: too easy, too narrow folded, and the beam cut off in mid-air). A descent door may now carry The Mirror Stair instead of The Carry, never one already walked this descent. The lantern sinks down a shaft past seven cold sconces, a mirror swinging on an arm either side of its crown, one for each wall. Hold either side of the screen and drag up or down: that mirror turns (the Signal Mirror's own reflection rule, now shared) and its light runs up or down the wall, always ending on the stone. Hold it on a sconce 0.75 s to light it, following it up as the shaft sinks; out of the light its ember cools. Each sconce lit widens the next floor's lamp 0.2 until its first wave breaks; each that rises out of reach unlit narrows it 0.2 (three of seven or fewer is a failure: a smaller lamp, never the end of the run). No embers. About 22 to 26 seconds. The shaft's walls stand near the edges of a phone screen. The descent frame now takes a row per descent (`DSC_GAME`); old seeds put their descent doors where v18.7.0 did. Taught by a first-time tip, a line in How the dark works and its page in the Grimoire's Descents.
 
 ## v18.7.0 — The Carry

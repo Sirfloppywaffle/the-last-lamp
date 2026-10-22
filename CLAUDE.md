@@ -30,6 +30,7 @@ You're the engineer and QA on this project. Gemini, working through Jules, is yo
 
 ## Releases
 - **Version numbers** (details in `AGENTS.md` §3): three numbers, always. Last = bug fixes and small tweaks. Middle = a new part of an ongoing feature (last resets to 0). First = a finished arc or a big change (others reset to 0). Bump once per release; the biggest change in the batch wins.
+- **Artifact mirroring is paused until Criss says otherwise.** Skip the mirror step below.
 - When Criss merges, mirror `index.html` to the claude.ai artifact (`python3 tools/build-artifact.py` writes the artifact body to `tests/.build/artifact.html`; publish it to https://claude.ai/artifact/PP2gyEZiPauEoEpbuM5Se7), then move the Unreleased notes in `docs/HISTORY.md` under a new version.
 
 ## Talking to Criss
