@@ -1,6 +1,6 @@
 # Expansion 2, first pass: seeds and mini floors
 
-**Status (22 Oct 2026):** seeds (v18.6.0), the descent frame and The Carry (v18.7.0) and The Mirror Stair (v18.8.0) are **built and on `main`** (#97, #98, #100). Everything else here is still design only: The Binding, The Cast and the pledge (sections 4 and 5), and the candidates The Winch and The Smothering. This doc's own PR changes no code (no `index.html`, `tests/`, `tools/` or `.github/`; see `README.md`).
+**Status (22 Oct 2026):** seeds (v18.6.0), the descent frame and The Carry (v18.7.0) and The Mirror Stair (v18.8.0) are **built and on `main`** (#97, #98, #100). **The Binding and the pledge** (step 7) are built on `claude/descent-binding`, waiting on Criss's play. Still design only: The Cast (5.3), and the candidates The Winch and The Smothering. This doc's own PR changes no code (no `index.html`, `tests/`, `tools/` or `.github/`; see `README.md`).
 **From Criss:** this is the second expansion, so right now we only brainstorm. Two ideas so far: a **seed system** (#95) and **mini-game floors** between the main floors. More ideas get added here (see section 5).
 **Who:** Claude drafted it, Gemini reviewed it (round 1, below), Criss steers. Round 1 is settled. Round 2 (Criss's **Binding** idea, the failure cost, and mini floor 6) is folded in at section 5 by Claude, Sonnet 5.5, and has not been reviewed by Gemini. Round 3 folds in Criss's answers on the pledge and picks mini floor 6 (The Cast); it is Claude's too, and equally unreviewed. What remains open is in section 4.
 
@@ -115,7 +115,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 | 4 | **Build the descent mini-floor frame and The Carry** (**done**, v18.7.0, #98) | Claude, Opus 5.5 | high |
 | 5 | **Build The Mirror Stair** (**done**, v18.8.0, #100; reworked after Criss's first playtest) | Claude, Opus 5.5 | high |
 | 6 | Criss decides on The Winch and The Smothering (The Binding and The Cast are chosen) | Criss | |
-| 7 | **Next build: The Binding and the pledge** (5.1, 5.2, 5.4): the pledge card, `run.mini`, the relic pull, the sigil field, the kit filter, tests, tips, Grimoire | Claude, Opus 5.5 | high |
+| 7 | **Built, in review: The Binding and the pledge** (5.1, 5.2, 5.4): the pledge card, `run.mini`, the relic pull, the sigil field, the kit filter, tests, tips, Grimoire | Claude, Opus 5.5 | high |
 | 8 | **Then The Cast** (5.3): the aim and line, the rite charge, the essence tenth, tests, tips, Grimoire | Claude, Opus 5.5 | high |
 | 9 | Balance numbers, in their own PR | Claude, Opus 5.5 | high |
 

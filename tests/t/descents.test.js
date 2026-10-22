@@ -47,7 +47,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
         if(n>1)out.two++;
         if(d.doors.some(x=>x.descent&&x.trial))out.trialClash++;
         /* pure: the same roll again gives the same doors */
-        const again=T.seeded(T.SALT.descent,0,()=>{const dd=JSON.parse(JSON.stringify(d.doors)); dd.forEach(x=>delete x.descent); T.descentDoor(dd); return dd;});
+        /* the roll, then the gate by what you hold (The Binding asks a pledge, and names its creature) */
+        const again=T.seeded(T.SALT.descent,0,()=>{const dd=JSON.parse(JSON.stringify(d.doors)); dd.forEach(x=>{delete x.descent; delete x.horror;}); T.descentDoor(dd); return dd;});
+        T.descentGate({doors:again,salvage:d.salvage});
         if(JSON.stringify(again)!==JSON.stringify(d.doors))out.impure++;
       }
     }

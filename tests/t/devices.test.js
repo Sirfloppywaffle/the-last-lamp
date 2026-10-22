@@ -127,7 +127,51 @@ const DEV=[
     await p.evaluate(()=>{const T=__t; T.descentFinish({}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
     const mirOk=mir.active&&mir.statsIn&&mir.clear&&mir.wide&&mir.pivots&&mir.still&&mcard.shown&&mcard.in&&mcard.thumb&&mcard.fits;
     if(!mirOk)console.log('FAIL '+nm+': The Mirror Stair and its card',JSON.stringify({mir,mcard}));
-    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk;
+    /* The Binding (Expansion 2, step 7; §5.4): the pledge card fits without scrolling sideways and its buttons take a thumb;
+       on the shaft, the counts and prompt sit in the safe area, every dot and its snap ring stand at least 24 px (and clear of
+       the insets) inside the screen and above the prompt, dots stand 50 px or more apart, the sigil strip sits under the counts
+       and clear of the field, the counts don't move as they change, and the card fits */
+    const bnd=await p.evaluate(ins=>{
+      const T=__t; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      T.tutSet({walk:'done',seen:[],off:false}); T.setDescentAuto(null);
+      T.newRun('lamplighter',0,{seed:4242}); T.run.floor=1; T.beginFloor(null); T.addRelic('tallow'); T.addRelic('reserve'); T.run.ess=300;
+      T.run.floor=2; T.run.descent={k:'binding',f0:1,msg:''}; T.run.mini={k:'binding',horror:'elite',kind:null}; T.pledgeCard();
+      const box=document.querySelector('#modal .box'), ch=[...document.querySelectorAll('#mChoices .choice')];
+      const o={card:ch.map(x=>{x.scrollIntoView({block:'nearest'}); return q(x);})};
+      o.cardIn=o.card.length===2&&o.card.every(inside)&&o.card.every(r=>r[3]-r[1]>=44); o.sideways=getComputedStyle(box).overflowX!=='hidden'&&box.scrollWidth>box.clientWidth+1;
+      T.tutSet({walk:'done',seen:['binding','pledge'],off:false});
+      T.F.blocking.choices[0].fn();
+      const C=T.DESC; o.active=C.active&&C.phase==='walk'&&C.k==='binding';
+      T.descentFrame(0);
+      const G=T.bindGeo(), stats=[...document.querySelectorAll('.dsc-stat')].map(q), prompt=q(document.querySelector('#dscPrompt span'));
+      o.stats=stats; o.statsIn=stats.length===2&&stats.every(inside)&&inside(prompt);
+      const L=Math.max(24,ins.left), R=innerWidth-Math.max(24,ins.right), dots=[...Array(9).keys()].map(i=>T.bindDotXY(i,G));
+      o.g=Math.round(G.g); o.r=Math.round(G.r);
+      o.dotsIn=dots.every(d=>d[0]-G.r>=L-1&&d[0]+G.r<=R+1&&d[1]-G.r>=ins.top&&d[1]+G.r<=prompt[1]+1);
+      o.gap=G.g>=50;
+      const strip=[G.sx,G.sy,G.sx+G.sw,G.sy+G.sw/3.4].map(Math.round);
+      o.strip=strip; o.stripOk=strip[0]>=ins.left-1&&strip[2]<=innerWidth-ins.right+1&&stats.every(r=>r[3]<=strip[1]+1)
+        &&!(strip[2]>G.cx-G.g-G.r&&strip[0]<G.cx+G.g+G.r&&strip[3]>G.cy-G.g-G.r&&strip[1]<G.cy+G.g+G.r);
+      C.done=2; C.hudKey=''; T.descentFrame(0);
+      o.still=JSON.stringify(stats)===JSON.stringify([...document.querySelectorAll('.dsc-stat')].map(q));
+      C.done=1; C.prog=2; C.fp=T.bindDotXY(C.sig[1][2],G); C.hudKey=''; T.descentFrame(0);
+      return o;},ins);
+    await p.waitForTimeout(250);
+    await p.screenshot({path:(process.argv[3]||'.')+'/binding-'+nm+'.png'});
+    const bcard=await p.evaluate(ins=>{
+      const T=__t, C=T.DESC; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      C.done=3; C.phase='out'; C.stroke=null; C.endAt=C.t; C.held=false; C.liftT=0; C.t+=1; T.descentFrame(.05);
+      const el=document.getElementById('dscCard'), r=el.getBoundingClientRect();
+      const o={shown:!document.getElementById('dscCardWrap').hidden,thumb:r.height>=44&&r.width>=200,fits:el.scrollHeight<=el.clientHeight+1||r.height>=120};
+      o.in=r.left>=ins.left-1&&r.right<=innerWidth-ins.right+1&&r.top>=ins.top-1&&r.bottom<=innerHeight-ins.bottom+1;
+      return o;},ins);
+    await p.screenshot({path:(process.argv[3]||'.')+'/binding-card-'+nm+'.png'});
+    await p.evaluate(()=>{const T=__t; T.descentFinish({}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
+    const bndOk=bnd.cardIn&&!bnd.sideways&&bnd.active&&bnd.statsIn&&bnd.dotsIn&&bnd.gap&&bnd.stripOk&&bnd.still&&bcard.shown&&bcard.in&&bcard.thumb&&bcard.fits;
+    if(!bndOk)console.log('FAIL '+nm+': The Binding, its pledge card and its result card',JSON.stringify({bnd,bcard}));
+    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk&&bndOk;
     if(!ok)bad++;
     console.log((ok?'OK  ':'BAD ')+nm.padEnd(17),'side',c.side,'tile',c.tile,'boardMoved',moved,'barMoved',cmdMoved,'over',c.over,'unsafe',c.offs,'hint',c.hint,errs.length?errs:'');
     await ctx.close();
