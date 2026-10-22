@@ -11,7 +11,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.starts={}; for(const k of Object.keys(T.KITS)){T.newRun(k,0); out.starts[k]=T.run.wards.includes('chime');}
     /* the stair offers it to everyone else: gifts, merchants and the pack draw from it */
     T.newRun('lamplighter',0); T.run.floor=1; T.beginFloor(null); T.setP(true);
-    let seen=0; for(let i=0;i<400;i++){T.F.phase='cleared'; T.openDraft(0,0); if(T.draft.opts.some(o=>o.kind==='ward'&&o.key==='chime'))seen++; T.F.draft=null; T.F.phase='build';}
+    let seen=0; /* a fresh seed each time: one seed gives one gift (seeds, #95) */
+    for(let i=0;i<400;i++){T.run.seed=i; T.F.phase='cleared'; T.openDraft(0,0); if(T.draft.opts.some(o=>o.kind==='ward'&&o.key==='chime'))seen++; T.F.draft=null; T.F.phase='build';}
     out.gifted=seen;
     /* the ring spreads thin: four nearest full, the rest half */
     window.devNoDark=true;
