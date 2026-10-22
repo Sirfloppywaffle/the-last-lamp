@@ -283,7 +283,7 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 
 **Risks.**
 - **Depth overlaps the Rest room** ("Deepen the reservoir", +3). A Rest room and a Smothering can be one door, so +6 is possible. Balance PR.
-- **The Carry has the same hole:** it is built, offered to the Occultist, and pays its mistakes in dread, which feeds him. Criss's rule for the Smothering says it should get the same filter. **Decision needed (Criss):** add `fits` to the Carry in the Smothering's build PR? It shrinks the Occultist's pool to four.
+- **The Carry stays offered to the Occultist (Criss, round 4).** Its dread feeds him too, but madness still flickers and shrinks his lamp, and a failed Carry still loses the flask, so it bites. The Smothering's only price is dread, so it does not.
 - **`run.fume` is a new saved field:** old saves have none (reads 0), and it counts only on its floor, as `run.woke` does.
 - **A tap game can feel thin** beside the others. The drift is what makes it a game; if it is too easy, tighten the rise, not the wick count (Criss said three).
 
