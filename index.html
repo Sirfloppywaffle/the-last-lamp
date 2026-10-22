@@ -506,7 +506,7 @@ input[type=range]::-moz-range-track {
         <li><b>Every stair has a name.</b> A descent is drawn from a seed: its maps, waves, Heralds, gifts, doors, omens, rooms and offers. The pause, death and morning screens name the stair and show its code; tap Copy to keep it. When the lamp goes out you can descend the same stair again, drawn the same way, though what the dark does in a fight is never the same twice. A stair walked twice leaves no embers.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard. <i>Sealed:</i> two of your wards are locked for the floor, marked with a lock in the tray; never your light and never your harpoon. <i>One of Each:</i> each kind of ward stands only once, except what makes your light (candles of every kind, Tuning Forks, pylons, Bell Wires and Try-pots). <i>Bare Hands:</i> your rites are silent, all but the Bellringer's Toll. <i>Unbranched:</i> nothing can be upgraded, not even the lamp. <i>The Long Night:</i> candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller; it never comes with Moonless or Thick Dark.</li>
-        <li><b>Descents.</b> On the landings after floors two, three and four, one door may carry a descent, marked with a cupped flame: the way down, played after the toll, before the next floor begins. Each pays and each costs. Failing one never ends the run, none leaves embers, and once walked it is not offered again that descent. <i>The Carry:</i> hold your thumb down anywhere to cup a small flame past a gallery of sleepers. A sleeper inside your light stirs; hidden, it settles. Hold too long and you stumble, spill the flask and flare. It pays the oil you carry down; every sleeper you wake adds dread on the next floor, and waking three loses the flask. <i>The Mirror Stair:</i> drag a mirror off the lantern into its beam, level with a cold sconce, until the sconce catches. The beam stops at the first mirror it meets. Each sconce lit widens the lamp below until its first wave breaks; each you sink past unlit stays dark and narrows it.</li>
+        <li><b>Descents.</b> On the landings after floors two, three and four, one door may carry a descent, marked with a cupped flame: the way down, played after the toll, before the next floor begins. Each pays and each costs. Failing one never ends the run, none leaves embers, and once walked it is not offered again that descent. <i>The Carry:</i> hold your thumb down anywhere to cup a small flame past a gallery of sleepers. A sleeper inside your light stirs; hidden, it settles. Hold too long and you stumble, spill the flask and flare. It pays the oil you carry down; every sleeper you wake adds dread on the next floor, and waking three loses the flask. <i>The Mirror Stair:</i> hold either side and drag up or down to swing that side's mirror, and hold its light on a cold sconce, following it up, until it catches. Each sconce lit widens the lamp below until its first wave breaks; each that rises out of reach unlit stays dark and narrows it.</li>
         <li><b>Relics.</b> Relics bend the rules, and a cursed one takes as much as it gives. You are only offered a relic you can use: one that needs a ward, such as Salt or the Hex Effigy, waits until you can build it. Dead Reckoning, whose price falls on light, never comes to the Bellringer, who sees by sound. Tap a relic's seal to read it; a number on a seal is what it holds.</li>
         <li><b>Patrons.</b> Old things below the stair make offerings: the Drowned Mother, the Wrong Sun, and the Many-Mouthed. Half the time the landing's gift is one of theirs instead (a quarter, if one already reached out on that floor), and now and then one reaches out between waves; which one is a toss each time. Take one gift, or refuse. Every gift raises that patron's Attention, and Attention changes your floors. Her water speeds what walks in it, rises, and at last hides it. The Wrong Sun's bright spots show whatever stands in them, but a Stalker that crosses one has seen the lamp and runs; Watched, they sear, and the glare spreads to the stone beside them; Claimed, your wards in the glare fire slower. The Many-Mouthed reads what you built and sends its own up the stair as each wave begins, Gibberers for your wards and Gorgers for your horrors, and they leave nothing when they die; Watched, you carry dread and Gorgers snuff candles; Claimed, a Choir-Husk veils what walks near it, and bindings may break from Whispers. Their signs sit beside the Grimoire; tap one to see where you stand.</li>
         <li><b>Conjunctions.</b> Two patrons who have both noticed you, neither yet claiming you, may offer one gift together in place of the last of three. It is not shaped by your kit. The one whose Attention lags pays for it, and the other watches: the next wave, her water rises a tile, the Sun opens another spot, or one more Gibberer climbs. A descent takes one conjunction from each pair, and two at most. The Drowned Mother and the Wrong Sun: Phosphor Tide. The Drowned Mother and the Many-Mouthed: Gorger’s Undertow, Brine-Choir. The Wrong Sun and the Many-Mouthed: Sun-Drunk Chorus, Violet Husking.</li>
@@ -1023,7 +1023,7 @@ const DESCENTS={
     costs:'Every sleeper you wake follows you down, and its dread stays with you on the next floor.',
     fail:'Wake three and the whole gallery stirs: you drop the flask and run.'},
   mirror:{n:'The Mirror Stair',short:'Mirror Stair',verb:'Route',
-    d:'The lantern sinks down a shaft of cold sconces, its beam thrown straight down. Drag your two mirrors off it into the beam, and throw the light across onto them.',
+    d:'The lantern sinks down a shaft of cold sconces, a mirror swinging on either side of it. Drag up or down to swing them and throw its light onto the sconces as they pass.',
     pays:'Every sconce you light widens the lamp below until its first wave breaks.',
     costs:'Every sconce you sink past unlit stays dark, and narrows it.',
     fail:'Leave too many dark and the lamp below burns smaller than it began.'}
@@ -1037,17 +1037,18 @@ const CARRY_N=7, CARRY_SPEED=1, CARRY_X=1.15, CARRY_R=1.75, CARRY_STIR=.85, CARR
   CARRY_STUMBLE_T=.8, CARRY_FLARE_R=2.4, CARRY_FLARE_MUL=1.2, CARRY_OIL=5, CARRY_SPILL=1, CARRY_MAD=1, CARRY_FAIL=3,
   CARRY_FIRST=4, CARRY_GAP=[3.2,4.6], CARRY_PAIR=[1.3,1.7], CARRY_TAIL=3.5, CARRY_CAP=44;
 /* The Mirror Stair, in tiles of the shaft and seconds: the lantern sinks MIR_SPEED tiles a second past MIR_N cold sconces set in
-   the walls, MIR_W either side of the middle. Its hooded lens throws a beam straight down, from MIR_TOP below it to MIR_BEAM.
-   A mirror in the beam (no more than MIR_IN off the middle) leans toward the wall on its own side and throws the light across;
-   a sconce within MIR_TOL of that crossing catches after MIR_KINDLE seconds in it, and is kept. The beam strikes only the first
-   mirror it meets, so of two sconces close together the lower is lit first. You carry MIR_MIRRORS; one the lantern sinks past
-   swings back to it. A sconce you sink past unlit stays dark. Each lit one widens the next floor's lamp by MIR_GLOW until its
-   first wave breaks, and each dark one narrows it by MIR_DIM: light three of six and the lamp gains a little; light two and it
-   loses (that is the failure).
-   A dragged mirror rides MIR_LIFT px (at least) above the thumb, so the thumb never hides it (rule 1); a touch takes the mirror
-   within MIR_GRAB tiles of it, or one still on the lantern */
-const MIR_N=6, MIR_MIRRORS=2, MIR_SPEED=.9, MIR_W=1.75, MIR_TOP=.35, MIR_BEAM=3.2, MIR_IN=.5, MIR_TOL=.42, MIR_KINDLE=.6,
-  MIR_GLOW=.25, MIR_DIM=.2, MIR_FIRST=4.5, MIR_GAP=[2.6,3.6], MIR_PAIR=[.95,1.25], MIR_TAIL=3, MIR_CAP=44, MIR_LIFT=56, MIR_GRAB=1.3;
+   the walls, MIR_W either side of the middle. A mirror swings on an arm either side of the lantern's crown (MIR_ARM: across,
+   then up from the flame); the lantern's light strikes it and it throws the light onto its own wall. You swing it by dragging
+   up or down: the spot of light on the wall moves MIR_GAIN tiles for every tile the thumb moves, between MIR_SPOT[0] and
+   MIR_SPOT[1] tiles below the lantern (it starts at MIR_REST). A sconce within MIR_TOL of the spot catches after MIR_KINDLE
+   seconds in it, and is kept; out of it, its ember cools at MIR_COOL a second, so a wavering aim loses what it gave. The shaft
+   keeps sinking, so the spot has to follow the sconce up. A sconce that rises past the
+   highest spot unlit stays dark. A sconce sliding past a spot left still is in it for 2·MIR_TOL/MIR_SPEED s, less than
+   MIR_KINDLE, so an idle thumb lights none. Each lit one widens the next floor's lamp by MIR_GLOW until its first wave breaks;
+   each dark one narrows it by MIR_DIM: light more than you leave dark and the lamp gains (anything less is the failure).
+   One close pair of sconces stands on the same wall, so one mirror has to catch one and swing to the next */
+const MIR_N=7, MIR_SPEED=1, MIR_W=2.1, MIR_ARM=[.55,-.55], MIR_SPOT=[-1,3.4], MIR_REST=1.2, MIR_GAIN=1, MIR_TOL=.28, MIR_KINDLE=.75, MIR_COOL=1.5,
+  MIR_GLOW=.2, MIR_DIM=.2, MIR_FIRST=5, MIR_GAP=[2.4,3.4], MIR_PAIR=[1,1.3], MIR_TAIL=3, MIR_CAP=44;
 const ROOMS={
   merchant:{n:'A Merchant’s Alcove',tag:'Merchant',d:'Something trades in the dark. Spend your essence on relics, wards and bindings before the stair burns it.'},
   shrine:{n:'A Bleeding Shrine',tag:'Shrine',d:'Make a pact: power, for a price.'},
@@ -4766,81 +4767,67 @@ function descIcon(cv,k){
 }
 
 /* ---------------- The Mirror Stair (Expansion 2, the second descent) ----------------
-   The lantern sinks down a shaft of cold sconces, its hooded lens throwing a beam straight down. You carry MIR_MIRRORS mirrors on
-   it: drag one off into the beam and it leans toward the wall on its own side, throwing the light across (mirrorOut, the
-   Signal Mirror's own rule). Held level with a sconce long enough, the sconce catches and is kept. The beam stops at the first
-   mirror it meets. A mirror the lantern sinks past swings back to it. One thumb: a touch takes the mirror near it, or one still
-   on the lantern; a lift sets it where it is; a cancelled touch puts it back where it was taken from, and fails nothing */
-const MIR_FY=.3, MIR_CAGE=.72;
-/* where a mirror in the beam sends the light: straight across to the wall on its side (index 0 the left, 1 the right) */
-const MIR_OUT=[-1,1].map(sd=>mirrorOut(0,1,mirrorTurn(0,1,sd,0)));
-const MIR_LEAN=[mirrorTurn(0,1,-1,0),mirrorTurn(0,1,1,0)];
-/* the shaft: MIR_N sconces, the first MIR_FIRST tiles down, on either wall. One gap is a pair across the shaft from each other,
-   close enough that a mirror set for the upper stands in the beam's way to the lower */
+   The lantern sinks down a shaft of cold sconces. A mirror swings on an arm either side of its crown, one for each wall: the
+   lantern's light strikes it and it throws a beam onto its wall (mirrorOut, the Signal Mirror's own rule). Hold either side of
+   the screen and drag up or down to swing that side's mirror; its spot of light runs up or down the wall. Held on a sconce long
+   enough, the sconce catches and is kept. The shaft keeps sinking, so the spot has to follow a sconce up as it rises. One thumb,
+   one mirror at a time; a cancelled touch puts the mirror back where it was, and fails nothing */
+const MIR_FY=.3;
+/* the shaft: MIR_N sconces, the first MIR_FIRST tiles down. One gap is a close pair on the same wall, so one mirror has to catch
+   the first and swing on to the second */
 function mirrorLayout(){
   const gaps=[]; for(let i=0;i<MIR_N-2;i++)gaps.push(rnd(MIR_GAP[0],MIR_GAP[1]));
   gaps.push(rnd(MIR_PAIR[0],MIR_PAIR[1])); shuffle(gaps);
   const sc=[]; let y=MIR_FIRST, side=RNG()<.5?-1:1;
   for(let i=0;i<MIR_N;i++){
     sc.push({side,y,heat:0,lit:false,dark:false,lt:0});
-    if(i<gaps.length){const g=gaps[i]; y+=g; side=g<MIR_GAP[0]||RNG()<.5?-side:side;}
+    if(i<gaps.length){const g=gaps[i]; y+=g; if(g>=MIR_GAP[0]&&RNG()<.5)side=-side;}
   }
   return {sc,len:y+MIR_TAIL};
 }
-function mirrorFresh(lay){return {sc:lay.sc,lit:0,dark:0,drag:null,hit:null,geo:null,crossOn:false,cross:[0,0,0,0],
-  ms:[...Array(MIR_MIRRORS).keys()].map(i=>({st:'cage',home:i%2?1:-1,x:0,y:0,swing:0}))};}
-/* where the shaft lies on screen, in CSS px: u a tile, the middle at cx, the lantern at fy (worked out once a frame) */
+function mirrorFresh(lay){return {sc:lay.sc,lit:0,dark:0,drag:null,geo:null,
+  ms:[-1,1].map(side=>({side,spot:MIR_REST,rot:0,ox:0,oy:0}))};}
+/* where the shaft lies on screen, in CSS px: u a tile, the middle at cx, the lantern at fy. The walls stand near the edges of a
+   narrow screen; a wide one gives the shaft as much height as it can (worked out once a frame) */
+function mirrorU(w,h){return Math.min(w/(MIR_W*2+.7),h/7.4);}
 function mirGeo(){const C=DESC; if(C.geo)return C.geo; const o=$('#dscOverlay'), w=o.clientWidth||innerWidth, h=o.clientHeight||innerHeight;
-  return (C.geo={u:Math.min(w/6.2,h/7.4),cx:w/2,fy:h*MIR_FY});}
-/* where a mirror is, in tiles of the shaft: one on the lantern hangs beside it */
-function mirrorAt(m,C){return m.st==='cage'?[m.home*MIR_CAGE,C.pos+.1]:[m.x,m.y];}
-function mirrorSide(m){return m.x<0?-1:1;}
-/* the mirror under the thumb rides above it, so the thumb never hides it (rule 1), and stays inside the shaft */
-function mirrorHeld(C){const D=C.drag; if(!D)return; const g=mirGeo(), lift=Math.max(MIR_LIFT,g.u*.85);
-  D.m.x=clamp((D.sx-g.cx)/g.u,-(MIR_W-.32),MIR_W-.32); D.m.y=C.pos+(D.sy-lift-g.fy)/g.u;}
+  return (C.geo={u:mirrorU(w,h),cx:w/2,fy:h*MIR_FY});}
+/* a mirror's turn: the lantern's light comes out from the flame to the glass, and leaves for the spot on the wall. mirrorTurn
+   gives the glass that sends it there, and mirrorOut (the Signal Mirror's rule) gives back the way it goes, which the beam is
+   drawn along */
+function mirrorAim(m){
+  const ax=m.side*MIR_ARM[0], ay=MIR_ARM[1], il=Math.hypot(ax,ay), ix=ax/il, iy=ay/il;
+  const dx=m.side*MIR_W-ax, dy=m.spot-ay, dl=Math.hypot(dx,dy);
+  m.rot=mirrorTurn(ix,iy,dx/dl,dy/dl); const o=mirrorOut(ix,iy,m.rot); m.ox=o[0]; m.oy=o[1];
+}
+/* the touch: the side of the screen picks the mirror, and the drag moves its spot */
 function mirrorDown(ev){
   const C=DESC; if(C.drag||C.phase!=='walk')return false;
-  const g=mirGeo(), xy=dscXY(ev), wx=(xy[0]-g.cx)/g.u, wy=C.pos+(xy[1]-g.fy)/g.u;
-  let m=null, bd=MIR_GRAB;
-  for(const q of C.ms){const p=mirrorAt(q,C), d=Math.hypot(p[0]-wx,p[1]-wy); if(d<bd){bd=d; m=q;}}
-  m=m||C.ms.find(q=>q.st==='cage');
-  if(!m)return false;
-  C.drag={m,id:ev.pointerId,sx:xy[0],sy:xy[1],prev:{st:m.st,x:m.x,y:m.y}};
-  m.st='held'; m.swing=0; mirrorHeld(C);
+  const g=mirGeo(), xy=dscXY(ev), m=C.ms[xy[0]<g.cx?0:1];
+  C.drag={m,id:ev.pointerId,sy0:xy[1],spot0:m.spot};
   return true;
 }
-function mirrorMove(ev){const C=DESC, D=C.drag; if(!D||ev.pointerId!==D.id)return; const xy=dscXY(ev); D.sx=xy[0]; D.sy=xy[1]; mirrorHeld(C);}
-/* a lift sets the mirror where it is (back on the lantern if it is above the lens); a cancel puts it back where it was taken */
-function mirrorUp(ev,cancel){
-  const C=DESC, D=C.drag; if(!D||(ev&&ev.pointerId!==D.id))return;
-  const m=D.m; C.drag=null;
-  if(cancel){m.st=D.prev.st; m.x=D.prev.x; m.y=D.prev.y; return;}
-  if(m.y>=C.pos+MIR_TOP)m.st='set'; else{m.st='cage'; m.swing=1;}
-}
+function mirrorMove(ev){const C=DESC, D=C.drag; if(!D||ev.pointerId!==D.id)return; const g=mirGeo(), xy=dscXY(ev);
+  D.m.spot=clamp(D.spot0+(xy[1]-D.sy0)/g.u*MIR_GAIN,MIR_SPOT[0],MIR_SPOT[1]);}
+/* a lift leaves the mirror where it is; a cancel puts it back where it was when the touch began */
+function mirrorUp(ev,cancel){const C=DESC, D=C.drag; if(!D||(ev&&ev.pointerId!==D.id))return; if(cancel)D.m.spot=D.spot0; C.drag=null;}
 /* one step of The Mirror Stair, dt ≤ 0.05 of real time */
 function mirrorStep(dt){
   const C=DESC; if(!C.active||(C.phase!=='walk'&&C.phase!=='out'))return;
   C.t+=dt; C.flash=Math.max(0,C.flash-dt*2.5);
   C.pos+=MIR_SPEED*dt*(C.phase==='out'?.6:1);
-  if(C.drag)mirrorHeld(C);
-  for(const m of C.ms){m.swing=Math.max(0,m.swing-dt*2); if(m.st==='set'&&m.y<C.pos+MIR_TOP){m.st='cage'; m.swing=1;}}
-  /* the beam strikes the first mirror below the lens that stands in it, and crosses to the wall on that mirror's side */
-  let hit=null;
-  if(C.phase==='walk')for(const m of C.ms){if(m.st==='cage'||Math.abs(m.x)>MIR_IN||m.y<C.pos+MIR_TOP||m.y>C.pos+MIR_BEAM)continue; if(!hit||m.y<hit.y)hit=m;}
-  C.hit=hit; C.crossOn=!!hit;
-  let side=0, ey=0;
-  if(hit){side=mirrorSide(hit); const o=MIR_OUT[side>0?1:0], k=(side*MIR_W-hit.x)/(Math.abs(o[0])>1e-6?o[0]:side*1e-6);
-    ey=hit.y+o[1]*k; C.cross[0]=hit.x; C.cross[1]=hit.y; C.cross[2]=hit.x+o[0]*k; C.cross[3]=ey;}
   for(const s of C.sc){
     if(s.lit||s.dark){s.lt+=dt; continue;}
-    if(hit&&s.side===side&&Math.abs(s.y-ey)<=MIR_TOL){s.heat+=dt;
+    const m=C.ms[s.side>0?1:0];
+    if(C.phase==='walk'&&Math.abs(s.y-(C.pos+m.spot))<=MIR_TOL){s.heat+=dt;
       if(s.heat>=MIR_KINDLE){s.lit=true; s.lt=0; C.lit++; C.flash=1; AUDIO.kindle(); continue;}}
-    /* sunk past: no mirror below the lens can reach it now */
-    if(C.pos+MIR_TOP>s.y+MIR_TOL){s.dark=true; s.lt=0; C.dark++; AUDIO.snuff();}
+    else s.heat=Math.max(0,s.heat-MIR_COOL*dt);
+    /* risen past the highest the light can reach: it stays dark */
+    if(s.y<C.pos+MIR_SPOT[0]-MIR_TOL){s.dark=true; s.lt=0; C.dark++; AUDIO.snuff();}
   }
   if(C.phase==='walk'&&(C.pos>=C.len||C.t>=MIR_CAP)){
     for(const s of C.sc)if(!s.lit&&!s.dark){s.dark=true; s.lt=0; C.dark++;}
-    C.phase='out'; C.endAt=C.t; C.hit=null; C.crossOn=false;
+    C.phase='out'; C.endAt=C.t;
   }
 }
 /* what the shaft comes to: each sconce lit widens the lamp below, each left dark narrows it. o (tests) may give only dark */
@@ -4923,8 +4910,8 @@ function paintSconce(c,wx,y,side,u,s,tm,still){
   }
 }
 function drawMirror(c,w,h,tm){
-  const C=DESC, u=Math.min(w/6.2,h/7.4), sp=dscSprites(u), M=mirSprites(), cx=w/2, fy=h*MIR_FY, still=reduceMotion, lite=gfxLite;
-  const Y=y=>fy+(y-C.pos)*u, X=x=>cx+x*u, wallX=MIR_W*u, px=Math.max(1,u*.03);
+  const C=DESC, u=mirrorU(w,h), sp=dscSprites(u), M=mirSprites(), cx=w/2, fy=h*MIR_FY, still=reduceMotion, lite=gfxLite;
+  const Y=y=>fy+(y-C.pos)*u, X=x=>cx+x*u, wallX=MIR_W*u, px=Math.max(1,u*.03), held=C.drag&&C.drag.m;
   c.setTransform(1,0,0,1,0,0); c.globalAlpha=1; c.globalCompositeOperation='source-over';
   c.fillStyle='#050607'; c.fillRect(0,0,w,h);
   /* the shaft: courses of stone on its back wall and blocks in its sides, scrolling up as the lantern sinks */
@@ -4932,15 +4919,16 @@ function drawMirror(c,w,h,tm){
   c.fillStyle='#14181a'; c.fillRect(cx-wallX,0,wallX*2,h);
   c.fillStyle='rgba(0,0,0,.42)';
   for(let k=Math.floor(y0/crs);k*crs<y1;k++){const yy=Y(k*crs); c.fillRect(cx-wallX,yy,wallX*2,px);
-    if(!lite){const off=(k&1)?.5:0; for(let j=-2;j<=2;j++){const xx=cx+(j+off)*1.15*u; if(xx>cx-wallX&&xx<cx+wallX)c.fillRect(xx,yy,px,crs*u);}}}
+    if(!lite){const off=(k&1)?.5:0; for(let j=-3;j<=3;j++){const xx=cx+(j+off)*1.15*u; if(xx>cx-wallX&&xx<cx+wallX)c.fillRect(xx,yy,px,crs*u);}}}
   c.fillStyle='#1d2225'; c.fillRect(0,0,cx-wallX,h); c.fillRect(cx+wallX,0,w-cx-wallX,h);
   c.fillStyle='rgba(0,0,0,.4)'; c.fillRect(cx-wallX,0,u*.14,h); c.fillRect(cx+wallX-u*.14,0,u*.14,h);
   if(!lite){c.fillStyle='rgba(6,8,9,.7)'; const blk=.7;
     for(let k=Math.floor(y0/blk);k*blk<y1;k++){const yy=Y(k*blk); c.fillRect(0,yy,cx-wallX,px); c.fillRect(cx+wallX,yy,w-cx-wallX,px);
       const off=(k&1)?.55:0; for(let j=0;j<4;j++){const xx=(j+off)*1.1*u; c.fillRect(cx-wallX-xx,yy,px,blk*u); c.fillRect(cx+wallX+xx,yy,px,blk*u);}}}
-  /* the beam: from the lens straight down to the first mirror in it (or its full length), and across from that mirror */
-  const beamOn=C.phase==='walk', hit=C.hit, cr=C.crossOn?C.cross:null, bTop=Y(C.pos+MIR_TOP), bBot=hit?Y(hit.y):Y(C.pos+MIR_BEAM), bw=u*.42;
-  const cx0=cr?Math.min(X(cr[0]),X(cr[2])):0, cxw=cr?Math.abs(X(cr[2])-X(cr[0])):0, cy=cr?Y(cr[1]):0;
+  /* each mirror's beam, from its glass along mirrorOut to the stone; it always ends on the wall, in a spot of light */
+  const on=C.phase==='walk'||C.phase==='tip', bw=u*.3;
+  for(const m of C.ms){mirrorAim(m); const k=(MIR_W-MIR_ARM[0])/Math.max(.05,Math.abs(m.ox)); m.len=k*u; m.px=X(m.side*MIR_ARM[0]); m.py=fy+MIR_ARM[1]*u;
+    m.ex=m.px+m.ox*k*u; m.ey=m.py+m.oy*k*u; m.ang=Math.atan2(m.oy,m.ox);}
   /* the dark, holed where light falls */
   if(!lite){
     if(!M.mask||M.mask.width!==w||M.mask.height!==h){M.mask=document.createElement('canvas'); M.mask.width=w; M.mask.height=h;}
@@ -4948,28 +4936,33 @@ function drawMirror(c,w,h,tm){
     g.globalCompositeOperation='source-over'; g.globalAlpha=1; g.clearRect(0,0,w,h); g.fillStyle='rgba(3,4,5,.93)'; g.fillRect(0,0,w,h);
     g.globalCompositeOperation='destination-out';
     let R=1.5*u; g.drawImage(M.hole,cx-R,fy-R,R*2,R*2);
-    if(beamOn){g.globalAlpha=.8; g.drawImage(M.cut,cx-bw,bTop,bw*2,Math.max(1,bBot-bTop)); if(cr)g.drawImage(M.cutV,cx0,cy-bw,cxw,bw*2); g.globalAlpha=1;}
+    if(on)for(const m of C.ms){g.save(); g.translate(m.px,m.py); g.rotate(m.ang); g.globalAlpha=.8; g.drawImage(M.cutV,0,-bw*1.4,m.len,bw*2.8); g.restore();
+      R=u*.85; g.globalAlpha=.9; g.drawImage(M.hole,m.ex-R,m.ey-R,R*2,R*2); g.globalAlpha=1;}
     for(const s of C.sc){const sy=Y(s.y); if(sy<-2*u||sy>h+2*u)continue; const sx=X(s.side*(MIR_W-.3));
       if(s.lit){R=u*(1.1+Math.min(1,s.lt*2)*.6)*(still?1:1+Math.sin(tm*5+s.y)*.03); g.drawImage(M.hole,sx-R,sy-R,R*2,R*2);}
       else if(s.heat>0){R=u*.7*s.heat/MIR_KINDLE; g.drawImage(M.hole,sx-R,sy-R,R*2,R*2);}}
     c.drawImage(M.mask,0,0);
   }else{c.fillStyle='rgba(3,4,5,.7)'; c.fillRect(0,0,w,h);}
-  /* the light itself, added over the dark */
+  /* the light itself, added over the dark: the lantern, both beams and where they strike */
   c.save(); c.globalCompositeOperation='lighter';
   let gw=u*1.25; c.globalAlpha=.6; c.drawImage(sp.warm,cx-gw,fy-gw,gw*2,gw*2);
-  if(beamOn){const fl=still?1:.9+Math.sin(tm*11)*.05; c.globalAlpha=.5*fl; c.drawImage(M.beam,cx-u*.17,bTop,u*.34,Math.max(1,bBot-bTop));
-    c.globalAlpha=.22*fl; c.drawImage(M.beam,cx-bw,bTop,bw*2,Math.max(1,bBot-bTop));
-    if(cr){c.globalAlpha=.5*fl; c.drawImage(M.beamV,cx0,cy-u*.17,cxw,u*.34); c.globalAlpha=.22*fl; c.drawImage(M.beamV,cx0,cy-bw,cxw,bw*2);}}
+  if(on){const fl=still?1:.9+Math.sin(tm*11)*.05;
+    for(const m of C.ms){c.save(); c.translate(m.px,m.py); c.rotate(m.ang);
+      c.globalAlpha=.5*fl; c.drawImage(M.beamV,0,-u*.12,m.len,u*.24); c.globalAlpha=.2*fl; c.drawImage(M.beamV,0,-bw,m.len,bw*2); c.restore();
+      gw=u*.55; c.globalAlpha=.7*fl; c.drawImage(sp.warm,m.ex-gw,m.ey-gw,gw*2,gw*2);}}
   for(const s of C.sc){if(!s.lit)continue; const sy=Y(s.y); if(sy<-2*u||sy>h+2*u)continue; gw=u*(.7+Math.min(1,s.lt*2)*.3);
     c.globalAlpha=.75; c.drawImage(sp.warm,X(s.side*(MIR_W-.3))-gw,sy-u*.2-gw,gw*2,gw*2);}
   c.restore();
-  /* dust drifting down the beam */
-  if(beamOn&&!lite&&!still&&bBot>bTop){c.fillStyle='rgba(255,226,170,.7)'; const L=bBot-bTop;
-    for(let m=0;m<14;m++){const mx=cx+(hash(m,1,7)-.5)*bw*1.2, my=bTop+((hash(m,2,7)*L+tm*u*.3*(hash(m,3,7)+.3))%L);
-      c.globalAlpha=.35+.4*hash(m,4,7); c.fillRect(mx,my,Math.max(1,u*.025),Math.max(1,u*.025));}
+  /* dust turning in the beams */
+  if(on&&!lite&&!still){c.fillStyle='rgba(255,226,170,.7)';
+    for(const m of C.ms)for(let q=0;q<7;q++){const f=((hash(q,1,m.side+3)+tm*.12*(hash(q,3,7)+.4))%1), off=(hash(q,2,m.side+5)-.5)*bw;
+      c.globalAlpha=.3+.4*hash(q,4,7); c.fillRect(m.px+(m.ex-m.px)*f-Math.sin(m.ang)*off,m.py+(m.ey-m.py)*f+Math.cos(m.ang)*off,Math.max(1,u*.025),Math.max(1,u*.025));}
     c.globalAlpha=1;}
   /* the sconces, over the dark */
   for(const s of C.sc){const sy=Y(s.y); if(sy<-u||sy>h+u)continue; paintSconce(c,X(s.side*MIR_W),sy,s.side,u,s,tm,still);}
+  /* where each beam strikes: a thin ring on the stone, so the aim reads even where the light is faint */
+  if(on)for(const m of C.ms){c.strokeStyle=m===held?'rgba(255,214,140,.9)':'rgba(237,180,90,.45)'; c.lineWidth=Math.max(1.5,u*.03);
+    c.beginPath(); c.arc(m.ex-m.side*u*.12,m.ey,u*MIR_TOL,0,TAU); c.stroke();}
   /* the gallery's floor below, near the end: the name of where the shaft lets out */
   const fl=FLOORS[C.f1], ey=Y(C.len+2);
   if(ey<h+u&&fl){c.save(); c.globalAlpha=clamp(1-(ey-fy)/(h*.5),0,1)*.9; c.textAlign='center'; c.textBaseline='middle';
@@ -4984,33 +4977,28 @@ function drawMirror(c,w,h,tm){
   c.fillStyle='#fff0c8'; c.fillRect(cx-u*.08,fy-u*.1,u*.16,u*.16);
   c.fillStyle='#211b16'; for(const bx of [-.17,-.06,.03,.14])c.fillRect(cx+bx*u,fy-u*.17,u*.03,u*.3);
   c.fillStyle='#1c1814'; c.beginPath(); c.moveTo(cx-u*.2,fy+u*.13); c.lineTo(cx+u*.2,fy+u*.13); c.lineTo(cx+u*.11,fy+u*.25); c.lineTo(cx-u*.11,fy+u*.25); c.closePath(); c.fill();
-  c.fillStyle=beamOn?'#fff6dc':'#8a7a5c'; c.beginPath(); c.ellipse(cx,fy+u*.27,u*.07,u*.03,0,0,TAU); c.fill();
-  /* the mirrors: hanging from hooks on the lantern, set in the shaft, or riding above the thumb */
+  /* the arms from the crown, the pivots, and the mirrors turned on them */
   for(const m of C.ms){
-    if(m.st==='cage'){
-      const sw=still?0:Math.sin(tm*1.7+m.home)*.05+m.swing*Math.sin(tm*9)*.45, hx=cx+m.home*u*.3, hy=fy-u*.22, mx=X(m.home*MIR_CAGE), my=fy+u*.1;
-      c.strokeStyle='#3a342e'; c.lineWidth=Math.max(1,u*.022); c.beginPath(); c.moveTo(hx,hy); c.lineTo(mx,my-u*.08); c.stroke();
-      paintPane(c,mx,my,m.home*.5+sw,u,false,false);
-    }else{
-      const sd=mirrorSide(m), inCol=Math.abs(m.x)<=MIR_IN, mx=X(m.x), my=Y(m.y);
-      /* a held mirror in the column that the beam does not reach shows where it would throw the light */
-      if(m.st==='held'&&inCol&&m!==hit&&m.y>=C.pos+MIR_TOP){c.strokeStyle='rgba(237,180,90,.35)'; c.lineWidth=Math.max(1,u*.025); c.setLineDash([u*.1,u*.1]);
-        c.beginPath(); c.moveTo(mx,my); c.lineTo(X(sd*MIR_W),my); c.stroke(); c.setLineDash([]);}
-      paintPane(c,mx,my,MIR_LEAN[sd>0?1:0],u,m===hit&&beamOn,!inCol&&m.st!=='held');
-      if(m.st==='held'){c.strokeStyle='rgba(237,180,90,.55)'; c.lineWidth=Math.max(1,u*.025); c.beginPath(); c.arc(mx,my,u*.46,0,TAU); c.stroke();}
-    }
+    c.strokeStyle='#3a342e'; c.lineWidth=Math.max(1.5,u*.045); c.lineCap='round';
+    c.beginPath(); c.moveTo(cx+m.side*u*.1,fy-u*.45); c.quadraticCurveTo(cx+m.side*u*.35,fy-u*.62,m.px,m.py); c.stroke();
+    paintPane(c,m.px,m.py,m.rot,u*.85,on,false);
+    c.fillStyle='#6b5530'; c.beginPath(); c.arc(m.px,m.py,u*.045,0,TAU); c.fill();
+    if(m===held){c.strokeStyle='rgba(237,180,90,.6)'; c.lineWidth=Math.max(1,u*.025); c.beginPath(); c.arc(m.px,m.py,u*.38,0,TAU); c.stroke();}
   }
   if(lite){const vw=Math.max(w,h)*1.1; c.globalAlpha=.6; c.drawImage(sp.vig,cx-vw,fy-vw,vw*2,vw*2); c.globalAlpha=1;}
   if(C.flash>0){c.fillStyle='rgba(255,200,120,'+(.14*C.flash)+')'; c.fillRect(0,0,w,h);}
 }
-/* the Grimoire's picture of The Mirror Stair: the beam down from the top, a mirror turning it, a sconce catching */
+/* the Grimoire's picture of The Mirror Stair: the lantern's light caught by a mirror on its arm and thrown onto a sconce */
 function mirrorIcon(c,n){
-  const mx=n*.55, my=n*.6, sx=n*.2;
-  c.strokeStyle='rgba(255,222,150,.9)'; c.lineWidth=n*.035; c.lineCap='round';
-  c.beginPath(); c.moveTo(mx,n*.12); c.lineTo(mx,my); c.lineTo(sx+n*.06,my); c.stroke();
-  c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=.6; const s=dscSprites(n/2).warm; c.drawImage(s,sx-n*.22,my-n*.36,n*.44,n*.44); c.restore();
-  paintSconce(c,n*.08,my+n*.04,-1,n*.55,{lit:true,lt:1,y:0,dark:false,heat:0},0,true);
-  paintPane(c,mx,my,MIR_LEAN[0],n*.55,true,false);
+  const lx=n*.72, ly=n*.6, mx=n*.56, my=n*.36, sx=n*.2, sy=n*.62;
+  c.save(); c.globalCompositeOperation='lighter'; const s=dscSprites(n/2).warm;
+  c.globalAlpha=.55; c.drawImage(s,lx-n*.2,ly-n*.2,n*.4,n*.4); c.globalAlpha=.6; c.drawImage(s,sx-n*.2,sy-n*.4,n*.4,n*.4); c.restore();
+  c.strokeStyle='rgba(255,222,150,.9)'; c.lineWidth=n*.035; c.lineCap='round'; c.beginPath(); c.moveTo(mx,my); c.lineTo(sx+n*.05,sy-n*.1); c.stroke();
+  c.fillStyle='#e8b464'; c.fillRect(lx-n*.05,ly-n*.06,n*.1,n*.12); c.fillStyle='#1c1814'; c.fillRect(lx-n*.07,ly-n*.09,n*.14,n*.03);
+  c.strokeStyle='#3a342e'; c.lineWidth=n*.025; c.beginPath(); c.moveTo(lx,ly-n*.09); c.lineTo(mx,my); c.stroke();
+  paintSconce(c,n*.08,sy+n*.04,-1,n*.55,{lit:true,lt:1,y:0,dark:false,heat:0},0,true);
+  const il=Math.hypot(mx-lx,my-ly), ol=Math.hypot(sx-mx,sy-n*.1-my);
+  paintPane(c,mx,my,mirrorTurn((mx-lx)/il,(my-ly)/il,(sx-mx)/ol,(sy-n*.1-my)/ol),n*.5,true,false);
 }
 /* each descent's game, for the frame: its layout (a pure roll on sub-stream sub of SALT.descent), its per-play state, a step on
    real time, what it comes to and pays, its counts, its painter and its touch. A new descent adds a row, and a new sub */
@@ -5023,7 +5011,7 @@ const DSC_GAME={
     title:r=>r.fail?'The shaft stays dark':r.dark?'The beam crosses':'Every sconce burns',pay:mirrorPay,counts:mirrorCounts,draw:drawMirror,
     down:mirrorDown,move:mirrorMove,up:mirrorUp,go:'Tap to sink',
     hud:'<span class="dsc-stat">Lit <b id="dscLit">0</b> of <b>'+MIR_N+'</b></span><span class="dsc-stat" id="dscStatD">Dark <b id="dscDark">0</b></span>',
-    prompt:'Drag a mirror off the lantern into its beam',label:'The Mirror Stair: drag a mirror into the lantern’s beam to throw its light onto the sconces'}
+    prompt:'Hold a side, drag up or down to swing its mirror',label:'The Mirror Stair: drag up or down on either side to swing that mirror and throw the lantern’s light onto the sconces'}
 };
 
 function saveBest(won){
@@ -9284,7 +9272,7 @@ const TIPS={
      (keyed by DSC_GAME[k].tip: 'mirror' was already the Signal Mirror's) */
   descentdoor:{where:'landing',when:()=>false,title:'A descent',text:'A door marked with a cupped flame has a descent behind it: a short game on the way down, played after the toll. It pays, and it costs. Failing it never ends the run. The other doors are only stairs.'},
   carry:{where:'descent',when:()=>false,title:'The Carry',get text(){return 'Hold your thumb down anywhere to cup the flame. A sleeper inside its light begins to stir, and its eyes start to open; hidden, it settles again. Hold too long and you stumble: the flask spills and the flame flares. Lift between sleepers. Wake '+(['one','two','three','four','five'][CARRY_FAIL-1]||CARRY_FAIL)+' and you lose the flask.';}},
-  mirrorstair:{where:'descent',when:()=>false,title:'The Mirror Stair',text:'Drag a mirror off the lantern into its beam. It leans toward the wall on its side and throws the light across: hold it level with a cold sconce until the sconce catches. The beam stops at the first mirror it meets, so of two close together, light the lower first. A sconce you sink past unlit stays dark.'},
+  mirrorstair:{where:'descent',when:()=>false,title:'The Mirror Stair',text:'A mirror swings on each side of the lantern, one for each wall. Hold either side of the screen and drag up or down: that mirror turns, and its light runs up or down the wall. Hold the light on a cold sconce until it catches. The shaft keeps sinking, so follow the sconce up. One that rises out of reach unlit stays dark.'},
   fork:{when:()=>F.phase==='build'&&F.forks.length,steps:()=>{
     const out=[{title:'The stair forks',text:'Here the stair splits. They take the darker way, and only light you cast counts, never the lamp’s. The gold chevron shows where they will go. Shades and Stalkers hunt your light instead.',target:()=>F.forks[0]?coachBoard(F.forks[0].x,F.forks[0].y,.9):null}];
     if(trayItems().some(i=>i.type==='weir'))out.push({title:'The Weir',enter:()=>coachShowTray('weir'),text:'Build a Weir on the fork, lit or dark, and it shuts one way. Tap it between waves to flip it. Watchers fly over it, and a Behemoth breaks it.',target:()=>coachTray('weir')});

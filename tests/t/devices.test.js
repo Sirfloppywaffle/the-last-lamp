@@ -94,9 +94,9 @@ const DEV=[
     await p.evaluate(()=>{const T=__t; T.descentFinish({woke:0,spilt:0}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
     const dscOk=dsc.doorIn&&dsc.tip&&!dsc.sideways&&dsc.active&&dsc.statsIn&&dsc.clear&&dsc.still&&card.shown&&card.in&&card.thumb&&card.fits;
     if(!dscOk)console.log('FAIL '+nm+': the descent door, The Carry and its card',JSON.stringify({dsc,card}));
-    /* The Mirror Stair (Expansion 2, step 5): its counts and prompt sit inside the safe area, clear of the lantern and the beam;
-       the mirrors on the lantern stand clear of the back-swipe edges; the deepest point of the beam, with the thumb below the
-       mirror it holds, is still on screen above the gesture bar; the counts don't move as they change; the card fits */
+    /* The Mirror Stair (Expansion 2, step 5): its counts and prompt sit inside the safe area, the counts above the highest spot
+       of light and the prompt below the lowest, so neither covers a sconce you can reach; on a phone (500 px wide or less) the shaft fills most
+       of the width; the mirrors stand clear of the back-swipe edges; the counts don't move as they change; the card fits */
     const mir=await p.evaluate(ins=>{
       const T=__t; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
       const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
@@ -104,15 +104,13 @@ const DEV=[
       T.tutSet({walk:'done',seen:['mirrorstair'],off:false}); T.setDescentAuto(null);
       T.newRun('lamplighter',0,{seed:4242}); T.run.floor=2; T.run.descent={k:'mirror',f0:1,msg:''}; T.startDescent();
       const C=T.DESC, K=T.MIRK, o={active:C.active&&C.phase==='walk'&&C.k==='mirror'};
-      const ov=document.getElementById('dscOverlay').getBoundingClientRect(), u=Math.min(ov.width/6.2,ov.height/7.4), fy=ov.height*K.FY, cx=ov.width/2;
+      const ov=document.getElementById('dscOverlay').getBoundingClientRect(), u=T.mirrorU(ov.width,ov.height), fy=ov.height*K.FY, cx=ov.width/2;
       const stats=[...document.querySelectorAll('.dsc-stat')].map(q), prompt=q(document.querySelector('#dscPrompt span'));
       o.u=+u.toFixed(1); o.stats=stats; o.prompt=prompt; o.statsIn=stats.length===2&&stats.every(inside)&&inside(prompt);
-      /* the counts above the lantern's hood, the prompt below the end of the beam */
-      o.clear=stats.every(r=>r[3]<=fy-u*.55||r[2]<=cx-u*.4||r[0]>=cx+u*.4)&&prompt[1]>=fy+(K.BEAM+.1)*u;
-      const cages=C.ms.map(m=>[cx+m.home*K.CAGE*u,fy+.1*u]);
-      o.cages=cages.every(c=>c[0]-u*.34>=Math.max(24,ins.left)&&c[0]+u*.34<=innerWidth-Math.max(24,ins.right));
-      o.reach=+(fy+K.BEAM*u+Math.max(K.LIFT,u*.85)).toFixed(0); o.reachOk=o.reach<=innerHeight-ins.bottom-4;
-      const s=C.sc[0]; C.pos=s.y-1.6; C.ms[0].st='set'; C.ms[0].x=s.side*.3; C.ms[0].y=s.y; s.lit=true; s.lt=1; C.lit=1;
+      o.clear=stats.every(r=>r[3]<=fy+(K.SPOT[0]-K.TOL)*u-u*.25)&&prompt[1]>=fy+(K.SPOT[1]+K.TOL)*u;
+      o.shaft=+(K.W*2*u/ov.width).toFixed(2); o.wide=ov.width>500||o.shaft>=.8;
+      o.pivots=[-1,1].every(sd=>{const x=cx+sd*K.ARM[0]*u; return x-u*.3>=Math.max(24,ins.left)&&x+u*.3<=innerWidth-Math.max(24,ins.right)&&fy+K.ARM[1]*u-u*.2>=ins.top;});
+      const s=C.sc[0]; C.pos=s.y-1.2; C.ms[s.side>0?1:0].spot=1.2; s.lit=true; s.lt=1; C.lit=1;
       C.sc[1].dark=true; C.sc[1].lt=2; C.dark=1; C.hudKey=''; T.descentFrame(0);
       o.still=JSON.stringify(stats)===JSON.stringify([...document.querySelectorAll('.dsc-stat')].map(q));
       return o;},ins);
@@ -127,7 +125,7 @@ const DEV=[
       return o;},ins);
     await p.screenshot({path:(process.argv[3]||'.')+'/mirror-card-'+nm+'.png'});
     await p.evaluate(()=>{const T=__t; T.descentFinish({}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
-    const mirOk=mir.active&&mir.statsIn&&mir.clear&&mir.cages&&mir.reachOk&&mir.still&&mcard.shown&&mcard.in&&mcard.thumb&&mcard.fits;
+    const mirOk=mir.active&&mir.statsIn&&mir.clear&&mir.wide&&mir.pivots&&mir.still&&mcard.shown&&mcard.in&&mcard.thumb&&mcard.fits;
     if(!mirOk)console.log('FAIL '+nm+': The Mirror Stair and its card',JSON.stringify({mir,mcard}));
     const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk;
     if(!ok)bad++;
