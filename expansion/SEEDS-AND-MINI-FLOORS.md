@@ -112,7 +112,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 | 1 | Update this doc to round 1 | Claude, Sonnet 5.5 | medium |
 | 2 | Rewrite #95 with the pure-roll design | Claude, Sonnet 5.5 | low |
 | 3 | **Build seeds** (**done**, v18.6.0, #97) | Claude, Opus 5.5 | high |
-| 4 | **Build the descent mini-floor frame and The Carry** (**done**, v18.7.0, #98) | Claude, Opus 5.5 | high |
+| 4 | **Build the descent mini-floor frame and The Carry** (**done**, v18.7.0, #98; Criss played it: played well, no changes) | Claude, Opus 5.5 | high |
 | 5 | **Build The Mirror Stair** (**done**, v18.8.0, #100; reworked after Criss's first playtest) | Claude, Opus 5.5 | high |
 | 6 | Criss decides on The Winch and The Smothering (The Binding and The Cast are chosen) | Criss | |
 | 7 | **Next build: The Binding and the pledge** (5.1, 5.2, 5.4): the pledge card, `run.mini`, the relic pull, the sigil field, the kit filter, tests, tips, Grimoire | Claude, Opus 5.5 | high |
