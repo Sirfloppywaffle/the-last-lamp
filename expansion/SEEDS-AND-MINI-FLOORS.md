@@ -2,7 +2,7 @@
 
 **Status:** ideas only. Nothing here is built, and nothing changes the game. No changes to `index.html`, `tests/`, `tools/` or `.github/` (see `README.md`).
 **From Criss:** this is the second expansion, so right now we only brainstorm. Two ideas so far: a **seed system** (#95) and **mini-game floors** between the main floors. More ideas get added here (see section 5).
-**Who:** Claude drafted it, Gemini reviewed it (round 1, below), Criss steers. Round 1 is settled; what remains open is in section 4.
+**Who:** Claude drafted it, Gemini reviewed it (round 1, below), Criss steers. Round 1 is settled. Round 2 (Criss's **Binding** idea, the failure cost, and mini floor 6) is folded in at section 5 by Claude, Sonnet 5.5, and has not been reviewed by Gemini. What remains open is in section 4.
 
 ---
 
@@ -86,8 +86,10 @@ Landings after floors **2, 3 and 4** (the gaps 2→3, 3→4, 4→5). Floor 1→2
 | 2 | **The Carry** | **pilot** | hide | Hold your thumb to cup a small flame through a gallery of sleepers. Show light too long and they stir; hold too long and you stumble. | oil | madness for every sleeper woken |
 | 3 | **The Winch** | candidate (Gemini) | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch a falling flask or purse. | oil, or an essence purse | a snag costs oil |
 | 4 | **The Smothering** | candidate (Gemini) | order | Black fumes rise the tube. Snuff three wicks in the order of their brightness, dimmest first, before they reach the lamp. | oil refilled | madness for a wrong snuff |
-| 5 | *open* | needs a mechanic | | Gemini's **Snare Line** (cut tangled lines at tension notches) is a timing tap. Is there a spookier verb? | | |
-| 6 | *open* | needs a mechanic | | Gemini's **Black Tide** (drag weights onto the lantern through a torrent) has no clear challenge yet. | | |
+| 5 | **The Binding** | candidate (Criss) | draw | Trace three different sigils, each a short connect-the-dots path, before the lantern sinks past the creature it holds. A wrong stroke resets only that sigil. | a bound horror, named on the door | the **pledge**: what you put up is forfeit on failure (5.2) |
+| 6 | **The Cast** | candidate (Claude) | aim | Drag back and loose a weighted line at three iron rings on the swaying shaft wall; the cable sways, so lead it. Each ring caught is kept. | a rite charge | each line cast is weighted with a tenth of your essence, caught or not (5.3) |
+
+Gemini's **Snare Line** (a timing tap) and **Black Tide** (no clear challenge) stay out; The Cast takes the one verb nothing else uses (aim).
 
 **Cut:** The Bone Field, The Narrow Door, The Drowning Stair, The Bell Below (reasons in section 0).
 
@@ -96,7 +98,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 ### 2.5 Risks
 
 - **The Smothering** needs brightness to be distinguishable on a phone in a dark scene. Test it on a Fold, not a headless screenshot.
-- **Reward order.** The toll cuts everything but salvage to 30% when you descend. A mini-floor reward granted **after** the toll skips the cut, which would make a purse the best essence in the game. Decide the order before balance (section 4).
+- **Reward order.** The toll cuts everything but salvage to 30% when you descend. A mini-floor reward granted **after** the toll skips the cut, which would make a purse the best essence in the game. Decide the order before balance (section 4). The Binding pays no essence and takes its pledge from post-toll essence, so the order does not matter for it (5.2).
 - **Do not become a minigame collection.** A player should leave a mini floor hungrier for the lamp, not relieved to be out of the tower defense.
 - **Mirror Stair needs the Signal Mirror's beam logic** (`mirror` ward). Reuse it, don't copy it.
 - **Tests:** each mini floor needs a headless hook (run it, set the outcome, assert the reward and cost), and a 14-size layout check.
@@ -112,7 +114,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 | 3 | **Build seeds:** name, copy button, same-stair replay, no embers on replays, dev paste, tests, tip, rules line | Claude, Opus 5.5 | high |
 | 4 | **Build the descent mini-floor frame and The Carry** | Claude, Opus 5.5 | high |
 | 5 | **Build The Mirror Stair** | Claude, Opus 5.5 | high |
-| 6 | Criss plays both on the PR previews; decide on the other four | Criss | |
+| 6 | Criss plays both on the PR previews; decide on the other four (The Winch, The Smothering, The Binding, The Cast) | Criss | |
 | 7 | Balance numbers, in their own PR | Claude, Opus 5.5 | high |
 
 Each build is a normal feature PR against `index.html`, reviewed as usual (a self-review while Gemini is paused, or `/gemini re-review` when Criss asks), with tests, tips, rules lines and Grimoire entries (rule 23). Criss says when an idea graduates.
@@ -121,10 +123,67 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 
 ## 4. Still open
 
-1. **Reward order:** do mini-floor rewards land before or after the toll? [Claude's call: after the toll, but essence rewards are capped small, so the stair's price still bites. Revisit at balance.]
-2. **Mini floors 5 and 6:** what are they? Needs a mechanic, not a mood.
-3. **Criss's additions** (section 5).
+1. **Reward order:** do mini-floor rewards land before or after the toll? [Claude's call: after the toll, but essence rewards are capped small, so the stair's price still bites. The Binding sidesteps it (5.2). Revisit at balance.]
+2. **Mini floors 5 and 6:** **proposed** The Binding (Criss's) and The Cast (Claude's). Criss to confirm or swap.
+3. **The pledge (5.2), for Criss:** (a) are the two kinds right, an essence share and a relic you can spare; (b) is the in-game word "pledge" right; (c) the relic: the newest one you could spare, or your pick; (d) a reload mid-mini-floor restarts it with the pledge still out, which lets an app-kill buy a retry (Claude's call: accept it, because a folded Fold can reload the tab and a forfeit for that is cruel).
+4. **Criss's additions** (section 5): The Binding is folded in. More still welcome.
 
 ## 5. Criss's additions
 
 *(Criss adds his further Expansion 2 ideas here, and Claude folds them into the plan.)*
+
+### 5.1 The Binding (Criss), round 2
+
+- **What you do.** The lantern sinks past a creature held in its light. Three different sigils come one at a time, each a short path through a field of 5 to 7 dots. Trace each in order with one thumb; dots snap, and a wandering stroke resets only that sigil. All three before the lantern passes the creature, about 25 to 35 seconds (inside the 45 cap).
+- **Pays:** one bound horror into `run.roster`, fielded like any other, so it carries its madness (pillar 2). Never essence, never embers (section 0). The creature is named on the door and chosen by a pure roll, like the rest of the stair.
+- **Offered:** only to kits that field horrors. Never the Galvanist (`gridKit()`): the same filter as Swallowed Sigils and the relic `needs` filter (v18.5.0). At most once a run (section 2.2).
+- **Tone:** it fits the existing violet sigil. Today you *tap* a sigil a kill leaves; here you *draw* one. Pushback: that makes the tap feel thin, and a skilled player could farm horrors. The once-a-run cap and the kit filter hold that down; if Criss finds it overlaps, the horror kind on the door can be one the player cannot get by the tap.
+
+### 5.2 The failure cost: the pledge
+
+**Call: adopt the stake, narrowed. In-game it is a *pledge*** ("You lay 60 essence on the stone."). "Stake" reads as gambling, and Knucklebones already owns that. Gambling pays double; a pledge only comes back.
+
+**Rejected costs, for the record**
+- (a) 3 madness: it tangles with the Occultist (bound-horror madness feeds his spears and deed) and the Many-Mouthed's dread.
+- (b) Cap horrors in the first wave, (c) one more creature next wave: nothing for a kit with no horrors, almost nothing for a strong build.
+- **A few oil:** a rounding error for builds that lose none.
+- **Oil as the stake:** it shrinks as you get stronger (anti-scaling), and it is what ends a run, so a weak build spirals. Never.
+- **A bound horror as the stake:** Criss said losing one horror a stair "was no curse, especially for the Occultist" (v18.5.0, Choir in the Walls), and it is nothing to the Galvanist.
+- **A ward:** wards are stripped every floor (`floorCleared`); only the buildable list persists, and losing one touches the tray, trees and Trials. Too many systems for a 30-second floor.
+- **A cursed relic:** fail on purpose and shed the curse. Excluded.
+
+**The one rule that stops it being income: pledge only what you would arrive with.** The pledge is taken *after* the toll (`descend()` applies the toll, then the map, then `beginFloor()`), from the essence that survived. A win returns exactly that, no interest, so there is nothing to farm and no way to dodge the toll. The reward is separate and is a horror, not essence. A win is your baseline plus the reward; a failure is your baseline minus the pledge.
+
+**What can be pledged (two kinds):**
+1. **An essence share** of what you arrive with (one table number, say a quarter). It scales with the build, and a poor run pledges little, so it cannot spiral. Not offered if it would be under the Knucklebones floor of 20, or if essence is in debt (the Ossuary Key's credit).
+2. **A relic you can spare** (not cursed), for when you hold one. This is the tooth that stops it being dull. Build order: **essence first**; the relic pledge second, because a relic cannot simply be removed (Oil Reserve changed the brim) and needs a lose-relic path that undoes side effects.
+
+**No stall.** The door names the pledge in its sub-line, so taking the door is accepting it: no new screen. The plain stair stays the default. The pledge is deducted at the mini floor's start, as Knucklebones does (`run.ess-=r.stake`), kept as `run.mini={id,pot}` (old saves have none), and refunded on a win. If the pledge would be empty, the door shows as the plain stair.
+
+**Every mini floor? No.** A pledge belongs to a mini floor whose result is *binary*. The Binding either holds or it does not. The Carry, Mirror Stair and Smothering already cost something per mistake, shown as it happens (a woken sleeper, a dark sconce), which beats a lump forfeit; giving all six the same bet-play-collect shape would break section 2.2 ("a different cost each") and pillar 5. The Winch and The Cast keep their own per-try costs.
+
+### 5.3 Mini floor 6: The Cast
+
+- **Verb: aim.** Nothing else uses it (route, hide, steer, order, draw).
+- **What you do.** Iron rings hang on the shaft wall; the cable sways with the descent. Drag back from the bottom of the stage, which shows an arc, and loose a weighted line to catch a ring. 3 lines, 15 to 25 seconds, one thumb.
+- **Pays:** a rite charge, one extra cast of a rite you carry on the next floor, per ring caught (2 at most; a rite is a cooldown spell, so a charge is a new thing). **Costs:** each line is weighted with a tenth of your essence, caught or not. A share scales with the build where a flat oil cost does not.
+- **Touches light** only thinly: the rings show only inside the lantern's glow. Weakest of the six on pillar 1; Criss may want to cut it.
+
+### 5.4 Thumb test: drawing sigils on a folded Fold (rules 1 to 6)
+
+A review cannot test a thumb (section 0); only Criss's playtest settles it. On paper the idea passes only in this shape, and fails if the shape is freeform:
+- **Not freeform.** Free recognition of a drawn shape is jittery on glass. Use a **3×3 dot field that snaps**, like an unlock pattern: a thumb error under the snap radius is invisible.
+- **Rule 1 (nothing covers the board):** a thumb hides about 45 px. Show the sigil as a ghost under the field **and** in a strip above it, out of the thumb's way. The timer is a thin bar, not a modal.
+- **Rule 2 (nothing shifts):** the strip and bar have a fixed size, reserved from the start.
+- **Rule 3 (safe areas):** dots stay at least 24 px inside the screen edge, because Android's back swipe starts at the edge. Keep the field above the bottom gesture bar.
+- **Rule 4 (short landscape):** at 915×356 the field is about 170 px square with dots 56 px apart; it fits in `#app.side` only if the strip moves to the side column. Test it; likewise 852×342.
+- **Rule 5 (click, not pointerdown):** drawing needs pointer events, but the result card must appear 600 ms or more after the last lift and dismiss on `click`, or the lift lands on its button. A `pointercancel` (a palm, a fold) ends the stroke and never fails the floor.
+- **Rule 6:** touch only; `touch-action:none` on the field; no hover.
+- **Pace:** at about 8 seconds a sigil, 5 segments is the limit.
+
+### 5.5 Checked, touches, riskiest part
+
+- **§1:** touch only; bosses stay all-or-nothing and a failed mini floor never ends a run (the pledge cannot kill: it is essence or a relic, never oil); hard on purpose; the sigil is painted violet, glowing, silhouetted. **§9:** pillars 2, 4 and 5 hold. Pillar 1 is thin (the creature and the rings show only in the lantern's glow). **Rule 23:** each mini floor ships a first-time tip, a "How the dark works" line and a Grimoire **Descents** page, and the pledge gets its own tip and line.
+- **Systems touched:** `descend()` and `showMap()` (the frame), `makeDoors()` (the glyph and the pledge line), `run` and `resumeFrom()` (`run.mini`), `run.ess` (HUD, merchant, Ossuary Key credit), `run.relics` (relic pledge), `run.roster` and `HORRORS` (the reward, madness tiers, the Many-Mouthed's Gorger count), the kit filter, `tests/hook.js` (a headless hook for each mini floor), and the 14-size device test.
+- **Riskiest part: the pledge pot.** Essence leaves `run.ess` at the start and has to come back on every exit: a win, a failure, a reload mid-floor, quit to title and Continue. Miss one and essence vanishes or doubles. Second: a pure roll (seeds) picks the door, but whether the pledge exists depends on what you hold, so two plays of one seed can show a plain door where the other shows The Binding. Roll purely, then gate by state.
+- **Balance** (later PR): the pledge share, the reward's worth against it, the Cast's essence tenth.
