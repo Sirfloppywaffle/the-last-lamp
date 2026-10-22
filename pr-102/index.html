@@ -5136,7 +5136,10 @@ function bindFresh(lay){
    and the strip and creature on the left. Dots keep DSC_EDGE clear of the screen's sides and stay above the bottom bar */
 function bindGeo(){
   const C=DESC; if(C.geo)return C.geo;
-  const o=$('#dscOverlay'), w=o.clientWidth||innerWidth, h=o.clientHeight||innerHeight, hud=$('#dscHud'), cs=getComputedStyle(hud);
+  const o=$('#dscOverlay'), w=o.clientWidth||innerWidth, h=o.clientHeight||innerHeight;
+  /* worked out again only when the screen changes size (the frame clears C.geo every frame) */
+  if(C.bg&&C.bg.w===w&&C.bg.h===h)return (C.geo=C.bg);
+  const hud=$('#dscHud'), cs=getComputedStyle(hud);
   const padL=parseFloat(cs.paddingLeft)||16, padR=parseFloat(cs.paddingRight)||16, top=(hud.offsetHeight||30)+12;
   const pr=$('#dscPrompt'), bot=Math.max(44,(pr.offsetHeight||40)+6), side=w>h*1.15;
   let g,cx,cy,sx,sw,sh,mx,my,mu;
@@ -5151,7 +5154,7 @@ function bindGeo(){
     cx=w/2; cy=h-bot-g-r-6;
     const bT=top+sh, bB=cy-g-r; mx=w/2; my=(bT+bB)/2; mu=Math.min(w/6,(bB-bT)/2.8);
   }
-  return (C.geo={w,h,g,r:Math.max(18,g*BIND_SNAP),cx,cy,top,bot,padL,padR,sx,sy:top,sw,sh,mx,my,mu});
+  return (C.geo=C.bg={w,h,g,r:Math.max(18,g*BIND_SNAP),cx,cy,top,bot,padL,padR,sx,sy:top,sw,sh,mx,my,mu});
 }
 function bindDotXY(i,G){return [G.cx+(i%3-1)*G.g,G.cy+((i/3|0)-1)*G.g];}
 function bindDot(xy,G){G=G||bindGeo(); for(let i=0;i<9;i++){const d=bindDotXY(i,G); if(Math.hypot(xy[0]-d[0],xy[1]-d[1])<=G.r)return i;} return -1;}
@@ -5165,7 +5168,7 @@ function bindVisit(i){
     C.done++; C.prog=0; C.stroke=null; C.fp=null; C.flash=1; C.ring=1; AUDIO.bind(); try{if(navigator.vibrate)navigator.vibrate(30);}catch(e){}
     if(C.done>=BIND_N){C.phase='out'; C.endAt=C.t;}
     return;}
-  if(s.slice(0,C.prog).includes(i))return;
+  const k=s.indexOf(i); if(k>=0&&k<C.prog)return;
   C.prog=0; C.bad=1; C.wrong++; C.shake=reduceMotion?0:.6; AUDIO.snuff();
 }
 function bindDown(ev){
@@ -5221,9 +5224,9 @@ function bindCounts(C){const key=C.done+'|'+C.phase; if(key===C.hudKey)return; C
    for the time left; the three sigils in a strip; the field of dots under the thumb, with the sigil to draw as a ghost on it
    and what you have drawn in violet. Each sigil bound wraps a violet band round the creature. Lite drops the glows */
 const BIND_VIO='169,124,226';
-function bindPaint(c,s,G,x0,y0,sz,lw,a){
+function bindPaint(c,s,G,x0,y0,sz,lw,a,n){
   c.strokeStyle='rgba('+BIND_VIO+','+a+')'; c.lineWidth=lw; c.lineCap='round'; c.lineJoin='round'; c.beginPath();
-  s.forEach((i,k)=>{const x=x0+(i%3)*sz, y=y0+(i/3|0)*sz; if(k)c.lineTo(x,y); else c.moveTo(x,y);}); c.stroke();
+  n=n==null?s.length:n; for(let k=0;k<n;k++){const i=s[k], x=x0+(i%3)*sz, y=y0+(i/3|0)*sz; if(k)c.lineTo(x,y); else c.moveTo(x,y);} c.stroke();
 }
 function drawBinding(c,w,h,tm){
   const C=DESC, G=bindGeo(), d=DPR, still=reduceMotion, lite=gfxLite, u=G.mu*d, mx=G.mx*d, my=G.my*d;
@@ -5279,7 +5282,7 @@ function drawBinding(c,w,h,tm){
   if(live)bindPaint(c,s,G,fx,fy,g,Math.max(3,g*.11),.2);
   if(won)bindPaint(c,s,G,fx,fy,g,Math.max(3,g*.07),.95*(1-clamp((C.t-C.endAt)*.8,0,.6)));
   for(let i=0;i<9;i++){
-    const dx=fx+(i%3)*g, dy=fy+(i/3|0)*g, on=live&&s.slice(0,C.prog).includes(i);
+    const dx=fx+(i%3)*g, dy=fy+(i/3|0)*g, k2=s.indexOf(i), on=live&&k2>=0&&k2<C.prog;
     c.strokeStyle='rgba(228,221,204,.1)'; c.lineWidth=Math.max(1,d); c.beginPath(); c.arc(dx,dy,G.r*d,0,TAU); c.stroke();
     c.fillStyle=C.bad>0?'rgba(218,90,75,'+(.4+.5*C.bad)+')':on?'rgba('+BIND_VIO+',1)':'rgba(228,221,204,.7)';
     c.beginPath(); c.arc(dx,dy,Math.max(4,g*.085)*(on?1.3:1),0,TAU); c.fill();
@@ -5293,8 +5296,8 @@ function drawBinding(c,w,h,tm){
       c.fillStyle='rgba(237,180,90,.6)'; c.beginPath(); c.moveTo(ax+Math.cos(an)*rr*1.25,ay+Math.sin(an)*rr*1.25);
       c.lineTo(ax+Math.cos(an+.45)*rr,ay+Math.sin(an+.45)*rr); c.lineTo(ax+Math.cos(an-.45)*rr,ay+Math.sin(an-.45)*rr); c.fill();}
     if(C.prog>0){
-      if(!lite){c.save(); c.globalCompositeOperation='lighter'; bindPaint(c,s.slice(0,C.prog),G,fx,fy,g,Math.max(6,g*.2),.25); c.restore();}
-      bindPaint(c,s.slice(0,C.prog),G,fx,fy,g,Math.max(3,g*.07),.95);
+      if(!lite){c.save(); c.globalCompositeOperation='lighter'; bindPaint(c,s,G,fx,fy,g,Math.max(6,g*.2),.25,C.prog); c.restore();}
+      bindPaint(c,s,G,fx,fy,g,Math.max(3,g*.07),.95,C.prog);
       if(C.fp){const la=s[C.prog-1]; c.strokeStyle='rgba('+BIND_VIO+',.6)'; c.lineWidth=Math.max(2,g*.05); c.beginPath(); c.moveTo(fx+(la%3)*g,fy+(la/3|0)*g); c.lineTo(C.fp[0]*d,C.fp[1]*d); c.stroke();}
     }
   }
