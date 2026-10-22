@@ -84,7 +84,7 @@ Landings after floors **2, 3 and 4** (the gaps 2→3, 3→4, 4→5). Floor 1→2
 |---|---|---|---|---|---|---|
 | 1 | **The Mirror Stair** | **pilot** | route | As the lantern sinks, drag 2 or 3 mirrors to bounce its beam onto wall sconces. Each one lit is kept. | light: the next floor's lamp burns wider for its first wave | each missed sconce stays dark |
 | 2 | **The Carry** | **pilot** | hide | Hold your thumb to cup a small flame through a gallery of sleepers. Show light too long and they stir; hold too long and you stumble. | oil | madness for every sleeper woken |
-| 3 | **The Winch** | **chosen (Criss)** | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch falling purses (5.5). | essence: three small purses (the flask is cut, 5.5) | a snag costs the lamp oil |
+| 3 | **The Winch** | **chosen (Criss)** | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch falling purses (5.5). | essence: three small purses; sometimes the last holds a relic (5.5) | a snag costs the lamp oil |
 | 4 | **The Smothering** | **chosen (Criss)** | order | Black fumes rise the tube. Snuff three wicks in the order of their brightness, dimmest first, before they reach the lamp (5.6). Never the Occultist: madness feeds him. | depth: the lamp holds more oil for the run (not a refill, 5.6) | dread for a wrong snuff |
 | 5 | **The Binding** | **chosen (Criss)** | draw | Trace three different sigils, each a short connect-the-dots path, before the lantern sinks past the creature it holds. A wrong stroke resets only that sigil. | a bound horror, named on the door | the **pledge**: what you put up is forfeit on failure (5.2) |
 | 6 | **The Cast** | **chosen (Criss)** | aim | Drag back and loose a weighted line at three iron rings on the swaying shaft wall; the cable sways, so lead it. Each ring caught is kept. | a rite charge | each line cast is weighted with a tenth of your essence, caught or not (5.3) |
@@ -134,7 +134,7 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 
 **Still open**
 1. **Relic pledge, to revisit after a playtest:** a pull of 3 where you pick one lets a player with several relics offer the least-loved. Tune the pull then.
-2. **Mini floors 3 and 4: chosen** (round 4). Two calls in 5.5 and 5.6 change Gemini's table and wait on Criss (each marked **Decision needed**): the Winch drops the flask, and the Smothering pays depth, not a refill.
+2. **Mini floors 3 and 4: chosen** (round 4). The Winch's pay is settled (Criss, round 4: purses, the flask cut, and a drowned man's purse that sometimes holds a relic). One call still waits on Criss (**Decision needed**, 5.6): the Smothering pays depth, not a refill.
 3. **Criss's additions** (section 5): The Binding is folded in. More still welcome.
 
 ## 5. Criss's additions
@@ -209,37 +209,40 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 - **Verb: steer.** Sideways, the one way no other descent drags (the Mirror Stair drags up and down, the Cast drags back).
 - **What you do.** The cable snags and pays out in jerks as the lantern sinks. Drag anywhere, left or right: the lantern follows your thumb's sideways travel (relative, not under the thumb), a beat behind on its cable. Black ribs jut from both walls and narrow the shaft to a gap; arms reach out of slits in the stone and draw back on a rhythm, fingers first. Three purses are knocked loose above you, one at a time; a glint at the top edge marks where each will fall a second before it does. Be under it when it reaches the lantern and the hook takes it. Touch a rib or an arm and you snag. About 25 seconds.
 - **Pays: essence.** Each purse caught is a tenth of what you arrive with (after the toll), never under 4 or over 12: 36 at most. The Cast's mirror (a line costs a tenth, 5 to 20): the Cast spends essence for charges, the Winch earns it at the lamp's risk. Capped small because it lands after the toll (2.5).
+- **The drowned man's purse (Criss, round 4).** About one Winch in four, the last purse is a drowned man's, pale and waterlogged, and it holds a relic instead of essence. You see which it is from its glint, before it falls, so going for it is a choice. It falls behind the tightest gap of the shaft: the hardest catch. Caught, the relic is yours (`addRelic()`, so the Grimoire records it); missed, it sinks. Never a cursed relic: a curse sprung by a good catch reads as a cheat. Drawn from `relicPool(false)`, the pool a landing relic comes from, so it fits your kit and your unlocked packs. If that pool is empty, it is an ordinary purse.
 - **Costs: the lamp's oil.** Each snag is 1 oil, 3 at most. It also jerks the lantern still for 0.6 s and dims its glow a step for the rest of the shaft, so you see the next rib later: one snag invites the next. After a snag, 1 s of grace, so leaning on one rib is one snag, not thirty. Paid when the shaft ends, so a reload costs nothing (as the Cast). Through `loseOil()`, which never takes the last oil: it cannot end the run. No descent takes the lamp's oil yet (the Carry spills its own flask), so the cost is the Winch's alone.
 - **Light (pillar 1).** Ribs and arms show only inside the lantern's glow, and the arms reach for the light. The glow is how you read ahead; a snag shrinks it. The dark below the glow is where the thumb rests, so it covers nothing you need.
-- **Fail:** no purse caught. The snags are paid all the same. No lump forfeit (5.2: the Winch keeps its per-try cost).
+- **Fail:** no purse caught (a relic purse counts). The snags are paid all the same. No lump forfeit (5.2: the Winch keeps its per-try cost).
 
-**Pure roll (sub 7 of `SALT.descent`).** `winchLayout()`, inside `seeded(SALT.descent,7,…)`, draws once and in a fixed order: each rib (wall, depth, how far it juts), each arm (wall, depth, reach, its phase on the rhythm), each purse (when it falls, its x). The arms move as a function of time and their rolled phase, never `Math.random`, so a reload replays the same shaft. **Every purse is catchable:** its x lies in a gap no rib or arm closes when it arrives, at least the catch radius from a wall, and reachable from the last purse at the lantern's top speed. A purse that fails this rerolls inside the stream a fixed number of times, then takes the widest gap, so the draw count never changes. A row in `DSC_GAME`: `winch:{sub:7,tip:'winch',…}`.
+**Pure roll (sub 7 of `SALT.descent`).** `winchLayout()`, inside `seeded(SALT.descent,7,…)`, draws once and in a fixed order: each rib (wall, depth, how far it juts), each arm (wall, depth, reach, its phase on the rhythm), each purse (when it falls, its x), then whether the last is the drowned man's and which relic it holds. Both are always drawn, as a 0-to-1 roll and an index into the pool, so the draw count never depends on what you hold. The arms move as a function of time and their rolled phase, never `Math.random`, so a reload replays the same shaft. **Every purse is catchable:** its x lies in a gap no rib or arm closes when it arrives, at least the catch radius from a wall, and reachable from the last purse at the lantern's top speed. A purse that fails this rerolls inside the stream a fixed number of times, then takes the widest gap, so the draw count never changes. A row in `DSC_GAME`: `winch:{sub:7,tip:'winch',…}`.
 
-**Shape numbers** (shape, not balance; rule 22): sink 0.9 tiles/s; walls ±2; 6 ribs jutting 0.8 to 1.3; 3 arms, reach 1.2, out 0.9 s in every 2.4 s, fingers shown 0.5 s first; 3 purses, glint 1 s ahead; catch radius 0.35; cable lag 0.12 s; top sideways speed 3 tiles/s; glow 2.6 tiles, −0.3 a snag, never under 1.7; lurch 0.6 s, grace 1 s; snag 1 oil, 3 at most; purse 0.1 of arrival, 4 to 12; cap 40 s.
+**Shape numbers** (shape, not balance; rule 22): sink 0.9 tiles/s; walls ±2; 6 ribs jutting 0.8 to 1.3; 3 arms, reach 1.2, out 0.9 s in every 2.4 s, fingers shown 0.5 s first; 3 purses, glint 1 s ahead; catch radius 0.35; cable lag 0.12 s; top sideways speed 3 tiles/s; glow 2.6 tiles, −0.3 a snag, never under 1.7; lurch 0.6 s, grace 1 s; snag 1 oil, 3 at most; purse 0.1 of arrival, 4 to 12; a relic purse 0.25 of Winches; cap 40 s.
 
 **Tests** (`tests/t/winch.test.js`; `DESCENT_AUTO` settles it in the rest of the suite):
 - One seed lays out the same shaft twice; `Math.random` stubbed to throw while `winchLayout()` runs.
 - Over 200 seeds, a scripted lantern can reach every purse (the catchable rule holds).
 - Result table: 0 to 3 caught × 0 to 5 snags → essence and oil; snags cap at 3; purse at 4 and 12 for arrivals of 0, 60 and 500.
+- The relic purse: one seed draws the same relic, or none, twice; about a quarter of 1,000 seeds hold one; caught, `addRelic()` runs once and a reload before the end adds nothing; never cursed; an empty pool gives an ordinary purse.
 - At 1 oil, three snags leave the lamp at 1 and the floor begins.
 - Pressed against one rib for 3 s: one snag per grace window.
 - Reload mid-shaft replays it with nothing paid; the end pays once.
 - The pool holds six descents (five for the Galvanist and the Occultist); a seed's descent doors stand where they did.
 - 14 sizes: glint and HUD strip clear of notches; nothing shifts when a purse falls.
 
-**Rule 23:** a first-time tip (`TIPS.winch`: "Drag left or right to steer. Ribs and arms show only in the light. Be under a purse when it falls."), a clause in the Descents line of "How the dark works", its Grimoire Descents page (from its `DESCENTS` row), and a practice button in the Developer menu. Nothing new for the Grimoire's other tabs.
+**Rule 23:** a first-time tip (`TIPS.winch`: "Drag left or right to steer. Ribs and arms show only in the light. Be under a purse when it falls. A pale one holds a relic."), a clause in the Descents line of "How the dark works", its Grimoire Descents page (from its `DESCENTS` row), and a practice button in the Developer menu. Nothing new for the Grimoire's other tabs.
 
 **Checked.**
 - **Pillar 1:** fits, middling. The glow is read, and a snag shrinks it. Stronger than the Cast, weaker than the Mirror Stair.
-- **Pillar 2:** fits. Essence in, the lamp's oil out, capped and never the last drop.
+- **Pillar 2:** fits. Essence or a relic in, the lamp's oil out, capped and never the last drop. The relic is the bait: it sits behind the tightest gap, so chasing it is how you snag.
 - **Pillar 3:** fits. Arms from slits, fingers first, ribs as silhouettes.
 - **Pillar 4:** fits on paper: one sideways drag from anywhere. The worry is short landscape (915×356, 852×342): few tiles of shaft above and below the lantern. Size the tile to the stage's height, lantern at mid-stage, as the Cast does.
 - **Pillar 5:** fits. The only descent that pays essence and the only one that takes the lamp's oil.
 - **§1:** touch only; cannot end a run; bosses untouched; hard (a purse behind a closing gap); dark art.
-- **Does not fit as Gemini wrote it: the flask.** A flask pays oil against an oil cost, a wash, and it is the Carry's reward (2.2: a different currency each). **Call: purses only; the flask is cut. Decision needed (Criss):** keep the flask as a rarer drop if you want it, at the cost of 2.2.
+- **Does not fit as Gemini wrote it: the flask.** A flask pays oil against an oil cost, a wash, and it is the Carry's reward (2.2: a different currency each). **Settled (Criss, round 4): purses only, the flask cut, and the drowned man's purse added for teeth.**
 
 **Risks.**
 - **Essence after the toll:** 36 at most, and a Knucklebones room can sit behind the same door. Balance PR.
+- **A relic for 25 seconds is a lot.** The Binding asks a pledge for its horror; the Winch asks only oil and nerve. One in four, the hardest catch, and never twice a run hold it down; the balance PR may lower the chance or make the relic purse cost a snag's worth more.
 - **A snag at 1 oil costs nothing,** so a dry lamp plays it free. Accepted: it helps a weak run, not a strong one.
 - **Relative steering:** a player may expect the lantern under the thumb. Too much cable lag reads as input delay. Criss's play settles both.
 
