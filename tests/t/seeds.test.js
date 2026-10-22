@@ -20,9 +20,12 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   await p.evaluate(()=>{
     const T=__t;
     const J=o=>JSON.parse(JSON.stringify(o));
+    /* the run with its keys sorted: what it holds matters, not the order keys were first set in (a resumed run can add
+       one, like run.water, after the descent's keys rather than before) */
+    const canon=o=>Array.isArray(o)?o.map(canon):o&&typeof o==='object'?Object.keys(o).sort().reduce((m,k)=>{m[k]=canon(o[k]); return m;},{}):o;
     /* what a floor is, the moment it begins (the herald's rift is drawn lazily, so draw it here, the same in every walk) */
     window.__floorRec=()=>{if(T.run.draw&&T.run.draw.herald)T.heraldGate(T.run.draw.herald);
-      return {run:J(T.run),map:T.F.def.mapv,mapN:T.F.def.mapN,waves:J(T.F.def.waves),wnames:J(T.F.def.wnames),omen:T.F.omen,elite:T.F.elite,trial:T.F.trial};};
+      return {run:canon(T.run),map:T.F.def.mapv,mapN:T.F.def.mapN,waves:J(T.F.def.waves),wnames:J(T.F.def.wnames),omen:T.F.omen,elite:T.F.elite,trial:T.F.trial};};
     /* clear the floor and open its landing, as floorCleared() would after the last wave */
     window.__clear=()=>{T.F.foes=[]; T.F.queue=[]; T.F.wave=T.F.def.waves.length; T.F.phase='cleared'; T.openDraft(40,0);};
     /* from the open landing to the next floor. onStep(stepName) is called each time a step is on screen (and saved) */
@@ -114,7 +117,10 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       const reached=a.filter(r=>Array.isArray(r)&&r[0]&&r[0].run).length;
       a.forEach((r,f)=>{if(r&&r[0]&&r[0].run){(maps[f]=maps[f]||new Set()).add(r[0].map);}});
       const doors=a.flatMap(r=>Array.isArray(r)?r.filter(x=>Array.isArray(x)&&x[0]==='doors'):[]).length;
-      out.push({sd:c.sd,kit:c.kit,depth:c.depth,same:A===B,first,reached,doors,sig:A.length,key:JSON.stringify(a.map(r=>r&&r[0]&&r[0].map))+JSON.stringify(a[0]&&a[0][0]&&a[0][0].run.draw)});
+      /* the descent doors each walk was offered (Expansion 2): which landing, which door, which descent */
+      const dsc=w=>w.flatMap((r,f)=>Array.isArray(r)?r.filter(x=>Array.isArray(x)&&x[0]==='doors').flatMap(x=>x[1].map((d,i)=>d.descent?[f+1,i,d.descent]:null).filter(Boolean)):[]);
+      const dA=dsc(a), dB=dsc(b2);
+      out.push({sd:c.sd,kit:c.kit,depth:c.depth,same:A===B,first,reached,doors,sig:A.length,dA,dsame:JSON.stringify(dA)===JSON.stringify(dB),key:JSON.stringify(a.map(r=>r&&r[0]&&r[0].map))+JSON.stringify(a[0]&&a[0][0]&&a[0][0].run.draw)});
     }
     const counts=T.FLOORS.map((f,i)=>T.floorMaps(i).length), met=counts.map((n,f)=>maps[f]?[...maps[f]].sort().join():'');
     return {out,counts,met,bag:localStorage.getItem('ll-maps')};
@@ -123,6 +129,11 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     ok(w.same,`seed ${w.sd} (${w.kit}, depth ${w.depth}): two walks of floors 1 to 5 are identical`,w.first);
     ok(w.reached===5&&w.doors===4,`seed ${w.sd}: the walk reached all five floors through four landings`,w);
   }
+  /* a replayed stair offers the same descent doors, only on the landings after floors 2, 3 and 4 */
+  for(const w of walks.out)ok(w.dsame,`seed ${w.sd}: both walks offered the same descent doors`,w.dA);
+  const offered=walks.out.flatMap(w=>w.dA);
+  ok(offered.length>0&&offered.every(x=>x[0]>=2&&x[0]<=4),'descent doors were offered, and only after floors 2, 3 and 4',offered);
+  console.log('descent doors offered in',offered.length,'landings of',walks.out.length*4);
   ok(new Set(walks.out.map(w=>w.key)).size===walks.out.length,'different seeds draw different stairs',walks.out.map(w=>w.key));
   walks.counts.forEach((n,f)=>ok(walks.met[f]===[...Array(n).keys()].join(),`floor ${f+1}: the walks met every one of its ${n} maps`,walks.met[f]));
   ok(walks.bag===null,'seeded runs never write ll-maps',walks.bag);
@@ -153,7 +164,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
             out.push({sd,f:f+1,st,same:JSON.stringify(__floorRec())===nextRef&&JSON.stringify(rec)===refLanding});
           }else{
             __drive(rec);
-            out.push({sd,f:f+1,st,same:JSON.stringify(__floorRec())===nextRef,got:JSON.stringify(__floorRec()).slice(0,200),want:nextRef.slice(0,200)});
+            out.push({sd,f:f+1,st,same:JSON.stringify(__floorRec())===nextRef,got:JSON.stringify(__floorRec()),want:nextRef});
           }
         }
         /* carry on from where the reference stood */

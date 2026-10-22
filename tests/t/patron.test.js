@@ -232,7 +232,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     return out;});
   console.log(JSON.stringify(teach));
   ok(teach.chip&&teach.card.includes('Attention 1')&&teach.card.includes('Her Milk'),'her sign shows Attention and her gifts',teach.card);
-  ok(teach.book.includes('The Drowned Mother')&&teach.book.includes('Her Milk')&&teach.tabs===7,'the Grimoire has a Patrons page',teach);
+  ok(teach.book.includes('The Drowned Mother')&&teach.book.includes('Her Milk')&&teach.tabs===8,'the Grimoire has a Patrons page',teach);
   ok(teach.rules,'How the dark works explains patrons');
   ok(teach.tip==='water','the first water gets a tip',teach.tip);
 
