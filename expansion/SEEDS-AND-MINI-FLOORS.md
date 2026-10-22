@@ -85,7 +85,7 @@ Landings after floors **2, 3 and 4** (the gaps 2→3, 3→4, 4→5). Floor 1→2
 | 1 | **The Mirror Stair** | **pilot** | route | As the lantern sinks, drag 2 or 3 mirrors to bounce its beam onto wall sconces. Each one lit is kept. | light: the next floor's lamp burns wider for its first wave | each missed sconce stays dark |
 | 2 | **The Carry** | **pilot** | hide | Hold your thumb to cup a small flame through a gallery of sleepers. Show light too long and they stir; hold too long and you stumble. | oil | madness for every sleeper woken |
 | 3 | **The Winch** | **chosen (Criss)** | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch falling purses (5.5). | essence: three small purses (the flask is cut, 5.5) | a snag costs the lamp oil |
-| 4 | **The Smothering** | **chosen (Criss)** | order | Black fumes rise the tube. Snuff three wicks in the order of their brightness, dimmest first, before they reach the lamp (5.6). | depth: the lamp holds more oil for the run (not a refill, 5.6) | dread for a wrong snuff |
+| 4 | **The Smothering** | **chosen (Criss)** | order | Black fumes rise the tube. Snuff three wicks in the order of their brightness, dimmest first, before they reach the lamp (5.6). Never the Occultist: madness feeds him. | depth: the lamp holds more oil for the run (not a refill, 5.6) | dread for a wrong snuff |
 | 5 | **The Binding** | **chosen (Criss)** | draw | Trace three different sigils, each a short connect-the-dots path, before the lantern sinks past the creature it holds. A wrong stroke resets only that sigil. | a bound horror, named on the door | the **pledge**: what you put up is forfeit on failure (5.2) |
 | 6 | **The Cast** | **chosen (Criss)** | aim | Drag back and loose a weighted line at three iron rings on the swaying shaft wall; the cable sways, so lead it. Each ring caught is kept. | a rite charge | each line cast is weighted with a tenth of your essence, caught or not (5.3) |
 
@@ -224,7 +224,7 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 - At 1 oil, three snags leave the lamp at 1 and the floor begins.
 - Pressed against one rib for 3 s: one snag per grace window.
 - Reload mid-shaft replays it with nothing paid; the end pays once.
-- The pool holds six descents (five for the Galvanist); a seed's descent doors stand where they did.
+- The pool holds six descents (five for the Galvanist and the Occultist); a seed's descent doors stand where they did.
 - 14 sizes: glint and HUD strip clear of notches; nothing shifts when a purse falls.
 
 **Rule 23:** a first-time tip (`TIPS.winch`: "Drag left or right to steer. Ribs and arms show only in the light. Be under a purse when it falls."), a clause in the Descents line of "How the dark works", its Grimoire Descents page (from its `DESCENTS` row), and a practice button in the Developer menu. Nothing new for the Grimoire's other tabs.
@@ -251,6 +251,7 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 - **Pays: depth.** Each plume snuffed clean (all three, in order, before the fumes arrive) deepens the lamp: it holds 1 more oil for the rest of the run, 3 at most. Through `run.baseOilMax` and `updateOilMax()`, the path the Rest room and events use, so relic oil mods stay right. Paid at the end.
 - **Costs: dread.** Each wrong snuff, and each plume that reaches the lantern with a wick still lit, is 1 dread on the next floor, 3 at most. A wrong snuff still puts that wick out; the plume can't be clean, but you finish it. Kept as `run.fume={floor,n}`, read in `dread()` beside the Carry's `wokeDread()`. Paid at the end, so a reload costs nothing.
 - **Fail:** no plume clean. Nothing paid; the dread stands.
+- **Offered: never to the Occultist (Criss, round 4).** His Bone Spears, Risen and horrors hit harder with every madness tier, and dread raises the tier, so a wrong snuff would feed him instead of biting him: a mistake that pays breaks pillar 2. Its `DESCENTS` row gets `fits:()=>run.kit!=='occultist'`, the same filter that keeps the Binding from the Galvanist. Every other kit may draw it.
 
 **Pure roll (sub 8 of `SALT.descent`).** `smotherLayout()`, inside `seeded(SALT.descent,8,…)`, draws per plume: which niche holds which brightness, each wick's drift (a slow swing with a rolled phase and size; plumes 2 and 3 only) and the plume's rise. A wick's brightness is a function of the layout and time only. **Fair by construction:** at most one crossing a plume, never in its first 1.5 s; and two wicks within a tie band of each other both count as the dimmest, so a crossing can never make a right read wrong. Every plume leaves time for three taps with a reaction margin. A row in `DSC_GAME`: `smother:{sub:8,tip:'smothering',…}`.
 
@@ -265,6 +266,7 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 - A wrong snuff: 1 dread, that wick out, the plume not clean. A plume reaching the lantern: 1 dread. Dread caps at 3 and lasts the next floor only; an old save with no `run.fume` reads 0.
 - Depth: +1 capacity a clean plume through `baseOilMax`; it survives adding and removing an oil-cap relic, and a save and resume.
 - `pointercancel` and a slide off snuff nothing.
+- The Occultist's pool never holds it, over many seeds; every other kit's does.
 - 14 sizes: three targets of 48 px or more, 24 px clear of the edges, at 915×356 and 852×342 too (a row across the tube fits the short height).
 
 **Rule 23:** a first-time tip (`TIPS.smothering`: "Tap the wicks out, dimmest first, before the fumes reach the lantern. Out of order, the smoke comes down with you."), a clause in the Descents rules line, its Grimoire Descents page, a practice button. Depth needs no tip of its own: the Rest room already teaches it.
@@ -276,11 +278,12 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 - **Pillar 4: the real risk** (2.5 flagged it). Brightness in a dark scene on a phone is hard to read, and only Criss's Fold settles it. So step 10 starts with a one-screen prototype (`expansion/proto/`, its own `LL_STORE_NS`) for Criss to play before the full build. If it fails, the fallback reads the flame's height alone, which is less about light.
 - **Pillar 5: does not fit as Gemini wrote it.** "Oil refilled" for madness is the Carry's trade exactly (oil in, dread out), so two of six descents would be one bargain with two verbs, and 2.2 asks a different currency each. **Call: pay depth.** The Carry tops the lamp up now; the Smothering makes it hold more for the rest of the run. The cost stays Criss's (madness, as dread; 2.2 asks only the pay to differ). **Decision needed (Criss):** keep the refill if you'd rather, knowing it is the Carry's trade.
 - **§1:** touch only; dread cannot end a run; bosses untouched; hard (the drift); dark art.
+- **Pillar 2 for the Occultist:** fails, so he is never offered it (above).
 - **Length:** one plume alone is about 5 s, under the 15 s floor (2.2). That is why there are three.
 
 **Risks.**
 - **Depth overlaps the Rest room** ("Deepen the reservoir", +3). A Rest room and a Smothering can be one door, so +6 is possible. Balance PR.
-- **Dread feeds the Occultist:** madness tiers sharpen his Bone Spears, so a wrong snuff is a small gain for him. The Carry already does this; noted, not fixed.
+- **The Carry has the same hole:** it is built, offered to the Occultist, and pays its mistakes in dread, which feeds him. Criss's rule for the Smothering says it should get the same filter. **Decision needed (Criss):** add `fits` to the Carry in the Smothering's build PR? It shrinks the Occultist's pool to four.
 - **`run.fume` is a new saved field:** old saves have none (reads 0), and it counts only on its floor, as `run.woke` does.
 - **A tap game can feel thin** beside the others. The drift is what makes it a game; if it is too easy, tighten the rise, not the wick count (Criss said three).
 
@@ -300,7 +303,7 @@ Today each landing after floors 2 to 4 rolls once (`DESCENT_CHANCE` 0.7) for one
 | 4 (today) | 2.1 | 2.7% | 0.53 |
 | **6, at 0.7** | **2.1** | **2.7%** | **0.35** |
 | 6, at 0.8 | 2.4 | 0.8% | 0.40 |
-| 5 (the Galvanist), at 0.7 | 2.1 | 2.7% | 0.42 |
+| 5 (the Galvanist: no Binding; the Occultist: no Smothering), at 0.7 | 2.1 | 2.7% | 0.42 |
 
 - **Call: keep 0.7.** Six descents don't change how many doors carry one (about two a run, and the plain stair stands on every landing). They spread those doors over more kinds, which is pillar 5, at the price of each showing about one run in three. Raising it to 0.8 buys little (0.35 → 0.40) and makes a descent near certain on every landing: section 2.5's warning about a minigame collection.
 - **No weighting toward descents you haven't seen.** It would read `ll-codex`, which differs per phone, so one seed would offer different doors on two phones (rule 11b). The roll stays pure.
