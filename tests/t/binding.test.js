@@ -242,6 +242,15 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(/The Binding/.test(taught.book)&&/pledge/.test(taught.book),'the Grimoire’s Descents page has The Binding',taught.book.slice(0,300));
   ok(taught.prac&&taught.kept,'practice in developer mode pledges nothing and keeps nothing',taught);
 
+  /* 6. the tab is closed at the card, then Continue from a fresh page: the card, then The Binding, then the floor */
+  await p.evaluate(()=>{__t.setDescentAuto(null); __takeBinding(71,1,400,[],'shrieker');});
+  await p.reload(); await p.waitForTimeout(400);
+  const fresh=await p.evaluate(()=>{const T=__t; T.setDescentAuto(null); document.getElementById('continueBtn').click();
+    const o={card:document.getElementById('mTitle').textContent,shown:!document.getElementById('modal').hidden};
+    const b2=[...document.querySelectorAll('#mChoices .choice')][0]; b2.click(); o.active=T.DESC.active&&T.DESC.k==='binding';
+    T.descentFinish({done:3}); o.phase=T.F&&T.F.phase; o.roster=T.run.roster.shrieker||0; o.mini=T.run.mini; return o;});
+  ok(fresh.shown&&fresh.card==='The Binding'&&fresh.active&&fresh.phase==='build'&&fresh.roster>=1&&fresh.mini===null,'Continue on a fresh page at the card: the card, The Binding, then the floor',fresh);
+
   ok(!errs.length,'no page errors',errs);
   await b.close();
   if(fails.length){fails.forEach(f=>console.log('FAIL '+f)); process.exit(1);}
