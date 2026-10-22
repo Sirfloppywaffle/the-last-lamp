@@ -117,8 +117,8 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 | 6 | Criss decides on The Winch and The Smothering (**done**, round 4: both chosen; designed at 5.5 and 5.6) | Criss | |
 | 7 | **Built: The Binding and the pledge** (**done**, #102; 5.1, 5.2, 5.4): the pledge card, `run.mini`, the relic pull, the sigil field, the kit filter, tests, tips, Grimoire | Claude, Opus 5.5 | high |
 | 8 | **Built: The Cast** (**done**, #103; 5.3): the aim and line, the rite charge, the essence tenth, tests, tips, Grimoire | Claude, Opus 5.5 | high |
-| 9 | **Build The Winch** (5.5): the steer, ribs and arms, the purses, the snag's oil, tests, tips, Grimoire | Claude, Opus 5.5 | high |
-| 10 | **Build The Smothering** (5.6): the wicks and their drift, the fumes, dread, the lamp's depth, tests, tips, Grimoire. **Fold test first:** Criss plays a one-screen brightness check before the full build | Claude, Opus 5.5 | high |
+| 9 | **Build The Winch** (5.5; #105): the steer, ribs and arms, the purses, the snag's oil, tests, tips, Grimoire | Claude, Opus 5.5 | high |
+| 10 | **Build The Smothering** (5.6; Fold test #106, then the build #107): the wicks and their drift, the fumes, dread, the lamp's depth, tests, tips, Grimoire. **Fold test first:** Criss plays a one-screen brightness check before the full build | Claude, Opus 5.5 | high |
 | 11 | Balance numbers for all six, in their own PR | Claude, Opus 5.5 | high |
 
 Each build is a normal feature PR against `index.html`, reviewed as usual (a self-review while Gemini is paused, or `/gemini re-review` when Criss asks), with tests, tips, rules lines and Grimoire entries (rule 23). Criss says when an idea graduates.
