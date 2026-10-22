@@ -26,7 +26,10 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const canon=o=>Array.isArray(o)?o.map(canon):o&&typeof o==='object'?Object.keys(o).sort().reduce((m,k)=>{m[k]=canon(o[k]); return m;},{}):o;
     /* what a floor is, the moment it begins (the herald's rift is drawn lazily, so draw it here, the same in every walk) */
     window.__floorRec=()=>{if(T.run.draw&&T.run.draw.herald)T.heraldGate(T.run.draw.herald);
-      return {run:canon(T.run),map:T.F.def.mapv,mapN:T.F.def.mapN,waves:J(T.F.def.waves),wnames:J(T.F.def.wnames),omen:T.F.omen,elite:T.F.elite,trial:T.F.trial};};
+      /* run.newEye is the Nameless's hood tip, set by the first binding of a kind ever (ll-codex, which outlives a run): the
+         second walk has met it already. It is no stair roll, so it is left out */
+      const rr=canon(T.run); delete rr.newEye;
+      return {run:rr,map:T.F.def.mapv,mapN:T.F.def.mapN,waves:J(T.F.def.waves),wnames:J(T.F.def.wnames),omen:T.F.omen,elite:T.F.elite,trial:T.F.trial};};
     /* clear the floor and open its landing, as floorCleared() would after the last wave */
     window.__clear=()=>{T.F.foes=[]; T.F.queue=[]; T.F.wave=T.F.def.waves.length; T.F.phase='cleared'; T.openDraft(40,0);};
     /* from the open landing to the next floor. onStep(stepName) is called each time a step is on screen (and saved) */
