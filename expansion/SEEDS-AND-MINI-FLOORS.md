@@ -2,7 +2,7 @@
 
 **Status:** ideas only. Nothing here is built, and nothing changes the game. No changes to `index.html`, `tests/`, `tools/` or `.github/` (see `README.md`).
 **From Criss:** this is the second expansion, so right now we only brainstorm. Two ideas so far: a **seed system** (#95) and **mini-game floors** between the main floors. More ideas get added here (see section 5).
-**Who:** Claude drafted it, Gemini reviewed it (round 1, below), Criss steers. Round 1 is settled. Round 2 (Criss's **Binding** idea, the failure cost, and mini floor 6) is folded in at section 5 by Claude, Sonnet 5.5, and has not been reviewed by Gemini. What remains open is in section 4.
+**Who:** Claude drafted it, Gemini reviewed it (round 1, below), Criss steers. Round 1 is settled. Round 2 (Criss's **Binding** idea, the failure cost, and mini floor 6) is folded in at section 5 by Claude, Sonnet 5.5, and has not been reviewed by Gemini. Round 3 folds in Criss's answers on the pledge and picks mini floor 6 (The Cast); it is Claude's too, and equally unreviewed. What remains open is in section 4.
 
 ---
 
@@ -87,7 +87,7 @@ Landings after floors **2, 3 and 4** (the gaps 2→3, 3→4, 4→5). Floor 1→2
 | 3 | **The Winch** | candidate (Gemini) | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch a falling flask or purse. | oil, or an essence purse | a snag costs oil |
 | 4 | **The Smothering** | candidate (Gemini) | order | Black fumes rise the tube. Snuff three wicks in the order of their brightness, dimmest first, before they reach the lamp. | oil refilled | madness for a wrong snuff |
 | 5 | **The Binding** | candidate (Criss) | draw | Trace three different sigils, each a short connect-the-dots path, before the lantern sinks past the creature it holds. A wrong stroke resets only that sigil. | a bound horror, named on the door | the **pledge**: what you put up is forfeit on failure (5.2) |
-| 6 | **The Cast** | candidate (Claude) | aim | Drag back and loose a weighted line at three iron rings on the swaying shaft wall; the cable sways, so lead it. Each ring caught is kept. | a rite charge | each line cast is weighted with a tenth of your essence, caught or not (5.3) |
+| 6 | **The Cast** | **chosen (Criss)** | aim | Drag back and loose a weighted line at three iron rings on the swaying shaft wall; the cable sways, so lead it. Each ring caught is kept. | a rite charge | each line cast is weighted with a tenth of your essence, caught or not (5.3) |
 
 Gemini's **Snare Line** (a timing tap) and **Black Tide** (no clear challenge) stay out; The Cast takes the one verb nothing else uses (aim).
 
@@ -123,9 +123,14 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 
 ## 4. Still open
 
+**Closed by Criss (round 3)**
+- **Mini floor 6** is **The Cast** (5.3).
+- **The pledge (5.2):** (a) the two kinds, an essence share and a relic, are right; (b) the word is **pledge**; (c) the relic is **a random pull of 3 non-cursed relics, and you pick which one**; (d) a reload mid-mini-floor restarts it with the pledge still out: **accepted**.
+
+**Still open**
 1. **Reward order:** do mini-floor rewards land before or after the toll? [Claude's call: after the toll, but essence rewards are capped small, so the stair's price still bites. The Binding sidesteps it (5.2). Revisit at balance.]
-2. **Mini floors 5 and 6:** **proposed** The Binding (Criss's) and The Cast (Claude's). Criss to confirm or swap.
-3. **The pledge (5.2), for Criss:** (a) are the two kinds right, an essence share and a relic you can spare; (b) is the in-game word "pledge" right; (c) the relic: the newest one you could spare, or your pick; (d) a reload mid-mini-floor restarts it with the pledge still out, which lets an app-kill buy a retry (Claude's call: accept it, because a folded Fold can reload the tab and a forfeit for that is cruel).
+2. **Mini floor 5 (The Binding):** Criss did not name it in round 3. It is his own idea, so it is treated as chosen. Criss to confirm, or swap.
+3. **The relic pick (5.2), new from (c), for Criss to veto:** the pull of 3 needs a small card, the one new screen in the pledge. Claude's calls are in 5.2 (which door gets which kind, fewer than 3 relics, effects while pledged). Veto any.
 4. **Criss's additions** (section 5): The Binding is folded in. More still welcome.
 
 ## 5. Criss's additions
@@ -156,13 +161,21 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 
 **What can be pledged (two kinds):**
 1. **An essence share** of what you arrive with (one table number, say a quarter). It scales with the build, and a poor run pledges little, so it cannot spiral. Not offered if it would be under the Knucklebones floor of 20, or if essence is in debt (the Ossuary Key's credit).
-2. **A relic you can spare** (not cursed), for when you hold one. This is the tooth that stops it being dull. Build order: **essence first**; the relic pledge second, because a relic cannot simply be removed (Oil Reserve changed the brim) and needs a lose-relic path that undoes side effects.
+2. **A relic**, for when you hold one that is not cursed. This is the tooth that stops it being dull. **Criss's call (round 3):** the game pulls **3 of your non-cursed relics at random and you pick which one** to put up. Build order: **essence first**; the relic pledge second, because losing a relic needs a lose-relic path that undoes side effects (below).
 
-**No stall.** The door names the pledge in its sub-line, so taking the door is accepting it: no new screen. The plain stair stays the default. The pledge is deducted at the mini floor's start, as Knucklebones does (`run.ess-=r.stake`), kept as `run.mini={id,pot}` (old saves have none), and refunded on a win. If the pledge would be empty, the door shows as the plain stair.
+**Which door gets which kind (Claude's call).** A pure roll picks the kind per door; then state gates it. If the rolled kind cannot be paid (no essence over the floor, or no non-cursed relic), the door takes the other kind; if neither, it shows as the plain stair. So the door never asks you to choose a kind, and one seed still shows the same door glyph (roll purely, then gate by state; 5.5).
+
+**The relic pick (Claude's call).** Taking a relic-pledge door opens one small card with the pulled relics (rule 23 voice: "You lay one on the stone."). It is the only new screen in the pledge, and it has a way out: back to the plain stair. The pull is drawn when the door is taken and kept in `run.mini`, so a reload shows the same three. With three or more non-cursed relics it is a pull of 3; with two or one it shows what you hold (one is take it or leave it); with none the door cannot carry a relic pledge. Cursed relics never appear, so a failure cannot shed a curse (5.2, rejected costs).
+
+**A pledged relic stays in `run.relics`, marked, with its effects on, until the floor resolves (Claude's call).** Do not take it out at the start and give it back on a win. In `index.html`, `addRelic()` pays Oil Reserve's oil again, and with an empty list it resets `baseOilMax`, so removing then re-adding a relic would pay twice or skew the brim. Only a failure calls `removeRelic()` (it already undoes the oil cap, but not Oil Reserve's oil; the failure path still has to handle that). A win does nothing to the relic.
+
+**No stall for essence.** The door names the pledge in its sub-line, so taking the door is accepting it: no new screen. The plain stair stays the default. The essence pledge is deducted at the mini floor's start, as Knucklebones does (`run.ess-=r.stake`), kept as `run.mini={id,pot}` (old saves have none; for a relic pledge `pot` holds the relic and the pulled three), and refunded on a win. If the pledge would be empty, the door shows as the plain stair.
+
+**Reload (Criss, round 3: accepted).** A reload mid-mini-floor restarts it with the pledge still out. That means an app-kill buys a retry, and Criss accepts it, because a folded Fold can reload the tab and a forfeit for that is cruel. For a relic pledge the restart keeps the same three and the same pick.
 
 **Every mini floor? No.** A pledge belongs to a mini floor whose result is *binary*. The Binding either holds or it does not. The Carry, Mirror Stair and Smothering already cost something per mistake, shown as it happens (a woken sleeper, a dark sconce), which beats a lump forfeit; giving all six the same bet-play-collect shape would break section 2.2 ("a different cost each") and pillar 5. The Winch and The Cast keep their own per-try costs.
 
-### 5.3 Mini floor 6: The Cast
+### 5.3 Mini floor 6: The Cast (chosen by Criss, round 3)
 
 - **Verb: aim.** Nothing else uses it (route, hide, steer, order, draw).
 - **What you do.** Iron rings hang on the shaft wall; the cable sways with the descent. Drag back from the bottom of the stage, which shows an arc, and loose a weighted line to catch a ring. 3 lines, 15 to 25 seconds, one thumb.
@@ -185,5 +198,5 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 
 - **§1:** touch only; bosses stay all-or-nothing and a failed mini floor never ends a run (the pledge cannot kill: it is essence or a relic, never oil); hard on purpose; the sigil is painted violet, glowing, silhouetted. **§9:** pillars 2, 4 and 5 hold. Pillar 1 is thin (the creature and the rings show only in the lantern's glow). **Rule 23:** each mini floor ships a first-time tip, a "How the dark works" line and a Grimoire **Descents** page, and the pledge gets its own tip and line.
 - **Systems touched:** `descend()` and `showMap()` (the frame), `makeDoors()` (the glyph and the pledge line), `run` and `resumeFrom()` (`run.mini`), `run.ess` (HUD, merchant, Ossuary Key credit), `run.relics` (relic pledge), `run.roster` and `HORRORS` (the reward, madness tiers, the Many-Mouthed's Gorger count), the kit filter, `tests/hook.js` (a headless hook for each mini floor), and the 14-size device test.
-- **Riskiest part: the pledge pot.** Essence leaves `run.ess` at the start and has to come back on every exit: a win, a failure, a reload mid-floor, quit to title and Continue. Miss one and essence vanishes or doubles. Second: a pure roll (seeds) picks the door, but whether the pledge exists depends on what you hold, so two plays of one seed can show a plain door where the other shows The Binding. Roll purely, then gate by state.
+- **Riskiest part: the pledge pot.** Essence leaves `run.ess` at the start and has to come back on every exit: a win, a failure, a reload mid-floor, quit to title and Continue. Miss one and essence vanishes or doubles. A relic pledge has its own two ways to go wrong: a failure that forfeits the relic but leaves Oil Reserve's oil in place, and a reload that re-pulls the three (so the pull belongs in `run.mini`, not in a fresh roll). Second: a pure roll (seeds) picks the door, but whether the pledge exists depends on what you hold, so two plays of one seed can show a plain door where the other shows The Binding. Roll purely, then gate by state.
 - **Balance** (later PR): the pledge share, the reward's worth against it, the Cast's essence tenth.
