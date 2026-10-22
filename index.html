@@ -4898,7 +4898,7 @@ function paintPane(c,x,y,rot,u,lit,dim){
   c.restore();
 }
 /* a sconce on the wall at (wx,y): an iron arm, a cup, a candle; lit, a flame; catching, an ember and a ring filling; left dark,
-   the candle black, and after a while two eyes in the wall beside it */
+   the candle black, and after a while two eyes in the stone behind it, out of the shaft where the mirrors work */
 const MIR_FLAME=[[1,'rgba(240,120,45,.9)'],[.66,'#ffc96e'],[.34,'#fff6dc']];
 function paintSconce(c,wx,y,side,u,s,tm,still){
   const d=-side, cx=wx+d*u*.3;
@@ -4917,7 +4917,7 @@ function paintSconce(c,wx,y,side,u,s,tm,still){
       c.fillStyle='rgba(255,170,90,'+(.4+.6*k)+')'; c.beginPath(); c.arc(cx,y-u*.26,u*(.02+.03*k),0,TAU); c.fill();
       c.strokeStyle='rgba(237,180,90,.85)'; c.lineWidth=Math.max(1.5,u*.035); c.beginPath(); c.arc(cx,y-u*.08,u*.3,-Math.PI/2,-Math.PI/2+k*TAU); c.stroke();}
   }else if(s.lt>.5){
-    const a=Math.min(1,(s.lt-.5)*1.5)*.75, bl=still||hash(Math.floor(tm*1.4+s.y*7),3,1)>.07?1:.1, ex=wx+d*u*.78, ey=y-u*.34;
+    const a=Math.min(1,(s.lt-.5)*1.5)*.75, bl=still||hash(Math.floor(tm*1.4+s.y*7),3,1)>.07?1:.1, ex=wx-d*u*.42, ey=y-u*.3;
     c.fillStyle='rgba(242,134,74,'+(a*bl)+')';
     c.beginPath(); c.ellipse(ex-u*.075,ey,u*.028,u*.02,0,0,TAU); c.moveTo(ex+u*.103,ey); c.ellipse(ex+u*.075,ey,u*.028,u*.02,0,0,TAU); c.fill();
   }
