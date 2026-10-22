@@ -1063,7 +1063,8 @@ const MIR_N=7, MIR_SPEED=1, MIR_W=2.1, MIR_ARM=[.55,-.55], MIR_SPOT=[-1,3.4], MI
    It binds one of BIND_KINDS, named on the door. The pledge: BIND_SHARE of the essence you arrive with, never under BIND_MIN
    (Knucklebones' floor) and never offered if you arrive with less; or one relic you pick from BIND_PULL non-cursed ones */
 const BIND_N=3, BIND_SEGS=[3,4,5], BIND_TIME=27, BIND_SNAP=.36, BIND_KINDS=['gnasher','watcher','wretch','shrieker','elite'],
-  BIND_SHARE=.25, BIND_MIN=20, BIND_PULL=3;
+  BIND_SHARE=.25, BIND_MIN=20, BIND_PULL=3,
+  BIND_RARE='elite', BIND_RARE_P=.08, BIND_COMMON=BIND_KINDS.filter(k=>k!==BIND_RARE);
 const ROOMS={
   merchant:{n:'A Merchant’s Alcove',tag:'Merchant',d:'Something trades in the dark. Spend your essence on relics, wards and bindings before the stair burns it.'},
   shrine:{n:'A Bleeding Shrine',tag:'Shrine',d:'Make a pact: power, for a price.'},
@@ -4482,7 +4483,7 @@ function descentGate(d){
   const door=d.doors.find(x=>x.descent==='binding'); if(!door)return;
   if(!pledgeEss(tollKeep(run.ess,d.salvage))&&!pledgeRelics().length){const alt=descentPool().find(k=>k!=='binding');
     if(alt)door.descent=alt; else delete door.descent; return;}
-  door.horror=seeded(SALT.descent,4,()=>pick(BIND_KINDS));
+  door.horror=seeded(SALT.descent,4,()=>RNG()<BIND_RARE_P?BIND_RARE:pick(BIND_COMMON));
 }
 function descentStop(){DESC.active=false; DSC_PTR.clear(); const o=$('#dscOverlay'); if(o)o.hidden=true;}
 /* opt.practice (developer mode): a descent played over the floor you are on. It pays nothing and saves nothing */
@@ -5128,7 +5129,7 @@ function bindFresh(lay){
   const m=run&&run.descent&&run.descent.k==='binding'?run.mini:null;
   /* practice (developer mode) has no door: any creature will do */
   return {sig:lay.sig,done:0,prog:0,stroke:null,fp:null,last:-1,wrong:0,bad:0,hint:0,ring:0,geo:null,
-    horror:m&&HORRORS[m.horror]?m.horror:BIND_KINDS[Math.floor(Math.random()*BIND_KINDS.length)],
+    horror:m&&HORRORS[m.horror]?m.horror:BIND_COMMON[Math.floor(Math.random()*BIND_COMMON.length)],
     pledge:m&&m.kind?{kind:m.kind,n:m.n|0,relic:m.relic||null}:null};
 }
 /* where the field lies, in CSS px: g between dots, r the snap. Upright, the sigils stand in a strip under the counts, the
