@@ -114,7 +114,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 | 3 | **Build seeds:** name, copy button, same-stair replay, no embers on replays, dev paste, tests, tip, rules line | Claude, Opus 5.5 | high |
 | 4 | **Build the descent mini-floor frame and The Carry** | Claude, Opus 5.5 | high |
 | 5 | **Build The Mirror Stair** | Claude, Opus 5.5 | high |
-| 6 | Criss plays both on the PR previews; decide on the other four (The Winch, The Smothering, The Binding, The Cast) | Criss | |
+| 6 | Criss plays both on the PR previews; decide on The Winch, The Smothering and The Binding (The Cast is chosen) | Criss | |
 | 7 | Balance numbers, in their own PR | Claude, Opus 5.5 | high |
 
 Each build is a normal feature PR against `index.html`, reviewed as usual (a self-review while Gemini is paused, or `/gemini re-review` when Criss asks), with tests, tips, rules lines and Grimoire entries (rule 23). Criss says when an idea graduates.
@@ -167,7 +167,7 @@ Each build is a normal feature PR against `index.html`, reviewed as usual (a sel
 
 **The relic pick (Claude's call).** Taking a relic-pledge door opens one small card with the pulled relics (rule 23 voice: "You lay one on the stone."). It is the only new screen in the pledge, and it has a way out: back to the plain stair. The pull is drawn when the door is taken and kept in `run.mini`, so a reload shows the same three. With three or more non-cursed relics it is a pull of 3; with two or one it shows what you hold (one is take it or leave it); with none the door cannot carry a relic pledge. Cursed relics never appear, so a failure cannot shed a curse (5.2, rejected costs).
 
-**A pledged relic stays in `run.relics`, marked, with its effects on, until the floor resolves (Claude's call).** Do not take it out at the start and give it back on a win. In `index.html`, `addRelic()` pays Oil Reserve's oil again, and with an empty list it resets `baseOilMax`, so removing then re-adding a relic would pay twice or skew the brim. Only a failure calls `removeRelic()` (it already undoes the oil cap, but not Oil Reserve's oil; the failure path still has to handle that). A win does nothing to the relic.
+**A pledged relic stays in `run.relics`, marked, with its effects on, until the floor resolves (Claude's call).** Do not take it out at the start and give it back on a win. In `index.html`, `addRelic()` pays Oil Reserve's oil on every add, so removing then re-adding that relic would pay it twice. Only a failure calls `removeRelic()` (it already undoes the oil cap, but not Oil Reserve's oil; the failure path still has to handle that). A win does nothing to the relic.
 
 **No stall for essence.** The door names the pledge in its sub-line, so taking the door is accepting it: no new screen. The plain stair stays the default. The essence pledge is deducted at the mini floor's start, as Knucklebones does (`run.ess-=r.stake`), kept as `run.mini={id,pot}` (old saves have none; for a relic pledge `pot` holds the relic and the pulled three), and refunded on a win. If the pledge would be empty, the door shows as the plain stair.
 
