@@ -42,7 +42,7 @@ const {chromium}=require('playwright');
     await p.tap('#bookBtn'); await p.waitForTimeout(300);
     let s=await p.evaluate(()=>({title:document.querySelector('#mTitle').textContent,paused:!!__t.BOOK&&document.querySelector('#modal').hidden===false,
       tabs:[...document.querySelectorAll('[data-book]')].map(x=>x.textContent),names:[...document.querySelectorAll('.book-e b')].map(x=>x.textContent)}));
-    if(s.title!=='The Grimoire'||s.tabs.join()!=='Creatures,Wards,Rites,Relics,Kits,Patrons,Trials')fail('the HUD book opens the Grimoire with its seven tabs '+JSON.stringify(s));
+    if(s.title!=='The Grimoire'||s.tabs.join()!=='Creatures,Wards,Rites,Relics,Kits,Patrons,Trials,Descents')fail('the HUD book opens the Grimoire with its eight tabs '+JSON.stringify(s));
     if(!s.names.includes('Shade')||s.names.includes('Trench Behemoth')||s.names.filter(n=>n==='???').length<5)fail('creatures met are named, the rest are ??? '+JSON.stringify(s.names));
     const lore=await p.evaluate(()=>[...document.querySelectorAll('.book-e')].find(e=>e.querySelector('b').textContent==='Shade').textContent);
     if(!/Veiled/.test(lore)||!/Life 30/.test(lore))fail('a met creature shows its numbers and how it works: '+lore);

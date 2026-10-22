@@ -327,6 +327,27 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 /* Map Overlay */
 #mapOverlay{position:fixed;inset:0;z-index:100;background:#050607;touch-action:none;display:flex;flex-direction:column}
 #mapCv{flex:1;width:100%;height:100%;display:block}
+.dsc-glyph{width:1.15em;height:1.15em;vertical-align:-.22em;margin-right:.35em;color:var(--tallow)}
+.choice.dsc-door{border-color:rgba(237,180,90,.5);background:linear-gradient(180deg,rgba(237,180,90,.07),transparent 60%),var(--slab)}
+.choice em.dsc-em{color:var(--tallow)}
+.dsc-tip{display:block;margin-top:8px;padding:8px 10px;border-left:2px solid var(--tallow);color:var(--bone);font-size:.88rem}
+#dscOverlay{position:fixed;inset:0;z-index:101;background:#050607;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none}
+#dscCv{position:absolute;inset:0;width:100%;height:100%;display:block}
+.dsc-hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;gap:12px;pointer-events:none;
+  padding:calc(10px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 0 calc(16px + env(safe-area-inset-left));
+  font-family:var(--f-num);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ash);white-space:nowrap}
+.dsc-hud b{display:inline-block;min-width:1.1em;text-align:center;color:var(--bone);font-weight:500}
+.dsc-stat.is-bad b{color:var(--wound)}
+.dsc-prompt{position:absolute;left:0;right:0;bottom:0;pointer-events:none;text-align:center;color:var(--bone);font-size:.95rem;opacity:.8;
+  padding:0 calc(16px + env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
+.dsc-prompt.is-gone{visibility:hidden}
+.dsc-cardwrap{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;
+  padding:calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
+.dsc-card{pointer-events:auto;width:100%;max-width:420px;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:7px;text-align:left;cursor:pointer;
+  padding:16px 18px;border-radius:10px;border:1px solid var(--seam);background:rgba(14,17,19,.95);color:var(--ash);font:inherit;font-size:.92rem;line-height:1.35}
+.dsc-card b{font-family:var(--f-display);font-weight:500;font-size:1.5rem;line-height:1.05;color:var(--bone)}
+.dsc-card i{font-style:normal;font-family:var(--f-num);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--tallow);margin-top:4px}
+.dsc-ctag{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tallow)}
 .map-skip{position:absolute;bottom:20px;right:20px;color:var(--ash);font-family:var(--f-num);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
 
 /* Slider Overrides */
@@ -473,7 +494,7 @@ input[type=range]::-moz-range-track {
         <li><b>Heralds.</b> Some floors send a Herald: a named terror in one wave, shown on the strip above the board in the break before it comes. It drains 8 oil if it reaches the lamp, but it is no boss and never ends the run by itself. Kill it and it pays a relic. Floors two to four each send one, and a descent never meets the same one twice. The Last Keeper carries a lamp of its own, and every candle it passes goes out for 6.5 seconds (a Tuning Fork falls silent). The Tithe-taker takes 2 essence a second while it walks in your light; kill it and the sack bursts, paying it all back and half again. In the break before a Herald's wave, a red ring marks the rift it will climb out of. The Bellfather strikes its great bell every 5 seconds, and wards within 2.2 tiles reel and do nothing for 2 seconds. No Herald can be held for long: after 3 seconds stunned or pinned it breaks free, and shrugs off every hold for 3 seconds. A boss's rift is marked the same way in the break before its wave, with a wider, doubled ring and two marks: it always climbs out there.</li>
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
         <li><b>Madness.</b> Every horror you field adds madness. At Whispers the lamp flickers. At Slipping a horror may break loose when a wave begins, and you may start to see eyes in the dark that are not there. When the dark leans in, the lamp shrinks and everything but a boss moves faster.</li>
-        <li><b>Dread.</b> The Many-Mouthed adds dread, striped at the end of the madness bar. Dread counts with madness toward every tier, but only the madness of horrors you paid for makes the Occultist stronger or opens free horrors. Dread brings only the dark.</li>
+        <li><b>Dread.</b> The Many-Mouthed adds dread, striped at the end of the madness bar, and so does every sleeper you wake on The Carry, for the floor below it. Dread counts with madness toward every tier, but only the madness of horrors you paid for makes the Occultist stronger or opens free horrors. Dread brings only the dark.</li>
         <li><b>Wards.</b> Your kit names the wards you start with: Candles, Harpoons, Salt, Hook Traps set on the path, the Tithe Bowl that pays for every death near it, the Hex Effigy that makes everything near it take more damage, and its own. The Bone Chime, Tar Censer, Galvanic Coil and Whaling Gun are found on the stair: as gifts, from merchants, or in a pack. Only the Bellringer starts with the Chime.</li>
         <li><b>Chimes.</b> A Bone Chime stuns everything in its ring, but the ring spreads thin: the four nearest take its full strike, the rest half. A boss it stuns goes deaf to every chime for 4 seconds, and a dull grey ring shows it shrugging them off.</li>
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
@@ -485,6 +506,7 @@ input[type=range]::-moz-range-track {
         <li><b>Every stair has a name.</b> A descent is drawn from a seed: its maps, waves, Heralds, gifts, doors, omens, rooms and offers. The pause, death and morning screens name the stair and show its code; tap Copy to keep it. When the lamp goes out you can descend the same stair again, drawn the same way, though what the dark does in a fight is never the same twice. A stair walked twice leaves no embers.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard. <i>Sealed:</i> two of your wards are locked for the floor, marked with a lock in the tray; never your light and never your harpoon. <i>One of Each:</i> each kind of ward stands only once, except what makes your light (candles of every kind, Tuning Forks, pylons, Bell Wires and Try-pots). <i>Bare Hands:</i> your rites are silent, all but the Bellringer's Toll. <i>Unbranched:</i> nothing can be upgraded, not even the lamp. <i>The Long Night:</i> candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller; it never comes with Moonless or Thick Dark.</li>
+        <li><b>Descents.</b> On the landings after floors two, three and four, one door may carry a descent, marked with a cupped flame: the way down, played after the toll, before the next floor begins. Each pays and each costs. Failing one never ends the run, none leaves embers, and once walked it is not offered again that descent. <i>The Carry:</i> hold your thumb down anywhere to cup a small flame past a gallery of sleepers. A sleeper inside your light stirs; hidden, it settles. Hold too long and you stumble, spill the flask and flare. It pays the oil you carry down; every sleeper you wake adds dread on the next floor, and waking three loses the flask.</li>
         <li><b>Relics.</b> Relics bend the rules, and a cursed one takes as much as it gives. You are only offered a relic you can use: one that needs a ward, such as Salt or the Hex Effigy, waits until you can build it. Dead Reckoning, whose price falls on light, never comes to the Bellringer, who sees by sound. Tap a relic's seal to read it; a number on a seal is what it holds.</li>
         <li><b>Patrons.</b> Old things below the stair make offerings: the Drowned Mother, the Wrong Sun, and the Many-Mouthed. Half the time the landing's gift is one of theirs instead (a quarter, if one already reached out on that floor), and now and then one reaches out between waves; which one is a toss each time. Take one gift, or refuse. Every gift raises that patron's Attention, and Attention changes your floors. Her water speeds what walks in it, rises, and at last hides it. The Wrong Sun's bright spots show whatever stands in them, but a Stalker that crosses one has seen the lamp and runs; Watched, they sear, and the glare spreads to the stone beside them; Claimed, your wards in the glare fire slower. The Many-Mouthed reads what you built and sends its own up the stair as each wave begins, Gibberers for your wards and Gorgers for your horrors, and they leave nothing when they die; Watched, you carry dread and Gorgers snuff candles; Claimed, a Choir-Husk veils what walks near it, and bindings may break from Whispers. Their signs sit beside the Grimoire; tap one to see where you stand.</li>
         <li><b>Conjunctions.</b> Two patrons who have both noticed you, neither yet claiming you, may offer one gift together in place of the last of three. It is not shaped by your kit. The one whose Attention lags pays for it, and the other watches: the next wave, her water rises a tile, the Sun opens another spot, or one more Gibberer climbs. A descent takes one conjunction from each pair, and two at most. The Drowned Mother and the Wrong Sun: Phosphor Tide. The Drowned Mother and the Many-Mouthed: Gorger’s Undertow, Brine-Choir. The Wrong Sun and the Many-Mouthed: Sun-Drunk Chorus, Violet Husking.</li>
@@ -496,6 +518,13 @@ input[type=range]::-moz-range-track {
     </div>
   </div>
 </section>
+
+<div id="dscOverlay" hidden>
+  <canvas id="dscCv" aria-label="The Carry: hold your thumb down to cup the flame as you pass the sleepers"></canvas>
+  <div class="dsc-hud"><span class="dsc-stat">Flask <b id="dscOil">5</b> oil</span><span class="dsc-stat" id="dscStatW">Woken <b id="dscWoke">0</b> of <b id="dscFail">3</b></span></div>
+  <div class="dsc-prompt" id="dscPrompt"><span>Hold anywhere to cup the flame</span></div>
+  <div class="dsc-cardwrap" id="dscCardWrap" hidden><button class="dsc-card" id="dscCard" type="button"></button></div>
+</div>
 
 <div id="mapOverlay" hidden>
   <canvas id="mapCv"></canvas>
@@ -537,7 +566,7 @@ const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='18.6.0';
+const GAME_VERSION='18.7.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -983,6 +1012,25 @@ const TRIALS={
    Sealed also leaves the harpoon, so every kit keeps something that strikes. The Long Night halves candle light and fork hum */
 const TRIAL_FLOORS=[1,2], RATION_MAX=6, HALLOW_PATCHES=4, HALLOW_SIZE=4,
   TRIAL_SPARE=['candle','fork','pylon','bellwire','trypot'], SEAL_N=2, NIGHT_DIM=.5, NIGHT_LAMP=1;
+/* Descents (Expansion 2, expansion/SEEDS-AND-MINI-FLOORS.md §2): a door on the forked stairs may carry a mini floor, a short
+   touch game played on the shaft on the way down, after the toll. Only on the landings after floors 2, 3 and 4 (run.floor 1
+   to 3 at the landing), on one door that carries no Trial. The plain stair stays the default, and none is played twice in a
+   run (run.descents). Failing one costs, and never ends the run; none pays embers. Every number here is shape, not balance */
+const DESCENTS={
+  carry:{n:'The Carry',short:'The Carry',verb:'Hide',
+    d:'You carry a small flame down a gallery of sleepers. Hold your thumb down to cup it and hide the light; lift it to see your feet.',
+    pays:'A flask of oil for the lamp. Every stumble spills some.',
+    costs:'Every sleeper you wake follows you down, and its dread stays with you on the next floor.',
+    fail:'Wake three and the whole gallery stirs: you drop the flask and run.'}
+};
+const DESCENT_LANDINGS=[1,2,3], DESCENT_CHANCE=.7;
+/* The Carry, in tiles of the gallery and seconds: you walk CARRY_SPEED tiles a second past CARRY_N sleepers. A sleeper in your
+   uncupped light (CARRY_R) stirs at CARRY_STIR a second and settles at CARRY_CALM; at 1 it wakes. Cupped, the flame hides,
+   but after CARRY_HOLD seconds held you stumble: the hand comes away, the flame flares to CARRY_FLARE_R for CARRY_STUMBLE_T
+   (stirring at CARRY_FLARE_MUL the rate) and the flask spills CARRY_SPILL. Uncupped, your footing comes back at CARRY_BREATHE */
+const CARRY_N=7, CARRY_SPEED=1, CARRY_X=1.15, CARRY_R=1.75, CARRY_STIR=.85, CARRY_CALM=.1, CARRY_HOLD=3.5, CARRY_BREATHE=.9,
+  CARRY_STUMBLE_T=.8, CARRY_FLARE_R=2.4, CARRY_FLARE_MUL=1.2, CARRY_OIL=5, CARRY_SPILL=1, CARRY_MAD=1, CARRY_FAIL=3,
+  CARRY_FIRST=4, CARRY_GAP=[3.2,4.6], CARRY_PAIR=[1.3,1.7], CARRY_TAIL=3.5, CARRY_CAP=44, CARRY_CARD=.6;
 const ROOMS={
   merchant:{n:'A Merchant’s Alcove',tag:'Merchant',d:'Something trades in the dark. Spend your essence on relics, wards and bindings before the stair burns it.'},
   shrine:{n:'A Bleeding Shrine',tag:'Shrine',d:'Make a pact: power, for a price.'},
@@ -1485,6 +1533,8 @@ function dread(){
   let g=0; for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(!e.dead&&e.type==='gibberer')g+=muffle&&inWater(e)?GIB_DREAD/2:GIB_DREAD;}
   d+=Math.min(GIB_DREAD_MAX,g);
   if(F.phase==='wave')d+=(F.feedMad||0)+(F.baitMad||0);
+  /* the sleepers woken on The Carry followed you down */
+  d+=wokeDread();
   return d+conjDread();
 }
 function horrorMadness(paidOnly){let m=0; if(!F)return 0; for(const t of F.towers)if(t.kind==='horror'&&!(paidOnly&&t.free))m+=horrorMad(t.type); return m;}
@@ -2084,6 +2134,8 @@ const AUDIO={
   boom(){this.noise(.35,.4,300,.8,'lowpass'); this.synth(90,'square',.28,.3,35);},
   coin(){if(!this.gate('coin',90))return; this.synth(1568,'sine',.07,.25); this.synth(2093,'sine',.05,.3,null,.04);},
   rumble(){this.synth(52,'sawtooth',.3,1.4,30,0,.2); this.noise(1.2,.22,120,.6,'lowpass');},
+  /* a sleeper wakes on The Carry: a low breath drawn in, and something shifting in cloth */
+  wake(){if(!this.gate('wake',150))return; this.synth(68,'sawtooth',.13,1.3,44,0,.25); this.noise(.9,.12,320,.8,'lowpass');},
   roar(){this.synth(74,'sawtooth',.45,2.4,30,0,.35); this.synth(77,'square',.22,2.2,32,0,.4); this.synth(148,'sawtooth',.14,1.8,60,.25,.3); this.noise(2.6,.32,170,.6,'lowpass'); this.noise(.9,.18,900,.8,'bandpass',.3);}
 };
 
@@ -2919,7 +2971,14 @@ function checkpoint(){
   store.set(SAVEKEY,lastSave);
 }
 function clearSave(){lastSave=null; store.set(SAVEKEY,null);}
-function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); reserveMigrate(); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; if(run.leech>=LEECH_N)run.leech=LEECH_N-1; if(run.kit==='occultist'&&!run.wards.includes('grasp'))run.wards.splice(2,0,'grasp'); updateOilMax(); beginFloor(s);}
+function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); reserveMigrate(); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; if(run.leech>=LEECH_N)run.leech=LEECH_N-1; if(run.kit==='occultist'&&!run.wards.includes('grasp'))run.wards.splice(2,0,'grasp'); updateOilMax();
+  descentStop();
+  /* saved at the start of a descent: the toll is paid and the floor counted, so it plays again from the top, then the floor
+     begins fresh (a descent this build doesn't know is skipped) */
+  if(run.descent){if(DESCENTS[run.descent.k]){startDescent(); return;} const m=run.descent.msg; run.descent=null; MAP_SYS.pendingMsg=m||''; beginFloor(null); return;}
+  beginFloor(s);}
+/* the save made as a descent begins: the run as it stands, nothing on the board, no landing */
+function descentSave(){lastSave={v:2,run:JSON.parse(JSON.stringify(run)),wave:0,towers:[],lamp:null,draft:null}; store.set(SAVEKEY,lastSave);}
 
 /* ---------------- dev mode ----------------
    Hidden: tap the "The Last Lamp" heading on the title screen 7 times quickly to switch it on or off.
@@ -2976,6 +3035,8 @@ const DEV_ACTS={
   },
   /* take or drop any relic, cursed ones too (Unlock everything skips those). It shows, never saves: codexSee is silent in dev mode (rule 24) */
   relic(k){if(!RELICS[k])return 'No such relic'; if(run.relics.includes(k)){removeRelic(k); forceUI(); return RELICS[k].n+' dropped';} addRelic(k); forceUI(); return RELICS[k].n+' taken';},
+  /* play a descent over this floor: it pays nothing and saves nothing (rule 24) */
+  descent(k){if(!DESCENTS[k])return 'No such descent'; if(F.phase!=='build'&&F.phase!=='wave'&&F.phase!=='draft')return 'Not now'; startDescent({practice:true,k}); return null;},
   reveal(k){revealKit(k,KITS[k].deed?'deed':'hall',()=>openDevMode(),false); return null;},
   /* descend the stair a pasted code names, as this kit at this depth. Shows, never saves (rule 24): the code is not kept,
      and the run is a replay, so it leaves no embers */
@@ -3003,6 +3064,8 @@ function openDevMode(msg){
     +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+Object.keys(TRIALS).map(k=>btn('trial',(F.trial===k?'● ':'')+TRIALS[k].n,k)).join('')+btn('trial',(F.trial?'':'● ')+'No Trial','none')+'</div>'
     +(floorMaps(run.floor).length>1?'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Restart this floor on a map</h3>'
       +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+floorMaps(run.floor).map((m,v)=>btn('mapv',(F.def.mapv===v?'● ':'')+m.n,String(v))).join('')+'</div>':'')
+    +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Practise a descent (pays and saves nothing)</h3>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+Object.keys(DESCENTS).map(k=>btn('descent',DESCENTS[k].n,k)).join('')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Reveal a kit</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+Object.keys(KITS).filter(k=>k!=='lamplighter').map(k=>btn('reveal',KITS[k].who||KITS[k].n,k)).join('')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Take or drop a relic (● held, † cursed)</h3>'
@@ -3046,7 +3109,9 @@ function openDevMode(msg){
    NEVER reuse or renumber a salt: every old code would walk a different stair. Add new ones at the end.
    Never hash() here (rule 11): it needs three numbers, and a missing one gives NaN. roll() turns anything into an integer. */
 const SALT={map:1,waves:2,herald:3,heraldGate:4,gift:5,giftPatron:6,relics:7,doors:8,merchant:9,shrine:10,event:11,reliquary:12,
-  pick:13,pact:14,eventRoll:15,seal:16,hallow:17,water:18,spots:19,phos:20,swarm:21,patronBreak:22,cleanse:23};
+  pick:13,pact:14,eventRoll:15,seal:16,hallow:17,water:18,spots:19,phos:20,swarm:21,patronBreak:22,cleanse:23,
+  /* the descents (Expansion 2): sub 0 is which door and which descent, sub 1 lays out the gallery */
+  descent:24};
 /* a decision that is made more than once a floor (a wave's break, a second relic) passes which one as sub */
 const SEED_SUB=4096;
 function mix32(h){h^=h>>>16; h=Math.imul(h,0x7feb352d); h^=h>>>15; h=Math.imul(h,0x846ca68b); h^=h>>>16; return h>>>0;}
@@ -3131,6 +3196,7 @@ function newRun(k,depth,o){
   /* a stair walked again (Descend the same stair, or a code pasted in developer mode) leaves no embers (pillar 2) */
   if(o.replay)run.replay=true;
   if(run.depth>=5){run.baseOilMax-=5; updateOilMax(); run.oil=run.oilMax;}
+  descentStop();
   beginFloor(null);
 }
 /* the Roster: who each kit was the night Saltmouth drowned (expansion/ROSTER.md) */
@@ -3608,7 +3674,7 @@ function giftChoice(o,fn){
 function relicChoice(k,fn,tagExtra){const R=RELICS[k]; return {cls:R.curse?'curse':'relic',tag:(R.curse?'Cursed relic':'Relic')+(tagExtra||''),title:R.n,sub:R.d,fn};}
 /* each choice only counts once, even if tapped twice while the next screen loads */
 function step(expect,fn){return ()=>{if(!F||!F.draft||F.draft.done)return; const d=F.draft; if((d.pick?'pick':d.step)!==expect)return; try{fn(d);}catch(err){reportError(err);}};}
-function toFork(d){d.step='fork'; d.doors=seeded(SALT.doors,0,makeDoors); showLanding();}
+function toFork(d){d.step='fork'; d.doors=seeded(SALT.doors,0,makeDoors); seeded(SALT.descent,0,()=>descentDoor(d.doors)); showLanding();}
 function afterGift(d){if(d.relics>0){d.step='relic'; d.ropts=seeded(SALT.relics,d.relics,()=>relicOpts(3)); if(!d.ropts.length){d.relics=0; toFork(d); return;} showLanding();} else toFork(d);}
 function makeDoors(){
   const n=has('compass')?4:3;
@@ -4178,7 +4244,8 @@ function makeStock(){
 }
 function chooseDoor(d,i){
   const door=d.doors[i];
-  run.next={omen:door.omen,elite:door.room==='deep',trial:door.trial||null};
+  run.next={omen:door.omen,elite:door.room==='deep',trial:door.trial||null,descent:DESCENTS[door.descent]?door.descent:null};
+  if(d.doors.some(x=>x.descent))tipSeen('descentdoor');
   if(door.room==='deep'){descend(); return;}
   d.step='room'; d.room=makeRoom(door.room); showLanding();
 }
@@ -4257,11 +4324,14 @@ function landingStep(){
   }
   if(d.step==='fork'){
     const nf=FLOORS[run.floor+1];
-    return {kind:'draft',wide:true,title:'The stair forks',body:'Below lies '+(nf?nf.name:'the end')+'. Each door leads there by a different way, and each carries its own omen.',note:tollNote(d),
-      choices:d.doors.map((door,i)=>{const R=ROOMS[door.room], O=door.omen?OMENS[door.omen]:null, Tr=TRIALS[door.trial];
-        /* a Trial door says its rule, and what passing it pays, so it is a choice and never a surprise */
-        return {cls:door.room==='deep'||Tr?'curse':(door.room==='shrine'?'bind':''),tag:R.tag+(Tr?' · Trial: '+Tr.short:'')+(O?' · Omen: '+O.n:''),title:R.n,
-          sub:R.d+(Tr?' <em>Trial: '+Tr.n+'. '+Tr.d+' Pass it and take a relic.</em>':'')+(O?' <em>Beyond it: '+O.d+'</em>':Tr?'':' <em>Beyond it, the floor is quiet.</em>'),fn:step('fork',dd=>chooseDoor(dd,i))};}),
+    /* the first time a descent is offered, the landing says what one is (rule 23) */
+    const dTip=d.doors.some(x=>DESCENTS[x.descent])&&tipFresh('descentdoor')?'<span class="dsc-tip"><b>'+TIPS.descentdoor.title+'.</b> '+TIPS.descentdoor.text+'</span>':'';
+    return {kind:'draft',wide:true,title:'The stair forks',body:'Below lies '+(nf?nf.name:'the end')+'. Each door leads there by a different way, and each carries its own omen.'+dTip,note:tollNote(d),
+      choices:d.doors.map((door,i)=>{const R=ROOMS[door.room], O=door.omen?OMENS[door.omen]:null, Tr=TRIALS[door.trial], Ds=DESCENTS[door.descent];
+        /* a Trial door says its rule, and what passing it pays, so it is a choice and never a surprise; a descent door says what
+           it pays and what it costs, and carries the descent's glyph */
+        return {cls:(door.room==='deep'||Tr?'curse':(door.room==='shrine'?'bind':''))+(Ds?' dsc-door':''),tag:(Ds?DSC_GLYPH:'')+R.tag+(Tr?' · Trial: '+Tr.short:'')+(Ds?' · Descent: '+Ds.short:'')+(O?' · Omen: '+O.n:''),title:R.n,
+          sub:R.d+(Tr?' <em>Trial: '+Tr.n+'. '+Tr.d+' Pass it and take a relic.</em>':'')+(Ds?' <em class="dsc-em">Descent: '+Ds.n+'. On the way down. '+Ds.pays+' '+Ds.costs+'</em>':'')+(O?' <em>Beyond it: '+O.d+'</em>':Tr||Ds?'':' <em>Beyond it, the floor is quiet.</em>'),fn:step('fork',dd=>chooseDoor(dd,i))};}),
       actions:[pause]};
   }
   const r=d.room, take={label:'Take the stair',primary:true,fn:step('room',()=>descend())};
@@ -4309,6 +4379,7 @@ function descend(){
   const prot=Math.min(run.ess,d.salvage||0), loose=Math.max(0,run.ess-prot);
   const keep=prot+Math.floor(loose*(has('gilded')?0:.3)), burned=run.ess-keep;
   run.ess=keep;
+  const ds=run.next&&DESCENTS[run.next.descent]?run.next.descent:null;
   run.omen=(run.next&&run.next.omen)||null; run.elite=!!(run.next&&run.next.elite); run.trial=(run.next&&run.next.trial)||null; run.next=null;
   /* Choir in the Walls: every sung horror still on the board goes into the walls at the stair */
   let lost=0;
@@ -4317,10 +4388,341 @@ function descend(){
   const f0 = run.floor;
   run.floor++;
   const msg=(burned>0?'The stair takes its toll: '+burned+' essence burns away.':'')+(lost?' '+(lost>1?lost+' of your horrors go':'One of your horrors goes')+' into the walls.':'');
+  /* a descent door: the toll is paid, and the way down is played before the floor begins. Its start is saved, so a reload
+     plays it again from the top with nothing lost or paid twice */
+  if(ds){
+    run.descent={k:ds,f0,msg:msg.trim()};
+    run.descents=run.descents||[]; if(!run.descents.includes(ds))run.descents.push(ds);
+    descentSave(); startDescent(); return;
+  }
   showMap(true, f0, run.floor, msg.trim());
   beginFloor(null);
 }
 function nextFloor(){descend();}
+
+/* ---------------- descents: the way down, played (Expansion 2) ----------------
+   A descent door (DESCENTS, rolled by descentDoor) turns the drop between floors into a short touch game on the shaft.
+   descend() pays the toll as always, then saves (descentSave) and calls startDescent(); the game runs on real time in
+   #dscOverlay (rule 14), outside the floor; descentFinish() pays its reward after the toll, then beginFloor(). A reload
+   in the middle plays it again from the top: run.descent marks it, and nothing about the game itself is saved (rule 15).
+   DESC is visual and per-play state only. DESCENT_AUTO (tests) settles a descent at once with a given outcome. */
+const DSC_GLYPH='<svg class="dsc-glyph" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.6c1.7 2.1 2.5 3.6 2.5 5A2.5 2.5 0 0 1 8 9.1a2.5 2.5 0 0 1-2.5-2.5C5.5 5.2 6.3 3.7 8 1.6z" fill="currentColor"/><path d="M2.2 8.2c.7 3.3 3 5.3 5.8 5.3s5.1-2 5.8-5.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+let DESC={active:false}, DESCENT_AUTO=null;
+const DSC_PTR=new Set(), DSC_EDGE=24;
+/* which door carries a descent, and which one. Three draws, always made in the same order, so the stair a seed names never
+   depends on anything but the descents already walked this run */
+function descentDoor(doors){
+  const r=RNG(), rd=RNG(), rk=RNG();
+  if(!DESCENT_LANDINGS.includes(run.floor)||r>=DESCENT_CHANCE)return;
+  const pool=Object.keys(DESCENTS).filter(k=>!(run.descents||[]).includes(k)), open=doors.filter(x=>!x.trial);
+  if(!pool.length||!open.length)return;
+  open[Math.floor(rd*open.length)].descent=pool[Math.floor(rk*pool.length)];
+}
+function descentStop(){DESC.active=false; DSC_PTR.clear(); const o=$('#dscOverlay'); if(o)o.hidden=true;}
+/* opt.practice (developer mode): a descent played over the floor you are on. It pays nothing and saves nothing */
+function startDescent(opt){
+  opt=opt||{};
+  const practice=!!opt.practice, k=practice?opt.k:run.descent.k;
+  closeModal(); relicTipHide(); $('#title').hidden=true; $('#peekBtn').hidden=true;
+  MAP_SYS.active=false; $('#mapOverlay').hidden=true;
+  paused=true; sel=null; selTower=null; mode=null; DSC_PTR.clear();
+  const lay=practice?carryLayout():seeded(SALT.descent,1,carryLayout);
+  DESC={active:true,k,practice,phase:'walk',t:0,pos:0,len:lay.len,sl:lay.sl,blind:0,stumble:0,spilt:0,woke:0,cup:0,held:false,heldEver:false,
+    liftT:0,endAt:0,shake:0,flash:0,f1:Math.min(run.floor,FLOORS.length-1),hudKey:''};
+  if(DESCENT_AUTO){descentFinish(DESCENT_AUTO); return;}
+  $('#dscOverlay').hidden=false; $('#dscCardWrap').hidden=true;
+  AUDIO.init(); AUDIO.rumble();
+  /* the first time, the game waits behind its tip until it is read */
+  if(tipFresh('carry')){DESC.phase='tip'; carryCard('tip');}
+  dscHud();
+}
+/* the gallery: CARRY_N sleepers, the first CARRY_FIRST tiles down, set along both walls. One gap is a pair, across the stair
+   from each other, too close to pass under one held breath */
+function carryLayout(){
+  const gaps=[]; for(let i=0;i<CARRY_N-2;i++)gaps.push(rnd(CARRY_GAP[0],CARRY_GAP[1]));
+  gaps.push(rnd(CARRY_PAIR[0],CARRY_PAIR[1])); shuffle(gaps);
+  const sl=[]; let y=CARRY_FIRST, side=RNG()<.5?-1:1;
+  for(let i=0;i<CARRY_N;i++){
+    sl.push({x:side*CARRY_X,y,stir:0,woke:false,wt:0,v:Math.floor(RNG()*3)});
+    if(i<gaps.length){const g=gaps[i]; y+=g; side=g<CARRY_GAP[0]||RNG()<.6?-side:side;}
+  }
+  return {sl,len:y+CARRY_TAIL};
+}
+/* one step of The Carry, dt ≤ 0.05 of real time */
+function carryStep(dt){
+  const C=DESC; if(!C.active||(C.phase!=='walk'&&C.phase!=='out'))return;
+  C.t+=dt; C.flash=Math.max(0,C.flash-dt*2.5); C.shake=Math.max(0,C.shake-dt*3);
+  if(C.phase==='out'){C.pos=Math.min(C.len+.6,C.pos+CARRY_SPEED*dt*.6); C.cup=Math.max(0,C.cup-dt*6); C.stumble=0; C.blind=Math.max(0,C.blind-dt*CARRY_BREATHE); return;}
+  const cupped=C.held&&C.stumble<=0;
+  C.cup=clamp(C.cup+(cupped?dt*8:-dt*6),0,1);
+  if(C.stumble>0)C.stumble-=dt; else C.pos+=CARRY_SPEED*dt;
+  if(cupped){C.blind+=dt/CARRY_HOLD; if(C.blind>=1)carryStumble();}
+  else C.blind=Math.max(0,C.blind-dt*CARRY_BREATHE);
+  const flare=C.stumble>0, R=flare?CARRY_FLARE_R:CARRY_R, rate=CARRY_STIR*(flare?CARRY_FLARE_MUL:1), lit=!(C.held&&!flare);
+  for(const s of C.sl){
+    if(s.woke){s.wt+=dt; continue;}
+    if(lit&&Math.hypot(s.x,s.y-C.pos)<R)s.stir+=rate*dt; else s.stir=Math.max(0,s.stir-CARRY_CALM*dt);
+    if(s.stir>=1){s.stir=1; s.woke=true; s.wt=0; C.woke++; AUDIO.wake();}
+  }
+  if(C.pos>=C.len||C.t>=CARRY_CAP){C.phase='out'; C.endAt=C.t;}
+}
+function carryStumble(){
+  const C=DESC; C.blind=0; C.stumble=CARRY_STUMBLE_T; C.spilt++; C.flash=1; C.shake=reduceMotion?0:1; AUDIO.snuff();
+  try{if(navigator.vibrate)navigator.vibrate(60);}catch(e){}
+}
+/* what a Carry comes to: woken sleepers and stumbles in, oil and dread out */
+function carryResult(o){
+  const woke=Math.max(0,o.woke|0), spilt=Math.max(0,o.spilt|0), fail=woke>=CARRY_FAIL;
+  return {woke,spilt,fail,oil:fail?0:Math.max(0,CARRY_OIL-spilt*CARRY_SPILL),mad:woke*CARRY_MAD};
+}
+function carryLine(r,long){
+  const n=r.woke===1?'One sleeper':r.woke+' sleepers', they=r.woke===1?'It follows':'They follow';
+  if(!long){
+    if(r.fail)return 'The gallery woke, and the flask is lost. '+r.mad+' dread follows you down to this floor.';
+    return 'You carry '+r.oil+' oil down.'+(r.woke?' '+n.replace(' sleeper',' woken sleeper').replace(' sleepers',' woken sleepers')+' '+(r.woke===1?'follows':'follow')+' you: '+r.mad+' dread on this floor.':'');
+  }
+  if(r.fail)return n+' opened their eyes, and then all of them did. You drop the flask and run. '+they+' you down: '+r.mad+' dread on the next floor.';
+  return 'You bring '+r.oil+' oil down to the lamp.'+(r.spilt?' You stumbled '+(r.spilt===1?'once':r.spilt+' times')+', and the flask spilt '+(r.spilt*CARRY_SPILL)+'.':'')
+    +(r.woke?' '+n+' woke. '+they+' you down: '+r.mad+' dread on the next floor.':' Nothing woke.');
+}
+/* the woken follow you down: their dread lasts the floor below the gallery */
+function wokeDread(){return run&&run.woke&&run.woke.floor===run.floor?run.woke.n|0:0;}
+/* the descent is over: its reward lands after the toll, and the floor begins. o (tests, DESCENT_AUTO) sets the outcome */
+function descentFinish(o){
+  const C=DESC; if(!C.active)return;
+  const r=carryResult(o||C), k=C.k;
+  descentStop();
+  if(C.practice){openDevMode(DESCENTS[k].n+', practised. '+carryLine(r,true)+' Nothing was kept.'); return;}
+  if(r.oil>0)addOil(r.oil);
+  run.woke=r.mad>0?{floor:run.floor,n:r.mad}:null;
+  const m=[run.descent&&run.descent.msg,carryLine(r,false)].filter(Boolean).join(' ');
+  run.descent=null;
+  MAP_SYS.pendingMsg=m;
+  beginFloor(null);
+}
+function carryCard(kind){
+  const el=$('#dscCard'), C=DESC;
+  if(kind==='tip')el.innerHTML='<span class="dsc-ctag">'+DSC_GLYPH+'Descent</span><b>'+TIPS.carry.title+'</b><span>'+TIPS.carry.text+'</span><i>Tap to walk on</i>';
+  else{const r=carryResult(C), nf=FLOORS[C.f1];
+    el.innerHTML='<span class="dsc-ctag">'+DSC_GLYPH+DESCENTS[C.k].n+'</span><b>'+(r.fail?'The gallery wakes':'Carried down')+'</b><span>'+carryLine(r,true)+'</span><i>'+(C.practice?'Tap to go back':'Tap to go down to '+nf.name)+'</i>';}
+  el.dataset.kind=kind; $('#dscCardWrap').hidden=false;
+}
+/* the counts at the top: fixed widths, so nothing moves as they change (rule 2) */
+function dscHud(){
+  const C=DESC, r=carryResult(C), key=r.oil+'|'+C.woke+'|'+(C.heldEver?1:0)+'|'+C.phase;
+  if(key===C.hudKey)return; C.hudKey=key;
+  $('#dscOil').textContent=r.oil; $('#dscWoke').textContent=C.woke; $('#dscFail').textContent=CARRY_FAIL;
+  $('#dscStatW').classList.toggle('is-bad',C.woke>=CARRY_FAIL-1);
+  $('#dscPrompt').classList.toggle('is-gone',C.heldEver||C.phase!=='walk');
+}
+function descentFrame(raw){
+  const C=DESC;
+  carryStep(Math.min(.05,raw));
+  if(C.phase==='out'&&!C.held&&C.t-Math.max(C.liftT,C.endAt)>=CARRY_CARD){C.phase='card'; carryCard('result');}
+  dscHud();
+  const o=$('#dscOverlay'), cv=$('#dscCv'), w=Math.round(o.clientWidth*DPR), h=Math.round(o.clientHeight*DPR);
+  if(cv.width!==w||cv.height!==h){cv.width=w; cv.height=h;}
+  drawCarry(cv.getContext('2d'),w,h,performance.now()/1000);
+}
+/* one thumb, anywhere but the very edges, which belong to the system's back swipe. A cancelled touch is only a lift: it never
+   stumbles, wakes or fails anything */
+$('#dscCv').addEventListener('pointerdown',ev=>{
+  if(!DESC.active)return; ev.preventDefault();
+  if(DESC.phase!=='walk'&&DESC.phase!=='out')return;
+  if(ev.pointerType!=='mouse'&&(ev.clientX<DSC_EDGE||ev.clientX>innerWidth-DSC_EDGE))return;
+  DSC_PTR.add(ev.pointerId); DESC.held=true; DESC.heldEver=true;
+});
+function dscLift(ev){if(!DSC_PTR.delete(ev.pointerId))return; if(!DSC_PTR.size&&DESC.active){DESC.held=false; DESC.liftT=DESC.t;}}
+window.addEventListener('pointerup',dscLift); window.addEventListener('pointercancel',dscLift);
+function dscLetGo(){if(!DESC.active||!DSC_PTR.size)return; DSC_PTR.clear(); DESC.held=false; DESC.liftT=DESC.t;}
+window.addEventListener('blur',dscLetGo);
+$('#dscOverlay').addEventListener('contextmenu',ev=>ev.preventDefault());
+/* the card goes on click, never on pointerdown (rule 5): it shows only once the thumb has been up a while anyway */
+$('#dscCard').addEventListener('click',()=>{
+  if(!DESC.active)return;
+  const k=$('#dscCard').dataset.kind;
+  if(k==='tip'&&DESC.phase==='tip'){tipSeen('carry'); $('#dscCardWrap').hidden=true; DESC.phase='walk'; DESC.hudKey='';}
+  else if(k==='result'&&DESC.phase==='card')descentFinish();
+});
+
+/* ---- The Carry, painted: a stone stair winding down between two walls, a sleeper in a niche every few steps, the small
+   flame in your hand. The dark is one cached mask drawn over everything, holed at the flame. Woken eyes, and eyes beginning
+   to open, are drawn over the dark. Sprites are cached by size; Lite drops the dust, the wall seams and the breathing */
+const DSC_SPR={u:0,sl:[]};
+function dscMk(n,f){const c=document.createElement('canvas'); c.width=c.height=n; f(c.getContext('2d'),n); return c;}
+function dscSprites(u){
+  if(!DSC_SPR.dark){
+    DSC_SPR.dark=dscMk(256,(g,n)=>{const r=g.createRadialGradient(n/2,n/2,0,n/2,n/2,n/2); r.addColorStop(0,'rgba(3,4,5,0)'); r.addColorStop(.5,'rgba(3,4,5,.12)'); r.addColorStop(.8,'rgba(3,4,5,.7)'); r.addColorStop(.93,'rgba(3,4,5,.94)'); r.addColorStop(1,'rgba(3,4,5,.97)'); g.fillStyle=r; g.fillRect(0,0,n,n);});
+    DSC_SPR.warm=dscMk(128,(g,n)=>{const r=g.createRadialGradient(n/2,n/2,0,n/2,n/2,n/2); r.addColorStop(0,'rgba(255,196,120,.85)'); r.addColorStop(.35,'rgba(237,150,70,.35)'); r.addColorStop(1,'rgba(237,120,50,0)'); g.fillStyle=r; g.fillRect(0,0,n,n);});
+    DSC_SPR.eye=dscMk(64,(g,n)=>{const r=g.createRadialGradient(n/2,n/2,0,n/2,n/2,n/2); r.addColorStop(0,'rgba(242,170,90,.9)'); r.addColorStop(.4,'rgba(242,134,74,.3)'); r.addColorStop(1,'rgba(242,134,74,0)'); g.fillStyle=r; g.fillRect(0,0,n,n);});
+    DSC_SPR.vig=dscMk(256,(g,n)=>{const r=g.createRadialGradient(n/2,n/2,n*.18,n/2,n/2,n*.72); r.addColorStop(0,'rgba(0,0,0,0)'); r.addColorStop(.6,'rgba(0,0,0,.75)'); r.addColorStop(1,'rgba(0,0,0,1)'); g.fillStyle=r; g.fillRect(0,0,n,n);});
+  }
+  const S=Math.max(16,Math.round(u*1.4));
+  if(DSC_SPR.u!==S){DSC_SPR.u=S; DSC_SPR.sl=[0,1,2].map(v=>dscMk(S,(g,n)=>{g.setTransform(n*SLP_K,0,0,n*SLP_K,n*.5,n*.55); paintSleeper(g,v);}));}
+  return DSC_SPR;
+}
+/* where a sleeper's eyes are, in its own unit space (it faces +x, toward the stair), per variant */
+const SLEEPER_EYES=[[[.155,-.27],[.235,-.245]],[[.14,-.2],[.215,-.18]],[[.165,-.29],[.24,-.27]]], SLP_K=.88;
+/* a sleeper, in unit space (about one unit tall), facing +x: a hunched, shrouded thing on its haunches, head bowed on its
+   knees. Lit from the stair side, so its rim shows first as the flame comes near */
+function paintSleeper(g,v){
+  const hunch=[1,.86,1.06][v], hood=v===2;
+  g.save(); g.scale(1,hunch);
+  /* the body: a heap of shroud from the back of the niche to its knees */
+  const bg=g.createLinearGradient(-.45,0,.45,0); bg.addColorStop(0,'#14181a'); bg.addColorStop(.55,'#3a403d'); bg.addColorStop(1,'#6b7068');
+  g.fillStyle=bg; g.beginPath(); g.moveTo(-.44,.42); g.bezierCurveTo(-.5,.1,-.38,-.2,-.12,-.22); g.bezierCurveTo(.08,-.24,.2,-.1,.3,.06);
+  g.bezierCurveTo(.42,.16,.46,.3,.43,.42); g.closePath(); g.fill();
+  /* folds of the shroud */
+  g.strokeStyle='rgba(8,10,11,.55)'; g.lineWidth=.025; g.lineCap='round';
+  for(const [a,b,c2,d] of [[-.3,.38,-.2,0],[-.12,.4,-.04,.06],[.1,.4,.2,.14]]){g.beginPath(); g.moveTo(a,b); g.quadraticCurveTo((a+c2)/2+.05,(b+d)/2,c2,d); g.stroke();}
+  /* knees, and the hands folded on them */
+  g.fillStyle='#4d534e'; g.beginPath(); g.ellipse(.3,.18,.13,.1,-.3,0,TAU); g.fill();
+  g.fillStyle='#8d8a7c'; g.beginPath(); g.ellipse(.33,.08,.07,.045,-.4,0,TAU); g.fill();
+  g.strokeStyle='rgba(30,28,24,.6)'; g.lineWidth=.012; g.beginPath(); g.moveTo(.29,.07); g.lineTo(.37,.06); g.stroke();
+  /* the head, bowed toward the knees */
+  const hx=[.18,.16,.19][v], hy=[-.25,-.18,-.27][v];
+  const hg=g.createRadialGradient(hx+.06,hy-.04,.02,hx,hy,.19); hg.addColorStop(0,'#b3ae9c'); hg.addColorStop(.6,'#7b786b'); hg.addColorStop(1,'#2e2e29');
+  g.fillStyle=hg; g.beginPath(); g.ellipse(hx,hy,.13,.155,.35,0,TAU); g.fill();
+  /* the brow's shadow, where the eyes are */
+  g.fillStyle='rgba(20,18,16,.55)'; g.beginPath(); g.ellipse(hx+.02,hy-.005,.1,.045,.25,0,TAU); g.fill();
+  if(hood){
+    const og=g.createLinearGradient(hx-.2,0,hx+.15,0); og.addColorStop(0,'#101315'); og.addColorStop(1,'#3b403c');
+    g.fillStyle=og; g.beginPath(); g.moveTo(hx-.22,hy+.2); g.bezierCurveTo(hx-.26,hy-.12,hx-.08,hy-.26,hx+.08,hy-.22);
+    g.bezierCurveTo(hx+.2,hy-.18,hx+.2,hy-.06,hx+.16,hy+.02); g.bezierCurveTo(hx+.06,hy-.1,hx-.08,hy-.02,hx-.1,hy+.2); g.closePath(); g.fill();
+  }
+  g.restore();
+}
+function drawCarry(c,w,h,tm){
+  const C=DESC, sp=dscSprites(Math.min(w/6.2,h/7.4));
+  const u=Math.min(w/6.2,h/7.4), cx=w/2, fy=h*.36, still=reduceMotion, lite=gfxLite;
+  const Y=y=>fy+(y-C.pos)*u, X=x=>cx+x*u;
+  c.setTransform(1,0,0,1,0,0);
+  c.fillStyle='#050607'; c.fillRect(0,0,w,h);
+  if(C.shake>0&&!still){const a=C.shake*u*.06; c.translate(Math.sin(tm*61)*a,Math.cos(tm*47)*a);}
+  /* the stair: treads between the walls, scrolling up as you go down */
+  const wallX=1.75*u, tread=.55, y0=C.pos-fy/u-1, y1=C.pos+(h-fy)/u+1;
+  c.fillStyle='#16191a'; c.fillRect(cx-wallX,0,wallX*2,h);
+  c.fillStyle='rgba(0,0,0,.45)';
+  for(let k=Math.floor(y0/tread);k*tread<y1;k++){const yy=Y(k*tread); c.fillRect(cx-wallX,yy,wallX*2,Math.max(1,u*.05));}
+  c.fillStyle='rgba(120,110,95,.06)';
+  for(let k=Math.floor(y0/tread);k*tread<y1;k++){const yy=Y(k*tread)+u*.05; c.fillRect(cx-wallX,yy,wallX*2,Math.max(1,u*.03));}
+  /* the walls, and their blocks */
+  c.fillStyle='#1f2427'; c.fillRect(0,0,cx-wallX,h); c.fillRect(cx+wallX,0,w-cx-wallX,h);
+  if(!lite){
+    c.fillStyle='rgba(6,8,9,.7)'; const blk=.7;
+    for(let k=Math.floor(y0/blk);k*blk<y1;k++){const yy=Y(k*blk); c.fillRect(0,yy,cx-wallX,Math.max(1,u*.04)); c.fillRect(cx+wallX,yy,w-cx-wallX,Math.max(1,u*.04));
+      const off=(k&1)?.55:0; for(let j=0;j<4;j++){const xx=(j+off)*1.1*u; c.fillRect(cx-wallX-xx,yy,Math.max(1,u*.04),blk*u); c.fillRect(cx+wallX+xx,yy,Math.max(1,u*.04),blk*u);}}
+  }
+  /* the niches and their sleepers */
+  const S=sp.u;
+  for(const s of C.sl){
+    const sy=Y(s.y); if(sy<-S||sy>h+S)continue;
+    const side=s.x<0?-1:1, nx=cx+side*wallX;
+    c.fillStyle='#0a0c0d'; c.beginPath();
+    c.moveTo(nx,sy+.55*u); c.lineTo(nx-side*1.2*u,sy+.55*u); c.lineTo(nx-side*1.2*u,sy-.3*u);
+    c.quadraticCurveTo(nx-side*1.2*u,sy-.85*u,nx-side*.55*u,sy-.85*u); c.lineTo(nx,sy-.85*u); c.closePath(); c.fill();
+    const br=still||lite?1:1+Math.sin(tm*1.3+s.y*2.1)*.012, tw=!still&&!s.woke&&s.stir>.35?Math.sin(tm*23+s.y)*s.stir*u*.012:0;
+    c.setTransform(-side*1,0,0,br,X(s.x)+tw,sy);
+    c.drawImage(sp.sl[s.v],-S*.5,-S*.55,S,S);
+    /* closed eyes: two dark creases, seen only where the light reaches */
+    const E=SLEEPER_EYES[s.v];
+    if(!s.woke){c.strokeStyle='rgba(15,12,10,.85)'; c.lineWidth=Math.max(1,u*.018);
+      for(const e of E){const ex=e[0]*S*SLP_K, ey2=e[1]*S*SLP_K*[1,.86,1.06][s.v]; c.beginPath(); c.arc(ex,ey2-S*.012,S*.022,.2*Math.PI,.8*Math.PI); c.stroke();}}
+    c.setTransform(1,0,0,1,0,0);
+    if(C.shake>0&&!still){const a=C.shake*u*.06; c.translate(Math.sin(tm*61)*a,Math.cos(tm*47)*a);}
+  }
+  /* the light: wide while the flame shows, a glimmer through the fingers while cupped, a flare when you stumble */
+  const flare=C.stumble>0, Rl=flare?CARRY_FLARE_R:CARRY_R, fk=still?1:1+Math.sin(tm*7)*.03+Math.sin(tm*13)*.02;
+  const Rv=(Rl*(1-C.cup)+.55*C.cup)*u*fk, Rm=Rv*1.15;
+  /* whole pixels, so the mask and the dark around it meet without a seam */
+  const mL=Math.floor(cx-Rm), mT=Math.floor(fy-Rm), mS=Math.ceil(Rm*2)+1;
+  c.drawImage(sp.dark,mL,mT,mS,mS);
+  c.fillStyle='rgba(3,4,5,.97)';
+  c.fillRect(-w,-h,w*3,mT+h); c.fillRect(-w,mT+mS,w*3,h*2); c.fillRect(-w,mT,mL+w,mS); c.fillRect(mL+mS,mT,w*2,mS);
+  c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=(.55+.45*(1-C.cup))*(.9+C.flash*.6);
+  const gw=Rv*1.1; c.drawImage(sp.warm,cx-gw,fy-gw,gw*2,gw*2); c.restore();
+  /* the edge of the light: a sleeper inside this ring stirs */
+  if(C.cup<.5&&C.phase==='walk'){c.strokeStyle='rgba(237,180,90,'+(.16*(1-C.cup*2))+')'; c.lineWidth=Math.max(1,u*.025); c.setLineDash([u*.12,u*.12]); c.beginPath(); c.arc(cx,fy,Rl*u,0,TAU); c.stroke(); c.setLineDash([]);}
+  /* eyes over the dark: lids cracking as a sleeper stirs, and the woken staring after the flame */
+  for(const s of C.sl){
+    const sy=Y(s.y); if(sy<-S||sy>h+S)continue;
+    if(!s.woke&&s.stir<.2)continue;
+    const side=s.x<0?-1:1, E=SLEEPER_EYES[s.v], hu=[1,.86,1.06][s.v];
+    const open=s.woke?Math.min(1,s.wt*3):s.stir*.55;
+    for(const e of E){
+      const ex=X(s.x)-side*e[0]*S*SLP_K, ey2=sy+e[1]*S*SLP_K*hu, rw=S*.026, rh=Math.max(.6,rw*.85*open);
+      if(s.woke){c.save(); c.globalCompositeOperation='lighter'; c.globalAlpha=.5*open; c.drawImage(sp.eye,ex-rw*5,ey2-rw*5,rw*10,rw*10); c.restore();}
+      c.fillStyle=s.woke?'rgba(236,222,180,'+(.92*open)+')':'rgba(242,134,74,'+Math.min(1,s.stir*1.1)+')';
+      c.beginPath(); c.ellipse(ex,ey2,rw,rh,0,0,TAU); c.fill();
+      if(s.woke){
+        /* the pupil follows the flame */
+        const dx=cx-ex, dy=fy-ey2, dl=Math.hypot(dx,dy)||1;
+        c.fillStyle='#0b0908'; c.beginPath(); c.ellipse(ex+dx/dl*rw*.35,ey2+dy/dl*rh*.3,rw*.42,rh*.7,0,0,TAU); c.fill();
+        c.fillStyle='rgba(255,255,255,.7)'; c.beginPath(); c.arc(ex-rw*.3,ey2-rh*.35,rw*.16,0,TAU); c.fill();
+      }
+    }
+  }
+  /* the gallery's floor below, when the end is near: the name of where it lets out */
+  const fl=FLOORS[C.f1], ey=Y(C.len+2.4);
+  if(ey<h+u&&fl){c.save(); c.globalAlpha=clamp(1-(ey-fy)/(h*.5),0,1)*.9; c.textAlign='center'; c.textBaseline='middle';
+    c.font='700 '+Math.round(u*.42)+'px "Grenze Gotisch", Georgia, serif'; c.fillStyle='#EDB45A'; c.fillText(fl.name,cx,ey);
+    c.font='500 '+Math.round(u*.2)+'px "DM Mono", monospace'; c.fillStyle='#8B9294'; c.fillText(('Floor '+(C.f1+1)+' of '+FLOORS.length).toUpperCase(),cx,ey+u*.4); c.restore();}
+  /* dust falling past the flame */
+  if(!lite&&!still){c.fillStyle='rgba(255,214,150,.35)';
+    for(let m=0;m<18;m++){const mx=cx+(hash(m,1,0)-.5)*Rv*2.2, my=fy+(((hash(m,2,0)*3-C.pos*.8-tm*.15*(hash(m,3,0)+.4))%3+3)%3-1.5)*Rv*.8;
+      c.globalAlpha=clamp(1-Math.hypot(mx-cx,my-fy)/Rv,0,1)*.8; c.fillRect(mx,my,Math.max(1,u*.025),Math.max(1,u*.025));}
+    c.globalAlpha=1;}
+  /* the flame, the candle under it, and the hand */
+  const fs=u*.2*(still?1:1+Math.sin(tm*9)*.06)*(1+C.flash*.5), fx=cx+(still?0:Math.sin(tm*3.1)*u*.012);
+  c.fillStyle='#d9c9a0'; c.fillRect(cx-u*.05,fy+u*.02,u*.1,u*.28);
+  c.fillStyle='#a3916c'; c.fillRect(cx+u*.02,fy+u*.02,u*.03,u*.28);
+  for(const [k,col] of [[1,'rgba(240,120,45,.9)'],[.7,'#ffc96e'],[.38,'#fff6dc']]){
+    c.fillStyle=col; c.beginPath(); c.moveTo(fx,fy-fs*1.6*k); c.quadraticCurveTo(fx+fs*.6*k,fy-fs*.3*k,fx,fy+fs*.15); c.quadraticCurveTo(fx-fs*.6*k,fy-fs*.3*k,fx,fy-fs*1.6*k); c.fill();}
+  /* the holding hand under the candle; the cupping fingers close round the flame as you hold */
+  /* the fist round the candle's foot: knuckles toward you, lit along the top by the flame */
+  const kL=cx-u*.21, kT=fy+u*.28, kW=u*.42, kH=u*.26, kr=u*.09;
+  c.fillStyle='#2e2019'; c.beginPath(); c.moveTo(kL+kr,kT); c.lineTo(kL+kW-kr,kT); c.quadraticCurveTo(kL+kW,kT,kL+kW,kT+kr);
+  c.lineTo(kL+kW,kT+kH); c.lineTo(kL,kT+kH); c.lineTo(kL,kT+kr); c.quadraticCurveTo(kL,kT,kL+kr,kT); c.fill();
+  c.fillStyle='rgba(237,150,70,.35)'; c.fillRect(kL+kr*.6,kT,kW-kr*1.2,Math.max(1,u*.025));
+  c.strokeStyle='rgba(10,7,5,.8)'; c.lineWidth=Math.max(1,u*.014);
+  for(let k=1;k<4;k++){const lx=kL+kW*k/4; c.beginPath(); c.moveTo(lx,kT+u*.03); c.lineTo(lx,kT+kH*.6); c.stroke();}
+  if(C.cup>0){
+    const tr=still?0:C.blind*C.blind*u*.03*Math.sin(tm*41), sh=(1-C.cup)*u*.5, cp=C.cup;
+    for(const sd of [-1,1]){
+      const bx=cx+sd*(u*.32+sh)+tr, by=fy+u*.32+sh*.5;
+      c.fillStyle='#0d0a08'; c.beginPath(); c.moveTo(bx,by);
+      c.bezierCurveTo(bx+sd*u*.06,fy-u*.05,bx-sd*u*.08,fy-u*.36,bx-sd*u*.3*cp,fy-u*.42*cp);
+      c.bezierCurveTo(bx-sd*u*.2*cp,fy-u*.2,bx-sd*u*.16,fy+u*.1,bx-sd*u*.14,by+u*.04); c.closePath(); c.fill();
+      c.strokeStyle='rgba(237,150,70,'+(.65*cp)+')'; c.lineWidth=Math.max(1,u*.02); c.beginPath();
+      c.moveTo(bx-sd*u*.14,by); c.bezierCurveTo(bx-sd*u*.16,fy+u*.1,bx-sd*u*.2*cp,fy-u*.2,bx-sd*u*.3*cp,fy-u*.42*cp); c.stroke();
+    }
+  }
+  /* how long the hand can stay: a ring round the flame that empties as you hold, red near the end */
+  if(C.blind>.01&&C.phase==='walk'){
+    const left=1-C.blind, r0=u*.62;
+    c.strokeStyle='rgba(228,221,204,.15)'; c.lineWidth=Math.max(2,u*.05); c.beginPath(); c.arc(cx,fy,r0,0,TAU); c.stroke();
+    c.strokeStyle=C.blind>.7?'rgba(218,90,75,.9)':'rgba(228,221,204,.75)'; c.beginPath(); c.arc(cx,fy,r0,-Math.PI/2,-Math.PI/2+left*TAU); c.stroke();
+  }
+  /* held too long, the dark closes in from the edges; a stumble flashes */
+  c.setTransform(1,0,0,1,0,0);
+  if(C.blind>.3){c.globalAlpha=Math.min(.9,(C.blind-.3)*1.3); const vw=Math.max(w,h)*1.25; c.drawImage(sp.vig,cx-vw,fy-vw,vw*2,vw*2); c.globalAlpha=1;}
+  if(C.flash>0){c.fillStyle='rgba(255,190,110,'+(.22*C.flash)+')'; c.fillRect(0,0,w,h);}
+}
+/* the Grimoire's picture of a descent: a sleeper with its eyes open, and the flame */
+function descIcon(cv,k){
+  const c=cv.getContext('2d'), n=cv.width;
+  c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,n,n);
+  c.fillStyle='#0c0f11'; c.beginPath(); c.arc(n/2,n/2,n*.48,0,TAU); c.fill();
+  c.setTransform(n*.78,0,0,n*.78,n*.42,n*.56); paintSleeper(c,0);
+  c.setTransform(1,0,0,1,0,0);
+  const S=n*.78, E=SLEEPER_EYES[0];
+  for(const e of E){const ex=n*.42+e[0]*S, ey=n*.56+e[1]*S; c.fillStyle='rgba(242,134,74,.45)'; c.beginPath(); c.arc(ex,ey,n*.05,0,TAU); c.fill();
+    c.fillStyle='#ecdeb4'; c.beginPath(); c.ellipse(ex,ey,n*.022,n*.018,0,0,TAU); c.fill();
+    c.fillStyle='#0b0908'; c.beginPath(); c.arc(ex+n*.006,ey,n*.009,0,TAU); c.fill();}
+  const fx=n*.8, fy=n*.36, fs=n*.07;
+  for(const [kk,col] of [[1,'rgba(240,120,45,.9)'],[.6,'#ffd68a']]){c.fillStyle=col; c.beginPath(); c.moveTo(fx,fy-fs*1.6*kk); c.quadraticCurveTo(fx+fs*.6*kk,fy,fx,fy+fs*.3); c.quadraticCurveTo(fx-fs*.6*kk,fy,fx,fy-fs*1.6*kk); c.fill();}
+  c.strokeStyle='#0d0a08'; c.lineWidth=n*.04; c.lineCap='round'; c.beginPath(); c.arc(fx,fy+fs*.2,fs*1.1,.15*Math.PI,.85*Math.PI); c.stroke();
+}
 
 function saveBest(won){
   const b=store.get('ll-best',{floor:0,wins:0})||{floor:0,wins:0};
@@ -4360,6 +4762,7 @@ function reportError(err){
   if(errShown)return;
   errShown=true;
   paused=true;
+  descentStop();
   if(F)F.blocking=null;
   showModal({title:'Something broke',bad:true,
     body:'The game hit an error ('+String((err&&err.message)||err).slice(0,140)+'). Your run is saved at the last break between waves, so Continue on the title screen picks it back up.',
@@ -8382,7 +8785,7 @@ function showBook(){
   if(run&&!devOn)held.forEach(k=>C.relics.add(k));
   const hasSeen=(kind,k)=>devOn||C[kind].has(k);
   const foes=Object.keys(FOES).filter(k=>!FOES[k].bound), relics=Object.keys(RELICS);
-  const tabs=[['foes','Creatures'],['wards','Wards'],['rites','Rites'],['relics','Relics'],['kits','Kits'],['patrons','Patrons'],['trials','Trials']];
+  const tabs=[['foes','Creatures'],['wards','Wards'],['rites','Rites'],['relics','Relics'],['kits','Kits'],['patrons','Patrons'],['trials','Trials'],['descents','Descents']];
   let list='', intro='';
   if(t==='foes'){
     const seen=foes.filter(k=>hasSeen('foes',k)).length;
@@ -8420,6 +8823,10 @@ function showBook(){
     intro='On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule. Pass it and take a relic.';
     list=Object.keys(TRIALS).map(k=>{const T=TRIALS[k], now=!!(run&&F&&F.trial===k);
       return bookEntry(bookSeal(T.short.charAt(0)),T.n,'Trial'+(now?' · This floor':''),T.d,now?'is-held':'');}).join('');
+  }else if(t==='descents'){
+    intro='On the landings after floors two, three and four, one door may carry a descent, marked with a cupped flame: the way down, played. It pays and it costs, and failing it never ends the run. Once walked, it is not offered again until your next descent.';
+    list=Object.keys(DESCENTS).map(k=>{const D=DESCENTS[k], done=!!(run&&(run.descents||[]).includes(k));
+      return bookEntry('<canvas width="72" height="72" data-dicon="'+k+'"></canvas>',D.n,'Descent · '+D.verb+(done?' · Walked this descent':''),D.d+' <i>Pays:</i> '+D.pays+' <i>Costs:</i> '+D.costs+' <i>Fails:</i> '+D.fail,done?'is-held':'');}).join('');
   }else if(t==='kits'){
     /* every kit, what it builds and what it casts; a kit not yet earned stays dark, unless developer mode is on */
     const m=meta();
@@ -8442,6 +8849,7 @@ function showBook(){
   showModal({kind:'book',wide:true,title:'The Grimoire',body:'',html,actions:[{label:BOOK.from==='pause'?'Back':'Close',primary:true,fn:closeBook}]});
   $('#mChoices').querySelectorAll('canvas[data-icon]').forEach(cv=>{const p=cv.dataset.icon.split(':'); bookIcon(cv,p[0],p[1],p[2]==='1',p[3]);});
   $('#mChoices').querySelectorAll('canvas[data-port]').forEach(cv=>{const p=cv.dataset.port.split(':'); paintPortrait(cv,p[0],p[1]==='1');});
+  $('#mChoices').querySelectorAll('canvas[data-dicon]').forEach(cv=>descIcon(cv,cv.dataset.dicon));
 }
 function bookIcon(cvs,kind,type,sil,kt){
   if(!sil){drawIcon(cvs,{kind,type,kit:kt}); return;}
@@ -8460,6 +8868,9 @@ $('#bookBtn').onclick=()=>{if(F&&run&&!F.blocking&&canPause())openBook('hud');};
 const COACH={on:false,list:null,i:0,kind:'',key:'',held:false,raf:0,last:0};
 function tut(){const t=store.get('ll-tut',null); return t&&typeof t==='object'?{walk:t.walk||'',seen:Array.isArray(t.seen)?t.seen:[],off:!!t.off}:{walk:'',seen:[],off:false};}
 function tutSave(t){store.set('ll-tut',t);}
+/* a tip shown where it happens rather than on the board (TIPS with where): not yet seen, and tips are on */
+function tipFresh(k){const t=tut(); return !t.off&&!t.seen.includes(k);}
+function tipSeen(k){const t=tut(); if(!t.seen.includes(k)){t.seen.push(k); tutSave(t);}}
 function coachEl(el){if(typeof el==='string')el=$(el); if(!el||el.hidden||el.closest('[hidden]'))return null; const r=el.getBoundingClientRect(); return r.width&&r.height?{left:r.left,top:r.top,width:r.width,height:r.height}:null;}
 /* a circle on the board, in tile units */
 function coachBoard(x,y,rad){const r=cv.getBoundingClientRect(), sx=r.width/COLS, sy=r.height/ROWS; return {left:r.left+(x-rad)*sx,top:r.top+(y-rad)*sy,width:2*rad*sx,height:2*rad*sy,round:true};}
@@ -8567,6 +8978,9 @@ function coachWalkSteps(){
 /* a ring on the creature a lesson is about, while it lives and can be seen */
 function foeTarget(e){return rad=>()=>e&&!e.dead&&canSee(e)?coachBoard(e.x,e.y,rad||Math.max(.6,e.def.r*1.6)):null;}
 const TIPS={
+  /* shown where they happen, not on the board (coachPoll skips a tip with where): the landing's fork, and The Carry's first card */
+  descentdoor:{where:'landing',when:()=>false,title:'A descent',text:'A door marked with a cupped flame has a descent behind it: a short game on the way down, played after the toll. It pays, and it costs. Failing it never ends the run. The other doors are only stairs.'},
+  carry:{where:'descent',when:()=>false,title:'The Carry',get text(){return 'Hold your thumb down anywhere to cup the flame. A sleeper inside its light begins to stir, and its eyes start to open; hidden, it settles again. Hold too long and you stumble: the flask spills and the flame flares. Lift between sleepers. Wake '+(['one','two','three','four','five'][CARRY_FAIL-1]||CARRY_FAIL)+' and you lose the flask.';}},
   fork:{when:()=>F.phase==='build'&&F.forks.length,steps:()=>{
     const out=[{title:'The stair forks',text:'Here the stair splits. They take the darker way, and only light you cast counts, never the lamp’s. The gold chevron shows where they will go. Shades and Stalkers hunt your light instead.',target:()=>F.forks[0]?coachBoard(F.forks[0].x,F.forks[0].y,.9):null}];
     if(trayItems().some(i=>i.type==='weir'))out.push({title:'The Weir',enter:()=>coachShowTray('weir'),text:'Build a Weir on the fork, lit or dark, and it shuts one way. Tap it between waves to flip it. Watchers fly over it, and a Behemoth breaks it.',target:()=>coachTray('weir')});
@@ -8906,7 +9320,7 @@ function coachPoll(){
   /* creature tips first: they are the ones that can't wait */
   for(const pass of [true,false])for(const k in TIPS){
     const tip=TIPS[k];
-    if(!!tip.foe!==pass||t.seen.includes(k))continue;
+    if(tip.where||!!tip.foe!==pass||t.seen.includes(k))continue;
     let e=null;
     if(tip.foe){
       if(!F.tipMet[k])continue;
@@ -9275,7 +9689,7 @@ function moreCue(){
 }
 $('#modal .box').addEventListener('scroll',moreCue,{passive:true});
 function closeModal(){$('#modal').hidden=true; pauseOpen=false;}
-function canPause(){return !!(F&&run&&$('#title').hidden&&(F.phase==='build'||F.phase==='wave'||F.phase==='draft'));}
+function canPause(){return !!(F&&run&&!DESC.active&&$('#title').hidden&&(F.phase==='build'||F.phase==='wave'||F.phase==='draft'));}
 function isFull(){return !!(document.fullscreenElement||document.webkitFullscreenElement);}
 async function toggleFull(){
   const el=document.documentElement;
@@ -9415,7 +9829,8 @@ function frame(now){
   watchPerf(now-last);
   const raw=Math.min(.05,(now-last)/1000); last=now;
   try{
-    if(!$('#title').hidden)drawTitle(now/1000);
+    if(DESC.active)descentFrame(raw);
+    else if(!$('#title').hidden)drawTitle(now/1000);
     /* REVIEW(Claude) 4: this frame() FIND was rebased onto v12's substep loop (update(raw*speed) is gone) */
     else if(MAP_SYS.active){
       if(MAP_SYS.anim){
@@ -9481,6 +9896,7 @@ $('#continueBtn').onclick=()=>{AUDIO.init(); if(lastSave&&lastSave.run)resumeFro
 /* the rules open on top, where they can be seen, instead of unfolding below the fold of the title screen */
 $('#rulesBtn').onclick=()=>showRules(false);
 document.addEventListener('keydown',e=>{
+  if(DESC.active)return;
   if(e.key==='Escape'||e.key==='p'||e.key==='P'){
     if(pauseOpen){resumeGame(); return;}
     if($('#modal').hidden||(F&&F.phase==='draft'))openPause();
@@ -9488,6 +9904,7 @@ document.addEventListener('keydown',e=>{
 });
 /* screen off or tab hidden mid-wave: stop and show the pause menu */
 document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)dscLetGo();
   if(document.hidden&&F&&!paused&&$('#modal').hidden&&canPause())openPause();
   /* the music sleeps with the screen and wakes with it */
   const c=AUDIO.ctx;

@@ -49,7 +49,52 @@ const DEV=[
     await p.screenshot({path:(process.argv[3]||'.')+'/seed-death-'+nm+'.png'});
     const seedOk=sp.copyIn&&sp.codeIn&&sp.thumb&&!sp.sideways&&sd.copyIn&&sd.codeIn&&sd.sameIn===true&&sd.thumb&&!sd.sideways&&JSON.stringify(b0)===JSON.stringify(b1);
     if(!seedOk)console.log('FAIL '+nm+': the stair’s name and code on the pause and death screens',JSON.stringify({sp,sd,b0,b1}));
-    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk;
+    /* descents (Expansion 2): the descent door and its first-time tip on the landing fit without sideways scroll; The Carry's
+       counts and prompt sit inside the safe area, clear of the flame and the stair ahead of it, and don't move as they change;
+       its result card fits and is big enough for a thumb. The same in #app.side */
+    const dsc=await p.evaluate(ins=>{
+      const T=__t; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      const o={side:document.getElementById('app').classList.contains('side')};
+      T.tutSet({walk:'done',seen:[],off:false});
+      T.newRun('lamplighter',0,{seed:4242}); T.run.floor=1; T.beginFloor(null);
+      T.F.foes=[]; T.F.queue=[]; T.F.wave=T.F.def.waves.length; T.F.phase='cleared'; T.openDraft(40,0);
+      const d=T.F.draft; d.patron=null; d.relics=0; T.F.blocking.choices[0].fn();
+      d.doors.forEach(x=>delete x.descent); const i=d.doors.findIndex(x=>!x.trial); d.doors[i].descent='carry'; T.showLanding();
+      const box=document.querySelector('#modal .box'), door=document.querySelectorAll('#mChoices .choice')[i];
+      door.scrollIntoView({block:'nearest'});
+      o.door=q(door); o.doorIn=inside(o.door); o.tip=!!document.querySelector('#mBody .dsc-tip');
+      o.sideways=getComputedStyle(box).overflowX!=='hidden'&&box.scrollWidth>box.clientWidth+1;
+      T.tutSet({walk:'done',seen:['carry'],off:false});
+      T.setDescentAuto(null); T.chooseDoor(d,i); if(T.F.draft&&!T.F.draft.done)T.descend();
+      const C=T.DESC; o.active=C.active&&C.phase==='walk';
+      const ov=document.getElementById('dscOverlay').getBoundingClientRect();
+      const u=Math.min(ov.width/6.2,ov.height/7.4), fy=ov.height*.36;
+      const stats=[...document.querySelectorAll('.dsc-stat')].map(q), prompt=q(document.querySelector('#dscPrompt span'));
+      o.u=+u.toFixed(1); o.stats=stats; o.prompt=prompt;
+      o.statsIn=stats.every(inside)&&inside(prompt);
+      /* clear of the flame and what lies ahead of it: the light above it, and three tiles of stair below it */
+      o.clear=stats.every(r=>r[3]<=fy-u*.9)&&prompt[1]>=fy+u*2.5;
+      C.woke=2; C.spilt=3; C.hudKey=''; T.descentFrame(0);
+      const stats2=[...document.querySelectorAll('.dsc-stat')].map(q);
+      o.still=JSON.stringify(stats)===JSON.stringify(stats2);
+      return o;},ins);
+    await p.waitForTimeout(250);
+    await p.screenshot({path:(process.argv[3]||'.')+'/carry-'+nm+'.png'});
+    const card=await p.evaluate(ins=>{
+      const T=__t, C=T.DESC; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      C.pos=C.len; C.held=false; C.liftT=0; T.carryStep(.05); C.t+=1; T.descentFrame(.05);
+      const el=document.getElementById('dscCard'), r=el.getBoundingClientRect();
+      const o={shown:!document.getElementById('dscCardWrap').hidden,r:[r.left,r.top,r.right,r.bottom].map(Math.round),thumb:r.height>=44&&r.width>=200,
+        fits:el.scrollHeight<=el.clientHeight+1||r.height>=120};
+      o.in=r.left>=ins.left-1&&r.right<=innerWidth-ins.right+1&&r.top>=ins.top-1&&r.bottom<=innerHeight-ins.bottom+1;
+      return o;},ins);
+    await p.screenshot({path:(process.argv[3]||'.')+'/carry-card-'+nm+'.png'});
+    await p.evaluate(()=>{const T=__t; T.descentFinish({woke:0,spilt:0}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
+    const dscOk=dsc.doorIn&&dsc.tip&&!dsc.sideways&&dsc.active&&dsc.statsIn&&dsc.clear&&dsc.still&&card.shown&&card.in&&card.thumb&&card.fits;
+    if(!dscOk)console.log('FAIL '+nm+': the descent door, The Carry and its card',JSON.stringify({dsc,card}));
+    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk;
     if(!ok)bad++;
     console.log((ok?'OK  ':'BAD ')+nm.padEnd(17),'side',c.side,'tile',c.tile,'boardMoved',moved,'barMoved',cmdMoved,'over',c.over,'unsafe',c.offs,'hint',c.hint,errs.length?errs:'');
     await ctx.close();

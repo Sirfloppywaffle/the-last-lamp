@@ -102,6 +102,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     for(let i=0;i<3;i++)T.hurt(at('crawler',g,n1.d-.3),9999); out.capped=+(dn-n1.d).toFixed(2);
     clearFoes();
     out.cur=+T.currentOf(T.spawnFoe('gorger',g,d0+.5)).toFixed(2); clearFoes();
+    /* one stretch of water only: with two on the same way, the dry run-up before the first could fall in the second, so a
+       Gorger was born wet and raised nothing (about 1 run in 12 on main, PR #98) */
+    T.run.water.str=[T.run.water.str[0]]; T.waterSync();
     holdWave(); T.F.gorgeRise=0; const w0=T.F.water.size;
     /* each Gorger starts a tile and more short of the water as it stands now: a rise can grow the water's near end toward
        where the last one started, and one born already wet raises nothing (this failed about 1 run in 12) */
