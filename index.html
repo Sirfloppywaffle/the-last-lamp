@@ -239,12 +239,23 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 
 /* Modal */
 .modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 20px) 16px calc(env(safe-area-inset-bottom,0px) + 20px);background:var(--veil)}
-.box{width:100%;max-width:640px;max-height:100%;overflow-y:auto;background:var(--stone);border:1px solid var(--seam);border-radius:10px;padding:20px}
+/* .box hides sideways overflow: the More below cue's fade reaches 20px past a 16px padding on short screens, and once a box
+   scrolled, it slid 4px sideways under a thumb (found by the seeds layout check) */
+.box{width:100%;max-width:640px;max-height:100%;overflow-y:auto;overflow-x:hidden;background:var(--stone);border:1px solid var(--seam);border-radius:10px;padding:20px}
 .box h2{margin:0 0 8px;font-family:var(--f-display);font-weight:700;font-size:2.1rem;line-height:.95;color:var(--tallow);text-wrap:balance}
 .box h2.bad{color:var(--wound)}
 .box > p{margin:0 0 14px;color:var(--ash);max-width:60ch}
 .box .note{font-size:.82rem}
 .statline{font-family:var(--f-num);font-size:.8rem;color:var(--bone)}
+/* seeds (#95): the stair's name, its code and the copy button, at the foot of the pause, death and morning screens */
+.seed-line{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--seam)}
+.seed-name{font-family:var(--f-display);font-size:1.05rem;color:var(--tallow);line-height:1.15}
+.seed-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.seed-code{font-family:var(--f-num);font-size:.86rem;letter-spacing:.06em;color:var(--bone);user-select:all;-webkit-user-select:all;overflow-wrap:anywhere}
+.btn.seed-copy{min-height:40px;padding:6px 14px;font-size:.82rem;flex:0 0 auto}
+.seed-again{font-size:.8rem;color:var(--ash)}
+.seed-dev{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.seed-in{flex:1 1 180px;min-width:0;min-height:40px;padding:6px 10px;font:16px var(--f-num);letter-spacing:.04em;color:var(--bone);background:var(--abyss);border:1px solid var(--seam);border-radius:6px;text-transform:uppercase}
 .choices{display:grid;gap:10px}
 @media (min-width:600px){.choices{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .choice{text-align:left;padding:12px;border-radius:8px;border:1px solid var(--seam);background:var(--slab);display:flex;flex-direction:column;gap:5px;min-width:0}
@@ -470,7 +481,8 @@ input[type=range]::-moz-range-track {
         <li><b>The Roster.</b> Five went down the stair the night Saltmouth drowned: Ambrose Fenn the lamplighter, Jonah Tolland the harpooner, the Nameless, Dr. Lucan Voss and Agathe Vell. Each carries the lamp their own way. Some are earned by a deed on the stair, some in the Ember Hall. Every kind of horror you bind or capture, on any descent, adds its eyes to the Nameless’s hood, for good: there are six to find.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
-        <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. You meet every map of a floor before any comes back, and a saved floor keeps its own.</li>
+        <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. The stair's name decides which, and a saved floor keeps its own.</li>
+        <li><b>Every stair has a name.</b> A descent is drawn from a seed: its maps, waves, Heralds, gifts, doors, omens, rooms and offers. The pause, death and morning screens name the stair and show its code; tap Copy to keep it. When the lamp goes out you can descend the same stair again, drawn the same way, though what the dark does in a fight is never the same twice. A stair walked twice leaves no embers.</li>
         <li><b>Omens.</b> Each door shows the omen waiting on the floor behind it: a smaller lamp, a swarm, faster creatures, kills that pay nothing. Choose your risks.</li>
         <li><b>Trials.</b> On the way to floors two and three, one door carries a Trial: the floor behind it plays by a rule, and passing it pays a relic. <i>Rationed:</i> six wards at most beside the path (what lies on the path, and horrors, don't count); the count sits beside the floor's name. <i>The Hallowed Ground:</i> beside the path you can build only on four patches marked in chalk, lit or dark; nothing there goes dark, a candle there burns without the lamp, a Tuning Fork there hums without the lamp's sound, and a pylon there powers the grid. Your wards there still strike only what is seen or heard. <i>Sealed:</i> two of your wards are locked for the floor, marked with a lock in the tray; never your light and never your harpoon. <i>One of Each:</i> each kind of ward stands only once, except what makes your light (candles of every kind, Tuning Forks, pylons, Bell Wires and Try-pots). <i>Bare Hands:</i> your rites are silent, all but the Bellringer's Toll. <i>Unbranched:</i> nothing can be upgraded, not even the lamp. <i>The Long Night:</i> candles shine half as far, Tuning Forks hum half as wide, and the lamp burns a tile smaller; it never comes with Moonless or Thick Dark.</li>
         <li><b>Relics.</b> Relics bend the rules, and a cursed one takes as much as it gives. You are only offered a relic you can use: one that needs a ward, such as Salt or the Hex Effigy, waits until you can build it. Dead Reckoning, whose price falls on light, never comes to the Bellringer, who sees by sound. Tap a relic's seal to read it; a number on a seal is what it holds.</li>
@@ -518,12 +530,14 @@ let COLS=12, ROWS=14, ORIENT='port';
 window.devNoDark=false;
 const $=s=>document.querySelector(s);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const rnd=(a,b)=>a+Math.random()*(b-a);
-const pick=a=>a[Math.floor(Math.random()*a.length)];
+/* RNG is Math.random, except while seeded() is drawing a stair roll (seeds, #95): then it is that roll's own stream */
+let RNG=Math.random;
+const rnd=(a,b)=>a+RNG()*(b-a);
+const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='18.5.3';
+const GAME_VERSION='18.6.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -1025,7 +1039,7 @@ function checkOccultistDeed(cleared){
 }
 function kit(){return run&&run.kit;}
 function depthLvl(){return (run&&run.depth)||0;}
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(RNG()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
 /* a relic that needs a ward or rite is only offered to a run that has one (its kit's, or one bought, gifted or found).
    A relic with notKit is never offered to that kit: Dead Reckoning, whose curse falls on light, costs the Bellringer nothing,
    since she sees by her Toll (Criss, v18.5.2). A run that already carries it keeps it */
@@ -1106,7 +1120,7 @@ function offerSet(p,forceConj){
   const ok=k=>{const O=OFFERINGS[k]; return O.p===p&&!O.pair&&!hasOff(k)&&(!O.kit||O.kit===kit())&&(!O.need||O.need());};
   const keys=Object.keys(OFFERINGS).filter(ok), gen=shuffle(keys.filter(k=>!OFFERINGS[k].kit)), own=shuffle(keys.filter(k=>OFFERINGS[k].kit));
   const out=[];
-  if(own.length&&(Math.random()<.5||gen.length<3))out.push(own[0]);
+  if(own.length&&(RNG()<.5||gen.length<3))out.push(own[0]);
   for(const k of gen){if(out.length>=3)break; out.push(k);}
   if(!out.length)return null;
   shuffle(out);
@@ -1129,7 +1143,7 @@ function conjFor(p,force){
     return !mine.some(m=>OFFERINGS[m].pair.every(q=>O.pair.includes(q)));});
   if(!ks.length)return null;
   const k=pick(ks), w=OFFERINGS[k].pair.filter(q=>patTier(q)>=2).length;
-  return force||Math.random()<CONJ_CHANCE[w]?k:null;
+  return force||RNG()<CONJ_CHANCE[w]?k:null;
 }
 /* the Caller pays: the one of the pair whose Attention lags (the first of the pair on a tie) takes +1. The other is the
    Witness: it takes nothing, but the next wave it makes itself felt (conjWitness, from startWave) */
@@ -1183,8 +1197,10 @@ function offerChoice(k,fn){
 /* mid-floor, at about one break in seven (once a floor), a patron reaches out: three offerings, take one or refuse */
 function patronBreak(force){
   if(!F||F.phase!=='build'||F.patronCalled)return;
-  if(!force&&(Math.random()>=PATRON_BREAK||(COACH.on&&COACH.kind==='walk')||tut().walk===''&&run.floor===0))return;
-  const po=patronOffer(); if(!po)return;
+  const po=seeded(SALT.patronBreak,F.wave,()=>{
+    if(!force&&(RNG()>=PATRON_BREAK||(COACH.on&&COACH.kind==='walk')||tut().walk===''&&run.floor===0))return null;
+    return patronOffer();});
+  if(!po)return;
   const p=po.p, opts=po.o;
   F.patronCalled=true;
   const myF=F; let tries=0;
@@ -1212,17 +1228,20 @@ function openOffer(opts,p){
    turned board keeps the same water; the tiles are worked out again from them each time */
 function floodSeed(){
   if(!F||!run)return;
+  seeded(SALT.water,0,floodDraw);
+  waterSync();
+}
+function floodDraw(){
   const str=[], used=new Set();
   for(let n=0;n<40&&str.length<FLOOD_N;n++){
-    const g=Math.floor(Math.random()*F.paths.length), P=F.paths[g], hi=Math.floor(P.len)-FLOOD_LEN-3;
+    const g=Math.floor(RNG()*F.paths.length), P=F.paths[g], hi=Math.floor(P.len)-FLOOD_LEN-3;
     if(hi<2)continue;
-    const d0=2+Math.floor(Math.random()*(hi-1)), d1=d0+FLOOD_LEN-1, keys=[];
+    const d0=2+Math.floor(RNG()*(hi-1)), d1=d0+FLOOD_LEN-1, keys=[];
     for(let d=d0;d<=d1;d++){const p=posAt(P,d); keys.push(Math.floor(p[0])+','+Math.floor(p[1]));}
     if(keys.some(k=>used.has(k)))continue;
     keys.forEach(k=>used.add(k)); str.push([g,d0,d1]);
   }
   run.water={floor:run.floor,str};
-  waterSync();
 }
 function waterSync(){
   /* waterStr: which stretch each wet tile belongs to (Phosphor Tide and Brine-Choir work a stretch at a time) */
@@ -1269,9 +1288,9 @@ function nearWater(x,y){const w=F.waterPts; if(!w)return false; for(let i=0;i<w.
    floor or a turned board keeps the same spots; buildGeometry() works the tiles out again each time */
 function spotPick(used){
   for(let n=0;n<40;n++){
-    const g=Math.floor(Math.random()*F.paths.length), P=F.paths[g]; if(!P||P.len<6)continue;
+    const g=Math.floor(RNG()*F.paths.length), P=F.paths[g]; if(!P||P.len<6)continue;
     /* never the first two tiles (where they climb out) or the last three (the lamp's doorstep) */
-    const d=2+Math.floor(Math.random()*(Math.floor(P.len)-4)), p=posAt(P,d), c=Math.floor(p[0]), r=Math.floor(p[1]), key=c+','+r;
+    const d=2+Math.floor(RNG()*(Math.floor(P.len)-4)), p=posAt(P,d), c=Math.floor(p[0]), r=Math.floor(p[1]), key=c+','+r;
     if(used.has(key)||(c===F.lampC&&r===F.lampR))continue;
     return {g,d,key};
   }
@@ -1280,7 +1299,7 @@ function spotPick(used){
 function spotSeed(){
   if(!F||!run)return;
   const tiles=[], used=new Set();
-  for(let i=0;i<SPOT_N;i++){const s=spotPick(used); if(!s)break; used.add(s.key); tiles.push([s.g,s.d]);}
+  seeded(SALT.spots,0,()=>{for(let i=0;i<SPOT_N;i++){const s=spotPick(used); if(!s)break; used.add(s.key); tiles.push([s.g,s.d]);}});
   run.spots={floor:run.floor,tiles};
   spotSync();
   phosSpot();
@@ -1290,7 +1309,7 @@ function spotSeed(){
 function phosSpot(){
   if(!hasOff('phosphor')||!run.spots||run.spots.floor!==run.floor||!run.water||run.water.floor!==run.floor||!run.water.str.length)return;
   for(const k of F.spots)if(F.water.has(k))return;
-  const [g,d0,d1]=pick(run.water.str), d=d0+Math.floor(Math.random()*(d1-d0+1));
+  const [g,d]=seeded(SALT.phos,0,()=>{const s=pick(run.water.str); return [s[0],s[1]+Math.floor(RNG()*(s[2]-s[1]+1))];});
   if(run.spots.tiles.length)run.spots.tiles[0]=[g,d]; else run.spots.tiles.push([g,d]);
   spotSync();
 }
@@ -1721,7 +1740,7 @@ function castEbb(){
 const EVENTS={
   choir:{n:'The Drowned Choir',body:'Below the stair, voices rise out of black water. They are singing your name, slightly wrong.',opts:[
     {l:'Listen',d:'Lose 3 oil. Choose a relic.',fn:()=>{loseOil(3); return {text:'The song leaves something behind on the step.',pick:1};}},
-    {l:'Sing back',d:'Half the time 120 essence, half the time lose 4 oil.',fn:()=>{if(Math.random()<.5){run.ess+=120; return {text:'They fall silent, and leave essence on the water. +120 essence.'};} loseOil(4); return {text:'Your voice cracks. The water rises over the lamp. −4 oil.'};}},
+    {l:'Sing back',d:'Half the time 120 essence, half the time lose 4 oil.',fn:()=>{if(RNG()<.5){run.ess+=120; return {text:'They fall silent, and leave essence on the water. +120 essence.'};} loseOil(4); return {text:'Your voice cracks. The water rises over the lamp. −4 oil.'};}},
     {l:'Walk past',d:'Nothing happens.',fn:()=>({text:'You keep your head down. The singing follows you a long way.'})}]},
   corpse:{n:'A Lantern-bearer’s Corpse',body:'Someone made it this far. Their lamp is cracked and dry, but their pack is still full.',opts:[
     {l:'Take their oil',d:'+5 oil.',fn:()=>{addOil(5); return {text:'There is a little left in the bottom of the reservoir. +5 oil.'};}},
@@ -1736,7 +1755,7 @@ const EVENTS={
     {l:'Pocket the salt',d:'+70 essence.',fn:()=>{run.ess+=70; return {text:'It sells. +70 essence.'};}},
     {l:'Smash it',d:'The lamp holds 3 more oil, but you lose 2 oil now.',fn:()=>{run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+3; updateOilMax(); loseOil(2); return {text:'Brine pours out and runs toward the lamp. +3 capacity, −2 oil.'};}}]},
   door:{n:'A Door That Was Not There',pack:'events_more',body:'Set into the wall of the stair. The hinges are still wet.',opts:[
-    {l:'Open it',d:'Half the time a merchant. Half the time the next floor turns elite.',fn:()=>{if(Math.random()<.5)return {text:'Behind it, something with too many hands is selling things.',room:'merchant'}; if(run.next)run.next.elite=true; return {text:'Behind it, the stair goes down steeper. The next floor is elite.'};}},
+    {l:'Open it',d:'Half the time a merchant. Half the time the next floor turns elite.',fn:()=>{if(RNG()<.5)return {text:'Behind it, something with too many hands is selling things.',room:'merchant'}; if(run.next)run.next.elite=true; return {text:'Behind it, the stair goes down steeper. The next floor is elite.'};}},
     {l:'Leave it shut',d:'Nothing happens.',fn:()=>({text:'You leave it. When you look back, there is no door.'})}]},
   mirror:{n:'The Black Mirror',pack:'events_more',body:'Your reflection is carrying a lamp too. Its flame is brighter than yours.',opts:[
     {l:'Trade lamps',d:'The lamp holds 5 less oil, but burns half a tile wider for the rest of the run.',fn:()=>{const b=run.baseOilMax!=null?run.baseOilMax:run.oilMax; run.baseOilMax=Math.max(6,b-5); updateOilMax(); run.lampBonus=(run.lampBonus||0)+.5; return {text:'Your hand comes away holding the brighter lamp. It is lighter than it should be.'};}},
@@ -1852,6 +1871,8 @@ function mapDraw(fi){
   const n=floorMaps(fi).length;
   if(n<2)return 0;
   if(MAPV_FORCE!=null)return clamp(MAPV_FORCE|0,0,n-1);
+  /* a seeded run takes its map from the seed alone, and never reads or writes the bag: a replay would empty it */
+  if(seedOn())return Math.floor(roll(run.seed,fi,SALT.map,0)*n);
   /* the very first descent (the walkthrough not yet offered) plays the map the walkthrough was written on */
   if(fi===0&&!tut().walk)return 0;
   const S=store.get('ll-maps',null)||{}, bags=S.b||{}, last=S.l||{};
@@ -1906,7 +1927,7 @@ function drawWaves(fi){
   return def.waves.map((w,i)=>{
     if(fixedWave(w))return 'c';
     const opts=['c'].concat(deck.map((c,k)=>c.at.includes(i)?k:-1).filter(k=>k>=0));
-    return opts[Math.floor(Math.random()*opts.length)];
+    return opts[Math.floor(RNG()*opts.length)];
   });
 }
 /* the waves and their names for a draw; an unknown card (an old save, a changed deck) falls back to the classic wave */
@@ -2835,7 +2856,7 @@ function rationN(){let n=0; for(const t of F.towers)if(t.kind==='ward'&&!t.dead&
 function rationFull(){return trialOn('rationed')&&rationN()>=RATION_MAX;}
 /* Sealed: two wards from your arsenal, drawn once as the floor begins and kept with the save (run.seal, like run.hallow) */
 function sealable(){return run.wards.filter(w=>WARDS[w]&&!WARDS[w].raised&&w!=='harpoon'&&!TRIAL_SPARE.includes(w));}
-function sealSeed(){run.seal={floor:run.floor,w:shuffle(sealable()).slice(0,SEAL_N)};}
+function sealSeed(){run.seal={floor:run.floor,w:seeded(SALT.seal,0,()=>shuffle(sealable()).slice(0,SEAL_N))};}
 function sealedW(type){return trialOn('sealed')&&!!run.seal&&run.seal.floor===run.floor&&run.seal.w.includes(type);}
 /* One of Each: a kind that already stands can't stand again, except what makes your light (or what a rite raises) */
 function onceTaken(type){if(!trialOn('once')||TRIAL_SPARE.includes(type)||!WARDS[type]||WARDS[type].raised)return false;
@@ -2847,7 +2868,8 @@ function trialBarred(i){return i.kind==='ward'&&((rationCounts(i.type)&&rationFu
 /* the Hallowed Ground: four patches, each the ground around one tile of the path, so a patch holds wards on both sides of it
    (and a Galvanist's wire can cross it). One always lies around the lamp; the others are spread along the stair, one way
    after another. Worked out in the board's present orientation, kept the way FLOORS writes it (flipPt undoes itself) */
-function hallowSeed(){
+function hallowSeed(){seeded(SALT.hallow,0,hallowDraw);}
+function hallowDraw(){
   const pathT=F.pathTiles, lampK=F.lampC+','+F.lampR, used=new Set(), centres=[[F.lampC,F.lampR]], patches=[];
   const around=(c,r)=>{const o=[]; for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const x=c+dc, y=r+dr, k=x+','+y;
     if((dc||dr)&&x>=0&&y>=0&&x<COLS&&y<ROWS&&!pathT.has(k)&&k!==lampK&&!used.has(k))o.push([x,y]);} return o;};
@@ -2858,7 +2880,7 @@ function hallowSeed(){
   take(F.lampC,F.lampR);
   for(let k=0,tries=0;patches.length<HALLOW_PATCHES&&tries<300;tries++){
     const P=F.paths[k%F.paths.length], sep=tries<150?4:2.5;
-    const q=posAt(P,P.len*(.15+Math.random()*.6)), c=Math.floor(q[0]), r=Math.floor(q[1]);
+    const q=posAt(P,P.len*(.15+RNG()*.6)), c=Math.floor(q[0]), r=Math.floor(q[1]);
     if(!pathT.has(c+','+r)||centres.some(z=>Math.hypot(z[0]-c,z[1]-r)<sep))continue;
     if(take(c,r)){centres.push([c,r]); k++;}
   }
@@ -2955,6 +2977,15 @@ const DEV_ACTS={
   /* take or drop any relic, cursed ones too (Unlock everything skips those). It shows, never saves: codexSee is silent in dev mode (rule 24) */
   relic(k){if(!RELICS[k])return 'No such relic'; if(run.relics.includes(k)){removeRelic(k); forceUI(); return RELICS[k].n+' dropped';} addRelic(k); forceUI(); return RELICS[k].n+' taken';},
   reveal(k){revealKit(k,KITS[k].deed?'deed':'hall',()=>openDevMode(),false); return null;},
+  /* descend the stair a pasted code names, as this kit at this depth. Shows, never saves (rule 24): the code is not kept,
+     and the run is a replay, so it leaves no embers */
+  seed(){
+    const el=$('#seedIn'), v=parseStair(el&&el.value);
+    if(v==null)return 'No stair has that code. It reads like BRINE-HOLLOW-7F2A.';
+    const k=run.kit, d=run.depth||0;
+    MAP_SYS.active=false; $('#mapOverlay').hidden=true;
+    closeModal(); clearSave(); newRun(k,d,{seed:v,replay:true}); return null;
+  },
   spawn(k){
     if(F.phase==='build'){hint('Call the wave first, then spawn.',2200); return 'Spawns only during a wave';}
     spawnFoe(k,Math.floor(Math.random()*F.nRoots),0); return FOES[k].n+' spawned';
@@ -2976,6 +3007,8 @@ function openDevMode(msg){
     +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+Object.keys(KITS).filter(k=>k!=='lamplighter').map(k=>btn('reveal',KITS[k].who||KITS[k].n,k)).join('')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Take or drop a relic (● held, † cursed)</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+Object.keys(RELICS).map(k=>btn('relic',(run.relics.includes(k)?'● ':'')+RELICS[k].n+(RELICS[k].curse?' †':''),k)).join('')+'</div>'
+    +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Descend a stair by its code</h3>'
+    +'<div class="seed-dev"><input id="seedIn" class="seed-in" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Stair code" placeholder="'+(seedOn()?stairCode(run.seed):'BRINE-HOLLOW-7F2A')+'">'+btn('seed','Descend it')+'</div>'
     +'<h3 style="margin:0 0 8px;font-family:var(--f-display);color:var(--bone)">Spawn on a random path</h3>'
     +'<div style="display:flex;flex-wrap:wrap;gap:6px">'+SPAWNABLE.map(k=>btn('spawn',FOES[k].n,k)).join('')+'</div>';
   showModal({kind:'dev',title:'Developer',body:msg?'<span class="note">'+msg+'</span>':'Test tools. Nothing here is saved as a normal run would be.',html,
@@ -3003,11 +3036,100 @@ function openDevMode(msg){
   });
 })();
 
+/* ---------------- seeds (#95) ----------------
+   Every new run carries run.seed, a 32-bit number, and every stair roll is a pure function of it: roll(seed, floor, salt, i).
+   The stair rolls are the map, the wave cards, the Herald, the gift, the patrons' offers, the doors with their omens and
+   Trials, the rooms and what is in them, events, the Hallowed Ground, Sealed, her water and the Sun's spots. Each decision
+   owns one fixed salt in SALT, and i counts draws inside it. Nothing about the stream is saved, so a resume cannot drift.
+   Rolls inside a fight (spawns, slips, souls, a patron's water rising, the Knucklebones, jitter) stay on Math.random, so
+   the same stair still plays differently if you play it differently.
+   NEVER reuse or renumber a salt: every old code would walk a different stair. Add new ones at the end.
+   Never hash() here (rule 11): it needs three numbers, and a missing one gives NaN. roll() turns anything into an integer. */
+const SALT={map:1,waves:2,herald:3,heraldGate:4,gift:5,giftPatron:6,relics:7,doors:8,merchant:9,shrine:10,event:11,reliquary:12,
+  pick:13,pact:14,eventRoll:15,seal:16,hallow:17,water:18,spots:19,phos:20,swarm:21,patronBreak:22,cleanse:23};
+/* a decision that is made more than once a floor (a wave's break, a second relic) passes which one as sub */
+const SEED_SUB=4096;
+function mix32(h){h^=h>>>16; h=Math.imul(h,0x7feb352d); h^=h>>>15; h=Math.imul(h,0x846ca68b); h^=h>>>16; return h>>>0;}
+/* 0 to 1, never 1; the same four numbers always give the same answer */
+function roll(seed,floor,salt,i){
+  let h=mix32((seed|0)^0x9e3779b9);
+  h=mix32(h^Math.imul((floor|0)+1,0x85ebca6b));
+  h=mix32(h^Math.imul((salt|0)+1,0xc2b2ae35));
+  h=mix32(h^Math.imul((i|0)+1,0x27d4eb2f));
+  return h/4294967296;
+}
+/* an old save has no seed and plays unseeded, as it always did (rule 15) */
+function seedOn(){return !!(run&&typeof run.seed==='number');}
+function dice(salt,sub){if(!seedOn())return Math.random; const sd=run.seed, f=run.floor; let i=(sub|0)*SEED_SUB; return ()=>roll(sd,f,salt,i++);}
+/* run fn with rnd(), pick() and shuffle() drawing from this decision's stream (fn must not wait on anything) */
+function seeded(salt,sub,fn){const keep=RNG; RNG=dice(salt,sub); try{return fn();}finally{RNG=keep;}}
+function newSeed(){try{return crypto.getRandomValues(new Uint32Array(1))[0]>>>0;}catch(e){return Math.floor(Math.random()*4294967296)>>>0;}}
+/* the stair's name and code. Six bits name the first word, six the second, twenty the four letters after them, so the
+   code holds the whole seed and the name is read straight off it: BRINE-HOLLOW-7F2A is the Brine-Hollow stair */
+const SEED_A=['Brine','Salt','Tallow','Wick','Bone','Ash','Wrack','Kelp','Silt','Tar','Rust','Chalk','Pitch','Cinder','Marrow','Gall',
+  'Lye','Soot','Tide','Fog','Mire','Grave','Hook','Net','Bell','Moth','Eel','Crab','Gull','Rook','Ember','Wax',
+  'Coal','Peat','Reed','Rope','Chain','Iron','Lead','Pewter','Slate','Flint','Clay','Mud','Shell','Pearl','Scale','Fin',
+  'Gill','Tooth','Claw','Horn','Hide','Blood','Bile','Rot','Mould','Moss','Thorn','Nettle','Hemlock','Wormwood','Candle','Lantern'];
+const SEED_B=['Hollow','Gullet','Throat','Well','Cellar','Vault','Sump','Drain','Shaft','Weir','Sluice','Crypt','Nave','Cistern','Steps','Reach',
+  'Deep','Sound','Mouth','Pit','Hold','Keel','Wharf','Quay','Jetty','Pier','Dock','Locks','Gate','Door','Landing','Gallery',
+  'Chapel','Altar','Font','Belfry','Tower','Spire','Cloister','Ossuary','Barrow','Cairn','Kirk','Yard','Lane','Row','Close','Wynd',
+  'Mill','Forge','Kiln','Furnace','Hearth','Chimney','Flue','Grate','Trench','Ditch','Dyke','Fen','Marsh','Shoal','Narrows','Fathom'];
+/* Crockford's letters: no I, L, O or U, so nothing copied by hand reads as something else */
+const SEED_B32='0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+function stairWords(seed){seed>>>=0; return [SEED_A[seed>>>26],SEED_B[(seed>>>20)&63]];}
+function stairName(seed){const w=stairWords(seed); return 'the '+w[0]+'-'+w[1]+' stair';}
+function stairCode(seed){seed>>>=0; const w=stairWords(seed); let t=seed&0xFFFFF, tail='';
+  for(let k=0;k<4;k++){tail=SEED_B32[t&31]+tail; t>>>=5;}
+  return (w[0]+'-'+w[1]+'-'+tail).toUpperCase();}
+/* a code back to its seed, or null. Case, spaces and dashes don't matter; O reads as 0, I and L as 1. A bare number is a seed */
+function parseStair(txt){
+  const w=String(txt==null?'':txt).toUpperCase().replace(/[^A-Z0-9]+/g,' ').trim().split(' ').filter(Boolean);
+  if(w.length===1&&/^\d{1,10}$/.test(w[0])){const n=Number(w[0]); return n<=4294967295?n>>>0:null;}
+  if(w.length!==3||w[2].length!==4)return null;
+  const a=SEED_A.findIndex(x=>x.toUpperCase()===w[0]), b=SEED_B.findIndex(x=>x.toUpperCase()===w[1]);
+  if(a<0||b<0)return null;
+  let t=0;
+  for(const ch of w[2].replace(/O/g,'0').replace(/[IL]/g,'1')){const v=SEED_B32.indexOf(ch); if(v<0)return null; t=t*32+v;}
+  return ((a<<26)|(b<<20)|t)>>>0;
+}
+/* a fresh seed for a new run. On the very first descent the walkthrough is written on map 0 of the Cistern, so that run
+   is given a seed whose Cistern is map 0: its replays and its code then walk the same stair as it did */
+function freshSeed(){
+  let sd=newSeed();
+  const n=floorMaps(0).length;
+  if(n>1&&!tut().walk)for(let k=0;k<64&&Math.floor(roll(sd,0,SALT.map,0)*n)!==0;k++)sd=newSeed();
+  return sd;
+}
+/* the copy button: the clipboard where it can be had, a hidden textarea where it can't. Resolves true if it copied */
+function copyText(t){
+  const old=()=>{try{const ta=document.createElement('textarea'); ta.value=t; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); const ok=document.execCommand('copy'); ta.remove(); return ok;}catch(e){return false;}};
+  try{if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(t).then(()=>true,()=>old());}catch(e){}
+  return Promise.resolve(old());
+}
+/* the stair's name, its code and a copy button, for the pause, death and morning screens; nothing for an unseeded run */
+function seedLine(again){
+  if(!seedOn())return '';
+  const c=stairCode(run.seed), nm=stairName(run.seed);
+  return '<span class="seed-line"><span class="seed-name">'+nm.charAt(0).toUpperCase()+nm.slice(1)+(run.replay?', walked again':'')+'</span>'
+    +'<span class="seed-row"><code class="seed-code">'+c+'</code><button class="btn seed-copy" data-seedcopy="'+c+'">Copy</button></span>'
+    +(again?'<span class="seed-again">Descend the same stair walks it again: the same maps, waves and doors. It leaves no embers.</span>':'')+'</span>';
+}
+$('#mBody').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-seedcopy]'); if(!b)return;
+  const code=b.dataset.seedcopy;
+  copyText(code).then(ok=>{if(b.isConnected)b.textContent=ok?'Copied':'Not copied';});
+});
+
 /* ---------------- run & floors ---------------- */
-function newRun(k,depth){
+function newRun(k,depth,o){
   k=KITS[k]?k:'lamplighter'; const K=KITS[k];
+  o=o||{};
   run={floor:0,oil:20,oilMax:20,baseOilMax:20,spillV:1,ess:0,kit:k,depth:depth||0,wards:K.wards.slice(),rites:K.rites.slice(),relics:[],roster:Object.assign({},K.roster),
-    bound:0,kills:0,peakMad:0,omen:null,elite:false,trial:null,next:null,bosses:0,elites:0,seenEvents:[],madPen:0,lampBonus:0,bonusStipend:0};
+    bound:0,kills:0,peakMad:0,omen:null,elite:false,trial:null,next:null,bosses:0,elites:0,seenEvents:[],madPen:0,lampBonus:0,bonusStipend:0,
+    seed:typeof o.seed==='number'?o.seed>>>0:freshSeed()};
+  /* a stair walked again (Descend the same stair, or a code pasted in developer mode) leaves no embers (pillar 2) */
+  if(o.replay)run.replay=true;
   if(run.depth>=5){run.baseOilMax-=5; updateOilMax(); run.oil=run.oilMax;}
   beginFloor(null);
 }
@@ -3140,16 +3262,16 @@ function openHall(msg){
 function awardEmbers(won){
   const m=meta();
   const flr=run.floor+(won?1:0);
-  const e=Math.round((5 + Math.pow(flr,2)*6 + 15*(run.bosses||0) + 8*(run.elites||0) + (won?30:0))*(1+.25*(run.depth||0)));
+  const e=run.replay?0:Math.round((5 + Math.pow(flr,2)*6 + 15*(run.bosses||0) + 8*(run.elites||0) + (won?30:0))*(1+.25*(run.depth||0)));
   m.embers+=e; m.runs++;
   let opened=false;
   if(won){m.wins++; const nd=Math.min(5,(run.depth||0)+1); if(nd>m.depth){m.depth=nd; opened=true;}}
   saveMeta(m);
-  return '<br><span class="statline">+'+e+' embers. Spend them in the Ember Hall on the title screen.'+(opened?' The Deeper Dark opens to depth '+m.depth+'.':'')+'</span>';
+  return '<br><span class="statline">'+(run.replay?'A stair walked twice leaves no embers.':'+'+e+' embers. Spend them in the Ember Hall on the title screen.')+(opened?' The Deeper Dark opens to depth '+m.depth+'.':'')+'</span>';
 }
 function beginFloor(snap){
   /* a new floor draws its waves; a resumed one keeps its draw (an old save without one plays the classic waves) */
-  if(!snap||!run.draw||run.draw.floor!==run.floor)run.draw={floor:run.floor,cards:snap?FLOORS[run.floor].waves.map(()=>'c'):drawWaves(run.floor),herald:snap?null:heraldDraw(run.floor)};
+  if(!snap||!run.draw||run.draw.floor!==run.floor)run.draw={floor:run.floor,cards:snap?FLOORS[run.floor].waves.map(()=>'c'):seeded(SALT.waves,0,()=>drawWaves(run.floor)),herald:snap?null:seeded(SALT.herald,0,()=>heraldDraw(run.floor))};
   const drawn=drawnWaves(run.floor,run.draw.cards);
   /* the floor's map: drawn once as it begins; a resumed floor keeps its own, and an old save without one plays map 0 */
   if(!run.mapv||run.mapv.floor!==run.floor)run.mapv={floor:run.floor,v:snap?0:mapDraw(run.floor)};
@@ -3260,7 +3382,7 @@ function startWave(sub){
   /* the wave's own dread and the Teeth in the Stair begin again */
   F.feedMad=0; F.baitMad=0; F.ate=false; F.drunkMad=0; F.gorgeRise=0;
   const groups=F.def.waves[F.wave-1].slice();
-  if(F.omen==='swarm')groups.push(['skitter',8,.35,2.5,Math.floor(Math.random()*F.nRoots)]);
+  if(F.omen==='swarm')groups.push(['skitter',8,.35,2.5,Math.floor(dice(SALT.swarm,F.wave)()*F.nRoots)]);
   for(const raw of groups){
     const g=scaledGroup(raw);
     const n=F.elite&&g.count>1?Math.round(g.count*1.25):g.count;
@@ -3332,7 +3454,7 @@ function heraldDraw(fi){
 }
 function heraldMet(k){run.heraldsMet=(run.heraldsMet||[]).concat(run.heraldsMet&&run.heraldsMet.includes(k)?[]:[k]);}
 /* which rift the Herald climbs out of, chosen once the floor is laid out, so you can prepare for it */
-function heraldGate(h){if(h&&h.gate===undefined&&F&&F.nRoots)h.gate=Math.floor(Math.random()*F.nRoots); return h&&h.gate!==undefined?Math.min(h.gate,F.nRoots-1):0;}
+function heraldGate(h){if(h&&h.gate===undefined&&F&&F.nRoots)h.gate=Math.floor(dice(SALT.heraldGate,0)()*F.nRoots); return h&&h.gate!==undefined?Math.min(h.gate,F.nRoots-1):0;}
 /* the rifts to mark: a Herald's, and a boss's (named in the wave table, so known before it comes), from the break before until it climbs out */
 function riftDue(){
   const out=[]; if(!F||!F.nRoots||!F.def)return out;
@@ -3465,9 +3587,9 @@ function openDraft(salvage,healed){
   paused=true;
   F.phase='draft';
   const n=3+(F.omen==='starved'?1:0)+(has('hollow')?1:0)+(F.elite?1:0);
-  F.draft={step:'gift',salvage,healed,opts:draftOptions(n,F.elite),relics:(F.elite?1:0)+(F.omen==='hungering'?1:0)+(F.trial?1:0)};
+  F.draft={step:'gift',salvage,healed,opts:seeded(SALT.gift,0,()=>draftOptions(n,F.elite)),relics:(F.elite?1:0)+(F.omen==='hungering'?1:0)+(F.trial?1:0)};
   /* half the time the gift is a patron's offering instead; a quarter, if she already reached out on this floor */
-  if(Math.random()<(F.patronCalled?.25:.5)){const po=patronOffer(); F.draft.patron=po&&po.o;}
+  seeded(SALT.giftPatron,0,()=>{if(RNG()<(F.patronCalled?.25:.5)){const po=patronOffer(); F.draft.patron=po&&po.o;}});
   showLanding();
 }
 function showLanding(){F.blocking=landingModal(); checkpoint(); showModal(F.blocking); forceUI();}
@@ -3486,19 +3608,19 @@ function giftChoice(o,fn){
 function relicChoice(k,fn,tagExtra){const R=RELICS[k]; return {cls:R.curse?'curse':'relic',tag:(R.curse?'Cursed relic':'Relic')+(tagExtra||''),title:R.n,sub:R.d,fn};}
 /* each choice only counts once, even if tapped twice while the next screen loads */
 function step(expect,fn){return ()=>{if(!F||!F.draft||F.draft.done)return; const d=F.draft; if((d.pick?'pick':d.step)!==expect)return; try{fn(d);}catch(err){reportError(err);}};}
-function toFork(d){d.step='fork'; d.doors=makeDoors(); showLanding();}
-function afterGift(d){if(d.relics>0){d.step='relic'; d.ropts=relicOpts(3); if(!d.ropts.length){d.relics=0; toFork(d); return;} showLanding();} else toFork(d);}
+function toFork(d){d.step='fork'; d.doors=seeded(SALT.doors,0,makeDoors); showLanding();}
+function afterGift(d){if(d.relics>0){d.step='relic'; d.ropts=seeded(SALT.relics,d.relics,()=>relicOpts(3)); if(!d.ropts.length){d.relics=0; toFork(d); return;} showLanding();} else toFork(d);}
 function makeDoors(){
   const n=has('compass')?4:3;
   const w={merchant:3,event:3,shrine:2,rest:run.oil<run.oilMax*.6?3:2,reliquary:2,deep:2,bones:2};
   const pool=Object.keys(w), out=[];
   while(out.length<n&&pool.length){
     let tot=0; for(const k of pool)tot+=w[k];
-    let r=Math.random()*tot, ix=0;
+    let r=RNG()*tot, ix=0;
     for(;ix<pool.length;ix++){r-=w[pool[ix]]; if(r<=0)break;}
     out.push(pool.splice(Math.min(ix,pool.length-1),1)[0]);
   }
-  const doors=out.map(room=>({room,omen:(depthLvl()>=2||Math.random()<.5)?pick(Object.keys(OMENS)):null}));
+  const doors=out.map(room=>({room,omen:(depthLvl()>=2||RNG()<.5)?pick(Object.keys(OMENS)):null}));
   /* a Trial on one door (never the Deep Stair's: an elite floor under a Trial is two cruelties behind one choice) */
   const tk=Object.keys(TRIALS).filter(k=>TRIALS[k].fits(kit())), open=doors.filter(d=>d.room!=='deep');
   if(TRIAL_FLOORS.includes(run.floor+1)&&tk.length&&open.length){const d=pick(open); d.trial=pick(tk);
@@ -3507,16 +3629,16 @@ function makeDoors(){
   return doors;
 }
 function makeRoom(type){
-  if(type==='merchant')return {type,stock:makeStock()};
-  if(type==='shrine')return {type,pacts:shuffle(Object.keys(PACTS)).slice(0,3)};
+  if(type==='merchant')return {type,stock:seeded(SALT.merchant,0,makeStock)};
+  if(type==='shrine')return {type,pacts:seeded(SALT.shrine,0,()=>shuffle(Object.keys(PACTS)).slice(0,3))};
   if(type==='event'){
     const m=meta(), seen=run.seenEvents||(run.seenEvents=[]);
     let pool=Object.keys(EVENTS).filter(k=>(!EVENTS[k].pack||m.unlocked.includes(EVENTS[k].pack))&&!seen.includes(k));
     if(!pool.length)pool=Object.keys(EVENTS).filter(k=>!EVENTS[k].pack||m.unlocked.includes(EVENTS[k].pack));
-    const ev=pick(pool); seen.push(ev);
+    const ev=seeded(SALT.event,0,()=>pick(pool)); seen.push(ev);
     return {type,ev,res:null};
   }
-  if(type==='reliquary')return {type,opts:draftOptions(3,false)};
+  if(type==='reliquary')return {type,opts:seeded(SALT.reliquary,0,()=>draftOptions(3,false))};
   if(type==='bones')return {type,stake:Math.min(run.ess,40+run.floor*20),you:[[],[],[]],them:[[],[],[]],die:0,started:false,done:null,res:''};
   return {type};
 }
@@ -4060,10 +4182,10 @@ function chooseDoor(d,i){
   if(door.room==='deep'){descend(); return;}
   d.step='room'; d.room=makeRoom(door.room); showLanding();
 }
-function startPick(d,n,title,body){d.pick={left:n,opts:relicOpts(3),title:title||'Choose a relic',body:body||''}; if(!d.pick.opts.length)d.pick=null;}
+function startPick(d,n,title,body){d.pick={left:n,opts:seeded(SALT.pick,n,()=>relicOpts(3)),title:title||'Choose a relic',body:body||''}; if(!d.pick.opts.length)d.pick=null;}
 function takePick(d,k){
   addRelic(k); d.pick.left--;
-  if(d.pick.left>0){d.pick.opts=relicOpts(3); if(!d.pick.opts.length)d.pick=null;} else d.pick=null;
+  if(d.pick.left>0){d.pick.opts=seeded(SALT.pick,d.pick.left,()=>relicOpts(3)); if(!d.pick.opts.length)d.pick=null;} else d.pick=null;
   showLanding();
 }
 function doPact(d,k){
@@ -4089,7 +4211,7 @@ function buyStock(d,i){
   else if(it.kind==='ward'){if(!run.wards.includes(it.key))run.wards.push(it.key);}
   else if(it.kind==='bind'){run.roster[it.key]=(run.roster[it.key]||0)+1; run.bound++; checkOccultistDeed();}
   else if(it.kind==='oil')addOil(5);
-  else if(it.kind==='cleanse'){const c=pick(run.relics.filter(k=>RELICS[k].curse)); if(c){removeRelic(c); d.room.msg=RELICS[c].n+' is gone.';}}
+  else if(it.kind==='cleanse'){const c=seeded(SALT.cleanse,0,()=>pick(run.relics.filter(k=>RELICS[k].curse))); if(c){removeRelic(c); d.room.msg=RELICS[c].n+' is gone.';}}
   AUDIO.coin(); showLanding();
 }
 function stockChoice(d,it,i){
@@ -4150,7 +4272,7 @@ function landingStep(){
   if(r.type==='shrine'){
     if(r.res!=null)return {kind:'draft',wide:true,title:PACTS[r.done].n,body:r.res,actions:[take,pause]};
     return {kind:'draft',wide:true,title:'A Bleeding Shrine',body:'Three pacts are carved into it. You may take one, or none.',
-      choices:r.pacts.map(k=>({cls:'bind',tag:'Pact',title:PACTS[k].n,sub:PACTS[k].d,fn:step('room',dd=>doPact(dd,k))})),
+      choices:r.pacts.map(k=>({cls:'bind',tag:'Pact',title:PACTS[k].n,sub:PACTS[k].d,fn:step('room',dd=>seeded(SALT.pact,0,()=>doPact(dd,k)))})),
       actions:[{label:'Walk away',primary:true,fn:step('room',()=>descend())},pause]};
   }
   if(r.type==='event'){
@@ -4158,7 +4280,7 @@ function landingStep(){
     if(r.res!=null)return {kind:'draft',wide:true,title:E.n,body:r.res,actions:[take,pause]};
     return {kind:'draft',wide:true,title:E.n,body:E.body,
       choices:E.opts.map((op,i)=>({cls:'',tag:'Choice',title:op.l,sub:op.d,fn:step('room',dd=>{
-        const res=op.fn(); dd.room.res=res.text;
+        const res=seeded(SALT.eventRoll,i,op.fn); dd.room.res=res.text;
         if(res.room==='merchant'){dd.room=makeRoom('merchant'); dd.room.msg=res.text;}
         if(res.pick)startPick(dd,res.pick);
         showLanding();})})),actions:[pause]};
@@ -4209,7 +4331,7 @@ function saveBest(won){
 function summary(){return '<span class="statline">Creatures put down: '+run.kills+' · Horrors bound: '+run.bound+' · Peak madness: '+run.peakMad+'</span>';}
 function victory(){
   F.phase='won'; paused=true; saveBest(true); clearSave(); AUDIO.win();
-  F.blocking={kind:'end',title:'Morning',body:'The Primordial is still. Five floors of dark lie quiet over it, and the lamp is still burning. '+summary()+awardEmbers(true),
+  F.blocking={kind:'end',title:'Morning',body:'The Primordial is still. Five floors of dark lie quiet over it, and the lamp is still burning. '+summary()+awardEmbers(true)+seedLine(false),
     actions:[{label:'Descend again',primary:true,fn:()=>{closeModal(); openKitPicker();}},{label:'Title',fn:()=>{closeModal(); showTitle();}}]};
   revealThenShow(F.blocking);
 }
@@ -4219,12 +4341,16 @@ function defeat(){
   const embers=awardEmbers(false);
   selTower=null; sel=null; mode=null;
   const here=F;
+  /* copied now: the run may be gone by the time the screen shows (rule 10) */
+  const again=seedOn()?{kit:run.kit,depth:run.depth||0,seed:run.seed}:null, line=seedLine(!!again);
   setTimeout(()=>{
     if(F!==here)return;
     paused=true;
     F.blocking={kind:'end',title:'The lamp is out',bad:true,
-      body:'It gutters on '+F.def.name+', wave '+F.wave+'. The dark closes over the flame. '+summary()+embers,
-      actions:[{label:'Descend again',primary:true,fn:()=>{closeModal(); openKitPicker();}},{label:'Title',fn:()=>{closeModal(); showTitle();}}]};
+      body:'It gutters on '+F.def.name+', wave '+F.wave+'. The dark closes over the flame. '+summary()+embers+line,
+      actions:[{label:'Descend again',primary:true,fn:()=>{closeModal(); openKitPicker();}},
+        ...(again?[{label:'Descend the same stair',fn:()=>{closeModal(); clearSave(); newRun(again.kit,again.depth,{seed:again.seed,replay:true});}}]:[]),
+        {label:'Title',fn:()=>{closeModal(); showTitle();}}]};
     revealThenShow(F.blocking);
   },900);
 }
@@ -8683,7 +8809,11 @@ const TIPS={
     target:()=>{const so=F.souls.find(s=>s.t>0&&!s.big); return so?coachBoard(so.x,so.y,.75):null;}},
   madness:{when:()=>F.towers.some(t=>t.kind==='horror'),title:'Madness',text:'Every horror you field adds madness. At Whispers the lamp flickers. Deeper, a horror may break loose, and when the dark leans in the lamp shrinks.',target:()=>coachStat('#madV')},
   dark:{when:()=>!flickering()&&F.towers.some(t=>t.dark&&t.kind==='ward'),title:'Cut off',text:'This ward stands outside the lamp’s light, so it does nothing. Light has to connect back to the lamp through lit tiles.',
-    target:()=>{const t=F.towers.find(t=>t.dark&&t.kind==='ward'); return t?coachBoard(t.c+.5,t.r+.5,.7):null;}}
+    target:()=>{const t=F.towers.find(t=>t.dark&&t.kind==='ward'); return t?coachBoard(t.c+.5,t.r+.5,.7):null;}},
+  /* seeds (#95): last, so any tip about the floor itself goes first; in a break after the second floor's first wave, a quiet moment */
+  stair:{when:()=>seedOn()&&run.floor>=1&&F.phase==='build'&&F.wave>=1,title:'The stair has a name',
+    text:'Every descent is drawn from a seed: its maps, waves, doors and offers. Pause to read this stair’s name and copy its code. If the lamp goes out, you can descend the same stair again, but it leaves no embers.',
+    target:()=>coachEl('#pauseBtn')}
 };
 Object.keys(KITS).forEach(k=>{if(KITS[k].deed)TIPS['deed_'+k]={when:()=>!!(run.deeds&&run.deeds.includes(k)),title:'A deed is done',
   text:'You have earned '+KITS[k].n+'. Choose it from the title on your next descent.'};});
@@ -9172,7 +9302,7 @@ function openPause(){
   const om=(F.trial?'Trial: '+TRIALS[F.trial].n+'. '+TRIALS[F.trial].d+' ':'')+(F.omen?'Omen: '+OMENS[F.omen].n+'. '+OMENS[F.omen].d+' ':'');
   const kt=KITS[kit()]?KITS[kit()].n+'. ':'';
   const mp=mapTag()?'The stair here: '+F.def.mapN+'. ':'';
-  showModal({kind:'pause',title:'Paused',body:'The dark waits with you. '+kt+mp+om+rel+named,stack:true,
+  showModal({kind:'pause',title:'Paused',body:'The dark waits with you. '+kt+mp+om+rel+named+seedLine(false),stack:true,
     note:(fsNote?fsNote+' ':'')+(F.phase==='wave'?'Quitting now resumes from just before this wave.':F.phase==='draft'?'The stair is still waiting for you. Resume to go on.':'Your run is saved at every break between waves.'),
     actions:[
       {label:'Resume',primary:true,fn:resumeGame},
