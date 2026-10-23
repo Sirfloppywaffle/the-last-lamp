@@ -3,6 +3,7 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **A new title scene** (Gemini's main menu overhaul, previewed and tuned by Criss; built in by Claude). The title is now a drowned stair under a gothic arch: a brass lantern swings on its chain over black water, a great slit eye opens behind it, tentacles and grasping hands reach for the light, and the creatures wait at its edge, lit or only eyes. Every 10 to 16 seconds, or when you tap the scene, the dark leans in: a slow tremor of about 4 seconds where the flame gutters, the tentacles lunge and sigils bleed into the stone. Drag across the scene and the eye and the creatures follow your finger, a beat behind. Reduce Motion stops the tremor coming on its own and the lantern's swing. The old title animation is gone (kept in `docs/OLD-TITLE-SCREEN.md`). Buttons, the 7-tap developer trigger and everything past the title are unchanged.
 
 ## v18.9.0 — Four More Ways Down
 The descents grow to six: the Binding, the Cast, the Winch and the Smothering join the Carry and the Mirror Stair, balanced on Criss's play of #111 and #112.
