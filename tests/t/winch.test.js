@@ -269,7 +269,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   await touch('touchMove',sx-g.u,sy); await p.waitForTimeout(40); await touch('touchMove',sx-g.u*1.5,sy+20); await p.waitForTimeout(400);
   const moved=await p.evaluate(()=>({tx:+__t.DESC.tx.toFixed(2),x:+__t.DESC.x.toFixed(2),prompt:document.getElementById('dscPrompt').className}));
   await shot('winch-steer');
-  await touch('touchEnd'); await p.waitForTimeout(450);
+  await touch('touchEnd');
+  /* let go while still moving left, the lantern first carries on, then swings back: wait for the swing (up to 3 s) rather than a fixed beat, so a slow runner can't fail it */
+  await p.waitForFunction(m=>__t.DESC.x>m+.3,moved.x,{timeout:3000}).catch(()=>{});
   const lifted=await p.evaluate(()=>({x:+__t.DESC.x.toFixed(2),steer:!!__t.DESC.steer,held:__t.DESC.held}));
   ok(down.steer&&Math.abs(down.tx-down.x)<.05,'a touch anywhere takes the lantern where it hangs, without moving it (relative, not under the thumb)',down);
   ok(Math.abs(moved.tx-(down.tx-1.5))<.05&&moved.x<-.5&&/is-gone/.test(moved.prompt),'a drag left a tile and a half moves it a tile and a half left, and the prompt goes',moved);
