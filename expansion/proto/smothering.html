@@ -92,7 +92,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 <div class="modal low" id="intro">
   <div class="box" role="dialog" aria-labelledby="introH">
     <h2 id="introH">The Smothering</h2>
-    <p>Three wicks burn in the wall and black fumes climb the tube. Tap them out, dimmest first, before the fumes reach the lantern. Three plumes. In the later ones the flames gutter, and the order can change.</p>
+    <p>Three wicks burn in the wall and black fumes climb the tube. Tap them out, dimmest first, before the fumes reach them and smother what still burns. Three plumes. In the later ones the flames gutter, and the order can change.</p>
     <div class="row"><button class="btn call big grow" id="beginBtn" type="button">Begin</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button></div>
     <p class="note">The test: can you always tell which wick is dimmest?</p>
   </div>
@@ -124,7 +124,7 @@ const store={
 
 /* ------- the shape numbers (section 5.6) ------- */
 const LEVELS=[1,1.7,2.8];        // brightness levels, at least 1.6x apart
-const RISE=[8,7,6];              // seconds for the fumes to reach the lantern, per plume
+const RISE=[5.5,4.8,4.2];        // seconds for the fumes to reach the wicks and smother any still lit, per plume (spec 5.6 had 8, 7, 6 to the lantern)
 const DRIFT=[0,0.5,0.8];         // how far a gutter swings a wick, in levels, per plume
 const PERIOD=10;                 // a wick swings from one extreme to the other in 5 s, so a full cycle is 10 s
 const TIE=0.15;                  // wicks this close both count as the dimmest
@@ -419,7 +419,7 @@ function draw(){
 
   // The fumes: black from the floor, a ragged front, a faint bruise at the edge.
   if(fp>0.002){
-    const yb=ty+th,yTop=lampY+8*u;
+    const yb=ty+th,yTop=rowY-44*u;   // the front ends just above the flames: that is where it smothers them
     const fy=yb-(yb-yTop)*fp;
     g=ctx.createLinearGradient(0,fy-46*u,0,fy+30*u);
     g.addColorStop(0,'rgba(4,5,6,0)');g.addColorStop(1,'rgba(4,5,6,.97)');
