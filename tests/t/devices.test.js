@@ -236,7 +236,47 @@ const DEV=[
     await p.evaluate(()=>{const T=__t; T.descentFinish({}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
     const smoOk=smo.active&&smo.targets&&smo.statsIn&&smo.clear&&smo.still&&scard.shown&&scard.in&&scard.thumb&&scard.fits;
     if(!smoOk)console.log('FAIL '+nm+': The Smothering and its card',JSON.stringify({smo,scard}));
-    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk&&bndOk&&cstOk&&smoOk;
+    /* The Winch: the counts and the prompt inside the safe area; the glints below the counts and inside it too, well above the
+       lantern, and over the shaft; the lantern mid-stage; the counts don't move as they change, and nothing moves when a purse
+       falls or is caught; the card fits */
+    const wch=await p.evaluate(ins=>{
+      const T=__t; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      T.tutSet({walk:'done',seen:['winch'],off:false}); T.setDescentAuto(null);
+      T.newRun('lamplighter',0,{seed:4242}); T.run.floor=2; T.run.ess=400; T.run.descent={k:'winch',f0:1,msg:''}; T.startDescent();
+      const C=T.DESC, K=T.WINCHK, o={active:C.active&&C.phase==='walk'&&C.k==='winch'};
+      const ov=document.getElementById('dscOverlay').getBoundingClientRect(), u=T.winchU(ov.width,ov.height), fy=ov.height*K.FY, cx=ov.width/2;
+      const stats=[...document.querySelectorAll('.dsc-stat')].map(q), prompt=q(document.querySelector('#dscPrompt span')), gy=T.winchGlintY(ov.height,ov.width);
+      o.u=+u.toFixed(1); o.gy=Math.round(gy); o.stats=stats;
+      o.statsIn=stats.length===2&&stats.every(inside)&&inside(prompt)&&stats[0][2]<stats[1][0];
+      /* a glint's star reaches 0.26 of a tile each way: below the counts it may share a row with, clear of the notch, and two tiles
+         above the lantern */
+      const gr=u*.3, shaftL=cx-K.W*u, shaftR=cx+K.W*u, overlapsStats=stats.some(r=>r[2]>shaftL&&r[0]<shaftR);
+      o.glint=gy-gr>=Math.max(ins.top,overlapsStats?Math.max(...stats.map(r=>r[3])):0)&&gy<=fy-2*u+1&&shaftL>=ins.left&&shaftR<=innerWidth-ins.right;
+      o.clear=prompt[1]>=fy+(K.GLOW-.6)*u;
+      o.mid=Math.abs(fy-ov.height/2)<ov.height*.1;
+      const st=()=>JSON.stringify([...document.querySelectorAll('.dsc-stat')].map(q).concat([q(document.getElementById('dscCv'))]));
+      const s0=st();
+      C.ps[0].st='fall'; C.ps[0].ta=C.t+.4; T.descentFrame(0); const s1=st();
+      C.caught=1; C.ps[0].st='hook'; C.snags=2; C.hudKey=''; T.descentFrame(0); const s2=st();
+      o.still=s0===s1&&s1===s2;
+      C.ps[1].st='glint'; C.ps[1].ta=C.t+1.5; C.ps[1].relic=true;
+      return o;},ins);
+    await p.waitForTimeout(250);
+    await p.screenshot({path:(process.argv[3]||'.')+'/winch-'+nm+'.png'});
+    const wcard=await p.evaluate(ins=>{
+      const T=__t, C=T.DESC; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      C.pos=C.len; C.t=C.len/T.WINCHK.SPEED; C.held=false; C.liftT=0; T.winchStep(.05); C.t+=1; T.descentFrame(.05);
+      const el=document.getElementById('dscCard'), r=el.getBoundingClientRect();
+      const o={shown:!document.getElementById('dscCardWrap').hidden,thumb:r.height>=44&&r.width>=200,fits:el.scrollHeight<=el.clientHeight+1||r.height>=120};
+      o.in=r.left>=ins.left-1&&r.right<=innerWidth-ins.right+1&&r.top>=ins.top-1&&r.bottom<=innerHeight-ins.bottom+1;
+      return o;},ins);
+    await p.screenshot({path:(process.argv[3]||'.')+'/winch-card-'+nm+'.png'});
+    await p.evaluate(()=>{const T=__t; T.descentFinish({}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
+    const wchOk=wch.active&&wch.statsIn&&wch.glint&&wch.clear&&wch.mid&&wch.still&&wcard.shown&&wcard.in&&wcard.thumb&&wcard.fits;
+    if(!wchOk)console.log('FAIL '+nm+': The Winch and its card',JSON.stringify({wch,wcard}));
+    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk&&bndOk&&cstOk&&smoOk&&wchOk;
     if(!ok)bad++;
     console.log((ok?'OK  ':'BAD ')+nm.padEnd(17),'side',c.side,'tile',c.tile,'boardMoved',moved,'barMoved',cmdMoved,'over',c.over,'unsafe',c.offs,'hint',c.hint,errs.length?errs:'');
     await ctx.close();

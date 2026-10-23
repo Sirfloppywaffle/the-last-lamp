@@ -1,6 +1,6 @@
 # Expansion 2, first pass: seeds and mini floors
 
-**Status (22 Oct 2026):** seeds (v18.6.0), the descent frame and The Carry (v18.7.0) and The Mirror Stair (v18.8.0) are **built and on `main`** (#97, #98, #100). **The Binding and the pledge** (step 7) are on `main` too (#102). **The Cast** (step 8) is on `main` too (#103). **The Winch and The Smothering are chosen by Criss** (round 4) and designed at 5.5 and 5.6, agreed as the final draft; not built yet (steps 9 and 10). This doc's own PR changes no code (no `index.html`, `tests/`, `tools/` or `.github/`; see `README.md`).
+**Status (22 Oct 2026):** seeds (v18.6.0), the descent frame and The Carry (v18.7.0) and The Mirror Stair (v18.8.0) are **built and on `main`** (#97, #98, #100). **The Binding and the pledge** (step 7) are on `main` too (#102). **The Cast** (step 8) is on `main` too (#103). **The Winch and The Smothering are chosen by Criss** (round 4) and designed at 5.5 and 5.6, agreed as the final draft. **The Smothering** (step 10) is on `main` (#107, #109); **The Winch** (step 9) is built on its PR (#105). All six are built; only balance (step 11) remains. This doc's own PR changes no code (no `index.html`, `tests/`, `tools/` or `.github/`; see `README.md`).
 **From Criss:** this is the second expansion, so right now we only brainstorm. Two ideas so far: a **seed system** (#95) and **mini-game floors** between the main floors. More ideas get added here (see section 5).
 **Who:** Claude drafted it, Gemini reviewed it (round 1, below), Criss steers. Round 1 is settled. Round 2 (Criss's **Binding** idea, the failure cost, and mini floor 6) is folded in at section 5 by Claude, Sonnet 5.5, and has not been reviewed by Gemini. Round 3 folds in Criss's answers on the pledge and picks mini floor 6 (The Cast); it is Claude's too, and equally unreviewed. Round 4 designs Criss's last two picks, The Winch and The Smothering (5.5, 5.6), by Claude, Opus 5.5, with a self-review on its PR; Gemini has not seen it. What remains open is in section 4.
 
@@ -84,7 +84,7 @@ Landings after floors **2, 3 and 4** (the gaps 2→3, 3→4, 4→5). Floor 1→2
 |---|---|---|---|---|---|---|
 | 1 | **The Mirror Stair** | **pilot** | route | As the lantern sinks, drag 2 or 3 mirrors to bounce its beam onto wall sconces. Each one lit is kept. | light: the next floor's lamp burns wider for its first wave | each missed sconce stays dark |
 | 2 | **The Carry** | **pilot** | hide | Hold your thumb to cup a small flame through a gallery of sleepers. Show light too long and they stir; hold too long and you stumble. | oil | madness for every sleeper woken |
-| 3 | **The Winch** | **chosen (Criss)** | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch falling purses (5.5). | essence: three small purses; sometimes the last holds a relic (5.5) | a snag costs the lamp oil |
+| 3 | **The Winch** | **built** (#105) | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch falling purses (5.5). | essence: three small purses; sometimes the last holds a relic (5.5) | a snag costs the lamp oil |
 | 4 | **The Smothering** | **built** (#107) | order | Black fumes rise the tube. Snuff four wicks in the order of their brightness, dimmest first, before the fumes reach them (5.6). Never the Occultist: madness feeds him. | depth: the lamp holds more oil for the run (not a refill, 5.6) | dread for a wrong snuff |
 | 5 | **The Binding** | **chosen (Criss)** | draw | Trace three different sigils, each a short connect-the-dots path, before the lantern sinks past the creature it holds. A wrong stroke resets only that sigil. | a bound horror, named on the door | the **pledge**: what you put up is forfeit on failure (5.2) |
 | 6 | **The Cast** | **chosen (Criss)** | aim | Drag back and loose a weighted line at three iron rings on the swaying shaft wall; the cable sways, so lead it. Each ring caught is kept. | a rite charge | each line cast is weighted with a tenth of your essence, caught or not (5.3) |
@@ -117,7 +117,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 | 6 | Criss decides on The Winch and The Smothering (**done**, round 4: both chosen; designed at 5.5 and 5.6) | Criss | |
 | 7 | **Built: The Binding and the pledge** (**done**, #102; 5.1, 5.2, 5.4): the pledge card, `run.mini`, the relic pull, the sigil field, the kit filter, tests, tips, Grimoire | Claude, Opus 5.5 | high |
 | 8 | **Built: The Cast** (**done**, #103; 5.3): the aim and line, the rite charge, the essence tenth, tests, tips, Grimoire | Claude, Opus 5.5 | high |
-| 9 | **Build The Winch** (5.5; #105): the steer, ribs and arms, the purses, the snag's oil, tests, tips, Grimoire | Claude, Opus 5.5 | high |
+| 9 | **Built: The Winch** (**done**, #105; 5.5): the steer, ribs and arms, the purses and the drowned man's, the snag's oil, tests, tips, Grimoire | Claude, Opus 5.5 | high |
 | 10 | **Built: The Smothering** (**done**, #107; 5.6; Fold test #106, tuned on #108): the wicks and their drift, the fumes, dread, the lamp's depth, tests, tips, Grimoire. Built before step 9 | Claude, Opus 5.5 | high |
 | 11 | Balance numbers for all six, in their own PR | Claude, Opus 5.5 | high |
 
@@ -228,6 +228,15 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 - Reload mid-shaft replays it with nothing paid; the end pays once.
 - The pool holds six descents (five for the Galvanist and the Occultist); a seed's descent doors stand where they did.
 - 14 sizes: glint and HUD strip clear of notches; nothing shifts when a purse falls.
+
+**As built (step 9, Claude's calls; #105).** The shape numbers above, plus what they left open, all in the `WINCH_*` block:
+- **The shaft:** five rib depths, 3 to 4 tiles apart from 4.2 down; one of the last two holds the pair (each jutting 1.15 to 1.3, the long end of the range), so its gap (1.4 to 1.7) is always the tightest. Ribs 0.34 thick; the lantern 0.4 across and 0.44 tall. About 22 to 26 s.
+- **The arms:** fingers 0.5 s, then a fast reach, a hold and a draw back inside the 0.9 s; kept a tile clear of every rib and 1.5 of each other.
+- **The purses:** a glint 1 s, then a 0.9 s fall to the lantern. The first arrives at 3.2 to 4.6 s, the last as the lantern threads the pair, hung just inside one rib's tip (an idle lantern in the middle of the gap misses it), the second between.
+- **Catchable, as built:** a purse is placed where the lantern is clear of every rib and arm (0.1 to spare) from 0.7 s before it arrives (time to get round the last rib) to 0.45 s after (a catch is never a snag), inside the walls by the catch radius, and within half the top speed's reach of the last purse. Six tries; then where the last fell, if that is clear; then the clear spot nearest it (#104's fix, made safe: the last spot may itself be blocked by then). Over 1,000 seeds a planned path reaches every purse.
+- **Snags:** a rib or an arm is solid: it shoves the lantern clear and, outside the grace, snags. The lurch holds it sideways; the sink never stops, so every purse arrives when the layout says.
+- **The tile** is the shaft's width on a narrow screen and a 6.6th of the height on a short one (the Cast uses 8.6), so short landscape shows about three tiles above the lantern and three and a half below.
+- **Found while building, for the balance PR:** with ribs at most 1.3 and arms 1.2 of the 2 to a wall, the middle of the shaft is never closed. A lantern left there never snags, and catches about 0.8 purses of 3 (only those that fall to it). Leaving the middle is the price of a purse, which reads fine, but a bolder shaft (a longer arm, or a pair off-centre) would remove the safe lane.
 
 **Rule 23:** a first-time tip (`TIPS.winch`: "Drag left or right to steer. Ribs and arms show only in the light. Be under a purse when it falls. A pale one holds a relic."), a clause in the Descents line of "How the dark works", its Grimoire Descents page (from its `DESCENTS` row), and a practice button in the Developer menu. Nothing new for the Grimoire's other tabs.
 
