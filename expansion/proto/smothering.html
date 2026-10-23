@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Smothering Fold Test</title>
+<!-- Expansion 2, step 10, part 1 (#106): the Fold test for The Smothering (SEEDS-AND-MINI-FLOORS.md section 5.6).
+     One standalone page. It is not part of the game and never touches Criss's save: every key it writes is behind LL_STORE_NS. -->
+<script>window.LL_STORE_NS='exp-smothering:';</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=DM+Mono:wght@400;500&family=Grenze+Gotisch:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one tall tube filling the stage; the lantern hangs at the top, three niches in a row below it, fumes rise from the floor. */
+:root{
+  color-scheme: dark;
+  --abyss:#08090A;
+  --stone:#121618;
+  --slab:#1B2124;
+  --seam:#2A3236;
+  --veil:rgba(6,7,8,.82);
+  --shadow:rgba(0,0,0,.55);
+  --tallow:#EDB45A;
+  --tallow-glow:rgba(237,180,90,.13);
+  --ink-on-tallow:#1C1306;
+  --brine:#6AA99F;
+  --madness:#A97CE2;
+  --madness-dim:#4B3A68;
+  --wound:#DA5A4B;
+  --bone:#E4DDCC;
+  --ash:#8B9294;
+  --f-display:'Grenze Gotisch','UnifrakturMaguntia',Georgia,serif;
+  --f-body:'Alegreya Sans','Segoe UI',system-ui,sans-serif;
+  --f-num:'DM Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--abyss);color:var(--bone);font:15px/1.4 var(--f-body);overflow:hidden;-webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
+
+#app{height:100%;display:flex;flex-direction:column;gap:6px;max-width:1600px;margin:0 auto;
+  padding:max(6px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+
+.hud{flex:0 0 auto;display:flex;align-items:center;gap:6px 18px;padding-block:2px 6px;border-bottom:1px solid var(--seam)}
+.where{display:flex;flex-direction:column;gap:3px;margin-right:auto;min-width:0}
+.where span{font-family:var(--f-display);font-weight:700;font-size:1.35rem;line-height:.95;color:var(--tallow)}
+.where small{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ash)}
+.where small b{font-family:var(--f-num);font-weight:500;letter-spacing:0;color:var(--bone)}
+
+.btn{padding:10px 14px;border-radius:8px;border:1px solid var(--seam);background:var(--slab);font-size:.9rem}
+.btn.call{background:var(--tallow);border-color:var(--tallow);color:var(--ink-on-tallow);font-family:var(--f-display);font-weight:700;font-size:1.1rem;line-height:1}
+.btn.big{padding:12px 26px;font-size:1.45rem;min-height:48px}
+.lookBtn{min-height:44px;font-family:var(--f-num);font-size:.78rem;letter-spacing:.02em}
+
+.stage{flex:1 1 auto;min-height:0;position:relative}
+#board{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+
+.modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+  padding:calc(env(safe-area-inset-top,0px) + 20px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 20px) max(16px,env(safe-area-inset-left,0px));background:var(--veil)}
+.modal.low{align-items:flex-end;background:linear-gradient(to top,var(--veil) 55%,rgba(6,7,8,0))}
+.box{width:100%;max-width:460px;max-height:100%;overflow-y:auto;overflow-x:hidden;background:var(--stone);border:1px solid var(--seam);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.box h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:2.1rem;line-height:.95;color:var(--tallow);text-wrap:balance}
+.box p{margin:0;color:var(--ash);max-width:60ch}
+.box .note{font-size:.82rem}
+.box .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.box .row .grow{flex:1 1 auto}
+.tally{margin:0;display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:baseline}
+.tally dt{color:var(--ash)}
+.tally dd{margin:0;font-family:var(--f-num);font-size:1.15rem;color:var(--bone);font-variant-numeric:tabular-nums}
+.statline{font-family:var(--f-num);font-size:.78rem;color:var(--ash)}
+@media (max-height:480px){
+  .modal.low{align-items:center;background:var(--veil)}
+  .modal{padding-top:max(8px,env(safe-area-inset-top,0px));padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
+  .box{padding:12px;gap:8px}
+  .box h2{font-size:1.6rem}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="hud">
+    <div class="where"><span>The Smothering</span><small>Fold test &middot; <b id="plumeNo">Ready</b></small></div>
+    <button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button>
+  </header>
+  <main class="stage" id="stage"><canvas id="board" aria-label="The tube, with three wicks burning in the wall"></canvas></main>
+</div>
+
+<div class="modal low" id="intro">
+  <div class="box" role="dialog" aria-labelledby="introH">
+    <h2 id="introH">The Smothering</h2>
+    <p>Three wicks burn in the wall and black fumes climb the tube. Tap them out, dimmest first, before the fumes reach the lantern. Three plumes. In the later ones the flames gutter, and the order can change.</p>
+    <div class="row"><button class="btn call big grow" id="beginBtn" type="button">Begin</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button></div>
+    <p class="note">The test: can you always tell which wick is dimmest?</p>
+  </div>
+</div>
+
+<div class="modal" id="result" hidden>
+  <div class="box" role="dialog" aria-labelledby="resH">
+    <h2 id="resH">The smoke settles.</h2>
+    <dl class="tally">
+      <dt>Plumes clean</dt><dd id="rClean">0 of 3</dd>
+      <dt>Wrong snuffs</dt><dd id="rWrong">0</dd>
+      <dt>Late plumes</dt><dd id="rLate">0</dd>
+    </dl>
+    <div class="row"><button class="btn call big grow" id="againBtn" type="button">Play again</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button></div>
+    <div class="statline" id="rInfo"></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+'use strict';
+
+/* ------- storage (everything behind LL_STORE_NS, never the game's keys) ------- */
+const NS=window.LL_STORE_NS||'exp-smothering:';
+const store={
+  get(k){try{return localStorage.getItem(NS+k)}catch(e){return null}},
+  set(k,v){try{localStorage.setItem(NS+k,v)}catch(e){}}
+};
+
+/* ------- the shape numbers (section 5.6) ------- */
+const LEVELS=[1,1.7,2.8];        // brightness levels, at least 1.6x apart
+const RISE=[8,7,6];              // seconds for the fumes to reach the lantern, per plume
+const DRIFT=[0,0.5,0.8];         // how far a gutter swings a wick, in levels, per plume
+const PERIOD=10;                 // a wick swings from one extreme to the other in 5 s, so a full cycle is 10 s
+const TIE=0.15;                  // wicks this close both count as the dimmest
+const GAP=1.5;                   // seconds between plumes
+const NO_CROSS=1.5;              // no crossing in a plume's first 1.5 s
+const B_MIN=0.6, B_MAX=3.6;      // the dimmest wick stays well clear of black
+const NICHE_X=[0.2,0.5,0.8];     // niche centres across the tube
+const TAU=Math.PI*2;
+
+/* ------- the pure roll: same seed, same tube, no Math.random inside ------- */
+function mulberry32(a){
+  return function(){
+    a|=0;a=a+0x6D2B79F5|0;
+    let t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t;
+    return ((t^t>>>14)>>>0)/4294967296;
+  };
+}
+function shuffle(a,rng){
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));const x=a[i];a[i]=a[j];a[j]=x}
+  return a;
+}
+// A wick's brightness is a function of its roll and time only.
+function wickB(w,t){
+  let b=w.base;
+  if(w.amp)b+=w.amp*Math.sin(TAU*t/PERIOD+w.ph);
+  return b<B_MIN?B_MIN:b>B_MAX?B_MAX:b;
+}
+// How often two wicks swap places in a plume, and when the first swap happens.
+const PAIRS=[[0,1],[0,2],[1,2]];
+function crossings(ws,rise){
+  let n=0,first=Infinity;
+  const sg=[0,0,0];
+  for(let t=0;t<=rise+1e-9;t+=0.02){
+    for(let k=0;k<3;k++){
+      const d=wickB(ws[PAIRS[k][0]],t)-wickB(ws[PAIRS[k][1]],t);
+      const s=d>1e-4?1:d<-1e-4?-1:0;
+      if(s){
+        if(sg[k]&&s!==sg[k]){n++;if(t<first)first=t}
+        sg[k]=s;
+      }
+    }
+  }
+  return {n,first};
+}
+// One plume: which niche holds which level, and the gutter. Plumes 2 and 3 drift, with at most one crossing, never early.
+function rollPlume(rng,i){
+  const base=shuffle(LEVELS.slice(),rng), rise=RISE[i], A=DRIFT[i];
+  const plain=()=>({ws:base.map(b=>({base:b,amp:0,ph:0})),rise,cross:{n:0,first:Infinity}});
+  if(!A)return plain();
+  for(let tries=0;tries<400;tries++){
+    const ws=base.map(b=>({base:b,amp:A*(0.4+0.6*rng()),ph:rng()*TAU}));
+    const c=crossings(ws,rise);
+    // Look for exactly one crossing first (the drift should matter); settle for none late in the search.
+    if(c.n===1&&c.first>=NO_CROSS)return {ws,rise,cross:c};
+    if(tries>=300&&c.n===0)return {ws,rise,cross:c};
+  }
+  return plain();
+}
+function rollGame(seed){
+  const rng=mulberry32(seed);
+  return [0,1,2].map(i=>rollPlume(rng,i));
+}
+
+/* ------- state ------- */
+const $=id=>document.getElementById(id);
+const cv=$('board'), ctx=cv.getContext('2d'), stage=$('stage');
+const motionMQ=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
+const DEMO=[{base:1.7,amp:0,ph:0},{base:1,amp:0,ph:0},{base:2.8,amp:0,ph:0}];
+let lite=store.get('lite')==='1';
+let DPR=1;
+const L={w:0,h:0,tx:0,ty:0,tw:0,th:0,u:1,lampY:0,rowY:0,R:28};
+const G={
+  phase:'intro',seed:0,plan:[],i:0,t:0,time:0,gapT:0,fumeEnd:0,
+  lit:[true,true,true],snufT:[-9,-9,-9],
+  flags:{wrong:false,late:false},stat:{clean:0,wrong:0,late:0},
+  msg:'',puffs:[],press:-1,pid:-1,pressOn:false
+};
+
+function newSeed(){return (Math.random()*4294967296)>>>0}
+function startGame(){
+  G.seed=newSeed();
+  G.plan=rollGame(G.seed);
+  G.stat.clean=0;G.stat.wrong=0;G.stat.late=0;
+  G.i=0;G.puffs.length=0;
+  $('intro').hidden=true;$('result').hidden=true;
+  beginPlume();
+}
+function beginPlume(){
+  G.phase='plume';G.t=0;G.fumeEnd=0;
+  G.lit[0]=G.lit[1]=G.lit[2]=true;
+  G.snufT[0]=G.snufT[1]=G.snufT[2]=-9;
+  G.flags.wrong=false;G.flags.late=false;G.msg='';
+  G.press=-1;G.pid=-1;G.pressOn=false;
+  $('plumeNo').textContent='Plume '+(G.i+1)+' of 3';
+}
+function endPlume(){
+  const clean=!G.flags.wrong&&!G.flags.late;
+  if(clean)G.stat.clean++;
+  G.msg=G.flags.late?'Too late.':G.flags.wrong?'Out of order.':'Clean.';
+  G.fumeEnd=Math.min(1,G.t/G.plan[G.i].rise);
+  G.phase='gap';G.gapT=0;
+  G.press=-1;G.pid=-1;G.pressOn=false;
+}
+function showResult(){
+  G.phase='result';
+  $('rClean').textContent=G.stat.clean+' of 3';
+  $('rWrong').textContent=String(G.stat.wrong);
+  $('rLate').textContent=String(G.stat.late);
+  $('rInfo').textContent='Look: '+(lite?'Lite':'Full')+' · Layout '+G.seed.toString(36).toUpperCase();
+  $('plumeNo').textContent='Done';
+  $('result').hidden=false;
+}
+
+/* ------- the snuff ------- */
+// Right if the wick is the dimmest still lit, or within the tie band of it. Judged at the moment of the lift.
+function snuff(k){
+  if(G.phase!=='plume'||!G.lit[k])return;
+  const ws=G.plan[G.i].ws,t=G.t;
+  let min=Infinity;
+  for(let j=0;j<3;j++)if(G.lit[j]){const b=wickB(ws[j],t);if(b<min)min=b}
+  const ok=wickB(ws[k],t)<=min+TIE+1e-9;
+  G.lit[k]=false;G.snufT[k]=G.time;
+  G.puffs.push({k,t0:G.time,ok});
+  if(!ok){G.stat.wrong++;G.flags.wrong=true}
+  if(!G.lit[0]&&!G.lit[1]&&!G.lit[2])endPlume();
+  return ok;
+}
+
+function step(dt){
+  G.time+=dt;
+  while(G.puffs.length&&G.time-G.puffs[0].t0>1.3)G.puffs.shift();
+  if(G.phase==='plume'){
+    G.t+=dt;
+    if(G.t>=G.plan[G.i].rise){
+      G.t=G.plan[G.i].rise;
+      if(G.lit[0]||G.lit[1]||G.lit[2]){
+        for(let k=0;k<3;k++)if(G.lit[k]){G.lit[k]=false;G.snufT[k]=G.time;G.puffs.push({k,t0:G.time,ok:true})}
+        G.stat.late++;G.flags.late=true;
+      }
+      endPlume();
+    }
+  }else if(G.phase==='gap'){
+    G.gapT+=dt;
+    if(G.gapT>=GAP){
+      G.i++;
+      if(G.i>=3)showResult();else beginPlume();
+    }
+  }
+}
+
+/* ------- layout ------- */
+function wx(k){return L.tx+L.tw*NICHE_X[k]}
+function layout(){
+  const r=stage.getBoundingClientRect();
+  const w=Math.max(200,r.width),h=Math.max(200,r.height);
+  DPR=Math.min(2,window.devicePixelRatio||1);
+  cv.width=Math.round(w*DPR);cv.height=Math.round(h*DPR);
+  L.w=w;L.h=h;
+  L.tw=Math.min(w-8,440);L.tx=(w-L.tw)/2;
+  L.ty=2;L.th=h-4;
+  L.u=Math.max(0.6,Math.min(1.25,L.tw/360,L.th/330));
+  const u=L.u;
+  L.lampY=L.ty+30*u;
+  L.rowY=Math.max(L.ty+L.th*0.44,L.lampY+118*u);
+  L.R=Math.max(26,30*u);       // hit radius: a target of 52 px or more
+}
+function hit(e){
+  const r=cv.getBoundingClientRect();
+  const x=e.clientX-r.left,y=e.clientY-r.top;
+  const cy=L.rowY-22*L.u;
+  let best=-1,bd=L.R*L.R;
+  for(let k=0;k<3;k++){
+    if(!G.lit[k])continue;
+    const dx=x-wx(k),dy=y-cy,d=dx*dx+dy*dy;
+    if(d<=bd){bd=d;best=k}
+  }
+  return best;
+}
+
+/* ------- input: a wick is snuffed on the lift, on the same wick; a slide off or a cancel snuffs nothing ------- */
+cv.addEventListener('pointerdown',e=>{
+  if(G.phase!=='plume'||G.pid!==-1)return;
+  const k=hit(e);
+  if(k<0)return;
+  G.pid=e.pointerId;G.press=k;G.pressOn=true;
+  try{cv.setPointerCapture(e.pointerId)}catch(err){}
+  e.preventDefault();
+});
+cv.addEventListener('pointermove',e=>{
+  if(e.pointerId!==G.pid)return;
+  G.pressOn=hit(e)===G.press;
+});
+cv.addEventListener('pointerup',e=>{
+  if(e.pointerId!==G.pid)return;
+  const was=G.press,k=hit(e);
+  G.pid=-1;G.press=-1;G.pressOn=false;
+  if(k>=0&&k===was)snuff(k);
+});
+cv.addEventListener('pointercancel',e=>{
+  if(e.pointerId!==G.pid)return;
+  G.pid=-1;G.press=-1;G.pressOn=false;
+});
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+
+/* ------- the Look toggle ------- */
+function paintLook(){
+  const txt='Look: '+(lite?'Lite':'Full');
+  document.querySelectorAll('.lookBtn').forEach(b=>{b.textContent=txt;b.setAttribute('aria-pressed',lite?'true':'false')});
+}
+document.querySelectorAll('.lookBtn').forEach(b=>b.addEventListener('click',()=>{
+  lite=!lite;store.set('lite',lite?'1':'0');paintLook();
+  if(G.phase==='result')$('rInfo').textContent='Look: '+(lite?'Lite':'Full')+' · Layout '+G.seed.toString(36).toUpperCase();
+}));
+$('beginBtn').addEventListener('click',startGame);
+$('againBtn').addEventListener('click',startGame);
+
+/* ------- drawing ------- */
+function rr(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();
+}
+function smooth(x){x=x<0?0:x>1?1:x;return x*x*(3-2*x)}
+// The same light, drawn two ways: additive in the Full look, plain alpha in Lite.
+function glow(x,y,r,a,sy){
+  if(r<1||a<=0.002)return;
+  ctx.save();
+  ctx.globalCompositeOperation=lite?'source-over':'lighter';
+  ctx.translate(x,y);if(sy&&sy!==1)ctx.scale(1,sy);
+  const g=ctx.createRadialGradient(0,0,0,0,0,r);
+  g.addColorStop(0,'rgba(237,180,90,'+a+')');
+  g.addColorStop(0.45,'rgba(237,180,90,'+(a*0.38)+')');
+  g.addColorStop(1,'rgba(237,180,90,0)');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,r,0,TAU);ctx.fill();
+  ctx.restore();
+}
+function flame(x,base,h,w,sway,fill){
+  ctx.beginPath();
+  ctx.moveTo(x,base);
+  ctx.bezierCurveTo(x-w*0.95,base-h*0.30,x-w*0.55,base-h*0.72,x+sway,base-h);
+  ctx.bezierCurveTo(x+w*0.55,base-h*0.72,x+w*0.95,base-h*0.30,x,base);
+  ctx.closePath();ctx.fillStyle=fill;ctx.fill();
+}
+function fumeLevel(){
+  if(G.phase==='plume')return Math.min(1,G.t/G.plan[G.i].rise);
+  if(G.phase==='gap')return G.fumeEnd*(1-smooth(G.gapT/GAP));
+  return 0;
+}
+
+function draw(){
+  const w=L.w,h=L.h,u=L.u,tm=G.time;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#08090A';ctx.fillRect(0,0,w,h);
+  const {tx,ty,tw,th,lampY,rowY}=L;
+  const fp=fumeLevel();
+  const calm=motionMQ.matches;
+
+  ctx.save();
+  rr(tx,ty,tw,th,16*u);ctx.clip();
+
+  // The wall: slab stone, courses sliding up as the lantern sinks, shaded toward the edges like a curve.
+  let g=ctx.createLinearGradient(0,ty,0,ty+th);
+  g.addColorStop(0,'#1B2124');g.addColorStop(1,'#101416');
+  ctx.fillStyle=g;ctx.fillRect(tx,ty,tw,th);
+  ctx.strokeStyle='rgba(42,50,54,.55)';ctx.lineWidth=1;
+  const cs=34*u,off=(tm*14*u)%cs;
+  ctx.beginPath();
+  for(let y=ty-cs+off;y<ty+th;y+=cs){ctx.moveTo(tx,y);ctx.lineTo(tx+tw,y)}
+  ctx.stroke();
+  g=ctx.createLinearGradient(tx,0,tx+tw,0);
+  g.addColorStop(0,'rgba(0,0,0,.6)');g.addColorStop(0.2,'rgba(0,0,0,0)');
+  g.addColorStop(0.8,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.6)');
+  ctx.fillStyle=g;ctx.fillRect(tx,ty,tw,th);
+
+  // The lantern's own light on the wall, thinner as the fumes close in.
+  const lampK=1-0.65*fp*fp*fp;
+  glow(tx+tw/2,lampY,60*u*lampK,0.42*lampK,1);
+
+  // Niches: three arches cut in the wall.
+  const nw=58*u,nTop=rowY-86*u,nBot=rowY+16*u,nr=nw/2;
+  for(let k=0;k<3;k++){
+    const x=wx(k),x0=x-nr;
+    ctx.beginPath();
+    ctx.moveTo(x0,nBot);ctx.lineTo(x0,nTop+nr);ctx.arc(x,nTop+nr,nr,Math.PI,TAU);ctx.lineTo(x0+nw,nBot);ctx.closePath();
+    ctx.fillStyle='#040506';ctx.fill();
+    ctx.strokeStyle='rgba(54,64,69,.9)';ctx.lineWidth=1.5;ctx.stroke();
+  }
+
+  // The fumes: black from the floor, a ragged front, a faint bruise at the edge.
+  if(fp>0.002){
+    const yb=ty+th,yTop=lampY+8*u;
+    const fy=yb-(yb-yTop)*fp;
+    g=ctx.createLinearGradient(0,fy-46*u,0,fy+30*u);
+    g.addColorStop(0,'rgba(4,5,6,0)');g.addColorStop(1,'rgba(4,5,6,.97)');
+    ctx.fillStyle=g;ctx.fillRect(tx,fy-46*u,tw,Math.max(0,yb-(fy-46*u)));
+    const layers=[[-12,0.0,0.16,'rgba(75,58,104,.30)'],[0,1.9,0.12,'rgba(4,5,6,.55)'],[10,3.7,0.09,'rgba(4,5,6,.5)']];
+    for(let n=0;n<layers.length;n++){
+      const Ly=layers[n];
+      ctx.beginPath();ctx.moveTo(tx,yb);
+      for(let x=0;x<=tw;x+=8){
+        const yy=fy+Ly[0]*u+Math.sin(x*0.035+tm*(1.1+n*0.4)+Ly[1])*9*u+Math.sin(x*0.09-tm*1.7+Ly[1])*3*u;
+        ctx.lineTo(tx+x,yy);
+      }
+      ctx.lineTo(tx+tw,yb);ctx.closePath();ctx.fillStyle=Ly[3];ctx.fill();
+    }
+  }
+
+  // The wicks.
+  let ws=null,tNow=0;
+  if(G.phase==='plume'){ws=G.plan[G.i].ws;tNow=G.t}
+  else if(G.phase==='gap'){ws=G.plan[G.i].ws;tNow=G.plan[G.i].rise}
+  else if(G.phase==='intro'){ws=DEMO}
+  if(ws){
+    const ramp=G.phase==='plume'?smooth(G.t/0.4):1;
+    for(let k=0;k<3;k++){
+      const x=wx(k),base=rowY;
+      const lit=G.phase==='intro'||(G.phase==='plume'&&G.lit[k]);
+      if(lit){
+        const b=wickB(ws[k],tNow);
+        const fl=calm?0:1;
+        const sway=fl*(Math.sin(tm*7+k*2.1)*1.2+Math.sin(tm*13+k)*0.6)*u;
+        const jit=1+fl*0.03*Math.sin(tm*11+k*1.7);
+        const hh=(14+13*b)*u*ramp*jit;
+        const fw=(4.5+3*b)*u;
+        // Three cues, all rising with brightness: the pool on the wall, the halo, the flame's height.
+        glow(x,base-30*u,(30+24*b)*u,(0.07+0.075*b)*ramp,1.15);
+        glow(x+sway*0.5,base-hh*0.5,(20+17*b)*u,0.5*ramp,1);
+        let fg=ctx.createLinearGradient(0,base,0,base-hh);
+        fg.addColorStop(0,'#FFF3D6');fg.addColorStop(0.35,'#F6C772');fg.addColorStop(1,'#D9822E');
+        flame(x,base,hh,fw,sway,fg);
+        flame(x,base-0.5*u,hh*0.55,fw*0.5,sway*0.4,'rgba(255,251,239,.9)');
+      }
+      // The stub, and a dying ember after a snuff.
+      ctx.fillStyle='#6b6454';ctx.fillRect(x-3.5*u,base,7*u,9*u);
+      const age=tm-G.snufT[k];
+      if(!lit&&age>=0&&age<1.3){
+        ctx.fillStyle='rgba(218,90,75,'+(0.9*(1-age/1.3))+')';
+        ctx.beginPath();ctx.arc(x,base-0.5*u,2.4*u,0,TAU);ctx.fill();
+      }
+      // A pressed wick shows a ring; slide off and it fades.
+      if(G.press===k&&G.phase==='plume'){
+        ctx.strokeStyle=G.pressOn?'rgba(228,221,204,.55)':'rgba(139,146,148,.25)';
+        ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(x,rowY-22*u,L.R,0,TAU);ctx.stroke();
+      }
+    }
+  }
+
+  // Smoke from a snuffed wick; a ring in the wound colour when it was the wrong one.
+  for(let n=0;n<G.puffs.length;n++){
+    const p=G.puffs[n],age=tm-p.t0,x=wx(p.k);
+    if(age<0||age>1.3)continue;
+    const a=0.3*(1-age/1.3);
+    for(let c=0;c<4;c++){
+      const rr2=(5+age*17+c*3)*u,yy=rowY-6*u-age*(24+c*6)*u,xx=x+Math.sin(age*3+c*1.9)*5*u;
+      ctx.fillStyle='rgba(139,146,148,'+a+')';
+      ctx.beginPath();ctx.arc(xx,yy,rr2,0,TAU);ctx.fill();
+    }
+    if(!p.ok&&age<0.7){
+      ctx.strokeStyle='rgba(218,90,75,'+(0.85*(1-age/0.7))+')';ctx.lineWidth=3*u;
+      ctx.beginPath();ctx.arc(x,rowY-22*u,(10+age*55)*u,0,TAU);ctx.stroke();
+    }
+  }
+
+  // The lantern on its chain, drawn last and opaque so it never reads as a fourth wick.
+  {
+    const cx=tx+tw/2,lw=20*u,lh=26*u;
+    ctx.strokeStyle='rgba(139,146,148,.7)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(cx,ty);ctx.lineTo(cx,lampY-lh/2-6*u);ctx.stroke();
+    rr(cx-lw/2,lampY-lh/2,lw,lh,5*u);
+    g=ctx.createLinearGradient(0,lampY-lh/2,0,lampY+lh/2);
+    g.addColorStop(0,'rgba(255,240,205,'+(0.95*lampK)+')');g.addColorStop(1,'rgba(237,180,90,'+(0.8*lampK+0.1)+')');
+    ctx.fillStyle=g;ctx.fill();
+    ctx.strokeStyle='#8B9294';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx-lw/2-2*u,lampY-lh/2);ctx.lineTo(cx,lampY-lh/2-7*u);ctx.lineTo(cx+lw/2+2*u,lampY-lh/2);ctx.closePath();
+    ctx.fillStyle='#2A3236';ctx.fill();ctx.strokeStyle='#8B9294';ctx.stroke();
+  }
+
+  // What happened to the plume, said once, in the fumes.
+  if(G.phase==='gap'&&G.msg){
+    const a=Math.min(1,(GAP-G.gapT)/0.5);
+    ctx.font="700 "+Math.round(26*u)+"px 'Grenze Gotisch',Georgia,serif";
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='rgba(228,221,204,'+a+')';
+    ctx.fillText(G.msg,tx+tw/2,rowY+(th+ty-rowY)*0.42);
+  }
+  ctx.restore();
+
+  ctx.strokeStyle='#2A3236';ctx.lineWidth=2;
+  rr(tx,ty,tw,th,16*u);ctx.stroke();
+}
+
+/* ------- loop: simulation steps never exceed 50 ms ------- */
+let last=0;
+function frame(ts){
+  requestAnimationFrame(frame);
+  if(!last)last=ts;
+  let dt=(ts-last)/1000;last=ts;
+  if(!(dt>0))dt=0;
+  if(dt>0.05)dt=0.05;
+  step(dt);draw();
+}
+
+paintLook();
+layout();
+if(window.ResizeObserver)new ResizeObserver(layout).observe(stage);
+window.addEventListener('resize',layout);
+requestAnimationFrame(frame);
+
+// A small hook so the page can be driven from a headless browser; nothing in play uses it.
+window.__sm={G,L,wickB,crossings,rollPlume,rollGame,mulberry32,snuff,step,hit,wx,layout,TIE,RISE,LEVELS};
+})();
+</script>
+</body>
+</html>
