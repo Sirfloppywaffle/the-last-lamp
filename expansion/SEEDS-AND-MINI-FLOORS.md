@@ -119,7 +119,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 | 8 | **Built: The Cast** (**done**, #103; 5.3): the aim and line, the rite charge, the essence tenth, tests, tips, Grimoire | Claude, Opus 5.5 | high |
 | 9 | **Built: The Winch** (**done**, #105; 5.5): the steer, ribs and arms, the purses and the drowned man's, the snag's oil, tests, tips, Grimoire | Claude, Opus 5.5 | high |
 | 10 | **Built: The Smothering** (**done**, #107; 5.6; Fold test #106, tuned on #108): the wicks and their drift, the fumes, dread, the lamp's depth, tests, tips, Grimoire. Built before step 9 | Claude, Opus 5.5 | high |
-| 11 | **Balance numbers for all six, in their own PR** (**done**, 5.9): the Winch's swing and longer arms (Criss's play of #111), the Smothering's gaps; the rest kept, with reasons | Claude, Opus 5.5 | high |
+| 11 | **Balance numbers for all six, in their own PR** (**done**, #112, 5.9): the Winch's swing and longer arms (Criss's play of #111), the Smothering's gaps; the rest kept, with reasons | Claude, Opus 5.5 | high |
 
 Each build is a normal feature PR against `index.html`, reviewed as usual (a self-review while Gemini is paused, or `/gemini re-review` when Criss asks), with tests, tips, rules lines and Grimoire entries (rule 23). Criss says when an idea graduates.
 
@@ -323,7 +323,7 @@ Today each landing after floors 2 to 4 rolls once (`DESCENT_CHANCE` 0.7) for one
 - **Seeds:** two new `DESCENTS` rows change the pool's length, so a code made before the build keeps its descent doors where they stood but may carry a different descent, as happened with the Mirror Stair, the Binding and the Cast. Append the rows after `cast` and never reorder: `Object.keys` order is the pool's order. **Built out of order:** The Smothering (step 10) went in before The Winch (step 9), so `smother` follows `cast` and `winch` will follow `smother`.
 - The Binding's fallback (`descentGate()`: nothing to pledge, so the next open descent) almost never comes up empty with six.
 
-### 5.9 Balance, step 11 (Claude, Opus 5.5)
+### 5.9 Balance, step 11 (#112; Claude, Opus 5.5)
 
 Criss's play of #111 came first: everything worked, he is content with the ribs, the arms and the purses, the snag is a fair cost, and leaving the lantern in the middle was the problem; falling debris, or a line that sways, could fix it. Every number below was checked in a headless sim of the real step (200 shafts a row unless noted; the thumbs are scripts, so they are steadier than a hand, and a person will fare worse).
 
