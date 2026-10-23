@@ -285,10 +285,13 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .bones-cols .choice{padding:9px 10px;gap:3px}
 .bones-cols .choice:disabled{opacity:.45;cursor:default}
 @media (max-height:500px){.bones-cols .choice{padding:6px 8px;gap:1px}.bones-cols .choice .tg{display:none}}
-/* "more below": a box with more to scroll fades at the bottom and says so. The cue is 0px tall, so showing it moves nothing */
+/* "more below": a box with more to scroll fades at the bottom and says so. The cue is 0px tall, so showing it moves nothing.
+   The fade lets taps through; the pill takes them and scrolls to the bottom (Criss kept tapping it and nothing happened, and the
+   tap went through to whatever lay under it). Its ::after makes the target thumb-sized without making the pill any bigger */
 .mmore{position:sticky;bottom:0;height:0;pointer-events:none}
 .mmore::before{content:"";position:absolute;left:-20px;right:-20px;bottom:-20px;height:84px;background:linear-gradient(rgba(18,22,24,0),var(--stone) 70%)}
-.mmore span{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);padding:4px 12px;border-radius:999px;background:var(--slab);border:1px solid var(--tallow);color:var(--tallow);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.mmore button{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);pointer-events:auto;padding:4px 12px;border-radius:999px;background:var(--slab);border:1px solid var(--tallow);color:var(--tallow);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;line-height:1.4}
+.mmore button::after{content:"";position:absolute;inset:-12px -10px}
 .mactions.stack{flex-direction:column;align-items:stretch;max-width:340px}
 /* the Roster: one card per kit, a painted portrait on each. The portrait keeps its 3:4 shape from the first frame, so nothing shifts as it paints (rule 2) */
 .rost-row{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 10px;margin:0 -2px;scrollbar-width:none}
@@ -549,7 +552,7 @@ input[type=range]::-moz-range-track {
     <p id="mBody"></p>
     <div class="choices" id="mChoices"></div>
     <div class="mactions" id="mActions"></div>
-    <div class="mmore" id="mMore" hidden><span>More below ↓</span></div>
+    <div class="mmore" id="mMore" hidden><button type="button" id="mMoreBtn"><span>More below ↓</span></button></div>
   </div>
 </div>
 
@@ -10828,6 +10831,9 @@ function moreCue(){
   $('#mMore').hidden=!more;
 }
 $('#modal .box').addEventListener('scroll',moreCue,{passive:true});
+/* tapping the cue jumps straight to the bottom (on click, never pointerdown: rule 5); the cue hides itself once there. A jump,
+   not a glide: a long glide outlived a closed box and dragged the next one opened away from its top */
+$('#mMoreBtn').addEventListener('click',()=>{const b=$('#modal .box'); b.scrollTop=b.scrollHeight; moreCue();});
 function closeModal(){$('#modal').hidden=true; pauseOpen=false;}
 function canPause(){return !!(F&&run&&!DESC.active&&$('#title').hidden&&(F.phase==='build'||F.phase==='wave'||F.phase==='draft'));}
 function isFull(){return !!(document.fullscreenElement||document.webkitFullscreenElement);}

@@ -25,6 +25,15 @@ const {chromium}=require('playwright');
       if(await p.evaluate(()=>!document.querySelector('#mMore').hidden))fail(tag+'the cue should go away at the bottom');
       await p.evaluate(()=>{document.querySelector('#modal .box').scrollTop=0;}); await p.waitForTimeout(150);
       if(await p.evaluate(()=>document.querySelector('#mMore').hidden))fail(tag+'the cue should come back when scrolled up again');
+      // tapping the cue takes you straight to the bottom (Criss kept tapping it); the tap lands on the cue, not what lies under it
+      const pill=await p.evaluate(()=>{const s=document.querySelector('#mMoreBtn').getBoundingClientRect(), x=s.left+s.width/2, y=s.top+s.height/2, h=document.elementFromPoint(x,y);
+        return {x,y,h:s.height,own:!!h&&!!h.closest('#mMoreBtn'),reach:(()=>{const e=document.elementFromPoint(x,s.top-8); return !!e&&!!e.closest('#mMoreBtn');})()};});
+      if(!pill.own)fail(tag+'the cue should take a tap at its middle '+JSON.stringify(pill));
+      if(!pill.reach)fail(tag+'the cue should take a tap a little above it too (a thumb-sized target) '+JSON.stringify(pill));
+      await p.tap('#mMoreBtn'); await p.waitForTimeout(900);
+      const after=await p.evaluate(()=>{const box=document.querySelector('#modal .box'); return {left:box.scrollHeight-box.scrollTop-box.clientHeight,cue:!document.querySelector('#mMore').hidden,open:!document.querySelector('#modal').hidden};});
+      if(after.left>8||after.cue||!after.open)fail(tag+'tapping "More below" should scroll to the bottom and hide the cue, leaving the rules open '+JSON.stringify(after));
+      await p.evaluate(()=>{document.querySelector('#modal .box').scrollTop=0;}); await p.waitForTimeout(150);
     }
     // Close (a click, not pointerdown: AGENTS.md rule 5) returns to the title, and reopening starts at the top
     await p.evaluate(()=>[...document.querySelectorAll('#mActions button')].find(x=>x.textContent==='Close').click()); await p.waitForTimeout(150);
