@@ -58,12 +58,13 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     for(const k of Object.keys(T.KITS)){T.newRun(k,0,{seed:5}); pools[k]=T.descentPool().includes('smother');}
     const d=__fork(77,1); d.doors.forEach(x=>{delete x.descent; delete x.horror;}); const i=d.doors.findIndex(x=>!x.trial); d.doors[i].descent='smother'; T.showLanding();
     const btn=document.querySelectorAll('#mChoices .choice')[i];
-    return {kinds,occ,pools,last:Object.keys(T.DESCENTS).pop(),tag:btn.querySelector('.tg').textContent,glyph:!!btn.querySelector('.tg svg.dsc-glyph'),sub:btn.textContent};
+    return {kinds,occ,pools,keys:Object.keys(T.DESCENTS),tag:btn.querySelector('.tg').textContent,glyph:!!btn.querySelector('.tg svg.dsc-glyph'),sub:btn.textContent};
   });
   ok(door.kinds.smother>15&&door.kinds.carry>15&&door.kinds.cast>15,'The Smothering is offered on the landings alongside the other descents',door.kinds);
   ok(!door.occ.smother&&door.occ.carry>5,'the Occultist is never offered it, over 120 stairs; he still meets the others',door.occ);
   ok(!door.pools.occultist&&Object.keys(door.pools).filter(k=>k!=='occultist').every(k=>door.pools[k]),'every kit but the Occultist has it in its pool',door.pools);
-  ok(door.last==='smother','its row is appended last, so the pool keeps its order (§5.8)',door.last);
+  /* §5.8: rows are only appended. The Smothering went in right after The Cast; The Winch, built after it, follows it */
+  ok(door.keys.indexOf('smother')===door.keys.indexOf('cast')+1,'its row follows The Cast’s, so the pool keeps its order (§5.8)',door.keys);
   ok(/Descent: The Smothering/.test(door.tag)&&door.glyph,'a Smothering door carries the glyph and says which descent',door);
   ok(/hold one more oil/.test(door.sub)&&/dread/.test(door.sub),'the door says what it pays and what it costs',door.sub);
 
