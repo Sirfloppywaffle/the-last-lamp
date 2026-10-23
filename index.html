@@ -1134,7 +1134,7 @@ const WINCH_SPEED=.9, WINCH_W=2, WINCH_RIBS=6, WINCH_JUT=[.8,1.3], WINCH_PAIR=[1
   WINCH_GLINT=1, WINCH_DROP=.9, WINCH_CATCH=.35, WINCH_LAG=.12, WINCH_TOP=3, WINCH_GAIN=1, WINCH_LR=.2, WINCH_LH=.22,
   WINCH_GLOW=2.6, WINCH_DIM=.3, WINCH_GLOW_MIN=1.7, WINCH_LURCH=.6, WINCH_GRACE=1, WINCH_SNAG=1, WINCH_SNAG_MAX=3,
   WINCH_PURSE=.1, WINCH_PURSE_MIN=4, WINCH_PURSE_MAX=12, WINCH_RELIC=.25, WINCH_REROLL=6, WINCH_CAP=40, WINCH_FY=.46,
-  WINCH_SWAY_P=2, WINCH_SWAY_Z=.2, WINCH_HAND=.15, WINCH_JERK=.85, WINCH_KICK=.8, WINCH_KICKS=40, WINCH_BOUNCE=.35;
+  WINCH_SWAY_P=2, WINCH_SWAY_Z=.1, WINCH_WARN=.3, WINCH_HAND=.15, WINCH_JERK=.85, WINCH_KICK=.8, WINCH_KICKS=40, WINCH_BOUNCE=.35;
 const ROOMS={
   merchant:{n:'A Merchant’s Alcove',tag:'Merchant',d:'Something trades in the dark. Spend your essence on relics, wards and bindings before the stair burns it.'},
   shrine:{n:'A Bleeding Shrine',tag:'Shrine',d:'Make a pact: power, for a price.'},
@@ -5951,7 +5951,7 @@ function winchFresh(lay){
    strength rolled with the shaft (C.kk), up to WINCH_KICK. The middle is no refuge: the arms reach across it. The kicks are the
    layout's and the rest is time and the thumb: a reload swings the same */
 function winchSway(C,dt){
-  const jk=Math.floor(C.t*WINCH_JERK); if(jk>C.jk){C.jk=jk; C.v+=(C.kk&&C.kk.length?C.kk[(jk-1)%C.kk.length]:0)*WINCH_KICK;}
+  const jk=Math.floor(C.t*WINCH_JERK-WINCH_WARN); if(jk>C.jk){C.jk=jk; C.v+=(C.kk&&C.kk.length?C.kk[(jk-1)%C.kk.length]:0)*WINCH_KICK;}
   if(C.steer){const want=clamp((C.tx-C.x)/WINCH_LAG,-WINCH_TOP,WINCH_TOP); C.v+=(want-C.v)*Math.min(1,dt/WINCH_HAND);}
   else{const W=TAU/WINCH_SWAY_P; C.v+=(-W*W*C.x-2*WINCH_SWAY_Z*W*C.v)*dt;}
   C.x+=C.v*dt;
@@ -6129,7 +6129,11 @@ function drawWinch(c,w,h,tm){
     c.font='700 '+Math.round(u*.42)+'px "Grenze Gotisch", Georgia, serif'; c.fillStyle='#EDB45A'; c.fillText(fl.name,cx,ey);
     c.font='500 '+Math.round(u*.2)+'px "DM Mono", monospace'; c.fillStyle='#8B9294'; c.fillText(('Floor '+(C.f1+1)+' of '+FLOORS.length).toUpperCase(),cx,ey+u*.4); c.restore();}
   /* the cable, from its fixed point over the middle, the lantern swinging on it, and the hook with what it has taken */
-  c.strokeStyle='#3a342e'; c.lineWidth=Math.max(1,u*.04); c.beginPath(); c.moveTo(cx,-u); c.lineTo(lx,ly-u*.24); c.stroke();
+  c.strokeStyle='#3a342e'; c.lineWidth=Math.max(1,u*.04); c.beginPath(); c.moveTo(cx,-u);
+  /* each knock shows first: the cable kinks the way it will push, WINCH_WARN of a jerk before it lands (it is the game: Reduce Motion keeps it) */
+  const kn=Math.floor(C.t*WINCH_JERK), kf=C.t*WINCH_JERK-kn, kv=kn>=1&&C.kk&&C.kk.length?C.kk[(kn-1)%C.kk.length]:0,
+    kb=kv*u*.3*(kf<WINCH_WARN?kf/WINCH_WARN:Math.max(0,1-(kf-WINCH_WARN)/.25)), my=(ly-u*1.24)/2-u*.1;
+  c.quadraticCurveTo((cx+lx)/2+kb,my,lx,ly-u*.24); c.stroke();
   c.save(); c.translate(lx,ly); c.rotate(Math.atan2(cx-lx,ly+u)*.6);
   c.fillStyle='#1c1814'; c.fillRect(-u*.16,-u*.24,u*.32,u*.06); c.fillStyle='#e8b464'; c.fillRect(-u*.11,-u*.18,u*.22,u*.3);
   c.fillStyle='#fff3d6'; c.fillRect(-u*.04,-u*.1,u*.08,u*.14); c.fillStyle='#211b16'; for(const bx of [-.11,-.02,.07])c.fillRect(bx*u,-u*.18,u*.03,u*.3);
