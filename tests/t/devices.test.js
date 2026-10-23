@@ -205,7 +205,38 @@ const DEV=[
     await p.evaluate(()=>{const T=__t; T.descentFinish({}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
     const cstOk=cst.active&&cst.statsIn&&cst.clear&&cst.wide&&cst.still&&ccard.shown&&ccard.in&&ccard.thumb&&ccard.fits;
     if(!cstOk)console.log('FAIL '+nm+': The Cast and its card',JSON.stringify({cst,ccard}));
-    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk&&bndOk&&cstOk;
+    /* The Smothering: four targets of 48 px or more, 24 px clear of the edges and the safe area, never overlapping; the counts
+       above the niches and the prompt below the wicks, so neither covers a target; the counts don't move as they change; the card fits */
+    const smo=await p.evaluate(ins=>{
+      const T=__t; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      T.tutSet({walk:'done',seen:['smothering'],off:false}); T.setDescentAuto(null);
+      T.newRun('lamplighter',0,{seed:4242}); T.run.floor=2; T.run.descent={k:'smother',f0:1,msg:''}; T.startDescent();
+      const C=T.DESC; C.pl[0].rise=999; C.gt=T.SMOK.GAP; T.smotherStep(.01); C.pt=1; T.descentFrame(0);
+      const o={active:C.active&&C.phase==='walk'&&C.sub==='plume'&&C.k==='smother'};
+      const G=T.smoGeo(), xs=[0,1,2,3].map(k=>T.smoX(G,k)), stats=[...document.querySelectorAll('.dsc-stat')].map(q), prompt=q(document.querySelector('#dscPrompt span'));
+      o.R=+G.R.toFixed(1); o.xs=xs.map(Math.round); o.stats=stats; o.prompt=prompt;
+      o.targets=G.R*2>=48&&xs.every((x,k)=>k===0||x-xs[k-1]>=G.R*2)&&xs[0]-G.R>=Math.max(24,ins.left)&&innerWidth-xs[3]-G.R>=Math.max(24,ins.right)&&G.cy-G.R>=ins.top&&G.cy+G.R<=innerHeight-ins.bottom;
+      o.statsIn=stats.length===2&&stats.every(inside)&&inside(prompt)&&stats[0][2]<stats[1][0];
+      o.clear=stats.every(r=>r[3]<=G.rowY-86*G.s+2)&&prompt[1]>=G.cy+G.R-2;
+      C.clean=1; C.wrong=2; C.hudKey=''; T.descentFrame(0);
+      o.still=JSON.stringify(stats)===JSON.stringify([...document.querySelectorAll('.dsc-stat')].map(q));
+      return o;},ins);
+    await p.waitForTimeout(250);
+    await p.screenshot({path:(process.argv[3]||'.')+'/smother-'+nm+'.png'});
+    const scard=await p.evaluate(ins=>{
+      const T=__t, C=T.DESC; ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      for(let k=0;k<4;k++)C.lit[k]=false; C.lit[0]=true; C.i=2; C.pl[2].rise=999; T.smotherSnuff(0); C.held=false; C.liftT=0; T.smotherStep(.05); C.t+=1; T.descentFrame(.05);
+      const el=document.getElementById('dscCard'), r=el.getBoundingClientRect();
+      const o={shown:!document.getElementById('dscCardWrap').hidden,thumb:r.height>=44&&r.width>=200,fits:el.scrollHeight<=el.clientHeight+1||r.height>=120};
+      o.in=r.left>=ins.left-1&&r.right<=innerWidth-ins.right+1&&r.top>=ins.top-1&&r.bottom<=innerHeight-ins.bottom+1;
+      return o;},ins);
+    await p.screenshot({path:(process.argv[3]||'.')+'/smother-card-'+nm+'.png'});
+    await p.evaluate(()=>{const T=__t; T.descentFinish({}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
+    const smoOk=smo.active&&smo.targets&&smo.statsIn&&smo.clear&&smo.still&&scard.shown&&scard.in&&scard.thumb&&scard.fits;
+    if(!smoOk)console.log('FAIL '+nm+': The Smothering and its card',JSON.stringify({smo,scard}));
+    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk&&bndOk&&cstOk&&smoOk;
     if(!ok)bad++;
     console.log((ok?'OK  ':'BAD ')+nm.padEnd(17),'side',c.side,'tile',c.tile,'boardMoved',moved,'barMoved',cmdMoved,'over',c.over,'unsafe',c.offs,'hint',c.hint,errs.length?errs:'');
     await ctx.close();
