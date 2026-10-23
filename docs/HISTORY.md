@@ -3,6 +3,7 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **Design: Saltmouth Above** (Expansion 3, step 1; `expansion/EXPANSION3_TOWN.md`; Gemini's draft, reviewed by Claude, Opus 5.5; docs only). A walkable town above the stair, rebuilt from timber, iron, tallow and curios each run hauls up. Claude's round 1 fixes the draft against `main` (Jonah, not Mags; the Throat; every run is seeded, so the town's gift is off only on replays and Trial floors), allows one town gift per descent with a price on the stair, keeps chores to town materials, cuts the Scrap Chute and Harpoon Rack, and reorders the plan into ten PRs. Pixel art or painted is Criss's call.
 
 ## v18.9.0 — Four More Ways Down
 The descents grow to six: the Binding, the Cast, the Winch and the Smothering join the Carry and the Mirror Stair, balanced on Criss's play of #111 and #112.
