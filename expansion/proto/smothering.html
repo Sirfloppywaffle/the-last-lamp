@@ -54,7 +54,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .btn{padding:10px 14px;border-radius:8px;border:1px solid var(--seam);background:var(--slab);font-size:.9rem}
 .btn.call{background:var(--tallow);border-color:var(--tallow);color:var(--ink-on-tallow);font-family:var(--f-display);font-weight:700;font-size:1.1rem;line-height:1}
 .btn.big{padding:12px 26px;font-size:1.45rem;min-height:48px}
-.lookBtn,.misBtn{min-height:44px;font-family:var(--f-num);font-size:.78rem;letter-spacing:.02em}
+.lookBtn{min-height:44px;font-family:var(--f-num);font-size:.78rem;letter-spacing:.02em}
 
 .stage{flex:1 1 auto;min-height:0;position:relative}
 #board{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
@@ -93,9 +93,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
   <div class="box" role="dialog" aria-labelledby="introH">
     <h2 id="introH">The Smothering</h2>
     <p>Three wicks burn in the wall and black fumes climb the tube. Tap them out, dimmest first, before the fumes reach the lantern. Three plumes. In the later ones the flames gutter, and the order can change.</p>
-    <div class="row"><button class="btn call big grow" id="beginBtn" type="button">Begin</button></div>
-    <div class="row"><button class="btn misBtn" type="button" aria-pressed="false">Misdirect: Off</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button></div>
-    <p class="note" id="misNote" hidden>Misdirect is on. From the second plume, one flame lies about its size. Trust the glow.</p>
+    <div class="row"><button class="btn call big grow" id="beginBtn" type="button">Begin</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button></div>
     <p class="note">The test: can you always tell which wick is dimmest?</p>
   </div>
 </div>
@@ -108,8 +106,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
       <dt>Wrong snuffs</dt><dd id="rWrong">0</dd>
       <dt>Late plumes</dt><dd id="rLate">0</dd>
     </dl>
-    <div class="row"><button class="btn call big grow" id="againBtn" type="button">Play again</button></div>
-    <div class="row"><button class="btn misBtn" type="button" aria-pressed="false">Misdirect: Off</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button></div>
+    <div class="row"><button class="btn call big grow" id="againBtn" type="button">Play again</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button></div>
     <div class="statline" id="rInfo"></div>
   </div>
 </div>
@@ -187,16 +184,9 @@ function rollPlume(rng,i){
   }
   return plain();
 }
-// Misdirect: one wick's flame is drawn a step off its true rank. Its halo and its pool on the wall stay honest, and so does the ranking.
-// Dimmest shows tall, middle shows taller than the brightest, brightest shows short. Always rolled, so the switch never changes the tube.
-function flameB(w,t,decoy){
-  let b=wickB(w,t);
-  if(decoy){b+=w.base<2?1.4:-1.5;b=b<B_MIN?B_MIN:b>B_MAX?B_MAX:b}
-  return b;
-}
 function rollGame(seed){
   const rng=mulberry32(seed);
-  return [0,1,2].map(i=>{const p=rollPlume(rng,i);p.decoy=Math.floor(rng()*3);return p});
+  return [0,1,2].map(i=>rollPlume(rng,i));
 }
 
 /* ------- state ------- */
@@ -205,7 +195,6 @@ const cv=$('board'), ctx=cv.getContext('2d'), stage=$('stage');
 const motionMQ=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
 const DEMO=[{base:1.7,amp:0,ph:0},{base:1,amp:0,ph:0},{base:2.8,amp:0,ph:0}];
 let lite=store.get('lite')==='1';
-let mis=store.get('mis')==='1';
 let DPR=1;
 const L={w:0,h:0,tx:0,ty:0,tw:0,th:0,u:1,lampY:0,rowY:0,R:28};
 const G={
@@ -245,7 +234,7 @@ function showResult(){
   $('rClean').textContent=G.stat.clean+' of 3';
   $('rWrong').textContent=String(G.stat.wrong);
   $('rLate').textContent=String(G.stat.late);
-  $('rInfo').textContent=infoLine();
+  $('rInfo').textContent='Look: '+(lite?'Lite':'Full')+' · Layout '+G.seed.toString(36).toUpperCase();
   $('plumeNo').textContent='Done';
   $('result').hidden=false;
 }
@@ -341,20 +330,14 @@ cv.addEventListener('pointercancel',e=>{
 });
 cv.addEventListener('contextmenu',e=>e.preventDefault());
 
-/* ------- the Look and Misdirect switches ------- */
-function infoLine(){return 'Look: '+(lite?'Lite':'Full')+' · Misdirect: '+(mis?'On':'Off')+' · Layout '+G.seed.toString(36).toUpperCase()}
-function paintOpts(){
-  const lt='Look: '+(lite?'Lite':'Full'),mt='Misdirect: '+(mis?'On':'Off');
-  document.querySelectorAll('.lookBtn').forEach(b=>{b.textContent=lt;b.setAttribute('aria-pressed',lite?'true':'false')});
-  document.querySelectorAll('.misBtn').forEach(b=>{b.textContent=mt;b.setAttribute('aria-pressed',mis?'true':'false')});
-  $('misNote').hidden=!mis;
-  if(G.phase==='result')$('rInfo').textContent=infoLine();
+/* ------- the Look toggle ------- */
+function paintLook(){
+  const txt='Look: '+(lite?'Lite':'Full');
+  document.querySelectorAll('.lookBtn').forEach(b=>{b.textContent=txt;b.setAttribute('aria-pressed',lite?'true':'false')});
 }
 document.querySelectorAll('.lookBtn').forEach(b=>b.addEventListener('click',()=>{
-  lite=!lite;store.set('lite',lite?'1':'0');paintOpts();
-}));
-document.querySelectorAll('.misBtn').forEach(b=>b.addEventListener('click',()=>{
-  mis=!mis;store.set('mis',mis?'1':'0');paintOpts();
+  lite=!lite;store.set('lite',lite?'1':'0');paintLook();
+  if(G.phase==='result')$('rInfo').textContent='Look: '+(lite?'Lite':'Full')+' · Layout '+G.seed.toString(36).toUpperCase();
 }));
 $('beginBtn').addEventListener('click',startGame);
 $('againBtn').addEventListener('click',startGame);
@@ -468,18 +451,19 @@ function draw(){
         const fl=calm?0:1;
         const sway=fl*(Math.sin(tm*7+k*2.1)*1.2+Math.sin(tm*13+k)*0.6)*u;
         const jit=1+fl*0.03*Math.sin(tm*11+k*1.7);
-        // Misdirect (plumes 2 and 3; the intro shows it on the middle niche): the flame's size lies, the glow does not.
-        const dec=mis&&(G.phase==='intro'?k===1:G.i>=1&&G.plan[G.i].decoy===k);
-        const fb=flameB(ws[k],tNow,dec);
-        const hh=(14+13*fb)*u*ramp*jit;
-        const fw=(4.5+3*fb)*u;
-        // Three cues, all rising with brightness: the pool on the wall, the halo, the flame's height.
+        // Every flame is the same size (Criss, after the Fold tests); brightness alone says which is dimmest.
+        // Three cues, all rising with brightness: the pool on the wall, the halo's radius and strength, the flame's own intensity.
+        const hh=36*u*ramp*jit;
+        const fw=9.6*u;
+        const fa=Math.min(1,0.45+0.19*b);
         glow(x,base-30*u,(30+24*b)*u,(0.07+0.075*b)*ramp,1.15);
-        glow(x+sway*0.5,base-hh*0.5,(20+17*b)*u,0.5*ramp,1);
+        glow(x+sway*0.5,base-hh*0.5,(20+17*b)*u,(0.25+0.14*b)*ramp,1);
         let fg=ctx.createLinearGradient(0,base,0,base-hh);
         fg.addColorStop(0,'#FFF3D6');fg.addColorStop(0.35,'#F6C772');fg.addColorStop(1,'#D9822E');
+        ctx.globalAlpha=fa;
         flame(x,base,hh,fw,sway,fg);
         flame(x,base-0.5*u,hh*0.55,fw*0.5,sway*0.4,'rgba(255,251,239,.9)');
+        ctx.globalAlpha=1;
       }
       // The stub, and a dying ember after a snuff.
       ctx.fillStyle='#6b6454';ctx.fillRect(x-3.5*u,base,7*u,9*u);
@@ -551,14 +535,14 @@ function frame(ts){
   step(dt);draw();
 }
 
-paintOpts();
+paintLook();
 layout();
 if(window.ResizeObserver)new ResizeObserver(layout).observe(stage);
 window.addEventListener('resize',layout);
 requestAnimationFrame(frame);
 
 // A small hook so the page can be driven from a headless browser; nothing in play uses it.
-window.__sm={G,L,wickB,flameB,crossings,rollPlume,rollGame,mulberry32,snuff,step,hit,wx,layout,TIE,RISE,LEVELS,setMis(v){mis=!!v;paintOpts()}};
+window.__sm={G,L,wickB,crossings,rollPlume,rollGame,mulberry32,snuff,step,hit,wx,layout,TIE,RISE,LEVELS};
 })();
 </script>
 </body>
