@@ -85,7 +85,7 @@ Landings after floors **2, 3 and 4** (the gaps 2→3, 3→4, 4→5). Floor 1→2
 | 1 | **The Mirror Stair** | **pilot** | route | As the lantern sinks, drag 2 or 3 mirrors to bounce its beam onto wall sconces. Each one lit is kept. | light: the next floor's lamp burns wider for its first wave | each missed sconce stays dark |
 | 2 | **The Carry** | **pilot** | hide | Hold your thumb to cup a small flame through a gallery of sleepers. Show light too long and they stir; hold too long and you stumble. | oil | madness for every sleeper woken |
 | 3 | **The Winch** | **chosen (Criss)** | steer | The cable snags on the way down. Drag the lantern left or right past black ribs and reaching arms to catch falling purses (5.5). | essence: three small purses; sometimes the last holds a relic (5.5) | a snag costs the lamp oil |
-| 4 | **The Smothering** | **chosen (Criss)** | order | Black fumes rise the tube. Snuff three wicks in the order of their brightness, dimmest first, before they reach the lamp (5.6). Never the Occultist: madness feeds him. | depth: the lamp holds more oil for the run (not a refill, 5.6) | dread for a wrong snuff |
+| 4 | **The Smothering** | **built** (#107) | order | Black fumes rise the tube. Snuff four wicks in the order of their brightness, dimmest first, before the fumes reach them (5.6). Never the Occultist: madness feeds him. | depth: the lamp holds more oil for the run (not a refill, 5.6) | dread for a wrong snuff |
 | 5 | **The Binding** | **chosen (Criss)** | draw | Trace three different sigils, each a short connect-the-dots path, before the lantern sinks past the creature it holds. A wrong stroke resets only that sigil. | a bound horror, named on the door | the **pledge**: what you put up is forfeit on failure (5.2) |
 | 6 | **The Cast** | **chosen (Criss)** | aim | Drag back and loose a weighted line at three iron rings on the swaying shaft wall; the cable sways, so lead it. Each ring caught is kept. | a rite charge | each line cast is weighted with a tenth of your essence, caught or not (5.3) |
 
@@ -97,7 +97,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 
 ### 2.5 Risks
 
-- **The Smothering** needs brightness to be distinguishable on a phone in a dark scene. Test it on a Fold, not a headless screenshot.
+- **The Smothering** needs brightness to be distinguishable on a phone in a dark scene. Test it on a Fold, not a headless screenshot. **Settled (Criss, #106):** played folded, unfolded and at night with auto-brightness on, the dimmest always read.
 - **Reward order.** The toll cuts everything but salvage to 30% when you descend. A mini-floor reward granted **after** the toll skips the cut, which would make a purse the best essence in the game. Criss decided it (section 4): rewards land after the toll, and balance keeps essence rewards small. The Binding pays no essence and takes its pledge from post-toll essence, so the order does not matter for it (5.2). The Winch's purses are the case this warns of: each is a tenth of what you arrive with, capped at 12 (5.5).
 - **Do not become a minigame collection.** A player should leave a mini floor hungrier for the lamp, not relieved to be out of the tower defense.
 - **Mirror Stair needs the Signal Mirror's beam logic** (`mirror` ward). Reuse it, don't copy it.
@@ -118,7 +118,7 @@ All numbers above are *shape, not balance*. Balance is its own later PR (rule 22
 | 7 | **Built: The Binding and the pledge** (**done**, #102; 5.1, 5.2, 5.4): the pledge card, `run.mini`, the relic pull, the sigil field, the kit filter, tests, tips, Grimoire | Claude, Opus 5.5 | high |
 | 8 | **Built: The Cast** (**done**, #103; 5.3): the aim and line, the rite charge, the essence tenth, tests, tips, Grimoire | Claude, Opus 5.5 | high |
 | 9 | **Build The Winch** (5.5; #105): the steer, ribs and arms, the purses, the snag's oil, tests, tips, Grimoire | Claude, Opus 5.5 | high |
-| 10 | **Build The Smothering** (5.6; Fold test #106, then the build #107): the wicks and their drift, the fumes, dread, the lamp's depth, tests, tips, Grimoire. **Fold test first:** Criss plays a one-screen brightness check before the full build | Claude, Opus 5.5 | high |
+| 10 | **Built: The Smothering** (**done**, #107; 5.6; Fold test #106, tuned on #108): the wicks and their drift, the fumes, dread, the lamp's depth, tests, tips, Grimoire. Built before step 9 | Claude, Opus 5.5 | high |
 | 11 | Balance numbers for all six, in their own PR | Claude, Opus 5.5 | high |
 
 Each build is a normal feature PR against `index.html`, reviewed as usual (a self-review while Gemini is paused, or `/gemini re-review` when Criss asks), with tests, tips, rules lines and Grimoire entries (rule 23). Criss says when an idea graduates.
@@ -249,46 +249,47 @@ A review cannot test a thumb (section 0); only Criss's playtest settles it. On p
 ### 5.6 Mini floor 4: The Smothering (chosen by Criss, round 4)
 
 - **Verb: order.**
-- **What you do.** The lantern sinks down a narrow tube. Three wicks burn in niches across it, at the lantern's height, each a different brightness. Black fumes climb from below. Tap them out dimmest first, then the middle, then the brightest, before the fumes reach the lantern. Three plumes, three new wicks each. In the second and third the wicks gutter: their brightness drifts, so the order can change as you watch. You read the light now, not a moment ago. About 25 seconds.
+- **What you do.** The lantern sinks down a narrow tube, a storey a plume. Four wicks burn in niches across it, below the lantern, each a different brightness. Black fumes climb from below. Tap them out dimmest first, before the fumes reach them; any still lit when they arrive is smothered. Three plumes, four new wicks each. In the second and third the wicks gutter: their brightness drifts, so the order can change as you watch. You read the light now, not a moment ago. About 13 to 20 seconds (a quick reader ends each plume early). **Changed on the Fold test (Criss, #106/#108):** four wicks, not three (three was too quick a solve once the dimmest and brightest were obvious); every flame the same size, so only light ranks them; the fumes smother the wicks, not the lantern (before, reaching the candles did nothing); a faster rise.
 - **The tap.** A wick is snuffed on the lift, on the same wick (`pointerup`); a slide off it or a `pointercancel` snuffs nothing, so a palm or a fold never costs madness. Targets at least 48 px, wicks at least 1.2 tiles apart.
 - **Pays: depth.** Each plume snuffed clean (all three, in order, before the fumes arrive) deepens the lamp: it holds 1 more oil for the rest of the run, 3 at most. Through `run.baseOilMax` and `updateOilMax()`, the path the Rest room and events use, so relic oil mods stay right. Paid at the end.
-- **Costs: dread.** Each wrong snuff, and each plume that reaches the lantern with a wick still lit, is 1 dread on the next floor, 3 at most. A wrong snuff still puts that wick out; the plume can't be clean, but you finish it. Kept as `run.fume={floor,n}`, read in `dread()` beside the Carry's `wokeDread()`. Paid at the end, so a reload costs nothing.
+- **Costs: dread.** Each wrong snuff, and each plume whose fumes reach a wick still lit, is 1 dread on the next floor, 3 at most. A wrong snuff still puts that wick out; the plume can't be clean, but you finish it. Kept as `run.fume={floor,n}`, read in `dread()` beside the Carry's `wokeDread()`. Paid at the end, so a reload costs nothing.
 - **Fail:** no plume clean. Nothing paid; the dread stands.
 - **Offered: never to the Occultist (Criss, round 4).** His Bone Spears, Risen and horrors hit harder with every madness tier, and dread raises the tier, so a wrong snuff would feed him instead of biting him: a mistake that pays breaks pillar 2. Its `DESCENTS` row gets `fits:()=>run.kit!=='occultist'`, the same filter that keeps the Binding from the Galvanist. Every other kit may draw it.
 
-**Pure roll (sub 8 of `SALT.descent`).** `smotherLayout()`, inside `seeded(SALT.descent,8,…)`, draws per plume: which niche holds which brightness, each wick's drift (a slow swing with a rolled phase and size; plumes 2 and 3 only) and the plume's rise. A wick's brightness is a function of the layout and time only. **Fair by construction:** at most one crossing a plume, never in its first 1.5 s; and two wicks within a tie band of each other both count as the dimmest, so a crossing can never make a right read wrong. Every plume leaves time for three taps with a reaction margin. A row in `DSC_GAME`: `smother:{sub:8,tip:'smothering',…}`.
+**Pure roll (sub 8 of `SALT.descent`).** `smotherLayout()`, inside `seeded(SALT.descent,8,…)`, draws per plume: which niche holds which brightness, each wick's drift (a slow swing with a rolled phase and size; plumes 2 and 3 only) and the plume's rise. A wick's brightness is a function of the layout and time only. **Fair by construction:** at most one crossing a plume, never in its first 1.5 s; and two wicks within a tie band of each other both count as the dimmest, so a crossing can never make a right read wrong. Every plume leaves time for three taps with a reaction margin. A row in `DSC_GAME`: `smother:{sub:8,tip:'smothering',…}`. Built: `smoPlume()` looks for exactly one crossing (the drift should matter) and settles for none late in its search; over 200 seeds every guttering plume found one.
 
-**Shape numbers:** 3 plumes of 3 wicks; brightness levels 1, 1.7 and 2.8 (at least 1.6× apart); rise 8, 7 and 6 s; drift 0, 0.5 and 0.8 of a level, over 5 s; tie band 0.15 of a level; 1.5 s between plumes; 1 dread a mistake, 3 at most; 1 depth a clean plume, 3 at most; cap 40 s.
+**Shape numbers (as tuned on the Fold test, `SMO_*`):** 3 plumes of 4 wicks; brightness levels 1, 1.45, 1.95 and 2.5; rise to the wicks 5.9, 5.2 and 4.7 s; drift 0, 0.3 and 0.5 of a level (each wick 40 to 100% of it), from one extreme to the other in 5 s; never under 0.6 of a level; tie band 0.15 of a level; 1.5 s between plumes and before the first; 1 dread a mistake, 3 at most; 1 depth a clean plume, 3 at most; cap 40 s. (Before the test: 3 wicks, levels 1, 1.7, 2.8, rise 8, 7, 6 s to the lantern, drift 0.5 and 0.8.)
 
-**Reading brightness on a phone.** Never colour or glow alone: three cues together, the flame's height, its halo's radius and the pool it throws on the tube wall. The Lite path draws the same sizes without the additive glow. `reduceMotion` keeps the drift (it is the game) but drops the flicker. The dimmest wick stays well clear of black, because phone auto-brightness crushes the dark end first.
+**Reading brightness on a phone.** Never colour or glow alone: three cues together, the pool the flame throws on the tube wall, its halo's radius and strength, and the flame's own intensity. **Every flame is the same size** (Criss, #106: height gave it away); the flame-height fallback is retired. The Lite path draws the same sizes without the additive glow. `reduceMotion` keeps the drift (it is the game) but drops the flicker. The dimmest wick stays well clear of black, because phone auto-brightness crushes the dark end first.
 
 **Tests** (`tests/t/smothering.test.js`):
 - One seed lays out the same tube twice; `Math.random` stubbed to throw while `smotherLayout()` runs.
-- Over 200 seeds: at most one crossing a plume, none in its first 1.5 s; a perfect tapper clears every plume in time.
+- Over 200 seeds: at most one crossing a plume, none in its first 1.5 s; a perfect tapper (a tap every 0.6 s from 1 s in) clears every plume in time; an idle thumb is smothered every plume.
 - The tie rule: inside the band, either wick is right.
-- A wrong snuff: 1 dread, that wick out, the plume not clean. A plume reaching the lantern: 1 dread. Dread caps at 3 and lasts the next floor only; an old save with no `run.fume` reads 0.
+- A wrong snuff: 1 dread, that wick out, the plume not clean. A plume reaching a wick still lit: 1 dread. Dread caps at 3 and lasts the next floor only; an old save with no `run.fume` reads 0.
 - Depth: +1 capacity a clean plume through `baseOilMax`; it survives adding and removing an oil-cap relic, and a save and resume.
 - `pointercancel` and a slide off snuff nothing.
 - The Occultist's pool never holds it, over many seeds; every other kit's does.
-- 14 sizes: three targets of 48 px or more, 24 px clear of the edges, at 915×356 and 852×342 too (a row across the tube fits the short height).
+- 14 sizes: four targets of 48 px or more, 24 px clear of the edges and the safe area, at 915×356 and 852×342 too (a row across the tube fits the short height).
+- Painted: the light round each wick ranks as its level does, in Full and in Lite.
 
-**Rule 23:** a first-time tip (`TIPS.smothering`: "Tap the wicks out, dimmest first, before the fumes reach the lantern. Out of order, the smoke comes down with you."), a clause in the Descents rules line, its Grimoire Descents page, a practice button. Depth needs no tip of its own: the Rest room already teaches it.
+**Rule 23:** a first-time tip (`TIPS.smothering`: "Four wicks burn in the wall… Tap them out, dimmest first, before the fumes reach them. Read the light, not the flame… Out of order, the smoke comes down with you."), a clause in the Descents rules line, its Grimoire Descents page, a practice button. Depth needs no tip of its own: the Rest room already teaches it.
 
 **Checked.**
 - **Pillar 1:** the strongest of the six. Reading light is the whole game.
 - **Pillar 2:** fits. Dread for every mistake.
 - **Pillar 3:** fits. Black fumes, faint wicks, nothing seen in full.
-- **Pillar 4: the real risk** (2.5 flagged it). Brightness in a dark scene on a phone is hard to read, and only Criss's Fold settles it. So step 10 starts with a one-screen prototype (`expansion/proto/`, its own `LL_STORE_NS`) for Criss to play before the full build. If it fails, the fallback reads the flame's height alone, which is less about light.
+- **Pillar 4: the real risk** (2.5 flagged it). Brightness in a dark scene on a phone is hard to read, and only Criss's Fold settles it. So step 10 started with a one-screen prototype (`expansion/proto/smothering.html`, its own `LL_STORE_NS`). **Passed (Criss, #106):** folded, unfolded and at night, the dimmest always read, even with every flame one size.
 - **Pillar 5: does not fit as Gemini wrote it.** "Oil refilled" for madness is the Carry's trade exactly (oil in, dread out), so two of six descents would be one bargain with two verbs, and 2.2 asks a different currency each. **Settled (Criss, round 4): pay depth.** The Carry tops the lamp up now; the Smothering makes it hold more for the rest of the run. The cost stays Criss's (madness, as dread; 2.2 asks only the pay to differ).
 - **§1:** touch only; dread cannot end a run; bosses untouched; hard (the drift); dark art.
 - **Pillar 2 for the Occultist:** fails, so he is never offered it (above).
-- **Length:** one plume alone is about 5 s, under the 15 s floor (2.2). That is why there are three.
+- **Length:** one plume alone is about 5 s, under the 15 s floor (2.2). That is why there are three. Left to the fumes the tube takes about 20 s; a quick reader ends each plume early and can be through in about 13. Under 2.2's floor for the fastest hands only; the balance PR (step 11) may lengthen the lead-in if it feels thin.
 
 **Risks.**
 - **Depth overlaps the Rest room** ("Deepen the reservoir", +3). A Rest room and a Smothering can be one door, so +6 is possible. Balance PR.
 - **The Carry stays offered to the Occultist (Criss, round 4).** Its dread feeds him too, but madness still flickers and shrinks his lamp, and a failed Carry still loses the flask, so it bites. The Smothering's only price is dread, so it does not.
 - **`run.fume` is a new saved field:** old saves have none (reads 0), and it counts only on its floor, as `run.woke` does.
-- **A tap game can feel thin** beside the others. The drift is what makes it a game; if it is too easy, tighten the rise, not the wick count (Criss said three).
+- **A tap game can feel thin** beside the others. The drift is what makes it a game; if it is too easy, tighten the rise (Criss settled on four wicks).
 
 ### 5.7 Checked, touches, riskiest part (The Binding and the pledge)
 
@@ -310,5 +311,5 @@ Today each landing after floors 2 to 4 rolls once (`DESCENT_CHANCE` 0.7) for one
 
 - **Call: keep 0.7.** Six descents don't change how many doors carry one (about two a run, and the plain stair stands on every landing). They spread those doors over more kinds, which is pillar 5, at the price of each showing about one run in three. Raising it to 0.8 buys little (0.35 → 0.40) and makes a descent near certain on every landing: section 2.5's warning about a minigame collection.
 - **No weighting toward descents you haven't seen.** It would read `ll-codex`, which differs per phone, so one seed would offer different doors on two phones (rule 11b). The roll stays pure.
-- **Seeds:** two new `DESCENTS` rows change the pool's length, so a code made before the build keeps its descent doors where they stood but may carry a different descent, as happened with the Mirror Stair, the Binding and the Cast. Append the rows after `cast` and never reorder: `Object.keys` order is the pool's order.
+- **Seeds:** two new `DESCENTS` rows change the pool's length, so a code made before the build keeps its descent doors where they stood but may carry a different descent, as happened with the Mirror Stair, the Binding and the Cast. Append the rows after `cast` and never reorder: `Object.keys` order is the pool's order. **Built out of order:** The Smothering (step 10) went in before The Winch (step 9), so `smother` follows `cast` and `winch` will follow `smother`.
 - The Binding's fallback (`descentGate()`: nothing to pledge, so the next open descent) almost never comes up empty with six.
