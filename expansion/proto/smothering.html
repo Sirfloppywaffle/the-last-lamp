@@ -54,7 +54,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .btn{padding:10px 14px;border-radius:8px;border:1px solid var(--seam);background:var(--slab);font-size:.9rem}
 .btn.call{background:var(--tallow);border-color:var(--tallow);color:var(--ink-on-tallow);font-family:var(--f-display);font-weight:700;font-size:1.1rem;line-height:1}
 .btn.big{padding:12px 26px;font-size:1.45rem;min-height:48px}
-.lookBtn{min-height:44px;font-family:var(--f-num);font-size:.78rem;letter-spacing:.02em}
+.lookBtn,.nBtn{min-height:44px;font-family:var(--f-num);font-size:.78rem;letter-spacing:.02em}
 
 .stage{flex:1 1 auto;min-height:0;position:relative}
 #board{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
@@ -86,14 +86,14 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
     <div class="where"><span>The Smothering</span><small>Fold test &middot; <b id="plumeNo">Ready</b></small></div>
     <button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button>
   </header>
-  <main class="stage" id="stage"><canvas id="board" aria-label="The tube, with three wicks burning in the wall"></canvas></main>
+  <main class="stage" id="stage"><canvas id="board" aria-label="The tube, with wicks burning in the wall"></canvas></main>
 </div>
 
 <div class="modal low" id="intro">
   <div class="box" role="dialog" aria-labelledby="introH">
     <h2 id="introH">The Smothering</h2>
-    <p>Three wicks burn in the wall and black fumes climb the tube. Tap them out, dimmest first, before the fumes reach them and smother what still burns. Three plumes. In the later ones the flames gutter, and the order can change.</p>
-    <div class="row"><button class="btn call big grow" id="beginBtn" type="button">Begin</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button></div>
+    <p><span id="nWord">Four</span> wicks burn in the wall and black fumes climb the tube. Tap them out, dimmest first, before the fumes reach them and smother what still burns. Three plumes. In the later ones the flames gutter, and the order can change.</p>
+    <div class="row"><button class="btn call big grow" id="beginBtn" type="button">Begin</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button><button class="btn nBtn" type="button" aria-pressed="false">Wicks: 4</button></div>
     <p class="note">The test: can you always tell which wick is dimmest?</p>
   </div>
 </div>
@@ -106,7 +106,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
       <dt>Wrong snuffs</dt><dd id="rWrong">0</dd>
       <dt>Late plumes</dt><dd id="rLate">0</dd>
     </dl>
-    <div class="row"><button class="btn call big grow" id="againBtn" type="button">Play again</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button></div>
+    <div class="row"><button class="btn call big grow" id="againBtn" type="button">Play again</button><button class="btn lookBtn" type="button" aria-pressed="false">Look: Full</button><button class="btn nBtn" type="button" aria-pressed="false">Wicks: 4</button></div>
     <div class="statline" id="rInfo"></div>
   </div>
 </div>
@@ -123,15 +123,18 @@ const store={
 };
 
 /* ------- the shape numbers (section 5.6) ------- */
-const LEVELS=[1,1.7,2.8];        // brightness levels, at least 1.6x apart
-const RISE=[5.5,4.8,4.2];        // seconds for the fumes to reach the wicks and smother any still lit, per plume (spec 5.6 had 8, 7, 6 to the lantern)
-const DRIFT=[0,0.5,0.8];         // how far a gutter swings a wick, in levels, per plume
+// Per wick count. Three: the brightest is brought down from 2.8 to 2.3 (Criss, after the Fold tests). Four: closer steps, a gentler drift
+// (the gaps are about 0.5, so a swing of 0.8 would cross everything), and a longer rise, because there is one more tap to make.
+// The rise is the time for the fumes to reach the wicks and smother any still lit (spec 5.6 had 8, 7, 6 to the lantern).
+const CFG={
+  3:{levels:[1,1.7,2.3],rise:[5.5,4.8,4.2],drift:[0,0.5,0.8],xs:[0.2,0.5,0.8],demo:[1.7,1,2.3]},
+  4:{levels:[1,1.45,1.95,2.5],rise:[6.5,5.8,5.2],drift:[0,0.3,0.5],xs:[0.16,0.387,0.613,0.84],demo:[1.95,1,2.5,1.45]}
+};
 const PERIOD=10;                 // a wick swings from one extreme to the other in 5 s, so a full cycle is 10 s
 const TIE=0.15;                  // wicks this close both count as the dimmest
 const GAP=1.5;                   // seconds between plumes
 const NO_CROSS=1.5;              // no crossing in a plume's first 1.5 s
 const B_MIN=0.6, B_MAX=3.6;      // the dimmest wick stays well clear of black
-const NICHE_X=[0.2,0.5,0.8];     // niche centres across the tube
 const TAU=Math.PI*2;
 
 /* ------- the pure roll: same seed, same tube, no Math.random inside ------- */
@@ -154,13 +157,14 @@ function wickB(w,t){
   return b<B_MIN?B_MIN:b>B_MAX?B_MAX:b;
 }
 // How often two wicks swap places in a plume, and when the first swap happens.
-const PAIRS=[[0,1],[0,2],[1,2]];
+const PAIRS={3:[[0,1],[0,2],[1,2]],4:[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]]};
 function crossings(ws,rise){
+  const pr=PAIRS[ws.length];
   let n=0,first=Infinity;
-  const sg=[0,0,0];
+  const sg=pr.map(()=>0);
   for(let t=0;t<=rise+1e-9;t+=0.02){
-    for(let k=0;k<3;k++){
-      const d=wickB(ws[PAIRS[k][0]],t)-wickB(ws[PAIRS[k][1]],t);
+    for(let k=0;k<pr.length;k++){
+      const d=wickB(ws[pr[k][0]],t)-wickB(ws[pr[k][1]],t);
       const s=d>1e-4?1:d<-1e-4?-1:0;
       if(s){
         if(sg[k]&&s!==sg[k]){n++;if(t<first)first=t}
@@ -171,43 +175,47 @@ function crossings(ws,rise){
   return {n,first};
 }
 // One plume: which niche holds which level, and the gutter. Plumes 2 and 3 drift, with at most one crossing, never early.
-function rollPlume(rng,i){
-  const base=shuffle(LEVELS.slice(),rng), rise=RISE[i], A=DRIFT[i];
+function rollPlume(rng,i,nw){
+  const cfg=CFG[nw];
+  const base=shuffle(cfg.levels.slice(),rng), rise=cfg.rise[i], A=cfg.drift[i];
   const plain=()=>({ws:base.map(b=>({base:b,amp:0,ph:0})),rise,cross:{n:0,first:Infinity}});
   if(!A)return plain();
-  for(let tries=0;tries<400;tries++){
+  for(let tries=0;tries<600;tries++){
     const ws=base.map(b=>({base:b,amp:A*(0.4+0.6*rng()),ph:rng()*TAU}));
     const c=crossings(ws,rise);
     // Look for exactly one crossing first (the drift should matter); settle for none late in the search.
     if(c.n===1&&c.first>=NO_CROSS)return {ws,rise,cross:c};
-    if(tries>=300&&c.n===0)return {ws,rise,cross:c};
+    if(tries>=450&&c.n===0)return {ws,rise,cross:c};
   }
   return plain();
 }
-function rollGame(seed){
+function rollGame(seed,nw){
   const rng=mulberry32(seed);
-  return [0,1,2].map(i=>rollPlume(rng,i));
+  return [0,1,2].map(i=>rollPlume(rng,i,nw));
 }
 
 /* ------- state ------- */
 const $=id=>document.getElementById(id);
 const cv=$('board'), ctx=cv.getContext('2d'), stage=$('stage');
 const motionMQ=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
-const DEMO=[{base:1.7,amp:0,ph:0},{base:1,amp:0,ph:0},{base:2.8,amp:0,ph:0}];
+const DEMO={3:CFG[3].demo.map(b=>({base:b,amp:0,ph:0})),4:CFG[4].demo.map(b=>({base:b,amp:0,ph:0}))};
 let lite=store.get('lite')==='1';
+let nPref=store.get('n')==='3'?3:4;       // how many wicks the next game uses
 let DPR=1;
 const L={w:0,h:0,tx:0,ty:0,tw:0,th:0,u:1,lampY:0,rowY:0,R:28};
 const G={
-  phase:'intro',seed:0,plan:[],i:0,t:0,time:0,gapT:0,fumeEnd:0,
-  lit:[true,true,true],snufT:[-9,-9,-9],
+  phase:'intro',seed:0,n:4,plan:[],i:0,t:0,time:0,gapT:0,fumeEnd:0,
+  lit:[true,true,true,true],snufT:[-9,-9,-9,-9],
   flags:{wrong:false,late:false},stat:{clean:0,wrong:0,late:0},
   msg:'',puffs:[],press:-1,pid:-1,pressOn:false
 };
 
+function curN(){return G.phase==='intro'?nPref:G.n}
 function newSeed(){return (Math.random()*4294967296)>>>0}
 function startGame(){
   G.seed=newSeed();
-  G.plan=rollGame(G.seed);
+  G.n=nPref;
+  G.plan=rollGame(G.seed,G.n);
   G.stat.clean=0;G.stat.wrong=0;G.stat.late=0;
   G.i=0;G.puffs.length=0;
   $('intro').hidden=true;$('result').hidden=true;
@@ -215,8 +223,7 @@ function startGame(){
 }
 function beginPlume(){
   G.phase='plume';G.t=0;G.fumeEnd=0;
-  G.lit[0]=G.lit[1]=G.lit[2]=true;
-  G.snufT[0]=G.snufT[1]=G.snufT[2]=-9;
+  for(let k=0;k<4;k++){G.lit[k]=k<G.n;G.snufT[k]=-9}
   G.flags.wrong=false;G.flags.late=false;G.msg='';
   G.press=-1;G.pid=-1;G.pressOn=false;
   $('plumeNo').textContent='Plume '+(G.i+1)+' of 3';
@@ -234,7 +241,7 @@ function showResult(){
   $('rClean').textContent=G.stat.clean+' of 3';
   $('rWrong').textContent=String(G.stat.wrong);
   $('rLate').textContent=String(G.stat.late);
-  $('rInfo').textContent='Look: '+(lite?'Lite':'Full')+' · Layout '+G.seed.toString(36).toUpperCase();
+  $('rInfo').textContent=infoLine();
   $('plumeNo').textContent='Done';
   $('result').hidden=false;
 }
@@ -245,12 +252,12 @@ function snuff(k){
   if(G.phase!=='plume'||!G.lit[k])return;
   const ws=G.plan[G.i].ws,t=G.t;
   let min=Infinity;
-  for(let j=0;j<3;j++)if(G.lit[j]){const b=wickB(ws[j],t);if(b<min)min=b}
+  for(let j=0;j<G.n;j++)if(G.lit[j]){const b=wickB(ws[j],t);if(b<min)min=b}
   const ok=wickB(ws[k],t)<=min+TIE+1e-9;
   G.lit[k]=false;G.snufT[k]=G.time;
   G.puffs.push({k,t0:G.time,ok});
   if(!ok){G.stat.wrong++;G.flags.wrong=true}
-  if(!G.lit[0]&&!G.lit[1]&&!G.lit[2])endPlume();
+  if(!G.lit.some(Boolean))endPlume();
   return ok;
 }
 
@@ -261,8 +268,8 @@ function step(dt){
     G.t+=dt;
     if(G.t>=G.plan[G.i].rise){
       G.t=G.plan[G.i].rise;
-      if(G.lit[0]||G.lit[1]||G.lit[2]){
-        for(let k=0;k<3;k++)if(G.lit[k]){G.lit[k]=false;G.snufT[k]=G.time;G.puffs.push({k,t0:G.time,ok:true})}
+      if(G.lit.some(Boolean)){
+        for(let k=0;k<G.n;k++)if(G.lit[k]){G.lit[k]=false;G.snufT[k]=G.time;G.puffs.push({k,t0:G.time,ok:true})}
         G.stat.late++;G.flags.late=true;
       }
       endPlume();
@@ -277,7 +284,7 @@ function step(dt){
 }
 
 /* ------- layout ------- */
-function wx(k){return L.tx+L.tw*NICHE_X[k]}
+function wx(k){return L.tx+L.tw*CFG[curN()].xs[k]}
 function layout(){
   const r=stage.getBoundingClientRect();
   const w=Math.max(200,r.width),h=Math.max(200,r.height);
@@ -297,7 +304,7 @@ function hit(e){
   const x=e.clientX-r.left,y=e.clientY-r.top;
   const cy=L.rowY-22*L.u;
   let best=-1,bd=L.R*L.R;
-  for(let k=0;k<3;k++){
+  for(let k=0;k<G.n;k++){
     if(!G.lit[k])continue;
     const dx=x-wx(k),dy=y-cy,d=dx*dx+dy*dy;
     if(d<=bd){bd=d;best=k}
@@ -330,14 +337,21 @@ cv.addEventListener('pointercancel',e=>{
 });
 cv.addEventListener('contextmenu',e=>e.preventDefault());
 
-/* ------- the Look toggle ------- */
-function paintLook(){
-  const txt='Look: '+(lite?'Lite':'Full');
-  document.querySelectorAll('.lookBtn').forEach(b=>{b.textContent=txt;b.setAttribute('aria-pressed',lite?'true':'false')});
+/* ------- the Look and Wicks switches ------- */
+function infoLine(){return 'Look: '+(lite?'Lite':'Full')+' \u00b7 Wicks: '+G.n+' \u00b7 Layout '+G.seed.toString(36).toUpperCase()}
+function paintOpts(){
+  const lt='Look: '+(lite?'Lite':'Full'),nt='Wicks: '+nPref;
+  document.querySelectorAll('.lookBtn').forEach(b=>{b.textContent=lt;b.setAttribute('aria-pressed',lite?'true':'false')});
+  document.querySelectorAll('.nBtn').forEach(b=>{b.textContent=nt;b.setAttribute('aria-pressed',nPref===4?'true':'false')});
+  $('nWord').textContent=nPref===4?'Four':'Three';
+  if(G.phase==='result')$('rInfo').textContent=infoLine();
 }
 document.querySelectorAll('.lookBtn').forEach(b=>b.addEventListener('click',()=>{
-  lite=!lite;store.set('lite',lite?'1':'0');paintLook();
-  if(G.phase==='result')$('rInfo').textContent='Look: '+(lite?'Lite':'Full')+' · Layout '+G.seed.toString(36).toUpperCase();
+  lite=!lite;store.set('lite',lite?'1':'0');paintOpts();
+}));
+// The wick count takes effect on the next game, never mid-plume.
+document.querySelectorAll('.nBtn').forEach(b=>b.addEventListener('click',()=>{
+  nPref=nPref===4?3:4;store.set('n',String(nPref));paintOpts();
 }));
 $('beginBtn').addEventListener('click',startGame);
 $('againBtn').addEventListener('click',startGame);
@@ -409,7 +423,8 @@ function draw(){
 
   // Niches: three arches cut in the wall.
   const nw=58*u,nTop=rowY-86*u,nBot=rowY+16*u,nr=nw/2;
-  for(let k=0;k<3;k++){
+  const nn=curN();
+  for(let k=0;k<nn;k++){
     const x=wx(k),x0=x-nr;
     ctx.beginPath();
     ctx.moveTo(x0,nBot);ctx.lineTo(x0,nTop+nr);ctx.arc(x,nTop+nr,nr,Math.PI,TAU);ctx.lineTo(x0+nw,nBot);ctx.closePath();
@@ -440,10 +455,10 @@ function draw(){
   let ws=null,tNow=0;
   if(G.phase==='plume'){ws=G.plan[G.i].ws;tNow=G.t}
   else if(G.phase==='gap'){ws=G.plan[G.i].ws;tNow=G.plan[G.i].rise}
-  else if(G.phase==='intro'){ws=DEMO}
+  else if(G.phase==='intro'){ws=DEMO[nPref]}
   if(ws){
     const ramp=G.phase==='plume'?smooth(G.t/0.4):1;
-    for(let k=0;k<3;k++){
+    for(let k=0;k<nn;k++){
       const x=wx(k),base=rowY;
       const lit=G.phase==='intro'||(G.phase==='plume'&&G.lit[k]);
       if(lit){
@@ -535,14 +550,14 @@ function frame(ts){
   step(dt);draw();
 }
 
-paintLook();
+paintOpts();
 layout();
 if(window.ResizeObserver)new ResizeObserver(layout).observe(stage);
 window.addEventListener('resize',layout);
 requestAnimationFrame(frame);
 
 // A small hook so the page can be driven from a headless browser; nothing in play uses it.
-window.__sm={G,L,wickB,crossings,rollPlume,rollGame,mulberry32,snuff,step,hit,wx,layout,TIE,RISE,LEVELS};
+window.__sm={G,L,wickB,crossings,rollPlume,rollGame,mulberry32,snuff,step,hit,wx,layout,TIE,CFG,setN(v){nPref=v===3?3:4;paintOpts()}};
 })();
 </script>
 </body>
