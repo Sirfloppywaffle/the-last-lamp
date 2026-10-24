@@ -12,7 +12,7 @@
 |---|---|---|---|---|
 | 1 | Design doc (`EXPANSION3_TOWN.md`) | #116 | merged | — |
 | 2 | Pixel compiler, the square, rain, light, Keeper sprite, Head-frame, Walk Saltmouth, `ll-town` | #117 | merged | 18.10.0 |
-| 3 | The haul | #119 | open | 18.11.0 |
+| 3 | The haul | #119 | merged | 18.11.0 |
 | 4 | Build mode: paths, lights, fences, trees, headstones of past runs | — | not started | 18.12.0 |
 | 5 | Keepers in town, Take the lamp (swap kit), chores | — | not started | 18.13.0 |
 | 6 | Workshops and the one town gift, with its price | — | not started | 18.14.0 |
