@@ -43,11 +43,16 @@ The draft has one blessing slot, but chores, shrines and the pawned relic sit ou
 - **Chores pay town materials only.** Never embers, never anything on the stair. The Nameless scribes **1 curio per 3 floors**; Agathe tolls the fog-bell for **5 timber and 5 iron a floor**. One chore slot (two at Lodge tier 3).
 - **The Scrap Chute** (80% back on a sale) and the **Harpoon Rack** (50% off an upgrade) are cut. They are permanent, priceless and on top of the gift.
 
-### 0.4 Art direction: Decision needed
-`AGENTS.md` §1 records Criss's call: "3D in the 2D sense", painted canvas volumes. Saltmouth in crisp pixel art is a departure.
-- **Claude's view:** keep the pixel town. It is a different place, and the contrast (a rain-lit port above, the painted dark below) is a strength. The Roster portraits stay painted, so faces stay consistent where you choose a Keeper.
-- **The other way:** paint the town with the game's own volume painter. More consistent, more work per building, harder to make read at 48 px.
-- **If Criss keeps pixel art,** `AGENTS.md` §1 gets a line: *the surface is pixel art; the stair stays painted.*
+### 0.4 Art direction: pixel art (Criss decided, 23 Oct)
+`AGENTS.md` §1 records "3D in the 2D sense" for the game. **The surface is pixel art; the stair stays painted.** Criss: "Pixel 100%." The Roster portraits stay painted, so faces match where you choose a Keeper.
+
+The four references Criss gave Gemini (screenshots, not kept in the repo), and what each means here:
+- **Pixel Heroes** (an idle RPG's title art): chunky chibi bodies with big heads and hoods, a hard dark outline, one held tool each, faces read from two or three pixels. *Here:* the Keepers and townsfolk, 16×24, each told apart by silhouette and tool alone.
+- **Blood Forest** (a top-down action RPG): purple-brown earth in big dithered patches, black round-crowned trees with rust-orange canopies, scattered red ember squares, pale grass tufts, wooden posts. *Here:* the cliff ground and its edge; the palette's rust and ember reds.
+- **Lovecraft's Untold Stories, the library:** diamond-patterned red-brown floor, tall shelves of coloured spines, green and amber desk lamps, two jackal statues flanking a dark ritual circle, cyan water in stone basins. *Here:* the Keeper's Lodge.
+- **Lovecraft's Untold Stories, the graveyard:** dark cobbles drawn as rounded stones, a slate-roofed crypt in blue-grey brick with moss, iron fence, stone crosses, small amber fires, thin diagonal rain. *Here:* the square, the north cemetery, the weather.
+
+What all four share, and the rules for step 2: a **dark ground with little contrast** so lit things pop; **light as small warm sources** (fires, lamps, windows), never a flat bright scene; **no anti-aliasing**, integer scale only; **outlines one shade darker**, not pure black, except on characters.
 
 ### 0.5 Smaller calls
 - **The title stays the front door.** `startInTown` defaults to **off**; *Walk Saltmouth* sits beside Descend. Turning it on is a setting. (Criss: nothing changes in the game itself.)
@@ -78,7 +83,7 @@ The draft has one blessing slot, but chores, shrines and the pawned relic sit ou
 Every step ships its tip, rules line and Grimoire entry (rule 23), a test, and a `docs/HISTORY.md` line.
 
 ### 0.7 Still open (for Criss)
-1. Pixel art or painted (0.4).
+1. ~~Pixel art or painted~~: pixel art (0.4).
 2. The gift prices in 0.3: the shape is Claude's call; the numbers are for playtest.
 3. Does the town ever show something Floors 1 to 5 can't (a sixth Keeper, a new relic)? This doc says no: the town only prepares and remembers.
 
