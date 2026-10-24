@@ -12204,8 +12204,8 @@ function townPathTo(tx,ty){
 function townClear(ax,ay,bx,by){const n=Math.ceil(Math.hypot(bx-ax,by-ay)/.2); for(let i=1;i<=n;i++){if(!townFree(ax+(bx-ax)*i/n,ay+(by-ay)*i/n))return false;} return true;}
 function townTapTile(tx,ty){
   const ch=townCh(tx,ty);
-  /* the Head-frame and its tower (which rises over the cobbles behind it) */
-  const frame=ch==='H'||ch==='='||(tx>=10&&tx<=13&&ty>=7&&ty<=8&&ch===',');
+  /* the Head-frame and its tower, which rises over the two middle columns of cobbles behind it (not the outer ones) */
+  const frame=ch==='H'||ch==='='||((tx===11||tx===12)&&(ty===7||ty===8));
   if(frame){TWN.goal='frame'; if(Math.hypot(TWN.p.x-TOWN_DECK.x,TWN.p.y-TOWN_DECK.y)<.5){townDescend(); return;}
     const pts=townPathTo(TWN.p.x<TOWN_DECK.x?11:12,11); TWN.path=pts?pts.concat([{x:TOWN_DECK.x,y:TOWN_DECK.y}]):null;}
   else{TWN.goal=null; TWN.path=townPathTo(tx,ty);}
