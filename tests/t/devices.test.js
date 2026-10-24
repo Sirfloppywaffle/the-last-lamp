@@ -37,11 +37,24 @@ const DEV=[
       o.whole=Number.isInteger(T.k)&&cv.width===Math.round(cv.getBoundingClientRect().width*T.dpr)&&o.tile>=40&&o.tile<=64;
       o.still=JSON.stringify(c0)===JSON.stringify(c1);
       o.resStill=JSON.stringify(res0)===JSON.stringify(res1);
+      /* build mode (step 4): Build sits in the HUD beside the counts without touching them; opening it shows the tray inside
+         the safe area, every chip a thumb, the message line clear of the HUD, and nothing else moves */
+      const bb=document.getElementById('townBuild'), hudB0=[back,q(bb),res0], over=(a,c)=>!!a&&!!c&&a[2]>c[0]&&a[0]<c[2]&&a[3]>c[1]&&a[1]<c[3];
+      bb.click();
+      const tw=document.getElementById('townCardWrap'); if(!tw.hidden)document.getElementById('townCard').click();
+      const tray=q(document.getElementById('townTray')), msg=q(document.getElementById('townTmsg')), chips=[...document.querySelectorAll('#townTrow [data-deco]')].map(q);
+      const hudB1=[q(document.getElementById('townBack')),q(bb),q(document.getElementById('townRes'))];
+      o.build={btn:hudB0[1],tray,msg,first:chips[0],n:chips.length};
+      o.buildOk=inside(hudB0[1])&&thumb(hudB0[1])&&!over(hudB0[1],res0)&&!over(hudB0[1],back)&&inside(q(document.getElementById('townTrow')))&&inside(msg)&&chips.length===7
+        &&chips.every(c=>c[3]-c[1]>=44&&c[2]-c[0]>=44&&c[3]<=innerHeight-ins.bottom+1)&&inside(chips[0])
+        &&!hudB1.some(r=>over(r,msg))&&JSON.stringify(hudB0)===JSON.stringify(hudB1)&&JSON.stringify(q(cv))===JSON.stringify(c1);
       return o;},ins);
     await p.waitForTimeout(200);
+    await p.screenshot({path:(process.argv[3]||'.')+'/town-build-'+nm+'.png'});
+    await p.evaluate(()=>__t.townBuildSet(false)); await p.waitForTimeout(100);
     await p.screenshot({path:(process.argv[3]||'.')+'/town-'+nm+'.png'});
     await p.evaluate(()=>__t.townClose());
-    const townOk=town.walkIn&&town.btns&&town.resStill&&town.cover&&town.whole&&town.still;
+    const townOk=town.walkIn&&town.btns&&town.resStill&&town.cover&&town.whole&&town.still&&town.buildOk;
     if(!townOk)console.log('FAIL '+nm+': Saltmouth on this screen',JSON.stringify(town));
     await p.evaluate(()=>{const T=__t; T.newRun(); T.run.floor=2; T.beginFloor(null); T.run.ess=900; T.forceUI();});
     await p.waitForTimeout(400);

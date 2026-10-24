@@ -494,6 +494,27 @@ input[type=range]::-moz-range-track {
 .town-card i{font-style:normal;font-family:var(--f-num);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--tallow);margin-top:4px}
 .town-ctag{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tallow)}
 #title .btn.town-walk{font-size:1.12rem;padding:12px 18px}
+/* build mode (step 4): the HUD's button, and the tray that takes the bottom of the screen. Fixed sizes, so nothing shifts */
+.town-hud .btn.town-build{min-width:72px;padding-left:10px;padding-right:10px;flex:0 0 auto}
+/* the narrowest phones: Title, Build and the counts take the bar, and the town's name gives way (it never pushes the counts off) */
+.town-name{flex:0 1 auto;min-width:0;overflow:hidden;white-space:nowrap}
+@media (max-width:399px){.town-name{display:none}}
+.town-hud .btn.town-build.on{border-color:var(--tallow);color:var(--tallow)}
+.town-tray{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:stretch;gap:6px;pointer-events:none;
+  padding:0 calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left))}
+.town-tmsg{align-self:center;max-width:100%;height:1.75em;line-height:1.75em;padding:0 10px;border-radius:6px;background:rgba(14,17,19,.88);
+  font-size:.8rem;color:var(--ash);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 0 #000}
+.town-trow{pointer-events:auto;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;touch-action:pan-x;scrollbar-width:none;overscroll-behavior:contain;padding:1px}
+.town-trow::-webkit-scrollbar{display:none}
+/* centred when they fit, scrolled from the first when they don't */
+.town-trow>:first-child{margin-left:auto}.town-trow>:last-child{margin-right:auto}
+.town-chip{flex:0 0 auto;width:64px;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;padding:3px 2px 4px;
+  border-radius:8px;border:1px solid var(--seam);background:rgba(14,17,19,.92);color:var(--bone);font:inherit;cursor:pointer;touch-action:pan-x}
+.town-chip img{display:block;image-rendering:pixelated;image-rendering:crisp-edges;pointer-events:none}
+.town-chip span{font-family:var(--f-num);font-size:.6rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ash);white-space:nowrap;line-height:1}
+.town-chip.on{border-color:var(--tallow);box-shadow:inset 0 0 0 1px var(--tallow)}
+.town-chip.on span{color:var(--tallow)}
+.town-chip.poor img{opacity:.45}
 </style>
 </head>
 <body>
@@ -575,7 +596,7 @@ input[type=range]::-moz-range-track {
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, Kindle sets a creature burning and running, lighting the dark around it, and its Signal Mirror, built in the lamp's own light, reflects it in a 5-tile beam you aim between waves (it locks while the dark comes); you can build in the beam, and it burns what crosses it. The Galvanist builds a power grid: Pylons string live wires that shock, stun and light what crosses them, if a pylon stands in the lamp's own light to power the rest; his Arc Lamps burn bright but flicker; his Lightning Rods plant where they strike and join the grid; Overload fires every wire at once for 2 oil, and run hot it fries his pylons; he binds nothing by ritual: his Grounding Anchor forces nearby pylons to link to it, and a bindable creature that dies inside one of its triangles is caught in a cage to tap (the Keeper's core waits 15 seconds for a cage, and its fall readies the Anchor), each capture drawing 2 Heat out of the grid; his lamp's Dynamo branch ends in a Static Burst. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Bellringer, Agathe Vell, sees by sound: her Toll rings the lamp, and whatever its ring touches is heard for 1.5 seconds, outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost; each Toll makes 1 Noise (it fades 1 every 8 seconds), and at 5 the dark answers with two Abyssal Stalkers; the Great Bell is heard across the whole floor for 3 Noise; her Bell Wires can be strung anywhere on the path, even in the dark, and hear what crosses them; she builds no candles: her Tuning Forks give no light but hum, standing within 5 tiles of the lamp or 3.5 of another fork, and she can build inside a hum even in the dark, though wards there strike only what is heard; a toll that reaches a fork rings again from it; a toll from the lamp echoes back off the walls of the floor; heavy things leave red footsteps where they tread unseen, but Shades, Stalkers and fliers make none; her Clapper Harpoons ring what they strike and knock it back, and the path's edges show for her even where it is dark; her lamp's Peal branch makes it toll on its own, with no Noise, but that heartbeat finds only the ordinary dark; tap Toll on the beat (a ring closes on the lamp, and the button glows) for a Perfect Toll that reaches half again as far and rings out faster, though it makes as much Noise as any toll; her Tolls, Great Bell, Bell Wires, Clapper bolts and Tocsin shells crack what they strike, and three cracks shatter it, hurting and cracking what stands beside it (bosses take 8, Behemoths and elites 5); her Tocsin shells any Bell Wire that jangles, however far away. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it; Haul Away casts a whaling net that hauls everything under it, and everything on its lines, 3 tiles back and tangles it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The Roster.</b> Five went down the stair the night Saltmouth drowned: Ambrose Fenn the lamplighter, Jonah Tolland the harpooner, the Nameless, Dr. Lucan Voss and Agathe Vell. Each carries the lamp their own way. Some are earned by a deed on the stair, some in the Ember Hall. Every kind of horror you bind or capture, on any descent, adds its eyes to the Nameless’s hood, for good: there are six to find.</li>
-        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town.</li>
+        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it on the square: cobbles, boardwalk, street-lamps, braziers, fences and trees, each taken up again for all it cost; nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. The stair's name decides which, and a saved floor keeps its own.</li>
@@ -604,8 +625,9 @@ input[type=range]::-moz-range-track {
 
 <div id="townOverlay" hidden>
   <canvas id="townCv" aria-label="Saltmouth, the town above the stair. Tap the ground to walk there, or hold and drag to steer."></canvas>
-  <div class="town-hud"><button class="btn" id="townBack" type="button">Title</button><span class="town-name">Saltmouth</span><div class="town-res" id="townRes" aria-label="Saltmouth haul"><span class="town-stat">Timber <b id="townResTimber">0</b></span><span class="town-stat">Iron <b id="townResIron">0</b></span><span class="town-stat">Tallow <b id="townResTallow">0</b></span><span class="town-stat">Curios <b id="townResCurios">0</b></span></div></div>
+  <div class="town-hud"><button class="btn" id="townBack" type="button">Title</button><span class="town-name">Saltmouth</span><button class="btn town-build" id="townBuild" type="button" aria-pressed="false">Build</button><div class="town-res" id="townRes" aria-label="Saltmouth haul"><span class="town-stat">Timber <b id="townResTimber">0</b></span><span class="town-stat">Iron <b id="townResIron">0</b></span><span class="town-stat">Tallow <b id="townResTallow">0</b></span><span class="town-stat">Curios <b id="townResCurios">0</b></span></div></div>
   <div class="town-actwrap"><button class="btn call town-act" id="townAct" type="button" hidden>Descend the stair</button></div>
+  <div class="town-tray" id="townTray" hidden><div class="town-tmsg" id="townTmsg" aria-live="polite"></div><div class="town-trow" id="townTrow" aria-label="Build"></div></div>
   <div class="town-cardwrap" id="townCardWrap" hidden><button class="town-card" id="townCard" type="button"></button></div>
 </div>
 
@@ -649,7 +671,7 @@ const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='18.11.0';
+const GAME_VERSION='18.12.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -6290,7 +6312,7 @@ function victory(){
 }
 function defeat(){
   if(F.phase==='over')return;
-  F.phase='over'; saveBest(false); const hLine=haulLine(run&&run.haul); haulCredit(); clearSave(); AUDIO.lose();
+  F.phase='over'; saveBest(false); const hLine=haulLine(run&&run.haul); haulCredit(); graveAdd(); clearSave(); AUDIO.lose();
   const embers=awardEmbers(false);
   selTower=null; sel=null; mode=null;
   const here=F;
@@ -6662,7 +6684,8 @@ function lampHit(e){
     banner('She catches the lamp','rite','5 oil, and her Attention');
     addAtt('mother',2); return;
   }
-  if(run.oil<=0){run.oil=0; defeat();}
+  /* the creature that put the lamp out is named on its headstone in Saltmouth (Expansion 3) */
+  if(run.oil<=0){run.oil=0; F.taker=e.type; defeat();}
 }
 function bindSoul(s){
   s.t=0; s.taken=true;
@@ -10550,7 +10573,8 @@ const TIPS={
   winch:{where:'descent',when:()=>false,title:'The Winch',text:'Drag left or right to steer. The cable hangs over the middle: let go and the lantern swings back there, and every jerk knocks it. Ribs and arms show only in the light, and the arms reach across the middle. Be under a purse when it falls. A pale one holds a relic. Touch a rib or an arm and you snag: the lamp gives up an oil, never its last, and the lantern dims.'},
   /* Saltmouth's first visit (Expansion 3), shown on a card in the town, never on the board */
   town:{where:'town',when:()=>false,title:'Saltmouth',text:'The rain has not stopped since the lamps went out. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: stand on its deck, or tap it.'},
-  townhaul:{where:'town',when:()=>false,title:'The haul',text:'Every descent brings something back up the shaft: timber and iron from cleared floors, iron from Heralds, tallow and curios from bosses, and tallow rendered from the essence the stair burns as its toll.'},
+  townhaul:{where:'town',when:()=>false,title:'The haul',text:'Every descent brings something back up the shaft: timber and iron from cleared floors, iron from Heralds, tallow and curios from bosses, and tallow rendered from the essence the stair burns as its toll. Build spends it on the square.'},
+  townbuild:{where:'town',when:()=>false,title:'Build',text:'Choose a piece on the tray, then tap the ground: green, it stands; red, the line above the tray says why not. Tap a piece you built to take it up, and all it cost comes back. Lamps and braziers push back the dark. Nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting: a Mossy Headstone carves the oldest, and a tap reads it.'},
   /* on the floor below The Cast, the first time a rite cools while a charge is held */
   charge:{when:()=>chargesNow()>0&&ritesNow().some(k=>chargeable(k)&&(F.cd[k]||0)>0&&!riteSilent(k)),title:'A rite charge',
     text:'You carry a rite charge down from The Cast. Tap a rite that is still cooling and it casts at once; its own wait goes on as it was. Charges last this floor only.',
@@ -11883,6 +11907,21 @@ const TOWN_WALK={d:[1,0,2,0],u:[1,0,2,0],r:[1,2,1,2]};
 const TOWN_FACES=['d','u','r','l'];
 const HAUL={floor:{timber:8,iron:5},herald:{iron:8},boss:{tallow:5,curios:1},tollPer:20};
 const HAUL_KEYS=['timber','iron','tallow','curios'];
+/* build mode (step 4): what the haul buys for the square. Costs are shape only, for playtest. path: laid into the ground and
+   walked on; everything else stands up and is solid. light: the radius of its pool, in art pixels. w, h: its footprint in
+   tiles; s: its name on the tray. grave: it carries the name of the oldest death that has no stone yet. Taking a piece up gives back all it cost */
+const TOWN_DECOS={
+  cobble:{n:'Wet Cobblestone',s:'Cobbles',cost:{iron:2},path:true},
+  board:{n:'Boardwalk',s:'Boards',cost:{timber:2},path:true},
+  lamp:{n:'Iron Street-Lamp',s:'Lamp',cost:{iron:6,tallow:4},light:40},
+  brazier:{n:'Brazier',s:'Brazier',cost:{iron:8,tallow:6},light:50},
+  fence:{n:'Wrought-Iron Fence',s:'Fence',cost:{iron:3}},
+  tree:{n:'Blood-Lichen Tree',s:'Tree',cost:{timber:8,tallow:4},w:2,h:2},
+  stone:{n:'Mossy Headstone',s:'Headstone',cost:{iron:5},grave:true}};
+/* the last deaths kept without a stone; a death with a stone is kept as long as its stone stands */
+const TOWN_GRAVES=12;
+/* what must always be walkable to: the Head-frame's deck. Later steps add doors and stations here */
+const TOWN_KEEP=[[11,11],[12,11]];
 function haulFix(h){h=h&&typeof h==='object'?h:{}; return {timber:Math.max(0,h.timber|0),iron:Math.max(0,h.iron|0),tallow:Math.max(0,h.tallow|0),curios:Math.max(0,h.curios|0)};}
 function haulTotal(h){h=haulFix(h); return h.timber+h.iron+h.tallow+h.curios;}
 function haulAdd(g){if(!run||!g)return; run.haul=haulFix(run.haul); for(const k of HAUL_KEYS)if(g[k])run.haul[k]+=g[k]|0;}
@@ -11918,10 +11957,57 @@ const TWN={on:false,k:0,dpr:1,W:0,H:0,vw:0,vh:0,cx:0,cy:0,p:{x:12,y:14,face:'u',
 /* what is kept. Old and future shapes merge onto the defaults, so a later step only adds fields (rule 15) */
 function townFix(t){
   t=t&&typeof t==='object'?t:{};
-  const o={v:1,startInTown:!!t.startInTown,px:+t.px,py:+t.py,visits:Math.max(0,t.visits|0),res:haulFix(t.res)};
+  const o={v:1,startInTown:!!t.startInTown,px:+t.px,py:+t.py,visits:Math.max(0,t.visits|0),res:haulFix(t.res),decos:[],graves:[],graveN:Math.max(0,t.graveN|0)};
   if(!isFinite(o.px)||!isFinite(o.py)||!townFree(o.px,o.py)){o.px=TOWN_SPAWN.x; o.py=TOWN_SPAWN.y;}
+  /* the deaths: each with its own number n, so a headstone stays bound to one even as older ones are let go */
+  const gs=(Array.isArray(t.graves)?t.graves:[]).filter(g=>g&&typeof g==='object'&&typeof g.kit==='string'), had=new Set();
+  for(const g of gs)o.graveN=Math.max(o.graveN,g.n|0);
+  for(const g of gs){
+    let n=g.n|0; if(n<1||had.has(n))n=++o.graveN; had.add(n);
+    o.graves.push(Object.assign({},g,{n,floor:Math.max(1,g.floor|0),wave:Math.max(0,g.wave|0)}));
+  }
+  /* what was built. A piece that no longer fits where it stood (a later map, or a broken save) is taken up, and pays back */
+  const used=new Set();
+  for(const d of Array.isArray(t.decos)?t.decos:[]){
+    const D=d&&TOWN_DECOS[d.id]; if(!D)continue;
+    const c=d.c|0, r=d.r|0, tiles=decoTiles(d.id,c,r);
+    if(!tiles.every(([x,y])=>townBuildable(x,y,!D.path)&&!used.has(y*TOWN_W+x))){for(const k in D.cost)o.res[k]+=D.cost[k]; continue;}
+    for(const [x,y] of tiles)used.add(y*TOWN_W+x);
+    o.decos.push(Object.assign({},d,{c,r}));
+  }
+  graveTrim(o);
   for(const k in t)if(!(k in o))o[k]=t[k];
   return o;
+}
+/* the tiles a piece covers when it stands at (c, r): its top-left */
+function decoTiles(id,c,r){const D=TOWN_DECOS[id], out=[]; for(let y=0;y<(D.h||1);y++)for(let x=0;x<(D.w||1);x++)out.push([c+x,r+y]); return out;}
+/* the Head-frame's tower stands over these: nothing built there would show */
+function townUnderFrame(x,y){return x>=10&&x<=13&&y>=6&&y<=8;}
+/* ground that takes a piece: open earth or cobbles, never the deck or under the tower; nothing solid where you climb out */
+function townBuildable(x,y,solid){
+  const ch=townCh(x,y); if(ch!=='.'&&ch!==',')return false;
+  if(townUnderFrame(x,y))return false;
+  return !(solid&&x===Math.floor(TOWN_SPAWN.x)&&y===Math.floor(TOWN_SPAWN.y));
+}
+/* graves with no stone, oldest first */
+function gravesWaiting(T){
+  T=T||townData(); const bound=new Set(); for(const d of T.decos)if(d.id==='stone')bound.add(d.g);
+  return T.graves.filter(g=>!bound.has(g.n)).sort((a,b)=>a.n-b.n);
+}
+/* keep the last TOWN_GRAVES deaths that have no stone; a death with a stone stays */
+function graveTrim(T){
+  const w=gravesWaiting(T); if(w.length<=TOWN_GRAVES)return;
+  const drop=new Set(w.slice(0,w.length-TOWN_GRAVES).map(g=>g.n));
+  T.graves=T.graves.filter(g=>!drop.has(g.n));
+}
+/* a lamp goes out: the town keeps its name. Called from defeat(); developer mode keeps it only in its own copy (rule 24) */
+function graveAdd(){
+  if(!run||run.graved)return null;
+  run.graved=true;
+  const T=townData(), n=(T.graveN|0)+1; T.graveN=n;
+  const g={n,kit:run.kit,floor:run.floor+1,wave:F?F.wave|0:0,foe:F&&F.taker||null,seed:typeof run.seed==='number'?run.seed>>>0:null,date:Date.now(),depth:run.depth|0};
+  T.graves.push(g); graveTrim(T); townSave();
+  return g;
 }
 /* developer mode reads the town but writes only to its own copy (rule 24): turning it off puts ll-town back as it was */
 function townData(){
@@ -11932,7 +12018,10 @@ function townData(){
 }
 function townSave(){if(devOn)return; store.set('ll-town',townData());}
 function townCh(x,y){return x<0||y<0||x>=TOWN_W||y>=TOWN_H?'^':TOWN_MAP[y][x];}
-function townSolid(x,y){return TOWN_SOLID.indexOf(townCh(x,y))>=0;}
+/* tiles a built piece stands on (y*TOWN_W+x), and which piece covers each tile; both rebuilt by townDecoSync() */
+const TOWN_BLOCK=new Set(), TOWN_AT=new Map();
+function townSolid(x,y){return TOWN_SOLID.indexOf(townCh(x,y))>=0||(x>=0&&y>=0&&x<TOWN_W&&y<TOWN_H&&TOWN_BLOCK.has(y*TOWN_W+x));}
+function townDecoAt(x,y){return x<0||y<0||x>=TOWN_W||y>=TOWN_H?null:TOWN_AT.get(y*TOWN_W+x)||null;}
 /* the feet: a small box round where you stand, in tiles */
 function townFree(x,y){
   const a=x-.28, b=x+.28, t=y-.22, d=y+.06;
@@ -11994,25 +12083,31 @@ function townSprites(){
 }
 /* the ground, painted once: Blood Forest's purple-brown earth in big dithered patches, the graveyard's rounded cobbles, the
    cliff and the black sea below it. Dark, and close in value, so that only what is lit stands out */
+/* one ground pixel, by what the tile is. Build mode (step 4) lays paths with the same rule, so a placed cobble meets the
+   square's own cobbles stone for stone. '_' is a laid boardwalk: planks running north to south, iron nails at their ends */
+function townGroundPx(x,y,ch){
+  const ty=(y/TOWN_T)|0, B=tBayer(x,y);
+  if(ch==='~')return thash(x>>2,y,4)<.07?'t':'s';
+  if(ch==='^'){
+    if(ty===21){const ly=y-ty*TOWN_T; if(ly>6)return (x+ly)%5===0?'1':(ly>11&&B>.5?'s':'l');}
+    const n=tNoise(x/6,y/6,3)+(B-.5)*.3; return n<.3?'0':n<.52?'1':n<.78?'2':'3';}
+  if(ch===','||ch==='o'||ch==='H'){
+    const band=Math.floor(y/5), sy=y%5, off=((thash(band,0,6)*7)|0), col=Math.floor((x+off)/7), sx=(x+off)%7, h=thash(col,band,7), sw=4+((thash(col,band,8)*3)|0);
+    if(sy===4||sx>=sw||((sx===0||sx===sw-1)&&(sy===0||sy===3)))return '1';
+    const dark=h<.3; let p=dark?'q':'2';
+    if(sy===0&&sx>0&&sx<sw-1)p=dark?'2':'3'; else if(sy===3&&sx>1)p='1';
+    if(sx===1&&sy===1&&thash(col,band,9)<.14)p='4';
+    return p;}
+  if(ch==='='){const ly=y%TOWN_T, lx=x%TOWN_T; let p=ly%4===3?'5':ly%4===0?'7':'6'; if(ly%4===1&&(lx===2||lx===13))p='4'; if(ly%4!==3&&thash(x>>3,ly>>2,11)<.15)p='5'; return p;}
+  if(ch==='_'){const lx=x%TOWN_T, ly=y%TOWN_T, k=lx&3, pl=(x>>2), end=(thash(pl,ty,13)*16)|0; let p=k===3?'5':k===0?'7':'6';
+    if(k!==3&&ly===end)p='5'; else if(k===1&&(ly===(end+2)%16||ly===(end+14)%16))p='4'; else if(k!==3&&thash(pl,y>>2,12)<.12)p='5'; return p;}
+  const n=tNoise(x/22,y/22,1)*.65+tNoise(x/7,y/7,2)*.35+(B-.5)*.22;
+  return n<.42?'l':n<.6?'m':'n';
+}
 function townGround(){
   const W=TOWN_W*TOWN_T, H=TOWN_H*TOWN_T, [cv,c]=tCanvas(W,H), img=c.createImageData(W,H), d=img.data;
-  const put=(x,y,ch)=>{const i=(y*W+x)*4, p=PX_RGB[ch]; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;};
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
-    const tx=(x/TOWN_T)|0, ty=(y/TOWN_T)|0, ch=TOWN_MAP[ty][tx], B=tBayer(x,y);
-    if(ch==='~'){put(x,y,thash(x>>2,y,4)<.07?'t':'s'); continue;}
-    if(ch==='^'){
-      if(ty===21){const ly=y-ty*TOWN_T; if(ly>6){put(x,y,(x+ly)%5===0?'1':(ly>11&&B>.5?'s':'l')); continue;}}
-      const n=tNoise(x/6,y/6,3)+(B-.5)*.3; put(x,y,n<.3?'0':n<.52?'1':n<.78?'2':'3'); continue;}
-    if(ch===','||ch==='o'||ch==='H'){
-      const band=Math.floor(y/5), sy=y%5, off=((thash(band,0,6)*7)|0), col=Math.floor((x+off)/7), sx=(x+off)%7, h=thash(col,band,7), sw=4+((thash(col,band,8)*3)|0);
-      if(sy===4||sx>=sw||((sx===0||sx===sw-1)&&(sy===0||sy===3))){put(x,y,'1'); continue;}
-      const dark=h<.3; let p=dark?'q':'2';
-      if(sy===0&&sx>0&&sx<sw-1)p=dark?'2':'3'; else if(sy===3&&sx>1)p='1';
-      if(sx===1&&sy===1&&thash(col,band,9)<.14)p='4';
-      put(x,y,p); continue;}
-    if(ch==='='){const ly=y%TOWN_T, lx=x%TOWN_T; let p=ly%4===3?'5':ly%4===0?'7':'6'; if(ly%4===1&&(lx===2||lx===13))p='4'; if(ly%4!==3&&thash(x>>3,ly>>2,11)<.15)p='5'; put(x,y,p); continue;}
-    const n=tNoise(x/22,y/22,1)*.65+tNoise(x/7,y/7,2)*.35+(B-.5)*.22;
-    put(x,y,n<.42?'l':n<.6?'m':'n');
+    const i=(y*W+x)*4, p=PX_RGB[townGroundPx(x,y,TOWN_MAP[(y/TOWN_T)|0][(x/TOWN_T)|0])]; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;
   }
   c.putImageData(img,0,0);
   /* pale grass tufts on bare earth, and stray embers by the braziers (Blood Forest's red squares) */
@@ -12142,11 +12237,32 @@ function townGrave(tx,ty){
   return cv;
 }
 /* the cemetery's railings: spear-topped bars, rails top and bottom; a run north to south is seen side on */
-function townFence(tx,ty){
-  const [cv,c]=tCanvas(16,20), ew=townCh(tx-1,ty)==='|'||townCh(tx+1,ty)==='|', ns=townCh(tx,ty-1)==='|'||townCh(tx,ty+1)==='|';
+function townFence(tx,ty,isF){
+  isF=isF||((x,y)=>townCh(x,y)==='|');
+  const [cv,c]=tCanvas(16,20), ew=isF(tx-1,ty)||isF(tx+1,ty), ns=isF(tx,ty-1)||isF(tx,ty+1);
   if(ew||!ns){tp(c,0,8,'1',16,1); tp(c,0,16,'1',16,1); for(let x=1;x<16;x+=3){tp(c,x,6,'1',1,12); tp(c,x,5,'4');}}
   if(ns){tp(c,7,0,'1',2,19); tp(c,7,0,'4',1,19); for(let y=1;y<18;y+=4)tp(c,6,y,'4',4,1);}
   return cv;
+}
+/* an iron street-lamp (step 4): a capped lantern on a post, its glass in the glow pass so it burns through the dark */
+function townLampPost(){
+  const [cv,c]=tCanvas(16,34);
+  tp(c,7,0,'1',2,1); tp(c,6,1,'4',4,1); tp(c,4,2,'3',8,1); tp(c,4,3,'1',8,1);
+  tp(c,4,4,'1',1,7); tp(c,11,4,'1',1,7); tp(c,5,4,'a',6,7); tp(c,4,11,'1',8,1); tp(c,5,12,'3',6,1);
+  tp(c,7,13,'3',1,16); tp(c,8,13,'1',1,16); tp(c,6,17,'1',4,1); tp(c,6,18,'3',4,1);
+  tp(c,5,29,'3',6,1); tp(c,5,30,'1',6,2); tp(c,4,32,'1',8,1); tp(c,3,33,'0',10,1);
+  tp(c,5,31,'y'); tp(c,9,32,'e'); tp(c,10,31,'y');
+  return cv;
+}
+function townLampGlass(){const [cv,c]=tCanvas(6,7); tp(c,0,0,'a',6,7); tp(c,1,1,'b',4,5); tp(c,2,2,'c',2,3); tp(c,3,0,'9',1,1); return cv;}
+/* where a piece would go: its footprint outlined, a sparse dither inside, in the town's green or its red */
+const TOWN_GHOST={};
+function townGhost(ch){
+  if(TOWN_GHOST[ch])return TOWN_GHOST[ch];
+  const [cv,c]=tCanvas(16,16);
+  tp(c,0,0,ch,16,1); tp(c,0,15,ch,16,1); tp(c,0,0,ch,1,16); tp(c,15,0,ch,1,16);
+  for(let y=2;y<14;y+=2)for(let x=2+(y&2);x<14;x+=4)tp(c,x,y,ch);
+  return (TOWN_GHOST[ch]=cv);
 }
 /* a lantern-ring for the stick, a target mark for a tap, a shadow under the Keeper */
 function townRing(r){const [cv,c]=tCanvas(r*2+1,r*2+1); for(let a=0;a<r*8;a++){const t=a/(r*8)*TAU; tp(c,Math.round(r+Math.cos(t)*r),Math.round(r+Math.sin(t)*r),'a');} return cv;}
@@ -12182,8 +12298,47 @@ function townArt(){
     if(ch==='+')add(townGrave(tx,ty),tx*16,ty*16,(ty+1)*16);
     if(ch==='|')add(townFence(tx,ty),tx*16,ty*16-4,(ty+1)*16-1);
   }
+  /* the fixed square is kept apart (props0, lights0, em0, and an untouched ground0) so what is built can be laid over it and
+     taken up again: townDecoSync() rebuilds the lists and repaints only the tiles whose paths changed */
+  const ground=townGround(), [g0,gc]=tCanvas(ground.width,ground.height); gc.drawImage(ground,0,0);
+  TOWN_ART={ground,ground0:g0,props0:props,lights0:lights,em0:em,props:props.slice(),lights:lights.slice(),em:em.slice(),
+    paths:new Map(),cache:{brz,fl},spr:townSprites(),ring:townRing(10),dot:townRing(1),mark:townRing(4),shadow:townShadow()};
+  townDecoSync();
+  return TOWN_ART;
+}
+/* one tile of the ground, painted as a path ('_' boardwalk, ',' cobbles), or put back as it was (ch null) */
+function townPaintTile(tx,ty,ch){
+  const A=TOWN_ART, c=A.ground.getContext('2d');
+  if(ch==null){c.drawImage(A.ground0,tx*16,ty*16,16,16,tx*16,ty*16,16,16); return;}
+  const img=c.createImageData(16,16), d=img.data;
+  for(let y=0;y<16;y++)for(let x=0;x<16;x++){const p=PX_RGB[townGroundPx(tx*16+x,ty*16+y,ch)], i=(y*16+x)*4; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;}
+  c.putImageData(img,tx*16,ty*16);
+}
+/* what is built, from townData().decos: which tiles are solid, the paths in the ground, and the pieces that stand, light and
+   glow. Run when the square opens and after every piece is laid or taken up; the ground itself is never repainted whole */
+function townDecoSync(){
+  const T=townData(), W=TOWN_W;
+  TOWN_BLOCK.clear(); TOWN_AT.clear();
+  for(const d of T.decos)for(const [x,y] of decoTiles(d.id,d.c,d.r)){TOWN_AT.set(y*W+x,d); if(!TOWN_DECOS[d.id].path)TOWN_BLOCK.add(y*W+x);}
+  const A=TOWN_ART; if(!A)return;
+  const want=new Map();
+  for(const d of T.decos)if(TOWN_DECOS[d.id].path)want.set(d.r*W+d.c,d.id);
+  for(const [i,id] of A.paths)if(want.get(i)!==id)townPaintTile(i%W,(i/W)|0,null);
+  for(const [i,id] of want)if(A.paths.get(i)!==id)townPaintTile(i%W,(i/W)|0,id==='board'?'_':',');
+  A.paths=want;
+  const props=A.props0.slice(), lights=A.lights0.slice(), em=A.em0.slice(), K=A.cache;
+  const fenceAt=(x,y)=>townCh(x,y)==='|'||(TOWN_AT.get(y*W+x)||{}).id==='fence';
+  for(const d of T.decos){
+    const x=d.c*16, y=d.r*16, base=(d.r+(TOWN_DECOS[d.id].h||1))*16;
+    if(d.id==='lamp'){K.post=K.post||townLampPost(); K.glass=K.glass||townLampGlass();
+      props.push({c:K.post,x,y:y-18,base}); em.push({c:K.glass,x:x+5,y:y-14,base}); lights.push({x:x+8,y:y-11,r:TOWN_DECOS.lamp.light,f:.25});}
+    else if(d.id==='brazier'){props.push({c:K.brz,x,y:y-6,base}); em.push({fl:K.fl,x:x+3,y:y-16,base,ph:d.c*3+d.r}); lights.push({x:x+8,y:y+2,r:TOWN_DECOS.brazier.light,f:1});}
+    else if(d.id==='tree'){const k='t'+d.c+','+d.r; props.push({c:K[k]||(K[k]=townTree(d.c,d.r)),x,y:y-12,base});}
+    else if(d.id==='stone'){const k='g'+d.c+','+d.r; props.push({c:K[k]||(K[k]=townGrave(d.c,d.r)),x,y,base});}
+    else if(d.id==='fence')props.push({c:townFence(d.c,d.r,fenceAt),x,y:y-4,base:base-1});
+  }
   props.sort((a,b)=>a.base-b.base); em.sort((a,b)=>a.base-b.base);
-  return (TOWN_ART={ground:townGround(),props,lights,em,spr:townSprites(),ring:townRing(10),dot:townRing(1),mark:townRing(4),shadow:townShadow()});
+  A.props=props; A.lights=lights; A.em=em;
 }
 
 /* ---- the visit ---- */
@@ -12191,7 +12346,11 @@ function townArt(){
 function townKit(){const k=meta().lastKit; return TOWN_KITS[k]?k:'lamplighter';}
 function townOpen(){
   const T=townData(), A=townArt();
-  TWN.on=true; TWN.kit=townKit(); TWN.p.x=T.px; TWN.p.y=T.py; TWN.p.face='u'; TWN.p.moving=false; TWN.path=null; TWN.goal=null; TWN.ptr=null; TWN.near=null;
+  /* what is built may differ from the last visit (developer mode keeps its own town) */
+  townDecoSync();
+  TWN.on=true; TWN.kit=townKit(); TWN.p.x=T.px; TWN.p.y=T.py;
+  if(!townFree(TWN.p.x,TWN.p.y)){TWN.p.x=TOWN_SPAWN.x; TWN.p.y=TOWN_SPAWN.y;}
+  TWN.build=false; TWN.pick=null; TWN.ghost=null; $('#townTray').hidden=true; $('#townBuild').textContent='Build'; $('#townBuild').classList.remove('on'); TWN.p.face='u'; TWN.p.moving=false; TWN.path=null; TWN.goal=null; TWN.ptr=null; TWN.near=null;
   TWN.lite=gfxLite; TWN.cx=null; TWN.rain=null; TWN.splash=null;
   T.visits=(T.visits|0)+1; townSave();
   $('#townOverlay').hidden=false; $('#townAct').hidden=true;
@@ -12201,7 +12360,7 @@ function townOpen(){
   return A;
 }
 function townShowTip(){
-  const k=tipFresh('town')?'town':(haulTotal(townData().res)>0&&tipFresh('townhaul')?'townhaul':null);
+  const k=tipFresh('town')?'town':haulTotal(townData().res)>0&&tipFresh('townhaul')?'townhaul':TWN.build&&tipFresh('townbuild')?'townbuild':null;
   TWN.card=k;
   $('#townCardWrap').hidden=!k;
   if(k)$('#townCard').innerHTML='<span class="town-ctag">Saltmouth</span><b>'+TIPS[k].title+'</b><span>'+TIPS[k].text+'</span>'+(k==='town'?'<i>Tap to walk out into the rain</i>':'');
@@ -12210,7 +12369,7 @@ function townShowTip(){
 function townClose(){
   if(!TWN.on)return;
   const T=townData(); T.px=+TWN.p.x.toFixed(2); T.py=+TWN.p.y.toFixed(2); townSave();
-  TWN.on=false; TWN.ptr=null; TWN.path=null; TWN.goal=null;
+  TWN.on=false; TWN.ptr=null; TWN.path=null; TWN.goal=null; TWN.build=false; TWN.pick=null; TWN.ghost=null;
   $('#townOverlay').hidden=true;
 }
 /* the Head-frame: the same way down as Descend on the title (a saved run is asked about first, never lost by a tap) */
@@ -12225,15 +12384,23 @@ function townDescend(){
 }
 /* tap a tile: the shortest way there over open ground (8 ways, no cutting corners), worked out once, on the tap. A tap on
    something solid walks to the nearest open tile; a tap on the Head-frame walks to its deck and goes down */
-function townPathTo(tx,ty){
-  const W=TOWN_W, N=W*TOWN_H, prev=TWN.prev||(TWN.prev=new Int16Array(N)), q=TWN.q||(TWN.q=new Int16Array(N));
-  const sx=clamp(Math.floor(TWN.p.x),0,W-1), sy=clamp(Math.floor(TWN.p.y),0,TOWN_H-1), s=sy*W+sx;
+/* every open tile reachable from (sx, sy): prev holds the way back, -1 where it can't be reached */
+const TOWN_DX=[1,-1,0,0,1,1,-1,-1], TOWN_DY=[0,0,1,-1,1,-1,1,-1];
+function townBFS(sx,sy){
+  const W=TOWN_W, N=W*TOWN_H, prev=TWN.prev||(TWN.prev=new Int16Array(N)), q=TWN.q||(TWN.q=new Int16Array(N)), s=sy*W+sx;
   prev.fill(-1); prev[s]=s; let h=0, t=0; q[t++]=s;
   while(h<t){const i=q[h++], x=i%W, y=(i/W)|0;
-    for(let k=0;k<8;k++){const dx=[1,-1,0,0,1,1,-1,-1][k], dy=[0,0,1,-1,1,-1,1,-1][k], nx=x+dx, ny=y+dy;
+    for(let k=0;k<8;k++){const dx=TOWN_DX[k], dy=TOWN_DY[k], nx=x+dx, ny=y+dy;
       if(nx<0||ny<0||nx>=W||ny>=TOWN_H||townSolid(nx,ny))continue;
       if(dx&&dy&&(townSolid(x+dx,y)||townSolid(x,y+dy)))continue;
       const j=ny*W+nx; if(prev[j]>=0)continue; prev[j]=i; q[t++]=j;}}
+  return prev;
+}
+/* can someone standing on (sx, sy) still walk to everything in TOWN_KEEP (the deck)? */
+function townReaches(sx,sy){const prev=townBFS(sx,sy); return TOWN_KEEP.some(([x,y])=>prev[y*TOWN_W+x]>=0);}
+function townPathTo(tx,ty){
+  const W=TOWN_W, N=W*TOWN_H;
+  const sx=clamp(Math.floor(TWN.p.x),0,W-1), sy=clamp(Math.floor(TWN.p.y),0,TOWN_H-1), s=sy*W+sx, prev=townBFS(sx,sy);
   let g=ty*W+tx;
   if(tx<0||ty<0||tx>=W||ty>=TOWN_H||prev[g]<0){let best=-1, bd=1e9;
     for(let i=0;i<N;i++){if(prev[i]<0)continue; const dd=Math.hypot(i%W+.5-(tx+.5),((i/W)|0)+.5-(ty+.5)); if(dd<bd-1e-6){bd=dd; best=i;}}
@@ -12245,7 +12412,16 @@ function townPathTo(tx,ty){
 /* nothing solid between two points, for a Keeper's feet */
 function townClear(ax,ay,bx,by){const n=Math.ceil(Math.hypot(bx-ax,by-ay)/.2); for(let i=1;i<=n;i++){if(!townFree(ax+(bx-ax)*i/n,ay+(by-ay)*i/n))return false;} return true;}
 function townTapTile(tx,ty){
+  if(TWN.build){townBuildTap(tx,ty); return;}
   const ch=townCh(tx,ty);
+  /* a headstone: walk up to it and read it (at once if you stand by it already) */
+  const sd=townDecoAt(tx,ty);
+  if(sd&&sd.id==='stone'){
+    if(Math.hypot(TWN.p.x-(sd.c+.5),TWN.p.y-(sd.r+.5))<1.3){TWN.path=null; TWN.goal=null; townEpitaph(sd); return;}
+    TWN.goal={stone:sd}; TWN.path=townPathTo(tx,ty);
+    if(TWN.path&&TWN.path.length){const e=TWN.path[TWN.path.length-1]; TWN.mark=.6; TWN.mx=e.x; TWN.my=e.y;} else TWN.path=null;
+    return;
+  }
   /* the Head-frame and its tower, which rises over the two middle columns of cobbles behind it (not the outer ones) */
   const frame=ch==='H'||ch==='='||((tx===11||tx===12)&&(ty===7||ty===8));
   if(frame){TWN.goal='frame'; if(Math.hypot(TWN.p.x-TOWN_DECK.x,TWN.p.y-TOWN_DECK.y)<.5){townDescend(); return;}
@@ -12253,10 +12429,148 @@ function townTapTile(tx,ty){
   else{TWN.goal=null; TWN.path=townPathTo(tx,ty);}
   if(TWN.path&&TWN.path.length){const e=TWN.path[TWN.path.length-1]; TWN.mark=.6; TWN.mx=e.x; TWN.my=e.y;}
 }
+/* ---- build mode (step 4) ---- */
+function townCostText(cost){return HAUL_KEYS.filter(k=>cost[k]).map(k=>cost[k]+' '+(k==='curios'&&cost[k]===1?'curio':k)).join(', ');}
+function townShort(cost,res){return HAUL_KEYS.filter(k=>(cost[k]|0)>(res[k]|0)).map(k=>(cost[k]-(res[k]|0))+' more '+k).join(' and ');}
+/* a two-tile-high piece stands with its foot on the tile you tap */
+function townAnchor(id,tx,ty){const D=TOWN_DECOS[id]; return {c:tx,r:ty-((D.h||1)-1)};}
+/* '' if the piece can stand there, or why not, in the game's voice */
+function townCanPlace(id,c,r){
+  const D=TOWN_DECOS[id], T=townData(), tiles=decoTiles(id,c,r), sx=Math.floor(TOWN_SPAWN.x), sy=Math.floor(TOWN_SPAWN.y);
+  for(const [x,y] of tiles){
+    const ch=townCh(x,y);
+    if(ch==='=')return 'Not on the deck: it is the way down.';
+    if(townUnderFrame(x,y)&&(ch==='.'||ch===','))return 'Nothing would show under the Head-frame.';
+    if(!D.path&&x===sx&&y===sy)return 'Keep this ground clear: you climb out here.';
+    if(!townBuildable(x,y,!D.path))return 'There is no open ground there.';
+    if(townDecoAt(x,y))return 'Something stands there already.';
+  }
+  if(D.grave&&!gravesWaiting(T).length)return 'No grave waits for a stone yet.';
+  /* something solid may not stand on you, or shut you or the square away from the Head-frame */
+  if(!D.path){
+    for(const [x,y] of tiles)TOWN_BLOCK.add(y*TOWN_W+x);
+    const P=TWN.p, onYou=!townFree(P.x,P.y);
+    const cut=!onYou&&(!townReaches(sx,sy)||!townReaches(clamp(Math.floor(P.x),0,TOWN_W-1),clamp(Math.floor(P.y),0,TOWN_H-1)));
+    for(const [x,y] of tiles)TOWN_BLOCK.delete(y*TOWN_W+x);
+    if(onYou)return 'You are standing there.';
+    if(cut)return 'That would wall off the Head-frame.';
+  }
+  const short=townShort(D.cost,T.res); if(short)return 'You need '+short+'.';
+  return '';
+}
+function townPlace(id,c,r){
+  const why=townCanPlace(id,c,r); if(why)return why;
+  const T=townData(), D=TOWN_DECOS[id], d={id,c,r};
+  if(D.grave)d.g=gravesWaiting(T)[0].n;
+  for(const k in D.cost)T.res[k]-=D.cost[k];
+  T.decos.push(d); townSave(); townDecoSync(); townHud(); townTrayUI();
+  /* a walk that now runs into it is given up */
+  if(!D.path&&TWN.path&&TWN.path.some(p=>townSolid(Math.floor(p.x),Math.floor(p.y)))){TWN.path=null; TWN.goal=null;}
+  return '';
+}
+/* tap a piece in build mode: it comes up, and all it cost comes back */
+function townTakeUp(d){
+  if(!d)return false;
+  const T=townData(), D=TOWN_DECOS[d.id], i=T.decos.indexOf(d); if(i<0)return false;
+  T.decos.splice(i,1); for(const k in D.cost)T.res[k]+=D.cost[k];
+  townSave(); townDecoSync(); townHud(); townTrayUI();
+  townSay('You take up the '+D.n+': '+townCostText(D.cost)+' back.');
+  return true;
+}
+function townBuildTap(tx,ty){
+  const d=townDecoAt(tx,ty);
+  if(d){TWN.ghost=null; townTakeUp(d); return;}
+  if(!TWN.pick){TWN.goal=null; TWN.path=townPathTo(tx,ty); if(TWN.path&&TWN.path.length){const e=TWN.path[TWN.path.length-1]; TWN.mark=.6; TWN.mx=e.x; TWN.my=e.y;} return;}
+  const id=TWN.pick, a=townAnchor(id,tx,ty), D=TOWN_DECOS[id], w=D.grave?gravesWaiting()[0]:null, why=townPlace(id,a.c,a.r);
+  TWN.ghost={id,c:a.c,r:a.r,why,t:.5};
+  townSay(why||(w?'The stone takes '+townWho(w.kit)+'’s name.':townPickLine(id)));
+}
+/* where the thumb is, while it is down: the footprint, green or red. Worked out once per tile, never per frame */
+function townGhostAt(tx,ty){
+  /* over a piece already built, the thumb would take it up: that piece's footprint, in gold */
+  const d=TWN.build?townDecoAt(tx,ty):null;
+  if(!TWN.build||(!TWN.pick&&!d)){TWN.ghost=null; return;}
+  const a=d?{c:d.c,r:d.r}:townAnchor(TWN.pick,tx,ty), id=d?d.id:TWN.pick, g=TWN.ghost;
+  if(g&&g.id===id&&g.c===a.c&&g.r===a.r&&g.t<0&&g.up===!!d)return;
+  TWN.ghost={id,c:a.c,r:a.r,why:d?'':townCanPlace(id,a.c,a.r),t:-1,up:!!d};
+}
+function townSay(t){const el=$('#townTmsg'); if(el)el.textContent=t;}
+function townPickLine(id){
+  if(!id)return 'Choose a piece, then tap the ground.';
+  const D=TOWN_DECOS[id], n=D.grave?gravesWaiting().length:0;
+  return D.n+' · '+townCostText(D.cost)+(D.grave?' · '+(n?n+(n===1?' grave waits':' graves wait'):'no grave waits'):'');
+}
+/* the tray: one chip per piece, its picture painted by the same painters, at a whole number of device pixels an art pixel */
+function townIcon(id){
+  const [cv,c]=tCanvas(16,20), A=townArt(), K=A.cache;
+  if(id==='cobble'||id==='board'){const img=c.createImageData(16,16), d=img.data;
+    for(let y=0;y<16;y++)for(let x=0;x<16;x++){const p=PX_RGB[townGroundPx(80+x,208+y,id==='board'?'_':',')], i=(y*16+x)*4; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;}
+    c.putImageData(img,0,4);}
+  else if(id==='lamp'){c.drawImage(townLampPost(),0,0); c.drawImage(townLampGlass(),5,4);}
+  else if(id==='brazier'){c.drawImage(K.fl[0],3,-6); c.drawImage(K.brz,0,4);}
+  else if(id==='fence')c.drawImage(townFence(-9,-9),0,0);
+  else if(id==='tree')c.drawImage(townTree(5,5),0,0,32,44,0,-1,16,22);
+  else if(id==='stone'){let x=0; while(x<40&&thash(x,1,70)>=.45)x++; c.drawImage(townGrave(x,1),0,4);}
+  return cv.toDataURL();
+}
+function townTrayBuild(){
+  const row=$('#townTrow'); if(row.childElementCount)return;
+  const dpr=Math.min(3,window.devicePixelRatio||1), s=Math.max(1,Math.round(2*dpr))/dpr;
+  for(const id in TOWN_DECOS){
+    const b=document.createElement('button'); b.type='button'; b.className='town-chip'; b.dataset.deco=id; b.setAttribute('aria-label',TOWN_DECOS[id].n);
+    const im=document.createElement('img'); im.alt=''; im.src=townIcon(id); im.style.width=(16*s)+'px'; im.style.height=(20*s)+'px';
+    const t=document.createElement('span'); t.textContent=TOWN_DECOS[id].s;
+    b.append(im,t); row.appendChild(b);
+  }
+}
+function townTrayUI(){
+  const T=townData();
+  for(const b of $('#townTrow').children){const id=b.dataset.deco, D=TOWN_DECOS[id];
+    b.classList.toggle('on',TWN.pick===id); b.setAttribute('aria-pressed',TWN.pick===id?'true':'false');
+    b.classList.toggle('poor',!!townShort(D.cost,T.res)||(D.grave&&!gravesWaiting(T).length));}
+}
+/* Build: the tray takes the bottom of the screen (the Head-frame's button is hidden while it shows), the HUD's button reads
+   Done. Nothing else moves */
+function townBuildSet(on){
+  on=!!on&&TWN.on; TWN.build=on; TWN.pick=null; TWN.ghost=null;
+  const b=$('#townBuild'); b.textContent=on?'Done':'Build'; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');
+  if(on){townTrayBuild(); townTrayUI(); townSay(townPickLine(null));}
+  $('#townTray').hidden=!on;
+  TWN.near=undefined; $('#townAct').hidden=true;
+  townShowTip();
+}
+/* ---- headstones ---- */
+function townWho(kit){const K=KITS[kit], w=(K&&K.who)||'a Keeper'; return w.replace(/^The /,'the ');}
+function townFoe(type){const D=FOES[type]; if(!D)return null; return /^The /.test(D.n)?'the '+D.n.slice(4):(/^[AEIOU]/.test(D.n)?'an ':'a ')+D.n;}
+/* Floor 4, wave 3. Taken by the Keeper Below on the Brine-Hollow stair. */
+function graveWords(g){
+  const stair=typeof g.seed==='number'?stairName(g.seed):'an unnamed stair', foe=g.foe&&townFoe(g.foe);
+  return 'Floor '+g.floor+', '+(g.wave>0?'wave '+g.wave:'before the first wave')+'. '
+    +(foe?'Taken by '+foe+' on '+stair+'.':'The lamp went out on '+stair+'.')+(g.depth>0?' The Deeper Dark, depth '+g.depth+'.':'');
+}
+/* the stone's own stair: its code, and Copy (the same button and handler as seedLine()'s) */
+function townSeedRow(seed){const c=stairCode(seed); return '<span class="seed-line"><span class="seed-row"><code class="seed-code">'+c+'</code><button class="btn seed-copy" data-seedcopy="'+c+'">Copy</button></span></span>';}
+function townEpitaph(d){
+  TWN.path=null; TWN.goal=null; TWN.ptr=null;
+  const g=d&&townData().graves.find(x=>x.n===d.g);
+  showModal({title:g?'Here lies '+townWho(g.kit):'A mossy headstone',
+    body:g?graveWords(g)+(typeof g.seed==='number'?townSeedRow(g.seed):''):'The name has worn away.',
+    actions:[{label:'Leave the stone',primary:true,fn:closeModal}]});
+}
+/* what the button at the bottom offers where you stand: the Head-frame's deck, or a headstone within reach. Nothing while
+   you build */
+function townNearAct(){
+  if(TWN.build)return null;
+  const P=TWN.p; if(Math.hypot(P.x-TOWN_DECK.x,P.y-TOWN_DECK.y)<1.4)return 'frame';
+  let best=null, bd=1.3;
+  for(const d of townData().decos){if(d.id!=='stone')continue; const dd=Math.hypot(P.x-(d.c+.5),P.y-(d.r+.5)); if(dd<bd){bd=dd; best=d;}}
+  return best;
+}
 /* one step of the walk, real time (rule 14). Steering and walking a path both move the feet and slide along what is solid */
 function townStep(dt){
   const P=TWN.p, R=TWN.ptr; TWN.t+=dt; if(TWN.mark>0)TWN.mark-=dt;
-  if(R&&!R.steer&&performance.now()-R.t0>250){R.steer=true; TWN.path=null; TWN.goal=null;}
+  /* holding still steers, except while a piece is chosen: then holding shows where it would go, and lifting sets it down */
+  if(R&&!R.steer&&!(TWN.build&&TWN.pick)&&performance.now()-R.t0>250){R.steer=true; TWN.path=null; TWN.goal=null;}
   let vx=0, vy=0, w=null;
   if(R&&R.steer){const dx=R.x-R.x0, dy=R.y-R.y0, L=Math.hypot(dx,dy);
     if(L>8){const m=Math.min(1,(L-8)/32)*TOWN_SPEED; vx=dx/L*m; vy=dy/L*m;}}
@@ -12274,10 +12588,12 @@ function townStep(dt){
   if(TWN.path&&dt>0){TWN.stuck=Math.hypot(P.x-x0,P.y-y0)<1e-4?TWN.stuck+dt:0; if(TWN.stuck>.3){TWN.path=null; TWN.goal=null; TWN.stuck=0;}}
   P.moving=sp>.05&&(P.x!==x0||P.y!==y0);
   if(P.moving){P.face=Math.abs(vx)>Math.abs(vy)*1.1?(vx>0?'r':'l'):(vy>0?'d':'u'); P.wt+=dt*Math.min(1,sp/TOWN_SPEED);}
-  /* the Head-frame's button shows while you stand by it; a path that ends there goes down when you arrive */
-  const near=Math.hypot(P.x-TOWN_DECK.x,P.y-TOWN_DECK.y)<1.4;
-  if(near!==TWN.near){TWN.near=near; $('#townAct').hidden=!near;}
-  if(TWN.goal==='frame'&&!TWN.path&&!R){TWN.goal=null; if(near)townDescend();}
+  /* the button shows while you stand by the Head-frame (or a headstone); a path that ends there acts when you arrive */
+  const near=townNearAct();
+  if(near!==TWN.near){TWN.near=near; const b=$('#townAct'); b.hidden=!near; if(near)b.textContent=near==='frame'?'Descend the stair':'Read the headstone';}
+  if(TWN.goal==='frame'&&!TWN.path&&!R){TWN.goal=null; if(near==='frame')townDescend();}
+  if(TWN.goal&&TWN.goal.stone&&!TWN.path&&!R){const d=TWN.goal.stone; TWN.goal=null; if(Math.hypot(P.x-(d.c+.5),P.y-(d.r+.5))<1.6)townEpitaph(d);}
+  if(TWN.ghost&&TWN.ghost.t>0){TWN.ghost.t-=dt; if(TWN.ghost.t<=0)TWN.ghost=null;}
 }
 /* a flame's light steps a pixel or two in and out (still with Reduce Motion or Lite) */
 function townFlick(L,tq,lite){return reduceMotion||lite?0:Math.round((thash(tq,L.x,L.y)-.5)*4*L.f);}
@@ -12348,6 +12664,10 @@ function townDraw(){
   if(spr.em)bc.drawImage(spr.em,pfx-8-cx,pfy-22-cy);
   /* where a tap is taking you, and the stick while you steer */
   if(TWN.mark>0&&((TWN.mark*10)|0)%2===0)bc.drawImage(A.mark,Math.round(TWN.mx*16)-4-cx,Math.round(TWN.my*16)-4-cy);
+  /* build mode: the footprint under the thumb, green where it can stand, red where it can't, gold on a piece to take up */
+  const G=TWN.build&&TWN.ghost;
+  if(G&&TOWN_DECOS[G.id]){const gc=townGhost(G.up?'b':G.why?'k':'g'), D=TOWN_DECOS[G.id];
+    for(let y=0;y<(D.h||1);y++)for(let x=0;x<(D.w||1);x++)bc.drawImage(gc,(G.c+x)*16-cx,(G.r+y)*16-cy);}
   const Rp=TWN.ptr;
   if(Rp&&Rp.steer){const k=TWN.k/TWN.dpr, ax=Math.round(Rp.x0/k), ay=Math.round(Rp.y0/k), dx=Rp.x-Rp.x0, dy=Rp.y-Rp.y0, L=Math.hypot(dx,dy), m=Math.min(L,40)/k;
     bc.globalAlpha=.55; bc.drawImage(A.ring,ax-10,ay-10);
@@ -12367,22 +12687,37 @@ $('#townCv').addEventListener('pointerdown',ev=>{
   if(!TWN.on||TWN.card||TWN.ptr)return; ev.preventDefault();
   if(ev.pointerType!=='mouse'&&(ev.clientX<DSC_EDGE||ev.clientX>innerWidth-DSC_EDGE))return;
   const [x,y]=townPtrXY(ev); TWN.ptr={id:ev.pointerId,x0:x,y0:y,x,y,t0:performance.now(),steer:false,far:0};
+  if(TWN.build)townGhostAt(...townPtrTile(x,y));
   try{$('#townCv').setPointerCapture(ev.pointerId);}catch(e){}
 });
-$('#townCv').addEventListener('pointermove',ev=>{const R=TWN.ptr; if(!R||ev.pointerId!==R.id)return; const [x,y]=townPtrXY(ev); R.x=x; R.y=y; R.far=Math.max(R.far,Math.hypot(x-R.x0,y-R.y0));
-  if(!R.steer&&R.far>12){R.steer=true; TWN.path=null; TWN.goal=null;}});
+/* the tile under a point on the canvas (CSS px) */
+function townPtrTile(x,y){const k=TWN.k/TWN.dpr; return [Math.floor((x/k+Math.round(TWN.cx))/16),Math.floor((y/k+Math.round(TWN.cy))/16)];}
+$('#townCv').addEventListener('pointermove',ev=>{const R=TWN.ptr;
+  /* a mouse shows the footprint as it passes; a thumb shows it only while it is down */
+  if(!R){if(TWN.on&&TWN.build&&ev.pointerType==='mouse')townGhostAt(...townPtrTile(...townPtrXY(ev))); return;}
+  if(ev.pointerId!==R.id)return; const [x,y]=townPtrXY(ev); R.x=x; R.y=y; R.far=Math.max(R.far,Math.hypot(x-R.x0,y-R.y0));
+  if(!R.steer&&R.far>12){R.steer=true; TWN.path=null; TWN.goal=null;}
+  if(TWN.build){if(R.steer){if(TWN.ghost&&TWN.ghost.t<0)TWN.ghost=null;} else townGhostAt(...townPtrTile(x,y));}});
 function townLift(ev){const R=TWN.ptr; if(!R||ev.pointerId!==R.id)return; TWN.ptr=null;
+  if(TWN.ghost&&TWN.ghost.t<0&&ev.pointerType!=='mouse')TWN.ghost=null;
   /* a slow tap (held past the quarter second, never moved) is still a tap: phones make plenty of them */
   if(ev.type==='pointercancel'||!TWN.on||R.far>12||(R.steer&&performance.now()-R.t0>600))return;
-  const [x,y]=townPtrXY(ev), k=TWN.k/TWN.dpr, lx=x/k+Math.round(TWN.cx), ly=y/k+Math.round(TWN.cy);
-  townTapTile(Math.floor(lx/16),Math.floor(ly/16));}
+  const [x,y]=townPtrXY(ev);
+  townTapTile(...townPtrTile(x,y));}
 $('#townCv').addEventListener('pointerup',townLift); $('#townCv').addEventListener('pointercancel',townLift);
 $('#townOverlay').addEventListener('contextmenu',ev=>ev.preventDefault());
 window.addEventListener('blur',()=>{TWN.ptr=null;});
 /* rule 5: the card, the back button and the Head-frame's button all go on click */
 $('#townCard').addEventListener('click',()=>{if(!TWN.card)return; const k=TWN.card; TWN.card=null; tipSeen(k); townShowTip();});
 $('#townBack').addEventListener('click',()=>{townClose(); showTitle();});
-$('#townAct').addEventListener('click',()=>{if(TWN.on&&TWN.near)townDescend();});
+$('#townAct').addEventListener('click',()=>{if(!TWN.on||!TWN.near||TWN.build)return; if(TWN.near==='frame')townDescend(); else townEpitaph(TWN.near);});
+$('#townBuild').addEventListener('click',()=>{if(TWN.on)townBuildSet(!TWN.build);});
+/* the tray's chips: tap one to choose it, again to put it down (on click, rule 5) */
+$('#townTrow').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-deco]'); if(!b||!TWN.build)return;
+  TWN.pick=TWN.pick===b.dataset.deco?null:b.dataset.deco; TWN.ghost=null;
+  townTrayUI(); townSay(townPickLine(TWN.pick));
+});
 
 /* ---------------- loop ---------------- */
 let last=performance.now(), uiAcc=0;
