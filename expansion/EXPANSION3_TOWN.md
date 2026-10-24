@@ -1,6 +1,6 @@
 # Expansion 3: Saltmouth Above
 
-**Status (23 Oct 2026):** design only. Step 1 of the plan (this doc). Nothing is built. This doc's PR changes no code (no `index.html`, `tests/`, `tools/` or `.github/`; see `README.md`).
+**Status (24 Oct 2026):** step 1 (this doc) merged in #116; step 2 is #117. **How to build each step, and where things stand: `expansion/EXPANSION3_RUNBOOK.md`.**
 **From Criss:** a walkable town above the stair, built from what each run hauls up. *"We're not changing anything to the game itself, just adding to it."*
 **Who:** Gemini drafted it (from section 1 down, kept as written apart from the fixes listed in 0.1). Claude reviewed it against `main` at v18.9.0 (round 1, section 0, Opus 5.5). Criss steers. **Where section 0 and the draft disagree, section 0 wins** until Criss says otherwise.
 

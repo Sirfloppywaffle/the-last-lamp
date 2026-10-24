@@ -262,5 +262,6 @@ npm run check                     # fast: syntax + lint rules only (no browser)
 - `docs/DESIGN.md`: every data table (creatures, wards and their upgrade trees, horrors, rites, relics, kits, omens, rooms, pacts, events, depths, Ember Hall, floors and waves) plus the formulas.
 - `docs/HISTORY.md`: version history, what each AI contributed, and Criss's feedback over time.
 - `docs/OTHER-GAMES.md`: Criss's other game projects (RECLAIM, OBLATION).
-- `expansion/EXPANSION3_TOWN.md`: Expansion 3, Saltmouth Above (a walkable town built from what each run hauls up). Design only; its section 0 is the current plan.
+- `expansion/EXPANSION3_TOWN.md`: Expansion 3, Saltmouth Above (a walkable town built from what each run hauls up). Its section 0 is the current plan.
+- `expansion/EXPANSION3_RUNBOOK.md`: **how to build Expansion 3, step by step**, with a status table and a ready prompt per step. Start there for any Saltmouth work.
 - Live play link: GitHub Pages for this repo (see `README.md`).
