@@ -153,13 +153,18 @@ const shots=process.argv[3]||'.';
 
   /* Start in Saltmouth: a setting, kept in ll-town, and the game opens in the town */
   await p.evaluate(()=>{document.getElementById('pauseBtn').click(); [...document.querySelectorAll('#mActions button')].find(x=>/quit to title/.test(x.textContent)).click();});
-  await p.click('#settingsBtn'); await p.waitForTimeout(100);
+  /* a modal ignores taps that start within 150 ms of it opening (the ghost-tap guard, allowModalInput, rule 5); wait like a
+     person would, or a fast CI run has the tap below swallowed and the setting stays Off (#120, #121) */
+  await p.click('#settingsBtn'); await p.waitForTimeout(300);
   const lbl0=await p.textContent('#townSetBtn'); await p.click('#townSetBtn'); const lbl1=await p.textContent('#townSetBtn');
   ok(lbl0==='Start in Saltmouth: Off'&&lbl1==='Start in Saltmouth: On','the setting reads Off, then On',{lbl0,lbl1});
-  await p.reload(); await p.waitForTimeout(500);
+  /* wait for the town to open rather than a fixed time: a slow CI runner once took longer, and the click below then hung
+     for 30 s and hid this check's result (#120). If it never opens, say so and don't click a button that isn't there. */
+  await p.reload();
+  await p.waitForFunction(()=>window.__t&&__t.TWN.on&&!document.getElementById('townOverlay').hidden,null,{timeout:8000}).catch(()=>{});
   const boot=await p.evaluate(()=>({on:__t.TWN.on, shown:!document.getElementById('townOverlay').hidden, kept:JSON.parse(localStorage.getItem('ll-town')).startInTown}));
   ok(boot.on&&boot.shown&&boot.kept===true,'with Start in Saltmouth on, the game opens in the town',boot);
-  await p.click('#townBack'); await p.waitForTimeout(100);
+  if(boot.on&&boot.shown)await p.click('#townBack',{timeout:5000}); await p.waitForTimeout(100);
   const title=await p.evaluate(()=>({on:__t.TWN.on, title:!document.getElementById('title').hidden}));
   ok(!title.on&&title.title,'Title goes back to the title',title);
   await p.evaluate(()=>{const t=JSON.parse(localStorage.getItem('ll-town')); t.startInTown=false; localStorage.setItem('ll-town',JSON.stringify(t));});
