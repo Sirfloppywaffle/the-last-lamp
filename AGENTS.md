@@ -31,6 +31,7 @@
 - The game should be **hard**. He found early versions too easy, then essence too plentiful. Difficulty went up in v9 and v10, and he called v10 "better balanced". His recent runs end on the floor 4 boss or the floor 5 boss.
 - **No keyboard-only features.** He plays by touch; an `F` shortcut patch was scrapped for this reason.
 - The art direction is "**3D in the 2D sense**": painted canvas volumes, glossy eyes, silhouettes in the dark, eerie but readable.
+- **Saltmouth, the town above the stair (Expansion 3), is pixel art.** The stair stays painted. Criss chose it on #116.
 
 ---
 
@@ -261,4 +262,5 @@ npm run check                     # fast: syntax + lint rules only (no browser)
 - `docs/DESIGN.md`: every data table (creatures, wards and their upgrade trees, horrors, rites, relics, kits, omens, rooms, pacts, events, depths, Ember Hall, floors and waves) plus the formulas.
 - `docs/HISTORY.md`: version history, what each AI contributed, and Criss's feedback over time.
 - `docs/OTHER-GAMES.md`: Criss's other game projects (RECLAIM, OBLATION).
+- `expansion/EXPANSION3_TOWN.md`: Expansion 3, Saltmouth Above (a walkable town built from what each run hauls up). Design only; its section 0 is the current plan.
 - Live play link: GitHub Pages for this repo (see `README.md`).
