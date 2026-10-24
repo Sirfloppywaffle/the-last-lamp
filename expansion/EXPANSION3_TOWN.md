@@ -1,6 +1,6 @@
 # Expansion 3: Saltmouth Above
 
-**Status (24 Oct 2026):** steps 1 to 3 are merged (#116, #117, #119). Step 4 (build mode and headstones) is in review. Progress per step lives in `EXPANSION3_RUNBOOK.md` §1.
+**Status (24 Oct 2026):** steps 1 to 3 are merged (#116, #117, #119). Step 4 (build mode and headstones) is in review in #122. Progress per step lives in `EXPANSION3_RUNBOOK.md` §1.
 **From Criss:** a walkable town above the stair, built from what each run hauls up. *"We're not changing anything to the game itself, just adding to it."*
 **Who:** Gemini drafted it (from section 1 down, kept as written apart from the fixes listed in 0.1). Claude reviewed it against `main` at v18.9.0 (round 1, section 0, Opus 5.5). Criss steers. **Where section 0 and the draft disagree, section 0 wins** until Criss says otherwise.
 
