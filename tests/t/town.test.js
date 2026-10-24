@@ -78,6 +78,9 @@ const shots=process.argv[3]||'.';
     P.x=12; P.y=13.5; __t.townTapTile(12,6);
     for(let i=0;i<300&&T.path;i++){__t.townStep(.05); if(!__t.townFree(P.x,P.y))bad++;}
     out.north=Math.hypot(P.x-12.5,P.y-6.5)<.1; out.bad2=bad;
+    /* beside the tower, not under it: a tap there walks there and opens nothing */
+    P.x=12; P.y=13.5; __t.townTapTile(10,7); out.side=T.goal===null; for(let i=0;i<300&&T.path;i++)__t.townStep(.05);
+    out.sideAt=Math.hypot(P.x-10.5,P.y-7.5)<.1&&document.getElementById('modal').hidden;
     /* a tap on a building walks to the nearest open ground beside it */
     __t.townTapTile(20,9); for(let i=0;i<300&&T.path;i++)__t.townStep(.05);
     out.house=[+P.x.toFixed(2),+P.y.toFixed(2)]; out.houseOk=__t.townFree(P.x,P.y)&&Math.hypot(P.x-20.5,P.y-9.5)<2.6;
@@ -85,6 +88,7 @@ const shots=process.argv[3]||'.';
     return out;});
   ok(walk.path&&walk.arrived&&walk.bad===0,'a tap walks there, never through anything solid',walk);
   ok(walk.north&&walk.bad2===0,'the walk goes round the Head-frame',walk);
+  ok(walk.side&&walk.sideAt,'a tap beside the tower walks there and opens nothing',walk);
   ok(walk.houseOk,'a tap on a building walks to the open ground nearest it',walk);
 
   /* hold and drag: a real touch-like pointer, held then dragged right, steers; a wall stops you */
