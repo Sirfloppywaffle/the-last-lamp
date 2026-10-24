@@ -13,7 +13,7 @@
 | 1 | Design doc (`EXPANSION3_TOWN.md`) | #116 | merged | — |
 | 2 | Pixel compiler, the square, rain, light, Keeper sprite, Head-frame, Walk Saltmouth, `ll-town` | #117 | merged | 18.10.0 |
 | 3 | The haul | #119 | merged | 18.11.0 |
-| 4 | Build mode: paths, lights, fences, trees, headstones of past runs | — | not started | 18.12.0 |
+| 4 | Build mode: paths, lights, fences, trees, headstones of past runs | #122 | in review | 18.12.0 |
 | 5 | Keepers in town, Take the lamp (swap kit), chores | — | not started | 18.13.0 |
 | 6 | Workshops and the one town gift, with its price | — | not started | 18.14.0 |
 | 7 | Rescued souls: the cage, the Drowned Oar, the Toothmonger | — | not started | 18.15.0 |
@@ -57,7 +57,7 @@ Everything is in `index.html`, in the section `/* ---------------- Saltmouth (Ex
 - `townArt()` builds everything once into `TOWN_ART = {ground, props, lights, em, spr, …}`.
   - `props` are `{c, x, y, base}` in world pixels; `base` is the y of the bottom of their footprint, and they are drawn in order of `base` with the Keeper slotted in. **To add anything that stands up (a lamp, a fence, a person), push a prop with the right `base` and re-sort.**
   - `lights` are `{x, y, r, f}`: a pool of light at world pixels, radius in art pixels, `f` how much it flickers (0 for steady). `em` are things drawn again after the dark (glowing panes, flames).
-- **For build mode (step 4)**, `TOWN_ART` must become rebuildable: split it into the fixed part (ground, fixed props) and a list made from `townData()`'s placed items, rebuilt when something is placed. Keep `TOWN_ART.ground` cached; only re-sort props and lights.
+- **Since step 4**, `TOWN_ART` is rebuildable: `props0`/`lights0`/`em0` and `ground0` are the fixed square; `townDecoSync()` lays what is built over them (call it after anything changes `townData().decos`). **A new building or person must not be walled in:** add the tile in front of its door or station to `TOWN_KEEP`, and `townCanPlace()` refuses any piece that would cut it off. If a step turns earth into building tiles, `townFix()` already drops (and pays back) any piece that stood there.
 
 **State**
 - `TOWN` (kept in `ll-town`) via `townData()`; `TOWN_DEV` is developer mode's copy. `townFix(t)` merges any stored shape onto the defaults `{v:1, startInTown:false, px, py, visits}` and keeps unknown fields, so a later step adds `res`, `graves`, etc. there.
@@ -66,7 +66,7 @@ Everything is in `index.html`, in the section `/* ---------------- Saltmouth (Ex
 **Flow**
 - `townOpen()` (from Walk Saltmouth, or at launch with Start in Saltmouth) shows `#townOverlay`; `townClose()` saves where you stood; `newRun()` calls `townClose()`.
 - `frame()` calls `townFrame(raw)` → `townStep(dt)` (walk or steer, slide on what is solid, the deck's button) → `townDraw()`.
-- Taps: `townTapTile(tx,ty)`. A tap on the Head-frame walks to the deck and calls `townDescend()` (the Roster, or the saved-run question). **To make a new thing tappable (a person, a door, a shrine), add a branch in `townTapTile` that sets `TWN.goal` to its id, path to the tile in front of it, and act in `townStep` where `TWN.goal==='frame'` is handled.**
+- Taps: `townTapTile(tx,ty)` (in build mode it hands over to `townBuildTap()`; a headstone is walked to and read). `#townAct`'s label and action come from `townNearAct()`: return a new thing there to offer it. A tap on the Head-frame walks to the deck and calls `townDescend()` (the Roster, or the saved-run question). **To make a new thing tappable (a person, a door, a shrine), add a branch in `townTapTile` that sets `TWN.goal` to its id, path to the tile in front of it, and act in `townStep` where `TWN.goal==='frame'` is handled.**
 - The town's buttons are DOM over the canvas: `#townBack` (top-left), `#townAct` (bottom centre, one button that shows near something: reuse it for every "Talk to…", "Enter the Lodge", "Build" action by setting its text and a `data-act`), `#townCardWrap`/`#townCard` (the tip card). Add anything new to `.town-hud` at the top, never over the middle of the canvas.
 - **Town tips:** a `TIPS` entry `{where:'town', when:()=>false, title, text}`; show it with the same pattern as `townOpen()` uses for `TIPS.town` (`tipFresh(key)` → fill `#townCard`, `tipSeen(key)` on click).
 
