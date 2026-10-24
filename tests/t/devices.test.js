@@ -13,6 +13,32 @@ const DEV=[
     const cdp=await ctx.newCDPSession(p);
     try{await cdp.send('Emulation.setSafeAreaInsetsOverride',{insets:Object.assign({top:0,bottom:0,left:0,right:0},ins)});}catch(e){}
     await p.goto(file); await p.waitForTimeout(400);
+    /* Saltmouth (Expansion 3): Walk Saltmouth fits on the title; in the town, Title and Descend the stair sit inside the safe
+       area, take a thumb and don't overlap; the canvas covers the screen at a whole number of device pixels to an art pixel;
+       a tile is 40 to 64 CSS px; the Head-frame's button showing moves nothing */
+    const town=await p.evaluate(ins=>{
+      ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44;
+      const tb=document.getElementById('townBtn'); tb.scrollIntoView({block:'center'});
+      const o={walk:q(tb)}; o.walkIn=inside(o.walk)&&o.walk[3]-o.walk[1]>=40;
+      tb.click();
+      const T=__t.TWN; T.p.x=12; T.p.y=14; T.cx=null; __t.townFrame(1/30);
+      const cv=document.getElementById('townCv'), c0=q(cv);
+      T.p.x=__t.TOWN_DECK.x; T.p.y=__t.TOWN_DECK.y; __t.townFrame(1/30);
+      const back=q(document.getElementById('townBack')), act=q(document.getElementById('townAct')), c1=q(cv);
+      o.back=back; o.act=act; o.k=T.k; o.tile=+(16*T.k/T.dpr).toFixed(1);
+      o.btns=inside(back)&&inside(act)&&thumb(back)&&thumb(act)&&!(back[2]>act[0]&&back[0]<act[2]&&back[3]>act[1]&&back[1]<act[3]);
+      o.cover=c0[0]<=0&&c0[1]<=0&&c0[2]>=innerWidth&&c0[3]>=innerHeight;
+      o.whole=Number.isInteger(T.k)&&cv.width===Math.round(cv.getBoundingClientRect().width*T.dpr)&&o.tile>=40&&o.tile<=64;
+      o.still=JSON.stringify(c0)===JSON.stringify(c1);
+      return o;},ins);
+    await p.waitForTimeout(200);
+    await p.screenshot({path:(process.argv[3]||'.')+'/town-'+nm+'.png'});
+    await p.evaluate(()=>__t.townClose());
+    const townOk=town.walkIn&&town.btns&&town.cover&&town.whole&&town.still;
+    if(!townOk)console.log('FAIL '+nm+': Saltmouth on this screen',JSON.stringify(town));
     await p.evaluate(()=>{const T=__t; T.newRun(); T.run.floor=2; T.beginFloor(null); T.run.ess=900; T.forceUI();});
     await p.waitForTimeout(400);
     const snap=()=>p.evaluate(()=>{const R=s=>{const x=document.querySelector(s); if(!x||x.hidden||!x.offsetParent&&s!=='#board')return null; const q=x.getBoundingClientRect(); return [q.left,q.top,q.right,q.bottom].map(Math.round);};
@@ -276,7 +302,7 @@ const DEV=[
     await p.evaluate(()=>{const T=__t; T.descentFinish({}); T.setDescentAuto({woke:0,spilt:0}); T.tutSet({walk:'done',seen:[],off:true});});
     const wchOk=wch.active&&wch.statsIn&&wch.glint&&wch.clear&&wch.mid&&wch.still&&wcard.shown&&wcard.in&&wcard.thumb&&wcard.fits;
     if(!wchOk)console.log('FAIL '+nm+': The Winch and its card',JSON.stringify({wch,wcard}));
-    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk&&bndOk&&cstOk&&smoOk&&wchOk;
+    const ok=!moved&&!cmdMoved&&c.over===0&&!c.offs.length&&c.card&&seedOk&&dscOk&&mirOk&&bndOk&&cstOk&&smoOk&&wchOk&&townOk;
     if(!ok)bad++;
     console.log((ok?'OK  ':'BAD ')+nm.padEnd(17),'side',c.side,'tile',c.tile,'boardMoved',moved,'barMoved',cmdMoved,'over',c.over,'unsafe',c.offs,'hint',c.hint,errs.length?errs:'');
     await ctx.close();
