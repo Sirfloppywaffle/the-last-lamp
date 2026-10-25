@@ -6415,7 +6415,7 @@ function tryPlace(c,r){
   /* Choir in the Walls: a horror fielded under it is sung, and goes into the walls when it leaves the board (wallsTake) */
   if(it.kind==='horror'&&has('choirwalls'))t.sung=true;
   spend(t,cost);
-  if(!run.replay&&run.gift==='dip'&&!(F&&F.trial)&&run.floor===0&&it.kind==='ward'&&it.type==='candle'&&!run.dipUsed){run.dipUsed=true; }
+  if(!run.replay&&run.gift==='dip'&&!(F&&F.trial)&&run.floor===0&&it.kind==='ward'&&it.type==='candle'&&!run.dipUsed){run.dipUsed=true; t.townDip=true;}
   /* a Corpse Candle takes a remembered body first, and Borrowed Flesh raises its phantom on the candle */
   if(it.kind==='ward'&&it.type==='candle'&&corpseKit()){t.corpse=true; t.body=takeBody(bodyNear(c,r),true); if(t.body&&t.body[2]&&HORRORS[t.body[2]])t.ph=t.body[2];}
   if(it.kind==='ward'&&it.type==='mirror')t.rot=Math.atan2(t.y-F.ly,t.x-F.lx)+Math.PI/4;
@@ -6460,6 +6460,7 @@ function sellTower(t,confirmed){
   const back=refund(t);
   if(t.corpse&&t.body&&run.corpses){run.corpses.list.push(t.body); corpseSync();}
   if(t.bones&&t.bones.length&&run.corpses&&t.grips===GRASP_GRIPS){run.corpses.list.push(...t.bones); corpseSync();}
+  if(t.townDip)run.dipUsed=false;
   run.ess+=back; removeTower(t); const walled=wallsTake(t);
   F.fx.push({k:'float',x:t.x,y:t.y-.2,txt:'+'+back,col:PAL.tallow,t:0,dur:.9,size:.3});
   if(walled)hint('The '+walled+' goes into the walls. It is not yours to field again.');
