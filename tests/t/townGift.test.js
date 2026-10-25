@@ -209,7 +209,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       doors.push({id:W.id,protectedDoor,opened:document.getElementById('mTitle').textContent.startsWith(W.n)});
       document.querySelector('#mActions button:last-child').click();
     }
-    const fixed=__t.townFix({res:{},decos:[{id:'fence',c:7,r:17}],buildings:{brazier:99,quay:-1},gift:'unknown'});
+    const fixed=__t.townFix({res:{},decos:[{id:'fence',c:8,r:17}],buildings:{brazier:99,quay:-1},gift:'unknown'});
     __t.townClose();
     const live=localStorage.getItem('ll-town'); __t.setDev(true);
     __t.townData().res={timber:1000,iron:1000,tallow:1000,curios:100};
