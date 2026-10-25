@@ -6432,6 +6432,7 @@ function tryPlace(c,r){
 }
 function removeTower(t){
   t.dead=true;
+  if(t.townDip)run.dipUsed=false;
   F.towers=F.towers.filter(x=>x!==t);
   if(t.kind==='ward'&&t.type==='salt'){F.salt.delete(t.c+','+t.r); bridgeSync();}
   if(selTower===t)selTower=null;
@@ -6459,7 +6460,6 @@ function sellTower(t,confirmed){
   const back=refund(t);
   if(t.corpse&&t.body&&run.corpses){run.corpses.list.push(t.body); corpseSync();}
   if(t.bones&&t.bones.length&&run.corpses&&t.grips===GRASP_GRIPS){run.corpses.list.push(...t.bones); corpseSync();}
-  if(t.townDip)run.dipUsed=false;
   run.ess+=back; removeTower(t); const walled=wallsTake(t);
   F.fx.push({k:'float',x:t.x,y:t.y-.2,txt:'+'+back,col:PAL.tallow,t:0,dur:.9,size:.3});
   if(walled)hint('The '+walled+' goes into the walls. It is not yours to field again.');

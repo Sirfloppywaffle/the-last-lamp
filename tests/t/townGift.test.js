@@ -194,6 +194,26 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(dipSales.freeSale&&dipSales.replaced,'selling the gifted Candle restores one free replacement',dipSales);
   ok(dipSales.oldSave,'an unmarked Candle in an older save never restores Dip',dipSales);
 
+  /* A gifted Corpse Candle also releases Dip when it burns out between waves. */
+  const dipBurnout=await p.evaluate(()=>{
+    const T=__t; T.townSetGift('dip'); T.newRun('occultist',0,{seed:42}); T.setP(true);
+    const place=()=>{
+      const it={kind:'ward',type:'candle'};
+      for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++)if(!T.placeProblem(it,c,r)){
+        T.setSel(it); T.tryPlace(c,r); return T.F.towers.at(-1);
+      }
+      throw new Error('No legal tile for Corpse Candle');
+    };
+    const free=place(), other=place();
+    const marked=free.corpse&&free.townDip===true&&other.corpse&&!other.townDip&&T.run.dipUsed===true;
+    const burned=T.corpseBurnOut(), released=T.run.dipUsed===false;
+    const removed=!T.F.towers.includes(free)&&!T.F.towers.includes(other);
+    const ess=T.run.ess, replacement=place();
+    return {marked,burned,released,removed,replaced:replacement.townDip===true&&T.run.dipUsed===true&&T.run.ess===ess};
+  });
+  ok(dipBurnout.marked&&dipBurnout.burned===2&&dipBurnout.removed,'Dip marks only the first Corpse Candle and both burn out',dipBurnout);
+  ok(dipBurnout.released&&dipBurnout.replaced,'burning out the gifted Corpse Candle restores Dip for its replacement',dipBurnout);
+
   /* 4. Disabled under every Trial in TRIALS */
   const trialRes=await p.evaluate(()=>{
     const trials=Object.keys(__t.TRIALS), bad=[];
