@@ -15,7 +15,7 @@
 | 3 | The haul | #119 | merged | 18.11.0 |
 | 4 | Build mode: paths, lights, fences, trees, headstones of past runs | #122 | merged | 18.12.0 |
 | 5 | Keepers in town, Take the lamp (swap kit), chores | #123 | merged | 18.13.0 |
-| 6 | Workshops and the one town gift, with its price | — | in progress | 18.14.0 |
+| 6 | Workshops and the one town gift, with its price | #124 | open | 18.14.0 |
 | 7 | Rescued souls: the cage, the Drowned Oar, the Toothmonger | — | not started | 18.15.0 |
 | 8 | The three shrines and the tide-pools | — | not started | 18.16.0 |
 | 9 | The Keeper's Lodge (one room) | — | not started | 18.17.0 |
