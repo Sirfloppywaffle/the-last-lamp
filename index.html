@@ -93,6 +93,9 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .relchip .relct{position:absolute;right:-2px;bottom:-2px;min-width:14px;height:14px;padding:0 2px;border-radius:7px;background:var(--abyss);border:1px solid currentColor;font:600 .58rem/12px var(--f-num);pointer-events:none}
 .meter.madm.is-still{box-shadow:0 0 0 1px #B9C4D6,0 0 6px rgba(185,196,214,.55)}
 .relchip.is-curse{border-color:var(--wound);color:var(--wound);background:radial-gradient(circle at 35% 30%,#3a1f1c,#140b0a 70%)}
+.relchip.is-gift,.book-seal.is-gift{border-color:var(--bone);color:var(--bone);background:radial-gradient(circle at 35% 30%,#2c333a,#0e1114 70%)}
+.town-workshop-actions .btn{min-height:44px;flex-shrink:0}
+.book-h{margin:12px 0 4px;font-family:var(--f-display);font-size:1.08rem;color:var(--tallow);letter-spacing:.04em}
 .relbook{flex:0 0 auto;width:36px;height:36px;padding:0;border-radius:8px;border:1px solid var(--seam);background:var(--slab);color:var(--bone);display:grid;place-items:center}
 .reltip{position:fixed;z-index:31;width:max-content;max-width:min(300px,calc(100vw - 16px));padding:9px 12px 10px;border-radius:8px;background:var(--stone);border:1px solid var(--tallow);box-shadow:0 8px 24px var(--shadow);pointer-events:none;font-size:.85rem;line-height:1.35;color:var(--bone)}
 .reltip b{display:block;margin:1px 0 3px;font-family:var(--f-display);font-size:1.08rem;font-weight:400}
@@ -596,7 +599,7 @@ input[type=range]::-moz-range-track {
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, Kindle sets a creature burning and running, lighting the dark around it, and its Signal Mirror, built in the lamp's own light, reflects it in a 5-tile beam you aim between waves (it locks while the dark comes); you can build in the beam, and it burns what crosses it. The Galvanist builds a power grid: Pylons string live wires that shock, stun and light what crosses them, if a pylon stands in the lamp's own light to power the rest; his Arc Lamps burn bright but flicker; his Lightning Rods plant where they strike and join the grid; Overload fires every wire at once for 2 oil, and run hot it fries his pylons; he binds nothing by ritual: his Grounding Anchor forces nearby pylons to link to it, and a bindable creature that dies inside one of its triangles is caught in a cage to tap (the Keeper's core waits 15 seconds for a cage, and its fall readies the Anchor), each capture drawing 2 Heat out of the grid; his lamp's Dynamo branch ends in a Static Burst. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Bellringer, Agathe Vell, sees by sound: her Toll rings the lamp, and whatever its ring touches is heard for 1.5 seconds, outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost; each Toll makes 1 Noise (it fades 1 every 8 seconds), and at 5 the dark answers with two Abyssal Stalkers; the Great Bell is heard across the whole floor for 3 Noise; her Bell Wires can be strung anywhere on the path, even in the dark, and hear what crosses them; she builds no candles: her Tuning Forks give no light but hum, standing within 5 tiles of the lamp or 3.5 of another fork, and she can build inside a hum even in the dark, though wards there strike only what is heard; a toll that reaches a fork rings again from it; a toll from the lamp echoes back off the walls of the floor; heavy things leave red footsteps where they tread unseen, but Shades, Stalkers and fliers make none; her Clapper Harpoons ring what they strike and knock it back, and the path's edges show for her even where it is dark; her lamp's Peal branch makes it toll on its own, with no Noise, but that heartbeat finds only the ordinary dark; tap Toll on the beat (a ring closes on the lamp, and the button glows) for a Perfect Toll that reaches half again as far and rings out faster, though it makes as much Noise as any toll; her Tolls, Great Bell, Bell Wires, Clapper bolts and Tocsin shells crack what they strike, and three cracks shatter it, hurting and cracking what stands beside it (bosses take 8, Behemoths and elites 5); her Tocsin shells any Bell Wire that jangles, however far away. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it; Haul Away casts a whaling net that hauls everything under it, and everything on its lines, 3 tiles back and tangles it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The Roster.</b> Five went down the stair the night Saltmouth drowned: Ambrose Fenn the lamplighter, Jonah Tolland the harpooner, the Nameless, Dr. Lucan Voss and Agathe Vell. Each carries the lamp their own way. Some are earned by a deed on the stair, some in the Ember Hall. Every kind of horror you bind or capture, on any descent, adds its eyes to the Nameless’s hood, for good: there are six to find.</li>
-        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it on the square: cobbles, boardwalk, street-lamps, braziers, fences and trees, each taken up again for all it cost; nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy. The Keepers you have freed stand in the square, each at their own footing; a dark footing is one you have not freed, and a tap on it says what frees them. Talk to a Keeper to carry the lamp down as them, or to set them to a chore: while you are down they put timber, iron, tallow or curios by for every floor you clear, and the haul brings it up. Never embers, nothing on the stair. Nothing built may stand on a Keeper's place or wall one in.</li>
+        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it on the square: cobbles, boardwalk, street-lamps, braziers, fences and trees, each taken up again for all it cost; nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy. The Keepers you have freed stand in the square, each at their own footing; a dark footing is one you have not freed, and a tap on it says what frees them. Talk to a Keeper to carry the lamp down as them, or to set them to a chore: while you are down they put timber, iron, tallow or curios by for every floor you clear, and the haul brings it up. Never embers, nothing on the stair. Nothing built may stand on a Keeper's place or wall one in. Five ruined workshops stand around the square — the Ember Brazier, the Try-Works, the Galvanic Smithy, the Cracked Belfry and the Ossuary Menagerie — and the haul restores them, then lights their windows. Each restored workshop offers a town gift at its door: you may carry one town gift down per descent, and each one exacts a price on the stair; it is off on a replayed stair and on any floor under a Trial.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. The stair's name decides which, and a saved floor keeps its own.</li>
@@ -671,7 +674,7 @@ const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='18.13.0';
+const GAME_VERSION='18.14.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -1353,7 +1356,7 @@ function addOil(n){spillIn(run.oil+n-run.oilMax); run.oil=Math.min(run.oilMax,ru
 /* Oil Reserve: oil gained past the brim spills, to burn in a wave */
 function spillIn(over){if(over>0&&has('reserve'))run.spill=Math.min(SPILL_MAX,(run.spill||0)+over);}
 function loseOil(n){run.oil=Math.max(1,run.oil-n);}
-function price(n){return Math.round(n);}
+function price(n){return Math.round(n*(run&&!run.replay&&run.gift==='ration'&&!(F&&F.trial)?1.1:1));}
 function bindable(){return ['gnasher','watcher','wretch','shrieker'];}
 
 /* patrons: offerings, Attention, and the water/bright spots it brings ---------------- */
@@ -1633,7 +1636,7 @@ function sunCd(t){
 }
 
 /* ---------------- the Many-Mouthed ---------------- */
-function hasRoster(){return !!run&&Object.values(run.roster||{}).some(v=>v>0);}
+function hasRoster(){return !!run&&Object.keys(run.roster||{}).some(k=>(run.roster[k]||0)-(k==='watcher'&&run.gift==='tether'&&run.tetherWatcher&&(run.replay||F&&F.trial)?1:0)>0);}
 /* the sprites its creatures need on this floor */
 function mouthTypes(){
   const t=[], n=patTier('mouths');
@@ -1743,7 +1746,9 @@ function dread(){
   d+=wokeDread()+fumeDread();
   return d+conjDread();
 }
-function horrorMadness(paidOnly){let m=0; if(!F)return 0; for(const t of F.towers)if(t.kind==='horror'&&!(paidOnly&&t.free))m+=horrorMad(t.type); return m;}
+function horrorMadness(paidOnly){let m=0, tetherFielded=false; if(!F)return 0; for(const t of F.towers)if(t.kind==='horror'){if(t.townTether)tetherFielded=true; if(!(paidOnly&&t.free))m+=horrorMad(t.type);}
+  if(!paidOnly&&run&&!run.replay&&run.gift==='tether'&&!F.trial&&run.tetherWatcher&&!tetherFielded)m+=horrorMad('watcher');
+  return m;}
 function tierOf(m){const T=tiers(); return m>=T[2]?3:m>=T[1]?2:m>=T[0]?1:0;}
 function boundMadness(){return horrorMadness(true);}
 function boundMadTier(){return F?tierOf(boundMadness()):0;}
@@ -1962,6 +1967,7 @@ function castRaise(x,y){
 /* Unbind: the horror leaves your roster and charges down the stair from the nearest point of the path */
 function castUnbind(t){
   const H=HORRORS[t.type], near=nearestPathPoint(t.x,t.y);
+  if(t.townTether)run.tetherWatcher=false;
   removeTower(t); run.roster[t.type]=Math.max(0,(run.roster[t.type]||0)-1);
   addHorrorCorpse(near.gate,near.d,t.type);
   F.charges.push({type:t.type,gate:near.gate,d:near.d,x:t.x,y:t.y,dmg:UNBIND_BASE+UNBIND_PER*H.mad,hit:[]});
@@ -2396,7 +2402,7 @@ function has(k){return run.relics.includes(k);}
 function tiers(){const b=(stillNow()?STILL_MAD:0)-(F&&F.omen==='whispering'?3:0)-(run.madPen||0)-(has('eyes')?2:0); return [Math.max(2,6+b),Math.max(3,10+b),Math.max(4,14+b)];}
 function horrorMad(type){if(has('choirwalls'))return 0; return HORRORS[type].mad;}
 /* Choir in the Walls: a sung horror leaving the board leaves your roster too. Once only: the flag is cleared. Returns its name */
-function wallsTake(t){if(!t||t.kind!=='horror'||!t.sung)return null; t.sung=false; run.roster[t.type]=Math.max(0,(run.roster[t.type]||0)-1); return HORRORS[t.type].n.replace('Bound ','');}
+function wallsTake(t){if(!t||t.kind!=='horror'||!t.sung)return null; t.sung=false; if(t.townTether)run.tetherWatcher=false; run.roster[t.type]=Math.max(0,(run.roster[t.type]||0)-1); return HORRORS[t.type].n.replace('Bound ','');}
 /* Quiet Mind: still, after STILL_T seconds of a wave with nothing built, upgraded or cast */
 function stillNow(){return !!(F&&F.still&&has('quiet'));}
 /* Sealing Wax: each sealed ward lowers the madness of your horrors by 1 (never below none) */
@@ -2407,7 +2413,7 @@ function horrorBoost(){return kit()==='occultist'?1+HORROR_TIER*boundMadTier():1
 /* everything that pushes you through the tiers: your horrors' madness and the Many-Mouthed's dread */
 function madness(){if(!F)return 0; return Math.max(0,horrorMadness(false)-waxN())+dread();}
 function madTier(){return tierOf(madness());}
-function wardCost(type){if(type==='candle'&&kit()==='occultist')return 0; return stillCost(WARDS[type].cost*(reckonLight(type)?RECKON_COST:1));}
+function wardCost(type){if(run&&!run.replay&&run.gift==='dip'&&!(F&&F.trial)&&run.floor===0&&type==='candle'&&!run.dipUsed)return 0; if(type==='candle'&&kit()==='occultist')return 0; return stillCost(WARDS[type].cost*(reckonLight(type)?RECKON_COST:1));}
 /* Dead Reckoning's price falls on the light that reaches out past the lamp: every light you build costs double */
 function reckonLight(type){return !!run&&has('witchsalt')&&(TRIAL_SPARE.includes(type)||type==='mirror');}
 /* the Occultist's Corpse Candles are free, so instead they shine less far past the lamp's own light */
@@ -2415,7 +2421,7 @@ function reckonDim(t){return !!F&&has('witchsalt')&&corpseKit()&&dst(t.x,t.y,F.l
 /* Quiet Mind: while you are still, the next ward or upgrade costs less */
 function stillCost(c){return stillNow()?Math.round(c*STILL_DISC):c;}
 function refillCost(){return 10;}
-function avail(type){return (run.roster[type]||0)-F.towers.filter(t=>t.kind==='horror'&&t.type===type).length;}
+function avail(type){let n=(run.roster[type]||0)-F.towers.filter(t=>t.kind==='horror'&&t.type===type).length; if(run&&!run.replay&&run.gift==='tether'&&F&&F.trial&&type==='watcher'&&run.tetherWatcher)n=Math.max(0,n-1); return n;}
 
 /* ---------------- stats from branches ---------------- */
 const m2=n=>Math.min(n||0,2);
@@ -2607,6 +2613,7 @@ function nearestPathPoint(x,y){
 /* ---------------- light ---------------- */
 function lampBase(){
   let r=3.7+lstat().wickR-(has('witchsalt')?RECKON_LAMP:0)+(has('blackwick')?1.2:0)+(run.lampBonus||0)-(F&&F.omen==='moonless'?1:0)-(trialOn('night')?NIGHT_LAMP:0)-(hasOff('first_bite')?BITE_LAMP:0)+sconceGlow();
+  if(run&&!run.replay&&run.gift==='dip'&&!(F&&F.trial)&&run.floor===0)r-=.5;
   if(madTier()>=3)r-=1;
   return Math.max(1.6,r);
 }
@@ -3183,7 +3190,7 @@ function checkpoint(){
   store.set(SAVEKEY,lastSave);
 }
 function clearSave(){lastSave=null; store.set(SAVEKEY,null);}
-function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); run.haul=haulFix(run.haul); reserveMigrate(); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; if(run.leech>=LEECH_N)run.leech=LEECH_N-1; if(run.kit==='occultist'&&!run.wards.includes('grasp'))run.wards.splice(2,0,'grasp'); updateOilMax();
+function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(run.replay||!run.gift||!TOWN_GIFTS[run.gift])run.gift=null; run.haul=haulFix(run.haul); reserveMigrate(); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; if(run.leech>=LEECH_N)run.leech=LEECH_N-1; if(run.kit==='occultist'&&!run.wards.includes('grasp'))run.wards.splice(2,0,'grasp'); updateOilMax();
   descentStop();
   /* saved at the start of a descent: the toll is paid and the floor counted, so it plays again from the top, then the floor
      begins fresh (a descent this build doesn't know is skipped) */
@@ -3330,7 +3337,7 @@ const SALT={map:1,waves:2,herald:3,heraldGate:4,gift:5,giftPatron:6,relics:7,doo
   /* the descents (Expansion 2): sub 0 is which door and which descent, sub 1 lays out the gallery, sub 2 the Mirror Stair,
      sub 3 The Binding's sigils, sub 4 the creature it holds, sub 5 the relics pulled for its pledge, sub 6 The Cast's rings,
      sub 7 The Winch's shaft, sub 8 The Smothering's wicks */
-  descent:24};
+  descent:24,townGift:25};
 /* a decision that is made more than once a floor (a wave's break, a second relic) passes which one as sub */
 const SEED_SUB=4096;
 function mix32(h){h^=h>>>16; h=Math.imul(h,0x7feb352d); h^=h>>>15; h=Math.imul(h,0x846ca68b); h^=h>>>16; return h>>>0;}
@@ -3412,6 +3419,9 @@ function newRun(k,depth,o){
   run={floor:0,oil:20,oilMax:20,baseOilMax:20,spillV:1,ess:0,kit:k,depth:depth||0,wards:K.wards.slice(),rites:K.rites.slice(),relics:[],roster:Object.assign({},K.roster),
     bound:0,kills:0,peakMad:0,omen:null,elite:false,trial:null,next:null,bosses:0,elites:0,seenEvents:[],madPen:0,lampBonus:0,bonusStipend:0,
     seed:typeof o.seed==='number'?o.seed>>>0:freshSeed(),haul:{timber:0,iron:0,tallow:0,curios:0}};
+  if(typeof o==='object'&&o&&o.trial&&TRIALS[o.trial])run.trial=o.trial;
+  run.gift=!o.replay&&townData().gift&&TOWN_GIFTS[townData().gift]?townData().gift:null;
+  if(run.gift==='tether'){run.roster.watcher=(run.roster.watcher||0)+1; run.tetherWatcher=true;}
   /* the Keeper left at a chore in Saltmouth works while you are down (Expansion 3, step 5); one you carry does not */
   run.chore=townChore(k);
   /* a stair walked again (Descend the same stair, or a code pasted in developer mode) leaves no embers (pillar 2) */
@@ -3582,6 +3592,8 @@ function beginFloor(snap){
   F={def,time:0,towers:[],salt:new Map(),foes:[],shots:[],fx:[],souls:[],pools:[],glints:[],links:[],threads:[],cands:[],charges:[],rods:[],wireCd:new Map(),tolls:[],ghosts:[],noise:0,pealT:0,lampRing:0,shatterQ:[],tocsinCalls:[],steps:[],wireBroken:new Set(),heat:0,knell:false,wave:0,phase:'build',queue:[],waveT:0,
      flareT:0,cd:{},nameUsed:false,named:null,hurtFlash:0,shake:0,flickT:0,flickNext:6,lastTier:0,gibs:[],husks:[],feedT:0,feedMad:0,baitMad:0,omen:run.omen||null,elite:!!run.elite,trial:TRIALS[run.trial]?run.trial:null};
   F.born=performance.now();
+  if(!snap&&!run.replay&&run.floor===0&&run.gift==='bone'&&!run.boneRoll&&!F.trial){const face=seeded(SALT.townGift,0,()=>1+Math.floor(RNG()*6)), dv=face>=4?15:-10; run.boneRoll=face; run.boneDelta=dv; run.ess=Math.max(0,run.ess+dv); }
+  if(run.gift==='tune'&&!run.replay&&run.floor===0&&!F.trial)F.cd=wrapRiteCd(F.cd);
   F.lamp={isLamp:true,type:'lamp',x:0,y:0,br:newBranches('lamp'),invested:0,fresh:0};
   buildGeometry();
   /* the Drowned Mother's water: a floor she has noticed you on floods as it begins (a resumed one keeps its water) */
@@ -3652,7 +3664,7 @@ function beginFloor(snap){
   };
   if(!MAP_SYS.active) F.showHints();
 }
-function earlyBonus(){return 6+F.wave*2+Math.min(12,3+F.foes.length);}
+function earlyBonus(){const b=6+F.wave*2+Math.min(12,3+F.foes.length); if(run&&!run.replay&&run.gift==='echo'&&!(F&&F.trial)&&run.floor===0)return Math.floor(b/2); return b;}
 function callWave(){
   if(F&&F.phase==='draft'&&F.blocking){showModal(F.blocking); return;}
   if(!F||paused)return;
@@ -3712,6 +3724,7 @@ function slipCheck(){
   const hs=F.towers.filter(t=>t.kind==='horror');
   if(!hs.length||Math.random()>=ch)return;
   const t=pick(hs);
+  if(t.townTether)run.tetherWatcher=false;
   removeTower(t);
   run.roster[t.type]=Math.max(0,(run.roster[t.type]||0)-1);
   const near=nearestPathPoint(t.x,t.y);
@@ -4586,10 +4599,10 @@ function landingStep(){
         showLanding();})})),actions:[pause]};
   }
   if(r.type==='rest'){
-    const curse=run.relics.filter(k=>RELICS[k].curse);
+    const curse=run.relics.filter(k=>RELICS[k].curse), rb=!run.replay&&run.gift==='ration'&&!(F&&F.trial)?2:0;
     const ch=[
-      {cls:'',tag:'Rest',title:'Tend the lamp',sub:'Restore 8 oil.',fn:step('room',()=>{addOil(8); descend();})},
-      {cls:'',tag:'Rest',title:'Deepen the reservoir',sub:'The lamp holds 3 more oil, and you restore 1.',fn:step('room',()=>{run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+3; updateOilMax(); addOil(1); descend();})}];
+      {cls:'',tag:'Rest',title:'Tend the lamp',sub:'Restore '+(8+rb)+' oil.',fn:step('room',()=>{addOil(8+rb); descend();})},
+      {cls:'',tag:'Rest',title:'Deepen the reservoir',sub:'The lamp holds 3 more oil, and you restore '+(1+rb)+'.',fn:step('room',()=>{run.baseOilMax=(run.baseOilMax!=null?run.baseOilMax:run.oilMax)+3; updateOilMax(); addOil(1+rb); descend();})}];
     if(curse.length)ch.push({cls:'curse',tag:'Rest',title:'Cleanse',sub:'Lay down '+RELICS[curse[0]].n+' and leave it here.',fn:step('room',()=>{removeRelic(curse[0]); descend();})});
     return {kind:'draft',wide:true,title:'A Quiet Landing',body:'Nothing is moving here. Lamp oil <b>'+Math.ceil(run.oil)+'/'+run.oilMax+'</b>.',choices:ch,actions:[pause]};
   }
@@ -5596,7 +5609,7 @@ function castCounts(C){
 }
 /* rite charges, on the floor below the shaft: a rite still cooling casts at once, and the charge is spent only if the cast
    lands. Never the Toll (her beat is her own), Name the Thing (once a floor by its nature) or Overload (paid in oil, not time) */
-function chargesNow(){return run&&run.charge&&run.charge.floor===run.floor?run.charge.n|0:0;}
+function chargesNow(){let n=run&&run.charge&&run.charge.floor===run.floor?run.charge.n|0:0; if(run&&!run.replay&&run.gift==='tune'&&!(F&&F.trial)&&run.floor===0&&!run.tuneSpent)n+=1; return n;}
 function chargeable(k){const R=RITES[k]; return !!R&&R.cd>0&&k!=='toll';}
 /* a charged cast in waiting (F.chg): the rite was cooling, so its wait is set aside while it casts. When the cast lands (its wait
    is set again), the old wait comes back, run on by the time that passed, and the charge is spent. If it never lands (the
@@ -5604,7 +5617,8 @@ function chargeable(k){const R=RITES[k]; return !!R&&R.cd>0&&k!=='toll';}
 function chargeSettle(){
   const g=F&&F.chg; if(!g)return; const k=g.k;
   if((F.cd[k]||0)>0){F.cd[k]=Math.max(0,g.left); F.chg=null;
-    if(run.charge){run.charge.n--; if(run.charge.n<=0)run.charge=null;}
+    if(run&&!run.replay&&run.gift==='tune'&&!F.trial&&run.floor===0&&!run.tuneSpent)run.tuneSpent=true;
+    else if(run.charge){run.charge.n--; if(run.charge.n<=0)run.charge=null;}
     F.fx.push({k:'ring',x:F.lx,y:F.ly,r0:.2,r1:1.3,t:0,dur:.55,col:'237,180,90'}); AUDIO.perfect(); forceUI();}
   else if(mode!==k){F.cd[k]=g.left; F.chg=null; forceUI();}
 }
@@ -6396,9 +6410,11 @@ function tryPlace(c,r){
   const t={kind:it.kind,type:it.type,id:++uid,c,r,x:c+.5,y:r+.5,br:newBranches(it.type),tgt:'first',invested:0,fresh:0,cd:.3,ang:-.7,ring:0,echo:0};
   /* Unpaid Teeth: a free horror is marked, so it never counts toward the tiers that open more */
   if(it.kind==='horror'&&!cost&&freeOpen())t.free=true;
+  if(it.kind==='horror'&&it.type==='watcher'&&run.gift==='tether'&&!run.replay&&!F.trial&&run.tetherWatcher&&!F.towers.some(h=>h.townTether))t.townTether=true;
   /* Choir in the Walls: a horror fielded under it is sung, and goes into the walls when it leaves the board (wallsTake) */
   if(it.kind==='horror'&&has('choirwalls'))t.sung=true;
   spend(t,cost);
+  if(!run.replay&&run.gift==='dip'&&!(F&&F.trial)&&run.floor===0&&it.kind==='ward'&&it.type==='candle'&&!run.dipUsed){run.dipUsed=true; }
   /* a Corpse Candle takes a remembered body first, and Borrowed Flesh raises its phantom on the candle */
   if(it.kind==='ward'&&it.type==='candle'&&corpseKit()){t.corpse=true; t.body=takeBody(bodyNear(c,r),true); if(t.body&&t.body[2]&&HORRORS[t.body[2]])t.ph=t.body[2];}
   if(it.kind==='ward'&&it.type==='mirror')t.rot=Math.atan2(t.y-F.ly,t.x-F.lx)+Math.PI/4;
@@ -10292,12 +10308,13 @@ function codexSee(kind,k){if(devOn)return; const C=codex(); if(C[kind].has(k))re
 function relicGlyph(k){return RELICS[k].n.replace(/^(The|A) /,'').charAt(0);}
 let relKey='', relTipT=0, relTipK='';
 function renderRelics(){
-  const key=run.relics.join(',')+'|'+Object.keys(PATRONS).map(attOf).join(',')+'|'+(run.leech||0)+'|'+Math.ceil(run.spill||0);
+  const key=run.relics.join(',')+'|'+Object.keys(PATRONS).map(attOf).join(',')+'|'+(run.leech||0)+'|'+Math.ceil(run.spill||0)+'|'+(run.gift||'')+'|'+(run.boneRoll||'');
   if(key===relKey)return; relKey=key;
   /* patrons who have noticed you sit first, ringed by Attention */
   let pat='';
   for(const pk of Object.keys(PATRONS)){const P=PATRONS[pk], a=attOf(pk); if(!a)continue;
     pat+='<button class="relchip is-patron" data-rel="patron:'+pk+'" aria-label="'+P.n+', Attention '+a+'" style="--att:'+Math.min(1,a/P.tiers[2].at)+'">'+P.glyph+'</button>';}
+    if(!run.replay&&run.gift&&TOWN_GIFTS[run.gift]){const G=TOWN_GIFTS[run.gift]; pat+='<button class="relchip is-gift" data-rel="gift:'+run.gift+'" aria-label="Town gift: '+G.n.replace(/"/g,'')+'">'+G.glyph+'</button>';}
   $('#relChips').innerHTML=pat+run.relics.map(k=>'<button class="relchip'+(RELICS[k].curse?' is-curse':'')+'" data-rel="'+k+'" aria-label="'+RELICS[k].n.replace(/"/g,'')+'">'+relicGlyph(k)+relicCount(k)+'</button>').join('');
 }
 /* a count on a relic's seal: the Leech Jar's kills, the Oil Reserve's spill */
@@ -10313,9 +10330,15 @@ function relicNote(k){
 }
 function relicTip(k,btn){
   const tip=$('#relTip');
+  tip.classList.remove('is-gift');
   if(relTipK===k&&!tip.hidden){relicTipHide(); return;}
   relTipK=k;
-  if(k.startsWith('patron:')){
+  if(k.startsWith('gift:')){
+    const gk=k.slice(5), G=TOWN_GIFTS[gk];
+    tip.classList.remove('is-curse','is-patron'); tip.classList.add('is-gift');
+    const rollTxt=gk==='bone'&&run&&run.boneRoll?' Rolled '+run.boneRoll+' ('+(run.boneDelta>0?'+'+run.boneDelta:run.boneDelta)+' essence).':'';
+    tip.innerHTML='<span class="reltag">Town gift · '+G.from+(F&&F.trial?' · Quiet under a Trial':'')+'</span><b>'+G.n+'</b><span>'+G.gain+' <i>Price: '+G.price+'</i>'+rollTxt+'</span>';
+  }else if(k.startsWith('patron:')){
     const p=k.slice(7), P=PATRONS[p], n=patTier(p), offs=(run.offs||[]).filter(o=>OFFERINGS[o].pair?OFFERINGS[o].pair.includes(p):OFFERINGS[o].p===p).map(o=>OFFERINGS[o].n);
     tip.classList.remove('is-curse'); tip.classList.add('is-patron');
     tip.innerHTML='<span class="reltag">Patron · Attention '+attOf(p)+(n?' · '+P.tiers[n-1].n:'')+'</span><b>'+P.n+'</b><span>'
@@ -10332,7 +10355,7 @@ function relicTip(k,btn){
   clearTimeout(relTipT); relTipT=setTimeout(relicTipHide,6000);
 }
 function relicTipHide(){$('#relTip').hidden=true; relTipK=''; clearTimeout(relTipT);}
-$('#relChips').addEventListener('click',ev=>{const b=ev.target.closest('[data-rel]'); if(b&&(RELICS[b.dataset.rel]||b.dataset.rel.startsWith('patron:')))relicTip(b.dataset.rel,b);});
+$('#relChips').addEventListener('click',ev=>{const b=ev.target.closest('[data-rel]'); if(b&&(RELICS[b.dataset.rel]||b.dataset.rel.startsWith('patron:')||b.dataset.rel.startsWith('gift:')))relicTip(b.dataset.rel,b);});
 /* the card takes no taps; the next tap anywhere else puts it away (on click, rule 5) */
 document.addEventListener('click',ev=>{if(!$('#relTip').hidden&&!ev.target.closest('[data-rel]'))relicTipHide();},true);
 
@@ -10433,6 +10456,7 @@ function showBook(){
       if(!hasSeen('relics',k))return bookEntry(bookSeal('?'),'???','','Not yet found.','is-locked');
       const now=held.includes(k);
       return bookEntry(bookSeal(relicGlyph(k),R.curse),R.n,(R.curse?'Cursed':'Relic')+(now?' · Carried now':resting(k)?' · Not on the stair for now':'')+(R.needs?' · Needs '+R.needs.map(w=>wdef(w).n).join(' or '):'')+(R.notKit?' · Never offered to '+R.notKit.map(q=>KITS[q].n.replace(/^The /,'the ')).join(' or '):''),(R.lore?'<i>'+R.lore+'</i> ':'')+R.d,now?'is-held':'');}).join('');
+    list+='<h4 class="book-h">Town gifts</h4>'+Object.keys(TOWN_GIFTS).map(gk=>{const G=TOWN_GIFTS[gk], now=!!(run&&!run.replay&&run.gift===gk); return bookEntry('<span class="book-seal is-gift">'+G.glyph+'</span>',G.n,'Town gift · '+G.from+(now?' · Carried now':''),G.gain+' <i>Price: '+G.price+'</i>',now?'is-held':'');}).join('');
   }
   const html='<div class="book-tabs">'+tabs.map(([k,n])=>'<button class="btn'+(k===t?' call':'')+'" data-book="'+k+'" aria-pressed="'+(k===t)+'">'+n+'</button>').join('')+'</div>'
     +'<p class="book-intro">'+intro+'</p><div class="book-list">'+list+'</div>';
@@ -10583,6 +10607,13 @@ const TIPS={
   townbuild:{where:'town',when:()=>false,title:'Build',text:'Choose a piece on the tray, then tap the ground: green, it stands; red, the line above the tray says why not. Tap a piece you built to take it up, and all it cost comes back. Lamps and braziers push back the dark. Nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting: a Mossy Headstone carves the oldest, and a tap reads it.'},
   townkeepers:{where:'town',when:()=>false,title:'The Keepers',text:'Those you have freed wait in the square, each at their own footing. A dark footing is a Keeper you have not freed: tap it to see what frees them. Talk to one to carry the lamp down as them, or to set them to a chore.'},
   townchore:{where:'town',when:()=>false,title:'A chore',text:'A Keeper at a chore goes to their work and puts materials by for every floor you clear. Never embers, never anything on the stair: it comes up with the haul. The Keeper you carry down does no chore. One at a time.'},
+  gift:{where:'town',when:()=>false,title:'Workshops and the town gift',text:'Spend the haul at a ruined workshop’s door to restore it, and again to light its windows. Each restored workshop offers one gift for the next descent, and every gift carries a price on the stair. You may carry only one town gift down at a time; it is off on a replayed stair and on any floor under a Trial.'},
+  gift_dip:{when:()=>!!(run&&!run.replay&&run.gift==='dip'&&!(F&&F.trial)&&run.floor===0&&F.phase==='build'),title:'The Chandler’s Dip',text:'Your first Candle Ward on floor 1 costs no essence, but the lamp burns 0.5 smaller until floor 2.',target:()=>coachEl('#relChips [data-rel="gift:dip"]')},
+  gift_ration:{when:()=>!!(run&&!run.replay&&run.gift==='ration'&&!(F&&F.trial)&&run.floor===0&&F.phase==='build'),title:'Whaler’s Ration',text:'Each Rest on the stair restores 2 more oil, but the merchant asks 10% more essence this descent.',target:()=>coachEl('#relChips [data-rel="gift:ration"]')},
+  gift_tune:{when:()=>!!(run&&!run.replay&&run.gift==='tune'&&!(F&&F.trial)&&run.floor===0&&F.phase==='build'),title:'Capacitor Tune',text:'You start floor 1 with +1 rite charge, but every rite’s first wait on floor 1 is 25% longer.',target:()=>coachEl('#relChips [data-rel="gift:tune"]')},
+  gift_echo:{when:()=>!!(run&&!run.replay&&run.gift==='echo'&&!(F&&F.trial)&&run.floor===0&&F.phase==='build'),title:'Echoing Iron',text:'Floor 1 shows both wave 1 and wave 2 in the strip above the board, but calling a wave early on floor 1 pays half the bonus.',target:()=>coachEl('#relChips [data-rel="gift:echo"]')},
+  gift_tether:{when:()=>!!(run&&!run.replay&&run.gift==='tether'&&!(F&&F.trial)&&run.floor===0&&F.phase==='build'),title:'Familiar’s Tether',text:'You start the descent with a bound Watcher in your roster, and its madness counts from the first wave whether you field it or not.',target:()=>coachEl('#relChips [data-rel="gift:tether"]')},
+  gift_bone:{when:()=>!!(run&&!run.replay&&run.gift==='bone'&&!(F&&F.trial)&&run.floor===0&&F.phase==='build'),title:'The Loaded Bone',text:'A single bone is rolled as you step onto the stair: 4 to 6 adds 15 essence on floor 1, and 1 to 3 takes 10.',target:()=>coachEl('#relChips [data-rel="gift:bone"]')},
   /* on the floor below The Cast, the first time a rite cools while a charge is held */
   charge:{when:()=>chargesNow()>0&&ritesNow().some(k=>chargeable(k)&&(F.cd[k]||0)>0&&!riteSilent(k)),title:'A rite charge',
     text:'You carry a rite charge down from The Cast. Tap a rite that is still cooling and it casts at once; its own wait goes on as it was. Charges last this floor only.',
@@ -11153,10 +11184,16 @@ function renderPreview(){
   /* the Whaler sees what the next wave will cost before calling it */
   const due=idx>=0?blubberDue():null, drink=due&&due.lamps?'<span class="pv-oil'+(due.oil?'':' is-fed')+'">Lamps drink '+due.lamps+(due.oil?' · −'+due.oil+' oil':' · fed')+'</span>':'';
   const hd=run.draw&&run.draw.herald, herald=idx>=0&&hd&&hd.wave===idx?'<span class="pv-herald">Herald · '+FOES[hd.type].n+'</span><span class="chip" title="'+FOES[hd.type].n+'"><canvas width="44" height="44" data-f="'+hd.type+'"></canvas></span>':'';
-  const key=label+'|'+wn+'|'+drink+'|'+herald+'|'+JSON.stringify(groups);
+  let echoHtml='';
+  if(run&&!run.replay&&run.gift==='echo'&&!(F&&F.trial)&&run.floor===0&&idx===0&&F.def.waves[1]){
+    const g2={}, wn2=F.def.wnames?F.def.wnames[1]:'';
+    for(const raw of F.def.waves[1]){const sg=scaledGroup(raw); g2[sg.type]=(g2[sg.type]||0)+sg.count;}
+    echoHtml='<span class="pl pv-echo">Wave 2 of '+n+'</span>'+(wn2?'<span class="pv-n">'+wn2+'</span>':'')+Object.keys(g2).map(k=>'<span class="chip" title="'+FOES[k].n+'"><canvas width="44" height="44" data-f="'+k+'"></canvas>×'+g2[k]+'</span>').join('');
+  }
+  const key=label+'|'+wn+'|'+drink+'|'+herald+'|'+JSON.stringify(groups)+'|'+echoHtml;
   if(key===previewKey)return; previewKey=key;
   const el=$('#preview');
-  el.innerHTML='<span class="pl">'+label+'</span>'+(wn?'<span class="pv-n">'+wn+'</span>':'')+drink+herald+Object.keys(groups).map(k=>'<span class="chip" title="'+FOES[k].n+'"><canvas width="44" height="44" data-f="'+k+'"></canvas>×'+groups[k]+'</span>').join('');
+  el.innerHTML='<span class="pl">'+label+'</span>'+(wn?'<span class="pv-n">'+wn+'</span>':'')+drink+herald+Object.keys(groups).map(k=>'<span class="chip" title="'+FOES[k].n+'"><canvas width="44" height="44" data-f="'+k+'"></canvas>×'+groups[k]+'</span>').join('')+echoHtml;
   el.querySelectorAll('canvas').forEach(c=>drawIcon(c,{kind:'foe',type:c.dataset.f}));
 }
 /* the rites you hold, plus the wisp on floors that fork (it is never a gift) */
@@ -11819,12 +11856,12 @@ const TOWN_W=24, TOWN_H=24, TOWN_T=16;
    cemetery's iron fence: none can be walked. . earth, , cobbles, = the Head-frame's deck, where you stand to go down */
 const TOWN_MAP=[
   '^^^^^^^^^^^^^^^^^^^^^^^^',
-  '^.T....||||||||||....T.^',
-  '^......|+.####.+|......^',
-  '^.T....|..####..|...T..^',
-  '^......|+.+..+.+|......^',
-  '^......||||..||||......^',
-  '^T.........,,.........T^',
+  '^.T###.||||||||||....T.^',
+  '^..###.|+.####.+|......^',
+  '^.T###.|..####..|...T..^',
+  '^......|+.+..+.+|..###.^',
+  '^..###.||||..||||..###.^',
+  '^T.###.....,,......###T^',
   '^.....,,,,,,,,,,,,.....^',
   '^#####,,,o,,,,o,,,#####^',
   '^#####,,,,HHHH,,,,#####^',
@@ -11835,9 +11872,9 @@ const TOWN_MAP=[
   '^.T...,,,,,,,,,,,,..T..^',
   '^.....,,,,,,,,,,,,.....^',
   '^...T......,,...#####..^',
-  '^..........,,...#####.T^',
-  '^.T........,,...#####..^',
-  '^..........,,...#####..^',
+  '^......###.,,##.#####.T^',
+  '^.T....###.,,##.#####..^',
+  '^..........,,##.#####..^',
   '^.......,,,,,,,,.......^',
   '^^^^^^^^^^^^^^^^^^^^^^^^',
   '~~~~~~~~~~~~~~~~~~~~~~~~',
@@ -11850,6 +11887,169 @@ const TOWN_HOUSES=[
   {x:18,y:8,w:5,h:4,door:2,win:[0,4],lit:[true,false],chim:3},
   {x:16,y:16,w:5,h:4,door:1,win:[3],lit:[true],ruin:true},
   {x:10,y:2,w:4,h:2,crypt:true}];
+
+/* Step 6: Workshops and the one town gift, with its price (EXPANSION3_TOWN.md §0.3 & §6.1) */
+const TOWN_BUILDING_KEYS=['brazier','quay','smithy','belfry','menagerie'];
+const TOWN_GIFTS={
+  dip:{k:'dip',n:'The Chandler’s Dip',from:'The Ember Brazier',workshop:'brazier',glyph:'C',
+    gain:'Your first Candle Ward on floor 1 is free.',
+    price:'The lamp burns 0.5 smaller until floor 2.'},
+  ration:{k:'ration',n:'Whaler’s Ration',from:'The Try-Works',workshop:'quay',glyph:'W',
+    gain:'+2 oil at each Rest.',
+    price:'The merchant asks 10% more this descent.'},
+  tune:{k:'tune',n:'Capacitor Tune',from:'The Galvanic Smithy',workshop:'smithy',glyph:'T',
+    gain:'+1 rite charge on floor 1.',
+    price:'Every rite’s first wait on floor 1 is 25% longer.'},
+  echo:{k:'echo',n:'Echoing Iron',from:'The Cracked Belfry',workshop:'belfry',glyph:'E',
+    gain:'Floor 1 shows waves 1 and 2 exactly.',
+    price:'The early-call bonus is halved on floor 1.'},
+  tether:{k:'tether',n:'Familiar’s Tether',from:'The Ossuary Menagerie',workshop:'menagerie',glyph:'F',
+    gain:'Start with a bound Watcher.',
+    price:'Its madness counts from the first wave, fielded or not.'},
+  bone:{k:'bone',n:'The Loaded Bone',from:'The Drowned Oar',workshop:'brazier',glyph:'L',
+    gain:'Roll: 4 to 6 is +15 essence on floor 1.',
+    price:'1 to 3 is −10 essence on floor 1.'}
+};
+const TOWN_WORKSHOPS={
+  brazier:{id:'brazier',n:'The Ember Brazier',keeper:'lamplighter',gift:'dip',extraGift:'bone',
+    x:7,y:17,w:3,h:2,door:1,win:[0,2],chim:1,
+    costs:[{iron:20,tallow:15},{iron:40,tallow:35,curios:2}],
+    ruinTxt:'A cold chandlery kettle and cracked brick beside the southern stones.',
+    builtTxt:'Tallow simmers in the iron pan. Ambrose dips spare wicks for the stair, and an old knucklebone sits on the ledge.'},
+  quay:{id:'quay',n:'The Try-Works',keeper:'whaler',gift:'ration',
+    x:3,y:5,w:3,h:2,door:1,win:[0,2],chim:2,
+    costs:[{timber:30,iron:20},{timber:50,iron:35,tallow:15}],
+    ruinTxt:'Collapsed try-pots and salt-rotted beams on the western rise.',
+    builtTxt:'Blubber-oil renders slow and clear under the flue, bottled for the landings below.'},
+  smithy:{id:'smithy',n:'The Galvanic Smithy',keeper:'galvanist',gift:'tune',
+    x:13,y:17,w:2,h:3,door:0,win:[0,1],chim:1,
+    costs:[{timber:20,iron:30},{timber:40,iron:55,tallow:20}],
+    ruinTxt:'A roofless forge of drowned iron and tangled copper bus-bars.',
+    builtTxt:'Leyden jars hum along the bench, wound tight enough to jump a rite’s cooldown once.'},
+  belfry:{id:'belfry',n:'The Cracked Belfry',keeper:'bellringer',gift:'echo',
+    x:19,y:4,w:3,h:3,door:1,win:[0,2],
+    costs:[{timber:25,iron:25},{timber:45,iron:45,curios:2}],
+    ruinTxt:'Fallen bell-timbers and split slate on the north-east cliff.',
+    builtTxt:'The bronze hangs plumb again; its hum carries back what climbs the first two waves.'},
+  menagerie:{id:'menagerie',n:'The Ossuary Menagerie',keeper:'occultist',gift:'tether',
+    x:3,y:1,w:3,h:3,door:1,win:[0,2],
+    costs:[{timber:30,tallow:15,curios:1},{timber:50,iron:30,tallow:25,curios:2}],
+    ruinTxt:'Broken iron ribs and chalkless pens beside the cemetery wall.',
+    builtTxt:'A Watcher perches inside the chalk ring, tethered to follow you down.'}
+};
+for(const k of TOWN_BUILDING_KEYS){
+  const W=TOWN_WORKSHOPS[k]; W.dx=W.x+W.door; W.dy=W.y+W.h; W.act={w:k};
+  const hObj={id:W.id,x:W.x,y:W.y,w:W.w,h:W.h,door:W.door,win:W.win.slice(),lit:W.win.map(()=>false),ruin:true,chim:W.chim};
+  W.house=hObj; TOWN_HOUSES.push(hObj);
+}
+function buildingsFix(b){
+  b=b&&typeof b==='object'?b:{};
+  const o={};
+  for(const k of TOWN_BUILDING_KEYS)o[k]=Math.max(0,Math.min(2,b[k]|0));
+  return o;
+}
+function loadedBoneFace(seed){
+  const s=(typeof seed==='number'?seed:(run&&run.seed)||1)>>>0;
+  return 1+Math.min(5,Math.floor(roll(s,0,SALT.townGift)*6));
+}
+function wrapRiteCd(cd){
+  const base=cd&&typeof cd==='object'?cd:{};
+  return new Proxy(base,{
+    set(o,k,v){
+      if(typeof v==='number'&&v>0&&!(o[k]>0)&&run&&!run.replay&&run.gift==='tune'&&!(F&&F.trial)&&run.floor===0){
+        run.tuneWait=run.tuneWait||{};
+        if(!run.tuneWait[k]&&!(F.chg&&F.chg.k===k)){
+          run.tuneWait[k]=true; v=+(v*1.25).toFixed(4);
+        }
+      }
+      o[k]=v; return true;
+    }
+  });
+}
+function townSyncBuildings(){
+  const B=(townData().buildings)||buildingsFix();
+  let changed=false;
+  for(const k of TOWN_BUILDING_KEYS){
+    const W=TOWN_WORKSHOPS[k], h=W.house, t=Math.max(0,Math.min(2,B[k]|0)), ruin=t<1, lit=t>=2;
+    if(h.ruin!==ruin||h.lit.some(x=>x!==lit)){
+      h.ruin=ruin; h.lit=h.win.map(()=>lit); changed=true;
+    }
+  }
+  return changed;
+}
+function townWorkshopAt(tx,ty){
+  for(const k of TOWN_BUILDING_KEYS){
+    const W=TOWN_WORKSHOPS[k];
+    if((tx>=W.x&&tx<W.x+W.w&&ty>=W.y&&ty<W.y+W.h)||(tx===W.dx&&ty===W.dy))return W;
+  }
+  return null;
+}
+function townCostText(c){
+  return HAUL_KEYS.filter(k=>c[k]>0).map(k=>c[k]+' '+(k==='curios'&&c[k]===1?'curio':k)).join(', ');
+}
+function townCanAfford(c,res){
+  const R=haulFix(res||townData().res);
+  return HAUL_KEYS.every(k=>!c[k]||R[k]>=c[k]);
+}
+function townUpgrade(id){
+  const W=TOWN_WORKSHOPS[id]; if(!W)return false;
+  const T=townData(); T.buildings=buildingsFix(T.buildings); T.res=haulFix(T.res);
+  const tier=T.buildings[id]|0; if(tier>=2)return false;
+  const cost=W.costs[tier]; if(!townCanAfford(cost,T.res))return false;
+  for(const k of HAUL_KEYS)if(cost[k])T.res[k]-=cost[k];
+  T.buildings[id]=tier+1;
+  townSave();
+  TOWN_ART=null; townArt();
+  townHud(); townShowTip();
+  return true;
+}
+function townSetGift(g){
+  const T=townData(); T.buildings=buildingsFix(T.buildings);
+  if(!g){T.gift=null; townSave(); townShowTip(); return true;}
+  const G=TOWN_GIFTS[g]; if(!G||!T.buildings[G.workshop])return false;
+  T.gift=g; townSave(); townShowTip();
+  return true;
+}
+function townWorkshop(id,note){
+  const W=TOWN_WORKSHOPS[id]; if(!W)return;
+  TWN.path=null; TWN.goal=null; TWN.ptr=null;
+  const T=townData(); T.buildings=buildingsFix(T.buildings);
+  const tier=T.buildings[id]|0, G=TOWN_GIFTS[W.gift], acts=[];
+  let body='';
+  if(tier===0){
+    const c1=W.costs[0];
+    body=W.ruinTxt+'<br><span class="statline">Restore for <b>'+townCostText(c1)+'</b> to unlock <b>'+G.n+'</b>: '+G.gain+' <i>Price on the stair: '+G.price+'</i></span>';
+    acts.push({label:'Restore · '+townCostText(c1),primary:true,fn:()=>{
+      if(!townUpgrade(id)){townWorkshop(id,'Not enough in the haul.'); return;}
+      AUDIO.place&&AUDIO.place(); townWorkshop(id,'Restored.');
+    }});
+  }else{
+    const on=T.gift===W.gift;
+    body=W.builtTxt+'<br><span class="statline"><b>'+G.n+'</b> · '+G.gain+' <i>Price: '+G.price+'</i>'+(on?' <b>(Carried next descent)</b>':'')+'</span>';
+    acts.push({label:on?'Leave '+G.n:'Carry '+G.n,primary:!on,fn:()=>{
+      townSetGift(on?null:W.gift); AUDIO.buy&&AUDIO.buy(); closeModal();
+    }});
+    if(W.extraGift){
+      const EG=TOWN_GIFTS[W.extraGift], eon=T.gift===W.extraGift;
+      body+='<br><span class="statline"><b>'+EG.n+'</b> · '+EG.gain+' <i>Price: '+EG.price+'</i>'+(eon?' <b>(Carried next descent)</b>':'')+'</span>';
+      acts.push({label:eon?'Leave '+EG.n:'Carry '+EG.n,fn:()=>{
+        townSetGift(eon?null:W.extraGift); AUDIO.buy&&AUDIO.buy(); closeModal();
+      }});
+    }
+    if(tier===1){
+      const c2=W.costs[1];
+      body+='<br><span class="statline">Light the windows for <b>'+townCostText(c2)+'</b>.</span>';
+      acts.push({label:'Light windows · '+townCostText(c2),fn:()=>{
+        if(!townUpgrade(id)){townWorkshop(id,'Not enough in the haul.'); return;}
+        AUDIO.place&&AUDIO.place(); townWorkshop(id,'The windows are lit.');
+      }});
+    }
+  }
+  acts.push({label:'Leave',fn:closeModal});
+  showModal({title:W.n+(tier===0?' (Ruin)':tier===1?' (Restored)':' (Lit)'),body,note:note||'',actions:acts});
+  $('#mActions').classList.add('town-workshop-actions'); $('#modal .box').scrollTop=0; moreCue();
+}
+
 /* you stand here to go down: the deck in front of the shaft */
 const TOWN_DECK={x:12,y:11.6}, TOWN_SPAWN={x:12,y:14};
 const TOWN_SPEED=3.4, TOWN_NIGHT='rgba(3,4,8,.83)';
@@ -11957,6 +12157,7 @@ const TOWN_BARKS={
 /* what must always be walkable to: the Head-frame's deck, and every Keeper's station and workplace. townCanPlace() refuses any
    piece that would cut one off from the Head-frame's side of the square, and nothing may stand on one (townBuildable) */
 const TOWN_KEEP=[[11,11],[12,11]].concat(...Object.values(TOWN_STAND).map(s=>[s.st,s.wk]));
+for(const k of TOWN_BUILDING_KEYS)TOWN_KEEP.push([TOWN_WORKSHOPS[k].dx,TOWN_WORKSHOPS[k].dy]);
 const TOWN_KEPT=new Set(TOWN_KEEP.map(([x,y])=>y*TOWN_W+x));
 function townKept(x,y){return TOWN_KEPT.has(y*TOWN_W+x);}
 function haulFix(h){h=h&&typeof h==='object'?h:{}; return {timber:Math.max(0,h.timber|0),iron:Math.max(0,h.iron|0),tallow:Math.max(0,h.tallow|0),curios:Math.max(0,h.curios|0)};}
@@ -12017,7 +12218,7 @@ const TWN={on:false,k:0,dpr:1,W:0,H:0,vw:0,vh:0,cx:0,cy:0,p:{x:12,y:14,face:'u',
 function townFix(t){
   t=t&&typeof t==='object'?t:{};
   const o={v:1,startInTown:!!t.startInTown,px:+t.px,py:+t.py,visits:Math.max(0,t.visits|0),res:haulFix(t.res),decos:[],graves:[],graveN:Math.max(0,t.graveN|0),
-    chore:KITS[t.chore]&&TOWN_CHORES[t.chore]?t.chore:null};
+    chore:KITS[t.chore]&&TOWN_CHORES[t.chore]?t.chore:null,buildings:buildingsFix(t.buildings),gift:typeof t.gift==='string'&&TOWN_GIFTS[t.gift]?t.gift:null};
   if(!isFinite(o.px)||!isFinite(o.py)||!townFree(o.px,o.py)){o.px=TOWN_SPAWN.x; o.py=TOWN_SPAWN.y;}
   /* the deaths: each with its own number n, so a headstone stays bound to one even as older ones are let go */
   const gs=(Array.isArray(t.graves)?t.graves:[]).filter(g=>g&&typeof g==='object'&&typeof g.kit==='string'), had=new Set();
@@ -12393,6 +12594,7 @@ function townStamp(r,glow){
 /* everything compiled for the square, once */
 let TOWN_ART=null;
 function townArt(){
+  if(townSyncBuildings())TOWN_ART=null;
   if(TOWN_ART)return TOWN_ART;
   const props=[], lights=[], em=[];
   const add=(cv,x,y,base)=>props.push({c:cv,x,y,base});
@@ -12502,7 +12704,7 @@ function townOpen(){
 function townShowTip(){
   const T=townData(), b=TWN.build, moved=TOWN_NOTE.length>0&&!b, standing=TWN.crowd.some(e=>!e.shade);
   const k=moved?'moved':tipFresh('town')?'town':haulTotal(T.res)>0&&tipFresh('townhaul')?'townhaul':b?(tipFresh('townbuild')?'townbuild':null)
-    :standing&&tipFresh('townkeepers')?'townkeepers':TWN.crowd.some(e=>e.work)&&tipFresh('townchore')?'townchore':null;
+    :standing&&tipFresh('townkeepers')?'townkeepers':TWN.crowd.some(e=>e.work)&&tipFresh('townchore')?'townchore':(Object.values(T.buildings||{}).some(v=>v>0)||T.gift)&&tipFresh('gift')?'gift':null;
   TWN.card=k;
   $('#townCardWrap').hidden=!k;
   if(!k)return;
@@ -12563,6 +12765,13 @@ function townKeeperAt(tx,ty){for(let i=0,c=TWN.crowd;i<c.length;i++){const e=c[i
 function townTapTile(tx,ty){
   if(TWN.build){townBuildTap(tx,ty); return;}
   /* a Keeper: walk up and talk (at once if you stand by them). A shade needs no walk: it says who is missing */
+  const wk=townWorkshopAt(tx,ty);
+  if(wk){
+    if(Math.hypot(TWN.p.x-(wk.dx+.5),TWN.p.y-(wk.dy+.5))<1.5){TWN.path=null; TWN.goal=null; townWorkshop(wk.id); return;}
+    TWN.goal={workshop:wk.id}; TWN.path=townPathTo(wk.dx,wk.dy);
+    if(TWN.path&&TWN.path.length){const e=TWN.path[TWN.path.length-1]; TWN.mark=.6; TWN.mx=e.x; TWN.my=e.y;} else TWN.goal=null;
+    return;
+  }
   const kp=townKeeperAt(tx,ty);
   if(kp){
     if(kp.shade){TWN.path=null; TWN.goal=null; townShadeCard(kp.k); return;}
@@ -12752,7 +12961,7 @@ function townSetChore(k){
   const T=townData(); T.chore=k&&TOWN_CHORES[k]&&!kitLocked(k)?k:null;
   townSave(); townKeepers(); townShowTip();
 }
-function townActLabel(n){return n==='frame'?'Descend the stair':n.k?(n.shade?'Who stood here?':'Talk to '+(KITS[n.k].who||KITS[n.k].n)):'Read the headstone';}
+function townActLabel(n){return n==='frame'?'Descend the stair':n.w?TOWN_WORKSHOPS[n.w].n:n.k?(n.shade?'Who stood here?':'Talk to '+(KITS[n.k].who||KITS[n.k].n)):'Read the headstone';}
 /* what the button at the bottom offers where you stand: the Head-frame's deck, a Keeper (or the footing of one not freed), or a
    headstone within reach, whichever is nearest. Nothing while you build */
 function townNearAct(){
@@ -12761,6 +12970,7 @@ function townNearAct(){
   d=Math.hypot(P.x-TOWN_DECK.x,P.y-TOWN_DECK.y); if(d<1.4){best='frame'; bd=d;}
   for(const s of townData().decos){if(s.id!=='stone')continue; d=Math.hypot(P.x-(s.c+.5),P.y-(s.r+.5)); if(d<1.3&&d<bd){bd=d; best=s;}}
   for(let i=0,c=TWN.crowd;i<c.length;i++){const e=c[i]; d=Math.hypot(P.x-e.x,P.y-e.y); if(d<1.5&&d<bd){bd=d; best=e;}}
+  for(const k of TOWN_BUILDING_KEYS){const W=TOWN_WORKSHOPS[k]; d=Math.hypot(P.x-(W.dx+.5),P.y-(W.dy+.5)); if(d<1.5&&d<bd){bd=d; best=W.act;}}
   return best;
 }
 /* one step of the walk, real time (rule 14). Steering and walking a path both move the feet and slide along what is solid */
@@ -12794,6 +13004,7 @@ function townStep(dt){
   if(TWN.goal==='frame'&&!TWN.path&&!R){TWN.goal=null; if(near==='frame')townDescend();}
   if(TWN.goal&&TWN.goal.stone&&!TWN.path&&!R){const d=TWN.goal.stone; TWN.goal=null; if(Math.hypot(P.x-(d.c+.5),P.y-(d.r+.5))<1.6)townEpitaph(d);}
   if(TWN.goal&&TWN.goal.keeper&&!TWN.path&&!R){const e=TWN.goal.keeper; TWN.goal=null; if(Math.hypot(P.x-e.x,P.y-e.y)<1.8)townTalk(e.k);}
+  if(TWN.goal&&TWN.goal.workshop&&!TWN.path&&!R){const wid=TWN.goal.workshop, wk=TOWN_WORKSHOPS[wid]; TWN.goal=null; if(wk&&Math.hypot(P.x-(wk.dx+.5),P.y-(wk.dy+.5))<1.8)townWorkshop(wid);}
   if(TWN.ghost&&TWN.ghost.t>0){TWN.ghost.t-=dt; if(TWN.ghost.t<=0)TWN.ghost=null;}
 }
 /* a flame's light steps a pixel or two in and out (still with Reduce Motion or Lite) */
@@ -12931,7 +13142,7 @@ window.addEventListener('blur',()=>{TWN.ptr=null;});
 $('#townCard').addEventListener('click',()=>{if(!TWN.card)return; const k=TWN.card; TWN.card=null; if(k==='moved')TOWN_NOTE=[]; else tipSeen(k); townShowTip();});
 $('#townBack').addEventListener('click',()=>{townClose(); showTitle();});
 $('#townAct').addEventListener('click',()=>{if(!TWN.on||!TWN.near||TWN.build)return; const n=TWN.near;
-  if(n==='frame')townDescend(); else if(n.k){if(n.shade)townShadeCard(n.k); else townTalk(n.k);} else townEpitaph(n);});
+  if(n==='frame')townDescend(); else if(n.w)townWorkshop(n.w); else if(n.k){if(n.shade)townShadeCard(n.k); else townTalk(n.k);} else townEpitaph(n);});
 $('#townBuild').addEventListener('click',()=>{if(TWN.on)townBuildSet(!TWN.build);});
 /* the tray's chips: tap one to choose it, again to put it down (on click, rule 5) */
 $('#townTrow').addEventListener('click',ev=>{

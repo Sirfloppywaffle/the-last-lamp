@@ -22,6 +22,17 @@ w("""- **Creature health:** `hp = base × m`, where `m = 1.15 + 0.35 × floorInd
 - **Horror stats** are fixed (no upgrade trees). Wards upgrade along branches: 3 branches × 3 tiers, and **only one branch per ward may reach tier 3** (the capstone).
 """)
 
+w("## Saltmouth workshops and town gifts\n")
+w("Workshops have tiers 0–2: ruined, restored, then lit windows. Tier 1 offers the gift. One gift is copied into the run; every gain and price is off on replay and under a Trial. The Loaded Bone is offered at the Brazier until the Drowned Oar opens in step 7.\n")
+w("| Workshop | Restore (0 → 1) | Light windows (1 → 2) |\n|---|---|---|")
+for k,v in D['TOWN_WORKSHOPS'].items():
+    costs=[', '.join('%s %s'%(n,r) for r,n in c.items()) for c in v['costs']]
+    w("| %s | %s | %s |"%(v['n'],*costs))
+w("\n| Gift | Gain | Price |\n|---|---|---|")
+for v in D['TOWN_GIFTS'].values():
+    w("| %s | %s | %s |"%(v['n'],v['gain'],v['price']))
+w("\nThe Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).\n")
+
 w("## Creatures\n")
 w("| Key | Name | HP | Speed | Oil | Essence | Radius | Traits |\n|---|---|---|---|---|---|---|---|")
 for k,f in D['FOES'].items():

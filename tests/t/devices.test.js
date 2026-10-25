@@ -75,6 +75,30 @@ const DEV=[
     await p.screenshot({path:(process.argv[3]||'.')+'/town-talk-'+nm+'.png'});
     await p.evaluate(()=>{document.querySelector('#mActions').querySelectorAll('button')[2].click(); __t.setDev(false); __t.townKeepers();});
     if(!(keepers.n===4&&keepers.label==='Talk to Dr. Lucan Voss'&&keepers.out&&keepers.one&&keepers.still&&keepers.talk))console.log('FAIL '+nm+': Keepers on this screen',JSON.stringify(keepers));
+    /* Step 6: workshop cards scroll on short phones; gifts keep the board fixed. */
+    const workshop=await p.evaluate(()=>{
+      __t.setDev(true);
+      const T=__t.townData(); T.res={timber:500,iron:500,tallow:500,curios:50};
+      __t.townUpgrade('brazier'); __t.townWorkshop('brazier');
+      return document.getElementById('mTitle').textContent;
+    });
+    for(const button of await p.locator('#mActions button').all()){
+      await button.scrollIntoViewIfNeeded();
+      const r=await button.boundingBox();
+      if(!r||r.height<44||r.x<ins.left||r.x+r.width>w-(ins.right||0)+1||r.y<0||r.y+r.height>h+1)console.log('FAIL '+nm+': workshop action out of reach',r);
+    }
+    await p.locator('#mActions button').first().scrollIntoViewIfNeeded();
+    await p.screenshot({path:(process.argv[3]||'.')+'/town-workshop-'+nm+'.png'});
+    if(!/Restored/.test(workshop))console.log('FAIL '+nm+': workshop card missing');
+    await p.locator('#mActions button').first().click();
+    await p.evaluate(()=>{
+      __t.townClose(); __t.newRun(); __t.renderRelics();
+    });
+    const beforeGift=await p.locator('#board').boundingBox();
+    await p.locator('#relChips .is-gift').click();
+    const giftTip=await p.locator('#relTip').boundingBox(), afterGift=await p.locator('#board').boundingBox();
+    if(!giftTip||giftTip.x<0||giftTip.y<0||giftTip.x+giftTip.width>w+1||giftTip.y+giftTip.height>h+1||JSON.stringify(beforeGift)!==JSON.stringify(afterGift))console.log('FAIL '+nm+': gift inspection shifts board or leaves screen');
+    await p.evaluate(()=>{__t.setDev(false);});
     await p.evaluate(()=>__t.townClose());
     const townOk=town.walkIn&&town.btns&&town.resStill&&town.cover&&town.whole&&town.still&&town.buildOk;
     if(!townOk)console.log('FAIL '+nm+': Saltmouth on this screen',JSON.stringify(town));
