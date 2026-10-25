@@ -511,7 +511,7 @@ input[type=range]::-moz-range-track {
 .town-trow{pointer-events:auto;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;touch-action:pan-x;scrollbar-width:none;overscroll-behavior:contain;padding:1px}
 .town-trow::-webkit-scrollbar{display:none}
 /* centred when they fit, scrolled from the first when they don't */
-.town-trow>:first-child{margin-left:auto}.town-trow>:last-child{margin-right:auto}
+.town-trow>:first-child,.town-trow>[hidden]:first-child+*{margin-left:auto}.town-trow>:last-child{margin-right:auto}
 .town-chip{flex:0 0 auto;width:64px;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;padding:3px 2px 4px;
   border-radius:8px;border:1px solid var(--seam);background:rgba(14,17,19,.92);color:var(--bone);font:inherit;cursor:pointer;touch-action:pan-x}
 .town-chip img{display:block;image-rendering:pixelated;image-rendering:crisp-edges;pointer-events:none}
@@ -12894,12 +12894,16 @@ function townTrayBuild(){
     const t=document.createElement('span'); t.textContent=TOWN_DECOS[id].s;
     b.append(im,t); row.appendChild(b);
   }
+  const b=document.createElement('button'); b.type='button'; b.id='townMaterials'; b.className='town-chip'; b.hidden=!devOn;
+  b.setAttribute('aria-label','Dev: add 100 timber, iron, tallow and curios');
+  b.innerHTML='<span>Dev</span><b>+100</b><span>each</span>'; row.prepend(b);
 }
 function townTrayUI(){
   const T=townData();
-  for(const b of $('#townTrow').children){const id=b.dataset.deco, D=TOWN_DECOS[id];
+  const grant=$('#townMaterials'); if(grant)grant.hidden=!devOn;
+  for(const b of $('#townTrow').querySelectorAll('[data-deco]')){const id=b.dataset.deco, D=TOWN_DECOS[id];
     b.classList.toggle('on',TWN.pick===id); b.setAttribute('aria-pressed',TWN.pick===id?'true':'false');
-    b.classList.toggle('poor',!!townShort(D.cost,T.res)||(D.grave&&!gravesWaiting(T).length));}
+    b.classList.toggle('poor',!!(townShort(D.cost,T.res)||(D.grave&&!gravesWaiting(T).length)));}
 }
 /* Build: the tray takes the bottom of the screen (the Head-frame's button is hidden while it shows), the HUD's button reads
    Done. Nothing else moves */
@@ -13149,6 +13153,13 @@ $('#townAct').addEventListener('click',()=>{if(!TWN.on||!TWN.near||TWN.build)ret
 $('#townBuild').addEventListener('click',()=>{if(TWN.on)townBuildSet(!TWN.build);});
 /* the tray's chips: tap one to choose it, again to put it down (on click, rule 5) */
 $('#townTrow').addEventListener('click',ev=>{
+  if(!TWN.build)return;
+  if(ev.target.closest('#townMaterials')){
+    if(!devOn)return;
+    /* townData keeps developer materials and everything bought with them in its private copy. */
+    const T=townData(); for(const k of HAUL_KEYS)T.res[k]+=100;
+    TWN.ghost=null; townHud(); townTrayUI(); townSay('+100 of each material. Developer mode: not saved.'); return;
+  }
   const b=ev.target.closest('[data-deco]'); if(!b||!TWN.build)return;
   TWN.pick=TWN.pick===b.dataset.deco?null:b.dataset.deco; TWN.ghost=null;
   townTrayUI(); townSay(townPickLine(TWN.pick));
