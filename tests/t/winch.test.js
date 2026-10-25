@@ -267,12 +267,13 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   await touch('touchStart',sx,sy); await p.waitForTimeout(40);
   const down=await p.evaluate(()=>({tx:__t.DESC.tx,x:__t.DESC.x,steer:!!__t.DESC.steer}));
   await touch('touchMove',sx-g.u,sy); await p.waitForTimeout(40); await touch('touchMove',sx-g.u*1.5,sy+20); await p.waitForTimeout(400);
-  const moved=await p.evaluate(()=>({tx:+__t.DESC.tx.toFixed(2),x:+__t.DESC.x.toFixed(2),prompt:document.getElementById('dscPrompt').className}));
+  const moved=await p.evaluate(()=>({tx:+__t.DESC.tx.toFixed(2),x:__t.DESC.x,prompt:document.getElementById('dscPrompt').className}));
   await shot('winch-steer');
   await touch('touchEnd');
-  /* let go while still moving left, the lantern first carries on, then swings back: wait for the swing (up to 3 s) rather than a fixed beat, so a slow runner can't fail it */
+  /* let go while still moving left, the lantern first carries on, then swings back: wait for the swing (up to 3 s).
+     Keep the wait and assertion unrounded so a passing coordinate cannot round back onto the strict boundary. */
   await p.waitForFunction(m=>__t.DESC.x>m+.3,moved.x,{timeout:3000}).catch(()=>{});
-  const lifted=await p.evaluate(()=>({x:+__t.DESC.x.toFixed(2),steer:!!__t.DESC.steer,held:__t.DESC.held}));
+  const lifted=await p.evaluate(()=>({x:__t.DESC.x,steer:!!__t.DESC.steer,held:__t.DESC.held}));
   ok(down.steer&&Math.abs(down.tx-down.x)<.05,'a touch anywhere takes the lantern where it hangs, without moving it (relative, not under the thumb)',down);
   ok(Math.abs(moved.tx-(down.tx-1.5))<.05&&moved.x<-.5&&/is-gone/.test(moved.prompt),'a drag left a tile and a half moves it a tile and a half left, and the prompt goes',moved);
   /* changed on purpose (Criss, #112): the cable is fixed over the middle, so a lantern let go swings back toward it */
@@ -373,20 +374,27 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
      shrinks the light; Lite and reduceMotion draw without error */
   await p.evaluate(()=>{const T0=__t; T0.setLite(false);});
   await p.evaluate(()=>{const C=__shaft(12); const T=__t; C.relicK=T.relicPool(false)[0]; C.ps=[{ta:C.t+1.9,x:-1,st:'glint',ct:0,relic:false},{ta:C.t+1.9,x:1,st:'glint',ct:0,relic:true}];
-    C.am=[]; C.rb=[{side:-1,d:C.pos+.8,jut:1.2},{side:1,d:C.pos+3.6,jut:1.2}]; C.x=C.tx=C.rx=0; T.winchStep(.01);});
+    C.am=[]; C.rb=[{side:-1,d:C.pos+.8,jut:1.2},{side:1,d:C.pos+3.6,jut:1.2}]; C.x=C.tx=C.rx=0; C.t=.5; C.phase='tip';});
   await p.waitForTimeout(500);
   await shot('winch-glints');
   const px=await p.evaluate(()=>{const T=__t, C=T.DESC, K=T.WINCHK, cv=document.getElementById('dscCv'), c=cv.getContext('2d'), w=cv.width, h=cv.height, u=T.winchU(w,h);
     const avg=(x,y,r)=>{const d=c.getImageData(Math.round(x-r),Math.round(y-r),Math.round(r*2),Math.round(r*2)).data; let R=0,G=0,B=0; for(let i=0;i<d.length;i+=4){R+=d[i];G+=d[i+1];B+=d[i+2];} const n=d.length/4; return [R/n,G/n,B/n];};
     const gy=T.winchGlintY(h/devicePixelRatio,w/devicePixelRatio)*devicePixelRatio, fy=h*K.FY;
     const lum=a=>a[0]+a[1]+a[2];
-    /* a rib's root, near the wall: one in the light, one far beyond it */
-    const near=avg(w/2-1.85*u,fy+(C.rb[0].d-C.pos)*u,u*.08), far=avg(w/2+1.85*u,fy+(C.rb[1].d-C.pos)*u,u*.08), wallNear=avg(w/2-1.85*u,fy+(C.rb[0].d-C.pos+.6)*u,u*.08);
-    return {gold:avg(w/2-u,gy,u*.12),pale:avg(w/2+u,gy,u*.12),gy,near:lum(near),wallNear:lum(wallNear),far:lum(far)};});
+    /* Freeze the painter's time as well as the simulation; compare the far rib with the same pixels without it. */
+    const draw=()=>T.DSC_GAME.winch.draw(c,w,h,1), farAt=()=>avg(w/2+1.85*u,fy+(C.rb[1].d-C.pos)*u,u*.08);
+    draw();
+    const near=avg(w/2-1.85*u,fy+(C.rb[0].d-C.pos)*u,u*.08), far=farAt(), wallNear=avg(w/2-1.85*u,fy+(C.rb[0].d-C.pos+.6)*u,u*.08);
+    const out={gold:avg(w/2-u,gy,u*.12),pale:avg(w/2+u,gy,u*.12),gy,near:lum(near),wallNear:lum(wallNear),far:lum(far)};
+    const ribs=C.rb; C.rb=[ribs[0]]; draw(); C.rb=ribs;
+    const wallFar=farAt(); out.hidden=far.every((v,i)=>Math.abs(v-wallFar[i])<=1);
+    draw(); return out;});
   /* coldness is blue less red: the pale glint is 40 colder than the gold. (Before this compared blue alone, which held only when
      the game had switched itself to Lite under load; in Full the gold star's white heart carries blue too, on main as here) */
   ok(px.gold[0]>px.gold[2]+15&&px.pale[2]>=px.pale[0]-4&&px.pale[1]>px.gold[1]-40&&(px.pale[2]-px.pale[0])>(px.gold[2]-px.gold[0])+40,'the gold glint reads warm and the drowned man’s cold and pale',px);
-  ok(px.wallNear-px.near>8&&px.far<12,'a rib in the light shows dark against the lit stone; one beyond it is lost in the dark',px);
+  /* The dark mask's RGB (3,4,5) sums to 12. Require the far rib to stay at or below that floor and match
+     the wall within one channel step (compositing quantization), while retaining the lit contrast check. */
+  ok(px.wallNear-px.near>8&&px.far<=12&&px.hidden,'a rib in the light shows dark against the lit stone; one beyond it is lost in the dark',px);
   const dim=await p.evaluate(()=>{const T=__t, C=T.DESC; const g0=C.glow; T.winchSnag(); T.winchSnag(); return [g0,C.glow];});
   ok(dim[1]<dim[0],'a snag shrinks the light',dim);
   await p.evaluate(()=>{const T=__t; T.setLite(true); const C=T.DESC; C.ps[0].st='fall'; C.ps[1].st='hook'; C.caught=1;});

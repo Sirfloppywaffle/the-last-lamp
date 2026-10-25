@@ -18,6 +18,29 @@ Every table below is generated from the live code (`index.html`) by `tests/gen-d
 - **Forks (floors 2 and 3):** a creature chooses only as it walks across a fork (anything born past one keeps its way), taking, in order: the way a working Weir leaves open (Watchers and bosses ignore it; a Behemoth smashes it and keeps the main way); the way a live Will-o’-Wisp marks (bosses ignore it); the main way if it is a Gnasher or a boss; its side if it is a Wretch's Skitterling born before the fork (one each way); otherwise the way with fewer path points inside **your** light (candles, Watchers; the lamp never counts), or, for Shades and Stalkers, the way with more. Ties, and anything under a Flare, keep the main way. Every branch is longer than the stretch of main way it replaces.
 - **Horror stats** are fixed (no upgrade trees). Wards upgrade along branches: 3 branches × 3 tiers, and **only one branch per ward may reach tier 3** (the capstone).
 
+## Saltmouth workshops and town gifts
+
+Workshops have tiers 0–2: ruined, restored, then lit windows. Tier 1 offers the gift. One gift is copied into the run; every gain and price is off on replay and under a Trial. The Loaded Bone is offered at the Brazier until the Drowned Oar opens in step 7.
+
+| Workshop | Restore (0 → 1) | Light windows (1 → 2) |
+|---|---|---|
+| The Ember Brazier | 20 iron, 15 tallow | 40 iron, 35 tallow, 2 curios |
+| The Try-Works | 30 timber, 20 iron | 50 timber, 35 iron, 15 tallow |
+| The Galvanic Smithy | 20 timber, 30 iron | 40 timber, 55 iron, 20 tallow |
+| The Cracked Belfry | 25 timber, 25 iron | 45 timber, 45 iron, 2 curios |
+| The Ossuary Menagerie | 30 timber, 15 tallow, 1 curios | 50 timber, 30 iron, 25 tallow, 2 curios |
+
+| Gift | Gain | Price |
+|---|---|---|
+| The Chandler’s Dip | Your first Candle Ward on floor 1 is free. | The lamp burns 0.5 smaller until floor 2. |
+| Whaler’s Ration | +2 oil at each Rest. | The merchant asks 10% more this descent. |
+| Capacitor Tune | +1 rite charge on floor 1. | Every rite’s first wait on floor 1 is 25% longer. |
+| Echoing Iron | Floor 1 shows waves 1 and 2 exactly. | The early-call bonus is halved on floor 1. |
+| Familiar’s Tether | Start with a bound Watcher. | Its madness counts from the first wave, fielded or not. |
+| The Loaded Bone | Roll: 4 to 6 is +15 essence on floor 1. | 1 to 3 is −10 essence on floor 1. |
+
+The Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip marks its free Candle; dismantling that Candle restores the free placement, while selling another tower leaves the gift spent. Older saves without the marker keep their recorded gift use. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).
+
 ## Creatures
 
 | Key | Name | HP | Speed | Oil | Essence | Radius | Traits |
