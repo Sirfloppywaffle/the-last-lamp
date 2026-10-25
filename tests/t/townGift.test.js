@@ -41,6 +41,21 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(wkRes.resAfter1.iron===480&&wkRes.resAfter1.tallow===485,'tier 1 brazier deducts 20 iron and 15 tallow',wkRes.resAfter1);
   ok(wkRes.g1==='dip'&&wkRes.g2==='ration','only one town gift is held in ll-town.gift at a time',wkRes);
 
+  /* Loaded gifts require their own restored workshop, using normalized tiers rather than raw saved values. */
+  const loadedGifts=await p.evaluate(()=>{
+    const out=[];
+    for(const [gift,G] of Object.entries(__t.TOWN_GIFTS)){
+      for(const [tier,restored] of [[undefined,false],[null,false],[-1,false],[.5,false],['bad',false],[0,false],[1,true],[2,true],[99,true],['1',true]]){
+        const buildings=Object.fromEntries(Object.keys(__t.TOWN_WORKSHOPS).map(k=>[k,k===G.workshop?tier:2]));
+        const got=__t.townFix({buildings,gift}).gift;
+        out.push({gift,tier,got,want:restored?gift:null});
+      }
+      out.push({gift,got:__t.townFix({gift}).gift,want:null});
+    }
+    return out;
+  });
+  ok(loadedGifts.every(x=>x.got===x.want),'loaded gifts survive only when their own normalized workshop is restored',loadedGifts.filter(x=>x.got!==x.want));
+
   /* 2. Seam & #relBar seal + #relTip, old saves have no gift, and disabled on run.replay */
   const seamRes=await p.evaluate(()=>{
     for(const id of Object.keys(__t.TOWN_WORKSHOPS))__t.townUpgrade(id);

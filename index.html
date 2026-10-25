@@ -12220,6 +12220,7 @@ function townFix(t){
   t=t&&typeof t==='object'?t:{};
   const o={v:1,startInTown:!!t.startInTown,px:+t.px,py:+t.py,visits:Math.max(0,t.visits|0),res:haulFix(t.res),decos:[],graves:[],graveN:Math.max(0,t.graveN|0),
     chore:KITS[t.chore]&&TOWN_CHORES[t.chore]?t.chore:null,buildings:buildingsFix(t.buildings),gift:typeof t.gift==='string'&&TOWN_GIFTS[t.gift]?t.gift:null};
+  if(o.gift&&!o.buildings[TOWN_GIFTS[o.gift].workshop])o.gift=null;
   if(!isFinite(o.px)||!isFinite(o.py)||!townFree(o.px,o.py)){o.px=TOWN_SPAWN.x; o.py=TOWN_SPAWN.y;}
   /* the deaths: each with its own number n, so a headstone stays bound to one even as older ones are let go */
   const gs=(Array.isArray(t.graves)?t.graves:[]).filter(g=>g&&typeof g==='object'&&typeof g.kit==='string'), had=new Set();
