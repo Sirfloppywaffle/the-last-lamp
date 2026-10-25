@@ -13,8 +13,8 @@
 | 1 | Design doc (`EXPANSION3_TOWN.md`) | #116 | merged | — |
 | 2 | Pixel compiler, the square, rain, light, Keeper sprite, Head-frame, Walk Saltmouth, `ll-town` | #117 | merged | 18.10.0 |
 | 3 | The haul | #119 | merged | 18.11.0 |
-| 4 | Build mode: paths, lights, fences, trees, headstones of past runs | #122 | in review | 18.12.0 |
-| 5 | Keepers in town, Take the lamp (swap kit), chores | — | not started | 18.13.0 |
+| 4 | Build mode: paths, lights, fences, trees, headstones of past runs | #122 | merged | 18.12.0 |
+| 5 | Keepers in town, Take the lamp (swap kit), chores | #123 | in review | 18.13.0 |
 | 6 | Workshops and the one town gift, with its price | — | not started | 18.14.0 |
 | 7 | Rescued souls: the cage, the Drowned Oar, the Toothmonger | — | not started | 18.15.0 |
 | 8 | The three shrines and the tide-pools | — | not started | 18.16.0 |
@@ -57,7 +57,7 @@ Everything is in `index.html`, in the section `/* ---------------- Saltmouth (Ex
 - `townArt()` builds everything once into `TOWN_ART = {ground, props, lights, em, spr, …}`.
   - `props` are `{c, x, y, base}` in world pixels; `base` is the y of the bottom of their footprint, and they are drawn in order of `base` with the Keeper slotted in. **To add anything that stands up (a lamp, a fence, a person), push a prop with the right `base` and re-sort.**
   - `lights` are `{x, y, r, f}`: a pool of light at world pixels, radius in art pixels, `f` how much it flickers (0 for steady). `em` are things drawn again after the dark (glowing panes, flames).
-- **Since step 4**, `TOWN_ART` is rebuildable: `props0`/`lights0`/`em0` and `ground0` are the fixed square; `townDecoSync()` lays what is built over them (call it after anything changes `townData().decos`). **A new building or person must not be walled in:** add the tile in front of its door or station to `TOWN_KEEP`, and `townCanPlace()` refuses any piece that would cut it off. If a step turns earth into building tiles, `townFix()` already drops (and pays back) any piece that stood there.
+- **Since step 4**, `TOWN_ART` is rebuildable: `props0`/`lights0`/`em0` and `ground0` are the fixed square; `townDecoSync()` lays what is built over them (call it after anything changes `townData().decos`). **A new building or person must not be walled in:** add the tile in front of its door or station to `TOWN_KEEP`, and `townCanPlace()` refuses any piece that would cut it off (since step 5 `townReaches()` needs **every** place in `TOWN_KEEP` to be reachable, and `townFix()` drops, newest first, any saved piece that would wall one in). Step 5 put every Keeper's station and workplace there; **a workshop in step 6 that stands on a Keeper's workplace must move that workplace in `TOWN_STAND`** (the Nameless and Agathe share the two tiles before the crypt, because the cemetery's side pockets are sealed). If a step turns earth into building tiles, `townFix()` already drops (and pays back) any piece that stood there.
 
 **State**
 - `TOWN` (kept in `ll-town`) via `townData()`; `TOWN_DEV` is developer mode's copy. `townFix(t)` merges any stored shape onto the defaults `{v:1, startInTown:false, px, py, visits}` and keeps unknown fields, so a later step adds `res`, `graves`, etc. there.

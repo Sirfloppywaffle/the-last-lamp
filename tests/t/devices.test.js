@@ -53,6 +53,28 @@ const DEV=[
     await p.screenshot({path:(process.argv[3]||'.')+'/town-build-'+nm+'.png'});
     await p.evaluate(()=>__t.townBuildSet(false)); await p.waitForTimeout(100);
     await p.screenshot({path:(process.argv[3]||'.')+'/town-'+nm+'.png'});
+    /* the Keepers (step 5): "Talk to Dr. Lucan Voss" sits where Descend the stair does, inside the safe area, a thumb, on one line,
+       and showing it moves nothing; the talk card's buttons all fit on the screen */
+    const keepers=await p.evaluate(ins=>{
+      ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      const T=__t.TWN, cv=document.getElementById('townCv'); __t.setDev(true); __t.townKeepers();
+      T.p.x=12; T.p.y=14; T.cx=null; __t.townFrame(1/30);
+      const c0=q(cv), back0=q(document.getElementById('townBack')), res0=q(document.getElementById('townRes'));
+      const e=T.crowd.find(x=>x.k==='galvanist'); T.p.x=e.x; T.p.y=e.y+1.2; __t.townFrame(1/30);
+      const act=document.getElementById('townAct'), a=q(act), o={a,label:act.textContent,n:T.crowd.filter(x=>!x.shade).length};
+      o.one=act.getBoundingClientRect().height<=64&&act.scrollWidth<=act.clientWidth+1&&getComputedStyle(act).whiteSpace!=='normal'||act.getClientRects().length===1;
+      o.out=inside(a)&&a[3]-a[1]>=44&&a[2]-a[0]>=44;
+      o.still=JSON.stringify(q(cv))===JSON.stringify(c0)&&JSON.stringify(q(document.getElementById('townBack')))===JSON.stringify(back0)&&JSON.stringify(q(document.getElementById('townRes')))===JSON.stringify(res0);
+      __t.townTalk('galvanist');
+      const bs=[...document.querySelectorAll('#mActions button')].map(q), mo=q(document.querySelector('#modal .box')||document.getElementById('mBody'));
+      o.talk=bs.length===3&&bs.every(r=>inside(r)&&r[3]-r[1]>=40);
+      return o;},ins);
+    await p.waitForTimeout(150);
+    await p.screenshot({path:(process.argv[3]||'.')+'/town-talk-'+nm+'.png'});
+    await p.evaluate(()=>{document.querySelector('#mActions').querySelectorAll('button')[2].click(); __t.setDev(false); __t.townKeepers();});
+    if(!(keepers.n===4&&keepers.label==='Talk to Dr. Lucan Voss'&&keepers.out&&keepers.one&&keepers.still&&keepers.talk))console.log('FAIL '+nm+': Keepers on this screen',JSON.stringify(keepers));
     await p.evaluate(()=>__t.townClose());
     const townOk=town.walkIn&&town.btns&&town.resStill&&town.cover&&town.whole&&town.still&&town.buildOk;
     if(!townOk)console.log('FAIL '+nm+': Saltmouth on this screen',JSON.stringify(town));
