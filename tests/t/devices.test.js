@@ -76,6 +76,13 @@ const DEV=[
     await p.evaluate(()=>{document.querySelector('#mActions').querySelectorAll('button')[2].click(); __t.setDev(false); __t.townKeepers();});
     if(!(keepers.n===4&&keepers.label==='Talk to Dr. Lucan Voss'&&keepers.out&&keepers.one&&keepers.still&&keepers.talk))console.log('FAIL '+nm+': Keepers on this screen',JSON.stringify(keepers));
     /* Step 6: workshop cards scroll on short phones; gifts keep the board fixed. */
+    await p.evaluate(()=>{__t.setDev(true); __t.townBuildSet(true);});
+    const materials=p.locator('#townMaterials'); await materials.scrollIntoViewIfNeeded();
+    const mr=await materials.boundingBox();
+    if(!mr||mr.width<44||mr.height<44||mr.x<(ins.left||0)||mr.x+mr.width>w-(ins.right||0)+1||mr.y<(ins.top||0)||mr.y+mr.height>h-(ins.bottom||0)+1)
+      console.log('FAIL '+nm+': dev materials control out of reach',mr);
+    await materials.click();
+    await p.evaluate(()=>__t.townBuildSet(false));
     const workshop=await p.evaluate(()=>{
       __t.setDev(true);
       const T=__t.townData(); T.res={timber:500,iron:500,tallow:500,curios:50};

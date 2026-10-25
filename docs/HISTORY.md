@@ -3,6 +3,7 @@
 What changed, who did it, and why. Newest first. Add your PR's line under **Unreleased**; Claude moves it into a version when it ships.
 
 ## Unreleased
+- **Developer: town materials without a run.** In Saltmouth's Build tray, developer mode shows **Dev +100 each**: tap to add 100 timber, iron, tallow and curios. Materials, decorations and workshop upgrades stay in the developer town's private copy; leaving developer mode or reloading restores the saved town. The control is hidden and inactive in normal play. Tray affordability refreshes correctly after repeated grants. No balance changes.
 - **Fix: Chandler's Dip resets whenever its marked Candle is removed**, including a Corpse Candle burning out between waves. Other towers leave the gift spent. The reset now lives in the shared removal path; a burnout regression covers the next Candle inheriting Dip. No balance changes.
 - **Saved town gifts:** loading Saltmouth clears a selected gift when its supplying workshop is not restored, using normalized building tiers just as gift selection does.
 - **Workshop review repairs:** the Chandler’s Dip follows its gifted Candle through upgrades and saves; dismantling that Candle restores the free placement, while other sales preserve gift use. Repair the Saltmouth code-map row and describe all Step 6 preview images. Compare the Winch’s hidden rib against the same scene without it, retain the lit-rib contrast check, and use unrounded touch positions in its swing test.
