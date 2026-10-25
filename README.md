@@ -18,3 +18,4 @@ It works on phones held upright or sideways, foldables, tablets and desktops. Yo
 - **Give Claude a task:** tell Claude in chat, or open a **Task for Claude** issue and point Claude to it.
 - **Green light:** open the pull request, tap its **▶ Play this version** link to try it on your phone (it has its own save), read the review conversation, and tap **Merge**.
 - **Something broke:** New issue → **Bug report**. Screenshots help.
+- **Test town building:** tap the title heading seven times to enable developer mode, then **Walk Saltmouth → Build → Dev +100 each**. Tap again for more timber, iron, tallow and curios. Materials and anything bought with them are temporary: reloading or leaving developer mode restores your saved town.
