@@ -39,7 +39,7 @@ Workshops have tiers 0–2: ruined, restored, then lit windows. Tier 1 offers th
 | Familiar’s Tether | Start with a bound Watcher. | Its madness counts from the first wave, fielded or not. |
 | The Loaded Bone | Roll: 4 to 6 is +15 essence on floor 1. | 1 to 3 is −10 essence on floor 1. |
 
-The Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).
+The Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip marks its free Candle; dismantling that Candle restores the free placement, while selling another tower leaves the gift spent. Older saves without the marker keep their recorded gift use. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).
 
 ## Creatures
 

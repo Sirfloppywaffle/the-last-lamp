@@ -144,6 +144,41 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(giftsRes.tether.tetherRoster===1&&giftsRes.tether.tetherMadUnfielded===2&&giftsRes.tether.tetherMadFielded===2,'Familiar’s Tether: starts with 1 bound Watcher whose madness counts fielded or not',giftsRes.tether);
   ok(giftsRes.bone.salt===25&&giftsRes.bone.essHi1===giftsRes.bone.baseEss+15&&giftsRes.bone.essHi1===giftsRes.bone.essHi2&&giftsRes.bone.rollHi1===giftsRes.bone.rollHi2&&giftsRes.bone.sameDraw&&giftsRes.bone.essLo===giftsRes.bone.baseEss-10,'Loaded Bone: SALT.townGift=25, +15 on 4..6, -10 on 1..3, same seed gives same roll',giftsRes.bone);
 
+  /* Dip belongs to its free Candle, even after upgrades and a save: other sales cannot restore it. */
+  const dipSales=await p.evaluate(()=>{
+    const T=__t, out={}; T.townSetGift('dip'); T.newRun('lamplighter',0); T.setP(true); T.run.ess=1000;
+    const place=type=>{
+      const it={kind:'ward',type}, spots=[];
+      for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++)if(!T.placeProblem(it,c,r))spots.push([c,r]);
+      spots.sort((a,b)=>Math.hypot(a[0]+.5-T.F.lx,a[1]+.5-T.F.ly)-Math.hypot(b[0]+.5-T.F.lx,b[1]+.5-T.F.ly));
+      if(!spots.length)throw new Error('No legal tile for '+type);
+      T.setSel(it); T.tryPlace(...spots[0]); return T.F.towers.at(-1);
+    };
+    const free=place('candle'), paid=place('candle'), other=place('harpoon'), cost=T.wardCost('candle');
+    out.marked=free.townDip===true&&!paid.townDip&&!other.townDip;
+    T.sellTower(paid,true); out.paidSale=T.run.dipUsed===true&&T.wardCost('candle')===cost;
+    T.sellTower(other,true); out.otherSale=T.run.dipUsed===true&&T.wardCost('candle')===cost;
+    T.buyBranch(free,0); out.upgraded=free.invested>0;
+    T.checkpoint(); const save=JSON.parse(localStorage.getItem('ll-save-v2'));
+    out.saved=save.run.dipUsed===true&&save.towers.find(t=>t.id===free.id).townDip===true;
+    T.resumeFrom(save); T.setP(true);
+    const restored=T.F.towers.find(t=>t.id===free.id);
+    out.restored=restored.townDip===true&&T.run.dipUsed===true&&T.wardCost('candle')===cost;
+    T.sellTower(restored,true); out.freeSale=T.run.dipUsed===false&&T.wardCost('candle')===0;
+    const ess=T.run.ess, replacement=place('candle');
+    out.replaced=replacement.townDip===true&&T.run.ess===ess&&T.run.dipUsed===true&&T.wardCost('candle')===cost;
+    /* Older saves lack ownership information: never guess that an unmarked Candle owns the gift. */
+    delete save.towers.find(t=>t.id===free.id).townDip;
+    T.resumeFrom(save); T.setP(true); T.sellTower(T.F.towers.find(t=>t.id===free.id),true);
+    out.oldSave=T.run.dipUsed===true&&T.wardCost('candle')===cost;
+    return out;
+  });
+  ok(dipSales.marked,'Dip marks only the gift-funded Candle',dipSales);
+  ok(dipSales.paidSale&&dipSales.otherSale,'selling a paid Candle or another ward preserves Dip use',dipSales);
+  ok(dipSales.upgraded&&dipSales.saved&&dipSales.restored,'Dip ownership survives upgrades and save/resume',dipSales);
+  ok(dipSales.freeSale&&dipSales.replaced,'selling the gifted Candle restores one free replacement',dipSales);
+  ok(dipSales.oldSave,'an unmarked Candle in an older save never restores Dip',dipSales);
+
   /* 4. Disabled under every Trial in TRIALS */
   const trialRes=await p.evaluate(()=>{
     const trials=Object.keys(__t.TRIALS), bad=[];
