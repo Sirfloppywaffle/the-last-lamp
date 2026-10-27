@@ -45,7 +45,8 @@ const shots=process.argv[3]||'.';
     }
     const v=Object.values(sig); out.distinct=new Set(v).size===v.length;
     return out;});
-  ok(art.kits.length===5&&art.frames===60&&art.sizes&&art.heads,'five Keepers, four facings, three steps, each 16 by 24',art);
+  /* step 7 adds the two rescued souls (the Croupier, the Toothmonger) to the compiled figures: seven in all */
+  ok(art.kits.length===7&&art.frames===84&&art.sizes&&art.heads,'five Keepers and two rescued souls, four facings, three steps, each 16 by 24',art);
   ok(art.alpha,'no anti-aliasing: every pixel of every Keeper is fully there or not at all',art);
   ok(art.outline,'every Keeper has a dark outline',art);
   ok(art.distinct,'each Keeper looks different',art);

@@ -20,7 +20,7 @@ Every table below is generated from the live code (`index.html`) by `tests/gen-d
 
 ## Saltmouth workshops and town gifts
 
-Workshops have tiers 0–2: ruined, restored, then lit windows. Tier 1 offers the gift. One gift is copied into the run; every gain and price is off on replay and under a Trial. The Loaded Bone is offered at the Brazier until the Drowned Oar opens in step 7.
+Workshops have tiers 0–2: ruined, restored, then lit windows. Tier 1 offers the gift. One gift is copied into the run; every gain and price is off on replay and under a Trial. The Loaded Bone is offered at the Drowned Oar and the Pawned Relic at the Toothmonger's stall, once each soul is freed (step 7).
 
 | Workshop | Restore (0 → 1) | Light windows (1 → 2) |
 |---|---|---|
@@ -38,8 +38,23 @@ Workshops have tiers 0–2: ruined, restored, then lit windows. Tier 1 offers th
 | Echoing Iron | Floor 1 shows waves 1 and 2 exactly. | The early-call bonus is halved on floor 1. |
 | Familiar’s Tether | Start with a bound Watcher. | Its madness counts from the first wave, fielded or not. |
 | The Loaded Bone | Roll: 4 to 6 is +15 essence on floor 1. | 1 to 3 is −10 essence on floor 1. |
+| The Pawned Relic | One relic you name is never offered this descent. | The Toothmonger keeps 25 tallow. |
 
-The Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip marks its free Candle; dismantling that Candle restores the free placement, while selling another tower leaves the gift spent. Older saves without the marker keep their recorded gift use. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).
+The Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).
+
+## Saltmouth: rescued souls (step 7)
+
+On the landings after floors 2, 3, 4, a door holds a cage with chance **0.4**, at most once a run, rolled on `SALT.cage = 26` after the descent doors and never on a Trial door, a descent door or the Deep Stair. The lock takes **15** essence. Freed souls go up with the haul's one credit, even from a death.
+
+The Croupier plays knucklebones at the Drowned Oar for **10** timber or tallow (a win pays it back twice over). The Pawned Relic costs **25** tallow each descent, taken as you go down; the relic is taken out of offers after the seeded roll.
+
+| The Toothmonger gives | You get |
+|---|---|
+| 10 timber | 5 iron |
+| 10 iron | 5 tallow |
+| 10 tallow | 5 timber |
+| 1 curio | 20 tallow |
+| 40 tallow | 1 curio |
 
 ## Creatures
 
@@ -557,6 +572,7 @@ One door on each fork into floor 2 or 3 carries a Trial; passing it pays a relic
 | `reliquary` | A Forgotten Reliquary | Reliquary | Another gift lies here, waiting to be taken. |
 | `bones` | The Knucklebones | Gamble | Something hooded waits at a stone table. It will play knucklebones for the essence the stair would burn. |
 | `deep` | The Deep Stair | Elite | No landing. The next floor is fiercer, with tougher creatures and more of them. Clear it and take a relic. |
+| `cage` | A Locked Cage | Cage | Someone from Saltmouth hangs over the drop in an iron cage. Pay essence to open it, or walk past. |
 
 ## Shrine pacts
 

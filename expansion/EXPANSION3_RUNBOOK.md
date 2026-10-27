@@ -15,8 +15,8 @@
 | 3 | The haul | #119 | merged | 18.11.0 |
 | 4 | Build mode: paths, lights, fences, trees, headstones of past runs | #122 | merged | 18.12.0 |
 | 5 | Keepers in town, Take the lamp (swap kit), chores | #123 | merged | 18.13.0 |
-| 6 | Workshops and the one town gift, with its price | #124 | open | 18.14.0 |
-| 7 | Rescued souls: the cage, the Drowned Oar, the Toothmonger | — | not started | 18.15.0 |
+| 6 | Workshops and the one town gift, with its price | #124 | merged | 18.14.0 |
+| 7 | Rescued souls: the cage, the Drowned Oar, the Toothmonger | PR_NUM | open | 18.15.0 |
 | 8 | The three shrines and the tide-pools | — | not started | 18.16.0 |
 | 9 | The Keeper's Lodge (one room) | — | not started | 18.17.0 |
 | 10 | Release v19.0.0 | — | not started | 19.0.0 |
@@ -33,7 +33,7 @@
 2. **Pixel art, §0.4.** No anti-aliasing (every pixel fully opaque or clear), integer scale only, a dark low-contrast ground, light only from small warm sources, outlines one shade darker than the fill (pure-dark outlines on characters only). Characters 16×24. The stair stays painted.
 3. **Rule 24: developer mode never writes `ll-town`.** Use `townData()` and `townSave()`; they already handle it. Never call `store.set('ll-town',…)` yourself.
 4. **Rule 15: saves.** `ll-town` only grows: add fields with defaults in `townFix()`, never rename or remove one. `ll-save-v2` stays loadable: anything new in `run` needs a default when an old save resumes (`resumeFrom()`).
-5. **Rule 11b: stair rolls.** Anything the town changes about what the stair offers is applied *after* the seeded roll, as a filter, and saved in `run`. A new roll goes through `seeded(SALT.<new>,…)` with a new salt **added at the end of `SALT`** (the next free number is 25). Never reuse or renumber a salt.
+5. **Rule 11b: stair rolls.** Anything the town changes about what the stair offers is applied *after* the seeded roll, as a filter, and saved in `run`. A new roll goes through `seeded(SALT.<new>,…)` with a new salt **added at the end of `SALT`** (the next free number is 27). Never reuse or renumber a salt.
 6. **Rule 23: teach every change.** Each step ships a `TIPS` entry (town tips use `where:'town'` and show on the town's card, see §3), a line in `#rulesList` (the existing `<li><b>Saltmouth.</b>…` line grows; add another `<li>` only for a big new system), and a Grimoire entry for any new creature, ward, rite, relic, kit or patron.
 7. **Rule 22: balance.** Every number is "shape only" until Criss plays it. List every new or changed number in the PR, old → new.
 8. **Pillar 2 (§0.3): every gain has a price.** Only one town gift per descent. Chores pay town materials only, never embers or anything on the stair.
@@ -173,7 +173,7 @@ Numbers marked *shape* are for playtest. Model and effort are Claude's settings;
 **Goal:** a cage on a landing holds someone from Saltmouth; free them and they open a place in town.
 
 **Build:**
-- **The cage:** a new stair roll with **`SALT.cage`** (the next free salt after step 6) in `makeDoors()`: on the landings after floors 2, 3 and 4, at most once a run, one door may carry a cage instead of a room (never a Trial door, never a descent door). Behind it: pay 15 essence (*shape*, never below 0) to free them, or walk past. Saved in `run.rescued` and credited with the haul.
+- **The cage:** a new stair roll with **`SALT.cage`** (26; built as `cageDoor()`, called from `toFork()` after the descent doors are rolled and before the Binding's gate, so `makeDoors()` and every old seed's doors are untouched): on the landings after floors 2, 3 and 4, at most once a run, one door may carry a cage instead of a room (never a Trial door, never a descent door). Behind it: pay 15 essence (*shape*, never below 0) to free them, or walk past. Saved in `run.rescued` and credited with the haul.
 - Who: the Croupier (opens the Drowned Oar), the Toothmonger (opens the stall). Already rescued souls are not caged again (`ll-town.rescued`).
 - **The Drowned Oar** (third in `TOWN_HOUSES`, now restored when rescued): a table to play Knucklebones against the Croupier for town materials, reusing `bonesPractice()`'s table with a wager of timber or tallow (no essence, no embers). The Loaded Bone gift (step 6) moves here if it fits better.
 - **The Toothmonger's stall:** trade materials at fixed rates, and the **Pawned Relic** gift: pick one non-cursed relic that is never offered this descent, price 25 tallow (§0.3). Filter it out of `relicPool()` after the roll, never before (rule 11b).
@@ -191,7 +191,7 @@ Numbers marked *shape* are for playtest. Model and effort are Claude's settings;
 
 **Build:**
 - Three shrines in the north cemetery (inside the fence, on its free tiles), each built for 25 iron, 25 tallow, 2 curios (*shape*). Pixel art in the crypt's style; each with its patron's colour (her brine, the Sun's gold, the Mouths' violet).
-- **A black candle** at one shrine is that descent's one town gift (shares `run.gift` with step 6): that patron's offer is among floor 1's, and its Attention starts at 1 (`addAtt()`). Applied after the seeded roll.
+- **A black candle** at one shrine is that descent's one town gift (shares `run.gift` with steps 6 and 7: a gift with a `soul` or `workshop` opens by `townGiftOpen()`; give the candle its own test there): that patron's offer is among floor 1's, and its Attention starts at 1 (`addAtt()`). Applied after the seeded roll, the way step 7's `unpawn()` filters the Pawned Relic. Leave the south overlook's new stall (tiles 4–5, row 18) and the souls' tiles in `TOWN_KEEP` clear.
 - **Tide-pools:** three spots on the south overlook (add a short stair down to the shore if the map needs it). Each refills after every descent with a small stack of one material (*shape*: 3 to 6) or, rarely, a bottle with a lore line. Tapped to collect. Use `Math.random`, not a stair roll; they are not on the stair.
 
 **Teach:** tips for shrines and pools; rules line.
