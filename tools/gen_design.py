@@ -31,7 +31,7 @@ for k,v in D['TOWN_WORKSHOPS'].items():
 w("\n| Gift | Gain | Price |\n|---|---|---|")
 for v in D['TOWN_GIFTS'].values():
     w("| %s | %s | %s |"%(v['n'],v['gain'],v['price']))
-w("\nThe Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).\n")
+w("\nThe Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip marks its free Candle; dismantling that Candle restores the free placement, while selling another tower leaves the gift spent. Older saves without the marker keep their recorded gift use. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).\n")
 
 w("## Saltmouth: rescued souls (step 7)\n")
 if 'CAGE_PRICE' in D:
