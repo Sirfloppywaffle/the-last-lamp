@@ -589,7 +589,7 @@ input[type=range]::-moz-range-track {
         <li><b>Free undo.</b> Anything you place or upgrade between waves refunds in full if you dismantle it before calling the dark.</li>
         <li><b>Waves are drawn.</b> Each floor draws its waves from a deck, so no two descents meet the same dark. The strip above the board names the next wave and shows what it brings. Waves with a boss or the Choirmaster keep their place.</li>
         <li><b>Call early.</b> Once a wave has finished arriving, you can call the next one while stragglers still walk, for bonus essence.</li>
-        <li><b>Binding.</b> Some creatures leave a violet sigil when they die. Tap it before it fades and that creature joins your roster. Bound horrors are placed like wards and hit far harder. Slay the Keeper Below and its soul lingers longer than most. Bind it and it fights for you on the last floor. The Galvanist binds nothing by ritual: he captures with his Grounding Anchor instead.</li>
+        <li><b>Binding.</b> Some creatures leave a violet sigil when they die. Tap it before it fades and that creature joins your roster. Bound horrors are placed like wards and hit far harder. Slay the Keeper Below and its soul lingers longer than most. Bind it and it fights for you on the last floor. The Galvanist binds nothing by ritual: he captures with his Grounding Anchor instead. A bound Shrieker screams Choirmasters and Heralds back only a third as far, and no scream moves the same one again for 3 seconds, however many Shriekers you field.</li>
         <li><b>Forks.</b> On some floors the stair splits. They take the darker way, and only light you cast counts, never the lamp's. A gold chevron at the fork shows where they will go. Shades and Stalkers do the opposite and hunt your light. Gnashers and bosses keep the main way. A Weir built on the fork shuts one way; flip it between waves. Watchers fly over it, and a Behemoth breaks it. On these floors you also hold the Will-o’-Wisp: tap a way at a fork and, for eight seconds, everything but a boss follows it there.</li>
         <li><b>Heralds.</b> Some floors send a Herald: a named terror in one wave, shown on the strip above the board in the break before it comes. It drains 8 oil if it reaches the lamp, but it is no boss and never ends the run by itself. Kill it and it pays a relic. Floors two to four each send one, and a descent never meets the same one twice. The Last Keeper carries a lamp of its own, and every candle it passes goes out for 6.5 seconds (a Tuning Fork falls silent). The Tithe-taker takes 2 essence a second while it walks in your light; kill it and the sack bursts, paying it all back and half again. In the break before a Herald's wave, a red ring marks the rift it will climb out of. The Bellfather strikes its great bell every 5 seconds, and wards within 2.2 tiles reel and do nothing for 2 seconds. No Herald can be held for long: after 3 seconds stunned or pinned it breaks free, and shrugs off every hold for 3 seconds. A boss's rift is marked the same way in the break before its wave, with a wider, doubled ring and two marks: it always climbs out there.</li>
         <li><b>Heavy creatures.</b> Trench Behemoths cannot be stunned or pushed back, and nothing slows them by more than 15%. Plan to out-damage them.</li>
@@ -804,7 +804,7 @@ const HORRORS={
   gnasher:{n:'Bound Gnasher',cost:30,mad:3,range:1.35,dmg:24,rate:.9,aim:true,d:'Bites whatever passes within reach. Brutal and short-ranged.'},
   watcher:{n:'Bound Watcher',cost:25,mad:2,range:3.4,dmg:5,rate:1.2,aim:true,d:'Its gaze is light. Everything in range is lit and unveiled, Shades included.'},
   wretch:{n:'Bound Wretch',cost:35,mad:3,range:2.5,dmg:4,rate:.8,poison:6,aim:true,d:'Spits ichor that poisons for 6 damage a second over 3 seconds.'},
-  shrieker:{n:'Bound Shrieker',cost:40,mad:4,range:2,dmg:4,rate:1/3,push:1.3,d:'Every 3 seconds it screams everything in range backward along the path. Choirmasters and Heralds go back a third as far.'},
+  shrieker:{n:'Bound Shrieker',cost:40,mad:4,range:2,dmg:4,rate:1/3,push:1.3,d:'Every 3 seconds it screams everything in range backward along the path. Choirmasters and Heralds go back a third as far, and no scream moves the same one again for 3 seconds.'},
   elite:{n:'Bound Choir',cost:50,mad:5,range:2.4,dps:6,slow:.35,d:'A drowned hymn. Everything in range slows by 35% and rots for 6 damage a second.'},
   keeper:{n:'Bound Keeper',cost:90,mad:7,range:3.2,dmg:65,rate:.4,aim:true,d:'The conquered lord of the Throat. Colossal damage and range. Radiates dread that slows all nearby.'}
 };
@@ -10865,6 +10865,9 @@ const TIPS={
   watcher:{foe:e=>e.type==='watcher',title:'A Watcher',text:'It flies, so a Weir cannot stop it. Bound, it unveils what the dark hides.'},
   wretch:{foe:e=>e.type==='wretch',title:'An Ichor Wretch',text:'When it dies it bursts into two Skitterlings. Kill it where your wards can reach the young.'},
   shrieker:{foe:e=>e.type==='shrieker',title:'A Shrieker',text:'Everything near it moves faster. Kill it first.'},
+  /* the first time a bound Shrieker has a Choirmaster or a Herald in its range (#128) */
+  shriekbig:{when:()=>!!(F&&F.phase==='wave'&&F.towers.some(t=>t.type==='shrieker'&&!t.dark&&F.foes.some(e=>!e.dead&&(e.def.elite||e.def.herald)&&dst(e.x,e.y,t.x,t.y)<=HORRORS.shrieker.range))),
+    title:'Too heavy to scream back',text:'A Choirmaster or a Herald goes back only a third as far when your Shrieker screams, and no scream moves it again for 3 seconds. More Shriekers will not hold it.'},
   behemoth:{foe:e=>e.def.heavy,title:'A Trench Behemoth',text:'It cannot be stunned or pushed back, and nothing slows it by more than 15%. Out-damage it.'},
   elite:{foe:e=>e.type==='elite',title:'The Drowned Choirmaster',text:'Its hymn hastens everything near it, and it drains six oil if it arrives.'},
   sigil:{when:()=>F.souls.some(so=>so.t>0&&!so.big&&!so.cage),title:'A sigil',text:'Tap the violet sigil before it fades and that creature is bound to you. Bound horrors are built like wards, and each one you field adds madness.',
@@ -11051,7 +11054,7 @@ function statLine(o){
     if(o.type==='gnasher')return 'Damage <b>'+H.dmg+'</b> · Range <b>'+H.range+'</b>';
     if(o.type==='watcher')return 'Lights and unveils · Damage <b>'+H.dmg+'</b> · Range <b>'+H.range+'</b>';
     if(o.type==='wretch')return 'Poison <b>18 damage</b> over 3s · Range <b>'+H.range+'</b>';
-    if(o.type==='shrieker')return 'Pushes back <b>'+H.push+'</b> every 3s (Choirmasters and Heralds a third as far) · Range <b>'+H.range+'</b>';
+    if(o.type==='shrieker')return 'Pushes back <b>'+H.push+'</b> every 3s (Choirmasters and Heralds a third as far, once in 3s) · Range <b>'+H.range+'</b>';
     if(o.type==='keeper')return 'Damage <b>'+H.dmg+'</b> · Slows <b>45%</b> · Range <b>'+H.range+'</b>';
     return 'Slows <b>35%</b> · <b>6 damage</b> per second · Range <b>'+H.range+'</b>';
   }
