@@ -17,8 +17,8 @@
 | 5 | Keepers in town, Take the lamp (swap kit), chores | #123 | merged | 18.13.0 |
 | 6 | Workshops and the one town gift, with its price | #124 | merged | 18.14.0 |
 | 7 | Rescued souls: the cage, the Drowned Oar, the Toothmonger | #127 | merged | 18.15.0 |
-| 8 | The three shrines and the tide-pools | `claude/town-shrines` | open | 18.16.0 |
-| 9 | The Keeper's Lodge (one room) | — | not started | 18.17.0 |
+| 8 | The three shrines and the tide-pools | #129 | merged | 18.16.0 |
+| 9 | The Keeper's Lodge (one room) | `claude/expansion3-step9-build-x1u5fj` | open | 18.17.0 |
 | 10 | Release v19.0.0 | — | not started | 19.0.0 |
 
 **Order matters.** Each step builds on the one before. Never start a step until the previous PR is merged into `main` (Criss merges after playing the preview).
