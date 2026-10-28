@@ -229,7 +229,7 @@ Base set (any kit may start with these): `candle`, `harpoon`, `salt`, `chime`, `
 | `gnasher` | Bound Gnasher | 30 | 3 | 1.35 | 24 dmg every 1.11s | Bites whatever passes within reach. Brutal and short-ranged. |
 | `watcher` | Bound Watcher | 25 | 2 | 3.4 | 5 dmg every 0.83s | Its gaze is light. Everything in range is lit and unveiled, Shades included. |
 | `wretch` | Bound Wretch | 35 | 3 | 2.5 | 4 dmg every 1.25s; poison 6/s | Spits ichor that poisons for 6 damage a second over 3 seconds. |
-| `shrieker` | Bound Shrieker | 40 | 4 | 2 | 4 dmg every 3.00s; push 1.3 | Every 3 seconds it screams everything in range backward along the path. |
+| `shrieker` | Bound Shrieker | 40 | 4 | 2 | 4 dmg every 3.00s; push 1.3 | Every 3 seconds it screams everything in range backward along the path. Choirmasters and Heralds go back a third as far, and no scream moves the same one again for 3 seconds. |
 | `elite` | Bound Choir | 50 | 5 | 2.4 | 6 dps; slow 35% | A drowned hymn. Everything in range slows by 35% and rots for 6 damage a second. |
 | `keeper` | Bound Keeper | 90 | 7 | 3.2 | 65 dmg every 2.50s | The conquered lord of the Throat. Colossal damage and range. Radiates dread that slows all nearby. |
 
