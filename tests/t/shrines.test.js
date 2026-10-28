@@ -60,6 +60,32 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(c.open&&/Drowned Mother/.test(c.title)&&c.seen===true,'the first break is the candle patron’s offer',c);
   ok(c.replayAtt===0&&!c.replayCandle&&!c.replayGift,'a replayed stair carries no candle',c);
 
+  /* 3b. review fixes (#129): the candle's offer is seeded, is spent only when it opens, and its point is quiet under a Trial */
+  const rv=await p.evaluate(async()=>{const T=__t, out={}; const td=T.townData(); td.res={timber:0,iron:50,tallow:50,curios:4};
+    T.townRaiseShrine('mother'); T.townSetGift('cmother');
+    const modal=()=>document.querySelector('#modal'), txt=()=>modal().innerText.replace(/\s+/g,' ');
+    const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+    const sample=async(seed)=>{T.newRun('lamplighter',0,{seed}); T.setP(false); T.F.phase='build'; T.F.patronCalled=false; T.patronBreak();
+      await sleep(1300); const t=modal().hidden?'':txt(); modal().hidden=true; T.setP(false); return t;};
+    const a=await sample(12345), b=await sample(12345), c=await sample(54321);
+    out.same=a&&a===b; out.some=!!a; out.other=c;
+    /* the next wave is called inside the 900 ms delay: the offer is not lost, it waits for the next break */
+    T.newRun('lamplighter',0,{seed:777}); T.setP(false); T.F.phase='build'; T.F.patronCalled=false; T.patronBreak();
+    T.setP(true); T.F.phase='wave'; await sleep(1300);
+    out.afterLapse={seen:!!T.run.candleSeen, called:T.F.patronCalled, open:!modal().hidden};
+    T.F.phase='build'; T.setP(false); T.patronBreak(); await sleep(1300);
+    out.afterRetry={seen:!!T.run.candleSeen, open:!modal().hidden}; modal().hidden=true; T.setP(false);
+    /* Trial floor: the candle's point does not count; earned Attention does */
+    T.newRun('lamplighter',0,{seed:1}); T.setP(false);
+    const raw=T.run.att.mother; T.F.trial={}; const quiet=[T.attOf('mother'),T.patTier('mother')];
+    T.run.att={mother:3}; const earned=T.attOf('mother'); T.F.trial=null; const loud=T.attOf('mother');
+    out.trial={raw,quiet,earned,loud};
+    return out;});
+  console.log(JSON.stringify({afterLapse:rv.afterLapse,afterRetry:rv.afterRetry,trial:rv.trial}));
+  ok(rv.some&&rv.same,'the same stair with the same candle offers the same three',rv);
+  ok(!rv.afterLapse.seen&&!rv.afterLapse.called&&!rv.afterLapse.open&&rv.afterRetry.seen&&rv.afterRetry.open,'a candle offer lost to an early call waits for the next break',rv);
+  ok(rv.trial.raw===1&&rv.trial.quiet[0]===0&&rv.trial.quiet[1]===0&&rv.trial.earned===2&&rv.trial.loud===3,'under a Trial the candle’s point is quiet and earned Attention stays',rv.trial);
+
   /* 4. another patron's candle: its own patron, and a save with no candle is unchanged */
   const o=await p.evaluate(()=>{const T=__t, td=T.townData(), out={};
     td.res={timber:0,iron:50,tallow:50,curios:4}; T.townRaiseShrine('sun'); T.townRaiseShrine('mouths');
