@@ -86,6 +86,15 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(!rv.afterLapse.seen&&!rv.afterLapse.called&&!rv.afterLapse.open&&rv.afterRetry.seen&&rv.afterRetry.open,'a candle offer lost to an early call waits for the next break',rv);
   ok(rv.trial.raw===1&&rv.trial.quiet[0]===0&&rv.trial.quiet[1]===0&&rv.trial.earned===2&&rv.trial.loud===3,'under a Trial the candle’s point is quiet and earned Attention stays',rv.trial);
 
+  /* 3c. the Grimoire learns only the offer that opens (a discarded ordinary offer is not recorded) */
+  const cx=await p.evaluate(async()=>{const T=__t, out={}; const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+    T.townData().res={timber:0,iron:50,tallow:50,curios:4}; T.townRaiseShrine('mother'); T.townSetGift('cmother');
+    T.newRun('lamplighter',0,{seed:4242}); T.setP(false); T.F.phase='build'; T.F.patronCalled=false;
+    T.codex().offs.clear(); const n0=T.codex().offs.size; T.patronBreak(); out.during=T.codex().offs.size-n0;
+    await sleep(1300); out.after=T.codex().offs.size-n0; out.open=!document.querySelector('#modal').hidden;
+    document.querySelector('#modal').hidden=true; T.setP(false); return out;});
+  ok(cx.during===0&&cx.open&&cx.after>0&&cx.after<=3,'the Grimoire records offers when they open, not when they are drawn',cx);
+
   /* 4. another patron's candle: its own patron, and a save with no candle is unchanged */
   const o=await p.evaluate(()=>{const T=__t, td=T.townData(), out={};
     td.res={timber:0,iron:50,tallow:50,curios:4}; T.townRaiseShrine('sun'); T.townRaiseShrine('mouths');
@@ -107,6 +116,15 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.takeEmpty=T.townPoolTake(1);
     td.pools=[null,{k:'tallow',n:5},null]; T.poolsRefill(td);
     out.kept=JSON.stringify(td.pools[1]); out.filled=td.pools.every(Boolean);
+    /* the haul-credit path, live: refills only the empty, once */
+    T.newRun('whaler',0); td.pools=[null,{k:'iron',n:3},{bottle:true}]; T.haulAdd({timber:1}); T.haulCredit();
+    out.credit=[!!td.pools[0],JSON.stringify(td.pools[1]),!!td.pools[2]&&td.pools[2].bottle===true];
+    /* developer mode: the refill lands in the developer town's copy and nothing is stored */
+    const live=localStorage.getItem('ll-town');
+    T.setDev(true); T.townReset(); const dev=T.townData(); dev.pools=[null,{k:'iron',n:3},{bottle:true}];
+    T.newRun('whaler',0); T.haulAdd({timber:1}); T.haulCredit();
+    out.devRefill=!!dev.pools[0]; out.devStored=localStorage.getItem('ll-town')===live;
+    T.setDev(false); T.townReset();
     let bad=0; for(let i=0;i<500;i++){const q=T.poolRoll(); if(!(q.bottle||(['timber','iron','tallow','curios'].includes(q.k)&&q.n>=1&&q.n<=6&&(q.k!=='curios'||q.n===1))))bad++;} out.bad=bad;
     return out;});
   console.log(JSON.stringify(t));
@@ -114,6 +132,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(t.iron===4&&t.slot0===null,'gathering empties the pool and pays the haul',t);
   ok(t.lore===1&&t.slot2===null&&t.takeEmpty===false,'a bottle is read once and kept',t);
   ok(t.kept==='{"k":"tallow","n":5}'&&t.filled&&t.bad===0,'refilling leaves a full pool alone',t);
+
+  ok(t.credit[0]&&t.credit[1]==='{"k":"iron","n":3}'&&t.credit[2],'haul credit refills only the empty pools',t.credit);
+  ok(t.devRefill&&t.devStored,'in developer mode the refill changes only the developer town and stores nothing',t);
 
   /* 6. a damaged save is mended; old saves have no shrines or pools */
   const f=await p.evaluate(()=>{const T=__t; const x=T.townFix({shrines:{mother:'yes',moon:true},pools:[{k:'gold',n:99},{k:'iron',n:99},7],lore:[1,'a',-4,1.5]});

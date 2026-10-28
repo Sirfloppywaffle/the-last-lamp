@@ -1385,6 +1385,8 @@ function patronOffer(){
 /* she, or it */
 function patShe(p){return p==='mother'?'her':'it';}
 /* three offerings, at most one of them the kit's own; null when the patron has nothing left to give */
+/* patronBreak draws its offers with this held, so the Grimoire learns only the three that open (see patronBreak) */
+let OFFER_HOLD=false;
 function offerSet(p,forceConj){
   p=p||'mother';
   const ok=k=>{const O=OFFERINGS[k]; return O.p===p&&!O.pair&&!hasOff(k)&&(!O.kit||O.kit===kit())&&(!O.need||O.need());};
@@ -1397,7 +1399,7 @@ function offerSet(p,forceConj){
   /* a conjunction takes the third card, never the kit's own, and is always shown last */
   const cj=conjFor(p,forceConj);
   if(cj){if(out.length<3)out.push(cj); else{let i=2; while(i>0&&OFFERINGS[out[i]].kit)i--; out.splice(i,1); out.push(cj);}}
-  out.forEach(k=>codexSee('offs',k));
+  if(!OFFER_HOLD)out.forEach(k=>codexSee('offs',k));
   return out;
 }
 /* conjunctions: a patron reaching out may bring another who has also noticed you. Both must be at Noticed or Watched, not
@@ -1472,12 +1474,13 @@ function patronBreak(force){
      seeded stream and after the ordinary draws, so the stair's rolls are spent exactly as without the candle and the same stair
      with the same candle always offers the same three */
   const due=!!(run.candle&&!run.replay&&!run.candleSeen&&run.floor===0&&!F.trial&&!quiet&&PATRONS[run.candle]);
-  const sd=seeded(SALT.patronBreak,F.wave,()=>{
+  OFFER_HOLD=true;
+  let sd; try{sd=seeded(SALT.patronBreak,F.wave,()=>{
     let po=null;
     if(force||!(RNG()>=PATRON_BREAK||quiet))po=patronOffer();
     let co=null;
     if(due&&(!po||po.p!==run.candle)){const o=offerSet(run.candle); if(o)co={p:run.candle,o};}
-    return {po,co};});
+    return {po,co};});}finally{OFFER_HOLD=false;}
   const pick=due&&sd.po&&sd.po.p===run.candle?Object.assign({candle:true},sd.po):due&&sd.co?Object.assign({candle:true},sd.co):sd.po;
   if(!pick)return;
   const p=pick.p, opts=pick.o;
@@ -1489,6 +1492,7 @@ function patronBreak(force){
     if(F!==myF||F.phase!=='build'){lapse(); return;}
     if(!$('#modal').hidden||COACH.on||F.intro||MAP_SYS.active||!$('#title').hidden){if(++tries<40)setTimeout(go,250); else lapse(); return;}
     if(pick.candle)run.candleSeen=true;
+    opts.forEach(k=>codexSee('offs',k));
     openOffer(opts,p);
   };
   setTimeout(go,force?0:900);
