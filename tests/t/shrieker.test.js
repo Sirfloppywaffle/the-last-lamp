@@ -40,9 +40,10 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     /* the rest: a second scream inside 3 seconds leaves the Herald where it is; after 3 seconds a scream moves it again */
     {setup(1); const pl=placeN(1); const e=T.spawnFoe('lastkeeper',0,pl.d); e.hp=e.max=1e9; const t=T.F.towers.find(x=>x.type==='shrieker');
       t.cd=0; let d0=e.d; T.update(1/30); const first=+(d0-e.d).toFixed(2);
-      t.cd=0; d0=e.d; T.update(1/30); const again=+(d0-e.d).toFixed(2);
-      T.F.time+=3.05; t.cd=0; d0=e.d; T.update(1/30); const after=+(d0-e.d).toFixed(2);
-      out.rest={first,again,after};
+      /* just short of the rest (2.85 s after the first scream, with the two ticks between) it is still left alone; just past it, moved */
+      T.F.time+=2.8; t.cd=0; d0=e.d; T.update(1/30); const near=+(d0-e.d).toFixed(2);
+      T.F.time+=.2; t.cd=0; d0=e.d; T.update(1/30); const after=+(d0-e.d).toFixed(2);
+      out.rest={first,near,after};
       /* its first-time tip is ready while one stands in a Shrieker's range, and not with only a Crawler there */
       out.tip=T.TIPS.shriekbig.when(); e.dead=true; const c=T.spawnFoe('crawler',0,pl.d); c.hp=c.max=1e9; out.tipCrawler=T.TIPS.shriekbig.when();}
     return out;
@@ -56,7 +57,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(r.crawlerPush>1.2&&r.crawlerPush<1.35,'a Crawler is still screamed back the full 1.3 tiles',r.crawlerPush);
   ok(r.heraldPush>.35&&r.heraldPush<.5,'a Herald is screamed back a third as far',r.heraldPush);
   ok(r.tip===true&&r.tipCrawler===false,'the first-time tip shows when a Choirmaster or Herald is in a bound Shrieker’s range',[r.tip,r.tipCrawler]);
-  ok(r.rest.first>.35&&r.rest.again<=0&&r.rest.after>.35,'no scream moves the same Herald again for 3 seconds; after that one does',r.rest);
+  ok(r.rest.first>.35&&r.rest.near<=0&&r.rest.after>.35,'no scream moves the same Herald again for 3 seconds; after that one does',r.rest);
   ok(errs.length===0,'no page errors',errs);
   await b.close();
   for(const f of fails)console.log('FAIL '+f);
