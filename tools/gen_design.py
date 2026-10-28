@@ -36,7 +36,7 @@ w("\nThe Loaded Bone uses `SALT.townGift = 25`, independently of map and wave dr
 w("## Saltmouth: rescued souls (step 7)\n")
 if 'CAGE_PRICE' in D:
     w("On the landings after floors %s, a door holds a cage with chance **%s**, at most once a run, rolled on `SALT.cage = 26` after the descent doors and never on a Trial door, a descent door or the Deep Stair. The lock takes **%s** essence. Freed souls go up with the haul's one credit, even from a death.\n"%(', '.join(str(x+1) for x in D['CAGE_LANDINGS']),D['CAGE_CHANCE'],D['CAGE_PRICE']))
-    w("The Croupier plays knucklebones at the Drowned Oar for **%s** timber or tallow (a win pays it back twice over). The Pawned Relic costs **%s** tallow each descent, taken as you go down; the relic is taken out of offers after the seeded roll.\n"%(D['BONES_WAGER'],D['PAWN_PRICE']))
+    w("The Croupier plays knucklebones at the Drowned Oar for **%s** timber or tallow (a win pays it back twice over). The Pawned Relic costs **%s** tallow, paid when you pawn it; it then holds the one town gift until the next descent, which spends it (a replayed stair does not). The relic is taken out of offers after the seeded roll.\n"%(D['BONES_WAGER'],D['PAWN_PRICE']))
     w("| The Toothmonger gives | You get |\n|---|---|")
     for t in D['TOWN_TRADES']:
         nm=lambda n,k:'%s %s'%(n,'curio' if k=='curios' and n==1 else k)

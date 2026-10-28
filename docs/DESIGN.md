@@ -38,7 +38,7 @@ Workshops have tiers 0–2: ruined, restored, then lit windows. Tier 1 offers th
 | Echoing Iron | Floor 1 shows waves 1 and 2 exactly. | The early-call bonus is halved on floor 1. |
 | Familiar’s Tether | Start with a bound Watcher. | Its madness counts from the first wave, fielded or not. |
 | The Loaded Bone | Roll: 4 to 6 is +15 essence on floor 1. | 1 to 3 is −10 essence on floor 1. |
-| The Pawned Relic | One relic you name is never offered this descent. | The Toothmonger keeps 25 tallow. |
+| The Pawned Relic | One relic you name is never offered on your next descent. | The Toothmonger keeps 25 tallow, paid as you pawn it. It stays pawned until you go down. |
 
 The Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip marks its free Candle; dismantling that Candle restores the free placement, while selling another tower leaves the gift spent. Older saves without the marker keep their recorded gift use. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).
 
@@ -46,7 +46,7 @@ The Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. 
 
 On the landings after floors 2, 3, 4, a door holds a cage with chance **0.4**, at most once a run, rolled on `SALT.cage = 26` after the descent doors and never on a Trial door, a descent door or the Deep Stair. The lock takes **15** essence. Freed souls go up with the haul's one credit, even from a death.
 
-The Croupier plays knucklebones at the Drowned Oar for **10** timber or tallow (a win pays it back twice over). The Pawned Relic costs **25** tallow each descent, taken as you go down; the relic is taken out of offers after the seeded roll.
+The Croupier plays knucklebones at the Drowned Oar for **10** timber or tallow (a win pays it back twice over). The Pawned Relic costs **25** tallow, paid when you pawn it; it then holds the one town gift until the next descent, which spends it (a replayed stair does not). The relic is taken out of offers after the seeded roll.
 
 | The Toothmonger gives | You get |
 |---|---|

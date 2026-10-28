@@ -150,10 +150,16 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const T=__t, out={bad:[],prefix:true};
     const Tn=T.townData(); Tn.rescued=['toothmonger']; Tn.res={timber:0,iron:0,tallow:30,curios:0};
     const k=Object.keys(T.RELICS).find(x=>!T.RELICS[x].curse&&!T.RELICS[x].pack&&!T.RELICS[x].needs&&!T.RELICS[x].notKit);
-    Tn.pawn=k; out.set=T.townSetGift('pawn'); T.townSave(); out.k=k;
+    Tn.gift=null; T.townSave(); out.k=k;
+    /* pawning pays at once, and from then on it is hers until you go down: no taking it back, no swapping it or the gift (#127) */
+    out.why=T.townPawn(k); out.paid=T.townData().res.tallow; out.held=T.townData().gift==='pawn'&&T.townData().pawn===k;
+    out.locked={leave:T.townSetGift(null),other:T.townSetGift('bone'),again:T.townPawn(Object.keys(T.RELICS).find(x=>x!==k&&T.pawnOK(x))),gift:T.townData().gift};
+    /* a replayed stair carries no gift and leaves it pawned */
+    T.newRun('lamplighter',0,{seed:21,replay:true}); out.replayRun={gift:T.run.gift,still:T.townData().pawn===k&&T.townData().gift==='pawn'};
     T.newRun('lamplighter',0,{seed:21}); out.gift=T.run.gift; out.pawnRun=T.run.pawn; out.tallow=T.townData().res.tallow; out.pawned=T.pawned();
+    out.spent={pawn:T.townData().pawn,gift:T.townData().gift,free:T.townSetGift(null)};
     const withDraw=JSON.stringify([T.run.draw,T.run.mapv]);
-    T.townSetGift(null); T.newRun('lamplighter',0,{seed:21}); out.sameDraw=withDraw===JSON.stringify([T.run.draw,T.run.mapv]);
+    T.newRun('lamplighter',0,{seed:21}); out.sameDraw=withDraw===JSON.stringify([T.run.draw,T.run.mapv]);
     /* the same rolls with and without it: the pawned relic gone, the rest in the same order */
     for(let sd=1;sd<=60;sd++)for(const fl of [0,1,2]){
       T.newRun('lamplighter',0,{seed:sd}); T.run.floor=fl;
@@ -168,19 +174,23 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     /* off on a replayed stair and under a Trial */
     T.newRun('lamplighter',0,{seed:5}); T.run.gift='pawn'; T.run.pawn=k; T.run.replay=true; out.replay=T.pawned();
     T.run.replay=false; T.F.trial='ration'; out.trial=T.pawned(); T.F.trial=null;
-    /* short of tallow it stays up top, and nothing is taken */
-    const Tm=T.townData(); Tm.res.tallow=10; T.townSetGift('pawn'); T.newRun('lamplighter',0,{seed:6}); out.poor={gift:T.run.gift,tallow:T.townData().res.tallow};
+    /* short of tallow she won't take it, and nothing is taken */
+    const Tm=T.townData(); Tm.res.tallow=10; out.poor={why:T.townPawn(k),tallow:T.townData().res.tallow,gift:T.townData().gift};
     /* a cursed relic can't be pawned; the stall's list is relics you have carried */
     const curse=Object.keys(T.RELICS).find(x=>T.RELICS[x].curse); out.curseOK=T.pawnOK(curse);
     out.fixCurse=T.townFix({rescued:['toothmonger'],pawn:curse,gift:'pawn'}).gift;
     T.townSetGift(null); T.townSave();
     return out;
   });
-  ok(pawn.set&&pawn.gift==='pawn'&&pawn.pawnRun===pawn.k&&pawn.tallow===5&&pawn.pawned===pawn.k,'the Pawned Relic goes down, and the Toothmonger keeps 25 tallow',pawn);
+  ok(pawn.why===''&&pawn.paid===5&&pawn.held,'pawning a relic takes 25 tallow at once and holds the one town gift',pawn);
+  ok(pawn.locked.leave===false&&pawn.locked.other===false&&pawn.locked.again!==''&&pawn.locked.gift==='pawn','once pawned it can’t be taken back, swapped, or replaced by another gift before a descent',pawn.locked);
+  ok(pawn.replayRun.gift===null&&pawn.replayRun.still,'a replayed stair carries no gift and leaves the relic pawned',pawn.replayRun);
+  ok(pawn.gift==='pawn'&&pawn.pawnRun===pawn.k&&pawn.tallow===5&&pawn.pawned===pawn.k,'the next descent takes the Pawned Relic down, and charges nothing more',pawn);
+  ok(pawn.spent.pawn===null&&pawn.spent.gift===null&&pawn.spent.free===true,'the descent spends it: the gift is free again',pawn.spent);
   ok(pawn.bad.length===0,'the pawned relic is never offered: not as a gift, a pick or at the merchant',pawn.bad);
   ok(pawn.prefix&&pawn.sameDraw,'the pawned relic is taken out after the roll: everything else stays where the seed put it',pawn);
   ok(pawn.replay===null&&pawn.trial===null,'the Pawned Relic is off on a replayed stair and under a Trial',pawn);
-  ok(pawn.poor.gift===null&&pawn.poor.tallow===10,'short of 25 tallow it stays up top, and nothing is taken',pawn.poor);
+  ok(pawn.poor.why!==''&&pawn.poor.tallow===10&&pawn.poor.gift===null,'short of 25 tallow she won’t take it, and nothing is taken',pawn.poor);
   ok(pawn.curseOK===false&&pawn.fixCurse===null,'a cursed relic is never pawned',pawn);
 
   /* 5. the art: both figures 16 by 24, outlined, and a head per facing */
@@ -188,6 +198,39 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     for(const k in __t.TOWN_SOULS){const A=__t.TOWN_SOULS[k].art; out[k]=!!S[k]&&['d','u','r'].every(f=>A.head[f].length===12&&A.head[f].every(r=>r.length===16))&&['d','u','r','l'].every(f=>S[k][f].every(fr=>fr.c.width===16&&fr.c.height===24));}
     return out;});
   ok(art.croupier&&art.toothmonger,'the Croupier and the Toothmonger are 16 by 24, a head for every facing',art);
+
+  /* 6. the square, drawn (#127): a lit window behind someone never shows through them, and a walk at full speed holds still on the
+     screen instead of hopping a pixel back and forth */
+  const look=await p.evaluate(()=>{
+    const T=__t, out={};
+    const Tn=T.townData(); Tn.rescued=['croupier']; T.townSave(); T.townOpen();
+    const A=T.townArt(), oar=T.TOWN_HOUSES[T.TOWN_SOULS.croupier.house], cr=T.TWN.crowd.find(e=>e.k==='croupier');
+    T.TWN.p.x=17.5; T.TWN.p.y=13.5; T.TWN.cx=null; T.TWN.path=null; T.townFrame(1/60);
+    const bc=T.TWN.bc, cx=T.TWN.lcx, cy=T.TWN.lcy, fx=Math.round(cr.x*16)-cx, fy=Math.round(cr.y*16)-cy;
+    /* only where his figure is: drawn alone, the same way the square draws him, onto a clear canvas */
+    const m=document.createElement('canvas'); m.width=bc.canvas.width; m.height=bc.canvas.height; T.townCrowdDraw(m.getContext('2d'),A,cr,cx,cy,false,true);
+    const d=bc.getImageData(fx-8,fy-22,16,22).data, md=m.getContext('2d').getImageData(fx-8,fy-22,16,22).data, pane=[[217,138,54],[245,194,107],[255,240,194]];
+    let hit=0, on=0; for(let i=0;i<d.length;i+=4){if(!md[i+3])continue; on++; if(pane.some(q=>q[0]===d[i]&&q[1]===d[i+1]&&q[2]===d[i+2]))hit++;}
+    /* the window itself still glows where nobody stands in front of it */
+    const px=(oar.x+oar.win[0])*16+5-cx, py=(oar.y+oar.h-1)*16+3-cy, w=bc.getImageData(px,py,5,4).data; let lit=0;
+    for(let i=0;i<w.length;i+=4)if(pane.some(q=>q[0]===w[i]&&q[1]===w[i+1]&&q[2]===w[i+2]))lit++;
+    out.window={hit,on,lit,lit0:oar.lit[0]};
+    /* walk the cobbles from west to east at full speed, and watch where you stand on the screen once the camera has caught up */
+    T.TWN.p.x=6.5; T.TWN.p.y=13.5; T.TWN.cx=null; T.TWN.path=[{x:17.5,y:13.5}]; T.TWN.goal=null;
+    const xs=[]; for(let i=0;i<190&&T.TWN.path;i++){T.townFrame(1/60); xs.push(Math.round(T.TWN.p.x*16)-T.TWN.lcx);}
+    let back=0; const sx=xs.slice(60); for(let i=2;i<sx.length;i++){const a=sx[i-1]-sx[i-2], b2=sx[i]-sx[i-1]; if(a&&b2&&Math.sign(a)!==Math.sign(b2))back++;}
+    out.walk={frames:xs.length,back,span:Math.max(...sx)-Math.min(...sx)};
+    /* a walk just off the diagonal keeps one facing */
+    T.TWN.p.x=8.5; T.TWN.p.y=14.5; T.TWN.p.face='r'; T.TWN.path=null; T.TWN.ptr={id:1,x0:100,y0:100,x:144,y:139,t0:0,steer:true,far:60};
+    /* a thumb wobbles: just over and just under the old switch point, frame by frame */
+    const faces=new Set(); for(let i=0;i<40;i++){T.TWN.ptr.y=i%2?139:141; T.townStep(1/60); faces.add(T.TWN.p.face);} T.TWN.ptr=null;
+    out.faces=[...faces];
+    T.townClose(); Tn.rescued=[]; T.townSave();
+    return out;
+  });
+  ok(look.window.lit0&&look.window.on>40&&look.window.hit===0&&look.window.lit>0,'a lit window behind the Croupier glows, but never over him',look.window);
+  ok(look.walk.frames>150&&look.walk.back===0,'walking at full speed you hold still on the screen: no hopping back and forth',look.walk);
+  ok(look.faces.length===1,'a walk just off the diagonal keeps one facing',look.faces);
 
   ok(errs.length===0,'no page errors',errs);
   await b.close();
