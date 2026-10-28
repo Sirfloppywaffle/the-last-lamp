@@ -105,6 +105,32 @@ const DEV=[
     await p.locator('#relChips .is-gift').click();
     const giftTip=await p.locator('#relTip').boundingBox(), afterGift=await p.locator('#board').boundingBox();
     if(!giftTip||giftTip.x<0||giftTip.y<0||giftTip.x+giftTip.width>w+1||giftTip.y+giftTip.height>h+1||JSON.stringify(beforeGift)!==JSON.stringify(afterGift))console.log('FAIL '+nm+': gift inspection shifts board or leaves screen');
+    /* step 7: the Toothmonger's stall and the Drowned Oar, with both souls home (developer mode: nothing is written). Every trade
+       and every action is thumb-sized and reachable; then the cage on a landing */
+    for(const card of ['stall','oar']){
+      await p.evaluate(c=>{const T=__t.townData(); T.rescued=['croupier','toothmonger']; T.res={timber:500,iron:500,tallow:500,curios:50};
+        __t.townOpen(); if(c==='stall')__t.townStallCard(); else __t.townOar();},card);
+      for(const button of await p.locator('#mChoices button, #mActions button').all()){
+        await button.scrollIntoViewIfNeeded();
+        const r=await button.boundingBox();
+        if(!r||r.height<44||r.x<ins.left||r.x+r.width>w-(ins.right||0)+1||r.y<0||r.y+r.height>h+1)console.log('FAIL '+nm+': '+card+' control out of reach',r);
+      }
+      await p.locator('#mTitle').scrollIntoViewIfNeeded();
+      await p.screenshot({path:(process.argv[3]||'.')+'/town-'+card+'-'+nm+'.png'});
+      await p.evaluate(()=>{document.getElementById('modal').hidden=true; __t.townClose();});
+    }
+    await p.evaluate(()=>{const T=__t; T.newRun('lamplighter',0,{seed:11}); T.run.ess=60; T.F.foes=[]; T.F.queue=[]; T.F.wave=T.F.def.waves.length; T.F.phase='cleared'; T.openDraft(0,0);
+      const d=T.F.draft; d.step='fork'; d.doors=[{room:'cage',who:'toothmonger',omen:null},{room:'rest',omen:null}]; T.chooseDoor(d,0);});
+    for(const button of await p.locator('#mChoices button, #mActions button').all()){
+      await button.scrollIntoViewIfNeeded();
+      const r=await button.boundingBox();
+      /* the landing's own buttons (Walk past, Pause menu, See the floor) are 42 px on wide screens in every room; the cage keeps that bar */
+      if(!r||r.height<40||r.x<ins.left||r.x+r.width>w-(ins.right||0)+1||r.y<0||r.y+r.height>h+1)console.log('FAIL '+nm+': cage control out of reach',r);
+    }
+    await p.locator('#mTitle').scrollIntoViewIfNeeded();
+    await p.screenshot({path:(process.argv[3]||'.')+'/cage-'+nm+'.png'});
+    if(!/Locked Cage/.test(await p.locator('#mTitle').textContent()))console.log('FAIL '+nm+': cage card missing');
+    await p.evaluate(()=>{document.getElementById('modal').hidden=true;});
     await p.evaluate(()=>{__t.setDev(false);});
     await p.evaluate(()=>__t.townClose());
     const townOk=town.walkIn&&town.btns&&town.resStill&&town.cover&&town.whole&&town.still&&town.buildOk;
