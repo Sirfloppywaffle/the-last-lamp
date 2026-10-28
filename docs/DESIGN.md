@@ -39,6 +39,9 @@ Workshops have tiers 0–2: ruined, restored, then lit windows. Tier 1 offers th
 | Familiar’s Tether | Start with a bound Watcher. | Its madness counts from the first wave, fielded or not. |
 | The Loaded Bone | Roll: 4 to 6 is +15 essence on floor 1. | 1 to 3 is −10 essence on floor 1. |
 | The Pawned Relic | One relic you name is never offered on your next descent. | The Toothmonger keeps 25 tallow, paid as you pawn it. It stays pawned until you go down. |
+| The Drowned Mother’s Candle | She is among floor 1’s offers, and her Attention starts at 1. | Water stands on the path from floor 1, and its current carries creatures through it 30% faster. |
+| The Wrong Sun’s Candle | The Wrong Sun is among floor 1’s offers, and its Attention starts at 1. | Three bright spots burn on the path from floor 1. A Stalker that crosses one runs 40% faster for 3 seconds. |
+| The Many-Mouthed’s Candle | The Many-Mouthed is among floor 1’s offers, and its Attention starts at 1. | Its creatures climb with every wave from floor 1, shaped by what you build. Nothing it sends leaves essence, bones or sigils. |
 
 The Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip marks its free Candle; dismantling that Candle restores the free placement, while selling another tower leaves the gift spent. Older saves without the marker keep their recorded gift use. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).
 
