@@ -1374,7 +1374,8 @@ function bindable(){return ['gnasher','watcher','wretch','shrieker'];}
 
 /* patrons: offerings, Attention, and the water/bright spots it brings ---------------- */
 function hasOff(k){return !!(run&&run.offs&&run.offs.includes(k));}
-function attOf(p){return (run&&run.att&&run.att[p])||0;}
+/* a black candle's one point is quiet on a floor under a Trial, like every town gift; Attention earned on the stair stays */
+function attOf(p){const a=(run&&run.att&&run.att[p])||0; return a>0&&run.candle===p&&!run.replay&&F&&F.trial?a-1:a;}
 function patTier(p){const a=attOf(p); return PATRONS[p]?PATRONS[p].tiers.filter(t=>a>=t.at).length:0;}
 /* which patron reaches out: any of them, at even odds, every time (so one early gift never locks the run to one patron);
    if that one has nothing left to give, another. Returns {p, o} or null */
@@ -1467,23 +1468,28 @@ function offerChoice(k,fn){
 /* mid-floor, at about one break in seven (once a floor), a patron reaches out: three offerings, take one or refuse */
 function patronBreak(force){
   if(!F||F.phase!=='build'||F.patronCalled)return;
-  const po=seeded(SALT.patronBreak,F.wave,()=>{
-    if(!force&&(RNG()>=PATRON_BREAK||(COACH.on&&COACH.kind==='walk')||tut().walk===''&&run.floor===0))return null;
-    return patronOffer();});
-  /* a black candle's patron reaches out at the first break of floor 1, once: the roll above is spent either way, so the stair's
-     seeded stream is the same with or without the candle (the offer replaces it only if it was another patron's) */
-  let pick=po;
-  if(run.candle&&!run.replay&&!run.candleSeen&&run.floor===0&&!(F&&F.trial)&&!(COACH.on&&COACH.kind==='walk')&&!(tut().walk===''&&run.floor===0)&&PATRONS[run.candle]){
-    if(!po||po.p!==run.candle){const co=offerSet(run.candle); if(co)pick={p:run.candle,o:co};}
-    run.candleSeen=true;
-  }
+  const quiet=(COACH.on&&COACH.kind==='walk')||tut().walk===''&&run.floor===0;
+  /* a black candle's patron reaches out at the first break of floor 1, once (step 8). Its offer is drawn here, inside the same
+     seeded stream and after the ordinary draws, so the stair's rolls are spent exactly as without the candle and the same stair
+     with the same candle always offers the same three */
+  const due=!!(run.candle&&!run.replay&&!run.candleSeen&&run.floor===0&&!F.trial&&!quiet&&PATRONS[run.candle]);
+  const sd=seeded(SALT.patronBreak,F.wave,()=>{
+    let po=null;
+    if(force||!(RNG()>=PATRON_BREAK||quiet))po=patronOffer();
+    let co=null;
+    if(due&&(!po||po.p!==run.candle)){const o=offerSet(run.candle); if(o)co={p:run.candle,o};}
+    return {po,co};});
+  const pick=due&&sd.po&&sd.po.p===run.candle?Object.assign({candle:true},sd.po):due&&sd.co?Object.assign({candle:true},sd.co):sd.po;
   if(!pick)return;
   const p=pick.p, opts=pick.o;
   F.patronCalled=true;
   const myF=F; let tries=0;
+  /* the candle is spent only when its offer opens: if the next wave is called first, or the delay runs out, it waits for the next break */
+  const lapse=()=>{if(pick.candle&&F===myF)F.patronCalled=false;};
   const go=()=>{
-    if(F!==myF||F.phase!=='build')return;
-    if(!$('#modal').hidden||COACH.on||F.intro||MAP_SYS.active||!$('#title').hidden){if(++tries<40)setTimeout(go,250); return;}
+    if(F!==myF||F.phase!=='build'){lapse(); return;}
+    if(!$('#modal').hidden||COACH.on||F.intro||MAP_SYS.active||!$('#title').hidden){if(++tries<40)setTimeout(go,250); else lapse(); return;}
+    if(pick.candle)run.candleSeen=true;
     openOffer(opts,p);
   };
   setTimeout(go,force?0:900);
