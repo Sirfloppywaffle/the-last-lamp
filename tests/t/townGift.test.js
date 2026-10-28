@@ -52,6 +52,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
         if(G.soul){const pawn=Object.keys(__t.RELICS).find(k=>!__t.RELICS[k].curse);
           const got=__t.townFix({buildings:{},gift,rescued:restored?[G.soul]:[],pawn}).gift;
           out.push({gift,tier,got,want:restored?gift:null}); continue;}
+        /* step 8: a patron's candle is open once its shrine is raised */
+        if(G.shrine){const got=__t.townFix({buildings:{},gift,shrines:{[G.shrine]:restored}}).gift;
+          out.push({gift,tier,got,want:restored?gift:null}); continue;}
         const buildings=Object.fromEntries(Object.keys(__t.TOWN_WORKSHOPS).map(k=>[k,k===G.workshop?tier:2]));
         const got=__t.townFix({buildings,gift}).gift;
         out.push({gift,tier,got,want:restored?gift:null});
