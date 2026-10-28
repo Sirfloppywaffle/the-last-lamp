@@ -220,6 +220,12 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const xs=[]; for(let i=0;i<190&&T.TWN.path;i++){T.townFrame(1/60); xs.push(Math.round(T.TWN.p.x*16)-T.TWN.lcx);}
     let back=0; const sx=xs.slice(60); for(let i=2;i<sx.length;i++){const a=sx[i-1]-sx[i-2], b2=sx[i]-sx[i-1]; if(a&&b2&&Math.sign(a)!==Math.sign(b2))back++;}
     out.walk={frames:xs.length,back,span:Math.max(...sx)-Math.min(...sx)};
+    /* a tap on the first pixel of a tile picks that tile, in a frame where the drawn offset is not the rounded camera (CodeRabbit) */
+    T.TWN.p.x=6.5; T.TWN.p.y=13.5; T.TWN.cx=null; T.TWN.path=[{x:17.5,y:13.5}];
+    let tried=0, wrong=0; const k=T.TWN.k/T.TWN.dpr;
+    for(let i=0;i<190&&T.TWN.path;i++){T.townFrame(1/60); if(Math.round(T.TWN.cx)===T.TWN.lcx)continue; tried++;
+      for(let tx=8;tx<=15;tx++){const got=T.townPtrTile((tx*16-T.TWN.lcx+.2)*k,(13*16-T.TWN.lcy+8)*k); if(got[0]!==tx||got[1]!==13)wrong++;}}
+    out.tap={tried,wrong};
     /* a walk just off the diagonal keeps one facing */
     T.TWN.p.x=8.5; T.TWN.p.y=14.5; T.TWN.p.face='r'; T.TWN.path=null; T.TWN.ptr={id:1,x0:100,y0:100,x:144,y:139,t0:0,steer:true,far:60};
     /* a thumb wobbles: just over and just under the old switch point, frame by frame */
@@ -230,6 +236,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   });
   ok(look.window.lit0&&look.window.on>40&&look.window.hit===0&&look.window.lit>0,'a lit window behind the Croupier glows, but never over him',look.window);
   ok(look.walk.frames>150&&look.walk.back===0,'walking at full speed you hold still on the screen: no hopping back and forth',look.walk);
+  ok(look.tap.tried>0&&look.tap.wrong===0,'a tap lands on the tile drawn under it, even while the camera catches up',look.tap);
   ok(look.faces.length===1,'a walk just off the diagonal keeps one facing',look.faces);
 
   ok(errs.length===0,'no page errors',errs);

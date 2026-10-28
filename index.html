@@ -13436,7 +13436,8 @@ $('#townCv').addEventListener('pointerdown',ev=>{
   try{$('#townCv').setPointerCapture(ev.pointerId);}catch(e){}
 });
 /* the tile under a point on the canvas (CSS px) */
-function townPtrTile(x,y){const k=TWN.k/TWN.dpr; return [Math.floor((x/k+Math.round(TWN.cx))/16),Math.floor((y/k+Math.round(TWN.cy))/16)];}
+/* by the camera offset the square was last drawn with (TWN.lcx/lcy), so a tap lands on the tile you see under your thumb */
+function townPtrTile(x,y){const k=TWN.k/TWN.dpr, cx=TWN.lcx!=null?TWN.lcx:Math.round(TWN.cx), cy=TWN.lcy!=null?TWN.lcy:Math.round(TWN.cy); return [Math.floor((x/k+cx)/16),Math.floor((y/k+cy)/16)];}
 $('#townCv').addEventListener('pointermove',ev=>{const R=TWN.ptr;
   /* a mouse shows the footprint as it passes; a thumb shows it only while it is down */
   if(!R){if(TWN.on&&TWN.build&&ev.pointerType==='mouse')townGhostAt(...townPtrTile(...townPtrXY(ev))); return;}
