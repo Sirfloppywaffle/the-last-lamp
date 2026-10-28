@@ -11,6 +11,8 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   const ctx=await b.newContext({viewport:{width:412,height:860},deviceScaleFactor:2.625,hasTouch:true,isMobile:true});
   const p=await ctx.newPage();
   await p.goto('file://'+process.argv[2]); await p.waitForTimeout(400);
+  /* step 7 moved the Loaded Bone to the Drowned Oar: the Croupier is home for every check below that carries it */
+  await p.evaluate(()=>{const T=__t.townData(); T.rescued=['croupier']; __t.townSave();});
 
   /* 1. Workshops: tiers 0 -> 1 -> 2, costs, ruin/restored/lit windows, and one gift at most */
   const wkRes=await p.evaluate(()=>{
@@ -46,6 +48,10 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const out=[];
     for(const [gift,G] of Object.entries(__t.TOWN_GIFTS)){
       for(const [tier,restored] of [[undefined,false],[null,false],[-1,false],[.5,false],['bad',false],[0,false],[1,true],[2,true],[99,true],['1',true]]){
+        /* step 7: a soul's gift (the Loaded Bone, the Pawned Relic) is open once that soul is home, whatever the workshops */
+        if(G.soul){const pawn=Object.keys(__t.RELICS).find(k=>!__t.RELICS[k].curse);
+          const got=__t.townFix({buildings:{},gift,rescued:restored?[G.soul]:[],pawn}).gift;
+          out.push({gift,tier,got,want:restored?gift:null}); continue;}
         const buildings=Object.fromEntries(Object.keys(__t.TOWN_WORKSHOPS).map(k=>[k,k===G.workshop?tier:2]));
         const got=__t.townFix({buildings,gift}).gift;
         out.push({gift,tier,got,want:restored?gift:null});

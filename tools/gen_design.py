@@ -23,7 +23,7 @@ w("""- **Creature health:** `hp = base × m`, where `m = 1.15 + 0.35 × floorInd
 """)
 
 w("## Saltmouth workshops and town gifts\n")
-w("Workshops have tiers 0–2: ruined, restored, then lit windows. Tier 1 offers the gift. One gift is copied into the run; every gain and price is off on replay and under a Trial. The Loaded Bone is offered at the Brazier until the Drowned Oar opens in step 7.\n")
+w("Workshops have tiers 0–2: ruined, restored, then lit windows. Tier 1 offers the gift. One gift is copied into the run; every gain and price is off on replay and under a Trial. The Loaded Bone is offered at the Drowned Oar and the Pawned Relic at the Toothmonger's stall, once each soul is freed (step 7).\n")
 w("| Workshop | Restore (0 → 1) | Light windows (1 → 2) |\n|---|---|---|")
 for k,v in D['TOWN_WORKSHOPS'].items():
     costs=[', '.join('%s %s'%(n,r) for r,n in c.items()) for c in v['costs']]
@@ -31,7 +31,17 @@ for k,v in D['TOWN_WORKSHOPS'].items():
 w("\n| Gift | Gain | Price |\n|---|---|---|")
 for v in D['TOWN_GIFTS'].values():
     w("| %s | %s | %s |"%(v['n'],v['gain'],v['price']))
-w("\nThe Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).\n")
+w("\nThe Loaded Bone uses `SALT.townGift = 25`, independently of map and wave draws. Gift use and each rite’s first Tune wait survive a save. Dip marks its free Candle; dismantling that Candle restores the free placement, while selling another tower leaves the gift spent. Older saves without the marker keep their recorded gift use. Dip’s smaller lamp lasts through floor 1, following the Step 6 handoff (the original §0.3 ended it after the first wave).\n")
+
+w("## Saltmouth: rescued souls (step 7)\n")
+if 'CAGE_PRICE' in D:
+    w("On the landings after floors %s, a door holds a cage with chance **%s**, at most once a run, rolled on `SALT.cage = 26` after the descent doors and never on a Trial door, a descent door or the Deep Stair. The lock takes **%s** essence. Freed souls go up with the haul's one credit, even from a death.\n"%(', '.join(str(x+1) for x in D['CAGE_LANDINGS']),D['CAGE_CHANCE'],D['CAGE_PRICE']))
+    w("The Croupier plays knucklebones at the Drowned Oar for **%s** timber or tallow (a win pays it back twice over). The Pawned Relic costs **%s** tallow, paid when you pawn it; it then holds the one town gift until the next descent, which spends it (a replayed stair does not). The relic is taken out of offers after the seeded roll.\n"%(D['BONES_WAGER'],D['PAWN_PRICE']))
+    w("| The Toothmonger gives | You get |\n|---|---|")
+    for t in D['TOWN_TRADES']:
+        nm=lambda n,k:'%s %s'%(n,'curio' if k=='curios' and n==1 else k)
+        w("| %s | %s |"%(', '.join(nm(n,k) for k,n in t['give'].items()),', '.join(nm(n,k) for k,n in t['get'].items())))
+    w("")
 
 w("## Creatures\n")
 w("| Key | Name | HP | Speed | Oil | Essence | Radius | Traits |\n|---|---|---|---|---|---|---|---|")
