@@ -50,3 +50,25 @@ Saltmouth stops being a list of things you restore and becomes *your* town. Touc
 4. Do we add sea-glass, or keep the economy at four materials?
 5. What's the first step: the move/rotate/storage tools (everything else uses them), then Lodge rooms, then outdoors?
 6. What could make this *not* fit the vibe, and how do we keep it eerie instead of cosy-cute?
+
+---
+
+## After round 1 with Gemini (PR #134)
+**Agreed, adopted:**
+- **No stair effects.** Decoration is cosmetic, lore, and town-side only. Set bonuses dropped.
+- **No fifth material.** Curios buy blueprints; tallow buys light and dye.
+- **Tile grid stays** (extends `LODGE_MAP` and the town's grid): reliable for a thumb on a folded Fold.
+- **Rotation:** flip for symmetric pieces, 4-way only for key asymmetric ones.
+- **Vibe palette:** salt, rot, iron, tallow, bone, rusted brass; barnacled, waterlogged, soot-stained; lighting makes sharp silhouettes.
+- **Gemini's ideas folded in:** the **Hearth Beacon** (fed with tallow and curios, thins the rain around town and reveals drowned carvings in the stone: the true-ending engine); the **Flooded Cellar** (brine rises after deaths and drains after deep wins, leaving kelp and barnacles); **Keeper waypoints and lore chalk**; **boss trophies** that rumble or show lore when tapped.
+
+**Dropped:** the tide-garden and farming (too cosy and choreful); the travelling peddler (Keepers and rescued souls do the trading instead).
+
+**Build order (draft runbook):**
+1. Build tools: lift, drag, rotate, storage, undo, small things on surfaces.
+2. Lodge rooms: the main room plus the Flooded Cellar and the Attic, and switching between them.
+3. Furniture catalogue in themed sets, wall mounts, trophies, and real darkness and light.
+4. The Hearth Beacon and the rain thinning out.
+5. Keepers reacting to what you place, lore chalk, and the cellar's watermarks.
+
+**Still for Criss:** whether any of the cut ideas should come back (e.g. a peddler as a rescued soul rather than a wanderer).
