@@ -72,3 +72,9 @@ Saltmouth stops being a list of things you restore and becomes *your* town. Touc
 5. Keepers reacting to what you place, lore chalk, and the cellar's watermarks.
 
 **Still for Criss:** whether any of the cut ideas should come back (e.g. a peddler as a rescued soul rather than a wanderer).
+
+## Criss's calls (round 2)
+- **Decorations are decorations.** No bonuses, unless a piece ties into another expansion (e.g. the Hearth Beacon feeding the true ending).
+- **Placement: both, as a toggle.** A Grid / Free switch in build mode. Grid snaps to tiles; Free places anywhere the footprint fits. Both keep the door and shelf clear.
+- **Rotation: 8 ways** (every 45°), so a chair can sit in a corner facing the middle of the room. Art: 8 facings for pieces that need them; symmetric pieces reuse mirrored frames. Diagonal footprints need their own collision check, especially in Grid mode.
+- The peddler and farming stay cut unless Criss brings them back.
