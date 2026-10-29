@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 3 step 9 - a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 2 - new pixel art (runbook §3), turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -48,6 +48,13 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] A piece may carry `x, y` (art pixels, Free) beside `c, r`; always read its footprint with `pieceRect(d,I)`, never `d.c*16`. `c, r` are the tiles it blocks, so walking and `TOWN_KEEP` checks stay on tiles.
 - [ ] Anything that draws or blocks pieces skips `BLD_SKIP` (the piece held). A new deed the player can take back calls `bldDid({a:…})` and gets a branch in `bldUndo()`.
 - [ ] New saved fields on a piece survive Store (`bldStow()` builds the stored entry) and `storeFix()`.
+
+## Turning, and new art (Expansion 4, step 2)
+
+- [ ] **New art:** `expansion/EXPANSION4_RUNBOOK.md` §3. PixelLab (`get_object` for a piece Criss made), then `tools/png2rows.py` to rows, every colour on a `PX` letter (a new letter only if none is close, said in the PR), drawn with `tRows()`; 16 px wide a tile, up to 24 on a diagonal, standing on its tile and rising above it. Check it in the shots.
+- [ ] A new piece declares `faces` (1, 2, 4 or 8) and, if its diagonals are drawn and cover other tiles than its straight footprint, `diag` (its tiles facing SW). Its painter takes the drawn facing `s` (`lodgeFurnDraw(id,s)`); mirrors come from `faceSrc()`.
+- [ ] Read a footprint with `pieceFoot(I,d.f)` / `pieceRect(d,I)` / `decoTiles(id,c,r,f)`, never `I.w`: a piece on its side swaps w and h. Anything that places, checks or draws a piece passes its `f`.
+- [ ] A new field on a piece rides along with `f`: in `bldStow()`, `storeFix()`, `bldPlaceStored()` and `townFix()`/`lodgeFix()`.
 
 ## Tests
 

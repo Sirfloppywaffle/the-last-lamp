@@ -532,7 +532,9 @@ input[type=range]::-moz-range-track {
 .town-tb b{font-weight:500;color:var(--bone)}
 .town-tb:disabled{opacity:.4;cursor:default}
 .town-tb-go{color:var(--bone);border-color:var(--tallow)}
-#townLiftBar .town-tb{min-width:96px}
+#townLiftBar .town-tb{min-width:76px}
+/* ⟳ (Expansion 4, step 2) is held to turn back: no text selection or callout under the thumb */
+#townLiftBar #townTurn{min-width:52px;font-size:1.15rem;letter-spacing:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
 .town-trow{min-height:64px}
 .town-trow.held{opacity:.4;pointer-events:none}
 .town-chip.town-stored b{position:absolute;top:2px;right:4px;font-family:var(--f-num);font-size:.6rem;font-weight:500;color:var(--bone)}
@@ -621,7 +623,7 @@ input[type=range]::-moz-range-track {
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, Kindle sets a creature burning and running, lighting the dark around it, and its Signal Mirror, built in the lamp's own light, reflects it in a 5-tile beam you aim between waves (it locks while the dark comes); you can build in the beam, and it burns what crosses it. The Galvanist builds a power grid: Pylons string live wires that shock, stun and light what crosses them, if a pylon stands in the lamp's own light to power the rest; his Arc Lamps burn bright but flicker; his Lightning Rods plant where they strike and join the grid; Overload fires every wire at once for 2 oil, and run hot it fries his pylons; he binds nothing by ritual: his Grounding Anchor forces nearby pylons to link to it, and a bindable creature that dies inside one of its triangles is caught in a cage to tap (the Keeper's core waits 15 seconds for a cage, and its fall readies the Anchor), each capture drawing 2 Heat out of the grid; his lamp's Dynamo branch ends in a Static Burst. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Bellringer, Agathe Vell, sees by sound: her Toll rings the lamp, and whatever its ring touches is heard for 1.5 seconds, outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost; each Toll makes 1 Noise (it fades 1 every 8 seconds), and at 5 the dark answers with two Abyssal Stalkers; the Great Bell is heard across the whole floor for 3 Noise; her Bell Wires can be strung anywhere on the path, even in the dark, and hear what crosses them; she builds no candles: her Tuning Forks give no light but hum, standing within 5 tiles of the lamp or 3.5 of another fork, and she can build inside a hum even in the dark, though wards there strike only what is heard; a toll that reaches a fork rings again from it; a toll from the lamp echoes back off the walls of the floor; heavy things leave red footsteps where they tread unseen, but Shades, Stalkers and fliers make none; her Clapper Harpoons ring what they strike and knock it back, and the path's edges show for her even where it is dark; her lamp's Peal branch makes it toll on its own, with no Noise, but that heartbeat finds only the ordinary dark; tap Toll on the beat (a ring closes on the lamp, and the button glows) for a Perfect Toll that reaches half again as far and rings out faster, though it makes as much Noise as any toll; her Tolls, Great Bell, Bell Wires, Clapper bolts and Tocsin shells crack what they strike, and three cracks shatter it, hurting and cracking what stands beside it (bosses take 8, Behemoths and elites 5); her Tocsin shells any Bell Wire that jangles, however far away. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it; Haul Away casts a whaling net that hauls everything under it, and everything on its lines, 3 tiles back and tangles it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The Roster.</b> Five went down the stair the night Saltmouth drowned: Ambrose Fenn the lamplighter, Jonah Tolland the harpooner, the Nameless, Dr. Lucan Voss and Agathe Vell. Each carries the lamp their own way. Some are earned by a deed on the stair, some in the Ember Hall. Every kind of horror you bind or capture, on any descent, adds its eyes to the Nameless’s hood, for good: there are six to find.</li>
-        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it on the square: cobbles, boardwalk, street-lamps, braziers, fences and trees. Tap a piece you built to lift it and set it down elsewhere; Store puts it away whole, to set down again for nothing, and Salvage in Storage gives back all it cost; Undo takes back your last ten deeds. Grid sets pieces on the tiles, Free wherever your thumb puts them. Nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy. The Keepers you have freed stand in the square, each at their own footing; a dark footing is one you have not freed, and a tap on it says what frees them. Talk to a Keeper to carry the lamp down as them, or to set them to a chore: while you are down they put timber, iron, tallow or curios by for every floor you clear, and the haul brings it up. Never embers, nothing on the stair. Nothing built may stand on a Keeper's place or wall one in. Five ruined workshops stand around the square — the Ember Brazier, the Try-Works, the Galvanic Smithy, the Cracked Belfry and the Ossuary Menagerie — and the haul restores them, then lights their windows. Each restored workshop offers a town gift at its door: you may carry one town gift down per descent, and each one exacts a price on the stair; it is off on a replayed stair and on any floor under a Trial. Some landings after floors 2, 3 and 4 hang a cage behind one door, at most once a descent: pay the lock and whoever is in it climbs to Saltmouth with your haul, even if your lamp goes out. The Croupier lights the Drowned Oar again and plays knucklebones for timber or tallow, and the Loaded Bone is his. The Toothmonger opens her stall: she trades materials at fixed rates, and for 25 tallow, paid at once, she pawns a relic you name so that nothing on your next descent offers it; it holds your one town gift until you go down. Three graves in the cemetery have been opened to the Drowned Mother, the Wrong Sun and the Many-Mouthed: raise one with iron, tallow and curios and its black candle is a town gift. Its patron's Attention starts at 1, so its first tier is on from floor 1 (and is the price), and it reaches out at the first break. Three tide-pools on the south shore hold a little timber, iron, tallow or a curio, and now and then a bottle; they fill again after each descent. Restore the Keeper's Lodge on the west side of the square with timber and iron, and step inside: one room to lay a floor and a wall in and set furniture down, lifted, stored and salvaged as in the square, and a Grimoire shelf with a spine for every creature met and relic found; tap it to read the book. With the Lodge standing, two Keepers can work at chores at once.</li>
+        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it on the square: cobbles, boardwalk, street-lamps, braziers, fences and trees. Tap a piece you built to lift it and set it down elsewhere; ⟳, or a tap on the lifted piece, turns it an eighth at a time (paths and fences a quarter), and holding turns it back; Store puts it away whole, to set down again for nothing, and Salvage in Storage gives back all it cost; Undo takes back your last ten deeds. Grid sets pieces on the tiles, Free wherever your thumb puts them. Nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy. The Keepers you have freed stand in the square, each at their own footing; a dark footing is one you have not freed, and a tap on it says what frees them. Talk to a Keeper to carry the lamp down as them, or to set them to a chore: while you are down they put timber, iron, tallow or curios by for every floor you clear, and the haul brings it up. Never embers, nothing on the stair. Nothing built may stand on a Keeper's place or wall one in. Five ruined workshops stand around the square — the Ember Brazier, the Try-Works, the Galvanic Smithy, the Cracked Belfry and the Ossuary Menagerie — and the haul restores them, then lights their windows. Each restored workshop offers a town gift at its door: you may carry one town gift down per descent, and each one exacts a price on the stair; it is off on a replayed stair and on any floor under a Trial. Some landings after floors 2, 3 and 4 hang a cage behind one door, at most once a descent: pay the lock and whoever is in it climbs to Saltmouth with your haul, even if your lamp goes out. The Croupier lights the Drowned Oar again and plays knucklebones for timber or tallow, and the Loaded Bone is his. The Toothmonger opens her stall: she trades materials at fixed rates, and for 25 tallow, paid at once, she pawns a relic you name so that nothing on your next descent offers it; it holds your one town gift until you go down. Three graves in the cemetery have been opened to the Drowned Mother, the Wrong Sun and the Many-Mouthed: raise one with iron, tallow and curios and its black candle is a town gift. Its patron's Attention starts at 1, so its first tier is on from floor 1 (and is the price), and it reaches out at the first break. Three tide-pools on the south shore hold a little timber, iron, tallow or a curio, and now and then a bottle; they fill again after each descent. Restore the Keeper's Lodge on the west side of the square with timber and iron, and step inside: one room to lay a floor and a wall in and set furniture down, lifted, stored and salvaged as in the square, and a Grimoire shelf with a spine for every creature met and relic found; tap it to read the book. With the Lodge standing, two Keepers can work at chores at once.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. The stair's name decides which, and a saved floor keeps its own.</li>
@@ -654,7 +656,7 @@ input[type=range]::-moz-range-track {
   <div class="town-actwrap"><button class="btn call town-act" id="townAct" type="button" hidden>Descend the stair</button></div>
   <div class="town-tray" id="townTray" hidden><div class="town-tmsg" id="townTmsg" aria-live="polite"></div><div class="town-tbot">
     <div class="town-tools" id="townTools"><div class="town-seg" role="group" aria-label="Show"><button type="button" class="town-tb" data-tab="pieces" aria-pressed="true">Pieces</button><button type="button" class="town-tb" data-tab="store" aria-pressed="false">Storage <b id="townStoreN">0</b></button></div><div class="town-seg" role="group" aria-label="Placing"><button type="button" class="town-tb" data-snap="grid" aria-pressed="true">Grid</button><button type="button" class="town-tb" data-snap="free" aria-pressed="false">Free</button></div><button type="button" class="town-tb" id="townUndo" disabled>Undo</button></div>
-    <div class="town-tools" id="townLiftBar" hidden><button type="button" class="town-tb town-tb-go" id="townDrop">✓ Place</button><button type="button" class="town-tb" id="townCancel">✕ Cancel</button><button type="button" class="town-tb" id="townStow">Store</button></div>
+    <div class="town-tools" id="townLiftBar" hidden><button type="button" class="town-tb town-tb-go" id="townDrop">✓ Place</button><button type="button" class="town-tb" id="townTurn" aria-label="Turn it. Hold to turn it back">⟳</button><button type="button" class="town-tb" id="townCancel">✕ Cancel</button><button type="button" class="town-tb" id="townStow">Store</button></div>
     <div class="town-trow" id="townTrow" aria-label="Build"></div></div></div>
   <div class="town-cardwrap" id="townCardWrap" hidden><button class="town-card" id="townCard" type="button"></button></div>
 </div>
@@ -699,7 +701,7 @@ const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='19.1.0';
+const GAME_VERSION='19.2.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -10740,7 +10742,7 @@ const TIPS={
   croupier:{where:'town',when:()=>false,title:'The Croupier',text:'You freed him from a cage, and the Drowned Oar is lit again. He plays knucklebones for town materials, never essence or embers, and keeps the Loaded Bone behind the bar: one town gift, like a workshop’s.'},
   toothmonger:{where:'town',when:()=>false,title:'The Toothmonger',text:'You freed her from a cage, and her stall is open. She trades materials at fixed rates, always less back than you give. Name a relic you have carried and pay 25 tallow, and as the Pawned Relic she keeps it off the stair on your next descent. It is your one town gift, and once pawned it stays with her until you go down.'},
   townshrines:{where:'town',when:()=>false,title:'Three shrines',text:'In the north cemetery three graves have been opened to the old things below. Raise a shrine with iron, tallow and curios, and its black candle is a town gift: its patron notices you before the stair, and reaches out at the first break. Its first tier is on from floor 1, and the price is the same tier. One candle, like any town gift.'},
-  townlift:{where:'town',when:()=>false,title:'Lift, store, salvage',text:'Tap a piece you built to lift it. Drag it, or tap where it goes, then Place; Cancel sets it back exactly where it stood. Store puts it away whole, and it waits in Storage on the tray to be set down again for nothing. Salvage, in Storage, gives back all it cost. Undo takes back your last ten deeds until you close Build.'},
+  townlift:{where:'town',when:()=>false,title:'Lift, turn, store, salvage',text:'Tap a piece you built to lift it. Drag it, or tap where it goes, then Place; Cancel sets it back exactly where it stood. Store puts it away whole, and it waits in Storage on the tray to be set down again for nothing. Salvage, in Storage, gives back all it cost. Undo takes back your last ten deeds until you close Build. ⟳, or a tap on the lifted piece, turns it an eighth; hold either to turn it back. A chair in a corner can face the room.'},
   townfree:{where:'town',when:()=>false,title:'Grid or Free',text:'Grid sets every piece square on the tiles. Free sets it where your thumb puts it, to the pixel, wherever its footprint fits; it still blocks the tiles it covers most of, and nothing may wall off a door or a Keeper’s place. Paths and fences keep to the tiles. Build remembers which you chose.'},
   lodge:{where:'town',when:()=>false,title:'The Keeper’s Lodge',text:'One room above the stair, and it is yours. Build here as in the square: tap a floor or a wall on the tray to lay it over the room, or choose a piece of furniture and tap the floor. Tap a piece to lift it, as in the square; a floor or a wall you change gives back all it cost. The shelf by the back wall holds the Grimoire. With the Lodge standing, two Keepers can work at chores at once. The door takes you back out into the rain.'},
   lodgeshelf:{where:'town',when:()=>false,title:'The Grimoire shelf',text:'One spine for every creature you have met and every relic you have found, on any descent: the cold ones creatures, the warm ones relics. Tap the shelf to read the Grimoire; close it and you are back in the Lodge.'},
@@ -12223,7 +12225,8 @@ const LODGE_KEEP=[[4,8],[5,8],[4,3],[5,3]];
 const LODGE_KEPT=new Set(LODGE_KEEP.map(([x,y])=>y*LODGE_W+x));
 /* what the room takes. k: a floor and a wall are laid over the whole room, one of each, the first of each kind free; furniture
    (furn) stands where you tap, like the square's pieces. w, h: its footprint in tiles; flat: walked over (the rug); light: the
-   radius of its pool, green for the banker's lamp. Changing or taking up anything gives back all it cost */
+   radius of its pool, green for the banker's lamp. Changing or taking up anything gives back all it cost. faces (Expansion 4,
+   step 2): how many facings it is drawn in (faceSrc()); diag: its footprint on a drawn diagonal, the tiles it covers facing SW */
 const LODGE_ITEMS={
   planks:{k:'floor',n:'Rotted Ship-Planks',s:'Planks',cost:{}},
   parquet:{k:'floor',n:'Diamond Parquet',s:'Parquet',cost:{timber:20}},
@@ -12231,19 +12234,51 @@ const LODGE_ITEMS={
   damp:{k:'wall',n:'Damp Stone',s:'Stone',cost:{}},
   library:{k:'wall',n:'Mahogany Library',s:'Library',cost:{timber:30}},
   brass:{k:'wall',n:'Brass-Ribbed Bulkhead',s:'Brass',cost:{iron:30}},
-  desk:{k:'furn',n:'Banker’s Desk',s:'Desk',cost:{timber:12,iron:4},w:2,light:30,green:true},
-  stove:{k:'furn',n:'Cast-Iron Stove',s:'Stove',cost:{iron:10,tallow:2},light:36},
-  rug:{k:'furn',n:'Ritual Rug',s:'Rug',cost:{tallow:8,curios:1},w:3,h:3,flat:true},
-  chair:{k:'furn',n:'Armchair',s:'Chair',cost:{timber:8,tallow:2}},
-  shelf:{k:'furn',n:'Bookshelf',s:'Shelf',cost:{timber:10}}};
+  desk:{k:'furn',n:'Banker’s Desk',s:'Desk',cost:{timber:12,iron:4},w:2,light:30,green:true,faces:4},
+  stove:{k:'furn',n:'Cast-Iron Stove',s:'Stove',cost:{iron:10,tallow:2},light:36,faces:4},
+  rug:{k:'furn',n:'Ritual Rug',s:'Rug',cost:{tallow:8,curios:1},w:3,h:3,flat:true,faces:1},
+  chair:{k:'furn',n:'Armchair',s:'Chair',cost:{timber:8,tallow:2},faces:8,diag:[[0,0]]},
+  shelf:{k:'furn',n:'Bookshelf',s:'Shelf',cost:{timber:10},faces:4}};
 function lodgeCh(x,y){return x<0||y<0||x>=LODGE_W||y>=LODGE_H?'#':LODGE_MAP[y][x];}
 function lodgeKept(x,y){return LODGE_KEPT.has(y*LODGE_W+x);}
-function lodgeTiles(id,c,r){const I=LODGE_ITEMS[id], out=[]; for(let y=0;y<(I.h||1);y++)for(let x=0;x<(I.w||1);x++)out.push([c+x,r+y]); return out;}
+function lodgeTiles(id,c,r,f){const t=pieceFoot(LODGE_ITEMS[id],f).t, out=[]; for(const [x,y] of t)out.push([c+x,r+y]); return out;}
+/* ---- Expansion 4, step 2: turning a piece. f is where it faces: 0 S (toward you), 1 SW, 2 W, 3 NW, 4 N, 5 NE, 6 E, 7 SE; ⟳
+   turns it one step clockwise, and a piece saved before turning faces 0. Its faces says how many facings it is drawn in: 1 (round:
+   every facing looks the same), 2 (front and side: its back is its front), 4 (front, side and back), 8 (every one drawn). The east
+   side is the west side mirrored unless it is drawn itself, and a diagonal not drawn shows the straight facing beside it that is
+   nearer the front. A piece kept to the tiles (snap) turns a quarter at a time ---- */
+const FACE_WORD=['south','south-west','west','north-west','north','north-east','east','south-east'];
+/* FACE_SRC[faces][f]: [the drawn facing that shows f, mirrored] */
+const FACE_SRC={};
+for(const n of [1,2,4,8]){const has=g=>n===8||g===0||(n>1&&g===2)||(n>3&&g===4), T=[];
+  for(let f=0;f<8;f++){let g=f, m=false;
+    if(f&1&&n<8)g=f<4?f-1:(f+1)&7;
+    if(!has(g)){if(has((8-g)&7)){g=(8-g)&7; m=true;} else g=(g+4)&7;}
+    T.push([n===1?0:g,m]);}
+  FACE_SRC[n]=T;}
+function faceSrc(I,f){return FACE_SRC[I.faces>=8?8:I.faces>=4?4:I.faces>=2?2:1][f&7];}
+/* a saved facing, or 0; a piece kept to the tiles only faces straight */
+function faceFix(f,I){f=Number.isInteger(f)&&f>=0&&f<8?f:0; return I&&I.snap?f&6:f;}
+/* the tiles a piece covers facing f, from its footprint's top-left ({w, h, t: [[x, y]…], full}): its w by h, a quarter turned
+   (h by w) when its side shows, or on a drawn diagonal its own mask (diag: the tiles it covers facing SW, turned a quarter
+   for each diagonal after). Worked out once per piece and facing */
+const FOOT=new Map();
+function pieceFoot(I,f){
+  let A=FOOT.get(I); if(!A)FOOT.set(I,A=[]);
+  f=(f|0)&7; if(A[f])return A[f];
+  const s=faceSrc(I,f)[0];
+  let t=[];
+  if(s&1&&I.diag){t=I.diag.map(p=>p.slice());
+    for(let q=1;q<s;q+=2){const H=Math.max(...t.map(p=>p[1]))+1; t=t.map(([x,y])=>[H-1-y,x]);}}
+  else{const side=s===2||s===6, W=side?I.h||1:I.w||1, H=side?I.w||1:I.h||1; for(let y=0;y<H;y++)for(let x=0;x<W;x++)t.push([x,y]);}
+  const w=Math.max(...t.map(p=>p[0]))+1, h=Math.max(...t.map(p=>p[1]))+1;
+  return A[f]={w,h,t,full:t.length===w*h};
+}
 /* with these solid pieces standing, can the door and the shelf still be walked to from the door? Its own walk, so it runs on a
    saved Lodge before anyone is inside */
 function lodgeKeepOK(pieces){
   const W=LODGE_W, H=LODGE_H, blocked=new Set(), DX=[1,-1,0,0,1,1,-1,-1], DY=[0,0,1,-1,1,-1,1,-1];
-  for(const d of pieces)for(const [x,y] of lodgeTiles(d.id,d.c,d.r))blocked.add(y*W+x);
+  for(const d of pieces)for(const [x,y] of lodgeTiles(d.id,d.c,d.r,d.f))blocked.add(y*W+x);
   const solid=(x,y)=>LODGE_SOLID.indexOf(lodgeCh(x,y))>=0||blocked.has(y*W+x);
   const seen=new Uint8Array(W*H), q=[], s=Math.floor(LODGE_IN.y)*W+Math.floor(LODGE_IN.x);
   if(blocked.has(s))return false;
@@ -12262,10 +12297,10 @@ function lodgeFix(l,res){
   const pay=c=>{if(res)for(const k in c)res[k]+=c[k];}, used=new Set();
   for(const d of o.built&&Array.isArray(l.furn)?l.furn:[]){
     if(!d||!kind(d.id,'furn'))continue;
-    const I=LODGE_ITEMS[d.id], c=d.c|0, r=d.r|0, tiles=lodgeTiles(d.id,c,r);
+    const I=LODGE_ITEMS[d.id], c=d.c|0, r=d.r|0, f=faceFix(d.f,I), tiles=lodgeTiles(d.id,c,r,f);
     if(!tiles.every(([x,y])=>lodgeCh(x,y)==='.'&&(I.flat||!lodgeKept(x,y))&&!used.has(y*LODGE_W+x))){pay(I.cost); continue;}
     for(const [x,y] of tiles)used.add(y*LODGE_W+x);
-    o.furn.push(freeFix({id:d.id,c,r,x:d.x,y:d.y},I,o.furn,lodgeTouchOK));
+    o.furn.push(freeFix({id:d.id,c,r,f,x:d.x,y:d.y},I,o.furn,lodgeTouchOK));
   }
   /* oldest first, every solid piece that still leaves the door and the shelf in reach stays */
   const solid=o.furn.filter(d=>!LODGE_ITEMS[d.id].flat);
@@ -12418,7 +12453,9 @@ const TOWN_SPEED=3.4, TOWN_NIGHT='rgba(3,4,8,.83)', LODGE_NIGHT='rgba(3,4,8,.7)'
 const PX={'0':'#07090c','1':'#101419','2':'#1a2028','3':'#28303b','4':'#3b4654','5':'#1d1612','6':'#33241b','7':'#4f3829',
   '8':'#7a331e','9':'#ad5428',a:'#d98a36',b:'#f5c26b',c:'#fff0c2',d:'#c9bfa8',e:'#7a8a74',f:'#3b6e5c',g:'#5ab8a8',h:'#4a7bc7',
   i:'#9ecbff',j:'#782238',k:'#c93b5b',l:'#1a1318',m:'#221a20',n:'#2c2229',q:'#262e3b',r:'#36404f',s:'#04070b',t:'#0a1118',
-  u:'#4d5544',v:'#b03a22',y:'#232f25'};
+  u:'#4d5544',v:'#b03a22',y:'#232f25',
+  /* Expansion 4, step 2: worn leather's light and tarnished brass, for the Armchair from PixelLab (nothing here was close) */
+  o:'#755941',p:'#a38545'};
 const PX_RGB={}; for(const k in PX){const v=parseInt(PX[k].slice(1),16); PX_RGB[k]=[v>>16,(v>>8)&255,v&255];}
 /* the Keepers, 16 by 24 (Pixel Heroes: big heads, one tool each, faces from two or three pixels). Heads are drawn per facing:
    d (toward you), u (away), r (to the right; left is the mirror). Bodies and legs are shared. em: the letters that glow,
@@ -12479,13 +12516,14 @@ const HAUL_KEYS=['timber','iron','tallow','curios'];
    walked on; everything else stands up and is solid. light: the radius of its pool, in art pixels. w, h: its footprint in
    tiles; s: its name on the tray. grave: it carries the name of the oldest death that has no stone yet. Salvaging a piece gives
    back all it cost. snap (Expansion 4, step 1): it keeps to the tiles even in Free placement, because paths are painted into the
-   ground tile by tile and a fence joins the fences beside it */
+   ground tile by tile and a fence joins the fences beside it. faces (Expansion 4, step 2): 2 for a path (its stones or boards run
+   across or along) and a fence (which way it runs alone); anything without is round enough to look the same every way */
 const TOWN_DECOS={
-  cobble:{n:'Wet Cobblestone',s:'Cobbles',cost:{iron:2},path:true,snap:true},
-  board:{n:'Boardwalk',s:'Boards',cost:{timber:2},path:true,snap:true},
+  cobble:{n:'Wet Cobblestone',s:'Cobbles',cost:{iron:2},path:true,snap:true,faces:2},
+  board:{n:'Boardwalk',s:'Boards',cost:{timber:2},path:true,snap:true,faces:2},
   lamp:{n:'Iron Street-Lamp',s:'Lamp',cost:{iron:6,tallow:4},light:40},
   brazier:{n:'Brazier',s:'Brazier',cost:{iron:8,tallow:6},light:50},
-  fence:{n:'Wrought-Iron Fence',s:'Fence',cost:{iron:3},snap:true},
+  fence:{n:'Wrought-Iron Fence',s:'Fence',cost:{iron:3},snap:true,faces:2},
   tree:{n:'Blood-Lichen Tree',s:'Tree',cost:{timber:8,tallow:4},w:2,h:2},
   stone:{n:'Mossy Headstone',s:'Headstone',cost:{iron:5},grave:true}};
 /* the last deaths kept without a stone; a death with a stone is kept as long as its stone stands */
@@ -12617,14 +12655,14 @@ function townFix(t){
   const used=new Set(), moved=[];
   for(const d of Array.isArray(t.decos)?t.decos:[]){
     const D=d&&TOWN_DECOS[d.id]; if(!D)continue;
-    const c=d.c|0, r=d.r|0, tiles=decoTiles(d.id,c,r);
+    const c=d.c|0, r=d.r|0, f=faceFix(d.f,D), tiles=decoTiles(d.id,c,r,f);
     if(!tiles.every(([x,y])=>townBuildable(x,y,!D.path)&&!used.has(y*TOWN_W+x))){
       for(const k in D.cost)o.res[k]+=D.cost[k];
       /* it stood on a Keeper's place (step 5), which came after it: say so */
       if(tiles.some(([x,y])=>(townKept(x,y)&&townCh(x,y)!=='=')||townCh(x,y)==='S'))moved.push(D.n);
       continue;}
     for(const [x,y] of tiles)used.add(y*TOWN_W+x);
-    o.decos.push(freeFix(Object.assign({},d,{c,r}),D,o.decos,townTouchOK));
+    o.decos.push(freeFix(Object.assign({},d,{c,r,f}),D,o.decos,townTouchOK));
   }
   /* nothing built may wall a Keeper in, even when each piece was fine when it went up (step 5). The pieces that stand are kept
      oldest first for as long as every Keeper's place can still be walked to; one that would shut a place off comes up and pays back */
@@ -12644,9 +12682,14 @@ function townFix(t){
   return o;
 }
 /* ---- Expansion 4, step 1: placing freely, and storage ---- */
-/* a piece's footprint in art pixels: where it stands freely (x, y), or else its tiles */
-function pieceRect(d,I){return {x:d.x!=null?d.x:d.c*16,y:d.y!=null?d.y:d.r*16,w:(I.w||1)*16,h:(I.h||1)*16};}
+/* a piece's footprint in art pixels: where it stands freely (x, y), or else its tiles; as turned (Expansion 4, step 2) */
+function pieceRect(d,I){const F=pieceFoot(I,d.f); return {x:d.x!=null?d.x:d.c*16,y:d.y!=null?d.y:d.r*16,w:F.w*16,h:F.h*16};}
 function rectsOver(a,b){return a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;}
+/* the footprint with its top-left at (x, y), as rectangles: one, or one a tile where a diagonal's mask leaves gaps */
+function footRects(x,y,F){return F.full?[{x,y,w:F.w*16,h:F.h*16}]:F.t.map(([a,b])=>({x:x+a*16,y:y+b*16,w:16,h:16}));}
+function pieceRects(d,I){const R=pieceRect(d,I); return footRects(R.x,R.y,pieceFoot(I,d.f));}
+function rectsHit(A,B){return A.some(a=>B.some(b=>rectsOver(a,b)));}
+function footTiles(RS){const out=[]; for(const R of RS)for(const t of rectTiles(R))out.push(t); return out;}
 /* every tile a footprint in pixels touches, even by one pixel */
 function rectTiles(R){const out=[]; for(let y=Math.floor(R.y/16);y<=Math.floor((R.y+R.h-1)/16);y++)for(let x=Math.floor(R.x/16);x<=Math.floor((R.x+R.w-1)/16);x++)out.push([x,y]); return out;}
 /* the ground a free footprint may hang over: the square's open ground (never the deck, never under the tower), the room's floor */
@@ -12659,8 +12702,8 @@ function lodgeTouchOK(x,y){return lodgeCh(x,y)==='.';}
 function freeFix(d,I,kept,touch){
   const x=d.x, y=d.y; delete d.x; delete d.y;
   if(I.snap||!Number.isInteger(x)||!Number.isInteger(y)||Math.round(x/16)!==d.c||Math.round(y/16)!==d.r)return d;
-  const R={x,y,w:(I.w||1)*16,h:(I.h||1)*16}, tab=I.k?LODGE_ITEMS:TOWN_DECOS;
-  if(!rectTiles(R).every(([tx,ty])=>touch(tx,ty))||kept.some(e=>rectsOver(R,pieceRect(e,tab[e.id]))))return d;
+  const RS=footRects(x,y,pieceFoot(I,d.f)), tab=I.k?LODGE_ITEMS:TOWN_DECOS;
+  if(!footTiles(RS).every(([tx,ty])=>touch(tx,ty))||kept.some(e=>rectsHit(RS,pieceRects(e,tab[e.id]))))return d;
   d.x=x; d.y=y; return d;
 }
 /* ll-town.store: pieces put away, each with the scene it belongs to (s), and what it cost, which Salvage gives back. A stored
@@ -12671,19 +12714,21 @@ function storeFix(a){
     if(!e||typeof e!=='object')continue;
     const s=e.s==='lodge'||e.s==='town'?e.s:null, I=s==='lodge'?LODGE_ITEMS[e.id]:s==='town'?TOWN_DECOS[e.id]:null;
     if(!I||(s==='lodge'&&I.k!=='furn'))continue;
-    const o={s,id:e.id,cost:haulFix(e.cost&&typeof e.cost==='object'?e.cost:I.cost)};
+    const o={s,id:e.id,cost:haulFix(e.cost&&typeof e.cost==='object'?e.cost:I.cost)}, f=faceFix(e.f,I);
+    /* it keeps the way it faced (Expansion 4, step 2) */
+    if(f)o.f=f;
     if(s==='town'&&I.grave&&Number.isInteger(e.g)&&e.g>0)o.g=e.g;
     out.push(o);
   }
   return out;
 }
-/* the tiles a piece covers when it stands at (c, r): its top-left */
-function decoTiles(id,c,r){const D=TOWN_DECOS[id], out=[]; for(let y=0;y<(D.h||1);y++)for(let x=0;x<(D.w||1);x++)out.push([c+x,r+y]); return out;}
+/* the tiles a piece covers when it stands at (c, r), its top-left, facing f */
+function decoTiles(id,c,r,f){const t=pieceFoot(TOWN_DECOS[id],f).t, out=[]; for(const [x,y] of t)out.push([c+x,r+y]); return out;}
 /* with these solid pieces standing, can every place in TOWN_KEEP be walked to from where you climb out? Its own walk over the
    map and the pieces (8 ways, no cutting corners), so it can run before the town is loaded */
 function townKeepOK(pieces){
   const W=TOWN_W, H=TOWN_H, blocked=new Set(), DX=[1,-1,0,0,1,1,-1,-1], DY=[0,0,1,-1,1,-1,1,-1];
-  for(const d of pieces)for(const [x,y] of decoTiles(d.id,d.c,d.r))blocked.add(y*W+x);
+  for(const d of pieces)for(const [x,y] of decoTiles(d.id,d.c,d.r,d.f))blocked.add(y*W+x);
   const solid=(x,y)=>x<0||y<0||x>=W||y>=H||TOWN_SOLID.indexOf(TOWN_MAP[y][x])>=0||blocked.has(y*W+x);
   const seen=new Uint8Array(W*H), q=[], s=Math.floor(TOWN_SPAWN.y)*W+Math.floor(TOWN_SPAWN.x);
   if(blocked.has(s))return false;
@@ -12957,9 +13002,10 @@ function townGrave(tx,ty){
   return cv;
 }
 /* the cemetery's railings: spear-topped bars, rails top and bottom; a run north to south is seen side on */
-function townFence(tx,ty,isF){
+/* a fence joins the fences beside it; one standing alone runs east to west, or north to south when turned (side) */
+function townFence(tx,ty,isF,side){
   isF=isF||((x,y)=>townCh(x,y)==='|');
-  const [cv,c]=tCanvas(16,20), ew=isF(tx-1,ty)||isF(tx+1,ty), ns=isF(tx,ty-1)||isF(tx,ty+1);
+  const [cv,c]=tCanvas(16,20), ew=isF(tx-1,ty)||isF(tx+1,ty), ns=isF(tx,ty-1)||isF(tx,ty+1)||(side&&!ew);
   if(ew||!ns){tp(c,0,8,'1',16,1); tp(c,0,16,'1',16,1); for(let x=1;x<16;x+=3){tp(c,x,6,'1',1,12); tp(c,x,5,'4');}}
   if(ns){tp(c,7,0,'1',2,19); tp(c,7,0,'4',1,19); for(let y=1;y<18;y+=4)tp(c,6,y,'4',4,1);}
   return cv;
@@ -13141,12 +13187,13 @@ function townArt(){
   townDecoSync();
   return TOWN_ART;
 }
-/* one tile of the ground, painted as a path ('_' boardwalk, ',' cobbles), or put back as it was (ch null) */
-function townPaintTile(tx,ty,ch){
+/* one tile of the ground, painted as a path ('_' boardwalk, ',' cobbles), or put back as it was (ch null). side: the path turned
+   a quarter, its pattern read across instead of down */
+function townPaintTile(tx,ty,ch,side){
   const A=TOWN_ART, c=A.ground.getContext('2d');
   if(ch==null){c.drawImage(A.ground0,tx*16,ty*16,16,16,tx*16,ty*16,16,16); return;}
   const img=c.createImageData(16,16), d=img.data;
-  for(let y=0;y<16;y++)for(let x=0;x<16;x++){const p=PX_RGB[townGroundPx(tx*16+x,ty*16+y,ch)], i=(y*16+x)*4; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;}
+  for(let y=0;y<16;y++)for(let x=0;x<16;x++){const p=PX_RGB[side?townGroundPx(ty*16+y,tx*16+x,ch):townGroundPx(tx*16+x,ty*16+y,ch)], i=(y*16+x)*4; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;}
   c.putImageData(img,tx*16,ty*16);
 }
 /* what is built, from townData().decos: which tiles are solid, the paths in the ground, and the pieces that stand, light and
@@ -13157,12 +13204,13 @@ let BLD_SKIP=null;
 function townDecoSync(){
   const T=townData(), W=TOWN_W;
   TOWN_BLOCK.clear(); TOWN_AT.clear();
-  for(const d of T.decos)if(d!==BLD_SKIP)for(const [x,y] of decoTiles(d.id,d.c,d.r)){TOWN_AT.set(y*W+x,d); if(!TOWN_DECOS[d.id].path)TOWN_BLOCK.add(y*W+x);}
+  for(const d of T.decos)if(d!==BLD_SKIP)for(const [x,y] of decoTiles(d.id,d.c,d.r,d.f)){TOWN_AT.set(y*W+x,d); if(!TOWN_DECOS[d.id].path)TOWN_BLOCK.add(y*W+x);}
   const A=TOWN_ART; if(!A)return;
   const want=new Map();
-  for(const d of T.decos)if(TOWN_DECOS[d.id].path&&d!==BLD_SKIP)want.set(d.r*W+d.c,d.id);
+  /* a path turned to its side (Expansion 4, step 2) runs the other way: its tile is painted with the pattern on its side */
+  for(const d of T.decos)if(TOWN_DECOS[d.id].path&&d!==BLD_SKIP)want.set(d.r*W+d.c,d.id+(townSide(d)?'|':''));
   for(const [i,id] of A.paths)if(want.get(i)!==id)townPaintTile(i%W,(i/W)|0,null);
-  for(const [i,id] of want)if(A.paths.get(i)!==id)townPaintTile(i%W,(i/W)|0,id==='board'?'_':',');
+  for(const [i,id] of want)if(A.paths.get(i)!==id)townPaintTile(i%W,(i/W)|0,id[0]==='b'?'_':',',id.endsWith('|'));
   A.paths=want;
   const props=A.props0.slice(), lights=A.lights0.slice(), em=A.em0.slice();
   for(const d of T.decos)if(d!==BLD_SKIP){const R=pieceRect(d,TOWN_DECOS[d.id]); townDecoProps(d,R.x,R.y,props,lights,em);}
@@ -13172,19 +13220,21 @@ function townDecoSync(){
 }
 /* what a built piece puts in the scene with its footprint's top-left at (x, y) in art pixels: what stands, what glows, its light.
    Its look comes from its tiles (c, r), so a tree or a stone keeps its own shape wherever it is drawn */
+/* does a two-way piece (a path, a fence) show its side: turned a quarter (Expansion 4, step 2) */
+function townSide(d){return faceSrc(TOWN_DECOS[d.id],d.f|0)[0]===2;}
 function townDecoProps(d,x,y,props,lights,em,held){
-  const K=TOWN_ART.cache, base=y+(TOWN_DECOS[d.id].h||1)*16;
+  const K=TOWN_ART.cache, base=y+pieceFoot(TOWN_DECOS[d.id],d.f).h*16;
   if(d.id==='lamp'){K.post=K.post||townLampPost(); K.glass=K.glass||townLampGlass();
     props.push({c:K.post,x,y:y-18,base}); em.push({c:K.glass,x:x+5,y:y-14,base}); lights.push({x:x+8,y:y-11,r:TOWN_DECOS.lamp.light,f:.25});}
   else if(d.id==='brazier'){props.push({c:K.brz,x,y:y-6,base}); em.push({fl:K.fl,x:x+3,y:y-16,base,ph:d.c*3+d.r}); lights.push({x:x+8,y:y+2,r:TOWN_DECOS.brazier.light,f:1});}
   else if(d.id==='tree'){const k='t'+d.c+','+d.r; props.push({c:K[k]||(K[k]=townTree(d.c,d.r)),x,y:y-12,base});}
   else if(d.id==='stone'){const k='g'+d.c+','+d.r; props.push({c:K[k]||(K[k]=townGrave(d.c,d.r)),x,y,base});}
-  else if(d.id==='fence')props.push({c:townFence(d.c,d.r,(fx,fy)=>townCh(fx,fy)==='|'||(TOWN_AT.get(fy*TOWN_W+fx)||{}).id==='fence'),x,y:y-4,base:base-1});
+  else if(d.id==='fence')props.push({c:townFence(d.c,d.r,(fx,fy)=>townCh(fx,fy)==='|'||(TOWN_AT.get(fy*TOWN_W+fx)||{}).id==='fence',townSide(d)),x,y:y-4,base:base-1});
   /* a path is laid into the ground; lifted, it is drawn as a patch of it */
-  else if(TOWN_DECOS[d.id].path&&held){const k='p'+d.id; props.push({c:K[k]||(K[k]=townPathPatch(d.id)),x,y,base:y});}
+  else if(TOWN_DECOS[d.id].path&&held){const sd=townSide(d), k='p'+d.id+sd; props.push({c:K[k]||(K[k]=townPathPatch(d.id,sd)),x,y,base:y});}
 }
-function townPathPatch(id){const [cv,c]=tCanvas(16,16), img=c.createImageData(16,16), dd=img.data;
-  for(let y=0;y<16;y++)for(let x=0;x<16;x++){const p=PX_RGB[townGroundPx(80+x,208+y,id==='board'?'_':',')], i=(y*16+x)*4; dd[i]=p[0]; dd[i+1]=p[1]; dd[i+2]=p[2]; dd[i+3]=255;}
+function townPathPatch(id,side){const [cv,c]=tCanvas(16,16), img=c.createImageData(16,16), dd=img.data;
+  for(let y=0;y<16;y++)for(let x=0;x<16;x++){const p=PX_RGB[side?townGroundPx(208+y,80+x,id==='board'?'_':','):townGroundPx(80+x,208+y,id==='board'?'_':',')], i=(y*16+x)*4; dd[i]=p[0]; dd[i+1]=p[1]; dd[i+2]=p[2]; dd[i+3]=255;}
   c.putImageData(img,0,0); return cv;}
 /* who stands where (step 5), from what is unlocked, who you carry and who is set to a chore: the Keepers you can talk to, and a
    dark shade at the footing of each you have not freed. Run when the square opens and whenever one of those changes, never per
@@ -13319,9 +13369,54 @@ function lodgeShelfArt(S){
 /* a sconce on the back wall: an iron bracket and a candle (its flame glows) */
 function lodgeSconce(){const [cv,c]=tCanvas(6,10); tp(c,0,8,'1',6,1); tp(c,1,9,'1',4,1); tp(c,2,4,'d',2,4); tp(c,2,4,'c',1,1); return cv;}
 function lodgeSconceFlame(){const [cv,c]=tCanvas(2,4); tp(c,0,1,'a',2,3); tp(c,0,1,'b',1,2); tp(c,1,0,'c'); return cv;}
-/* each piece of furniture, painted once: a canvas, where it hangs over its footprint (dy, from the footprint's top), and what
-   of it glows (em, at ex, ey) */
-function lodgeFurnArt(id){
+/* the Armchair in its eight facings (Expansion 4, step 2): Criss's PixelLab object "Lodge Armchair", 34 by 34 a facing, through
+   tools/png2rows.py (EXPANSION4_RUNBOOK.md §3): cropped, every colour on a PX letter, straight facings narrowed to 16 wide and
+   diagonals to 24. Indexed by facing, 0 S to 7 SE; each stands on its tile's bottom edge and rises above it */
+const LODGE_CHAIR=[
+  ['......5555......','..555577665555..','.5o7677655o67o5.','5o757756556767o5','5765666665665775','5o65666665665675','.66566666566566.','.56656656665665.','.57655656655675.','..565565665565..','..575566655575..','.55555665655555.','.57755666555675.','5777655555567775','5777655555567775','5667656676567665','5676566777656765','5566566777756665','.55655677755655.','..565656666565..','..575665666575..','..565555555565..','..575666666675..','..555555555555..','..575......575..','..55........55..'],
+  ['........55555..........','.......57o676555.......','......567655777755.....','......57655666675555...','......5665566665577655.','......5o6555666567577p5','.......5655l6665657o665','.......56555666565o6665','.......5755556665766665','.....555655656665776665','...5577755566666576665.','.557776555566666557665.','5677665555556665556665.','5766555556655655557655.','5675555676665555556655.','.56556777667655676565..','.56577667666577765565..','.57567767765777655565..','.56566677657666555565..','.57556667756755555665..','.55565566656655556655..','.56556655656555665555..','.55..5566557566655575..','.......5565656555.55...','.........557555........','..........5555.........','..........5765.........','...........55..........'],
+  ['...........5555.','..........565775','.........5765775','........56555555','........557p7o65','........5o766665','........57666665','........56666665','........5o666665','........5766665.','.........576665.','...5555555o6665.','..5666655566665.','.555555555p6665.','57o766766566655.','566665666566655.','565555555566655.','55555555556655..','56555555666655..','56666566666555..','56666666665555..','56666666665555..','56666555565555..','.5555555555555..','.575.......565..','.55.........55..'],
+  ['..555...................','.57775..................','577555..................','55567755................','5555577755..............','556665777655.555........','56666655766557o75.......','.56666655557o66o5.......','.5666665565666665.......','.566666556566665........','.55666665656666555..555.','.55666665656666566557765','..5656665665667555677665','..5566666665666567766555','..556666666566o56665555.','..556666666566655555555.','..556666666566655555565.','..556666666656665555665.','..555666666656666566665.','..555566666656666666555.','..565556666656666655575.','..55..5556655666555.555.','........555556555.......','..........55555.........','...........555..........','...........575..........','............5...........'],
+  ['.55....55....55.','5o75.557755.57o5','5o7657o7oo656775','5676775555666765','5655556655555565','5666666655566665','.56666665566665.','.56666666566665.','5566666665666655','5756666665666575','5656666666666565','5656666666666565','5555666666665555','.55566666666555.','..556666666655..','..556666666655..','..556566666655..','..556566666655..','..555565666555..','..555555555555..','..555555555555..','..565......575..','..55........55..'],
+  ['...................555..','..................57765.','.................5555765','...............557776555','..............577o755555','........555.557765555555','.......57o75566655555555','.......5o66o75555555555.','.......5666665555555555.','........566665555555555.','.555..55576665555555555.','56775566566665555555555.','5667775557665555555555..','5566677656665555555555..','.55556665o665555555555..','.555555556665555555555..','.565555556665555555555..','.566655566655555555555..','.566666666655555555555..','.555666666655555555555..','.575556666555555555565..','.555.555565555555...55..','.......555555555........','.........55555..........','..........555...........','..........575...........','...........5............'],
+  ['.55555..........','5775665.........','57756665........','55555665........','57o7o565........','55556o55........','55565755........','56566655........','56666p5.........','.566675.........','.566756.........','.566p555555555..','.56665556666665.','.566p5555555555.','.566656777777775','.566656665667665','.566655565555665','..56655555555555','..56665555555575','..56666656666665','..566666666666o5','..55666666666665','..55556666655575','..55555555555555','..575........575','..55..........55'],
+  ['..........55555........','.......555676o75.......','.....557757557765......','...55677655655675......','.5557776655655665......','5o7657666656556o5......','556o756666565565.......','5556o56566665565.......','5565665566665575.......','566577565666556555.....','.5666756566655567755...','.566755656665555677755.','.5666556666555555667765','.5667555665555555556675','.5666555556666665555665','..56567656666667765565.','..56556777566666777565.','..56555677756666776575.','..56555567675677666565.','..56655555765765665575.','..55665555665666556555.','..55566655565655665575.','..5755566657556655..55.','...55.5556565655.......','........555755.........','.........5555..........','.........5675..........','..........55...........']];
+/* a canvas mirrored left to right (the east side drawn from the west) */
+function tFlip(src){const [cv,c]=tCanvas(src.width,src.height); c.translate(src.width,0); c.scale(-1,1); c.drawImage(src,0,0); return cv;}
+/* each piece of furniture facing f, painted once: a canvas, where it stands over its footprint (dx, dy from the footprint's
+   top-left; by default centred on it and standing on its bottom edge), what of it glows (em, at ex, ey) and where its light
+   sits (lx, ly). A facing not drawn is the one faceSrc() names, mirrored where it says */
+function lodgeFurnArt(id,f){
+  const I=LODGE_ITEMS[id], src=faceSrc(I,f|0), F=pieceFoot(I,f|0), a=lodgeFurnDraw(id,src[0]);
+  if(src[1]){const w=a.cv.width; a.cv=tFlip(a.cv); if(a.em){a.ex=w-a.ex-a.em.width; a.em=tFlip(a.em);} if(a.lx!=null)a.lx=w-a.lx;}
+  a.dx=Math.round((F.w*16-a.cv.width)/2);
+  if(a.dy==null)a.dy=F.h*16-a.cv.height;
+  return a;
+}
+function lodgeFurnDraw(id,s){
+  if(id==='desk'&&s===2){
+    const [cv,c]=tCanvas(16,42);
+    /* turned on its side, two tiles deep: the top runs away from you, the drawers face west (their brass at its left edge), the
+       end panel and two legs toward you; the banker's lamp at the far end */
+    tp(c,1,12,'6',14,19); tp(c,1,12,'7',14,1); tp(c,1,12,'7',1,19); tp(c,14,13,'5',1,18); tp(c,1,31,'5',14,1);
+    tp(c,1,17,'a',1,1); tp(c,1,25,'a',1,1);
+    tp(c,4,19,'d',7,5); tp(c,5,20,'1',4,1); tp(c,5,22,'1',3,1); tp(c,10,26,'0',2,2);
+    tp(c,2,32,'5',12,7); tp(c,3,33,'6',10,4); tp(c,2,39,'5',2,2); tp(c,12,39,'5',2,2); tp(c,2,41,'0',12,1);
+    tp(c,6,14,'9',4,1); tp(c,7,10,'a',1,4); tp(c,4,7,'f',7,3); tp(c,4,7,'g',7,1); tp(c,4,10,'1',7,1);
+    const [e,ec]=tCanvas(7,2); tp(ec,0,0,'g',7,1); tp(ec,1,1,'i',5,1);
+    return {cv,em:e,ex:4,ey:8,lx:7,ly:16};
+  }
+  if(id==='desk'&&s===4){
+    const [cv,c]=tCanvas(32,26);
+    /* from behind: a plain back panel with two rails, the lamp now at its right, the papers and the ink at its left */
+    tp(c,1,10,'7',30,1); tp(c,1,11,'6',30,4); tp(c,1,14,'5',30,1);
+    tp(c,2,15,'5',28,8); tp(c,3,16,'6',26,1); tp(c,3,21,'6',26,1);
+    tp(c,2,23,'5',2,3); tp(c,28,23,'5',2,3); tp(c,2,25,'0',28,1);
+    tp(c,7,8,'d',8,4); tp(c,9,9,'1',5,1); tp(c,6,7,'d',6,1); tp(c,4,9,'0',2,2);
+    tp(c,22,10,'9',4,1); tp(c,24,6,'a',1,4); tp(c,21,3,'f',7,3); tp(c,21,3,'g',7,1); tp(c,21,6,'1',7,1);
+    const [e,ec]=tCanvas(7,2); tp(ec,0,0,'g',7,1); tp(ec,1,1,'i',5,1);
+    return {cv,dy:-10,em:e,ex:21,ey:4,lx:24,ly:12};
+  }
   if(id==='desk'){
     const [cv,c]=tCanvas(32,26);
     /* the top, the front with two drawers, the legs; papers and an inkwell; the banker's lamp: brass foot, green glass shade */
@@ -13335,22 +13430,37 @@ function lodgeFurnArt(id){
   }
   if(id==='stove'){
     const [cv,c]=tCanvas(16,28);
-    /* a pot-bellied iron stove: its pipe up to the ceiling's dark, a grate where the fire shows, four feet */
+    /* a pot-bellied iron stove: its pipe up to the ceiling's dark, a grate where the fire shows, four feet. Turned to the west its
+       grate is a sliver at its left; from behind there is only a seam, but the fire still lights the room */
     tp(c,6,0,'1',4,10); tp(c,6,0,'3',1,10); tp(c,4,9,'2',8,2);
     tp(c,3,11,'1',10,13); tp(c,2,13,'1',12,9); tp(c,3,12,'3',1,10); tp(c,12,13,'0',1,9); tp(c,3,11,'4',10,1);
-    tp(c,5,16,'0',6,4); tp(c,5,15,'2',6,1);
     tp(c,3,24,'0',2,3); tp(c,11,24,'0',2,3); tp(c,2,27,'0',12,1);
+    if(s===4){tp(c,4,17,'2',8,1); tp(c,5,19,'0',1,1); tp(c,10,19,'0',1,1); return {cv,dy:-12,lx:8,ly:18};}
+    if(s===2){tp(c,2,16,'0',3,4); tp(c,2,15,'2',3,1);
+      const [e,ec]=tCanvas(3,4); tp(ec,0,1,'9',3,3); tp(ec,0,2,'a',2,2); tp(ec,0,3,'b',1,1); tp(ec,1,0,'8');
+      return {cv,dy:-12,em:e,ex:2,ey:16,lx:4,ly:18};}
+    tp(c,5,16,'0',6,4); tp(c,5,15,'2',6,1);
     const [e,ec]=tCanvas(6,4); tp(ec,0,1,'9',6,3); tp(ec,1,2,'a',4,2); tp(ec,2,3,'b',2,1); tp(ec,1,0,'8'); tp(ec,4,0,'8');
     return {cv,dy:-12,em:e,ex:5,ey:16,lx:8,ly:18};
   }
   if(id==='chair'){
-    const [cv,c]=tCanvas(16,22);
-    /* a wing-backed armchair in worn red, wooden feet */
-    tp(c,3,0,'j',10,10); tp(c,4,1,'k',8,8); tp(c,3,0,'0',10,1);
-    tp(c,1,8,'j',3,9); tp(c,12,8,'j',3,9); tp(c,1,8,'k',3,1); tp(c,12,8,'k',3,1);
-    tp(c,4,10,'k',8,5); tp(c,4,15,'j',8,2); tp(c,4,10,'b',1,1);
-    tp(c,2,17,'6',2,4); tp(c,12,17,'6',2,4); tp(c,1,21,'0',14,1);
-    return {cv,dy:-6};
+    /* a wing-backed armchair in worn leather, brass studs, wooden feet */
+    const R=LODGE_CHAIR[s], [cv,c]=tCanvas(R[0].length,R.length); tRows(c,R,0,0);
+    return {cv};
+  }
+  if(id==='shelf'&&s===2){
+    const [cv,c]=tCanvas(16,30);
+    /* side on: its end board, the shelves' lips and the books' last covers at its left, where it faces */
+    tp(c,5,0,'5',7,30); tp(c,6,1,'7',5,1); tp(c,6,2,'6',5,27); tp(c,11,2,'5',1,27);
+    for(let row=0;row<3;row++){const y0=3+row*9, P=LODGE_SPINE_RELIC.concat(LODGE_SPINE_FOE)[(thash(0,row,164)*10)|0]; tp(c,4,y0+2,P[0],1,6); tp(c,4,y0+8,'6',1,1);}
+    tp(c,4,29,'0',8,1);
+    return {cv,dy:-14};
+  }
+  if(id==='shelf'&&s===4){
+    const [cv,c]=tCanvas(16,30);
+    /* from behind: its back, four rough boards */
+    tp(c,0,0,'5',16,30); for(const x of [1,5,9])tp(c,x,2,'6',3,27); tp(c,13,2,'6',2,27); tp(c,1,1,'7',14,1); tp(c,0,29,'0',16,1);
+    return {cv,dy:-14};
   }
   if(id==='shelf'){
     const [cv,c]=tCanvas(16,30);
@@ -13377,7 +13487,7 @@ function lodgeFurnArt(id){
 let LODGE_ART=null, LODGE_STALE=true;
 function lodgeArt(){
   LODGE_STALE=false;
-  const T=townData(), L=T.lodge, S=lodgeSpines(), sig=L.floor+'|'+L.wall+'|'+L.furn.map(d=>d===BLD_SKIP?'':d.id+d.c+','+d.r+(d.x!=null?'@'+d.x+','+d.y:'')).join(';')+'|'+S.n+'/'+S.cap;
+  const T=townData(), L=T.lodge, S=lodgeSpines(), sig=L.floor+'|'+L.wall+'|'+L.furn.map(d=>d===BLD_SKIP?'':d.id+d.c+','+d.r+'/'+(d.f|0)+(d.x!=null?'@'+d.x+','+d.y:'')).join(';')+'|'+S.n+'/'+S.cap;
   if(LODGE_ART&&LODGE_ART.sig===sig)return LODGE_ART;
   const TA=townArt(), props=[], lights=[], em=[];
   const shelf=lodgeShelfArt(S);
@@ -13388,9 +13498,11 @@ function lodgeArt(){
   const K=LODGE_ART&&LODGE_ART.cache||{};
   for(const d of L.furn){
     if(d===BLD_SKIP)continue;
-    const I=LODGE_ITEMS[d.id], a=K[d.id]||(K[d.id]=lodgeFurnArt(d.id)), R=pieceRect(d,I), x=R.x, y=R.y;
+    const I=LODGE_ITEMS[d.id], k=d.id+(d.f|0), a=K[k]||(K[k]=lodgeFurnArt(d.id,d.f)), R=pieceRect(d,I), x=R.x+a.dx, y=R.y;
     props.push({c:a.cv,x,y:y+a.dy,base:a.flat?y:y+R.h});
-    if(a.em){em.push({c:a.em,x:x+a.ex,y:y+a.dy+a.ey,base:y+16}); lights.push({x:x+a.lx,y:y+a.dy+a.ly,r:I.light,f:I.green?.2:.8,col:I.green?'green':''});}
+    /* a lamp turned away still lights the room; only what can be seen of its flame glows */
+    if(a.em)em.push({c:a.em,x:x+a.ex,y:y+a.dy+a.ey,base:y+R.h});
+    if(I.light)lights.push({x:x+a.lx,y:y+a.dy+a.ly,r:I.light,f:I.green?.2:.8,col:I.green?'green':''});
   }
   props.sort((a,b)=>a.base-b.base); em.sort((a,b)=>a.base-b.base);
   LODGE_ART={sig,mw:LODGE_W*16,mh:LODGE_H*16,ground:lodgeGround(L.floor,L.wall),props,lights,em,spines:shelf.drawn,cache:K,
@@ -13400,7 +13512,7 @@ function lodgeArt(){
 /* the furniture's solid tiles and which piece covers each, from ll-town.lodge; run after any change and on coming in */
 function lodgeSync(){
   LODGE_BLOCK.clear(); LODGE_AT.clear(); LODGE_STALE=true;
-  for(const d of townData().lodge.furn)if(d!==BLD_SKIP)for(const [x,y] of lodgeTiles(d.id,d.c,d.r)){LODGE_AT.set(y*LODGE_W+x,d); if(!LODGE_ITEMS[d.id].flat)LODGE_BLOCK.add(y*LODGE_W+x);}
+  for(const d of townData().lodge.furn)if(d!==BLD_SKIP)for(const [x,y] of lodgeTiles(d.id,d.c,d.r,d.f)){LODGE_AT.set(y*LODGE_W+x,d); if(!LODGE_ITEMS[d.id].flat)LODGE_BLOCK.add(y*LODGE_W+x);}
 }
 
 /* ---- the visit ---- */
@@ -13570,15 +13682,16 @@ function townTapTile(tx,ty){
 function townCostText(cost){return HAUL_KEYS.filter(k=>cost[k]).map(k=>cost[k]+' '+(k==='curios'&&cost[k]===1?'curio':k)).join(', ');}
 function townShort(cost,res){return HAUL_KEYS.filter(k=>(cost[k]|0)>(res[k]|0)).map(k=>(cost[k]-(res[k]|0))+' more '+k).join(' and ');}
 /* a two-tile-high piece stands with its foot on the tile you tap */
-function townAnchor(id,tx,ty){const D=TOWN_DECOS[id]; return {c:tx,r:ty-((D.h||1)-1)};}
+function townAnchor(id,tx,ty,f){return {c:tx,r:ty-(pieceFoot(TOWN_DECOS[id],f).h-1)};}
 /* '' if the piece can stand there, or why not, in the game's voice. Free placement (Expansion 4, step 1) gives x, y, the
    footprint's top-left in art pixels: the piece stands on the tiles it covers most of, and may hang over open ground beside them,
-   never over the deck, a building or another piece. townFits() is where alone; townCanPlace() adds the grave and the cost */
-function townFits(id,c,r,x,y){
+   never over the deck, a building or another piece. townFits() is where alone; townCanPlace() adds the grave and the cost. f: the
+   way it faces (Expansion 4, step 2), which turns its footprint */
+function townFits(id,c,r,x,y,f){
   const D=TOWN_DECOS[id], free=x!=null&&y!=null&&!D.snap, sx=Math.floor(TOWN_SPAWN.x), sy=Math.floor(TOWN_SPAWN.y);
   if(free){c=Math.round(x/16); r=Math.round(y/16);}
-  const tiles=decoTiles(id,c,r), R=free?{x,y,w:(D.w||1)*16,h:(D.h||1)*16}:{x:c*16,y:r*16,w:(D.w||1)*16,h:(D.h||1)*16};
-  for(const [x,y] of free?rectTiles(R):tiles){
+  const tiles=decoTiles(id,c,r,f), RS=footRects(free?x:c*16,free?y:r*16,pieceFoot(D,f));
+  for(const [x,y] of free?footTiles(RS):tiles){
     const ch=townCh(x,y);
     if(ch==='=')return 'Not on the deck: it is the way down.';
     if(townUnderFrame(x,y)&&(ch==='.'||ch===','))return 'Nothing would show under the Head-frame.';
@@ -13590,7 +13703,7 @@ function townFits(id,c,r,x,y){
     if(!townBuildable(x,y,!D.path))return 'There is no open ground there.';
     if(townDecoAt(x,y))return 'Something stands there already.';
   }
-  if(townData().decos.some(d=>d!==BLD_SKIP&&rectsOver(R,pieceRect(d,TOWN_DECOS[d.id]))))return 'Something stands there already.';
+  if(townData().decos.some(d=>d!==BLD_SKIP&&rectsHit(RS,pieceRects(d,TOWN_DECOS[d.id]))))return 'Something stands there already.';
   /* something solid may not stand on you, or shut you or the square away from the Head-frame */
   if(!D.path){
     for(const [x,y] of tiles)TOWN_BLOCK.add(y*TOWN_W+x);
@@ -13635,9 +13748,9 @@ function townGhostAt(tx,ty,wx,wy){
   /* over a piece already built, the thumb would lift it: that piece's footprint, in gold. Inside the Lodge, its furniture */
   const d=TWN.build?bldPieceAt(tx,ty,wx,wy):null;
   if(!TWN.build||(!TWN.pick&&!d)){TWN.ghost=null; return;}
-  const id=d?d.id:TWN.pick, R=d&&pieceRect(d,bldTab()[id]), a=d?{c:d.c,r:d.r,x:R.x,y:R.y}:bldAnchor(id,tx,ty,wx,wy), g=TWN.ghost;
-  if(g&&g.id===id&&g.x===a.x&&g.y===a.y&&g.t<0&&g.up===!!d)return;
-  TWN.ghost={id,c:a.c,r:a.r,x:a.x,y:a.y,why:d?'':bldWhyNew(id,a),t:-1,up:!!d};
+  const id=d?d.id:TWN.pick, R=d&&pieceRect(d,bldTab()[id]), a=d?{c:d.c,r:d.r,x:R.x,y:R.y,f:d.f|0}:bldAnchor(id,tx,ty,wx,wy,bldPickFace(id)), g=TWN.ghost;
+  if(g&&g.id===id&&g.x===a.x&&g.y===a.y&&g.f===a.f&&g.t<0&&g.up===!!d)return;
+  TWN.ghost={id,c:a.c,r:a.r,x:a.x,y:a.y,f:a.f,why:d?'':bldWhyNew(id,a),t:-1,up:!!d};
 }
 function townSay(t){const el=$('#townTmsg'); if(el)el.textContent=t;}
 function townPickLine(id){
@@ -13739,7 +13852,7 @@ function bldScene(){return TWN.inside?'lodge':'town';}
 function bldTab(){return TWN.inside?LODGE_ITEMS:TOWN_DECOS;}
 function bldList(T){T=T||townData(); return TWN.inside?T.lodge.furn:T.decos;}
 function bldSync(){if(TWN.inside)lodgeSync(); else townDecoSync();}
-function bldFits(id,c,r,x,y){return TWN.inside?lodgeFits(id,c,r,x,y):townFits(id,c,r,x,y);}
+function bldFits(id,c,r,x,y,f){return TWN.inside?lodgeFits(id,c,r,x,y,f):townFits(id,c,r,x,y,f);}
 function bldFree(){return townData().free===true;}
 /* where a piece stands: on its tiles alone (Grid, or a piece that keeps to the tiles), or freely, x, y beside the tiles it
    covers most of */
@@ -13749,15 +13862,15 @@ function bldAt(d,I,x,y){
   return d;
 }
 /* where a tap puts a piece: on the grid, as it always has (the square's on the tapped tile, a tall one standing on it; the room's
-   centred on it); placing freely, its footprint centred on the thumb to the art pixel, held inside the map */
-function bldAnchor(id,tx,ty,wx,wy){
-  const I=bldTab()[id], w=(I.w||1)*16, h=(I.h||1)*16;
+   centred on it); placing freely, its footprint centred on the thumb to the art pixel, held inside the map. f: the way it faces */
+function bldAnchor(id,tx,ty,wx,wy,f){
+  f=f|0; const I=bldTab()[id], F=pieceFoot(I,f), w=F.w*16, h=F.h*16;
   if(bldFree()&&!I.snap&&wx!=null){
     const W=(TWN.inside?LODGE_W:TOWN_W)*16, H=(TWN.inside?LODGE_H:TOWN_H)*16;
     const x=clamp(Math.round(wx-w/2),0,W-w), y=clamp(Math.round(TWN.inside?wy-h/2:wy-h+8),0,H-h);
-    return {c:Math.round(x/16),r:Math.round(y/16),x,y,free:true};
+    return {c:Math.round(x/16),r:Math.round(y/16),x,y,f,free:true};
   }
-  const a=(TWN.inside?lodgeAnchor:townAnchor)(id,tx,ty); return {c:a.c,r:a.r,x:a.c*16,y:a.r*16,free:false};
+  const a=(TWN.inside?lodgeAnchor:townAnchor)(id,tx,ty,f); return {c:a.c,r:a.r,x:a.c*16,y:a.r*16,f,free:false};
 }
 /* the piece under the thumb: whose footprint holds that art pixel, or else whose tile it is */
 function bldPieceAt(tx,ty,wx,wy){
@@ -13767,10 +13880,12 @@ function bldPieceAt(tx,ty,wx,wy){
 }
 /* what is stored for this scene, of one kind or all */
 function bldStored(id,T){T=T||townData(); const s=bldScene(); return T.store.filter(e=>e.s===s&&(!id||e.id===id));}
+/* the way a piece chosen on the tray will face: a stored one as it was put away (the first of its kind waiting), a new one south */
+function bldPickFace(id){if(TWN.tab!=='store')return 0; const e=bldStored(id)[0]; return e?e.f|0:0;}
 /* why a new piece can't go there: a stored one asks only for the ground, a bought one also for its cost (and a headstone, a name) */
 function bldWhyNew(id,a){
   const x=a.free?a.x:undefined, y=a.free?a.y:undefined;
-  if(TWN.tab==='store')return bldFits(id,a.c,a.r,x,y);
+  if(TWN.tab==='store')return bldFits(id,a.c,a.r,x,y,a.f);
   return TWN.inside?lodgeCanPlace(id,a.c,a.r,x,y):townCanPlace(id,a.c,a.r,x,y);
 }
 /* the build session's last ten deeds, newest last; Undo takes them back one at a time, and closing Build forgets them */
@@ -13785,20 +13900,20 @@ function bldTap(tx,ty){
   const d=bldPieceAt(tx,ty,wx,wy);
   if(d){bldLift(d); return;}
   if(!TWN.pick){TWN.goal=null; TWN.path=townPathTo(tx,ty); if(TWN.path&&TWN.path.length){const e=TWN.path[TWN.path.length-1]; TWN.mark=.6; TWN.mx=e.x; TWN.my=e.y;} return;}
-  const id=TWN.pick, I=bldTab()[id], a=bldAnchor(id,tx,ty,wx,wy), x=a.free?a.x:undefined, y=a.free?a.y:undefined;
+  const id=TWN.pick, I=bldTab()[id], a=bldAnchor(id,tx,ty,wx,wy,bldPickFace(id)), x=a.free?a.x:undefined, y=a.free?a.y:undefined;
   let why, line;
   if(TWN.tab==='store'){why=bldPlaceStored(id,a.c,a.r,x,y); const n=bldStored(id).length;
     if(!why){line='From storage: the '+I.n+'.'+(n?' '+n+' more wait.':''); if(!n)TWN.pick=null; townTrayUI();}}
   else if(TWN.inside){why=lodgePlace(id,a.c,a.r,x,y); line=lodgePickLine(id);}
   else{const w=I.grave?gravesWaiting()[0]:null; why=townPlace(id,a.c,a.r,x,y); line=w?'The stone takes '+townWho(w.kit)+'’s name.':townPickLine(id);}
-  TWN.ghost={id,c:a.c,r:a.r,x:a.x,y:a.y,why,t:.5};
+  TWN.ghost={id,c:a.c,r:a.r,x:a.x,y:a.y,f:a.f,why,t:.5};
   townSay(why||line);
 }
 /* a stored piece set down: it costs nothing, and a headstone keeps the name it carried */
 function bldPlaceStored(id,c,r,x,y){
   const T=townData(), s=bldScene(), i=T.store.findIndex(e=>e.s===s&&e.id===id); if(i<0)return 'Nothing like it waits in storage.';
-  const I=bldTab()[id], why=bldFits(id,c,r,x,y); if(why)return why;
-  const st=T.store[i], d=bldAt({id,c,r},I,x,y); if(st.g)d.g=st.g;
+  const st=T.store[i], I=bldTab()[id], f=st.f|0, why=bldFits(id,c,r,x,y,f); if(why)return why;
+  const d=bldAt({id,c,r},I,x,y); if(st.g)d.g=st.g; if(f)d.f=f;
   T.store.splice(i,1); bldList(T).push(d); bldDid({a:'place',d,st});
   townSave(); bldSync(); townHud(); townTrayUI(); bldWalkCheck(I);
   return '';
@@ -13808,34 +13923,57 @@ function bldPlaceStored(id,c,r,x,y){
 function bldLift(d){
   if(!TWN.build||TWN.lift||!d||bldList().indexOf(d)<0)return false;
   const I=bldTab()[d.id], R=pieceRect(d,I);
-  TWN.lift={d,id:d.id,from:{c:d.c,r:d.r,x:d.x,y:d.y},x:R.x,y:R.y,c:d.c,r:d.r,why:'',key:null,free:d.x!=null,art:null};
+  const f=d.f|0;
+  TWN.lift={d,id:d.id,from:{c:d.c,r:d.r,x:d.x,y:d.y,f},x:R.x,y:R.y,c:d.c,r:d.r,f,why:'',key:null,free:d.x!=null,art:null};
   BLD_SKIP=d; TWN.pick=null; TWN.ghost=null; TWN.path=null; TWN.goal=null; TWN.mark=0;
-  bldSync(); TWN.lift.art=bldArt(d);
+  bldSync(); TWN.lift.art=bldArt(d,f);
   bldLiftTo(R.x,R.y);
-  townTrayUI(); townSay('You lift the '+I.n+'. Drag it, or tap where it goes.');
+  townTrayUI(); townSay('You lift the '+I.n+'. Drag it, or tap where it goes. ⟳ turns it.');
   return true;
 }
-/* the lifted piece's look, once, relative to its footprint's top-left: what stands and what glows (it casts no light while held) */
-function bldArt(d){
-  if(TWN.inside){const K=LODGE_ART&&LODGE_ART.cache||{}, a=K[d.id]||lodgeFurnArt(d.id), o=[{c:a.cv,x:0,y:a.dy}]; if(a.em)o.push({c:a.em,x:a.ex,y:a.dy+a.ey}); return o;}
-  const props=[], lights=[], em=[]; townDecoProps(d,0,0,props,lights,em,true);
+/* the lifted piece's look facing f, made when it is lifted and each time it turns, relative to its footprint's top-left: what
+   stands and what glows (it casts no light while held) */
+function bldArt(d,f){
+  f=f|0;
+  if(TWN.inside){const K=LODGE_ART&&LODGE_ART.cache||{}, a=K[d.id+f]||lodgeFurnArt(d.id,f), o=[{c:a.cv,x:a.dx,y:a.dy}]; if(a.em)o.push({c:a.em,x:a.dx+a.ex,y:a.dy+a.ey}); return o;}
+  const props=[], lights=[], em=[]; townDecoProps({id:d.id,c:d.c,r:d.r,f,g:d.g},0,0,props,lights,em,true);
   return props.concat(em.map(o=>o.fl?{c:o.fl[0],x:o.x,y:o.y}:o));
 }
 /* move the lifted piece's footprint to (x, y) in art pixels, held inside the map: on the grid it snaps to the nearest tiles,
    freely it stays to the pixel. Whether it can go there is worked out only when it moves. true if it moved */
 function bldLiftTo(x,y){
   const L=TWN.lift; if(!L)return false;
-  const I=bldTab()[L.id], w=(I.w||1)*16, h=(I.h||1)*16, free=bldFree()&&!I.snap;
+  const I=bldTab()[L.id], F=pieceFoot(I,L.f), w=F.w*16, h=F.h*16, free=bldFree()&&!I.snap;
   x=clamp(Math.round(x),0,(TWN.inside?LODGE_W:TOWN_W)*16-w); y=clamp(Math.round(y),0,(TWN.inside?LODGE_H:TOWN_H)*16-h);
   if(!free){x=Math.round(x/16)*16; y=Math.round(y/16)*16;}
-  const key=x+','+y+','+free; if(key===L.key)return false;
+  const key=x+','+y+','+free+','+L.f; if(key===L.key)return false;
   L.key=key; L.x=x; L.y=y; L.c=Math.round(x/16); L.r=Math.round(y/16); L.free=free;
-  L.why=free?bldFits(L.id,L.c,L.r,x,y):bldFits(L.id,L.c,L.r);
+  L.why=free?bldFits(L.id,L.c,L.r,x,y,L.f):bldFits(L.id,L.c,L.r,undefined,undefined,L.f);
   return true;
 }
-/* a tap while a piece is lifted puts it there (where a tap would set a new piece down) */
+/* is this art pixel on the lifted piece's own footprint */
+function bldOnLift(wx,wy){
+  const L=TWN.lift; if(!L||wx==null)return false;
+  return footRects(L.x,L.y,pieceFoot(bldTab()[L.id],L.f)).some(R=>wx>=R.x&&wx<R.x+R.w&&wy>=R.y&&wy<R.y+R.h);
+}
+/* a tap while a piece is lifted puts it there (where a tap would set a new piece down); a tap on the piece itself turns it
+   (Expansion 4, step 2). Held there, it turns back (the pointer handlers) */
 function bldLiftTap(tx,ty,wx,wy){
-  const L=TWN.lift, a=bldAnchor(L.id,tx,ty,wx,wy); bldLiftTo(a.x,a.y); townSay(bldLiftLine());
+  const L=TWN.lift;
+  if(bldOnLift(wx,wy)){bldTurn(1); return;}
+  const a=bldAnchor(L.id,tx,ty,wx,wy,L.f); bldLiftTo(a.x,a.y); townSay(bldLiftLine());
+}
+/* ⟳: the lifted piece turns an eighth clockwise (dir 1) or back (-1); a piece kept to the tiles turns a quarter. Its footprint
+   keeps its top-left, so turning eight times (four for a path or a fence) brings it back exactly as it was */
+const BLD_HOLD=450;
+function bldTurn(dir){
+  const L=TWN.lift; if(!L)return false;
+  const I=bldTab()[L.id];
+  L.f=(L.f+(I.snap?2:1)*(dir<0?-1:1)+8)&7; L.key=null; L.art=bldArt(L.d,L.f);
+  bldLiftTo(L.x,L.y);
+  townSay(L.why||'The '+I.n+' faces '+FACE_WORD[L.f]+'.');
+  AUDIO.place&&AUDIO.place();
+  return true;
 }
 function bldLiftLine(){const L=TWN.lift; return !L?'':L.why||'The '+bldTab()[L.id].n+' can stand here. Place sets it down.';}
 /* ✓ Place: the lifted piece goes down where its ghost is, if it can */
@@ -13844,8 +13982,8 @@ function bldDrop(){
   if(L.why){townSay(L.why); return L.why;}
   const d=L.d, I=bldTab()[d.id], f=L.from;
   BLD_SKIP=null; TWN.lift=null;
-  d.c=L.c; d.r=L.r; if(L.free){d.x=L.x; d.y=L.y;} else{delete d.x; delete d.y;}
-  if(d.c!==f.c||d.r!==f.r||d.x!==f.x||d.y!==f.y)bldDid({a:'move',d,from:f});
+  d.c=L.c; d.r=L.r; d.f=L.f; if(L.free){d.x=L.x; d.y=L.y;} else{delete d.x; delete d.y;}
+  if(d.c!==f.c||d.r!==f.r||d.x!==f.x||d.y!==f.y||d.f!==f.f)bldDid({a:'move',d,from:f});
   townSave(); bldSync(); townTrayUI(); bldWalkCheck(I); AUDIO.place&&AUDIO.place();
   townSay('You set the '+I.n+' down.');
   return '';
@@ -13864,7 +14002,7 @@ function bldStow(){
   BLD_SKIP=null; TWN.lift=null;
   if(i<0){bldSync(); townTrayUI(); return false;}
   list.splice(i,1);
-  const st={s:bldScene(),id:d.id,cost:haulFix(I.cost)}; if(d.g)st.g=d.g;
+  const st={s:bldScene(),id:d.id,cost:haulFix(I.cost)}; if(d.g)st.g=d.g; if(L.f)st.f=L.f;
   T.store.push(st); bldDid({a:'store',d,i,st});
   townSave(); bldSync(); townHud(); townTrayUI();
   townSay('The '+I.n+' goes into storage.');
@@ -13891,12 +14029,12 @@ function bldUndo(){
     if(e.st){T.store.push(e.st); say='The '+n+' goes back into storage.';}
     else{T.res=haulFix(T.res); for(const k in e.cost)T.res[k]+=e.cost[k]; const back=townCostText(e.cost); say='You take back the '+n+(back?': '+back+' back.':'.');}}
   else if(e.a==='move'){
-    BLD_SKIP=e.d; bldSync(); const why=bldFits(e.d.id,e.from.c,e.from.r,e.from.x,e.from.y); BLD_SKIP=null;
+    BLD_SKIP=e.d; bldSync(); const why=bldFits(e.d.id,e.from.c,e.from.r,e.from.x,e.from.y,e.from.f); BLD_SKIP=null;
     if(why){bldSync(); return no(why);}
-    e.d.c=e.from.c; e.d.r=e.from.r; if(e.from.x!=null){e.d.x=e.from.x; e.d.y=e.from.y;} else{delete e.d.x; delete e.d.y;}
+    e.d.c=e.from.c; e.d.r=e.from.r; e.d.f=e.from.f; if(e.from.x!=null){e.d.x=e.from.x; e.d.y=e.from.y;} else{delete e.d.x; delete e.d.y;}
     say='The '+tab[e.d.id].n+' goes back where it stood.';}
   else if(e.a==='store'){const j=T.store.indexOf(e.st); if(j<0){U.pop(); townTrayUI(); return false;}
-    const why=bldFits(e.d.id,e.d.c,e.d.r,e.d.x,e.d.y); if(why)return no(why);
+    const why=bldFits(e.d.id,e.d.c,e.d.r,e.d.x,e.d.y,e.d.f); if(why)return no(why);
     T.store.splice(j,1); list.splice(Math.min(e.i,list.length),0,e.d); say='The '+tab[e.d.id].n+' comes out of storage, back where it stood.';}
   else if(e.a==='salvage'){T.res=haulFix(T.res); const short=townShort(e.st.cost,T.res); if(short)return no('You need '+short+' to take that back.');
     for(const k of HAUL_KEYS)T.res[k]-=e.st.cost[k]; T.store.splice(Math.min(e.i,T.store.length),0,e.st); say='The '+tab[e.st.id].n+' is back in storage.';}
@@ -14154,7 +14292,7 @@ function lodgeTapTile(tx,ty){
   if(TWN.path&&TWN.path.length){const e=TWN.path[TWN.path.length-1]; TWN.mark=.6; TWN.mx=e.x; TWN.my=e.y;} else if(goal)TWN.goal=null;
 }
 /* furniture goes down centred on the tap (the desk reaches to its right) */
-function lodgeAnchor(id,tx,ty){const I=LODGE_ITEMS[id]; return {c:tx-(((I.w||1)-1)>>1),r:ty-(((I.h||1)-1)>>1)};}
+function lodgeAnchor(id,tx,ty,f){const F=pieceFoot(LODGE_ITEMS[id],f); return {c:tx-((F.w-1)>>1),r:ty-((F.h-1)>>1)};}
 /* can someone standing on (sx, sy) in the room walk to the door and the shelf? */
 function lodgeReaches(sx,sy){const prev=townBFS(sx,sy); return LODGE_KEEP.every(([x,y])=>prev[y*TOWN_W+x]>=0);}
 /* what the haul is short of for this floor, wall or piece: a floor or a wall gives back the one it replaces */
@@ -14163,12 +14301,12 @@ function lodgeShort(id,T){
   if(I.k!=='furn'){const old=LODGE_ITEMS[T.lodge[I.k]].cost; for(const k in old)R[k]+=old[k];}
   return townShort(I.cost,R);
 }
-/* '' if the piece can stand there, or why not; x, y as townFits(), over the room's floor */
-function lodgeFits(id,c,r,x,y){
+/* '' if the piece can stand there, or why not; x, y and f as townFits(), over the room's floor */
+function lodgeFits(id,c,r,x,y,f){
   const I=LODGE_ITEMS[id]; if(!I||I.k!=='furn')return 'Choose a piece first.';
   const free=x!=null&&y!=null; if(free){c=Math.round(x/16); r=Math.round(y/16);}
-  const tiles=lodgeTiles(id,c,r), R=free?{x,y,w:(I.w||1)*16,h:(I.h||1)*16}:{x:c*16,y:r*16,w:(I.w||1)*16,h:(I.h||1)*16};
-  for(const [x,y] of free?rectTiles(R):tiles){
+  const tiles=lodgeTiles(id,c,r,f), RS=footRects(free?x:c*16,free?y:r*16,pieceFoot(I,f));
+  for(const [x,y] of free?footTiles(RS):tiles){
     const ch=lodgeCh(x,y);
     if(ch==='G')return 'Not against the Grimoire shelf.';
     if(ch!=='.')return 'There is no floor there.';
@@ -14177,7 +14315,7 @@ function lodgeFits(id,c,r,x,y){
     if(!I.flat&&lodgeKept(x,y))return y>5?'Keep the way to the door clear.':'Keep the way to the shelf clear.';
     if(lodgeAt(x,y))return 'Something stands there already.';
   }
-  if(townData().lodge.furn.some(d=>d!==BLD_SKIP&&rectsOver(R,pieceRect(d,LODGE_ITEMS[d.id]))))return 'Something stands there already.';
+  if(townData().lodge.furn.some(d=>d!==BLD_SKIP&&rectsHit(RS,pieceRects(d,LODGE_ITEMS[d.id]))))return 'Something stands there already.';
   if(!I.flat){
     for(const [x,y] of tiles)LODGE_BLOCK.add(y*LODGE_W+x);
     const P=TWN.p, onYou=!townFree(P.x,P.y);
@@ -14465,13 +14603,14 @@ function townDraw(){
   /* build mode: the footprint under the thumb, green where it can stand, red where it can't, gold on a piece to take up */
   const G=TWN.build&&TWN.ghost;
   const GD=G&&(IN?LODGE_ITEMS:TOWN_DECOS)[G.id];
-  if(GD&&!TWN.lift){const gc=townGhost(G.up?'b':G.why?'k':'g'), D=GD, gx=G.x!=null?G.x:G.c*16, gy=G.y!=null?G.y:G.r*16;
-    for(let y=0;y<(D.h||1);y++)for(let x=0;x<(D.w||1);x++)bc.drawImage(gc,gx+x*16-cx,gy+y*16-cy);}
+  if(GD&&!TWN.lift){const gc=townGhost(G.up?'b':G.why?'k':'g'), t=pieceFoot(GD,G.f).t, gx=G.x!=null?G.x:G.c*16, gy=G.y!=null?G.y:G.r*16;
+    for(let i=0;i<t.length;i++)bc.drawImage(gc,gx+t[i][0]*16-cx,gy+t[i][1]*16-cy);}
   /* a lifted piece (Expansion 4, step 1): its footprint, green where it can go and red where it can't, and the piece itself over
      it, drawn after the dark so it can be seen wherever it is carried */
   const LF=TWN.build&&TWN.lift, LD=LF&&(IN?LODGE_ITEMS:TOWN_DECOS)[LF.id];
-  if(LD){const gc=townGhost(LF.why?'k':'g');
-    for(let y=0;y<(LD.h||1);y++)for(let x=0;x<(LD.w||1);x++)bc.drawImage(gc,LF.x+x*16-cx,LF.y+y*16-cy);
+  /* turned (Expansion 4, step 2), its footprint is the tiles it covers facing that way: on a diagonal, its own mask */
+  if(LD){const gc=townGhost(LF.why?'k':'g'), t=pieceFoot(LD,LF.f).t;
+    for(let i=0;i<t.length;i++)bc.drawImage(gc,LF.x+t[i][0]*16-cx,LF.y+t[i][1]*16-cy);
     if(LF.art)for(let i=0;i<LF.art.length;i++){const o=LF.art[i]; bc.drawImage(o.c,LF.x+o.x-cx,LF.y+o.y-cy);}}
   const Rp=TWN.ptr;
   if(Rp&&Rp.steer){const k=TWN.k/TWN.dpr, ax=Math.round(Rp.x0/k), ay=Math.round(Rp.y0/k), dx=Rp.x-Rp.x0, dy=Rp.y-Rp.y0, L=Math.hypot(dx,dy), m=Math.min(L,40)/k;
@@ -14493,7 +14632,10 @@ $('#townCv').addEventListener('pointerdown',ev=>{
   if(ev.pointerType!=='mouse'&&(ev.clientX<DSC_EDGE||ev.clientX>innerWidth-DSC_EDGE))return;
   const [x,y]=townPtrXY(ev); TWN.ptr={id:ev.pointerId,x0:x,y0:y,x,y,t0:performance.now(),steer:false,far:0};
   /* a piece lifted (Expansion 4, step 1): a drag slides it from where it is, so the thumb never hides it, and nobody walks */
-  if(TWN.build){if(TWN.lift)TWN.ptr.lift={x:TWN.lift.x,y:TWN.lift.y}; else townGhostAt(...townPtrTile(x,y),...townPtrPx(x,y));}
+  /* held still on the lifted piece itself (Expansion 4, step 2), it turns back a step without waiting for the thumb to lift */
+  if(TWN.build){if(TWN.lift){const R=TWN.ptr, [wx,wy]=townPtrPx(x,y); R.lift={x:TWN.lift.x,y:TWN.lift.y};
+      if(bldOnLift(wx,wy))R.hold=setTimeout(()=>{if(TWN.ptr===R&&R.far<=6&&TWN.lift){R.turned=true; bldTurn(-1);}},BLD_HOLD);}
+    else townGhostAt(...townPtrTile(x,y),...townPtrPx(x,y));}
   try{$('#townCv').setPointerCapture(ev.pointerId);}catch(e){}
 });
 /* the tile under a point on the canvas (CSS px) */
@@ -14510,7 +14652,7 @@ $('#townCv').addEventListener('pointermove',ev=>{const R=TWN.ptr;
   if(TWN.build){if(R.steer){if(TWN.ghost&&TWN.ghost.t<0)TWN.ghost=null;} else townGhostAt(...townPtrTile(x,y));}});
 function townLift(ev){const R=TWN.ptr; if(!R||ev.pointerId!==R.id)return; TWN.ptr=null;
   /* a lifted piece: a drag has already moved it; a tap puts it where the tap lands */
-  if(R.lift){if(ev.type!=='pointercancel'&&TWN.on&&R.far<=6){const [x,y]=townPtrXY(ev); TWN.tapPx=townPtrPx(x,y); townTapTile(...townPtrTile(x,y));} return;}
+  if(R.lift){clearTimeout(R.hold); if(!R.turned&&ev.type!=='pointercancel'&&TWN.on&&R.far<=6){const [x,y]=townPtrXY(ev); TWN.tapPx=townPtrPx(x,y); townTapTile(...townPtrTile(x,y));} return;}
   if(TWN.ghost&&TWN.ghost.t<0&&ev.pointerType!=='mouse')TWN.ghost=null;
   /* a slow tap (held past the quarter second, never moved) is still a tap: phones make plenty of them */
   if(ev.type==='pointercancel'||!TWN.on||R.far>12||(R.steer&&performance.now()-R.t0>600))return;
@@ -14538,6 +14680,13 @@ $('#townTools').addEventListener('click',ev=>{
 $('#townDrop').addEventListener('click',()=>{if(TWN.build)bldDrop();});
 $('#townCancel').addEventListener('click',()=>{if(TWN.build)bldCancel();});
 $('#townStow').addEventListener('click',()=>{if(TWN.build)bldStow();});
+/* ⟳ (Expansion 4, step 2): a tap turns the lifted piece a step clockwise; held, it turns it back a step, and the click that
+   follows the hold is let go */
+let bldHeld=0;
+$('#townTurn').addEventListener('pointerdown',()=>{clearTimeout(bldHeld); TWN.turnBack=false; if(!TWN.build||!TWN.lift)return;
+  bldHeld=setTimeout(()=>{if(TWN.build&&TWN.lift){TWN.turnBack=true; bldTurn(-1);}},BLD_HOLD);});
+for(const k of ['pointerup','pointercancel','pointerleave'])$('#townTurn').addEventListener(k,()=>clearTimeout(bldHeld));
+$('#townTurn').addEventListener('click',()=>{if(TWN.turnBack){TWN.turnBack=false; return;} if(TWN.build)bldTurn(1);});
 /* the tray's chips: tap one to choose it, again to put it down (on click, rule 5) */
 $('#townTrow').addEventListener('click',ev=>{
   if(!TWN.build)return;

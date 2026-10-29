@@ -47,9 +47,9 @@ if 'LODGE_ITEMS' in D:
     w("## Saltmouth: the Keeper's Lodge (step 9)\n")
     nm=lambda c:', '.join('%s %s'%(n,'curio' if k=='curios' and n==1 else k) for k,n in c.items()) or 'free'
     w("Restoring the Lodge costs **%s**. Inside, one floor and one wall cover the room (changing either gives back the one replaced); furniture stands where it is set and comes up for all it cost. With the Lodge standing, two Keepers can work at chores.\n"%nm(D['LODGE_COST']))
-    w("| Piece | Kind | Cost | Footprint | Light |\n|---|---|---|---|---|")
+    w("| Piece | Kind | Cost | Footprint | Light | Facings drawn |\n|---|---|---|---|---|---|")
     for v in D['LODGE_ITEMS'].values():
-        w("| %s | %s | %s | %s | %s |"%(v['n'],{'floor':'Floor','wall':'Wall','furn':'Furniture'}[v['k']],nm(v['cost']),('%d×%d'%(v.get('w',1),v.get('h',1))+(' (walked over)' if v.get('flat') else '')) if v['k']=='furn' else 'the room',('%s%s'%(v['light'],' (green)' if v.get('green') else '')) if v.get('light') else ''))
+        w("| %s | %s | %s | %s | %s | %s |"%(v['n'],{'floor':'Floor','wall':'Wall','furn':'Furniture'}[v['k']],nm(v['cost']),('%d×%d'%(v.get('w',1),v.get('h',1))+(' (walked over)' if v.get('flat') else '')) if v['k']=='furn' else 'the room',('%s%s'%(v['light'],' (green)' if v.get('green') else '')) if v.get('light') else '',v.get('faces',1) if v['k']=='furn' else ''))
     w("")
 
 w("## Creatures\n")
