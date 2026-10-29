@@ -13146,6 +13146,11 @@ function carriedKit(){const c=devOn&&townData().carry; return c&&KITS[c]?c:meta(
    tops of the side and front walls, the door, and the floor in its style. Dark and close in value, as the square is */
 function lodgeGroundPx(x,y,floor,wall){
   const B=tBayer(x,y), FX=16, FY=32, EX=LODGE_W*16-16, EY=LODGE_H*16-16;
+  /* the side walls' tops run the room's whole depth, up to the ceiling line, so the back wall's face ends against them rather
+     than showing past them at the corners (Criss, #130) */
+  if((x<FX||x>=EX)&&y<FY){const ix=x<FX?FX-1-x:x-EX;
+    if(y===0)return '0'; if(ix===0)return '3';
+    return ix<3?'2':(thash(x>>2,y>>2,149)<.3?'1':'2');}
   if(y<FY){
     if(y<4)return y===0?'0':y===3?'3':'1';
     if(y>=29)return y===30?'6':'5';
