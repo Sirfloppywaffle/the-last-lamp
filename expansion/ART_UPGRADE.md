@@ -44,7 +44,8 @@ Step 4 draws about 30 catalogue pieces. Drawing them the new way from the start 
   - wall mounts and small things on surfaces (candles, books, bottles, a skull): `create_1_direction_object`. Size 32 gives 64 candidates and 48 gives 16.
 - **Dyes cost no generations.** A colourway is a letter-to-letter swap in code, not new art.
 - **Redraw the old four.** The Banker's Desk, Stove, Bookshelf and Ritual Rug get redrawn so they match the Armchair. They are catalogue pieces, so this belongs in step 4.
-- **`tools/png2rows.py --sheet out.png`.** The tool writes the contact sheet itself, numbered, at 4×, using only the standard library. That replaces the throwaway script used in step 3.
+- **`tools/png2rows.py --sheet out.png`.** The tool writes the contact sheet itself, numbered, at 4×, using only the standard library. That replaces the throwaway script used in step 3. *Built (step 4):* it also gained `--outline X`, which takes an edge pixel of pure dark up to the piece's own darkest letter (§2.1's outline rule).
+- *Learned (step 4):* with the Armchair as `style_object_id` the canvas must be at least 34, and the pieces came out 27 to 32 px across, so squeezing them to 16 spoiled them. Over-sized pieces were regenerated at canvas 24 without a style object (brighter, but the right size); wide ones (desk, pew, chart table, chest, coral table) keep 36 and a 2-tile footprint. Wall mounts and small things: 1-direction objects at 16 px (a style image forces its own size, 24); small things are about 10 px, so a candle sits on a desk's slot. Pass a short `item_descriptions` list: a 64-candidate job at size 16 draws your items first and 56 useful extras after.
 - **Estimated spend:** 10 to 20 generations a piece, so about 350 to 700 of the month's 2,000.
 
 ---
@@ -109,3 +110,20 @@ Pixel portraits on the town's talk cards, from `create_portrait_character`, besi
 | Cellar hatch | `LODGE_HATCH` | `f50809e6-9b56-4f7a-9e61-658056500dba` | 10 | narrowed 28→16; shut and open states drawn in code |
 | Attic ladder | `LODGE_LADDER` | `2326e2dc-bc2e-4a85-8e58-147c62a9a728` | 4 | 18×45 → 16×34; outline `0`→`5` |
 | Attic round window | `LODGE_WINDOW` | `65908fca-70c8-4ae0-a90c-3d511bc11592` | 12 | 28→24; glass cleared; outline `0`→`5` |
+| Chest (Sea Chest, 2 tiles) | `LODGE_ROWS.chest` | `b4ef2540-fb30-45db-bab5-88b43bc86af1` | 8 directions, S W N | none; edge `5` |
+| Stove (redraw) | `LODGE_ROWS.stove` | `76bd1769-21da-4ec6-922e-44982acf4be7` | 8 directions at 24, S W N | 17→16; edge `1`; its grate (`vkab89`) glows |
+| Banker's Desk (redraw) | `LODGE_ROWS.desk` | `ecbbec79-76bd-4889-9797-e23f5c53c71f` | 8 directions, S W N | 40→32 / 19→16; edge `5`; the lamp is gone |
+| Bookshelf (redraw) | `LODGE_ROWS.shelf` | `046c836e-3393-4c31-91d0-d03b2dda7472` | 8 directions at 24 | 19→16; edge `5` |
+| Ritual Rug (redraw) | `LODGE_ROWS.rug` | `c9efb5ad-2ec6-4b42-b3ae-4618eac806c0` | frame 10 of 16 (1-direction, 48) | 42×43 on its 3×3; edge `5` |
+| Chapel pew | `LODGE_ROWS.pew` | `14b225da-c37a-4d16-980d-be4e10c1c06e` | 8 directions, S W N | 38→32, 36→32, 15 |
+| Holy-water font | `LODGE_ROWS.font` | `ee04725e-3f66-4a77-9bb9-1172b447a0bd` | 8 directions at 24, S | 17→16; edge `2` |
+| Chapel lectern | `LODGE_ROWS.lectern` | `61245af4-daae-4bca-8e6e-a94ebca57d21` | 8 directions at 24, S W N | 17→16 |
+| Brass telescope | `LODGE_ROWS.telescope` | `24b195a9-1e9b-41ca-acc6-8be5ccfa4b58` | 8 directions at 24, S W N | 21→16 (side); edge `2` |
+| Orrery | `LODGE_ROWS.orrery` | `030745f4-86fc-4188-a0bd-e04f9816e6b7` | 8 directions at 24, S | 19→16 |
+| Chart table | `LODGE_ROWS.chart` | `6d489eb4-ab99-4b50-8f8a-dfc6f550a52c` | 8 directions, S W N | 38→32, 36→32, 20→16 |
+| Coral cluster | `LODGE_ROWS.coral` | `dbe2dde2-336d-464a-ad68-29fb75fcc3c4` | 8 directions at 24, S | 17→16 |
+| Brine urn | `LODGE_ROWS.urn` | `240bc2a9-47d6-432a-a152-7d43b91a1b29` | 8 directions at 24, S | 17→16; edge `5` |
+| Coral table (2 tiles) | `LODGE_ROWS.ctable` | `56da008d-e20c-492a-99d9-b741e46eb2d1` | 8 directions, S | none; edge `2` |
+| Wall mounts (wheel, barometer, anchor, portrait, saint, bell, clock, star chart, coral fan, mask) | `LODGE_ROWS.<id>` | `d9c1f555-6b2f-44db-8be3-ff736edd0713` | frames 0 to 9 of 64 (1-direction, 16) | none; edge `5` or `1` |
+| Small things (lantern, bottle, candle, skull, hourglass, shell, inkwell) | `LODGE_ROWS.<id>` | `6c375693-45e7-4b3d-bfaf-ddf3b5204c1d` | frames 0 to 7 of 64 (1-direction, 16) | narrowed to 8 to 12 wide, 7 to 12 tall; edge `5` or `1` |
+| Stack of books | `LODGE_ROWS.books` | `b375d966-2b23-43c4-9cc5-1cac07cf5263` | frame 3 of 64 | 14×15→13×11 |

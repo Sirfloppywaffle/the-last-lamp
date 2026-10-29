@@ -63,19 +63,70 @@ The Croupier plays knucklebones at the Drowned Oar for **10** timber or tallow (
 
 Restoring the Lodge costs **30 timber, 15 iron**. Inside, one floor and one wall cover the room (changing either gives back the one replaced); furniture stands where it is set and comes up for all it cost. With the Lodge standing, two Keepers can work at chores.
 
-| Piece | Kind | Cost | Footprint | Light | Facings drawn |
-|---|---|---|---|---|---|
-| Rotted Ship-Planks | Floor | free | the room |  |  |
-| Diamond Parquet | Floor | 20 timber | the room |  |  |
-| Cistern Flagstones | Floor | 20 iron | the room |  |  |
-| Damp Stone | Wall | free | the room |  |  |
-| Mahogany Library | Wall | 30 timber | the room |  |  |
-| Brass-Ribbed Bulkhead | Wall | 30 iron | the room |  |  |
-| Banker’s Desk | Furniture | 12 timber, 4 iron | 2×1 | 30 (green) | 4 |
-| Cast-Iron Stove | Furniture | 10 iron, 2 tallow | 1×1 | 36 | 4 |
-| Ritual Rug | Furniture | 8 tallow, 1 curio | 3×3 (walked over) |  | 1 |
-| Armchair | Furniture | 8 timber, 2 tallow | 1×1 |  | 8 |
-| Bookshelf | Furniture | 10 timber | 1×1 |  | 4 |
+### The catalogue (Expansion 4, step 4)
+
+The Lodge's pieces come in five themed sets, plus its own floors and walls. A set is **open** from the start or **bought as a blueprint** from the Peddler (step 6), until then shown locked on the tray. A **wall mount** hangs on the back wall (wall tiles, never floor, 1 tile wide). A **small thing** stands on a surface (a piece with slots on its top, half a tile apart) and goes wherever its host goes. Every piece has two to four **colourways**: its own, and a dye of 2 tallow each, a swap of palette letters (going back to its own colours gives the tallow back). Costs are shape only.
+
+| Set | Pieces | Open |
+|---|---|---|
+| The Lodge’s own | 6: Rotted Ship-Planks, Diamond Parquet, Cistern Flagstones, Damp Stone, Mahogany Library, Brass-Ribbed Bulkhead | from the start |
+| Fisherman’s | 7: Cast-Iron Stove, Sea Chest, Ship’s Wheel, Barometer, Rusted Anchor, Hurricane Lantern, Ship in a Bottle | from the start |
+| Old Library | 8: Armchair, Banker’s Desk, Bookshelf, Ritual Rug, Drowned Portrait, Candle in a Saucer, Stack of Books, Inkwell and Quill | from the start |
+| Drowned Chapel | 6: Chapel Pew, Holy-Water Font, Chapel Lectern, Drowned Saint, Ship’s Bell, Pilgrim’s Skull | blueprint |
+| Brass Observatory | 6: Brass Telescope, Orrery, Chart Table, Stopped Clock, Star Chart, Brass Hourglass | blueprint |
+| Deep-One Coral | 6: Coral Cluster, Brine Urn, Coral Table, Coral Fan, Pearl-Eyed Mask, Conch Shell | blueprint |
+
+| Dye | Swaps |
+|---|---|
+| Tarred | `5`→`1`, `6`→`2`, `7`→`3`, `8`→`3`, `9`→`4`, `o`→`4`, `p`→`4` |
+| Wine-dark | `5`→`l`, `6`→`m`, `7`→`n`, `8`→`j`, `9`→`k`, `o`→`j`, `p`→`k` |
+| Salt-bleached | `5`→`6`, `6`→`7`, `7`→`o`, `8`→`9`, `9`→`o`, `o`→`d`, `p`→`d` |
+| Verdigris | `9`→`f`, `a`→`g`, `b`→`g`, `p`→`e`, `o`→`e`, `c`→`g` |
+| Rust | `1`→`8`, `2`→`8`, `3`→`9`, `4`→`9`, `r`→`9`, `q`→`8` |
+| Blushed | `f`→`j`, `g`→`k`, `y`→`l` |
+| Ash | `f`→`3`, `g`→`4`, `y`→`1`, `d`→`e`, `u`→`3` |
+
+| Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |
+|---|---|---|---|---|---|---|---|
+| Rotted Ship-Planks | Lodge | Floor | free | the room |  |  |  |
+| Diamond Parquet | Lodge | Floor | 20 timber | the room |  |  |  |
+| Cistern Flagstones | Lodge | Floor | 20 iron | the room |  |  |  |
+| Damp Stone | Lodge | Wall | free | the room |  |  |  |
+| Mahogany Library | Lodge | Wall | 30 timber | the room |  |  |  |
+| Brass-Ribbed Bulkhead | Lodge | Wall | 30 iron | the room |  |  |  |
+| Cast-Iron Stove | Fisher | Furniture | 10 iron, 2 tallow | 1×1 | 36 | 4 | 2 |
+| Sea Chest | Fisher | Surface (4 slots) | 10 timber, 3 iron | 2×1 |  | 4 | 4 |
+| Ship’s Wheel | Fisher | Wall mount | 6 timber, 2 iron | 1×2 |  | 1 | 3 |
+| Barometer | Fisher | Wall mount | 6 iron, 1 tallow | 1×2 |  | 1 | 3 |
+| Rusted Anchor | Fisher | Wall mount | 8 iron | 1×2 |  | 1 | 3 |
+| Hurricane Lantern | Fisher | Small thing | 2 iron, 2 tallow | 1×1 | 26 | 1 | 3 |
+| Ship in a Bottle | Fisher | Small thing | 2 timber, 1 curio | 1×1 |  | 1 | 2 |
+| Armchair | Library | Furniture | 8 timber, 2 tallow | 1×1 |  | 8 | 4 |
+| Banker’s Desk | Library | Surface (4 slots) | 12 timber, 4 iron | 2×1 |  | 4 | 4 |
+| Bookshelf | Library | Surface (2 slots) | 10 timber | 1×1 |  | 4 | 4 |
+| Ritual Rug | Library | Furniture | 8 tallow, 1 curio | 3×3 (walked over) |  | 1 | 3 |
+| Drowned Portrait | Library | Wall mount | 5 timber, 2 tallow | 1×2 |  | 1 | 3 |
+| Candle in a Saucer | Library | Small thing | 1 tallow | 1×1 | 22 | 1 | 2 |
+| Stack of Books | Library | Small thing | 3 timber | 1×1 |  | 1 | 4 |
+| Inkwell and Quill | Library | Small thing | 1 iron, 1 tallow | 1×1 |  | 1 | 2 |
+| Chapel Pew | Chapel | Furniture | 12 timber | 2×1 |  | 4 | 4 |
+| Holy-Water Font | Chapel | Furniture | 10 iron, 2 tallow | 1×1 |  | 1 | 3 |
+| Chapel Lectern | Chapel | Furniture | 8 timber, 2 iron | 1×1 |  | 4 | 4 |
+| Drowned Saint | Chapel | Wall mount | 4 timber, 1 curio | 1×2 |  | 1 | 3 |
+| Ship’s Bell | Chapel | Wall mount | 8 iron, 1 tallow | 1×2 |  | 1 | 3 |
+| Pilgrim’s Skull | Chapel | Small thing | 1 curio | 1×1 |  | 1 | 2 |
+| Brass Telescope | Brass | Furniture | 12 iron, 4 timber | 1×1 |  | 4 | 3 |
+| Orrery | Brass | Furniture | 14 iron, 2 curios | 1×1 |  | 1 | 3 |
+| Chart Table | Brass | Surface (4 slots) | 12 timber, 3 iron | 2×1 |  | 4 | 4 |
+| Stopped Clock | Brass | Wall mount | 6 iron, 2 timber | 1×2 |  | 1 | 3 |
+| Star Chart | Brass | Wall mount | 3 timber, 2 tallow | 1×2 |  | 1 | 3 |
+| Brass Hourglass | Brass | Small thing | 2 iron, 1 tallow | 1×1 |  | 1 | 3 |
+| Coral Cluster | Coral | Furniture | 6 tallow, 1 curio | 1×1 |  | 1 | 3 |
+| Brine Urn | Coral | Furniture | 6 tallow, 2 iron | 1×1 |  | 1 | 3 |
+| Coral Table | Coral | Surface (4 slots) | 8 tallow, 1 curio | 2×1 |  | 1 | 3 |
+| Coral Fan | Coral | Wall mount | 5 tallow, 1 curio | 1×2 |  | 1 | 3 |
+| Pearl-Eyed Mask | Coral | Wall mount | 4 tallow, 2 curios | 1×2 |  | 1 | 3 |
+| Conch Shell | Coral | Small thing | 2 tallow | 1×1 |  | 1 | 3 |
 
 ## Creatures
 

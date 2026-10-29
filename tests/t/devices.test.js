@@ -76,7 +76,7 @@ const DEV=[
     await p.evaluate(()=>{document.querySelector('#mActions').querySelectorAll('button')[2].click(); __t.setDev(false); __t.townKeepers();});
     if(!(keepers.n===4&&keepers.label==='Talk to Dr. Lucan Voss'&&keepers.out&&keepers.one&&keepers.still&&keepers.talk))console.log('FAIL '+nm+': Keepers on this screen',JSON.stringify(keepers));
     /* the Keeper's Lodge (step 9), in developer mode so nothing is written: inside, Leave the Lodge sits where Descend the stair
-       does, inside the safe area and a thumb; the room fills its canvas at whole pixels; the build tray's eleven chips are thumbs
+       does, inside the safe area and a thumb; the room fills its canvas at whole pixels; the build tray's six chips (the Lodge's own floors and walls) are thumbs
        inside the safe area, and opening it moves nothing in the HUD */
     const lodge=await p.evaluate(ins=>{
       ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
@@ -136,8 +136,55 @@ const DEV=[
       const want=room==='cellar'?'Up to the Lodge':'Down to the Lodge';
       if(!(rm.buy&&rm.go&&rm.label===want&&rm.act&&rm.cover))console.log('FAIL '+nm+': the '+room+' on this screen',JSON.stringify(rm));
     }
+    /* Expansion 4, step 4: the catalogue. In the Lodge's tray the set chip leads and each set's pieces follow, those of a set not yet
+       bought shown shut with a padlock (not in developer mode, which opens them all); lifting a piece puts Dye beside ⟳ in the bar,
+       five thumbs that still fit; wall mounts and small things are drawn. Each a thumb inside the safe area, clear of one another and
+       of the message line, and nothing in the HUD moves. A screenshot of each */
+    const cat=await p.evaluate(ins=>{
+      ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44, over=(a,c)=>!!a&&!!c&&a[2]>c[0]&&a[0]<c[2]&&a[3]>c[1]&&a[1]<c[3];
+      const apart=rs=>rs.every((r,i)=>rs.every((t,j)=>i===j||!over(r,t)));
+      const D=__t.townData(), T=__t.TWN; if(__t.lodgeCur()!=='main')__t.lodgeGo('main');
+      D.lodge.floor='planks'; D.lodge.wall='damp';
+      D.lodge.furn=[{id:'desk',c:1,r:3,on:[{id:'candle',s:0},{id:'books',s:1},{id:'ink',s:3}]},{id:'wheel',c:6,r:0},{id:'portrait',c:3,r:0},{id:'chest',c:7,r:5,on:[{id:'lantern',s:0}]},{id:'chair',c:4,r:6,f:5},{id:'stove',c:8,r:3}];
+      __t.lodgeSync(); T.p.x=5; T.p.y=8.4; T.path=null; T.cx=null; __t.townFrame(1/30);
+      __t.townBuildSet(true); const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
+      T.set='rooms'; __t.townTrayUI(); __t.townFrame(1/30);
+      const hud=()=>JSON.stringify([q(document.getElementById('townBack')),q(document.getElementById('townBuild')),q(document.getElementById('townRes')),q(document.getElementById('townCv'))]);
+      const msg=()=>q(document.getElementById('townTmsg')), h0=hud(), o={sets:[]};
+      for(const k of __t.LODGE_SET_KEYS){
+        T.set=k; __t.townTrayUI(); const set=document.getElementById('townSet'), chips=[...document.querySelectorAll('#townTrow [data-lodge]')].map(q);
+        const sc=q(set); o.sets.push([k,chips.length,thumb(sc)&&inside(sc),chips.every(c=>thumb(c)&&c[3]<=innerHeight-ins.bottom+1),!over(sc,msg())&&hud()===h0]);}
+      /* a piece lifted: the bar of five */
+      T.set='fisher'; __t.townTrayUI(); __t.bldTap(1,3); __t.townFrame(1/30);
+      const lb=[...document.querySelectorAll('#townLiftBar .town-tb')].map(q).filter(Boolean), chips=[...document.querySelectorAll('#townTrow .town-chip')].filter(c=>!c.hidden).map(q);
+      o.lift=!!T.lift; o.lb=lb.length; o.liftOk=lb.length===5&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips.some(c=>over(r,c)))&&hud()===h0;
+      return o;},ins);
+    await p.waitForTimeout(120);
+    await p.screenshot({path:(process.argv[3]||'.')+'/lodge-catlift-'+nm+'.png'});
+    await p.evaluate(()=>{__t.bldCancel(); __t.TWN.set='library'; __t.townTrayUI(); __t.townFrame(1/30);});
+    await p.waitForTimeout(100);
+    await p.screenshot({path:(process.argv[3]||'.')+'/lodge-cat-'+nm+'.png'});
+    /* the sets not yet bought, shown locked (real mode: its own town in this page's storage) */
+    const locked=await p.evaluate(ins=>{
+      ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      __t.townBuildSet(false); __t.setDev(false); __t.townReset(); const R=__t.townData(); R.res={timber:500,iron:500,tallow:500,curios:50}; R.lodge.built=true; R.lodge.furn=[]; __t.lodgeSync();
+      __t.townBuildSet(true); const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
+      __t.TWN.set='chapel'; __t.townTrayUI();
+      const chips=[...document.querySelectorAll('#townTrow [data-lodge]')], locks=document.querySelectorAll('#townTrow img.town-lock').length;
+      const rs=chips.map(q); const o={n:chips.length,locks,locked:chips.every(c=>c.classList.contains('locked')),thumbs:rs.every(r=>r[3]-r[1]>=44&&r[2]-r[0]>=44)};
+      chips[0].click(); o.say=document.getElementById('townTmsg').textContent; o.pick=__t.TWN.pick;
+      return o;},ins);
+    await p.waitForTimeout(100);
+    await p.screenshot({path:(process.argv[3]||'.')+'/lodge-locked-'+nm+'.png'});
+    await p.evaluate(()=>{__t.townBuildSet(false); __t.setDev(true); __t.townReset(); __t.townKeepers();});
+    if(!(cat.sets.length===6&&cat.sets.every(x=>x[2]&&x[3]&&x[4])&&cat.sets.map(x=>x[1]).join()==='6,7,8,6,6,6'&&cat.lift&&cat.liftOk))console.log('FAIL '+nm+': the catalogue’s tray on this screen',JSON.stringify(cat));
+    if(!(locked.n===6&&locked.locks===6&&locked.locked&&locked.thumbs&&/Peddler/.test(locked.say)&&locked.pick===null))console.log('FAIL '+nm+': a set not yet bought, on this screen',JSON.stringify(locked));
     await p.evaluate(()=>{__t.lodgeLeave(); __t.setDev(false); __t.townKeepers();});
-    if(!(lodge.enter&&lodge.label==='Leave the Lodge'&&lodge.act&&lodge.cover&&lodge.n===11&&lodge.chips&&lodge.still))console.log('FAIL '+nm+': the Lodge on this screen',JSON.stringify(lodge));
+    if(!(lodge.enter&&lodge.label==='Leave the Lodge'&&lodge.act&&lodge.cover&&lodge.n===6&&lodge.chips&&lodge.still))console.log('FAIL '+nm+': the Lodge on this screen',JSON.stringify(lodge));
     /* Expansion 4, step 1: the build tools, in developer mode so nothing is written. The tool bar (Pieces, Storage, Grid, Free,
        Undo) and, with a piece lifted, Place, ⟳ (step 2), Cancel and Store: each a thumb inside the safe area, clear of one another, of the
        message line and of the chips; lifting swaps the bars and moves nothing else. Storage's chips are thumbs too */
@@ -156,7 +203,7 @@ const DEV=[
       const bar=[...document.querySelectorAll('#townTools .town-tb')].map(q), m0=msg(), row0=q(document.getElementById('townTrow')), h0=hud(), ch=chips();
       o.bar=bar; o.barOk=bar.length===5&&bar.every(r=>inside(r)&&thumb(r))&&apart(bar)&&!bar.some(r=>over(r,m0)||ch.some(c=>over(r,c)));
       __t.bldTap(14,15); __t.townFrame(1/30);
-      const lb=[...document.querySelectorAll('#townLiftBar .town-tb')].map(q);
+      const lb=[...document.querySelectorAll('#townLiftBar .town-tb')].map(q).filter(Boolean);
       o.lb=lb; o.liftOk=!!T.lift&&lb.length===4&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips().some(c=>over(r,c)))
         &&JSON.stringify(q(document.getElementById('townTrow')))===JSON.stringify(row0)&&hud()===h0;
       return o;},ins);

@@ -47,9 +47,20 @@ if 'LODGE_ITEMS' in D:
     w("## Saltmouth: the Keeper's Lodge (step 9)\n")
     nm=lambda c:', '.join('%s %s'%(n,'curio' if k=='curios' and n==1 else k) for k,n in c.items()) or 'free'
     w("Restoring the Lodge costs **%s**. Inside, one floor and one wall cover the room (changing either gives back the one replaced); furniture stands where it is set and comes up for all it cost. With the Lodge standing, two Keepers can work at chores.\n"%nm(D['LODGE_COST']))
-    w("| Piece | Kind | Cost | Footprint | Light | Facings drawn |\n|---|---|---|---|---|---|")
+    if 'LODGE_SETS' in D:
+        w("### The catalogue (Expansion 4, step 4)\n")
+        w("The Lodge's pieces come in five themed sets, plus its own floors and walls. A set is **open** from the start or **bought as a blueprint** from the Peddler (step 6), until then shown locked on the tray. A **wall mount** hangs on the back wall (wall tiles, never floor, 1 tile wide). A **small thing** stands on a surface (a piece with slots on its top, half a tile apart) and goes wherever its host goes. Every piece has two to four **colourways**: its own, and a dye of %s each, a swap of palette letters (going back to its own colours gives the tallow back). Costs are shape only.\n"%nm(D['DYE_COST']))
+        w("| Set | Pieces | Open |\n|---|---|---|")
+        for k,S in D['LODGE_SETS'].items():
+            ps=[v['n'] for v in D['LODGE_ITEMS'].values() if v['set']==k]
+            w("| %s | %d: %s | %s |"%(S['n'],len(ps),', '.join(ps),'from the start' if S.get('open') else 'blueprint'))
+        w("")
+        w("| Dye | Swaps |\n|---|---|\n"+"\n".join("| %s | %s |"%(v['n'],', '.join('`%s`→`%s`'%(a,b) for a,b in v['sw'].items())) for v in D['LODGE_DYES'].values()))
+        w("")
+    w("| Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |\n|---|---|---|---|---|---|---|---|")
     for v in D['LODGE_ITEMS'].values():
-        w("| %s | %s | %s | %s | %s | %s |"%(v['n'],{'floor':'Floor','wall':'Wall','furn':'Furniture'}[v['k']],nm(v['cost']),('%d×%d'%(v.get('w',1),v.get('h',1))+(' (walked over)' if v.get('flat') else '')) if v['k']=='furn' else 'the room',('%s%s'%(v['light'],' (green)' if v.get('green') else '')) if v.get('light') else '',v.get('faces',1) if v['k']=='furn' else ''))
+        kind='Floor' if v['k']=='floor' else 'Wall' if v['k']=='wall' else 'Wall mount' if v.get('mount') else 'Small thing' if v.get('small') else 'Surface (%d slots)'%v['top'] if v.get('top') else 'Furniture'
+        w("| %s | %s | %s | %s | %s | %s | %s | %s |"%(v['n'],D['LODGE_SETS'][v['set']]['s'] if 'LODGE_SETS' in D else '',kind,nm(v['cost']),('%d×%d'%(v.get('w',1),v.get('h',1))+(' (walked over)' if v.get('flat') else '')) if v['k']=='furn' else 'the room',('%s%s'%(v['light'],' (green)' if v.get('green') else '')) if v.get('light') else '',v.get('faces',1) if v['k']=='furn' else '',1+len(v.get('dyes',[])) if v['k']=='furn' else ''))
     w("")
 
 w("## Creatures\n")
