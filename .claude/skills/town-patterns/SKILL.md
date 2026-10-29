@@ -42,6 +42,13 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] `lodgeEnter()`/`lodgeLeave()` reset the walk, the camera and `TWN.tipFor`; anything new per scene resets there too. `TWN.crowd` is empty inside.
 - [ ] Room furniture: `LODGE_ITEMS`; kept clear: `LODGE_KEEP`; placing: `lodgeCanPlace()`/`lodgePlace()`.
 
+## Build mode (Expansion 4, step 1): lift, storage, undo, Grid / Free
+
+- [ ] A new kind of piece goes in `TOWN_DECOS` (square) or `LODGE_ITEMS` (`k:'furn'`, the Lodge); the `bld…` functions serve both scenes through `bldTab()`/`bldList()`/`bldSync()`/`bldFits()`. Give it `snap:true` if it must keep to the tiles (painted into the ground, or joined to its neighbours).
+- [ ] A piece may carry `x, y` (art pixels, Free) beside `c, r`; always read its footprint with `pieceRect(d,I)`, never `d.c*16`. `c, r` are the tiles it blocks, so walking and `TOWN_KEEP` checks stay on tiles.
+- [ ] Anything that draws or blocks pieces skips `BLD_SKIP` (the piece held). A new deed the player can take back calls `bldDid({a:…})` and gets a branch in `bldUndo()`.
+- [ ] New saved fields on a piece survive Store (`bldStow()` builds the stored entry) and `storeFix()`.
+
 ## Tests
 
 - [ ] **`tests/hook.js`:** add each function a test calls to the `HOOK` object, on the line for your step (functions by name, tables as getters: `get TOWN_X(){return TOWN_X}`).

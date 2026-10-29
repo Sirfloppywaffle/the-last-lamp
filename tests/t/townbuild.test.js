@@ -116,16 +116,19 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const title=document.getElementById('mTitle').textContent, copy=(document.querySelector('#mBody [data-seedcopy]')||{}).dataset;
     document.querySelector('#mActions button').click();
     const kept=__t.townData().graves.some(g=>g.n===d.g);
-    /* taken up, its grave waits again */
-    __t.townBuildSet(true); __t.townBuildTap(8,15); const back=__t.gravesWaiting().some(g=>g.n===d.g);
+    /* lifted and stored (Expansion 4, step 1), it keeps its name; salvaged, its grave waits again */
+    __t.townBuildSet(true); __t.townBuildTap(8,15); const lifted=!!__t.TWN.lift; __t.bldStow();
+    const storedKeeps=!__t.gravesWaiting().some(g=>g.n===d.g)&&__t.bldStored('stone').some(e=>e.g===d.g);
+    __t.bldSalvage('stone'); const back=__t.gravesWaiting().some(g=>g.n===d.g);
     __t.townBuildSet(false);
-    return {r,bound:d&&d.g===oldest.n,waiting,btn,title,copy:copy&&copy.seedcopy,code:__t.stairCode(oldest.seed),kept,back};
+    return {r,bound:d&&d.g===oldest.n,waiting,btn,title,copy:copy&&copy.seedcopy,code:__t.stairCode(oldest.seed),kept,back,lifted,storedKeeps};
   });
   ok(hs.r===''&&hs.bound&&hs.waiting===11,'a headstone binds the oldest grave that has no stone',hs);
   ok(!hs.btn.hidden&&hs.btn.txt==='Read the headstone'&&hs.title==='Here lies Ambrose Fenn','standing by it, the button reads it',hs);
   ok(hs.copy===hs.code,'the epitaph shows its own stair\'s code to copy',hs);
   ok(hs.kept,'a grave with a stone is kept past the 12',hs);
-  ok(hs.back,'a headstone taken up gives its grave back to wait',hs);
+  ok(hs.lifted&&hs.storedKeeps,'a headstone lifted and stored keeps the name it carries',hs);
+  ok(hs.back,'a headstone salvaged gives its grave back to wait',hs);
 
   /* 6. the real UI: Build, a chip, a tap on the canvas, and the tip; then a tap takes it up */
   const ui=await p.evaluate(()=>{
@@ -145,9 +148,16 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   await p.mouse.click(ui.x,ui.y); await p.waitForTimeout(80);
   const tap=await p.evaluate(()=>({at:(__t.townDecoAt(14,14)||{}).id,iron:__t.townData().res.iron}));
   ok(tap.at==='cobble'&&tap.iron===ui.iron-2,'a tap on the canvas lays the chosen piece where it lands',{tap,ui});
+  /* Expansion 4, step 1 changed this on purpose: a tap on a piece lifts it (nothing is refunded); Store puts it away, and Salvage
+     in Storage gives back all it cost */
   await p.mouse.click(ui.x,ui.y); await p.waitForTimeout(80);
-  const tap2=await p.evaluate(()=>({at:__t.townDecoAt(14,14),iron:__t.townData().res.iron,msg:document.getElementById('townTmsg').textContent}));
-  ok(!tap2.at&&tap2.iron===ui.iron&&/take up the Wet Cobblestone: 2 iron back/.test(tap2.msg),'a tap on a piece takes it up',tap2);
+  const tap2=await p.evaluate(()=>{const o={lift:!!__t.TWN.lift,at:__t.townDecoAt(14,14),iron:__t.townData().res.iron,msg:document.getElementById('townTmsg').textContent};
+    document.getElementById('townStow').click(); document.querySelector('#townTools [data-tab="store"]').click();
+    document.querySelector('#townTrow [data-stored="cobble"]').click(); document.getElementById('townSalvage').click();
+    o.iron2=__t.townData().res.iron; o.msg2=document.getElementById('townTmsg').textContent; o.left=__t.bldStored().length;
+    document.querySelector('#townTools [data-tab="pieces"]').click(); return o;});
+  ok(tap2.lift&&!tap2.at&&tap2.iron===ui.iron-2&&/lift the Wet Cobblestone/.test(tap2.msg),'a tap on a piece lifts it',tap2);
+  ok(tap2.iron2===ui.iron&&/salvage the Wet Cobblestone: 2 iron back/.test(tap2.msg2)&&tap2.left===0,'stored, then salvaged, it gives back all it cost',tap2);
 
   /* 7. what was built survives a reload: the paths are back in the ground, the solids block */
   await p.evaluate(()=>{__t.townData().res.timber=10; __t.townPlace('board',14,14); __t.townPlace('fence',15,15); __t.townClose();});
