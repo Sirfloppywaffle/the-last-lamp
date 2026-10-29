@@ -129,7 +129,7 @@ Full tables and formulas: **`docs/DESIGN.md`**.
 
 ---
 
-## 5. Code map (`index.html`, about 4,000 lines)
+## 5. Code map (`index.html`, about 14,000 lines)
 
 Everything lives in one file: CSS, then markup, then one big script inside an IIFE. The sections appear in this order, each marked by a `/* ------- name ------- */` comment.
 
@@ -228,7 +228,10 @@ npm install                       # first time
 npx playwright install chromium   # first time (add --with-deps on a bare Linux VM)
 npm test                          # everything: syntax/lint checks, UI flows, mechanics, roguelike walkthrough, map, touch, 14 device sizes
 npm run check                     # fast: syntax + lint rules only (no browser)
+node run.js --only <name>         # just the tests whose file name contains <name>
 ```
+
+In Claude's cloud container, skip both install lines: Playwright and Chromium are preinstalled, and the pinned install breaks the launch (`.claude/skills/test-setup/SKILL.md`).
 
 - **CI runs `npm test` on every PR** (`.github/workflows/checks.yml`). A red check blocks the merge.
 - If a browser can't be installed in your environment, run `npm run check`, say so in the PR, and rely on CI for the rest.
@@ -265,4 +268,5 @@ npm run check                     # fast: syntax + lint rules only (no browser)
 - `docs/OTHER-GAMES.md`: Criss's other game projects (RECLAIM, OBLATION).
 - `expansion/EXPANSION3_TOWN.md`: Expansion 3, Saltmouth Above (a walkable town built from what each run hauls up). Its section 0 is the current plan.
 - `expansion/EXPANSION3_RUNBOOK.md`: **how to build Expansion 3, step by step**, with a status table and a ready prompt per step. Start there for any Saltmouth work.
+- `.claude/skills/`: Claude's checklists (ship-step, test-setup, shots, self-review, town-patterns, steward). They point back to this file and the runbook; where a skill and these disagree, fix the skill.
 - Live play link: GitHub Pages for this repo (see `README.md`).

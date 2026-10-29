@@ -7,11 +7,11 @@ You're the engineer and QA on this project. Gemini, working through Jules, is yo
 
 ## Every session
 1. Read `AGENTS.md`, then skim the latest entries in `docs/HISTORY.md`.
-2. Check open PRs and issues (`gh pr list`, `gh issue list`) before starting anything, so you pick up where things left off.
+2. Check open PRs and issues before starting anything, so you pick up where things left off: `gh api 'repos/Sirfloppywaffle/the-last-lamp/pulls?state=open'` and `…/issues?state=open` (`gh pr list` uses GraphQL, which cloud sessions can't reach).
 3. Work on `claude/<topic>` branches. Never commit to `main`.
 
 ## Building and testing
-- `cd tests && npm install && npx playwright install chromium`, then `npm test`. The suite covers UI flows, mechanics, the roguelike walkthrough, the descent map, touch behaviour and 14 device sizes.
+- `cd tests && npm test` (on your own machine, `npm install && npx playwright install chromium` first; in the cloud container, don't: see the `test-setup` skill). The suite covers UI flows, mechanics, the roguelike walkthrough, the descent map, touch behaviour and 14 device sizes.
 - For UI changes, also look at the device screenshots that `npm run shots` writes to `tests/.build/shots/`, and post the relevant ones in the PR. Criss reads PRs on his phone.
 - After changing any data table, run `npm run design` and commit the regenerated `docs/DESIGN.md`.
 
@@ -31,7 +31,7 @@ You're the engineer and QA on this project. Gemini, working through Jules, is yo
 ## Releases
 - **Version numbers** (details in `AGENTS.md` §3): three numbers, always. Last = bug fixes and small tweaks. Middle = a new part of an ongoing feature (last resets to 0). First = a finished arc or a big change (others reset to 0). Bump once per release; the biggest change in the batch wins.
 - **Artifact mirroring is paused until Criss says otherwise.** Skip the mirror step below.
-- When Criss merges, mirror `index.html` to the claude.ai artifact (`python3 tools/build-artifact.py` writes the artifact body to `tests/.build/artifact.html`; publish it to https://claude.ai/artifact/PP2gyEZiPauEoEpbuM5Se7), then move the Unreleased notes in `docs/HISTORY.md` under a new version.
+- When Criss merges, mirror `index.html` to the claude.ai artifact (`python3 tools/build-artifact.py` writes the artifact body to `tests/.build/artifact.html`; publish it to https://claude.ai/artifact/PP2gyEZiPauEoEpbuM5Se7), then move the Unreleased notes in `docs/HISTORY.md` under a new version. During Expansion 3 they wait under Unreleased for step 10's v19.0.0 (runbook §5), even though `GAME_VERSION` moves each step.
 
 ## Talking to Criss
 Short and direct. Lead with what changed and what he should try. He's on a phone.

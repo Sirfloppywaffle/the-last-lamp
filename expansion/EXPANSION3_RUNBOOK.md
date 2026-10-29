@@ -18,7 +18,7 @@
 | 6 | Workshops and the one town gift, with its price | #124 | merged | 18.14.0 |
 | 7 | Rescued souls: the cage, the Drowned Oar, the Toothmonger | #127 | merged | 18.15.0 |
 | 8 | The three shrines and the tide-pools | #129 | merged | 18.16.0 |
-| 9 | The Keeper's Lodge (one room) | `claude/expansion3-step9-build-x1u5fj` | open | 18.17.0 |
+| 9 | The Keeper's Lodge (one room) | #130 | merged | 18.17.0 |
 | 10 | Release v19.0.0 | — | not started | 19.0.0 |
 
 **Order matters.** Each step builds on the one before. Never start a step until the previous PR is merged into `main` (Criss merges after playing the preview).
@@ -43,6 +43,8 @@
 
 ## 3. How the step 2 code works (read once, then work from this)
 
+For the patterns as they stand after step 9 (the `#townAct` offer, town tips, the Lodge's scene switch, the devices test), see `.claude/skills/town-patterns/SKILL.md`.
+
 Everything is in `index.html`, in the section `/* ---------------- Saltmouth (Expansion 3, the town above the stair) ---------------- */`, just before `/* ---------------- loop ---------------- */`. Search for these names.
 
 **Data**
@@ -61,17 +63,17 @@ Everything is in `index.html`, in the section `/* ---------------- Saltmouth (Ex
 
 **State**
 - `TOWN` (kept in `ll-town`) via `townData()`; `TOWN_DEV` is developer mode's copy. `townFix(t)` merges any stored shape onto the defaults `{v:1, startInTown:false, px, py, visits}` and keeps unknown fields, so a later step adds `res`, `graves`, etc. there.
-- `TWN` is one visit (never saved): `p` (Keeper's feet, in tiles), `path`, `goal`, `ptr` (the thumb), `near` (on the deck), `card`, the canvases `buf`/`mask`, `k` (device pixels per art pixel).
+- `TWN` is one visit (never saved): `p` (Keeper's feet, in tiles), `path`, `goal`, `ptr` (the thumb), `near` (what `#townAct` offers, from `townNearAct()`), `card`, the canvases `buf`/`mask`, `k` (device pixels per art pixel).
 
 **Flow**
 - `townOpen()` (from Walk Saltmouth, or at launch with Start in Saltmouth) shows `#townOverlay`; `townClose()` saves where you stood; `newRun()` calls `townClose()`.
 - `frame()` calls `townFrame(raw)` → `townStep(dt)` (walk or steer, slide on what is solid, the deck's button) → `townDraw()`.
 - Taps: `townTapTile(tx,ty)` (in build mode it hands over to `townBuildTap()`; a headstone is walked to and read). `#townAct`'s label and action come from `townNearAct()`: return a new thing there to offer it. A tap on the Head-frame walks to the deck and calls `townDescend()` (the Roster, or the saved-run question). **To make a new thing tappable (a person, a door, a shrine), add a branch in `townTapTile` that sets `TWN.goal` to its id, path to the tile in front of it, and act in `townStep` where `TWN.goal==='frame'` is handled.**
-- The town's buttons are DOM over the canvas: `#townBack` (top-left), `#townAct` (bottom centre, one button that shows near something: reuse it for every "Talk to…", "Enter the Lodge", "Build" action by setting its text and a `data-act`), `#townCardWrap`/`#townCard` (the tip card). Add anything new to `.town-hud` at the top, never over the middle of the canvas.
-- **Town tips:** a `TIPS` entry `{where:'town', when:()=>false, title, text}`; show it with the same pattern as `townOpen()` uses for `TIPS.town` (`tipFresh(key)` → fill `#townCard`, `tipSeen(key)` on click).
+- The town's buttons are DOM over the canvas: `#townBack` (top-left), `#townAct` (bottom centre, one button that shows near something: reuse it for every "Talk to…", "Enter the Lodge" action: `townNearAct()` returns the thing, `townActLabel()` gives its text, and the button's click handler acts on it), `#townCardWrap`/`#townCard` (the tip card). Add anything new to `.town-hud` at the top, never over the middle of the canvas.
+- **Town tips:** a `TIPS` entry `{where:'town', when:()=>false, title, text}`; show it once by adding it to the chain in `townShowTip()`, or for a thing you just opened, `TWN.tipFor=key; townShowTip();`.
 
 **Tests**
-- `tests/hook.js` exposes `__t.TWN`, `townOpen`, `townClose`, `townData`, `townSave`, `townTapTile`, `townStep`, `townDraw`, `townFrame`, `townPathTo`, `townFree`, `townSolid`, `townSprites`, `townArt`, `townDescend`, `TOWN_MAP`, `TOWN_KITS`, `TOWN_DECK`, `setDev(v)`, `townReset()`. Add new functions there when a test needs them.
+- `tests/hook.js` exposes `__t.TWN`, `townOpen`, `townClose`, `townData`, `townSave`, `townTapTile`, `townStep`, `townDraw`, `townFrame`, `townPathTo`, `townFree`, `townSolid`, `townSprites`, `townArt`, `townDescend`, `TOWN_MAP`, `TOWN_KITS`, `TOWN_DECK`, `setDev(v)`, `townReset()`, and each later step's functions on a line of their own. Add new functions there when a test needs them.
 - `tests/t/town.test.js` is the model for town tests. `tests/t/devices.test.js` has a Saltmouth block per device (search `Saltmouth (Expansion 3)`); extend it when you add UI.
 
 ---
@@ -83,7 +85,7 @@ Everything is in `index.html`, in the section `/* ---------------- Saltmouth (Ex
 3. **Teach it** (rule 23), add the **HISTORY** line under Unreleased, bump **`GAME_VERSION`** to the version in the status table, update the **AGENTS.md** code map's Saltmouth row and storage keys if names changed, and tick the **status table** above.
 4. **Test:** `cd tests && npm test`. New test file per step (named in the spec), and extend `devices.test.js` for any new button or panel. If you change a data table, `npm run design` and commit `docs/DESIGN.md`.
    - **Known flake:** `winch.test.js` fails about 1 run in 3 on `main` too. Rerun it alone before blaming your change.
-   - **If `npm install` is blocked** (Claude's sandbox): link the preinstalled one: `mkdir -p tests/node_modules && ln -sfn /opt/npm-tools/node_modules/playwright tests/node_modules/playwright && ln -sfn /opt/npm-tools/node_modules/playwright-core tests/node_modules/playwright-core`. If no browser at all (Jules may hit this): run `npm run check`, say so in the PR, and rely on CI.
+   - **Claude's cloud container:** skip `npm install` and `npx playwright install`. Playwright and Chromium are preinstalled and resolve globally (`NODE_PATH`, `/opt/pw-browsers`); installing the pinned 1.56 breaks the launch (delete `tests/node_modules` if it exists). `node run.js --only <name>` runs one test. Details: `.claude/skills/test-setup/SKILL.md`. If no browser at all (Jules may hit this): run `npm run check`, say so in the PR, and rely on CI.
 5. **Screenshots:** look at `tests/.build/shots/` yourself. Push the ones that matter (folded Fold portrait and landscape, unfolded, iPhone sideways) to an orphan branch `claude/shots-<topic>` with a README "Never merge this branch", and link them in the PR as `https://raw.githubusercontent.com/Sirfloppywaffle/the-last-lamp/<commit sha>/<path>.png`.
 6. **Open the PR** with: *Try this first* (numbered, what Criss taps on his Fold), *What and why*, *How it was tested*, *Risks*, *Balance changes* (every number, or "none"). End with the attribution line your tool asks for.
 7. **Self-review** as a PR comment in the AGENTS.md §2 shape (Verdict, Strongest objection, Bugs, Design, Checked). Be harder on yourself than on a stranger. **Don't comment `/gemini`.**
