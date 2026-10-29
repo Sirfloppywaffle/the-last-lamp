@@ -9,4 +9,4 @@ Rules (on top of `AGENTS.md`):
 - PR previews only publish `index.html`, so prototypes won't show up on the preview link. Claude can publish a prototype as a claude.ai artifact for Criss to play on his phone.
 - Design talk happens on the brainstorm PR and in `BRAINSTORM.md`. Edit the doc when the thread settles something.
 
-**Docs here:** `SEEDS-AND-MINI-FLOORS.md` (Expansion 2, shipped as v18.6.0 to v18.9.0), `EXPANSION3_TOWN.md` (Expansion 3, Saltmouth Above: in design).
+**Docs here:** `SEEDS-AND-MINI-FLOORS.md` (Expansion 2, shipped as v18.6.0 to v18.9.0), `EXPANSION3_TOWN.md` (Expansion 3, Saltmouth Above: shipped as v19.0.0), `EXPANSION5_PROGRESSION.md` (Expansion 5, Progression: in design; follows Expansion 4, Customization).
