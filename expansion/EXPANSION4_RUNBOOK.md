@@ -11,7 +11,7 @@
 | Step | What | PR | State | Version |
 |---|---|---|---|---|
 | 0 | Brainstorm and this runbook | #134 | merged | — |
-| 1 | Build tools: lift, move, storage, undo, Grid/Free toggle | #PRNUM | open | 19.1.0 |
+| 1 | Build tools: lift, move, storage, undo, Grid/Free toggle | #137 | open | 19.1.0 |
 | 2 | 8-way rotation and the text-grid art pipeline | | | 19.2.0 |
 | 3 | Lodge rooms: the Flooded Cellar and the Attic | | | 19.3.0 |
 | 4 | The catalogue: themed sets, wall mounts, small things on surfaces | | | 19.4.0 |
