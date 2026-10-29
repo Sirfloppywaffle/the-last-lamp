@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 2 - new pixel art (runbook §3), turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 3 - new pixel art (runbook §3), turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch and its rooms, test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -40,7 +40,8 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] `TWN.inside` is true inside. `townSolid()` asks `lodgeSolid()` there and `townSolidOut()` outside; use `townSolidOut` when you mean the square whatever the scene (`townFix()` does).
 - [ ] `townTapTile()` hands over to `lodgeTapTile()`; `townNearAct()` returns only `'door'` or `'shelf'` inside; `townDraw()` draws `lodgeArt()` (rebuilt when its signature changes) with no rain.
 - [ ] `lodgeEnter()`/`lodgeLeave()` reset the walk, the camera and `TWN.tipFor`; anything new per scene resets there too. `TWN.crowd` is empty inside.
-- [ ] Room furniture: `LODGE_ITEMS`; kept clear: `LODGE_KEEP`; placing: `lodgeCanPlace()`/`lodgePlace()`.
+- [ ] Room furniture: `LODGE_ITEMS`; kept clear: each room's `LODGE_ROOMS[m].keep` (the main room's is `LODGE_KEEP`); placing: `lodgeCanPlace()`/`lodgePlace()`.
+- [ ] **Rooms (Expansion 4, step 3):** the Lodge is three rooms of 10×10, `LODGE_ROOMS` (main, cellar, attic). Inside, `lodgeCur()` is the room you stand in (`TWN.room`) and `lodgeRoom(T,m)` what is kept of one: never read `T.lodge.furn`/`.floor`/`.wall` directly, or you get the main room wherever you are. Anything checking the room's map passes the room when it runs outside a visit (`lodgeCh(x,y,m)`, `lodgeKeepOK(pieces,m)`, as `lodgeRoomFix()` does). A new way between rooms is a letter in the map, in `LODGE_SOLID` and in `LODGE_WAYS`, with its `at` tile in that room's `keep`. Anything new per room goes in `LODGE_ROOMS` and `lodgeArt()` (its signature names the room); `lodgeGo()` resets the visit as `lodgeEnter()` does.
 
 ## Build mode (Expansion 4, step 1): lift, storage, undo, Grid / Free
 
