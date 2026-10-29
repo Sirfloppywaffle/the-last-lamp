@@ -1,4 +1,4 @@
-# Art upgrade: Saltmouth through PixelLab (draft)
+# Art upgrade: Saltmouth through PixelLab
 
 **For Criss:** you now have a PixelLab subscription (Tier 1: 2,000 generations a month, more than one job at a time). This plan uses it in four passes, each slotted in just before the runbook step that builds on it. Step 4 takes the first part itself, because it makes about 30 new pieces anyway. The stair stays painted (#116); this is Saltmouth only, unless you say otherwise.
 
@@ -51,7 +51,7 @@ Step 4 draws about 30 catalogue pieces. Drawing them the new way from the start 
 
 ## 4. The passes after step 4
 
-Each pass comes before the step that leans on it:
+Each pass comes before the step that leans on it (runbook §1 numbers them A1, A2, A3):
 
 | Order | What | Why here |
 |---|---|---|
@@ -71,7 +71,7 @@ Each pass comes before the step that leans on it:
 - **Test:** each loop has its still frame, and the frame time in `devices` doesn't rise.
 
 ### Art 2: the Keepers and the souls (about 400 generations)
-- **Pilot first.** Make Ambrose the Lamplighter with `create_character` (4 directions) plus `animate_character` (`walking`, `breathing-idle`). Put him side by side with today's rows in the shots. **If he doesn't beat the hand rows at 16×24, stop there and keep the rows.** Faces made of two or three pixels are hard to improve on.
+- **Pilot first.** Make Ambrose the Lamplighter with `create_character` (4 directions; Criss: not 8) plus `animate_character` (`walking`, `breathing-idle`). Put him side by side with today's rows in the shots. **If he doesn't beat the hand rows at 16×24, stop there and keep the rows.** Faces made of two or three pixels are hard to improve on.
 - **If the pilot wins:**
   - every Keeper and the rescued souls get the same treatment, keeping their silhouettes and tools: Jonah's harpoon, the Nameless's hood, Voss's rod;
   - their glowing letters (`em`) stay;
@@ -93,15 +93,11 @@ Pixel portraits on the town's talk cards, from `create_portrait_character`, besi
 
 ---
 
-## 5. Questions for Criss
+## 5. Criss's calls (on #139)
 
-1. **Versions.** An art pass changes how things look, not how they play. Two options:
-   - **A:** each pass is a middle bump, and the runbook's later versions shift by one (Art 1 becomes 19.5.0, step 5 becomes 19.6.0, …). v20.0.0 stays the release.
-   - **B:** each pass is a last-number bump (19.4.1, …).
-
-   **Recommended: A.** AGENTS.md §3 keeps the last number for small tweaks, and these passes aren't small.
-2. **Keepers.** Is "pilot one Keeper and compare" the right gate for Art 2?
-3. **Facings.** Keepers walk 8 ways but are drawn in 4 facings. Keep 4? The recommendation is yes, since 8 doubles the cost for little gain at 16 px.
+1. **Versions: middle-number bumps.** Each art pass is a new part of the expansion: A1 19.5.0, A2 19.7.0, A3 19.9.0, and the steps after them shift (the runbook's status table has the numbers). v20.0.0 stays the release.
+2. **Keepers: pilot one.** Art 2 starts with Ambrose alone; if he feels right, the others follow; if not, the hand-made rows stay.
+3. **4 facings, not 8.** Keepers keep `d`, `u`, `r` (and `l` mirrored).
 
 ---
 

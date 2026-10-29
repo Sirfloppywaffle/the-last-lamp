@@ -269,6 +269,6 @@ In Claude's cloud container, skip both install lines: Playwright and Chromium ar
 - `docs/OTHER-GAMES.md`: Criss's other game projects (RECLAIM, OBLATION).
 - `expansion/EXPANSION3_TOWN.md`: Expansion 3, Saltmouth Above (a walkable town built from what each run hauls up). Its section 0 is the current plan.
 - `expansion/EXPANSION3_RUNBOOK.md`: **how to build Expansion 3, step by step**, with a status table and a ready prompt per step. Start there for any Saltmouth work.
-- `expansion/EXPANSION4_RUNBOOK.md`: Expansion 4 (Customization), the same way: the build tools, rooms, the catalogue, light, the Peddler, the village, the Hearth Beacon. Start there for new Saltmouth work. **Its §3 is how all new pixel art is made:** PixelLab (tools from `.mcp.json`), converted to `tRows()` rows by `tools/png2rows.py`, every colour on a `PX` letter.
+- `expansion/EXPANSION4_RUNBOOK.md`: Expansion 4 (Customization), the same way: the build tools, rooms, the catalogue, light, the Peddler, the village, the Hearth Beacon. Start there for new Saltmouth work. Its art passes (A1 to A3, between the steps) come from `expansion/ART_UPGRADE.md`. **Its §3 is how all new pixel art is made:** PixelLab (tools from `.mcp.json`), converted to `tRows()` rows by `tools/png2rows.py`, every colour on a `PX` letter.
 - `.claude/skills/`: Claude's checklists (ship-step, test-setup, shots, self-review, town-patterns, steward). They point back to this file and the runbook; where a skill and these disagree, fix the skill.
 - Live play link: GitHub Pages for this repo (see `README.md`).
