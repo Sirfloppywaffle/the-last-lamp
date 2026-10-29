@@ -100,6 +100,41 @@ const DEV=[
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-'+nm+'.png'});
     await p.evaluate(()=>{__t.lodgeLeave(); __t.setDev(false); __t.townKeepers();});
     if(!(lodge.enter&&lodge.label==='Leave the Lodge'&&lodge.act&&lodge.cover&&lodge.n===11&&lodge.chips&&lodge.still))console.log('FAIL '+nm+': the Lodge on this screen',JSON.stringify(lodge));
+    /* Expansion 4, step 1: the build tools, in developer mode so nothing is written. The tool bar (Pieces, Storage, Grid, Free,
+       Undo) and, with a piece lifted, Place, Cancel and Store: each a thumb inside the safe area, clear of one another, of the
+       message line and of the chips; lifting swaps the bars and moves nothing else. Storage's chips are thumbs too */
+    const tools=await p.evaluate(ins=>{
+      ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44, over=(a,c)=>!!a&&!!c&&a[2]>c[0]&&a[0]<c[2]&&a[3]>c[1]&&a[1]<c[3];
+      const apart=rs=>rs.every((r,i)=>rs.every((t,j)=>i===j||!over(r,t)));
+      __t.setDev(true); const D=__t.townData(); D.res={timber:500,iron:500,tallow:500,curios:50};
+      const T=__t.TWN; T.p.x=12; T.p.y=14; T.path=null; T.cx=null;
+      __t.townBuildSet(true); const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
+      const o={place:__t.townPlace('lamp',14,15)}; __t.townFrame(1/30);
+      const hud=()=>JSON.stringify([q(document.getElementById('townBack')),q(document.getElementById('townBuild')),q(document.getElementById('townRes')),q(document.getElementById('townCv'))]);
+      const msg=()=>q(document.getElementById('townTmsg')), chips=()=>[...document.querySelectorAll('#townTrow .town-chip')].filter(c=>!c.hidden).map(q);
+      const bar=[...document.querySelectorAll('#townTools .town-tb')].map(q), m0=msg(), row0=q(document.getElementById('townTrow')), h0=hud(), ch=chips();
+      o.bar=bar; o.barOk=bar.length===5&&bar.every(r=>inside(r)&&thumb(r))&&apart(bar)&&!bar.some(r=>over(r,m0)||ch.some(c=>over(r,c)));
+      __t.bldTap(14,15); __t.townFrame(1/30);
+      const lb=[...document.querySelectorAll('#townLiftBar .town-tb')].map(q);
+      o.lb=lb; o.liftOk=!!T.lift&&lb.length===3&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips().some(c=>over(r,c)))
+        &&JSON.stringify(q(document.getElementById('townTrow')))===JSON.stringify(row0)&&hud()===h0;
+      return o;},ins);
+    await p.waitForTimeout(120);
+    await p.screenshot({path:(process.argv[3]||'.')+'/town-lift-'+nm+'.png'});
+    const store=await p.evaluate(ins=>{
+      ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      __t.bldStow(); document.querySelector('#townTools [data-tab="store"]').click(); document.querySelector('#townTrow [data-stored="lamp"]').click();
+      const cs=[document.getElementById('townSalvage'),document.querySelector('#townTrow [data-stored="lamp"]')].map(q);
+      return {cs,ok:cs.every(r=>inside(r)&&r[3]-r[1]>=44&&r[2]-r[0]>=44),n:document.getElementById('townStoreN').textContent};},ins);
+    await p.waitForTimeout(120);
+    await p.screenshot({path:(process.argv[3]||'.')+'/town-store-'+nm+'.png'});
+    await p.evaluate(()=>{__t.townBuildSet(false); __t.setDev(false); __t.townKeepers();});
+    if(!(tools.place===''&&tools.barOk&&tools.liftOk&&store.ok&&store.n==='1'))console.log('FAIL '+nm+': the build tools on this screen',JSON.stringify({tools,store}));
     /* Step 6: workshop cards scroll on short phones; gifts keep the board fixed. */
     await p.evaluate(()=>{__t.setDev(true); __t.townBuildSet(true);});
     const materials=p.locator('#townMaterials'); await materials.scrollIntoViewIfNeeded();
