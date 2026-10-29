@@ -14395,15 +14395,17 @@ function townDraw(){
   townSize();
   /* inside the Lodge (step 9) the same renderer draws the room: its own ground, props and lights, no rain, a lighter dark */
   const IN=!!TWN.inside, A=IN?(LODGE_STALE||!LODGE_ART?lodgeArt():LODGE_ART):townArt(), S=A.spr[TWN.kit], P=TWN.p, bc=TWN.bc, vw=TWN.vw, vh=TWN.vh, lite=gfxLite, MW=A.mw, MH=A.mh;
-  /* the camera follows a beat behind (at once with Reduce Motion), held inside the map; a narrow map is centred */
-  const tx=MW<=vw?Math.round((MW-vw)/2):clamp(P.x*16-vw/2,0,MW-vw), ty=MH<=vh?Math.round((MH-vh)/2):clamp(P.y*16-10-vh/2,0,MH-vh);
+  /* the camera follows a beat behind (at once with Reduce Motion), held inside the map; a narrow map is centred. While a piece
+     is lifted (Expansion 4, step 1) it follows the piece, so the piece is never left under the tray on a short screen */
+  const HL=TWN.build&&TWN.lift, fxp=HL?HL.x+8:P.x*16, fyp=HL?HL.y+18:P.y*16;
+  const tx=MW<=vw?Math.round((MW-vw)/2):clamp(fxp-vw/2,0,MW-vw), ty=MH<=vh?Math.round((MH-vh)/2):clamp(fyp-10-vh/2,0,MH-vh);
   if(TWN.cx===null||reduceMotion){TWN.cx=tx; TWN.cy=ty;} else{const f=Math.min(1,TWN.dt*7); TWN.cx+=(tx-TWN.cx)*f; TWN.cy+=(ty-TWN.cy)*f;
     /* within half a pixel it settles exactly, so a camera held at the map's edge sits on a whole pixel */
     if(Math.abs(tx-TWN.cx)<.5)TWN.cx=tx; if(Math.abs(ty-TWN.cy)<.5)TWN.cy=ty;}
   /* the camera trails you by a fraction of a pixel. Rounding it and you apart made your figure hop a pixel back and forth against
      the screen every frame at full speed (Criss, #127); rounding how far it trails you keeps you still on the screen while the
      square scrolls under you in whole pixels. A camera at rest on a whole pixel gives the same as rounding it */
-  const cx=Math.round(P.x*16)-Math.round(P.x*16-TWN.cx), cy=Math.round(P.y*16)-Math.round(P.y*16-TWN.cy), dcx=cx-(TWN.lcx==null?cx:TWN.lcx), dcy=cy-(TWN.lcy==null?cy:TWN.lcy); TWN.lcx=cx; TWN.lcy=cy;
+  const cx=Math.round(fxp)-Math.round(fxp-TWN.cx), cy=Math.round(fyp)-Math.round(fyp-TWN.cy), dcx=cx-(TWN.lcx==null?cx:TWN.lcx), dcy=cy-(TWN.lcy==null?cy:TWN.lcy); TWN.lcx=cx; TWN.lcy=cy;
   bc.globalCompositeOperation='source-over'; bc.globalAlpha=1;
   bc.fillStyle=PX.s; bc.fillRect(0,0,vw,vh);
   const sx=Math.max(0,cx), sy=Math.max(0,cy), sw=Math.min(MW,cx+vw)-sx, sh=Math.min(MH,cy+vh)-sy;
