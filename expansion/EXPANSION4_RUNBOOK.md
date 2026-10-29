@@ -48,7 +48,7 @@ Criss may bring pixel art drawn by Gemini as **text grids**: one line per row, o
 
 ## 4. The workflow for every step
 
-Same as `EXPANSION3_RUNBOOK.md` §4, with these changes: branch `claude/custom-<topic>`; the shots branch is `claude/shots-custom-<topic>`; HISTORY lines go under Unreleased and wait there for step 10's v20.0.0. Use the `ship-step`, `shots`, `self-review` and `steward` skills. **Don't comment `/gemini`** unless Criss asks.
+Same as `EXPANSION3_RUNBOOK.md` §4 (test and design commands run from `tests/`: `cd tests && npm test`, `cd tests && npm run design`), with these changes: branch `claude/custom-<topic>`; the shots branch is `claude/shots-custom-<topic>`; HISTORY lines go under Unreleased and wait there for step 10's v20.0.0. Use the `ship-step`, `shots`, `self-review` and `steward` skills. **Don't comment `/gemini`** unless Criss asks.
 
 ---
 
@@ -79,7 +79,7 @@ Numbers marked *shape* are for playtest.
 **Goal:** every piece turns in 45° steps.
 
 **Build:**
-- A **⟳** button while a piece is lifted (and a tap on the lifted piece itself) turns it one step clockwise; long-press turns it back. Saved as `f` (0 to 7) on each piece; old pieces are `f:0`.
+- A **⟳** button while a piece is lifted (and a tap on the lifted piece itself) turns it one step clockwise; long-press turns it back. Saved as `f` (0 to 7) on each piece: 0 S (facing the camera), 1 SW, 2 W, 3 NW, 4 N, 5 NE, 6 E, 7 SE; old pieces are `f:0`. Art is 16×16 per facing (24×24 allowed for diagonals that need it).
 - Each art entry declares `faces`: 1 (round things, no change), 2 (mirror), 4, or 8. Missing facings fall back to the nearest drawn one, mirrored where it fits.
 - **Diagonal footprints:** a piece at 45° covers its own tile mask (declared per piece). In Grid mode a diagonal piece snaps to tile centres; in Free mode it uses the mask at its pixel position.
 - Draw 8 facings for the Armchair (use Gemini's grid if Criss brought one, §3) and 4 for the Banker's Desk, Stove and Bookshelf. Fences and paths in town get 2 (mirror) or 4.
@@ -88,7 +88,8 @@ Numbers marked *shape* are for playtest.
 
 **Test** `tests/t/rotate.test.js`: 8 taps return to the start; the facing survives reload; a diagonal footprint blocks the right tiles; mirrored fallback draws. Shots: a chair in each corner facing the middle.
 
-**Prompt:** as step 1, with "step 2" and "the prompt for step 3".
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 2) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 2 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 3.
 
 ### Step 3: Lodge rooms (Claude: Opus 5.5, high)
 
@@ -102,7 +103,8 @@ Numbers marked *shape* are for playtest.
 
 **Teach:** a tip per room. **Test** `tests/t/lodgerooms.test.js`. Devices: each room on each screen.
 
-**Prompt:** as step 1, with "step 3".
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 3) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 3 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 4.
 
 ### Step 4: The catalogue (Claude: Sonnet 5.5, high)
 
@@ -115,9 +117,10 @@ Numbers marked *shape* are for playtest.
 - **Blueprints:** two sets are open from the start (Fisherman's, Old Library). The other three are bought from the Peddler (step 6); until then they show locked in the tray with "Ask the Peddler".
 - Everything costs town materials only.
 
-**Teach:** tray tips for wall mounts, surfaces, dyes. **Test** `tests/t/catalogue.test.js`. `npm run design` (new table).
+**Teach:** tray tips for wall mounts, surfaces, dyes. **Test** `tests/t/catalogue.test.js`. `cd tests && npm run design` (new table).
 
-**Prompt:** as step 1, with "step 4".
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 4) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 4 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 5.
 
 ### Step 5: Light and dark; trophies (Claude: Opus 5.5, high)
 
@@ -129,7 +132,8 @@ Numbers marked *shape* are for playtest.
 
 **Test** `tests/t/lodgelight.test.js`: a room with no lights is darker; trophies only for beaten bosses; codex never changes. Shots: one lit and one dark room per device.
 
-**Prompt:** as step 1, with "step 5".
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 5) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 5 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 6.
 
 ### Step 6: The Peddler (Claude: Opus 5.5, high)
 
@@ -137,12 +141,13 @@ Numbers marked *shape* are for playtest.
 
 **Build:**
 - Add him to `TOWN_SOULS` (the cage roll already picks from `cagePool()`, so no new stair roll). His stall is a building-like prop near the Head-frame with a keep tile in front of it.
-- `#townAct` "Talk to the Peddler" opens his wares: **blueprints** (the three locked sets from step 4, curios) and **dyes** (rare colourways, tallow). His stock rotates after each descent: 3 items from the pool, rolled with a new salt `SALT.peddler = 27` keyed on `ll-town.visits` (*shape*).
+- `#townAct` "Talk to the Peddler" opens his wares: **blueprints** (the three locked sets from step 4, curios) and **dyes** (rare colourways, tallow). His stock rotates after each descent: 3 items from the pool, rolled with a new salt `SALT.peddler = 27` keyed on a new counter `ll-town.trips` that rises only when a run ends (`victory()` / `defeat()`), so closing and reopening the town never rerolls it (*shape*).
 - Pixel-art character 16×24, his own kit colours. A short, odd voice: he trades in things that washed up.
 
-**Teach:** a tip, a rules line, a Grimoire entry. **Test** `tests/t/peddler.test.js`: he only appears once freed; stock is stable for a visit and changes after a descent; buying a blueprint unlocks the set; dev mode never writes.
+**Teach:** a tip, a rules line, a Grimoire entry. **Test** `tests/t/peddler.test.js`: he only appears once freed; stock survives closing and reopening the town, and changes only after a run ends; buying a blueprint unlocks the set; dev mode never writes.
 
-**Prompt:** as step 1, with "step 6".
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 6) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 6 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 7.
 
 ### Step 7: The village (Claude: Sonnet 5.5, high)
 
@@ -155,7 +160,8 @@ Numbers marked *shape* are for playtest.
 
 **Test** `tests/t/village.test.js`; devices.
 
-**Prompt:** as step 1, with "step 7".
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 7) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 7 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 8.
 
 ### Step 8: The Hearth Beacon (Claude: Opus 5.5, high)
 
@@ -168,7 +174,8 @@ Numbers marked *shape* are for playtest.
 
 **Teach:** a tip, a rules line. **Test** `tests/t/hearth.test.js`: rain density falls with level; carvings appear; no run field changes.
 
-**Prompt:** as step 1, with "step 8".
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 8) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 8 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 9.
 
 ### Step 9: Keepers react (Claude: Sonnet 5.5, high)
 
@@ -179,11 +186,12 @@ Numbers marked *shape* are for playtest.
 
 **Test** `tests/t/keepers4.test.js`.
 
-**Prompt:** as step 1, with "step 9".
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 9) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 9 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 10.
 
 ### Step 10: Release v20.0.0 (Claude: Sonnet 5.5, low)
 
-**Build:** no new features. Fix what Criss reported on steps 1 to 9. `GAME_VERSION = '20.0.0'`; move every Unreleased line in `docs/HISTORY.md` under `## v20.0.0 — Customization`; `npm run design`; full `npm test`; update `AGENTS.md`; set this table to done.
+**Build:** no new features. Fix what Criss reported on steps 1 to 9. `GAME_VERSION = '20.0.0'`; move every Unreleased line in `docs/HISTORY.md` under `## v20.0.0 — Customization`; `cd tests && npm run design`; full `cd tests && npm test`; update `AGENTS.md`; set this table to done.
 
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, and expansion/EXPANSION4_RUNBOOK.md (§4, and §5 step 10). Release v20.0.0 exactly as the runbook says. Open the PR with a self-review; no /gemini.
