@@ -13,7 +13,7 @@
 | 0 | Brainstorm and this runbook | #134 | merged | — |
 | 1 | Build tools: lift, move, storage, undo, Grid/Free toggle | #137 | merged | 19.1.0 |
 | 2 | 8-way rotation and the PixelLab art pipeline | #138 | merged | 19.2.0 |
-| 3 | Lodge rooms: the Flooded Cellar and the Attic | PR_NUM | open | 19.3.0 |
+| 3 | Lodge rooms: the Flooded Cellar and the Attic | #139 | open | 19.3.0 |
 | 4 | The catalogue: themed sets, wall mounts, small things on surfaces | | | 19.4.0 |
 | 5 | Light and dark indoors; boss trophies | | | 19.5.0 |
 | 6 | The Peddler: a rescued soul with a stall by the stairs | | | 19.6.0 |
@@ -111,7 +111,7 @@ Numbers marked *shape* are for playtest.
 - A hatch / ladder tile in the main room (added to the room's keep tiles) moves between rooms; `#townAct` offers "Down to the cellar" / "Up to the attic".
 - The Cellar has **brine**: a water level drawn over its floor (step 9 makes it move; here it sits at a fixed shallow level). The Attic's window shows rain falling outside.
 
-- *As built (PR_NUM):* the main room stays in `ll-town.lodge` itself; the others are `lodge.rooms.cellar` / `.attic`, each `{built, floor, wall, furn}` (`LODGE_ROOMS`, `lodgeRoom()`, `lodgeCur()`; every room is 10×10, so one set of room code serves all three). The hatch is `C` at (1,6), the ladder `L` on the back wall at x 2; the Cellar's ladder back is `U`, the Attic's hatch `H` (`LODGE_WAYS`); you arrive beside the way back. The Cellar's brine is `LODGE_ROOMS.cellar.brine` (3 art px), drawn into its ground and its pieces' feet (`lodgeWet()`); step 9 moves it. A room's first floor and wall are free there (`lodgeCost()`). Storage is shared by every room; changing room closes Build.
+- *As built (#139):* the main room stays in `ll-town.lodge` itself; the others are `lodge.rooms.cellar` / `.attic`, each `{built, floor, wall, furn}` (`LODGE_ROOMS`, `lodgeRoom()`, `lodgeCur()`; every room is 10×10, so one set of room code serves all three). The hatch is `C` at (1,6), the ladder `L` on the back wall at x 2; the Cellar's ladder back is `U`, the Attic's hatch `H` (`LODGE_WAYS`); you arrive beside the way back. The Cellar's brine is `LODGE_ROOMS.cellar.brine` (3 art px), drawn into its ground and its pieces' feet (`lodgeWet()`); step 9 moves it. A room's first floor and wall are free there (`lodgeCost()`). Storage is shared by every room; changing room closes Build.
 
 **Teach:** a tip per room. **Test** `tests/t/lodgerooms.test.js`. Devices: each room on each screen.
 
