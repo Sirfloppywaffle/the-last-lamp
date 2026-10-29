@@ -1,0 +1,203 @@
+# Expansion 4 runbook: Customization, steps 1 to 10
+
+**Who this is for:** whichever AI picks up the next step, with no memory of earlier sessions. Read this file, `AGENTS.md`, `expansion/EXPANSION4_BRAINSTORM.md` (the decisions at its end win over its first half), and `.claude/skills/town-patterns/SKILL.md`. Expansion 3's runbook (`EXPANSION3_RUNBOOK.md` §3) explains how the town code works; read it once.
+
+**For Criss:** to hand off a step, paste its **Prompt** (below) to Claude, with the repo link. After each merge, the AI that did the work ticks the status table.
+
+---
+
+## 1. Status (update this table in every step's PR)
+
+| Step | What | PR | State | Version |
+|---|---|---|---|---|
+| 0 | Brainstorm and this runbook | #134 | open | — |
+| 1 | Build tools: lift, move, storage, undo, Grid/Free toggle | | | 19.1.0 |
+| 2 | 8-way rotation and the text-grid art pipeline | | | 19.2.0 |
+| 3 | Lodge rooms: the Flooded Cellar and the Attic | | | 19.3.0 |
+| 4 | The catalogue: themed sets, wall mounts, small things on surfaces | | | 19.4.0 |
+| 5 | Light and dark indoors; boss trophies | | | 19.5.0 |
+| 6 | The Peddler: a rescued soul with a stall by the stairs | | | 19.6.0 |
+| 7 | The village: decorations, paths, paint, Keepers' huts | | | 19.7.0 |
+| 8 | The Hearth Beacon: the rain thins | | | 19.8.0 |
+| 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.9.0 |
+| 10 | Release v20.0.0 | | | 20.0.0 |
+
+**Order matters.** Never start a step until the previous PR is merged into `main`.
+
+---
+
+## 2. Rules that apply to every step
+
+Everything in `EXPANSION3_RUNBOOK.md` §2 still applies (additive only, pixel art §0.4, rule 24 dev mode never writes `ll-town`, rule 15 saves only grow, rule 11b stair rolls, rule 23 teach every change, rule 22 balance, AGENTS.md §6). On top of that, Criss's decisions for this expansion:
+
+1. **Decorations are decorations.** No piece changes anything on the stair. The only exception is a piece that ties into another expansion's arc (the Hearth Beacon, step 8, feeds the true ending, and even it changes only the town).
+2. **Grid or Free, as a toggle.** Build mode has a Grid / Free switch, remembered in `ll-town`. Grid snaps to tiles; Free places at art-pixel precision anywhere the footprint fits. Both keep every `TOWN_KEEP` / Lodge door and shelf tile reachable.
+3. **8-way rotation** (every 45°). A chair in a corner can face the middle of the room. Symmetric pieces reuse mirrored frames; only pieces that need it get 8 drawn facings.
+4. **Four materials only** (timber, iron, tallow, curios). Curios buy blueprints; tallow buys dyes and light.
+5. **The vibe:** salt, rot, rusted iron, tallow, bone, soot, barnacles. Muted and wet. Eerie, never cute. Lighting makes sharp silhouettes. It always rains (until step 8 thins it, a little).
+6. **Touch only, thumb-sized.** Every new control works on a folded Fold 7 in portrait. No drag-only action without a tap alternative.
+7. **Cut:** farming and crops. A wandering stranger (the Peddler is a rescued soul instead).
+
+---
+
+## 3. Art from Gemini (optional, any step)
+
+Criss may bring pixel art drawn by Gemini as **text grids**: one line per row, one character per pixel, `.` transparent, with a palette `char → hex`. The prompt is on PR #134. To use it: map each hex to the nearest `PX` colour (add a new `PX` letter only if none is close, and say so in the PR), paste the rows into the piece's art table, and draw it with `tRows()`. Check the result in the 14-device shots; fix stray pixels yourself rather than sending it back, and list the fixes in the PR.
+
+---
+
+## 4. The workflow for every step
+
+Same as `EXPANSION3_RUNBOOK.md` §4 (test and design commands run from `tests/`: `cd tests && npm test`, `cd tests && npm run design`), with these changes: branch `claude/custom-<topic>`; the shots branch is `claude/shots-custom-<topic>`; HISTORY lines go under Unreleased and wait there for step 10's v20.0.0. Use the `ship-step`, `shots`, `self-review` and `steward` skills. **Don't comment `/gemini`** unless Criss asks.
+
+---
+
+## 5. The steps
+
+Numbers marked *shape* are for playtest.
+
+### Step 1: Build tools (Claude: Opus 5.5, high)
+
+**Goal:** placing things feels like Animal Crossing: lift, move, then set down.
+
+**Build:**
+- In build mode (town and Lodge), tap a placed piece to **lift** it. It follows the thumb as a ghost (red where it can't go). Buttons in the tray: **✓ Place**, **✕ Cancel** (it goes back where it was), **Store**.
+- **Storage:** stored pieces keep what they cost and wait in a Storage tab of the tray, free to place again. Selling (the old full refund) becomes **Salvage** in the same tab. Saved in `ll-town.store` (optional, defaults to empty).
+- **Undo:** one button, the last 10 actions of this build session (place, lift, store, salvage). Clears when build mode closes.
+- **Grid / Free switch** in the tray. Free placement saves `x,y` in art pixels beside `c,r`; old saves are Grid. `townCanPlace()` / `lodgeCanPlace()` take a footprint in pixels in Free mode and test the tiles it covers.
+- Lifting a piece that a `TOWN_KEEP` path relies on is fine; placing anything that walls one off is still refused.
+
+**Teach:** a town tip for lifting and storing; one for Grid / Free. Rules line grows.
+
+**Test** `tests/t/buildtools.test.js`: lift and cancel returns it exactly; store then place costs nothing; salvage refunds in full; undo reverses each action; Free placement survives a reload; a Free piece can't wall off the door; developer mode never writes. Extend `devices.test.js` with the tray's new buttons.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 1) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 1 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 2.
+
+### Step 2: 8-way rotation (Claude: Opus 5.5, high)
+
+**Goal:** every piece turns in 45° steps.
+
+**Build:**
+- A **⟳** button while a piece is lifted (and a tap on the lifted piece itself) turns it one step clockwise; long-press turns it back. Saved as `f` (0 to 7) on each piece: 0 S (facing the camera), 1 SW, 2 W, 3 NW, 4 N, 5 NE, 6 E, 7 SE; old pieces are `f:0`. Art is 16×16 per facing (24×24 allowed for diagonals that need it).
+- Each art entry declares `faces`: 1 (round things, no change), 2 (mirror), 4, or 8. Missing facings fall back to the nearest drawn one, mirrored where it fits.
+- **Diagonal footprints:** a piece at 45° covers its own tile mask (declared per piece). In Grid mode a diagonal piece snaps to tile centres; in Free mode it uses the mask at its pixel position.
+- Draw 8 facings for the Armchair (use Gemini's grid if Criss brought one, §3) and 4 for the Banker's Desk, Stove and Bookshelf. Fences and paths in town get 2 (mirror) or 4.
+
+**Teach:** the tip from step 1 grows a line about ⟳.
+
+**Test** `tests/t/rotate.test.js`: 8 taps return to the start; the facing survives reload; a diagonal footprint blocks the right tiles; mirrored fallback draws. Shots: a chair in each corner facing the middle.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 2) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 2 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 3.
+
+### Step 3: Lodge rooms (Claude: Opus 5.5, high)
+
+**Goal:** the Lodge grows: the **Flooded Cellar** (down a hatch) and the **Attic** (up a ladder, a round window onto the rain).
+
+**Build:**
+- `ll-town.lodge` becomes a set of rooms (`main`, `cellar`, `attic`), each with its own floor, wall, furniture. Old saves load as `main`.
+- Each room is bought: Cellar 25 iron, 10 tallow; Attic 30 timber, 2 curios (*shape*).
+- A hatch / ladder tile in the main room (added to the room's keep tiles) moves between rooms; `#townAct` offers "Down to the cellar" / "Up to the attic".
+- The Cellar has **brine**: a water level drawn over its floor (step 9 makes it move; here it sits at a fixed shallow level). The Attic's window shows rain falling outside.
+
+**Teach:** a tip per room. **Test** `tests/t/lodgerooms.test.js`. Devices: each room on each screen.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 3) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 3 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 4.
+
+### Step 4: The catalogue (Claude: Sonnet 5.5, high)
+
+**Goal:** many more pieces, in five themed sets: **Fisherman's**, **Drowned Chapel**, **Brass Observatory**, **Old Library**, **Deep-One Coral**. About 30 pieces in all (*shape*), every set with something for the floor, the wall and a surface.
+
+**Build:**
+- **Wall mounts:** pieces that hang on the back wall (paintings, ship's wheel, barometer, clock). They use wall slots, never floor tiles.
+- **Small things on surfaces:** candles, books, bottles, a skull. Placed on a desk, shelf or table piece at half-tile precision; lifting the table lifts what is on it.
+- **Dyes:** each piece has 2 to 4 colourways (palette swaps). Dyeing costs tallow (*shape*). Saved as `dye` on the piece.
+- **Blueprints:** two sets are open from the start (Fisherman's, Old Library). The other three are bought from the Peddler (step 6); until then they show locked in the tray with "Ask the Peddler".
+- Everything costs town materials only.
+
+**Teach:** tray tips for wall mounts, surfaces, dyes. **Test** `tests/t/catalogue.test.js`. `cd tests && npm run design` (new table).
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 4) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 4 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 5.
+
+### Step 5: Light and dark; trophies (Claude: Opus 5.5, high)
+
+**Goal:** rooms are dark until you light them. Lamps, candles, a fireplace and the stove make pools of warm light with sharp silhouettes.
+
+**Build:**
+- Indoor darkness like the town's, lighter than outside but real. Each lit piece adds a light (`{x,y,r,f}`).
+- **Boss trophies:** each boss beaten unlocks a Lodge item of one shared kind, `k:'trophy'` (wall mount or plinth). Build it as a general kind, not one-off objects: Expansion 5's Keeper's Ledger (#131, `expansion/EXPANSION5_PROGRESSION.md` in #135) adds more trophies through the same kind. Tapping it shows its Grimoire line, and the Keeper Below's trophy rumbles faintly (sound off with the game's sound setting).
+
+**Test** `tests/t/lodgelight.test.js`: a room with no lights is darker; trophies only for beaten bosses; codex never changes. Shots: one lit and one dark room per device.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 5) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 5 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 6.
+
+### Step 6: The Peddler (Claude: Opus 5.5, high)
+
+**Goal:** a new rescued soul. Found caged on the stair like the Croupier and the Toothmonger; once freed, he keeps a stall by the stairs (the Head-frame) in Saltmouth.
+
+**Build:**
+- Add him to `TOWN_SOULS` (the cage roll already picks from `cagePool()`, so no new stair roll). His stall is a building-like prop near the Head-frame with a keep tile in front of it.
+- `#townAct` "Talk to the Peddler" opens his wares: **blueprints** (the three locked sets from step 4, curios) and **dyes** (rare colourways, tallow). His stock rotates after each descent: 3 items from the pool, rolled with a new salt `SALT.peddler = 27` keyed on a new counter `ll-town.trips` that rises only when a run ends (`victory()` / `defeat()`), so closing and reopening the town never rerolls it (*shape*).
+- Pixel-art character 16×24, his own kit colours. A short, odd voice: he trades in things that washed up.
+
+**Teach:** a tip, a rules line, a Grimoire entry. **Test** `tests/t/peddler.test.js`: he only appears once freed; stock survives closing and reopening the town, and changes only after a run ends; buying a blueprint unlocks the set; dev mode never writes.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 6) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 6 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 7.
+
+### Step 7: The village (Claude: Sonnet 5.5, high)
+
+**Goal:** the square gets the same tools as the Lodge.
+
+**Build:**
+- New town pieces: lamp posts, benches, planters of black kelp, statues, a shell path, a plank boardwalk, more fences. They use step 1's tools, step 2's rotation and the Grid / Free switch.
+- **Paint and trim:** each restored building has 3 muted palettes (*shape* cost in tallow).
+- **Keepers' huts:** one small hut per freed Keeper, placed by you (a keep tile in front of its door). The Keeper walks there between chores.
+
+**Test** `tests/t/village.test.js`; devices.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 7) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 7 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 8.
+
+### Step 8: The Hearth Beacon (Claude: Opus 5.5, high)
+
+**Goal:** the seed of the true ending: bringing the village out of the rain.
+
+**Build:**
+- The Hearth stands on the square (a fixed place, a keep tile). Feed it tallow and curios; it has levels (*shape*: 5).
+- Each level thins the rain in a widening circle around it (fewer, fainter drops; the dark lifts a little) and reveals more of a drowned carving in the stone under the square.
+- It changes **nothing** on the stair. Saved as `ll-town.hearth`.
+
+**Teach:** a tip, a rules line. **Test** `tests/t/hearth.test.js`: rain density falls with level; carvings appear; no run field changes.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 8) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 8 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 9.
+
+### Step 9: Keepers react (Claude: Sonnet 5.5, high)
+
+**Build:**
+- **Waypoints:** benches, the Hearth, the stove and armchairs are places Keepers go to when idle; each Keeper has a favourite set and lingers near it.
+- **Lore chalk:** a Keeper whose favourite set stands near their post leaves a chalked note on the floor once (tap to read). A few lines each.
+- **The cellar's tide:** brine rises a step after a death on the stair and drains after a win past floor 5 (*shape*). Risen water leaves kelp and barnacles on cellar pieces until the next win.
+
+**Test** `tests/t/keepers4.test.js`.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 9) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 9 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 10.
+
+### Step 10: Release v20.0.0 (Claude: Sonnet 5.5, low)
+
+**Build:** no new features. Fix what Criss reported on steps 1 to 9. `GAME_VERSION = '20.0.0'`; move every Unreleased line in `docs/HISTORY.md` under `## v20.0.0 — Customization`; `cd tests && npm run design`; full `cd tests && npm test`; update `AGENTS.md`; set this table to done.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, and expansion/EXPANSION4_RUNBOOK.md (§4, and §5 step 10). Release v20.0.0 exactly as the runbook says. Open the PR with a self-review; no /gemini.
+
+---
+
+## 6. If something here is wrong
+
+The code wins over this file: fix it in the PR that proves it wrong. If a change would fight a decision in §2 or `AGENTS.md` §1, stop and write a **Decision needed** comment for Criss.
