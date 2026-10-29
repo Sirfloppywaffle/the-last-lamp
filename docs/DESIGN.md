@@ -70,11 +70,11 @@ The Lodge's pieces come in five themed sets, plus its own floors and walls. A se
 | Set | Pieces | Open |
 |---|---|---|
 | The Lodge’s own | 6: Rotted Ship-Planks, Diamond Parquet, Cistern Flagstones, Damp Stone, Mahogany Library, Brass-Ribbed Bulkhead | from the start |
-| Fisherman’s | 7: Cast-Iron Stove, Sea Chest, Ship’s Wheel, Barometer, Rusted Anchor, Hurricane Lantern, Ship in a Bottle | from the start |
-| Old Library | 8: Armchair, Banker’s Desk, Bookshelf, Ritual Rug, Drowned Portrait, Candle in a Saucer, Stack of Books, Inkwell and Quill | from the start |
-| Drowned Chapel | 6: Chapel Pew, Holy-Water Font, Chapel Lectern, Drowned Saint, Ship’s Bell, Pilgrim’s Skull | blueprint |
-| Brass Observatory | 6: Brass Telescope, Orrery, Chart Table, Stopped Clock, Star Chart, Brass Hourglass | blueprint |
-| Deep-One Coral | 6: Coral Cluster, Brine Urn, Coral Table, Coral Fan, Pearl-Eyed Mask, Conch Shell | blueprint |
+| Fisherman’s | 8: Cast-Iron Stove, Sea Chest, Ship’s Wheel, Barometer, Ship’s Lantern, Rusted Anchor, Hurricane Lantern, Ship in a Bottle | from the start |
+| Old Library | 10: Armchair, Banker’s Desk, Bookshelf, Ritual Rug, Drowned Portrait, Candle Sconce, Standing Lamp, Candle in a Saucer, Stack of Books, Inkwell and Quill | from the start |
+| Drowned Chapel | 8: Chapel Pew, Holy-Water Font, Chapel Lectern, Drowned Saint, Ship’s Bell, Votive Rack, Candelabra, Pilgrim’s Skull | blueprint |
+| Brass Observatory | 7: Brass Telescope, Orrery, Chart Table, Stopped Clock, Star Chart, Brass Wall Lamp, Brass Hourglass | blueprint |
+| Deep-One Coral | 7: Coral Cluster, Brine Urn, Coral Table, Coral Fan, Pearl-Eyed Mask, Glow-Anemone, Conch Shell | blueprint |
 
 | Dye | Swaps |
 |---|---|
@@ -98,6 +98,7 @@ The Lodge's pieces come in five themed sets, plus its own floors and walls. A se
 | Sea Chest | Fisher | Surface (4 slots) | 10 timber, 3 iron | 2×1 |  | 4 | 4 |
 | Ship’s Wheel | Fisher | Wall mount | 6 timber, 2 iron | 1×2 |  | 1 | 3 |
 | Barometer | Fisher | Wall mount | 6 iron, 1 tallow | 1×2 |  | 1 | 3 |
+| Ship’s Lantern | Fisher | Wall mount | 4 iron, 2 tallow | 1×2 | 30 | 1 | 3 |
 | Rusted Anchor | Fisher | Wall mount | 8 iron | 1×2 |  | 1 | 3 |
 | Hurricane Lantern | Fisher | Small thing | 2 iron, 2 tallow | 1×1 | 26 | 1 | 3 |
 | Ship in a Bottle | Fisher | Small thing | 2 timber, 1 curio | 1×1 |  | 1 | 2 |
@@ -106,6 +107,8 @@ The Lodge's pieces come in five themed sets, plus its own floors and walls. A se
 | Bookshelf | Library | Surface (2 slots) | 10 timber | 1×1 |  | 4 | 4 |
 | Ritual Rug | Library | Furniture | 8 tallow, 1 curio | 3×3 (walked over) |  | 1 | 3 |
 | Drowned Portrait | Library | Wall mount | 5 timber, 2 tallow | 1×2 |  | 1 | 3 |
+| Candle Sconce | Library | Wall mount | 2 iron, 2 tallow | 1×2 | 28 | 1 | 3 |
+| Standing Lamp | Library | Furniture | 6 iron, 3 tallow | 1×1 | 40 | 1 | 3 |
 | Candle in a Saucer | Library | Small thing | 1 tallow | 1×1 | 22 | 1 | 2 |
 | Stack of Books | Library | Small thing | 3 timber | 1×1 |  | 1 | 4 |
 | Inkwell and Quill | Library | Small thing | 1 iron, 1 tallow | 1×1 |  | 1 | 2 |
@@ -114,18 +117,22 @@ The Lodge's pieces come in five themed sets, plus its own floors and walls. A se
 | Chapel Lectern | Chapel | Furniture | 8 timber, 2 iron | 1×1 |  | 4 | 4 |
 | Drowned Saint | Chapel | Wall mount | 4 timber, 1 curio | 1×2 |  | 1 | 3 |
 | Ship’s Bell | Chapel | Wall mount | 8 iron, 1 tallow | 1×2 |  | 1 | 3 |
+| Votive Rack | Chapel | Wall mount | 3 iron, 4 tallow | 1×2 | 26 | 1 | 3 |
+| Candelabra | Chapel | Furniture | 6 iron, 4 tallow | 1×1 | 34 | 1 | 3 |
 | Pilgrim’s Skull | Chapel | Small thing | 1 curio | 1×1 |  | 1 | 2 |
 | Brass Telescope | Brass | Furniture | 12 iron, 4 timber | 1×1 |  | 4 | 3 |
 | Orrery | Brass | Furniture | 14 iron, 2 curios | 1×1 |  | 1 | 3 |
 | Chart Table | Brass | Surface (4 slots) | 12 timber, 3 iron | 2×1 |  | 4 | 4 |
 | Stopped Clock | Brass | Wall mount | 6 iron, 2 timber | 1×2 |  | 1 | 3 |
 | Star Chart | Brass | Wall mount | 3 timber, 2 tallow | 1×2 |  | 1 | 3 |
+| Brass Wall Lamp | Brass | Wall mount | 6 iron, 2 tallow | 1×2 | 30 | 1 | 3 |
 | Brass Hourglass | Brass | Small thing | 2 iron, 1 tallow | 1×1 |  | 1 | 3 |
 | Coral Cluster | Coral | Furniture | 6 tallow, 1 curio | 1×1 |  | 1 | 3 |
 | Brine Urn | Coral | Furniture | 6 tallow, 2 iron | 1×1 |  | 1 | 3 |
 | Coral Table | Coral | Surface (4 slots) | 8 tallow, 1 curio | 2×1 |  | 1 | 3 |
 | Coral Fan | Coral | Wall mount | 5 tallow, 1 curio | 1×2 |  | 1 | 3 |
 | Pearl-Eyed Mask | Coral | Wall mount | 4 tallow, 2 curios | 1×2 |  | 1 | 3 |
+| Glow-Anemone | Coral | Wall mount | 6 tallow, 1 curio | 1×2 | 30 | 1 | 3 |
 | Conch Shell | Coral | Small thing | 2 tallow | 1×1 |  | 1 | 3 |
 
 ## Creatures

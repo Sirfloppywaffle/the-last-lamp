@@ -73,8 +73,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(/locked/.test(s.pew)&&/Peddler/.test(s.pew)&&/Peddler/.test(s.pewSmall),'a locked set’s piece is refused, and says whom to ask',s);
   ok(s.chapel&&s.pewOk==='','a blueprint opens its set',s);
   ok(s.fix.join()==='chapel,coral'&&s.kept.join()==='chapel','ll-town.blueprints keeps only sets that are bought, once each, and survives a reload',s);
-  ok(s.first==='townSet'&&s.set1==='fisher'&&/^stove,chest,wheel,baro,anchor,lantern,bottle$/.test(s.chips1)&&/^planks,parquet,flags,damp,library,brass$/.test(s.chips0),'the tray’s first chip is the set on show; each set shows its own pieces',s);
-  ok(s.set3==='chapel'&&s.lockedChips==='6/6'&&s.lockImgs===6&&s.lockedA===0,'a set not yet bought shows locked, a padlock on each piece',s);
+  ok(s.first==='townSet'&&s.set1==='fisher'&&/^stove,chest,wheel,baro,shiplamp,anchor,lantern,bottle$/.test(s.chips1)&&/^planks,parquet,flags,damp,library,brass$/.test(s.chips0),'the tray’s first chip is the set on show; each set shows its own pieces',s);
+  ok(s.set3==='chapel'&&s.lockedChips==='8/8'&&s.lockImgs===8&&s.lockedA===0,'a set not yet bought shows locked, a padlock on each piece',s);
   ok(s.pickLocked===null&&/Peddler/.test(s.say)&&/Peddler/.test(s.setSay),'tapping a locked piece chooses nothing and says "Ask the Peddler"',s);
   ok(s.dev.join()==='true,true,true'&&s.devPlace===''&&s.devSame&&!s.real,'developer mode opens every set, and writes nothing to ll-town',s);
 
@@ -144,6 +144,23 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(sf.moved.join()==='5,5,4','it comes down where it is put, with all four',sf.moved);
   ok(sf.stored[0]==='desk'&&sf.stored[1]===4&&sf.stored[2]&&sf.stored[3]===0&&sf.back[0]===4&&sf.back[1]===0,'Store keeps the table with all that was on it, and what it cost; it goes back down for nothing',sf);
   ok(sf.salvage,'Salvage gives back all of it: the table and everything on it',sf);
+
+  /* 4b. light: each set has a wall light, and the Library and the Chapel a standing one; they light the room from where they are,
+     a lamp steadily, a flame guttering, the Glow-Anemone cold */
+  const lt=await p.evaluate(`(()=>{const T=__t, I=T.LODGE_ITEMS, o={}, D=(${setup})('main'); D.blueprints=['chapel','observ','coral'];
+    const lit=Object.keys(I).filter(k=>I[k].light);
+    o.lit=lit.join(); o.wall=lit.filter(k=>I[k].mount).map(k=>I[k].set).join(); o.floor=lit.filter(k=>!I[k].mount&&!I[k].small).join();
+    const n0=T.lodgeArt().lights.length; const c=[1,6,8,3,3];
+    T.lodgePlace('shiplamp',3,0); T.lodgePlace('sconce',6,0); T.lodgePlace('floorlamp',2,5); T.lodgeGo('attic'); T.lodgePlace('walllamp',3,0); T.lodgePlace('anemone',6,0);
+    const A=T.lodgeArt(); o.attic=A.lights.filter(l=>l.col==='cold').length; o.steady=A.lights.filter(l=>l.f<=.2&&l.col!=='cold').length;
+    T.lodgeGo('main'); const M=T.lodgeArt(); o.main=M.lights.length-n0; o.em=M.em.length;
+    const sc=T.lodgeRoom().furn.find(e=>e.id==='sconce'), a=T.lodgeFA('sconce',0); o.pos=[Math.round(M.lights.find(l=>Math.abs(l.r-28)<.1).x)===sc.c*16+a.dx+a.lx];
+    /* a lit mount is still a mount: wall tiles, no floor */
+    o.solid=[T.townSolid(6,2)];
+    return o;})()`);
+  ok(lt.wall.split(',').sort().join()==='chapel,coral,fisher,library,observ','a wall light for each set',lt);
+  ok(lt.floor.split(',').sort().join()==='candelabra,floorlamp,stove','a standing lamp and a candelabra besides the stove',lt.floor);
+  ok(lt.main===3&&lt.attic===2&&lt.steady>=1&&lt.pos[0]&&lt.solid[0]===false,'each light the room from where it is: a wall lantern, a sconce and a lamp in the main room (3), a lamp and a cold anemone in the Attic, beside its window’s own cold light; a lit mount blocks no floor',lt);
 
   /* 5. a small thing can be lifted, moved to another surface, stored, and set down from Storage; Undo takes each deed back */
   const it=await p.evaluate(`(()=>{const T=__t, o={}, D=(${setup})('main'); T.townBuildSet(true);

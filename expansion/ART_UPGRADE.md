@@ -126,4 +126,7 @@ Pixel portraits on the town's talk cards, from `create_portrait_character`, besi
 | Coral table (2 tiles) | `LODGE_ROWS.ctable` | `56da008d-e20c-492a-99d9-b741e46eb2d1` | 8 directions, S | none; edge `2` |
 | Wall mounts (wheel, barometer, anchor, portrait, saint, bell, clock, star chart, coral fan, mask) | `LODGE_ROWS.<id>` | `d9c1f555-6b2f-44db-8be3-ff736edd0713` | frames 0 to 9 of 64 (1-direction, 16) | none; edge `5` or `1` |
 | Small things (lantern, bottle, candle, skull, hourglass, shell, inkwell) | `LODGE_ROWS.<id>` | `6c375693-45e7-4b3d-bfaf-ddf3b5204c1d` | frames 0 to 7 of 64 (1-direction, 16) | narrowed to 8 to 12 wide, 7 to 12 tall; edge `5` or `1` |
+| Wall lights (ship's lantern, candle sconce, votive rack, brass wall lamp, glow-anemone) | `LODGE_ROWS.<id>` | `852515e3-5ab7-443d-8e5e-544077e1db26` | frames 24, 1, 56, 3, 4 of 64 (1-direction, 16) | none; edge `1`; their flames and glass glow |
+| Candelabra | `LODGE_ROWS.candelabra` | `0603cbdf-02ae-4b87-94e1-85f816b47314` | 8 directions at 24, S | 19→16; edge `1` |
+| Standing lamp | `LODGE_ROWS.floorlamp` | `e682c63e-62f5-4902-8a63-18a48d201086` | 8 directions at 24, NE (a hooked lamp, its lantern to the right) | none; edge `1` |
 | Stack of books | `LODGE_ROWS.books` | `b375d966-2b23-43c4-9cc5-1cac07cf5263` | frame 3 of 64 | 14×15→13×11 |
