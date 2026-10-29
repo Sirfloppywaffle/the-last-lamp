@@ -13,7 +13,7 @@
 2. **Heat is last.** It matters only after you win, and it is the most balance to tune.
 3. **Bounties stay town-only.** They pay town materials and Lodge things, never anything on the stair. A stair reward can come later if the pull isn't enough.
 4. **Step by step.** Step 1 ships and is played before steps 2 to 4 are specified.
-5. **Mastery and Marks are open.** Criss is weighing a skill tree for the Keepers; step 3 waits for that.
+5. **The skill tree is the Marks** (#135): two Marks per Keeper, each a branch of three tiers like the ward trees, points only from mastery, tiers unlocked for good by mastery, and nothing bought with essence during a run (the essence balance stays as it is). Details in step 3.
 
 ### 0.2 Rules that hold for every step
 Everything in `EXPANSION3_RUNBOOK.md` §2 still applies.
@@ -113,10 +113,29 @@ Each feat is read from data the game already keeps: run fields (`run.floor`, `ru
 - The Keeper is drawn from those you have unlocked.
 - Pays a small fixed number of embers once a day, and the deepest floor reached each night is cut into a board by the Head-frame.
 
-## 3. Step 3: Keeper mastery and Marks (provisional, waits on Criss's skill tree)
-- Each Keeper ranks up by floors cleared while carrying them.
-- Ranks open that Keeper's Marks: alternate versions of the kit that trade one strength for another and are no stronger overall (Hades' aspects).
-- Whether ranks feed a skill tree, how it is shaped and where it lives (the Roster, or the Keeper in Saltmouth) is Criss's call, after Gemini's ideas on #131.
+## 3. Step 3: Keeper mastery and Marks: the skill tree (provisional)
+Gemini and Claude both proposed the same shape (#135), and Criss has decided the rest.
+
+**The shape:** the Keepers' skill tree *is* their Marks, built like the ward trees players already know.
+- **Two Marks per Keeper** (Criss: enough for now; revisit if needed). That is 10 Marks in all.
+- Each Mark is one branch of 3 tiers; tier 3 is its capstone.
+- Carrying no Mark is the plain kit; the plain kit is not a branch.
+
+**Points come only from mastery** (Criss). A Keeper ranks up by floors cleared while you carry them. Not embers, not town materials, not feats: the town never buys power. Mastery also rewards carrying different Keepers (pillar 5).
+
+**Mastery unlocks the tiers for good; nothing is bought during a run** (Criss).
+- Essence was balanced long ago and stays the run's one currency to spend; a second thing to buy with it would either starve the wards or go unused.
+- So a Mark works from the moment you choose it, at every tier its Keeper's mastery has opened.
+
+**The price lives inside each tier.** With nothing to buy, the Mark itself must carry its cost (pillar 2):
+- every tier gives something and takes something *from the same kit*;
+- the Galvanist's Overload, which runs hot and fries his pylons, is the model;
+- a Mark at its capstone is different from the plain kit, never stronger overall.
+
+**Choosing:** one Mark per run, picked at the Roster beside the Keeper (or with Take the lamp in Saltmouth), shown as one seal in the HUD. Nothing to manage mid-fight.
+
+**Writing them:**
+- Each Mark is written against the code, one Keeper per PR, and played by Criss before the next. Gemini's first example broke three mechanics (#135).
 - Every number is listed for Criss.
 
 ## 4. Step 4: The Deeper Dark, chosen (provisional)
