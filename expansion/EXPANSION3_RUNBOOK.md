@@ -19,7 +19,7 @@
 | 7 | Rescued souls: the cage, the Drowned Oar, the Toothmonger | #127 | merged | 18.15.0 |
 | 8 | The three shrines and the tide-pools | #129 | merged | 18.16.0 |
 | 9 | The Keeper's Lodge (one room) | #130 | merged | 18.17.0 |
-| 10 | Release v19.0.0 | — | not started | 19.0.0 |
+| 10 | Release v19.0.0 | #133 | done | 19.0.0 |
 
 **Order matters.** Each step builds on the one before. Never start a step until the previous PR is merged into `main` (Criss merges after playing the preview).
 

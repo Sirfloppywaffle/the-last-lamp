@@ -31,7 +31,7 @@
 - The game should be **hard**. He found early versions too easy, then essence too plentiful. Difficulty went up in v9 and v10, and he called v10 "better balanced". His recent runs end on the floor 4 boss or the floor 5 boss.
 - **No keyboard-only features.** He plays by touch; an `F` shortcut patch was scrapped for this reason.
 - The art direction is "**3D in the 2D sense**": painted canvas volumes, glossy eyes, silhouettes in the dark, eerie but readable.
-- **Saltmouth, the town above the stair (Expansion 3), is pixel art.** The stair stays painted. Criss chose it on #116.
+- **Saltmouth, the town above the stair (Expansion 3), is pixel art.** The stair stays painted. Criss chose it on #116. The town is finished (v19.0.0); new work on it is Expansion 4.
 
 ---
 
@@ -122,6 +122,7 @@ You tend **the last lamp** at the bottom of a drowned stair. Things climb out of
   - **Relics** bend the rules; some are cursed.
   - **Embers**, earned on every run, unlock kits, relic packs and events in the **Ember Hall**.
   - Winning opens **the Deeper Dark**: depths 1–5, each adding a new cruelty.
+- **Saltmouth** (Expansion 3, done in v19.0.0): a walkable pixel-art town above the stair, opened from the title with **Walk Saltmouth**. Every descent hauls timber, iron, tallow and curios up into it (`ll-town`); you build with them (paths, lights, fences, trees, headstones of past runs), free the Keepers and swap kits at their stations, restore five workshops for the one town gift per descent, rescue souls from cages on the landings, raise three shrines, and restore the Keeper's Lodge with its Grimoire shelf. It only adds to the game: floors, waves, wards and descents are unchanged. Code map row `Saltmouth` below.
 - **The descent map** plays between floors: a lantern sinking down the shaft past cleared floors. You can also open it from the pause menu.
 - **Speed** 1×/2×/3×. **Auto-save** at each floor start, each landing step, and each break between waves.
 
