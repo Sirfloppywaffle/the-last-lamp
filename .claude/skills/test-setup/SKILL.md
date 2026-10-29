@@ -20,7 +20,7 @@ What the suite covers and how tests are written: `AGENTS.md` §7. This is only a
 - [ ] **Known flake:** `winch.test.js` fails about 1 run in 3 on `main` too. Rerun it alone (`node run.js --only winch`) before blaming your change; if it passes alone, say so in the PR.
 - [ ] **Fails here, passes on CI** (checked on `main`, October 2026). This container's Chromium (153) is newer than the one CI installs for the pinned 1.56:
   - `devices`: "the stair's name and code on the pause and death screens" fails on every device. Its Copy button measures 55 px wide, and the test wants 56.
-  - `smothering`: "the result card shows 600 ms or more after the walk ends" can miss by a few ms under the full run's load. It passes alone.
+  - (`smothering`'s "the result card shows 600 ms or more after the walk ends" used to miss by a few ms, here and once on CI: it timed from Node after the call returned. Since #139 it times on the page's own clock.)
   If these are the only failures and your diff doesn't touch them, CI is the judge. Say so in the PR.
 - [ ] **No browser at all** (Jules's VM, or a container without Chromium): run `npm run check`, say so in the PR, and rely on CI (`.github/workflows/checks.yml` runs `npm test` on every PR).
 

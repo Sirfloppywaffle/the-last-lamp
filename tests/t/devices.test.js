@@ -107,6 +107,35 @@ const DEV=[
     await p.waitForTimeout(100);
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-chairs-'+nm+'.png'});
     if(chairs!==4)console.log('FAIL '+nm+': the four diagonal Armchairs are not drawn wide',chairs);
+    /* Expansion 4, step 3: the Flooded Cellar and the Attic, opened and furnished in developer mode (nothing written). Each is
+       reached by its way; the way back sits where Leave the Lodge does, inside the safe area and a thumb; the room fills its canvas.
+       A screenshot of each, standing at the way in, and one from the middle */
+    for(const room of ['cellar','attic']){
+      const rm=await p.evaluate(([room,ins])=>{
+        ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+        const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+        const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+        const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44;
+        const D=__t.townData(), T=__t.TWN; if(__t.lodgeCur()!=='main')__t.lodgeGo('main');
+        D.lodge.furn=[{id:'desk',c:5,r:4},{id:'chair',c:3,r:5,f:1},{id:'rug',c:4,r:6}]; __t.lodgeSync();
+        const o={buy:__t.lodgeRoomBuilt(room)||__t.lodgeBuyRoom(room)};
+        const R=__t.lodgeRoom(D,room); R.wall=room==='cellar'?'damp':'library';
+        R.furn=room==='cellar'?[{id:'stove',c:3,r:4},{id:'chair',c:5,r:5,f:7},{id:'rug',c:2,r:6},{id:'shelf',c:5,r:2}]:[{id:'desk',c:5,r:4},{id:'chair',c:3,r:5,f:1},{id:'shelf',c:7,r:2,f:0},{id:'rug',c:4,r:6}];
+        o.go=__t.lodgeWay(__t.LODGE_WAYS[room==='cellar'?'C':'L']);
+        const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
+        T.near=undefined; __t.townFrame(1/30); __t.townFrame(1/30);
+        const act=document.getElementById('townAct'), a=q(act), cv=q(document.getElementById('townCv'));
+        o.label=act.textContent; o.act=inside(a)&&thumb(a); o.cover=cv[0]<=0&&cv[1]<=0&&cv[2]>=innerWidth&&cv[3]>=innerHeight;
+        return o;},[room,ins]);
+      await p.waitForTimeout(150);
+      await p.screenshot({path:(process.argv[3]||'.')+'/lodge-'+room+'-'+nm+'.png'});
+      await p.evaluate(()=>{const T=__t.TWN; T.p.x=4.5; T.p.y=6.2; T.cx=null; T.near=undefined; __t.townFrame(1/30); __t.townFrame(1/30);});
+      await p.waitForTimeout(100);
+      await p.screenshot({path:(process.argv[3]||'.')+'/lodge-'+room+'-mid-'+nm+'.png'});
+      await p.evaluate(()=>__t.lodgeGo('main'));
+      const want=room==='cellar'?'Up to the Lodge':'Down to the Lodge';
+      if(!(rm.buy&&rm.go&&rm.label===want&&rm.act&&rm.cover))console.log('FAIL '+nm+': the '+room+' on this screen',JSON.stringify(rm));
+    }
     await p.evaluate(()=>{__t.lodgeLeave(); __t.setDev(false); __t.townKeepers();});
     if(!(lodge.enter&&lodge.label==='Leave the Lodge'&&lodge.act&&lodge.cover&&lodge.n===11&&lodge.chips&&lodge.still))console.log('FAIL '+nm+': the Lodge on this screen',JSON.stringify(lodge));
     /* Expansion 4, step 1: the build tools, in developer mode so nothing is written. The tool bar (Pieces, Storage, Grid, Free,

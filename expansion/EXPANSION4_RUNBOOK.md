@@ -12,17 +12,20 @@
 |---|---|---|---|---|
 | 0 | Brainstorm and this runbook | #134 | merged | — |
 | 1 | Build tools: lift, move, storage, undo, Grid/Free toggle | #137 | merged | 19.1.0 |
-| 2 | 8-way rotation and the PixelLab art pipeline | #138 | open | 19.2.0 |
-| 3 | Lodge rooms: the Flooded Cellar and the Attic | | | 19.3.0 |
-| 4 | The catalogue: themed sets, wall mounts, small things on surfaces | | | 19.4.0 |
-| 5 | Light and dark indoors; boss trophies | | | 19.5.0 |
-| 6 | The Peddler: a rescued soul with a stall by the stairs | | | 19.6.0 |
-| 7 | The village: decorations, paths, paint, Keepers' huts | | | 19.7.0 |
-| 8 | The Hearth Beacon: the rain thins | | | 19.8.0 |
-| 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.9.0 |
+| 2 | 8-way rotation and the PixelLab art pipeline | #138 | merged | 19.2.0 |
+| 3 | Lodge rooms: the Flooded Cellar and the Attic | #139 | open | 19.3.0 |
+| 4 | The catalogue: themed sets, wall mounts, small things on surfaces (with the art kit, `ART_UPGRADE.md` §3) | | | 19.4.0 |
+| A1 | Art pass 1: fire, water, weather (`ART_UPGRADE.md` §4) | | | 19.5.0 |
+| 5 | Light and dark indoors; boss trophies | | | 19.6.0 |
+| A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | | | 19.7.0 |
+| 6 | The Peddler: a rescued soul with a stall by the stairs | | | 19.8.0 |
+| A3 | Art pass 3: scenery (buildings, ground, props) | | | 19.9.0 |
+| 7 | The village: decorations, paths, paint, Keepers' huts | | | 19.10.0 |
+| 8 | The Hearth Beacon: the rain thins | | | 19.11.0 |
+| 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.12.0 |
 | 10 | Release v20.0.0 | | | 20.0.0 |
 
-**Order matters.** Never start a step until the previous PR is merged into `main`.
+**Order matters.** Never start a step until the previous PR is merged into `main`. The art passes (A1 to A3, Criss on #139: each a middle-number bump, placed before the step that leans on it) are built from `expansion/ART_UPGRADE.md`; their prompts are in §5 below, beside the steps.
 
 ---
 
@@ -111,6 +114,8 @@ Numbers marked *shape* are for playtest.
 - A hatch / ladder tile in the main room (added to the room's keep tiles) moves between rooms; `#townAct` offers "Down to the cellar" / "Up to the attic".
 - The Cellar has **brine**: a water level drawn over its floor (step 9 makes it move; here it sits at a fixed shallow level). The Attic's window shows rain falling outside.
 
+- *As built (#139):* the main room stays in `ll-town.lodge` itself; the others are `lodge.rooms.cellar` / `.attic`, each `{built, floor, wall, furn}` (`LODGE_ROOMS`, `lodgeRoom()`, `lodgeCur()`; every room is 10×10, so one set of room code serves all three). The hatch is `C` at (1,6), the ladder `L` on the back wall at x 2; the Cellar's ladder back is `U`, the Attic's hatch `H` (`LODGE_WAYS`); you arrive beside the way back. The Cellar's brine is `LODGE_ROOMS.cellar.brine` (3 art px), drawn into its ground and its pieces' feet (`lodgeWet()`); step 9 moves it. A room's first floor and wall are free there (`lodgeCost()`). Storage is shared by every room; changing room closes Build.
+
 **Teach:** a tip per room. **Test** `tests/t/lodgerooms.test.js`. Devices: each room on each screen.
 
 **Prompt:**
@@ -127,10 +132,19 @@ Numbers marked *shape* are for playtest.
 - **Blueprints:** two sets are open from the start (Fisherman's, Old Library). The other three are bought from the Peddler (step 6); until then they show locked in the tray with "Ask the Peddler".
 - Everything costs town materials only.
 
+- **The art kit** (`expansion/ART_UPGRADE.md` §3): every new piece from PixelLab on the town's palette, the Armchair and step 3's hatch, ladder and window as style references, dyes as letter swaps; the Banker's Desk, Stove, Bookshelf and Ritual Rug redrawn to match; `tools/png2rows.py --sheet`. Log every piece in `ART_UPGRADE.md` §6.
+
 **Teach:** tray tips for wall mounts, surfaces, dyes. **Test** `tests/t/catalogue.test.js`. `cd tests && npm run design` (new table).
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 4) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 4 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 5.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 4) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 4 exactly as the runbook says, following its §4 workflow, with the art kit from expansion/ART_UPGRADE.md §3 (every new piece from PixelLab through runbook §3 and tools/png2rows.py). The Lodge has three rooms now (LODGE_ROOMS; read pieces through lodgeRoom(), never T.lodge.furn): wall mounts and surface pieces work in all three. Tick the status table (step 3 is #139). End with the prompt for art pass A1.
+
+### Art pass A1: fire, water, weather (Claude: Opus 5.5, high)
+
+**Build:** `expansion/ART_UPGRADE.md` §4, Art 1: flames that loop (brazier, street-lamp, sconce, stove, banker's lamp), the sea, the tide-pools and the brine, rain splashes and the Attic window's rain, a puff of dust on placing or salvaging. A still frame for Lite and Reduce Motion. No balance, no new mechanics. **Test:** each loop has its still; `devices` frame time does not rise; shots.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A1) and expansion/ART_UPGRADE.md. Build art pass A1 exactly as ART_UPGRADE.md §4 says, through runbook §3, following the runbook's §4 workflow. Log every piece in ART_UPGRADE.md §6. Tick the status table. End with the prompt for step 5.
 
 ### Step 5: Light and dark; trophies (Claude: Opus 5.5, high)
 
@@ -143,7 +157,14 @@ Numbers marked *shape* are for playtest.
 **Test** `tests/t/lodgelight.test.js`: a room with no lights is darker; trophies only for beaten bosses; codex never changes. Shots: one lit and one dark room per device.
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 5) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 5 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 6.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 5) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 5 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for art pass A2.
+
+### Art pass A2: the Keepers and the souls (Claude: Opus 5.5, high)
+
+**Build:** `expansion/ART_UPGRADE.md` §4, Art 2. **Pilot first:** Ambrose the Lamplighter only, 4 facings (Criss: no 8), walk and idle, side by side with today's rows in the shots, and stop for Criss's verdict. If he likes it, the other Keepers and the rescued souls follow in the same PR or the next; if not, the hand-made rows stay and the pass ends. **Test:** `town.test.js`, `keepers.test.js`, `rescue.test.js` untouched; sprite sizes stay 16×24.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A2) and expansion/ART_UPGRADE.md. Build art pass A2's pilot: Ambrose the Lamplighter from PixelLab, 4 facings, walk and idle, through runbook §3, following the runbook's §4 workflow. Show him beside today's sprite and stop for Criss's verdict before redrawing anyone else. Tick the status table. End with the prompt for step 6.
 
 ### Step 6: The Peddler (Claude: Opus 5.5, high)
 
@@ -157,7 +178,14 @@ Numbers marked *shape* are for playtest.
 **Teach:** a tip, a rules line, a Grimoire entry. **Test** `tests/t/peddler.test.js`: he only appears once freed; stock survives closing and reopening the town, and changes only after a run ends; buying a blueprint unlocks the set; dev mode never writes.
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 6) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 6 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 7.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 6) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 6 exactly as the runbook says, following its §4 workflow; draw the Peddler the way art pass A2 drew the Keepers (or as rows, if A2 kept them). Tick the status table. End with the prompt for art pass A3.
+
+### Art pass A3: scenery (Claude: Opus 5.5, high)
+
+**Build:** `expansion/ART_UPGRADE.md` §4, Art 3: the buildings with their ruined, restored and lit states from one base each, the ground's tiles and edges, trees, fences, headstones, braziers, the Head-frame. `TOWN_MAP`, doors and keep tiles do not move. May split into A3a (buildings) and A3b (ground and props), each its own PR and the same version. **Test:** `town.test.js`, `townbuild.test.js`, `townGift.test.js` untouched; shots of the whole square.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A3) and expansion/ART_UPGRADE.md. Build art pass A3 exactly as ART_UPGRADE.md §4 says, through runbook §3, following the runbook's §4 workflow. Log every piece in ART_UPGRADE.md §6. Tick the status table. End with the prompt for step 7.
 
 ### Step 7: The village (Claude: Sonnet 5.5, high)
 
