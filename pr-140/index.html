@@ -12288,6 +12288,7 @@ const LODGE_ITEMS={
   chest:{k:'furn',set:'fisher',n:'Sea Chest',s:'Chest',cost:{timber:10,iron:3},w:2,faces:4,top:4,dyes:['tar','wine','bleach']},
   wheel:{k:'furn',set:'fisher',n:'Ship’s Wheel',s:'Wheel',cost:{timber:6,iron:2},mount:true,h:2,faces:1,dyes:['tar','bleach']},
   baro:{k:'furn',set:'fisher',n:'Barometer',s:'Barometer',cost:{iron:6,tallow:1},mount:true,h:2,faces:1,dyes:['verd','tar']},
+  shiplamp:{k:'furn',set:'fisher',n:'Ship’s Lantern',s:'Wall lantern',cost:{iron:4,tallow:2},mount:true,h:2,light:30,glow:'a9c',faces:1,dyes:['rust','tar']},
   anchor:{k:'furn',set:'fisher',n:'Rusted Anchor',s:'Anchor',cost:{iron:8},mount:true,h:2,faces:1,dyes:['tar','verd']},
   lantern:{k:'furn',set:'fisher',n:'Hurricane Lantern',s:'Lantern',cost:{iron:2,tallow:2},small:true,light:26,glow:'9abc',faces:1,dyes:['rust','tar']},
   bottle:{k:'furn',set:'fisher',n:'Ship in a Bottle',s:'Bottle',cost:{timber:2,curios:1},small:true,faces:1,dyes:['verd']},
@@ -12297,6 +12298,8 @@ const LODGE_ITEMS={
   shelf:{k:'furn',set:'library',n:'Bookshelf',s:'Shelf',cost:{timber:10},faces:4,top:2,dyes:['tar','wine','bleach']},
   rug:{k:'furn',set:'library',n:'Ritual Rug',s:'Rug',cost:{tallow:8,curios:1},w:3,h:3,flat:true,faces:1,dyes:['tar','wine']},
   portrait:{k:'furn',set:'library',n:'Drowned Portrait',s:'Portrait',cost:{timber:5,tallow:2},mount:true,h:2,faces:1,dyes:['wine','tar']},
+  sconce:{k:'furn',set:'library',n:'Candle Sconce',s:'Sconce',cost:{iron:2,tallow:2},mount:true,h:2,light:28,glow:'bc',faces:1,dyes:['bleach','verd']},
+  floorlamp:{k:'furn',set:'library',n:'Standing Lamp',s:'Lamp',cost:{iron:6,tallow:3},light:40,steady:true,glow:'bac',faces:1,dyes:['verd','tar']},
   candle:{k:'furn',set:'library',n:'Candle in a Saucer',s:'Candle',cost:{tallow:1},small:true,light:22,glow:'abc',faces:1,dyes:['bleach']},
   books:{k:'furn',set:'library',n:'Stack of Books',s:'Books',cost:{timber:3},small:true,faces:1,dyes:['wine','tar','bleach']},
   ink:{k:'furn',set:'library',n:'Inkwell and Quill',s:'Ink',cost:{iron:1,tallow:1},small:true,faces:1,dyes:['wine']},
@@ -12306,6 +12309,8 @@ const LODGE_ITEMS={
   lectern:{k:'furn',set:'chapel',n:'Chapel Lectern',s:'Lectern',cost:{timber:8,iron:2},faces:4,dyes:['tar','wine','bleach']},
   icon:{k:'furn',set:'chapel',n:'Drowned Saint',s:'Saint',cost:{timber:4,curios:1},mount:true,h:2,faces:1,dyes:['tar','wine']},
   bell:{k:'furn',set:'chapel',n:'Ship’s Bell',s:'Bell',cost:{iron:8,tallow:1},mount:true,h:2,faces:1,dyes:['verd','rust']},
+  votive:{k:'furn',set:'chapel',n:'Votive Rack',s:'Votives',cost:{iron:3,tallow:4},mount:true,h:2,light:26,glow:'abc9',faces:1,dyes:['rust','tar']},
+  candelabra:{k:'furn',set:'chapel',n:'Candelabra',s:'Candles',cost:{iron:6,tallow:4},light:34,glow:'bc',faces:1,dyes:['rust','bleach']},
   skull:{k:'furn',set:'chapel',n:'Pilgrim’s Skull',s:'Skull',cost:{curios:1},small:true,faces:1,dyes:['ash']},
   /* Brass Observatory (a blueprint from the Peddler) */
   telescope:{k:'furn',set:'observ',n:'Brass Telescope',s:'Telescope',cost:{iron:12,timber:4},faces:4,dyes:['tar','rust']},
@@ -12313,6 +12318,7 @@ const LODGE_ITEMS={
   chart:{k:'furn',set:'observ',n:'Chart Table',s:'Chart table',cost:{timber:12,iron:3},w:2,faces:4,top:4,dyes:['tar','wine','bleach']},
   clock:{k:'furn',set:'observ',n:'Stopped Clock',s:'Clock',cost:{iron:6,timber:2},mount:true,h:2,faces:1,dyes:['verd','tar']},
   stars:{k:'furn',set:'observ',n:'Star Chart',s:'Star chart',cost:{timber:3,tallow:2},mount:true,h:2,faces:1,dyes:['wine','bleach']},
+  walllamp:{k:'furn',set:'observ',n:'Brass Wall Lamp',s:'Wall lamp',cost:{iron:6,tallow:2},mount:true,h:2,light:30,steady:true,glow:'ab9c',faces:1,dyes:['verd','tar']},
   hourglass:{k:'furn',set:'observ',n:'Brass Hourglass',s:'Hourglass',cost:{iron:2,tallow:1},small:true,faces:1,dyes:['verd','rust']},
   /* Deep-One Coral (a blueprint from the Peddler) */
   coral:{k:'furn',set:'coral',n:'Coral Cluster',s:'Coral',cost:{tallow:6,curios:1},faces:1,dyes:['blush','ash']},
@@ -12320,8 +12326,9 @@ const LODGE_ITEMS={
   ctable:{k:'furn',set:'coral',n:'Coral Table',s:'Coral table',cost:{tallow:8,curios:1},w:2,faces:1,top:4,dyes:['blush','ash']},
   fan:{k:'furn',set:'coral',n:'Coral Fan',s:'Fan',cost:{tallow:5,curios:1},mount:true,h:2,faces:1,dyes:['blush','ash']},
   mask:{k:'furn',set:'coral',n:'Pearl-Eyed Mask',s:'Mask',cost:{tallow:4,curios:2},mount:true,h:2,faces:1,dyes:['ash','blush']},
+  anemone:{k:'furn',set:'coral',n:'Glow-Anemone',s:'Anemone',cost:{tallow:6,curios:1},mount:true,h:2,light:30,steady:true,col:'cold',glow:'gfc',faces:1,dyes:['blush','ash']},
   shell:{k:'furn',set:'coral',n:'Conch Shell',s:'Shell',cost:{tallow:2},small:true,faces:1,dyes:['blush','ash']}};
-/* ---- Expansion 4, step 4: the catalogue. Five themed sets and the Lodge's own floors and walls. A set is open from the start
+/* ---- Expansion 4, step 4: the catalogue. Seven pieces give light (light: radius; steady: no flicker; col: its colour): a wall light for each set, a standing lamp and a candelabra. Five themed sets and the Lodge's own floors and walls. A set is open from the start
    (open) or bought as a blueprint from the Peddler (step 6), kept in ll-town.blueprints; developer mode shows them all. A wall
    mount (mount) hangs on the back wall: its footprint is wall tiles, never floor, 1 tile wide and 2 tall, and where it may
    hang is each room's hang list. A small thing (small) stands on a surface: a piece with top: n slots along its top, half a
@@ -13608,7 +13615,14 @@ const LODGE_ROWS={
   skull:{0:['....55....','...5dd55..','..5ddedo5.','.5ddddde5.','5esdddueo5','5desddeu5.','.5usoes5..','.5eed55...','.5e7d.....','..555.....']},
   hourglass:{0:['..5555..','65ooppp7','6yuuu765','6seeee0m','605ep556','65.5u.55','6s5ee555','6secee55','6seppe05','76uoou55','7p777oo6','55pop5..']},
   shell:{0:['55.5555....','5dododo5...','5odpdodd5..','5poddddde..','.5pdopddd..','..5pd26dd5.','...5opu7dd5','....55pe1p5','......55.o.']},
-  ink:{0:['.......21','.....mdd1','....1dce1','...1ccd1.','..1ded1..','..1ed1...','.1u231...','.14s11...','14r4311..','1rssss1..','1rssss1..','.13221...']}};
+  ink:{0:['.......21','.....mdd1','....1dce1','...1ccd1.','..1ded1..','..1ed1...','.1u231...','.14s11...','14r4311..','1rssss1..','1rssss1..','.13221...']},
+  shiplamp:{0:['......2n','..m212mm','1t2t.l..','t..tt1..','...1o1..','..lo7om.','.8o767om','.9d9aa8e','.6.aa9.1','.m.acb.l','.6.aca.l','.6.896.1','..5oo91.','..6mn6d.']},
+  sconce:{0:['......b...','.....bb...','.....bcb..','......p...','.....pbo..','.....pbo..','.1...obo..','12m..obo..','1e1..obpp.','11l.1d1dpu','141.l1l56.','1lm1..1...','13l111..o.','.tm..1....']},
+  votive:{0:['.......a.......','......bc.......','......c9.......','......op..a....','....b7bb8.9....','...ab.9c8.9....','...a6.adp7co...','..dp.4do.7bo...','..co.pdo.7bc...','..7po7bo7ob6...','766cp7bbpdb766.','6oo6bb67b77a55m','.nml77767777m..','..r.ll1ll1mm...']},
+  walllamp:{0:['.....9999..','....8babb9.','...9ac9bbao','...9bbcbbb9','...9bbbbbbo','....7bbbb8.','....68aa8..','ooo..6777..','7p7...76...','77ab667....','7776777....','777........','.67........']},
+  anemone:{0:['.lll1l2llmll5.','5mr44uff4444l5','lfl1223g2222fl','lflgy3gyf4f2fl','5flgggfrgfg5fl','lfgfgggggcfgul','lf2gfgfgggcy4l','lug4gfggg3fmfl','1f1g3fgg3gglfl','1fmnucggg223ul','l4lngfggrr2lul','l41232fr222l4l','11444444uu442l','.llllllmmmmmm.']},
+  candelabra:{0:['.......b........','.......bb.......','.......cy.......','..b...ccc....b..','..b...ccc1...ba.','.cup..cbc1..dey.','.ccp.1ccs1..dcc.','.bbd.1pbp1..dbb.','.7b1.1sss1..1bp.','1ube1.171..1upp1','1l31..1u1...14u1','.11..1sus11..11.','..1ed1sus11pdse.','..1sb.1u1..e51..','...1p.1u1..u1...','....o.1u1..o....','......1u1.......','......1y1.......','......1y1.......','.....12y11......','.....3u5331.....','.....111111.....']},
+  floorlamp:{0:['.........111.11.','........1oo11u1.','....1.111...11..','...1p10p....1...','..1spso1...1s11.','...1ps01...123s1','...1ps1...19aaa1','...1o1....1acbb1','...1o1....1bccbb','..1so1.1..1bccal','..1sos11...1bb1.','..1so1.....1881.','...1o1......11..','...1o1..........','...1o1..........','..1so1..........','...1o1..........','...1o1..........','.11sos11........','101s2srs1.......','1s21u33s1.......','.1111111........']}};
 /* where small things stand on a surface, facing by facing: the two ends of its lane in the art's canvas, [x0, y0, x1, y1]; a piece's
    top slots are the middles of that many equal parts of it */
 const LODGE_TOPS={
@@ -13761,14 +13775,14 @@ function lodgeArt(){
     props.push({c:a.cv,x,y:y+a.dy,base});
     /* a lamp turned away still lights the room; only what can be seen of its flame glows */
     if(a.em)em.push({c:a.em,x:x+a.ex,y:y+a.dy+a.ey,base:I.mount?30:y+R.h});
-    if(I.light)lights.push({x:x+a.lx,y:y+a.dy+a.ly,r:I.light,f:I.green?.2:.8,col:I.green?'green':''});
+    if(I.light)lights.push({x:x+a.lx,y:y+a.dy+a.ly,r:I.light,f:I.steady||I.green?.2:.8,col:I.col||(I.green?'green':'')});
     /* what stands on it (Expansion 4, step 4), one canvas each, drawn just after it; a candle or a lantern lights the room */
     for(const q of d.on||[]){
       if(q===BLD_SKIP)continue;
       const J=LODGE_ITEMS[q.id], qa=lodgeFA(q.id,0,q.dye), t=a.top[q.s], qx=x+t[0]-(qa.cv.width>>1), qy=y+a.dy+t[1]-qa.cv.height;
       props.push({c:qa.cv,x:qx,y:qy,base:base+.5});
       if(qa.em)em.push({c:qa.em,x:qx,y:qy,base:base+.5});
-      if(J.light)lights.push({x:qx+qa.lx,y:qy+qa.ly,r:J.light,f:.8,col:''});
+      if(J.light)lights.push({x:qx+qa.lx,y:qy+qa.ly,r:J.light,f:J.steady?.2:.8,col:J.col||''});
     }
   }
   props.sort((a,b)=>a.base-b.base); em.sort((a,b)=>a.base-b.base);
