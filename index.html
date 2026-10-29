@@ -674,7 +674,7 @@ const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='18.17.0';
+const GAME_VERSION='19.0.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -3179,7 +3179,7 @@ function hallowDraw(){
   const pathT=F.pathTiles, lampK=F.lampC+','+F.lampR, used=new Set(), centres=[[F.lampC,F.lampR]], patches=[];
   const around=(c,r)=>{const o=[]; for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const x=c+dc, y=r+dr, k=x+','+y;
     if((dc||dr)&&x>=0&&y>=0&&x<COLS&&y<ROWS&&!pathT.has(k)&&k!==lampK&&!used.has(k))o.push([x,y]);} return o;};
-  const take=(c,r)=>{const o=shuffle(around(c,r)); if(o.length<2)return false; const got=[o.shift()];
+  const take=(c,r)=>{const o=shuffle(around(c,r)); if(o.length<HALLOW_SIZE)return false; const got=[o.shift()];
     /* each next tile is the farthest from those taken, so the patch reaches across the path */
     while(got.length<HALLOW_SIZE&&o.length){let bi=0, bd=-1; o.forEach((p,i)=>{let d=1e9; for(const q of got)d=Math.min(d,Math.hypot(p[0]-q[0],p[1]-q[1])); if(d>bd){bd=d; bi=i;}}); got.push(o.splice(bi,1)[0]);}
     got.forEach(p=>used.add(p[0]+','+p[1])); patches.push(got); return true;};
