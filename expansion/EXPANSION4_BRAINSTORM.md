@@ -78,3 +78,7 @@ Saltmouth stops being a list of things you restore and becomes *your* town. Touc
 - **Placement: both, as a toggle.** A Grid / Free switch in build mode. Grid snaps to tiles; Free places anywhere the footprint fits. Both keep the door and shelf clear.
 - **Rotation: 8 ways** (every 45°), so a chair can sit in a corner facing the middle of the room. Art: 8 facings for pieces that need them; symmetric pieces reuse mirrored frames. Diagonal footprints need their own collision check, especially in Grid mode.
 - The peddler and farming stay cut unless Criss brings them back.
+
+## Criss's calls (round 3)
+- **The Peddler comes back as a rescued soul.** Found in a cage on the stair like the other souls; once freed, he sets up a stall by the stairs in Saltmouth. Talk to him to buy **blueprints** (curios) and **dyes** (tallow). Rotating stock between descents.
+- **8-way art:** Criss can ask Gemini (in the Gemini app, outside the repo's API quota) to draw the 8 facings as text pixel grids that drop into the code. Prompt in the PR thread.
