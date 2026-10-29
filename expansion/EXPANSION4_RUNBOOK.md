@@ -128,7 +128,7 @@ Numbers marked *shape* are for playtest.
 
 **Build:**
 - Indoor darkness like the town's, lighter than outside but real. Each lit piece adds a light (`{x,y,r,f}`).
-- **Boss trophies:** each boss beaten unlocks a trophy (wall mount or plinth). Tapping it shows its Grimoire line, and the Keeper Below's trophy rumbles faintly (sound off with the game's sound setting).
+- **Boss trophies:** each boss beaten unlocks a Lodge item of one shared kind, `k:'trophy'` (wall mount or plinth). Build it as a general kind, not one-off objects: Expansion 5's Keeper's Ledger (#131, `expansion/EXPANSION5_PROGRESSION.md` in #135) adds more trophies through the same kind. Tapping it shows its Grimoire line, and the Keeper Below's trophy rumbles faintly (sound off with the game's sound setting).
 
 **Test** `tests/t/lodgelight.test.js`: a room with no lights is darker; trophies only for beaten bosses; codex never changes. Shots: one lit and one dark room per device.
 
