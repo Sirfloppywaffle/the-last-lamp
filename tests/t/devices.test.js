@@ -98,10 +98,19 @@ const DEV=[
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-build-'+nm+'.png'});
     await p.evaluate(()=>__t.townBuildSet(false)); await p.waitForTimeout(100);
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-'+nm+'.png'});
+    /* Expansion 4, step 2: the Armchair in all eight facings, one in each corner facing the middle and one on each side, lit
+       by a stove and the desk's lamp, in developer mode (nothing written); the Keeper stands in the middle so the camera holds the room */
+    const chairs=await p.evaluate(()=>{const D=__t.townData(), T=__t.TWN;
+      D.lodge.furn=[[1,2,7],[8,2,1],[1,8,5],[8,8,3],[1,5,6],[8,5,2],[6,2,0],[3,7,4]].map(([c,r,f])=>({id:'chair',c,r,f})).concat([{id:'stove',c:3,r:5,f:0},{id:'desk',c:5,r:5,f:0}]);
+      __t.lodgeSync(); T.p.x=4.5; T.p.y=6.7; T.path=null; T.cx=null; __t.townFrame(1/30); __t.townFrame(1/30);
+      return __t.lodgeArt().props.filter(o=>o.c.width>16&&o.c.width<=24).length;});
+    await p.waitForTimeout(100);
+    await p.screenshot({path:(process.argv[3]||'.')+'/lodge-chairs-'+nm+'.png'});
+    if(chairs!==4)console.log('FAIL '+nm+': the four diagonal Armchairs are not drawn wide',chairs);
     await p.evaluate(()=>{__t.lodgeLeave(); __t.setDev(false); __t.townKeepers();});
     if(!(lodge.enter&&lodge.label==='Leave the Lodge'&&lodge.act&&lodge.cover&&lodge.n===11&&lodge.chips&&lodge.still))console.log('FAIL '+nm+': the Lodge on this screen',JSON.stringify(lodge));
     /* Expansion 4, step 1: the build tools, in developer mode so nothing is written. The tool bar (Pieces, Storage, Grid, Free,
-       Undo) and, with a piece lifted, Place, Cancel and Store: each a thumb inside the safe area, clear of one another, of the
+       Undo) and, with a piece lifted, Place, ⟳ (step 2), Cancel and Store: each a thumb inside the safe area, clear of one another, of the
        message line and of the chips; lifting swaps the bars and moves nothing else. Storage's chips are thumbs too */
     const tools=await p.evaluate(ins=>{
       ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
@@ -119,7 +128,7 @@ const DEV=[
       o.bar=bar; o.barOk=bar.length===5&&bar.every(r=>inside(r)&&thumb(r))&&apart(bar)&&!bar.some(r=>over(r,m0)||ch.some(c=>over(r,c)));
       __t.bldTap(14,15); __t.townFrame(1/30);
       const lb=[...document.querySelectorAll('#townLiftBar .town-tb')].map(q);
-      o.lb=lb; o.liftOk=!!T.lift&&lb.length===3&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips().some(c=>over(r,c)))
+      o.lb=lb; o.liftOk=!!T.lift&&lb.length===4&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips().some(c=>over(r,c)))
         &&JSON.stringify(q(document.getElementById('townTrow')))===JSON.stringify(row0)&&hud()===h0;
       return o;},ins);
     await p.waitForTimeout(120);

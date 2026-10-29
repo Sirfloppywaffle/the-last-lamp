@@ -11,8 +11,8 @@
 | Step | What | PR | State | Version |
 |---|---|---|---|---|
 | 0 | Brainstorm and this runbook | #134 | merged | — |
-| 1 | Build tools: lift, move, storage, undo, Grid/Free toggle | #137 | open | 19.1.0 |
-| 2 | 8-way rotation and the text-grid art pipeline | | | 19.2.0 |
+| 1 | Build tools: lift, move, storage, undo, Grid/Free toggle | #137 | merged | 19.1.0 |
+| 2 | 8-way rotation and the PixelLab art pipeline | #138 | open | 19.2.0 |
 | 3 | Lodge rooms: the Flooded Cellar and the Attic | | | 19.3.0 |
 | 4 | The catalogue: themed sets, wall mounts, small things on surfaces | | | 19.4.0 |
 | 5 | Light and dark indoors; boss trophies | | | 19.5.0 |
@@ -40,11 +40,20 @@ Everything in `EXPANSION3_RUNBOOK.md` §2 still applies (additive only, pixel ar
 
 ---
 
-## 3. Art from Gemini (optional, any step)
+## 3. Art (every step)
 
-Criss may bring pixel art drawn by Gemini as **text grids**: one line per row, one character per pixel, `.` transparent, with a palette `char → hex`. The prompt is on PR #134. To use it: map each hex to the nearest `PX` colour (add a new `PX` letter only if none is close, and say so in the PR), paste the rows into the piece's art table, and draw it with `tRows()`. Check the result in the 14-device shots; fix stray pixels yourself rather than sending it back, and list the fixes in the PR.
+**New art comes from PixelLab.** Its tools load from `.mcp.json` (`create_8_direction_object`, `get_object`, `pixelart_workbench`, …). When Criss has made a piece himself he names the object: read it with `get_object`, which lists one PNG per facing. To make one, ask for a low top-down view on a canvas near 32 px, in the town's palette and §2.5's vibe, and show Criss before building on it. **Gemini's text grids** (one line per row, one character per pixel, `.` clear, a palette `char → hex`; the prompt is on PR #134) are still fine when Criss brings them: they skip the download, their colours snap to `PX` by the same rule as step 2 (nearest letter, a new one only if none is close), and every other rule holds.
 
----
+**From PNG to the game:**
+1. Download each facing into your scratchpad, never into the repo.
+2. Convert it with **`tools/png2rows.py`** (standard library only; one `--width` a run, so straight facings and diagonals are two runs):
+   `python3 tools/png2rows.py --width 16 --name 0 south.png --name 2 west.png --name 4 north.png --name 6 east.png`
+   - **No semi-transparent pixels:** alpha 128 or more is fully there, anything less is clear (it reports how many it had to decide).
+   - It crops to what is drawn, and `--width`/`--height` narrow it by taking out the interior columns (rows) most like their neighbour, so outlines stay whole.
+   - **Every colour snaps to the nearest `PX` letter**, read from `index.html`. A colour with no letter within `--max` (RGB distance, default 28) gets a new lowercase letter, reported as `NEW`: add it to `PX` with a comment, **say so in the PR**, and pass `--pal <letter>=#hex` on later runs so the letters agree. Free lowercase letters left: `w x z` (uppercase belong to each Keeper's palette).
+   - It prints the rows as JavaScript; paste them into the piece's art table and draw them with `tRows()`.
+3. **Match the town's art** (`EXPANSION3_TOWN.md` §0.4): no anti-aliasing, outlines one shade darker than the fill (pure dark only on characters), and the town's sizes. A piece is **16 px wide for each tile of its footprint**, up to 24 on a diagonal, and its height rises above the tile like the other props (it stands on its footprint's bottom edge: the Armchair is 26 to 28 tall over one tile). Crop or narrow to fit; where narrowing leaves a seam or an outline breaks, hand-touch it, in the rows or with `pixelart_workbench` (`inspect`, `lint`, `repair`) on the PNG before converting.
+4. **Look at it in the 14-device shots** (`cd tests && npm run shots`) and up close, at every facing. Fix stray pixels yourself rather than sending the art back, and list the fixes in the PR.
 
 ## 4. The workflow for every step
 
@@ -79,10 +88,11 @@ Numbers marked *shape* are for playtest.
 **Goal:** every piece turns in 45° steps.
 
 **Build:**
-- A **⟳** button while a piece is lifted (and a tap on the lifted piece itself) turns it one step clockwise; long-press turns it back. Saved as `f` (0 to 7) on each piece: 0 S (facing the camera), 1 SW, 2 W, 3 NW, 4 N, 5 NE, 6 E, 7 SE; old pieces are `f:0`. Art is 16×16 per facing (24×24 allowed for diagonals that need it).
+- A **⟳** button while a piece is lifted (and a tap on the lifted piece itself) turns it one step clockwise; long-press turns it back. Saved as `f` (0 to 7) on each piece: 0 S (facing the camera), 1 SW, 2 W, 3 NW, 4 N, 5 NE, 6 E, 7 SE; old pieces are `f:0`. Art is 16 px wide for each tile of footprint facing straight, up to 24 on a diagonal, and as tall as it needs above its tile like any prop (§3).
 - Each art entry declares `faces`: 1 (round things, no change), 2 (mirror), 4, or 8. Missing facings fall back to the nearest drawn one, mirrored where it fits.
 - **Diagonal footprints:** a piece at 45° covers its own tile mask (declared per piece). In Grid mode a diagonal piece snaps to tile centres; in Free mode it uses the mask at its pixel position.
-- Draw 8 facings for the Armchair (use Gemini's grid if Criss brought one, §3) and 4 for the Banker's Desk, Stove and Bookshelf. Fences and paths in town get 2 (mirror) or 4.
+- Draw 8 facings for the Armchair (Criss's PixelLab object "Lodge Armchair", `d2cde9bc-8019-4377-ae95-49526e49995a`, through §3) and 4 for the Banker's Desk, Stove and Bookshelf. Fences and paths in town get 2 (mirror) or 4.
+- *As built (#138):* new pieces go down facing south; a stored piece keeps its facing. Paths and fences (`snap`) turn a quarter at a time. A footprint keeps its top-left as it turns, so eight turns put it back exactly. A facing not drawn: east is west mirrored, a two-way piece's back is its front, and a diagonal shows the straight facing beside it nearer the front.
 
 **Teach:** the tip from step 1 grows a line about ⟳.
 
@@ -104,7 +114,7 @@ Numbers marked *shape* are for playtest.
 **Teach:** a tip per room. **Test** `tests/t/lodgerooms.test.js`. Devices: each room on each screen.
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 3) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 3 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 4.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 3) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 3 exactly as the runbook says, following its §4 workflow. Tick the status table (step 2 is #138). Any new art (the hatch, the ladder, the attic's round window) comes from PixelLab through runbook §3 and `tools/png2rows.py`. Each room's furniture turns like the main room's (`f`, `faces`, `pieceFoot()`). End with the prompt for step 4.
 
 ### Step 4: The catalogue (Claude: Sonnet 5.5, high)
 
