@@ -59,6 +59,24 @@ The Croupier plays knucklebones at the Drowned Oar for **10** timber or tallow (
 | 1 curio | 20 tallow |
 | 40 tallow | 1 curio |
 
+## Saltmouth: the Keeper's Lodge (step 9)
+
+Restoring the Lodge costs **30 timber, 15 iron**. Inside, one floor and one wall cover the room (changing either gives back the one replaced); furniture stands where it is set and comes up for all it cost. With the Lodge standing, two Keepers can work at chores.
+
+| Piece | Kind | Cost | Footprint | Light |
+|---|---|---|---|---|
+| Rotted Ship-Planks | Floor | free | the room |  |
+| Diamond Parquet | Floor | 20 timber | the room |  |
+| Cistern Flagstones | Floor | 20 iron | the room |  |
+| Damp Stone | Wall | free | the room |  |
+| Mahogany Library | Wall | 30 timber | the room |  |
+| Brass-Ribbed Bulkhead | Wall | 30 iron | the room |  |
+| Banker’s Desk | Furniture | 12 timber, 4 iron | 2×1 | 30 (green) |
+| Cast-Iron Stove | Furniture | 10 iron, 2 tallow | 1×1 | 36 |
+| Ritual Rug | Furniture | 8 tallow, 1 curio | 3×3 (walked over) |  |
+| Armchair | Furniture | 8 timber, 2 tallow | 1×1 |  |
+| Bookshelf | Furniture | 10 timber | 1×1 |  |
+
 ## Creatures
 
 | Key | Name | HP | Speed | Oil | Essence | Radius | Traits |

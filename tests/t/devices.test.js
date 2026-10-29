@@ -75,6 +75,31 @@ const DEV=[
     await p.screenshot({path:(process.argv[3]||'.')+'/town-talk-'+nm+'.png'});
     await p.evaluate(()=>{document.querySelector('#mActions').querySelectorAll('button')[2].click(); __t.setDev(false); __t.townKeepers();});
     if(!(keepers.n===4&&keepers.label==='Talk to Dr. Lucan Voss'&&keepers.out&&keepers.one&&keepers.still&&keepers.talk))console.log('FAIL '+nm+': Keepers on this screen',JSON.stringify(keepers));
+    /* the Keeper's Lodge (step 9), in developer mode so nothing is written: inside, Leave the Lodge sits where Descend the stair
+       does, inside the safe area and a thumb; the room fills its canvas at whole pixels; the build tray's eleven chips are thumbs
+       inside the safe area, and opening it moves nothing in the HUD */
+    const lodge=await p.evaluate(ins=>{
+      ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44;
+      __t.setDev(true); const D=__t.townData(); D.res={timber:500,iron:500,tallow:500,curios:50}; __t.townRestoreLodge();
+      D.lodge.floor='parquet'; D.lodge.wall='library'; D.lodge.furn=[{id:'desk',c:1,r:3},{id:'rug',c:3,r:4},{id:'stove',c:8,r:5},{id:'chair',c:7,r:7}];
+      const o={enter:__t.lodgeEnter()}; const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
+      __t.townFrame(1/30);
+      const cv=document.getElementById('townCv'), act=document.getElementById('townAct'), a=q(act), hud0=[q(document.getElementById('townBack')),q(document.getElementById('townBuild')),q(document.getElementById('townRes'))];
+      o.label=act.textContent; o.act=inside(a)&&thumb(a); o.cover=JSON.stringify(q(cv))===JSON.stringify([0,0,innerWidth,innerHeight].map(Math.round))||q(cv)[2]>=innerWidth;
+      document.getElementById('townBuild').click(); while(!tw.hidden)document.getElementById('townCard').click();
+      const chips=[...document.querySelectorAll('#townTrow [data-lodge]')].map(q), hud1=[q(document.getElementById('townBack')),q(document.getElementById('townBuild')),q(document.getElementById('townRes'))];
+      o.n=chips.length; o.chips=chips.every(c=>c[3]-c[1]>=44&&c[2]-c[0]>=44&&c[3]<=innerHeight-ins.bottom+1)&&inside(chips[0])&&inside(q(document.getElementById('townTmsg')));
+      o.still=JSON.stringify(hud0)===JSON.stringify(hud1);
+      return o;},ins);
+    await p.waitForTimeout(150);
+    await p.screenshot({path:(process.argv[3]||'.')+'/lodge-build-'+nm+'.png'});
+    await p.evaluate(()=>__t.townBuildSet(false)); await p.waitForTimeout(100);
+    await p.screenshot({path:(process.argv[3]||'.')+'/lodge-'+nm+'.png'});
+    await p.evaluate(()=>{__t.lodgeLeave(); __t.setDev(false); __t.townKeepers();});
+    if(!(lodge.enter&&lodge.label==='Leave the Lodge'&&lodge.act&&lodge.cover&&lodge.n===11&&lodge.chips&&lodge.still))console.log('FAIL '+nm+': the Lodge on this screen',JSON.stringify(lodge));
     /* Step 6: workshop cards scroll on short phones; gifts keep the board fixed. */
     await p.evaluate(()=>{__t.setDev(true); __t.townBuildSet(true);});
     const materials=p.locator('#townMaterials'); await materials.scrollIntoViewIfNeeded();
