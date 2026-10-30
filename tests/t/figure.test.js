@@ -54,6 +54,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     for(let t=0;t<3;t+=.05)idle.add(L.idle.indexOf(T.townFigPick(L,false,0,t,false)));
     o.idle=[...idle].sort().join();
     o.still=[0,.4,1.1,2.7].every(t=>T.townFigPick(L,false,0,t,true)===L.idle[0]);
+    /* a clock below zero still picks a frame (loops.test.js runs the square's clock backwards) */
+    o.neg=!!T.townFigPick(L,false,0,-2.3,false)&&!!T.townFigPick(L,true,-1,0,false);
     return o;});
   ok(c.sizes&&c.alpha&&c.edge,'every frame 16 by 24, no anti-aliasing, its edge pure dark',c);
   ok(c.steps,'the three steps everything else reads are still there, the first his idle’s still',c);
@@ -62,6 +64,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(c.others,'every other Keeper and soul is still made of the hand rows',c);
   ok(c.walk==='0,1,2,3,4,5','a stride pair walks through all six frames in order',c);
   ok(c.idle==='0,1,2,3'&&c.still,'standing he breathes in four frames; Lite and Reduce Motion hold the first',c);
+  ok(c.neg,'a clock below zero still picks a frame',c);
 
   /* 3. drawn: in the square he is the figure from TOWN_FIG; a freed Ambrose at his post breathes (another Keeper carried) */
   const sq=await p.evaluate(()=>{const T=__t; T.setDev(true); T.townReset(); T.townOpen();
