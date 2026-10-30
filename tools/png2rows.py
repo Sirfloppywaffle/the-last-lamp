@@ -103,7 +103,14 @@ def dist(a, b):
 def kit_palette(name):
     """a Keeper's letters (TOWN_KITS or TOWN_SOULS[...].art), then every PX letter the Keeper does not take over"""
     src = open(os.path.join(ROOT, 'index.html'), encoding='utf8').read()
-    m = re.search(r"\n  %s:\{(?:art:\{)?pal:\{(.*?)\}" % re.escape(name), src, re.S)
+    # a Keeper's pal opens its entry; a soul's sits in its art, after its texts: the first pal:{ before the next entry
+    # (other tables have entries of the same name, ROSTER's and TOWN_FIG's: the first entry with a pal is the one)
+    m = None
+    for e in re.finditer(r"\n  %s:\{" % re.escape(name), src):
+        end = re.compile(r"\n  [A-Za-z]\w*:\{").search(src, e.end())
+        m = re.compile(r"(?<![A-Za-z])pal:\{(.*?)\}", re.S).search(src, e.end(), end.start() if end else len(src))
+        if m:
+            break
     if not m:
         sys.exit('index.html: no Keeper or soul called %s with a pal' % name)
     own = {k: hexrgb(v) for k, v in re.findall(r"'?([0-9a-zA-Z])'?:'(#[0-9a-fA-F]{6})'", m.group(1))}
