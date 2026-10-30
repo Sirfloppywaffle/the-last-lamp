@@ -14,7 +14,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
 
   /* 1. the data: about thirty pieces in five sets, something in each for the floor, the wall and a surface; two to four colourways
      each; art for every piece on the town's palette, 16 pixels a tile */
-  const d=await p.evaluate(()=>{const T=__t, I=T.LODGE_ITEMS, out={}, furn=Object.keys(I).filter(k=>I[k].k==='furn'), cat=furn.filter(k=>I[k].set!=='rooms');
+  const d=await p.evaluate(()=>{const T=__t, I=T.LODGE_ITEMS, out={}, furn=Object.keys(I).filter(k=>I[k].k==='furn'&&!I[k].book), cat=furn.filter(k=>I[k].set!=='rooms');
     out.n=cat.length; out.sets=Object.keys(T.LODGE_SETS);
     out.parts=out.sets.filter(s=>s!=='rooms'&&s!=='trophy').map(s=>{const f=furn.filter(k=>I[k].set===s); return [s,f.filter(k=>!I[k].mount&&!I[k].small).length,f.filter(k=>I[k].mount).length,f.filter(k=>I[k].small).length,f.filter(k=>I[k].top).length];});
     out.dyes=furn.filter(k=>{const n=(I[k].dyes||[]).length+1; return n<2||n>4||!(I[k].dyes||[]).every(y=>T.LODGE_DYES[y]);});
@@ -100,17 +100,17 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const res={timber:0,iron:0,tallow:0,curios:0}, bad=T.lodgeRoomFix({furn:[{id:'wheel',c:2,r:0},{id:'baro',c:6,r:5},{id:'portrait',c:6,r:0},{id:'portrait',c:8,r:0,x:130,y:0},{id:'candle',c:5,r:5},{id:'anchor',c:4,r:0}]},'main',res,true);
     o.fix=[bad.furn.map(e=>e.id+e.c+','+e.r+(e.x!=null?'@'+e.x:'')).join(' '),res.timber,res.iron,res.tallow];
     return o;})()`);
-  ok(wm.main.join()==='ok,ok,ok,The ladder is in the way.,The shelf is in the way.,The shelf is in the way.,The sconce is in the way.,The sconce is in the way.','the main room’s wall takes a mount at three places; the ladder, the shelf and the sconces keep theirs',wm.main);
-  ok(wm.row0===''&&/already/.test(wm.dup)&&/shelf/.test(wm.near),'a mount goes up, and no two overlap',wm);
+  ok(wm.main.join()==='ok,ok,ok,The ladder is in the way.,ok,ok,Something hangs there already.,Something hangs there already.','the main room’s wall takes a mount anywhere but the ladder and the sconces it is built with (pieces now, which hang there until moved)',wm.main);
+  ok(wm.row0===''&&/already/.test(wm.dup)&&/already/.test(wm.near),'a mount goes up, and no two overlap',wm);
   ok(wm.at.join()==='3,0,true,true'&&wm.tiles,'on the grid a mount stands on its wall tiles, in the wall’s first row',wm.at);
   ok(wm.solid.every(x=>x)&&wm.floorUnder==='','a mount holds wall tiles and no floor: the floor below it is as free as before',wm);
-  ok(wm.free.join()==='ok,The sconce is in the way.,The sconce is in the way.,The sconce is in the way.,ok,The wall ends there.,The wall ends there.,The sconce is in the way.','Free hangs to the pixel, and the wall’s ends and lamps still hold',wm.free);
-  ok(wm.cellar.join()==='ok,ok,The sconce is in the way.,The ladder is in the way.,ok','the Cellar’s wall takes a mount; its ladder and its sconce keep theirs',wm.cellar);
+  ok(wm.free.join()==='ok,Something hangs there already.,Something hangs there already.,Something hangs there already.,ok,The wall ends there.,The wall ends there.,Something hangs there already.','Free hangs to the pixel, and the wall’s ends and lamps still hold',wm.free);
+  ok(wm.cellar.join()==='ok,ok,ok,The ladder is in the way.,ok','the Cellar’s wall takes a mount; its ladder keeps its place (this room is not seeded here, so no sconce hangs)',wm.cellar);
   ok(wm.attic.join()==='ok,ok,The roof is in the way.,The window is in the way.,The roof is in the way.','the Attic’s wall takes a mount between its roof and its window',wm.attic);
-  ok(wm.cellarPut===''&&wm.atticPut===''&&wm.cellarFurn==='wheel1,0'&&wm.atticFurn==='wheel3,0'&&wm.mainStill==='wheel,stove','a mount hangs in each room, and each room keeps its own',wm);
+  ok(wm.cellarPut===''&&wm.atticPut===''&&wm.cellarFurn==='wheel1,0'&&wm.atticFurn==='wheel3,0'&&wm.mainStill==='grimoire,sconce,sconce,wheel,stove','a mount hangs in each room, and each room keeps its own',wm);
   ok(wm.dry,'a mount in the Cellar hangs above the brine, dry',wm.dry);
-  ok(wm.saved.join()==='0,1,1','a mount is saved on the wall and survives a reload',wm.saved);
-  ok(wm.fix[0]==='baro6,0'&&wm.fix.slice(1).join()==='16,10,5','a saved wall that no longer takes a mount takes it up and pays it back: one on the ladder, one over another, one past the wall’s end, one on the shelf, a loose small thing; one on the floor row hangs on the wall',wm.fix);
+  ok(wm.saved.join()==='0,2,1','a mount is saved on the wall and survives a reload',wm.saved);
+  ok(wm.fix[0]==='baro6,0 anchor4,0 sconce1,0 sconce7,0'&&wm.fix.slice(1).join()==='16,2,5','a saved wall that no longer takes a mount takes it up and pays it back: one on the ladder, one over another, one past the wall’s end, a loose small thing; one on the floor row hangs on the wall; the shelf’s old place is open wall now, and the room’s own sconces are seeded',wm.fix);
 
   /* 4. small things on surfaces: half-tile slots along a piece's top; the nearest free one; the host carries them */
   const sf=await p.evaluate(`(()=>{const T=__t, o={}, D=(${setup})('main'); T.townBuildSet(true);
@@ -144,7 +144,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(sf.props===10&&sf.lights===1,'the host and each small thing are drawn, and a candle or a lantern lights the room',sf);
   ok(sf.lifted&&sf.artN===5&&sf.props2===sf.props-5,'lifting the table lifts what is on it',sf);
   ok(sf.moved.join()==='5,5,4','it comes down where it is put, with all four',sf.moved);
-  ok(sf.stored[0]==='desk'&&sf.stored[1]===4&&sf.stored[2]&&sf.stored[3]===0&&sf.back[0]===4&&sf.back[1]===0,'Store keeps the table with all that was on it, and what it cost; it goes back down for nothing',sf);
+  ok(sf.stored[0]==='desk'&&sf.stored[1]===4&&sf.stored[2]&&sf.stored[3]===3&&sf.back[0]===4&&sf.back[1]===0,'Store keeps the table with all that was on it, and what it cost; it goes back down for nothing',sf);
   ok(sf.salvage,'Salvage gives back all of it: the table and everything on it',sf);
 
   /* 4b. light: each set has a wall light, and the Library and the Chapel a standing one; they light the room from where they are,
@@ -156,7 +156,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.lodgePlace('shiplamp',3,0); T.lodgePlace('sconce',6,0); T.lodgePlace('floorlamp',2,5); T.lodgeGo('attic'); T.lodgePlace('walllamp',3,0); T.lodgePlace('anemone',6,0);
     const A=T.lodgeArt(); o.attic=A.lights.filter(l=>l.col==='cold').length; o.steady=A.lights.filter(l=>l.f<=.2&&l.col!=='cold').length;
     T.lodgeGo('main'); const M=T.lodgeArt(); o.main=M.lights.length-n0; o.em=M.em.length;
-    const sc=T.lodgeRoom().furn.find(e=>e.id==='sconce'), a=T.lodgeFA('sconce',0); o.pos=[Math.round(M.lights.find(l=>Math.abs(l.r-28)<.1).x)===sc.c*16+a.dx+a.lx];
+    const sc=T.lodgeRoom().furn.find(e=>e.id==='sconce'&&!e.out), a=T.lodgeFA('sconce',0); o.pos=[Math.round(M.lights.find(l=>Math.abs(l.r-28)<.1).x)===sc.c*16+a.dx+a.lx];
     /* a lit mount is still a mount: wall tiles, no floor */
     o.solid=[T.townSolid(6,2)];
     return o;})()`);
@@ -206,7 +206,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.lodgeGo('main'); o.main=T.lodgeRoom().furn.length;
     T.townSave(); T.townReset(); const L=T.townData().lodge; o.saved=[L.rooms.cellar.furn[0].on.map(q=>q.id+q.s).join(),L.rooms.attic.furn[0].on.map(q=>q.id+q.s).join()];
     return o;})()`);
-  ok(rm.cellar[0]===''&&rm.cellar[1]===''&&rm.cellar[2]===2&&rm.attic[2]===2&&rm.main===0&&rm.saved.join()==='lantern0,books1 lantern0,books1'.replace(' ',','),'small things stand on a chest in the Cellar and the Attic, each in its own room, and are saved there',rm);
+  ok(rm.cellar[0]===''&&rm.cellar[1]===''&&rm.cellar[2]===2&&rm.attic[2]===2&&rm.main===3&&rm.saved.join()==='lantern0,books1 lantern0,books1'.replace(' ',','),'small things stand on a chest in the Cellar and the Attic, each in its own room, and are saved there',rm);
   ok(rm.cellar[3]===1&&rm.attic[3]===1,'a lantern lights the room it stands in: one more light in each room, and a book none',rm);
 
   /* 7. dyes: the next colourway for tallow, back to the piece’s own for the tallow back; a swap of palette letters */
@@ -252,7 +252,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     chip('wheel').click(); T.bldTap(2,6); o.ladder=T.lodgeRoom().furn.filter(e=>e.id==='wheel').length;
     /* tapped on the wall, a mount lifts and slides along it, held to the wall; Free hangs it to the pixel */
     T.TWN.pick=null; T.TWN.tapPx=[6*16+8,20]; T.bldTap(6,1); o.mountLift=!!T.TWN.lift&&T.TWN.lift.d===w; T.bldLiftTo(40,90); o.slide=[T.TWN.lift.x,T.TWN.lift.y,T.TWN.lift.why];
-    T.bldDrop(); o.dropped=[w.c,w.r,w.x==null]; T.townData().free=true; T.TWN.tapPx=[3*16+8,20]; T.bldTap(3,1); T.bldLiftTo(98,60); T.bldDrop(); o.free=[w.c,w.r,w.x,w.y]; T.townData().free=false;
+    T.bldDrop(); o.dropped=[w.c,w.r,w.x==null]; T.townData().free=true; T.TWN.tapPx=[3*16+8,20]; T.bldTap(3,1); T.bldLiftTo(90,60); T.bldDrop(); o.free=[w.c,w.r,w.x,w.y]; T.townData().free=false;
     document.getElementById('townTmsg').textContent='';
     T.TWN.pick=null; chip('chest').click(); T.bldTap(4,5); const ch=T.lodgeRoom().furn.find(e=>e.id==='chest');
     chip('lantern').click(); o.pickLantern=T.TWN.pick; const sp=T.lodgeSlotPoint(ch,0); T.TWN.tapPx=[sp[0],sp[1]-3]; T.bldTap(4,5); o.lantern=ch.on&&ch.on.map(q=>q.id).join();
@@ -267,7 +267,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   console.log(JSON.stringify(ui));
   ok(ui.dyeIdle[0]===false&&ui.dyeIdle[1]===true,'in the Lodge the Dye button is there, and idle until a piece is lifted',ui.dyeIdle);
   ok(ui.pickWheel==='wheel'&&/tap the wall/.test(ui.say)&&ui.wheel&&ui.wheel.join()==='6,0'&&ui.ladder===1,'a mount chosen on the tray goes on the wall in the column tapped, wherever on the room; not where something is',ui);
-  ok(ui.mountLift&&ui.slide.join()==='48,0,'&&ui.dropped.join()==='3,0,true'&&ui.free.join()==='6,0,98,0','a tap on a mount lifts it, it slides along the wall and never off it; in Free it hangs to the pixel',ui);
+  ok(ui.mountLift&&ui.slide.join()==='48,0,'&&ui.dropped.join()==='3,0,true'&&ui.free.join()==='6,0,90,0','a tap on a mount lifts it, it slides along the wall and never off it; in Free it hangs to the pixel',ui);
   ok(ui.pickLantern==='lantern'&&ui.lantern==='lantern','a small thing chosen on the tray is set on the surface tapped',ui);
   ok(ui.lifted&&/townDrop/.test(ui.bar)&&/townDye/.test(ui.bar)&&ui.dyeLive.join()==='false,false'&&ui.dyed==='tar','a lifted piece shows Dye beside ⟳, live when it has colourways',ui);
   ok(ui.turnOff[0]===true&&ui.turnOff[1]===true,'a small thing lifted cannot be turned',ui.turnOff);
@@ -278,17 +278,17 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const a=T.townFix({res:{timber:0,iron:0,tallow:0,curios:0},lodge:{built:true,floor:'parquet',wall:'library',furn:[{id:'desk',c:2,r:4},{id:'stove',c:5,r:5,f:2},{id:'rug',c:5,r:6},{id:'chair',c:2,r:7,f:5},{id:'shelf',c:8,r:3}]}});
     const o={furn:a.lodge.furn.map(e=>e.id+e.c+','+e.r+'/'+(e.f|0)+(e.dye||'')+(e.on?'+':'')).join(' '),bp:a.blueprints};
     const b=T.townFix({res:{timber:0,iron:0,tallow:0,curios:0},blueprints:['coral','fisher','x'],lodge:{built:true,furn:[{id:'desk',c:2,r:4,dye:'nope',on:[{id:'candle',s:9},{id:'wheel',s:0},{id:'candle',s:1,dye:'bleach'},{id:'books',s:1},{id:'ink',s:0,dye:'verd'}]},{id:'chest',c:6,r:4,dye:'tar'}]},store:[{s:'lodge',id:'chest',dye:'bad'},{s:'lodge',id:'chair',dye:'wine'},{s:'town',id:'lamp',dye:'wine'},{s:'lodge',id:'desk',on:[{id:'candle',s:3},{id:'candle',s:3},{id:'books',s:7}]}]});
-    o.b=[b.blueprints.join(),b.lodge.furn[0].dye||'-',(b.lodge.furn[0].on||[]).map(q=>q.id+q.s+(q.dye||'')).join(),b.lodge.furn[1].dye,b.res.timber,b.res.curios,b.res.tallow,b.res.iron];
+    const bf=b.lodge.furn.filter(d=>d.id!=='grimoire'&&d.id!=='sconce'); o.b=[b.blueprints.join(),bf[0].dye||'-',(bf[0].on||[]).map(q=>q.id+q.s+(q.dye||'')).join(),bf[1].dye,b.res.timber,b.res.curios,b.res.tallow,b.res.iron];
     o.store=b.store.map(e=>e.id+(e.dye||'-')+(e.on?e.on.length:0)).join();
     return o;});
   console.log(JSON.stringify(old));
-  ok(old.furn==='desk2,4/0 stove5,5/2 rug5,6/0 chair2,7/5 shelf8,3/0'&&old.bp.length===0,'a Lodge from before the catalogue loads exactly as it was',old);
+  ok(old.furn==='grimoire4,2/0 desk2,4/0 stove5,5/2 rug5,6/0 chair2,7/5 shelf8,3/0 sconce1,0/0 sconce7,0/0'&&old.bp.length===0,'a Lodge from before the catalogue loads exactly as it was',old);
   ok(old.b[0]==='coral'&&old.b[1]==='-'&&old.b[2]==='candle1bleach,ink0'&&old.b[3]==='tar','a dye or a slot that is not valid is dropped; one that is stays',old.b);
   ok(old.b[4]===3+6&&old.b[5]===0&&old.b[6]===1&&old.b[7]===2,'what comes up pays back: a book in a slot taken, a candle past the top, a wheel that is no small thing',old.b);
   const junk=await p.evaluate(()=>{const res={timber:0,iron:0,tallow:0,curios:0}; let err=null, f=null;
     try{f=__t.lodgeRoomFix({furn:[{id:'desk',c:0,r:0,on:[{id:'nope',s:0},null,{id:'candle',s:1}]},{id:'chest',c:7,r:5,on:'x'},{id:'shelf',c:0,r:1,on:{}}]},'main',res,true);}catch(e){err=String(e);}
     return {err,furn:f&&f.furn.map(e=>e.id).join(),tallow:res.tallow,timber:res.timber};});
-  ok(!junk.err&&junk.furn==='chest'&&junk.tallow===1&&junk.timber===22,'a saved piece carrying an item that does not exist, or an `on` that is no list, is repaired, not fatal, and pays back what is real',junk);
+  ok(!junk.err&&junk.furn==='chest,sconce,sconce'&&junk.tallow===1&&junk.timber===22,'a saved piece carrying an item that does not exist, or an `on` that is no list, is repaired, not fatal, and pays back what is real',junk);
   ok(old.store==='chest-0,chairwine0,lamp-0,desk-1','Storage keeps a piece’s colourway and what stood on it, and only valid ones',old.store);
 
   /* 10. taught: a card for wall mounts, small things and dyes, the first time each is chosen; the rules line grows */
