@@ -116,7 +116,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.townSave(); T.townReset(); o.saved=T.townData().lodge.furn.filter(d=>d.id==='grimoire').map(d=>d.c+','+d.r).join();
     return o;})()`);
   ok(gr.start.join()==='4,2,true,.,.','the Grimoire shelf stands where it always stood, as a free piece on open floor',gr.start);
-  ok(!gr.chip&&/already|waits|here/.test(gr.again)||gr.again!=='','it is not on the tray and a second cannot be set down',[gr.chip,gr.again]);
+  ok(!gr.chip&&gr.again!=='','it is not on the tray and a second cannot be set down',[gr.chip,gr.again]);
   ok(gr.lift&&gr.moved&&gr.why===''&&gr.drop===''&&gr.now.join()==='6,6','the shelf is lifted and set down across the room',gr);
   ok(gr.old[0]===''&&gr.old[1]===false&&gr.old[2],'where it stood is open floor, and it is solid where it went',gr.old);
   ok(gr.takeUp===false&&gr.salv===false&&gr.still===1&&gr.haul,'it is never taken up or salvaged',gr);
@@ -216,7 +216,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const st=[]; W.p.x=5.5; W.p.y=8; for(let i=0;i<4;i++){T.townFrame(1/30); st.push(W.bk.s);} o.closing=st;
     for(let i=0;i<40;i++)T.townFrame(1/30); o.shut=W.bk.s;
     const sh=s=>T.lodgeBookFrame(0,s,0).toDataURL(); o.steps=new Set([0,1,2,3,4].map(sh)).size; o.bob=new Set([0,1,2].map(b=>T.lodgeBookFrame(0,4,b).toDataURL())).size;
-    o.em=T.lodgeBookEm(0,4,0,5).width===28&&T.lodgeBookEm(0,4,0,5)!==T.lodgeBookEm(0,0,0,5);
+    o.east=[T.lodgeBookFrame(6,4,0).toDataURL()!==T.lodgeBookFrame(0,4,0).toDataURL(),T.lodgeBookFrame(6,4,0).toDataURL()!==T.lodgeBookFrame(2,4,0).toDataURL()]; o.em=T.lodgeBookEm(0,4,0,5).width===28&&T.lodgeBookEm(0,4,0,5)!==T.lodgeBookEm(0,0,0,5);
     return o;})()`);
   ok(pd.foot==='1x1,1x1,1x1,1x1','the Grimoire’s podium is one tile',pd.foot);
   ok(pd.faces.every(Boolean),'it turns: front, side and back differ, east mirrors west, a diagonal shows the front',pd.faces);
@@ -224,6 +224,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(pd.turned===2&&pd.f===2,'and it turns',pd);
   ok(pd.chip[0]&&pd.chip[1],'stored, its chip draws in Storage',pd.chip);
   ok(pd.far===0&&pd.near===4&&pd.closing[0]>0&&pd.shut===0,'the book is shut away from it, opens when you come near, and shuts again in steps when you leave',pd);
+  ok(pd.east[0]&&pd.east[1],'the book seen from the east is the side view mirrored, not the front',pd.east);
   ok(pd.steps===5&&pd.bob>=2&&pd.em,'five steps from shut to open, a bob, and an aura frame of its own',pd);
 
   ok(!errs.length,'no page errors',errs);
