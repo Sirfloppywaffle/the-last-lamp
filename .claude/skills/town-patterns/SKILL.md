@@ -83,6 +83,7 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 
 - [ ] **A figure from PixelLab** is a `TOWN_FIG` entry: `walk` and `idle`, each `{d, u, r}` lists of frames (rows up to 16 by 24, stood on the bottom row; `l` is `r` mirrored), on the Keeper's own letters: `png2rows.py --kit <name> --frames N --width 16 --height 24` on a strip (runbook §3). `townSprites()` puts them on `TOWN_SPR[k][f].walk`/`.idle` and keeps the three steps (`[idle0, walk1, walk(1+n/2)]`), so `town.test.js` still counts 84 frames; `townFigPick()` is the only place that chooses one.
 - [ ] **What glows** is the Keeper's `em` letters, drawn again after the dark. Mark only the thing that burns with them: gold elsewhere goes on a letter of the Keeper's own that does not glow (Ambrose's buckle is `Y`).
+- [ ] PixelLab's template walk and idle redraw the head every frame; a pixel's wobble reads as the face swelling. Lock the head rows to the standing frame in every frame of a facing (`figure.test.js` checks it).
 - [ ] PixelLab's template walk and idle drop what the figure holds: lay it back from the still in every frame and check the contact sheet (`figure.test.js` saves `figure-compare.png`).
 
 ## Tests

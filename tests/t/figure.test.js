@@ -3,6 +3,7 @@
 //   palette letters (TOWN_KITS.lamplighter.pal) or the outline's 0, no bigger than 16 by 24.
 // - Compiled, every frame is 16 by 24, fully there or not at all, its edge pure dark; his lantern glows through the dark on its
 //   own layer. The three steps every other reader takes (town.test.js counts them) are still there.
+// - His head is the same in every frame of a facing (Criss on #144); only his body moves.
 // - Walking runs every frame of the walk once a stride pair; standing, he breathes in the idle by the clock; Lite and Reduce
 //   Motion stand him still on the idle's first frame. Freed Keepers standing at their posts breathe the same way.
 // - Everyone else is still made of the hand rows.
@@ -26,10 +27,15 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.size=['walk','idle'].every(k=>['d','u','r'].every(f=>G[k][f].every(fr=>fr.length<=24&&fr.every(r=>r.length===fr[0].length&&r.length<=16))));
     /* every frame of one facing's walk is cut to the same box, so he never jitters on the spot */
     o.box=['walk','idle'].every(k=>['d','u','r'].every(f=>G[k][f].every(fr=>fr.length===G[k][f][0].length&&fr[0].length===G[k][f][0][0].length)));
+    /* one head a facing (Criss on #144: a frame filled his face out a pixel each side): the nine rows from the hat's top are the same
+       in every walk and idle frame */
+    const top=fr=>fr.findIndex(r=>/[^.]/.test(r)), head=fr=>fr.slice(top(fr),top(fr)+9).join('/');
+    o.head=['d','u','r'].map(f=>new Set(G.walk[f].concat(G.idle[f]).map(head)).size);
     const em=T.TOWN_KITS.lamplighter.em; o.lantern=['d','u','r'].map(f=>G.idle[f][0].some(r=>[...r].some(ch=>em.includes(ch))));
     return o;});
   ok(d.keys==='lamplighter','only Ambrose is drawn whole: the pilot',d);
   ok(/^6,6,6;4,4,4$/.test(d.n),'a walk of six frames and an idle of four, for each facing drawn',d);
+  ok(d.head.every(n=>n===1),'his head is the same in every frame of a facing: only his body walks and breathes',d);
   ok(d.letters&&d.size&&d.box,'every frame on his own letters (and the outline’s 0), no bigger than 16 by 24, one box a facing',d);
   ok(d.lantern.every(Boolean),'his lantern is in every facing, on the letters that glow (em)',d);
 
