@@ -14,9 +14,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
 
   /* 1. the data: about thirty pieces in five sets, something in each for the floor, the wall and a surface; two to four colourways
      each; art for every piece on the town's palette, 16 pixels a tile */
-  const d=await p.evaluate(()=>{const T=__t, I=T.LODGE_ITEMS, out={}, furn=Object.keys(I).filter(k=>I[k].k==='furn');
-    out.n=furn.length; out.sets=Object.keys(T.LODGE_SETS);
-    out.parts=out.sets.filter(s=>s!=='rooms').map(s=>{const f=furn.filter(k=>I[k].set===s); return [s,f.filter(k=>!I[k].mount&&!I[k].small).length,f.filter(k=>I[k].mount).length,f.filter(k=>I[k].small).length,f.filter(k=>I[k].top).length];});
+  const d=await p.evaluate(()=>{const T=__t, I=T.LODGE_ITEMS, out={}, furn=Object.keys(I).filter(k=>I[k].k==='furn'), cat=furn.filter(k=>I[k].set!=='rooms');
+    out.n=cat.length; out.sets=Object.keys(T.LODGE_SETS);
+    out.parts=out.sets.filter(s=>s!=='rooms'&&s!=='trophy').map(s=>{const f=furn.filter(k=>I[k].set===s); return [s,f.filter(k=>!I[k].mount&&!I[k].small).length,f.filter(k=>I[k].mount).length,f.filter(k=>I[k].small).length,f.filter(k=>I[k].top).length];});
     out.dyes=furn.filter(k=>{const n=(I[k].dyes||[]).length+1; return n<2||n>4||!(I[k].dyes||[]).every(y=>T.LODGE_DYES[y]);});
     out.noSet=Object.keys(I).filter(k=>!T.LODGE_SETS[I[k].set]);
     out.noArt=furn.filter(k=>k!=='chair'&&!T.LODGE_ROWS[k]);
@@ -33,7 +33,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     return out;});
   console.log(JSON.stringify({n:d.n,parts:d.parts}));
   ok(d.n>=30&&d.n<=40,'about thirty pieces in all',d.n);
-  ok(d.sets.join()==='rooms,fisher,library,chapel,observ,coral','five themed sets, and the Lodge’s own floors and walls',d.sets);
+  /* step 5 adds the trophies' own page after the five sets, and the Stone Fireplace to the Lodge's own (not a catalogue piece) */
+  ok(d.sets.join()==='rooms,fisher,library,chapel,observ,coral,trophy','five themed sets, the Lodge’s own floors, walls and fireplace, and the trophies (step 5)',d.sets);
   ok(d.parts.every(([s,fl,m,sm])=>fl>=1&&m>=1&&sm>=1)&&d.parts.every(x=>x[4]>=0),'every set has something for the floor, the wall and a surface',d.parts);
   ok(d.parts.some(x=>x[4]>=1),'surfaces exist',d.parts);
   ok(!d.dyes.length&&!d.noSet.length&&!d.noArt.length&&d.tops.every(x=>x[1])&&!d.costs.length,'every piece: a set, art, two to four colourways, its slots drawn for every facing, town materials only',d);
@@ -73,7 +74,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(/locked/.test(s.pew)&&/Peddler/.test(s.pew)&&/Peddler/.test(s.pewSmall),'a locked set’s piece is refused, and says whom to ask',s);
   ok(s.chapel&&s.pewOk==='','a blueprint opens its set',s);
   ok(s.fix.join()==='chapel,coral'&&s.kept.join()==='chapel','ll-town.blueprints keeps only sets that are bought, once each, and survives a reload',s);
-  ok(s.first==='townSet'&&s.set1==='fisher'&&/^stove,chest,wheel,baro,shiplamp,anchor,lantern,bottle$/.test(s.chips1)&&/^planks,parquet,flags,damp,library,brass$/.test(s.chips0),'the tray’s first chip is the set on show; each set shows its own pieces',s);
+  ok(s.first==='townSet'&&s.set1==='fisher'&&/^stove,chest,wheel,baro,shiplamp,anchor,lantern,bottle$/.test(s.chips1)&&/^planks,parquet,flags,damp,library,brass,hearth$/.test(s.chips0),'the tray’s first chip is the set on show; each set shows its own pieces',s);
   ok(s.set3==='chapel'&&s.lockedChips==='8/8'&&s.lockImgs===8&&s.lockedA===0,'a set not yet bought shows locked, a padlock on each piece',s);
   ok(s.pickLocked===null&&/Peddler/.test(s.say)&&/Peddler/.test(s.setSay),'tapping a locked piece chooses nothing and says "Ask the Peddler"',s);
   ok(s.dev.join()==='true,true,true'&&s.devPlace===''&&s.devSame&&!s.real,'developer mode opens every set, and writes nothing to ll-town',s);
@@ -139,7 +140,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(sf.p1===''&&sf.s1==='candle1'&&sf.paid===1,'a small thing goes in the slot nearest the thumb, and costs what it costs',sf);
   ok(sf.p2===''&&sf.s2==='candle1,books0','the next goes in the nearest free slot',sf.s2);
   ok(/Set it on/.test(sf.off)&&/no room/.test(sf.full)&&sf.n===4,'not on a surface, or on a full one, it is refused',sf);
-  ok(sf.props===10&&sf.lights===3,'the host and each small thing are drawn, and a candle or a lantern lights the room',sf);
+  /* step 5: the room's own two sconces are cold until lit, so the candle is the room's one light (props: the sconces still hang) */
+  ok(sf.props===10&&sf.lights===1,'the host and each small thing are drawn, and a candle or a lantern lights the room',sf);
   ok(sf.lifted&&sf.artN===5&&sf.props2===sf.props-5,'lifting the table lifts what is on it',sf);
   ok(sf.moved.join()==='5,5,4','it comes down where it is put, with all four',sf.moved);
   ok(sf.stored[0]==='desk'&&sf.stored[1]===4&&sf.stored[2]&&sf.stored[3]===0&&sf.back[0]===4&&sf.back[1]===0,'Store keeps the table with all that was on it, and what it cost; it goes back down for nothing',sf);
@@ -159,7 +161,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.solid=[T.townSolid(6,2)];
     return o;})()`);
   ok(lt.wall.split(',').sort().join()==='chapel,coral,fisher,library,observ','a wall light for each set',lt);
-  ok(lt.floor.split(',').sort().join()==='candelabra,floorlamp,stove','a standing lamp and a candelabra besides the stove',lt.floor);
+  ok(lt.floor.split(',').sort().join()==='candelabra,floorlamp,hearth,stove','a standing lamp and a candelabra besides the stove (and step 5’s fireplace)',lt.floor);
   ok(lt.main===3&&lt.attic===2&&lt.steady>=1&&lt.pos[0]&&lt.solid[0]===false,'each light the room from where it is: a wall lantern, a sconce and a lamp in the main room (3), a lamp and a cold anemone in the Attic, beside its window’s own cold light; a lit mount blocks no floor',lt);
 
   /* 5. a small thing can be lifted, moved to another surface, stored, and set down from Storage; Undo takes each deed back */

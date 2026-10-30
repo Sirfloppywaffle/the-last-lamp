@@ -76,7 +76,7 @@ const DEV=[
     await p.evaluate(()=>{document.querySelector('#mActions').querySelectorAll('button')[2].click(); __t.setDev(false); __t.townKeepers();});
     if(!(keepers.n===4&&keepers.label==='Talk to Dr. Lucan Voss'&&keepers.out&&keepers.one&&keepers.still&&keepers.talk))console.log('FAIL '+nm+': Keepers on this screen',JSON.stringify(keepers));
     /* the Keeper's Lodge (step 9), in developer mode so nothing is written: inside, Leave the Lodge sits where Descend the stair
-       does, inside the safe area and a thumb; the room fills its canvas at whole pixels; the build tray's six chips (the Lodge's own floors and walls) are thumbs
+       does, inside the safe area and a thumb; the room fills its canvas at whole pixels; the build tray's seven chips (the Lodge's own floors and walls, and step 5's fireplace) are thumbs
        inside the safe area, and opening it moves nothing in the HUD */
     const lodge=await p.evaluate(ins=>{
       ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
@@ -181,10 +181,60 @@ const DEV=[
     await p.waitForTimeout(100);
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-locked-'+nm+'.png'});
     await p.evaluate(()=>{__t.townBuildSet(false); __t.setDev(true); __t.townReset(); __t.townKeepers();});
-    if(!(cat.sets.length===6&&cat.sets.every(x=>x[2]&&x[3]&&x[4])&&cat.sets.map(x=>x[1]).join()==='6,8,10,8,7,7'&&cat.lift&&cat.liftOk))console.log('FAIL '+nm+': the catalogue’s tray on this screen',JSON.stringify(cat));
+    if(!(cat.sets.length===7&&cat.sets.every(x=>x[2]&&x[3]&&x[4])&&cat.sets.map(x=>x[1]).join()==='7,8,10,8,7,7,2'&&cat.lift&&cat.liftOk))console.log('FAIL '+nm+': the catalogue’s tray on this screen',JSON.stringify(cat));
     if(!(locked.n===8&&locked.locks===8&&locked.locked&&locked.thumbs&&/Peddler/.test(locked.say)&&locked.pick===null))console.log('FAIL '+nm+': a set not yet bought, on this screen',JSON.stringify(locked));
+    /* Expansion 4, step 5: light and dark, in developer mode so nothing is written. The same room dark (every light out, the
+       sconces cold) and lit (the fireplace, a sconce, a candle): darker without; standing under a sconce, the button offers to light
+       it, a thumb inside the safe area, and lighting it moves nothing. A trophy's card fits. A screenshot of each */
+    const lit=await p.evaluate(ins=>{
+      ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44;
+      const D=__t.townData(), T=__t.TWN; if(!T.inside)__t.lodgeEnter(); if(__t.lodgeCur()!=='main')__t.lodgeGo('main');
+      const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
+      D.lodge.floor='planks'; D.lodge.wall='damp'; D.lodge.sconces=[];
+      D.lodge.furn=[{id:'hearth',c:6,r:3,out:true},{id:'chair',c:3,r:5,f:1},{id:'desk',c:6,r:6,on:[{id:'candle',s:1,out:true}]},{id:'keeper',c:6,r:0},{id:'primordial',c:1,r:4}];
+      __t.lodgeSync(); T.p.x=5; T.p.y=8.4; T.path=null; T.cx=null; __t.townFrame(1/30);
+      const o={dark:__t.lodgeArt().dark};
+      return o;},ins);
+    await p.waitForTimeout(100);
+    await p.screenshot({path:(process.argv[3]||'.')+'/lodge-dark-'+nm+'.png'});
+    const lit2=await p.evaluate(ins=>{
+      ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44;
+      const T=__t.TWN, L=__t.lodgeRoom(), o={};
+      for(const d of L.furn)if(d.out)__t.lodgeToggle(__t.lodgeActOf(d));
+      const dk=L.furn.find(d=>d.id==='desk'); __t.lodgeToggle(__t.lodgeActOf(dk.on[0],dk));
+      /* stand under the left-hand sconce: the button offers to light it */
+      T.p.x=1.6; T.p.y=2.6; T.path=null; T.near=undefined; __t.townFrame(1/30); __t.townFrame(1/30);
+      const act=document.getElementById('townAct'), a=q(act), hud0=JSON.stringify([q(document.getElementById('townBack')),q(document.getElementById('townBuild')),q(document.getElementById('townRes')),q(document.getElementById('townCv'))]);
+      o.label=act.textContent; o.act=inside(a)&&thumb(a);
+      act.click(); __t.townFrame(1/30); __t.townFrame(1/30);
+      o.sconce=L.sconces.join(); o.label2=act.textContent;
+      /* the button names what it offers, so its own width follows its words; nothing else moves */
+      o.still=hud0===JSON.stringify([q(document.getElementById('townBack')),q(document.getElementById('townBuild')),q(document.getElementById('townRes')),q(document.getElementById('townCv'))])&&inside(q(act));
+      T.p.x=5; T.p.y=6.2; T.cx=null; __t.townFrame(1/30); __t.townFrame(1/30);
+      o.lit=__t.lodgeArt().dark;
+      return o;},ins);
+    await p.waitForTimeout(100);
+    await p.screenshot({path:(process.argv[3]||'.')+'/lodge-lit-'+nm+'.png'});
+    const troph=await p.evaluate(ins=>{
+      ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
+      const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
+      const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
+      const d=__t.lodgeRoom().furn.find(e=>e.id==='keeper'); __t.lodgeTrophyCard(d);
+      const m=document.querySelector('#modal > div')||document.getElementById('modal'), r=q(m), b=[...document.querySelectorAll('#mActions button')].filter(x=>!x.hidden).map(q);
+      return {card:!!r&&r[3]-r[1]<=innerHeight,btn:b.length>0&&b.every(x=>x&&x[3]-x[1]>=40&&x[3]<=innerHeight+1),text:document.getElementById('modal').textContent.slice(0,60)};},ins);
+    await p.waitForTimeout(150);
+    await p.screenshot({path:(process.argv[3]||'.')+'/lodge-trophy-'+nm+'.png'});
+    await p.waitForTimeout(200); await p.evaluate(()=>{__t.TWN.shake=0; const b=document.querySelector('#mActions button'); if(b)b.click();});
+    if(!(lit.dark>lit2.lit+.08&&/^Light the sconce$/.test(lit2.label)&&lit2.act&&lit2.sconce==='0'&&/^Put out the sconce$/.test(lit2.label2)&&lit2.still))console.log('FAIL '+nm+': light and dark in the Lodge on this screen',JSON.stringify({lit,lit2}));
+    if(!(troph.card&&troph.btn&&/Keeper Below/.test(troph.text)))console.log('FAIL '+nm+': a trophy’s card on this screen',JSON.stringify(troph));
     await p.evaluate(()=>{__t.lodgeLeave(); __t.setDev(false); __t.townKeepers();});
-    if(!(lodge.enter&&lodge.label==='Leave the Lodge'&&lodge.act&&lodge.cover&&lodge.n===6&&lodge.chips&&lodge.still))console.log('FAIL '+nm+': the Lodge on this screen',JSON.stringify(lodge));
+    if(!(lodge.enter&&lodge.label==='Leave the Lodge'&&lodge.act&&lodge.cover&&lodge.n===7&&lodge.chips&&lodge.still))console.log('FAIL '+nm+': the Lodge on this screen',JSON.stringify(lodge));
     /* Expansion 4, step 1: the build tools, in developer mode so nothing is written. The tool bar (Pieces, Storage, Grid, Free,
        Undo) and, with a piece lifted, Place, ⟳ (step 2), Cancel and Store: each a thumb inside the safe area, clear of one another, of the
        message line and of the chips; lifting swaps the bars and moves nothing else. Storage's chips are thumbs too */
