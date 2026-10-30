@@ -160,7 +160,7 @@ const DEV=[
       /* a piece lifted: the bar of five */
       T.set='fisher'; __t.townTrayUI(); __t.bldTap(1,3); __t.townFrame(1/30);
       const lb=[...document.querySelectorAll('#townLiftBar .town-tb')].map(q).filter(Boolean), chips=[...document.querySelectorAll('#townTrow .town-chip')].filter(c=>!c.hidden).map(q);
-      o.lift=!!T.lift; o.lb=lb.length; o.liftOk=lb.length===5&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips.some(c=>over(r,c)))&&hud()===h0;
+      o.lift=!!T.lift; o.lb=lb.length; o.liftOk=lb.length===6&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips.some(c=>over(r,c)))&&hud()===h0;
       return o;},ins);
     await p.waitForTimeout(120);
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-catlift-'+nm+'.png'});
@@ -254,7 +254,7 @@ const DEV=[
       o.bar=bar; o.barOk=bar.length===5&&bar.every(r=>inside(r)&&thumb(r))&&apart(bar)&&!bar.some(r=>over(r,m0)||ch.some(c=>over(r,c)));
       __t.bldTap(14,15); __t.townFrame(1/30);
       const lb=[...document.querySelectorAll('#townLiftBar .town-tb')].map(q).filter(Boolean);
-      o.lb=lb; o.liftOk=!!T.lift&&lb.length===4&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips().some(c=>over(r,c)))
+      o.lb=lb; o.liftOk=!!T.lift&&lb.length===5&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips().some(c=>over(r,c)))
         &&JSON.stringify(q(document.getElementById('townTrow')))===JSON.stringify(row0)&&hud()===h0;
       return o;},ins);
     await p.waitForTimeout(120);
