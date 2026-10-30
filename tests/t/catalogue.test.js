@@ -141,7 +141,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(sf.p2===''&&sf.s2==='candle1,books0','the next goes in the nearest free slot',sf.s2);
   ok(/Set it on/.test(sf.off)&&/no room/.test(sf.full)&&sf.n===4,'not on a surface, or on a full one, it is refused',sf);
   /* step 5: the room's own two sconces are cold until lit, so the candle is the room's one light (props: the sconces still hang) */
-  ok(sf.props===10&&sf.lights===1,'the host and each small thing are drawn, and a candle or a lantern lights the room',sf);
+  ok(sf.props===11&&sf.lights===1,'the host and each small thing are drawn, and a candle or a lantern lights the room',sf);
   ok(sf.lifted&&sf.artN===5&&sf.props2===sf.props-5,'lifting the table lifts what is on it',sf);
   ok(sf.moved.join()==='5,5,4','it comes down where it is put, with all four',sf.moved);
   ok(sf.stored[0]==='desk'&&sf.stored[1]===4&&sf.stored[2]&&sf.stored[3]===3&&sf.back[0]===4&&sf.back[1]===0,'Store keeps the table with all that was on it, and what it cost; it goes back down for nothing',sf);

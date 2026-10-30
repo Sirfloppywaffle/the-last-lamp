@@ -169,6 +169,63 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(lt.clear[0]>0&&lt.clear[1]===lt.clear[0],'in the open, every glowing pixel of Ambrose’s lantern shows',lt.clear);
   ok(lt.behind[0]>0&&lt.behind[1]<lt.behind[0],'behind an armchair, the part of his lantern the chair covers does not show through it',lt.behind);
 
+
+  /* 5. Salvage in one tap, from the lifted piece: all it cost comes back at once; Undo takes it back for what it cost; a free piece
+     gives nothing; the Grimoire is refused; a small thing on a desk salvages too */
+  const sv=await p.evaluate(`(()=>{const T=__t, D=(${setup})(), o={}, L=()=>T.lodgeRoom();
+    T.TWN.p.x=8.5; T.TWN.p.y=7.5; T.lodgePlace('chair',3,5); T.lodgePlace('desk',5,5);
+    T.townBuildSet(true); while(!document.getElementById('townCardWrap').hidden)document.getElementById('townCard').click();
+    const r0=Object.assign({},D.res), c=L().furn.find(d=>d.id==='chair');
+    T.bldLift(c); o.btn=!document.getElementById('townScrap').hidden&&!document.getElementById('townScrap').disabled;
+    o.done=T.bldScrap(); o.gone=!L().furn.includes(c); o.back=[D.res.timber-r0.timber,D.res.tallow-r0.tallow]; o.store=D.store.length; o.lift=!!T.TWN.lift;
+    o.say=document.getElementById('townTmsg').textContent;
+    /* Undo: it comes back, and is paid for again */
+    T.bldUndo(); o.undone=L().furn.some(d=>d.id==='chair'); o.paid=JSON.stringify(D.res)===JSON.stringify(r0);
+    /* a small thing */
+    const desk=L().furn.find(d=>d.id==='desk'); T.townBuildSet(false); T.lodgePlaceSmall('candle',...T.lodgeSlotPoint(desk,0)); T.townBuildSet(true);
+    const t0=D.res.tallow, it=desk.on[0]; T.bldLiftItem(desk,it); o.item=T.bldScrap(); o.itemGone=!desk.on; o.itemBack=D.res.tallow-t0;
+    T.bldUndo(); o.itemUndo=(desk.on||[]).length===1;
+    /* a free sconce: nothing back; the Grimoire: refused, and the button is off while it is lifted */
+    const sc=L().furn.find(d=>d.id==='sconce'), h0=JSON.stringify(D.res); T.bldLift(sc); T.bldScrap(); o.sconce=[!L().furn.includes(sc),JSON.stringify(D.res)===h0];
+    const g=L().furn.find(d=>d.id==='grimoire'); T.bldLift(g); T.townTrayUI(); o.gBtn=document.getElementById('townScrap').disabled; o.gDone=T.bldScrap(); o.gStill=L().furn.includes(g)&&!!T.TWN.lift;
+    T.bldCancel(); T.townBuildSet(false); return o;})()`);
+  ok(sv.btn&&sv.done&&sv.gone&&sv.back.join()==='8,2'&&sv.store===0&&!sv.lift,'Salvage on a lifted piece breaks it up at once: all it cost is back, nothing waits in Storage',sv);
+  ok(/You salvage the Armchair/.test(sv.say)&&sv.undone&&sv.paid,'it says so, and Undo brings it back and charges for it again',sv);
+  ok(sv.item&&sv.itemGone&&sv.itemBack===1&&sv.itemUndo,'a small thing salvages the same way',sv);
+  ok(sv.sconce[0]&&sv.sconce[1],'a starting sconce salvages for nothing',sv.sconce);
+  ok(sv.gBtn&&sv.gDone===false&&sv.gStill,'the Grimoire cannot be salvaged: the button is off and a press does nothing',sv);
+
+  /* 6. the Grimoire is a podium with a book floating over it: one tile, four facings, a tap anywhere on it lifts it, its chip draws
+     in Storage, and the book opens as you come near and shuts as you leave */
+  const pd=await p.evaluate(`(()=>{const T=__t, D=(${setup})(), o={}, W=T.TWN, L=()=>T.lodgeRoom(), I=T.LODGE_ITEMS.grimoire;
+    const g=L().furn.find(d=>d.id==='grimoire');
+    o.foot=[0,2,4,6].map(f=>{const F=T.pieceFoot(I,f); return F.w+'x'+F.h;}).join();
+    const sig=f=>T.lodgeFA('grimoire',f).cv.toDataURL(); o.faces=[sig(0)!==sig(2),sig(4)!==sig(0),sig(2)!==sig(6),sig(0)===sig(1)];
+    /* a tap on the book above the podium lifts it (nothing chosen on the tray) */
+    T.townBuildSet(true); while(!document.getElementById('townCardWrap').hidden)document.getElementById('townCard').click();
+    const R=T.pieceRect(g,I); o.top=T.bldPieceAt(4,1,R.x+8,R.y-12)===g; o.pod=T.bldPieceAt(4,2,R.x+8,R.y+4)===g; o.beside=T.bldPieceAt(2,2,R.x-9,R.y+4)!==g;
+    /* turning it */
+    T.bldLift(g); T.bldTurn(1); T.bldTurn(1); o.turned=W.lift.f; T.bldDrop(); o.f=g.f;
+    /* stored, its chip draws and nothing throws */
+    T.bldLift(g); T.bldStow(); W.tab='store'; let err=null; try{T.townTrayUI();}catch(e){err=String(e);} o.chip=[!err,!!document.querySelector('#townTrow [data-stored="grimoire"] img')];
+    W.tab='pieces'; W.pick=null; W.pick='grimoire'; W.tab='store'; T.bldTap(5,3); W.tab='pieces'; T.townBuildSet(false);
+    /* the book: shut far off, open near, shut again; it bobs, and its aura is its own frame */
+    const gg=L().furn.find(d=>d.id==='grimoire'); gg.c=5; gg.r=3; gg.f=0; T.lodgeSync(); T.lodgeArt();
+    W.p.x=5.5; W.p.y=8; W.p.face='u'; for(let i=0;i<40;i++)T.townFrame(1/30); o.far=W.bk.s;
+    W.p.x=5.5; W.p.y=5.2; for(let i=0;i<40;i++)T.townFrame(1/30); o.near=W.bk.s;
+    const st=[]; W.p.x=5.5; W.p.y=8; for(let i=0;i<4;i++){T.townFrame(1/30); st.push(W.bk.s);} o.closing=st;
+    for(let i=0;i<40;i++)T.townFrame(1/30); o.shut=W.bk.s;
+    const sh=s=>T.lodgeBookFrame(0,s,0).toDataURL(); o.steps=new Set([0,1,2,3,4].map(sh)).size; o.bob=new Set([0,1,2].map(b=>T.lodgeBookFrame(0,4,b).toDataURL())).size;
+    o.em=T.lodgeBookEm(0,4,0,5).width===28&&T.lodgeBookEm(0,4,0,5)!==T.lodgeBookEm(0,0,0,5);
+    return o;})()`);
+  ok(pd.foot==='1x1,1x1,1x1,1x1','the Grimoire’s podium is one tile',pd.foot);
+  ok(pd.faces.every(Boolean),'it turns: front, side and back differ, east mirrors west, a diagonal shows the front',pd.faces);
+  ok(pd.top&&pd.pod&&pd.beside,'a tap on the book above the podium lifts it, as one on the podium does; a tap beside it does not',pd);
+  ok(pd.turned===2&&pd.f===2,'and it turns',pd);
+  ok(pd.chip[0]&&pd.chip[1],'stored, its chip draws in Storage',pd.chip);
+  ok(pd.far===0&&pd.near===4&&pd.closing[0]>0&&pd.shut===0,'the book is shut away from it, opens when you come near, and shuts again in steps when you leave',pd);
+  ok(pd.steps===5&&pd.bob>=2&&pd.em,'five steps from shut to open, a bob, and an aura frame of its own',pd);
+
   ok(!errs.length,'no page errors',errs);
   await b.close();
   if(fails.length){for(const f of fails)console.log('FAIL '+f); process.exit(1);}

@@ -524,6 +524,7 @@ input[type=range]::-moz-range-track {
 .town-tbot{display:flex;flex-direction:column;gap:6px;align-items:stretch}
 .town-tools{pointer-events:auto;align-self:center;display:flex;gap:6px;align-items:center;height:44px}
 .town-seg{display:flex;height:44px}
+/* the lift bar holds six buttons (Place, turn, Dye, Cancel, Store, Salvage): tighter than the rest so it fits 318 px and a 360 px phone */
 .town-tb{min-width:48px;height:44px;padding:0 9px;border:1px solid var(--seam);background:rgba(14,17,19,.92);color:var(--ash);font-family:var(--f-num);font-size:.68rem;
   letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;border-radius:8px;cursor:pointer}
 .town-seg .town-tb{border-radius:0}.town-seg .town-tb:first-child{border-radius:8px 0 0 8px}.town-seg .town-tb:last-child{border-radius:0 8px 8px 0;border-left:0}
@@ -532,9 +533,10 @@ input[type=range]::-moz-range-track {
 .town-tb b{font-weight:500;color:var(--bone)}
 .town-tb:disabled{opacity:.4;cursor:default}
 .town-tb-go{color:var(--bone);border-color:var(--tallow)}
-#townLiftBar .town-tb{min-width:62px;padding:0 6px}
+/* six buttons (Place, turn, Dye, Cancel, Store, Salvage) have to fit 318 px and a 360 px phone */
+#townLiftBar{gap:3px}#townLiftBar .town-tb{min-width:46px;padding:0 4px;font-size:.6rem;letter-spacing:.02em}
 /* ⟳ (Expansion 4, step 2) is held to turn back: no text selection or callout under the thumb */
-#townLiftBar #townTurn{min-width:52px;font-size:1.15rem;letter-spacing:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+#townLiftBar #townTurn{min-width:44px;font-size:1.15rem;letter-spacing:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
 .town-trow{min-height:64px}
 .town-trow.held{opacity:.4;pointer-events:none}
 .town-chip.town-stored b{position:absolute;top:2px;right:4px;font-family:var(--f-num);font-size:.6rem;font-weight:500;color:var(--bone)}
@@ -629,7 +631,7 @@ input[type=range]::-moz-range-track {
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, Kindle sets a creature burning and running, lighting the dark around it, and its Signal Mirror, built in the lamp's own light, reflects it in a 5-tile beam you aim between waves (it locks while the dark comes); you can build in the beam, and it burns what crosses it. The Galvanist builds a power grid: Pylons string live wires that shock, stun and light what crosses them, if a pylon stands in the lamp's own light to power the rest; his Arc Lamps burn bright but flicker; his Lightning Rods plant where they strike and join the grid; Overload fires every wire at once for 2 oil, and run hot it fries his pylons; he binds nothing by ritual: his Grounding Anchor forces nearby pylons to link to it, and a bindable creature that dies inside one of its triangles is caught in a cage to tap (the Keeper's core waits 15 seconds for a cage, and its fall readies the Anchor), each capture drawing 2 Heat out of the grid; his lamp's Dynamo branch ends in a Static Burst. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Bellringer, Agathe Vell, sees by sound: her Toll rings the lamp, and whatever its ring touches is heard for 1.5 seconds, outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost; each Toll makes 1 Noise (it fades 1 every 8 seconds), and at 5 the dark answers with two Abyssal Stalkers; the Great Bell is heard across the whole floor for 3 Noise; her Bell Wires can be strung anywhere on the path, even in the dark, and hear what crosses them; she builds no candles: her Tuning Forks give no light but hum, standing within 5 tiles of the lamp or 3.5 of another fork, and she can build inside a hum even in the dark, though wards there strike only what is heard; a toll that reaches a fork rings again from it; a toll from the lamp echoes back off the walls of the floor; heavy things leave red footsteps where they tread unseen, but Shades, Stalkers and fliers make none; her Clapper Harpoons ring what they strike and knock it back, and the path's edges show for her even where it is dark; her lamp's Peal branch makes it toll on its own, with no Noise, but that heartbeat finds only the ordinary dark; tap Toll on the beat (a ring closes on the lamp, and the button glows) for a Perfect Toll that reaches half again as far and rings out faster, though it makes as much Noise as any toll; her Tolls, Great Bell, Bell Wires, Clapper bolts and Tocsin shells crack what they strike, and three cracks shatter it, hurting and cracking what stands beside it (bosses take 8, Behemoths and elites 5); her Tocsin shells any Bell Wire that jangles, however far away. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it; Haul Away casts a whaling net that hauls everything under it, and everything on its lines, 3 tiles back and tangles it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The Roster.</b> Five went down the stair the night Saltmouth drowned: Ambrose Fenn the lamplighter, Jonah Tolland the harpooner, the Nameless, Dr. Lucan Voss and Agathe Vell. Each carries the lamp their own way. Some are earned by a deed on the stair, some in the Ember Hall. Every kind of horror you bind or capture, on any descent, adds its eyes to the Nameless’s hood, for good: there are six to find.</li>
-        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it on the square: cobbles, boardwalk, street-lamps, braziers, fences and trees. Tap a piece you built to lift it and set it down elsewhere; ⟳, or a tap on the lifted piece, turns it an eighth at a time (paths and fences a quarter), and holding turns it back; Store puts it away whole, to set down again for nothing, and Salvage in Storage gives back all it cost; Undo takes back your last ten deeds. Grid sets pieces on the tiles, Free wherever your thumb puts them. Nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy. The Keepers you have freed stand in the square, each at their own footing; a dark footing is one you have not freed, and a tap on it says what frees them. Talk to a Keeper to carry the lamp down as them, or to set them to a chore: while you are down they put timber, iron, tallow or curios by for every floor you clear, and the haul brings it up. Never embers, nothing on the stair. Nothing built may stand on a Keeper's place or wall one in. Five ruined workshops stand around the square — the Ember Brazier, the Try-Works, the Galvanic Smithy, the Cracked Belfry and the Ossuary Menagerie — and the haul restores them, then lights their windows. Each restored workshop offers a town gift at its door: you may carry one town gift down per descent, and each one exacts a price on the stair; it is off on a replayed stair and on any floor under a Trial. Some landings after floors 2, 3 and 4 hang a cage behind one door, at most once a descent: pay the lock and whoever is in it climbs to Saltmouth with your haul, even if your lamp goes out. The Croupier lights the Drowned Oar again and plays knucklebones for timber or tallow, and the Loaded Bone is his. The Toothmonger opens her stall: she trades materials at fixed rates, and for 25 tallow, paid at once, she pawns a relic you name so that nothing on your next descent offers it; it holds your one town gift until you go down. Three graves in the cemetery have been opened to the Drowned Mother, the Wrong Sun and the Many-Mouthed: raise one with iron, tallow and curios and its black candle is a town gift. Its patron's Attention starts at 1, so its first tier is on from floor 1 (and is the price), and it reaches out at the first break. Three tide-pools on the south shore hold a little timber, iron, tallow or a curio, and now and then a bottle; they fill again after each descent. Restore the Keeper's Lodge on the west side of the square with timber and iron, and step inside: one room to lay a floor and a wall in and set furniture down, lifted, stored and salvaged as in the square, and a Grimoire shelf with a spine for every creature met and relic found; tap it to read the book. The shelf is a piece like the rest: lift it and set it down elsewhere, or store it, but it can never be salvaged. The two sconces on the back wall are yours to move or store as well, and furniture stands on a rug. A hatch in its floor opens on the Flooded Cellar, a ladder by its shelf climbs to the Attic: open each with the haul, and each is a room of its own to lay a floor and a wall in and furnish, its pieces turned, stored and salvaged as below. The Lodge’s pieces come in five sets, Fisherman’s and the Old Library from the start and the Drowned Chapel, the Brass Observatory and the Deep-One Coral by a blueprint from the Peddler; the set chip on the tray shows the next. Some hang on the back wall, and small things stand on a desk, a chest, a shelf or a table and go wherever it goes. Dye gives a lifted piece another colourway for tallow. Its rooms are dark until you light them: tap a sconce, a lamp, a candle or a fireplace to light it or put it out, and every light throws the shadows of what stands near it. Each boss you put down on the stair leaves a trophy for the Lodge, one of each, carried up with the haul; tap it to read its Grimoire line. With the Lodge standing, two Keepers can work at chores at once.</li>
+        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it on the square: cobbles, boardwalk, street-lamps, braziers, fences and trees. Tap a piece you built to lift it and set it down elsewhere; ⟳, or a tap on the lifted piece, turns it an eighth at a time (paths and fences a quarter), and holding turns it back; Store puts it away whole, to set down again for nothing, and Salvage in Storage gives back all it cost; Undo takes back your last ten deeds. Grid sets pieces on the tiles, Free wherever your thumb puts them. Nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy. The Keepers you have freed stand in the square, each at their own footing; a dark footing is one you have not freed, and a tap on it says what frees them. Talk to a Keeper to carry the lamp down as them, or to set them to a chore: while you are down they put timber, iron, tallow or curios by for every floor you clear, and the haul brings it up. Never embers, nothing on the stair. Nothing built may stand on a Keeper's place or wall one in. Five ruined workshops stand around the square — the Ember Brazier, the Try-Works, the Galvanic Smithy, the Cracked Belfry and the Ossuary Menagerie — and the haul restores them, then lights their windows. Each restored workshop offers a town gift at its door: you may carry one town gift down per descent, and each one exacts a price on the stair; it is off on a replayed stair and on any floor under a Trial. Some landings after floors 2, 3 and 4 hang a cage behind one door, at most once a descent: pay the lock and whoever is in it climbs to Saltmouth with your haul, even if your lamp goes out. The Croupier lights the Drowned Oar again and plays knucklebones for timber or tallow, and the Loaded Bone is his. The Toothmonger opens her stall: she trades materials at fixed rates, and for 25 tallow, paid at once, she pawns a relic you name so that nothing on your next descent offers it; it holds your one town gift until you go down. Three graves in the cemetery have been opened to the Drowned Mother, the Wrong Sun and the Many-Mouthed: raise one with iron, tallow and curios and its black candle is a town gift. Its patron's Attention starts at 1, so its first tier is on from floor 1 (and is the price), and it reaches out at the first break. Three tide-pools on the south shore hold a little timber, iron, tallow or a curio, and now and then a bottle; they fill again after each descent. Restore the Keeper's Lodge on the west side of the square with timber and iron, and step inside: one room to lay a floor and a wall in and set furniture down, lifted, stored and salvaged as in the square, and a Grimoire on its podium, glowing for every creature met and relic found; tap it to read the book. The Grimoire floats over a podium and opens as you come near: lift it, turn it, set it down elsewhere or store it, but it can never be salvaged. Salvage on a lifted piece breaks it up at once. The two sconces on the back wall are yours to move or store as well, and furniture stands on a rug. A hatch in its floor opens on the Flooded Cellar, a ladder by its shelf climbs to the Attic: open each with the haul, and each is a room of its own to lay a floor and a wall in and furnish, its pieces turned, stored and salvaged as below. The Lodge’s pieces come in five sets, Fisherman’s and the Old Library from the start and the Drowned Chapel, the Brass Observatory and the Deep-One Coral by a blueprint from the Peddler; the set chip on the tray shows the next. Some hang on the back wall, and small things stand on a desk, a chest, a shelf or a table and go wherever it goes. Dye gives a lifted piece another colourway for tallow. Its rooms are dark until you light them: tap a sconce, a lamp, a candle or a fireplace to light it or put it out, and every light throws the shadows of what stands near it. Each boss you put down on the stair leaves a trophy for the Lodge, one of each, carried up with the haul; tap it to read its Grimoire line. With the Lodge standing, two Keepers can work at chores at once.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. The stair's name decides which, and a saved floor keeps its own.</li>
@@ -662,7 +664,7 @@ input[type=range]::-moz-range-track {
   <div class="town-actwrap"><button class="btn call town-act" id="townAct" type="button" hidden>Descend the stair</button></div>
   <div class="town-tray" id="townTray" hidden><div class="town-tmsg" id="townTmsg" aria-live="polite"></div><div class="town-tbot">
     <div class="town-tools" id="townTools"><div class="town-seg" role="group" aria-label="Show"><button type="button" class="town-tb" data-tab="pieces" aria-pressed="true">Pieces</button><button type="button" class="town-tb" data-tab="store" aria-pressed="false">Storage <b id="townStoreN">0</b></button></div><div class="town-seg" role="group" aria-label="Placing"><button type="button" class="town-tb" data-snap="grid" aria-pressed="true">Grid</button><button type="button" class="town-tb" data-snap="free" aria-pressed="false">Free</button></div><button type="button" class="town-tb" id="townUndo" disabled>Undo</button></div>
-    <div class="town-tools" id="townLiftBar" hidden><button type="button" class="town-tb town-tb-go" id="townDrop">✓ Place</button><button type="button" class="town-tb" id="townTurn" aria-label="Turn it. Hold to turn it back">⟳</button><button type="button" class="town-tb" id="townDye" aria-label="Dye it: its next colourway" hidden>Dye</button><button type="button" class="town-tb" id="townCancel">✕ Cancel</button><button type="button" class="town-tb" id="townStow">Store</button></div>
+    <div class="town-tools" id="townLiftBar" hidden><button type="button" class="town-tb town-tb-go" id="townDrop">✓ Place</button><button type="button" class="town-tb" id="townTurn" aria-label="Turn it. Hold to turn it back">⟳</button><button type="button" class="town-tb" id="townDye" aria-label="Dye it: its next colourway" hidden>Dye</button><button type="button" class="town-tb" id="townCancel">✕ Cancel</button><button type="button" class="town-tb" id="townStow">Store</button><button type="button" class="town-tb" id="townScrap" aria-label="Salvage it: all it cost comes back at once">Salvage</button></div>
     <div class="town-trow" id="townTrow" aria-label="Build"></div></div></div>
   <div class="town-cardwrap" id="townCardWrap" hidden><button class="town-card" id="townCard" type="button"></button></div>
 </div>
@@ -707,7 +709,7 @@ const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='19.7.1';
+const GAME_VERSION='19.8.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -10751,7 +10753,7 @@ const TIPS={
   croupier:{where:'town',when:()=>false,title:'The Croupier',text:'You freed him from a cage, and the Drowned Oar is lit again. He plays knucklebones for town materials, never essence or embers, and keeps the Loaded Bone behind the bar: one town gift, like a workshop’s.'},
   toothmonger:{where:'town',when:()=>false,title:'The Toothmonger',text:'You freed her from a cage, and her stall is open. She trades materials at fixed rates, always less back than you give. Name a relic you have carried and pay 25 tallow, and as the Pawned Relic she keeps it off the stair on your next descent. It is your one town gift, and once pawned it stays with her until you go down.'},
   townshrines:{where:'town',when:()=>false,title:'Three shrines',text:'In the north cemetery three graves have been opened to the old things below. Raise a shrine with iron, tallow and curios, and its black candle is a town gift: its patron notices you before the stair, and reaches out at the first break. Its first tier is on from floor 1, and the price is the same tier. One candle, like any town gift.'},
-  townlift:{where:'town',when:()=>false,title:'Lift, turn, store, salvage',text:'Tap a piece you built to lift it. Drag it, or tap where it goes, then Place; Cancel sets it back exactly where it stood. Store puts it away whole, and it waits in Storage on the tray to be set down again for nothing. Salvage, in Storage, gives back all it cost. Undo takes back your last ten deeds until you close Build. ⟳, or a tap on the lifted piece, turns it an eighth; hold either to turn it back. A chair in a corner can face the room.'},
+  townlift:{where:'town',when:()=>false,title:'Lift, turn, store, salvage',text:'Tap a piece you built to lift it. Drag it, or tap where it goes, then Place; Cancel sets it back exactly where it stood. Store puts it away whole, and it waits in Storage on the tray to be set down again for nothing. Salvage, on the lifted piece, breaks it up at once and gives back all it cost (a piece in Storage can be salvaged there too). Undo takes back your last ten deeds until you close Build. ⟳, or a tap on the lifted piece, turns it an eighth; hold either to turn it back. A chair in a corner can face the room.'},
   townfree:{where:'town',when:()=>false,title:'Grid or Free',text:'Grid sets every piece square on the tiles. Free sets it where your thumb puts it, to the pixel, wherever its footprint fits; it still blocks the tiles it covers most of, and nothing may wall off a door or a Keeper’s place. Paths and fences keep to the tiles. Build remembers which you chose.'},
   lodge:{where:'town',when:()=>false,title:'The Keeper’s Lodge',text:'One room above the stair, and it is yours. Build here as in the square: tap a floor or a wall on the tray to lay it over the room, or choose a piece of furniture and tap the floor. Tap a piece to lift it, as in the square; a floor or a wall you change gives back all it cost. The shelf by the back wall holds the Grimoire. With the Lodge standing, two Keepers can work at chores at once. The hatch in the floor and the ladder by the shelf lead to two more rooms, opened with the haul. The door takes you back out into the rain.'},
   lodgemount:{where:'town',when:()=>false,title:'Wall mounts',text:'A mount hangs on the back wall, never on the floor: tap the wall, or any square of the room, and it goes up in that column. It cannot hang over the ladder, the shelf or a lamp, and no two share a place. Lift one and it moves along the wall like any piece.'},
@@ -10761,7 +10763,7 @@ const TIPS={
   lodgeattic:{where:'town',when:()=>false,title:'The Attic',text:'A room under the roof, with its own floor, wall and furniture, built as below. The round window looks out on the rain over Saltmouth, and lets a little of the night in. Storage is the same in every room. The hatch takes you back down.'},
   lodgedark:{where:'town',when:()=>false,title:'Dark until you light it',text:'The Lodge’s sconces have been cold since the harbour went under. Tap one, or a lamp, a candle, the stove or a fireplace, and walk up to light it or put it out. Each light you set burning pushes the room’s dark back a little, and throws the shadows of what stands near it across the floor. The sconces on the wall cost nothing and are yours to move: in Build, lift one and hang it elsewhere, or store it. Furniture stands on a rug as well as beside it.'},
   lodgetrophy:{where:'town',when:()=>false,title:'Trophies',text:'Each boss you put down on the stair leaves a trophy, carried up with the haul even if your lamp goes out after. One of each, for nothing: hang it, set it on its plinth, lift and store it like any piece. Tap it in the room to read what the Grimoire says of what it came from.'},
-  lodgeshelf:{where:'town',when:()=>false,title:'The Grimoire shelf',text:'One spine for every creature you have met and every relic you have found, on any descent: the cold ones creatures, the warm ones relics. Tap the shelf to read the Grimoire; close it and you are back in the Lodge. In Build you can lift the shelf and set it down elsewhere, or put it away in Storage, but it cannot be salvaged.'},
+  lodgeshelf:{where:'town',when:()=>false,title:'The Grimoire',text:'The book floats over its podium and opens when you stand near it. A faint light gathers round it for every creature you have met and every relic you have found, on any descent. Tap it to read the Grimoire; close it and you are back in the Lodge. In Build you can lift the podium, turn it, set it down elsewhere, or put it away in Storage, but it cannot be salvaged.'},
   townpools:{where:'town',when:()=>false,title:'The tide-pools',text:'Three pools on the south shore. The tide leaves a little timber, iron, tallow or, rarely, a curio in them, and now and then a bottle. Gather what is there; each fills again after you come back up from a descent.'},
   gift:{where:'town',when:()=>false,title:'Workshops and the town gift',text:'Spend the haul at a ruined workshop’s door to restore it, and again to light its windows. Each restored workshop offers one gift for the next descent, and every gift carries a price on the stair. You may carry only one town gift down at a time; it is off on a replayed stair and on any floor under a Trial.'},
   gift_dip:{when:()=>!!(run&&!run.replay&&run.gift==='dip'&&!(F&&F.trial)&&run.floor===0&&F.phase==='build'),title:'The Chandler’s Dip',text:'Your first Candle Ward on floor 1 costs no essence, but the lamp burns 0.5 smaller until floor 2.',target:()=>coachEl('#relChips [data-rel="gift:dip"]')},
@@ -12221,7 +12223,7 @@ function poolBottle(T){
    Costs are shape only, for playtest */
 const LODGE_COST={timber:30,iron:15};
 const LODGE_W=10, LODGE_H=10;
-/* the room: # wall, G the Grimoire shelf against the back wall, D the door out; none can be walked. . the floor. Expansion 4,
+/* the room: # wall, D the door out (the Grimoire is a piece now, not a tile); none can be walked. . the floor. Expansion 4,
    step 3: L the ladder up to the Attic, against the back wall, and C the hatch down to the Flooded Cellar, in the floor */
 const LODGE_MAP=[
   '##L#######',
@@ -12294,9 +12296,10 @@ const LODGE_ITEMS={
   damp:{k:'wall',set:'rooms',n:'Damp Stone',s:'Stone',cost:{}},
   library:{k:'wall',set:'rooms',n:'Mahogany Library',s:'Library',cost:{timber:30}},
   brass:{k:'wall',set:'rooms',n:'Brass-Ribbed Bulkhead',s:'Brass',cost:{iron:30}},
-  /* the Grimoire's shelf: the Lodge has one, from the day it stands. book: it is drawn by lodgeBookFA() (a spine for every creature
-     met and relic found), is never on the tray, may be lifted, moved and stored but never salvaged, and there is only ever one */
-  grimoire:{k:'furn',set:'rooms',n:'Grimoire Shelf',s:'Grimoire',cost:{},w:2,faces:1,book:true},
+  /* the Grimoire: the Lodge has one, from the day it stands, a book floating over a podium. book: its podium is drawn by
+     lodgeBookFA() and the book itself by townDraw() (it opens as you come near; an aura for every creature met and relic found),
+     it is never on the tray, may be lifted, turned, moved and stored but never salvaged, and there is only ever one */
+  grimoire:{k:'furn',set:'rooms',n:'Grimoire',s:'Grimoire',cost:{},w:1,faces:4,book:true},
   /* Expansion 4, step 5: the Lodge's own hearth, the brightest light it takes */
   hearth:{k:'furn',set:'rooms',n:'Stone Fireplace',s:'Fireplace',cost:{iron:12,timber:4,tallow:3},w:2,light:52,glow:'9abc',faces:4,dyes:['ash']},
   /* Fisherman's (open from the start) */
@@ -13737,36 +13740,76 @@ function lodgeGround(floor,wall,room){
   c.putImageData(img,0,0);
   return cv;
 }
-/* a spine's two colours, light and dark: creatures in the cold colours, relics in the warm */
-const LODGE_SPINE_FOE=[['g','f'],['i','h'],['e','u'],['4','3'],['d','e']], LODGE_SPINE_RELIC=[['k','j'],['9','8'],['b','a'],['a','9'],['7','6']];
-/* how many spines the Grimoire shelf holds (one for every creature the Grimoire lists and every relic), and how many it shows:
-   one for each creature met and relic found. Developer mode, which opens the whole book, fills it */
+/* how many things the Grimoire holds (every creature the book lists and every relic), and how many are found: one for each
+   creature met and relic found. Developer mode, which opens the whole book, fills it */
 function lodgeSpines(){
   const C=codex(), foes=Object.keys(FOES).filter(k=>!FOES[k].bound), relics=Object.keys(RELICS);
   const f=devOn?foes.length:foes.filter(k=>C.foes.has(k)).length, r=devOn?relics.length:relics.filter(k=>C.relics.has(k)).length;
   return {foes:f,relics:r,n:f+r,cap:foes.length+relics.length};
 }
-/* the Grimoire shelf: a tall mahogany case two tiles wide against the back wall, nine spines a shelf. n: the spines it shows */
-function lodgeShelfArt(S){
-  const rows=Math.max(1,Math.ceil(S.cap/9)), H=rows*8+5, [cv,c]=tCanvas(32,H);
-  tp(c,0,0,'5',32,H); tp(c,1,1,'7',30,2); tp(c,1,3,'6',2,H-4); tp(c,29,3,'6',2,H-4); tp(c,3,3,'l',26,H-4);
-  let drawn=0;
-  for(let row=0;row<rows;row++){const y0=3+row*8;
-    tp(c,3,y0+7,'6',26,1); tp(c,3,y0+6,'1',26,1);
-    for(let j=0;j<9;j++){const i=row*9+j; if(i>=S.n)break;
-      const P=i<S.foes?LODGE_SPINE_FOE[(thash(i,1,160)*5)|0]:LODGE_SPINE_RELIC[(thash(i,2,161)*5)|0], top=y0+((thash(i,3,162)*2)|0), x=4+j*3;
-      tp(c,x,top,P[1],1,y0+6-top); tp(c,x+1,top,P[0],1,y0+6-top);
-      if(thash(i,4,163)<.4)tp(c,x,top+2,'b',2,1);
-      drawn++;}}
-  tp(c,0,H-1,'0',32,1);
-  return {cv,drawn};
+/* ---- the Grimoire (Expansion 4): a book that floats above a podium and opens when you come near. The podium is a piece's art like
+   any other (one tile, drawn facing the front, the side and the back; east is west mirrored); the book is drawn apart, in five
+   steps from shut to open and four heights of its bob, so townDraw() can pick the frame from how near you stand and the clock. A
+   violet aura glows round it through the dark, thicker for each creature met and relic found ---- */
+const BOOK_W=16, BOOK_H=18;
+/* the podium: a plinth, a banded shaft and a slanted desk; seen from the side the desk is a wedge. g: 0 front, 2 side, 4 back */
+const LODGE_PODIUM=[];
+function lodgePodium(g){
+  if(LODGE_PODIUM[g])return LODGE_PODIUM[g];
+  const [cv,c]=tCanvas(16,22);
+  tp(c,1,18,'3',14,4); tp(c,1,18,'4',14,1); tp(c,1,21,'2',14,1);
+  tp(c,5,7,'3',6,11); tp(c,5,7,'4',1,11); tp(c,10,7,'2',1,11);
+  tp(c,5,10,'p',6,1); tp(c,5,15,'p',6,1);
+  if(g===2){for(let i=0;i<8;i++){const t=1+(i>>1); tp(c,4+i,t,'4',1,1); tp(c,4+i,t+1,'3',1,6-t); tp(c,4+i,6,'2',1,1);} tp(c,4,1,'p',1,6);}
+  else{tp(c,4,3,g===0?'p':'4',8,1); tp(c,3,4,'4',10,1); tp(c,2,5,'3',12,1); tp(c,2,6,'2',12,1); tp(c,2,5,'2',1,2); tp(c,13,5,'2',1,2);}
+  return (LODGE_PODIUM[g]=cv);
 }
-/* the Grimoire shelf as a piece's art (lodgeFA() asks for it): the case, a spine for each thing found; made again only when the
-   shelf gains one. It stands on its footprint's bottom edge and rises above it */
-let LODGE_BOOK=null;
-function lodgeBookFA(){
-  const S=lodgeSpines(), k=S.n+'/'+S.cap; if(LODGE_BOOK&&LODGE_BOOK.k===k)return LODGE_BOOK.a;
-  const sh=lodgeShelfArt(S), a={cv:sh.cv,dx:0,dy:16-sh.cv.height,drawn:sh.drawn}; LODGE_BOOK={k,a}; return a;
+/* the book, g the way it faces, st 0 shut to 4 open, bob 0 to 2 pixels up. Front: two halves that part like a clam and fall open
+   onto text; side: a block that fans into a V; back: the covers, opening away from you */
+const LODGE_BOOKS=new Map();
+function lodgeBookFrame(g,st,bob){
+  const key=g+'|'+st+'|'+bob; let cv=LODGE_BOOKS.get(key); if(cv)return cv;
+  let c; [cv,c]=tCanvas(BOOK_W,BOOK_H);
+  const y0=6-bob, H=10, hw=[4,5,6,7,7][st], dr=[0,0,1,1,2][st];
+  if(g===2){
+    if(st===0){tp(c,5,y0,'j',6,H); tp(c,5,y0,'8',6,1); tp(c,5,y0+H-1,'8',6,1); tp(c,5,y0+2,'b',6,1); tp(c,5,y0+7,'b',6,1); tp(c,5,y0,'l',1,H);}
+    else{const W=[0,4,5,6,6][st];
+      for(let x=8-W;x<8+W;x++){const dx=Math.abs(x-8+(x<8?0:-0)), top=Math.max(y0,y0+8-Math.round(dx*st/2)); tp(c,x,top,'d',1,3); tp(c,x,top,'c',1,1); tp(c,x,top+3,'j',1,2);}
+      tp(c,7,y0+7,'l',2,3);}
+  }else{
+    const back=g===4;
+    for(const side of [-1,1])for(let i=0;i<hw;i++){
+      const x=side<0?7-i:8+i, top=y0+(hw>1?Math.round(dr*i/(hw-1)):0), edge=i===hw-1;
+      if(st<2||back){tp(c,x,top,'j',1,H); tp(c,x,top,'8',1,1); tp(c,x,top+H-1,'8',1,1); if(edge)tp(c,x,top,'8',1,H);}
+      else{tp(c,x,top,'d',1,H-2); tp(c,x,top,'c',1,1); tp(c,x,top+H-2,'j',1,2); if(edge)tp(c,x,top,'j',1,H);
+        if(st>=3&&i>0&&i<hw-1)for(let r=2;r<=6;r+=2)if((i+r)%3)tp(c,x,top+r,'7',1,1);}}
+    if(st===0&&!back)tp(c,7,y0+4,'b',2,2);
+    if(st>=2)tp(c,7,y0+(back?0:1),'l',2,back?H:H-2); else tp(c,8-hw,y0,'l',1,H);   /* shut: its spine on the left, no gutter */
+  }
+  if(g===6)cv=tFlip(cv);
+  LODGE_BOOKS.set(key,cv); return cv;
+}
+/* its aura: a faint violet halo round the book, drawn over the dark, brighter and fuller as it opens, and a mote for each thing
+   found in the Grimoire (ten at most) that twinkles. Same size and place for every frame: the book's canvas plus a margin */
+const BOOK_PAD=[6,5], BOOK_AURA=[28,28];
+const LODGE_BOOK_EM=new Map();
+function lodgeBookEm(g,st,bob,n){
+  const key=g+'|'+st+'|'+bob+'|'+Math.min(10,n); let cv=LODGE_BOOK_EM.get(key); if(cv)return cv;
+  let c; [cv,c]=tCanvas(BOOK_AURA[0],BOOK_AURA[1]);
+  const cx=BOOK_PAD[0]+8, cy=BOOK_PAD[1]+6+5-bob, k=.55+st*.12;
+  for(let y=0;y<BOOK_AURA[1];y++)for(let x=0;x<BOOK_AURA[0];x++){
+    const dx=(x-cx)/12, dy=(y-cy)/10, d=Math.hypot(dx,dy); if(d>=1)continue;
+    const a=d<.45?.17:d<.72?.1:(x+y)&1?.05:0; if(a)tp(c,x,y,'rgba(199,155,255,'+(a*k).toFixed(3)+')');}
+  if(st>=3)tp(c,cx-4,cy-3,'rgba(255,240,194,.22)',8,5);
+  for(let i=0;i<Math.min(10,n);i++){const an=thash(i,5,164)*6.283, r=6+thash(i,6,165)*6, tw=(i+bob)&1;
+    tp(c,Math.round(cx+Math.cos(an)*r*1.1),Math.round(cy+Math.sin(an)*r*.8),tw?'rgba(255,240,194,.8)':'rgba(199,155,255,.7)');}
+  LODGE_BOOK_EM.set(key,cv); return cv;
+}
+/* the podium as a piece's art (lodgeFA() asks for it): one tile, standing on its bottom edge and rising above it. The book floats
+   above it and is its own prop (lodgeArt()); the lifted piece and the tray's chip show it shut */
+function lodgeBookFA(f){
+  const [g,m]=faceSrc(LODGE_ITEMS.grimoire,f|0), cv=lodgePodium(g);
+  return {cv:m?tFlip(cv):cv,dx:0,dy:16-22,book:true,g:m?6:g};
 }
 /* the Armchair in its eight facings (Expansion 4, step 2): Criss's PixelLab object "Lodge Armchair", 34 by 34 a facing, through
    tools/png2rows.py (EXPANSION4_RUNBOOK.md §3): cropped, every colour on a PX letter, straight facings narrowed to 16 wide and
@@ -13847,6 +13890,7 @@ function tFlip(src){const [cv,c]=tCanvas(src.width,src.height); c.translate(src.
    light sits (lx, ly), and, for a surface, where small things stand on it (top: one [x, y] in the canvas for each slot). A facing
    not drawn is the one faceSrc() names, mirrored where it says */
 function lodgeFurnArt(id,f,dye,out){
+  if(LODGE_ITEMS[id].book)return lodgeBookFA(f);
   const I=LODGE_ITEMS[id], src=faceSrc(I,f|0), F=pieceFoot(I,f|0), a=lodgeFurnDraw(id,src[0],dye,out);
   if(src[1]){const w=a.cv.width; a.cv=tFlip(a.cv); if(a.em){a.ex=w-a.ex-a.em.width; a.em=tFlip(a.em);} if(a.lx!=null)a.lx=w-a.lx; if(a.top)a.top=a.top.map(p=>[w-p[0],p[1]]);
     if(a.fr){a.fr=a.fr.map(tFlip); a.emf=a.emf.map(tFlip);}}
@@ -13998,7 +14042,7 @@ function lodgeArt(){
      hatch lying in the floor. The main room's are shut until the room they lead to is bought */
   const ladder=(tx,ok)=>props.push({c:lodgeWayArt('ladder',ok,wet),x:tx*16,y:34-LODGE_LADDER.length,base:33});
   const hatch=(tx,ty,st)=>props.push({c:lodgeWayArt('hatch',st),x:tx*16,y:ty*16,base:ty*16});
-  let spines=0;
+  let spines=0, bookAt=null;
   if(m==='main'){
     ladder(2,lodgeRoom(T,'attic').built); hatch(1,6,lodgeRoom(T,'cellar').built?'open':'shut');
   }else if(m==='cellar'){
@@ -14015,11 +14059,18 @@ function lodgeArt(){
   for(const d of L.furn){
     if(d===BLD_SKIP)continue;
     /* in the Cellar every piece stands in the brine: its feet (all of it, lying flat) under the water; a mount hangs above it */
-    const I=LODGE_ITEMS[d.id], dry=lodgeFA(d.id,d.f,d.dye,d.out), k=d.id+(d.f|0)+(d.dye||'')+(d.out?'!':'')+(dry.drawn||''), a=!wet||I.mount?dry:K['w'+k]||(K['w'+k]=Object.assign({},dry,{cv:lodgeWet(dry.cv,wet,dry.flat),fr:dry.fr&&dry.fr.map(c=>lodgeWet(c,wet,dry.flat))}));
+    const I=LODGE_ITEMS[d.id], dry=lodgeFA(d.id,d.f,d.dye,d.out), k=d.id+(d.f|0)+(d.dye||'')+(d.out?'!':''), a=!wet||I.mount?dry:K['w'+k]||(K['w'+k]=Object.assign({},dry,{cv:lodgeWet(dry.cv,wet,dry.flat),fr:dry.fr&&dry.fr.map(c=>lodgeWet(c,wet,dry.flat))}));
     const R=pieceRect(d,I), x=R.x+a.dx, y=R.y, base=I.mount?30:a.flat?y:y+R.h, ph=(x*7+y*3)|0;
     const pr={c:a.cv,fr:a.fr,ph,x,y:y+a.dy,base}; props.push(pr);
     if(I.rumble)rumble=pr;
-    if(I.book){spines=dry.drawn; act('shelf',R.x/16,R.y/16,(R.x+R.w)/16,(R.y+R.h)/16,x,y+a.dy,a.cv.width,a.cv.height,base);}
+    if(I.book){
+      /* the book floats over the desk, its own prop drawn just after the podium; its aura goes in the glow layer (it lights and
+         shades nothing). What you stand near decides how open it is (townDraw()) */
+      spines=S.n; const by=y+a.dy-14, g=a.g, cx=x+8, bk=lodgeBookFrame(0,0,0);
+      props.push({book:true,g,n:S.n,c:bk,x,y:by,base:base+.2});
+      em.push({book:true,g,n:S.n,c:bk,x:x-BOOK_PAD[0],y:by-BOOK_PAD[1],base:base+.2});
+      bookAt={cx,gx:R.x+8,gy:R.y+R.h-8};
+      act('shelf',R.x/16,R.y/16,(R.x+R.w)/16,(R.y+R.h)/16,x,by,16,y+a.dy+22-by,base);}
     if(I.light||I.k==='trophy')act(lodgeActOf(d),R.x/16,I.mount?2:R.y/16,(R.x+R.w)/16,I.mount?2:(R.y+R.h)/16,x,y+a.dy,a.cv.width,a.cv.height,base);
     /* what stands on the floor throws a shadow away from each light, and stands dark against one behind it (step 5) */
     const sol=!I.mount&&!a.flat?{cv:dry.cv,x,y:y+a.dy,base:y+R.h}:null; if(sol)solids.push(sol);
@@ -14041,7 +14092,7 @@ function lodgeArt(){
   /* how dark the room is: its night with nothing burning, lifting toward its dim as the warm light in it grows (step 5) */
   let warm=0; for(const l of lights)warm+=l.w||0;
   const dark=RM.night-(RM.night-RM.dim)*Math.min(1,warm/LODGE_WARM);
-  LODGE_ART={sig,room:m,dark,warm,night:'rgba(3,4,8,'+dark.toFixed(3)+')',mw:LODGE_W*16,mh:LODGE_H*16,ground:lodgeGround(L.floor,L.wall,m),props,lights,em,spines,cache:K,
+  LODGE_ART={sig,room:m,dark,warm,night:'rgba(3,4,8,'+dark.toFixed(3)+')',mw:LODGE_W*16,mh:LODGE_H*16,ground:lodgeGround(L.floor,L.wall,m),props,lights,em,spines,bookAt,cache:K,
     sil:lodgeShade(solids,lights,m),rumble,acts,
     win:m==='attic'?LODGE_WIN:null,wade:wet?lodgeWade():null,glints:wet?LODGE_GLINTS:null,brine:wet?lodgeBrine():null,
     spr:TA.spr,shade:TA.shade,ring:TA.ring,dot:TA.dot,mark:TA.mark,shadow:TA.shadow};
@@ -14440,6 +14491,7 @@ function townTrayUI(){
     for(const b of $('#townTools').querySelectorAll('[data-tab]'))b.setAttribute('aria-pressed',b.dataset.tab===(TWN.tab||'pieces')?'true':'false');
     for(const b of $('#townTools').querySelectorAll('[data-snap]'))b.setAttribute('aria-pressed',(b.dataset.snap==='free')===(T.free===true)?'true':'false');
     $('#townUndo').disabled=!U.length||U[U.length-1].s!==bldScene();
+    $('#townScrap').disabled=!!(L&&TWN.inside&&LODGE_ITEMS[L.id]&&LODGE_ITEMS[L.id].book);
     for(const b of $('#townTrow').querySelectorAll('[data-stored]')){const on=TWN.tab==='store'&&TWN.pick===b.dataset.stored; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');}
     const sv=$('#townSalvage'); if(sv)sv.classList.toggle('poor',!(TWN.tab==='store'&&TWN.pick));
   }
@@ -14503,6 +14555,12 @@ function bldPieceAt(tx,ty,wx,wy){
   const tab=bldTab();
   /* what stands on a rug is lifted before the rug: a rug answers only where nothing else does */
   if(wx!=null)for(let pass=0;pass<2;pass++)for(const d of bldList())if(d!==BLD_SKIP&&!!tab[d.id].flat===(pass===1)){const R=pieceRect(d,tab[d.id]); if(wx>=R.x&&wx<R.x+R.w&&wy>=R.y&&wy<R.y+R.h)return d;}
+  /* inside, with nothing chosen on the tray, a tap on a tall piece's drawing above its footprint lifts it too (the front-most one) */
+  if(TWN.inside&&wx!=null&&!TWN.pick){let best=null, bb=-1e9;
+    for(const d of bldList()){if(d===BLD_SKIP||d.mount||tab[d.id].flat||tab[d.id].small)continue;
+      const I=tab[d.id], R=pieceRect(d,I), a=lodgeFA(d.id,d.f,d.dye,d.out), x0=R.x+a.dx, y0=R.y+a.dy-(a.book?14:0), y1=R.y+a.dy+a.cv.height;
+      if(wx>=x0&&wx<x0+a.cv.width&&wy>=y0&&wy<y1&&R.y+R.h>bb){best=d; bb=R.y+R.h;}}
+    if(best)return best;}
   return TWN.inside?lodgeAt(tx,ty):townDecoAt(tx,ty);
 }
 /* what is stored for this scene, of one kind or all */
@@ -14588,7 +14646,7 @@ function bldArt(d,f){
   f=f|0;
   if(TWN.inside){
     if(LODGE_ITEMS[d.id].small){const a=lodgeFA(d.id,0,d.dye,d.out); return [{c:a.cv,x:-(a.cv.width>>1),y:-a.cv.height}];}
-    const a=lodgeFA(d.id,f,d.dye,d.out), o=[{c:a.cv,x:a.dx,y:a.dy}]; if(a.em)o.push({c:a.em,x:a.dx+a.ex,y:a.dy+a.ey});
+    const a=lodgeFA(d.id,f,d.dye,d.out), o=[{c:a.cv,x:a.dx,y:a.dy}]; if(a.book)o.push({c:lodgeBookFrame(a.g,0,0),x:0,y:a.dy-14}); if(a.em)o.push({c:a.em,x:a.dx+a.ex,y:a.dy+a.ey});
     if(d.on&&a.top)for(const q of d.on){const ia=lodgeFA(q.id,0,q.dye,q.out), t=a.top[q.s]; o.push({c:ia.cv,x:a.dx+t[0]-(ia.cv.width>>1),y:a.dy+t[1]-ia.cv.height});}
     return o;}
   const props=[], lights=[], em=[]; townDecoProps({id:d.id,c:d.c,r:d.r,f,g:d.g},0,0,props,lights,em,true);
@@ -14698,6 +14756,21 @@ function bldStow(){
   townSay('The '+I.n+' goes into storage.');
   return true;
 }
+/* Salvage from the lifted piece, in one tap: Store and Salvage together. It is gone and all it cost is back in the haul; Undo takes
+   it back for what it cost. The Grimoire is never broken up */
+function bldScrap(){
+  const L=TWN.lift; if(!L)return false;
+  const I=bldTab()[L.id];
+  if(TWN.inside&&I.book){townSay('The Grimoire is not yours to break up. Store it, or set it down where you like.'); return false;}
+  const T=townData(), U=TWN.undo||(TWN.undo=[]);
+  if(!bldStow())return false;
+  const st=T.store.pop(), d=U.pop(); if(!st||!d)return false;
+  T.res=haulFix(T.res); for(const k of HAUL_KEYS)T.res[k]+=st.cost[k];
+  bldDid(d.a==='storeitem'?{a:'scrapitem',host:d.host,o:d.o,st,slot:d.slot}:{a:'scrap',d:d.d,i:d.i,st});
+  townSave(); townHud(); townTrayUI();
+  const back=townCostText(st.cost); townSay('You salvage the '+I.n+(back?': '+back+' back.':'.'));
+  return true;
+}
 /* Salvage, in Storage: a stored piece gives back all it cost (the old take-up), and a headstone's name waits again */
 function bldSalvage(id){
   if(TWN.inside&&LODGE_ITEMS[id]&&LODGE_ITEMS[id].book){townSay('The Grimoire is not yours to break up. Set it down where you like.'); return false;}
@@ -14742,6 +14815,12 @@ function bldUndo(){
     T.store.splice(j,1); list.splice(Math.min(e.i,list.length),0,e.d); say='The '+tab[e.d.id].n+' comes out of storage, back where it stood.';}
   else if(e.a==='salvage'){T.res=haulFix(T.res); const short=townShort(e.st.cost,T.res); if(short)return no('You need '+short+' to take that back.');
     for(const k of HAUL_KEYS)T.res[k]-=e.st.cost[k]; T.store.splice(Math.min(e.i,T.store.length),0,e.st); say='The '+tab[e.st.id].n+' is back in storage.';}
+  else if(e.a==='scrap'){const short=townShort(e.st.cost,T.res); if(short)return no('You need '+short+' to take that back.');
+    const why=bldFits(e.d.id,e.d.c,e.d.r,e.d.x,e.d.y,e.d.f); if(why)return no(why);
+    T.res=haulFix(T.res); for(const k of HAUL_KEYS)T.res[k]-=e.st.cost[k]; list.splice(Math.min(e.i,list.length),0,e.d); say='The '+tab[e.d.id].n+' is back, and the haul pays for it again.';}
+  else if(e.a==='scrapitem'){const h=e.host; if(list.indexOf(h)<0||(h.on||[]).some(q=>q.s===e.slot))return no('Something stands where it stood.');
+    const short=townShort(e.st.cost,T.res); if(short)return no('You need '+short+' to take that back.');
+    T.res=haulFix(T.res); for(const k of HAUL_KEYS)T.res[k]-=e.st.cost[k]; (h.on||(h.on=[])).push(e.o); e.o.s=e.slot; say='The '+tab[e.o.id].n+' is back, and the haul pays for it again.';}
   else if(e.a==='style'){const why=lodgeStyleWhy(e.from); if(why)return no(why); say='The '+LODGE_ITEMS[e.from].n+' is back.';}
   U.pop(); townSave(); bldSync(); townHud(); townTrayUI(); townSay(say); AUDIO.place&&AUDIO.place();
   return true;
@@ -15201,7 +15280,6 @@ function lodgePickLine(id){
 /* each piece's art in each facing and colourway, made once: lodgeFurnArt() (the Cellar's wet variants are made from it) */
 const LODGE_FA=new Map();
 function lodgeFA(id,f,dye,out){
-  if(LODGE_ITEMS[id].book)return lodgeBookFA();
   const k=id+'|'+(f|0)+'|'+(dye||'')+(out?'|out':''); let a=LODGE_FA.get(k);
   if(!a)LODGE_FA.set(k,a=lodgeFurnArt(id,f,dye,out));
   return a;
@@ -15282,6 +15360,7 @@ function lodgeIcon(id){
   if(!lodgePiece(I)){const img=c.createImageData(16,16), d=img.data;
     for(let y=0;y<16;y++)for(let x=0;x<16;x++){const p=PX_RGB[I.k==='floor'?lodgeGroundPx(48+x,64+y,id,'damp'):lodgeGroundPx(32+x,(I.k==='wall'?8:0)+y,'planks',id)], i=(y*16+x)*4; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;}
     c.putImageData(img,0,4);}
+  else if(I.book){const a=lodgeBookFA(0); c.drawImage(lodgeBookFrame(0,0,0),2,-2,12,14); c.drawImage(a.cv,0,0,16,22,2,3,12,17);}
   else{const a=lodgeFurnArt(id), w=a.cv.width, h=a.cv.height, k=Math.min(1,16/w,20/h); c.drawImage(a.cv,0,0,w,h,Math.round((16-w*k)/2),Math.round(20-h*k),Math.round(w*k),Math.round(h*k));
     if(a.em)c.drawImage(a.em,Math.round((16-w*k)/2+a.ex*k),Math.round(20-h*k+a.ey*k),Math.max(1,Math.round(a.em.width*k)),Math.max(1,Math.round(a.em.height*k)));}
   return cv.toDataURL();
@@ -15528,7 +15607,11 @@ function townDraw(){
   const fr=P.moving?cyc[Math.floor(P.wt*TOWN_SPEED*2.4)%4]:0, spr=S[face].walk?townFigPick(S[face],P.moving,P.wt,TWN.t,still):S[face][fr];
   /* the Keepers (step 5) stand among the props the same way you do: each goes in just before the first prop in front of its feet */
   const cr=TWN.crowd, cn=cr.length; let drawn=false, ci=0;
-  const propIm=o=>o.fr&&!still?o.fr[((o.wk?tw:tq)+o.ph)%o.fr.length]:o.c;
+  /* the Grimoire opens as you come near (shut again when you leave) and bobs on its podium; Lite and Reduce Motion do not bob */
+  const BK=TWN.bk||(TWN.bk={k:0,s:0,b:0});
+  if(IN&&A.bookAt){const d=Math.hypot(P.x*16-A.bookAt.gx,P.y*16-A.bookAt.gy), want=d<(BK.k>.5?56:40)?1:0;
+    BK.k=still?want:BK.k+Math.max(-1,Math.min(1,want-BK.k))*Math.min(1,TWN.dt*3.5); BK.s=Math.round(BK.k*4); BK.b=still?0:[0,1,2,1][Math.floor(TWN.t/.4)&3];}
+  const propIm=o=>o.book?lodgeBookFrame(o.g,BK.s,BK.b):o.fr&&!still?o.fr[((o.wk?tw:tq)+o.ph)%o.fr.length]:o.c;
   for(let i=0,n=A.props.length;i<=n;i++){
     const o=i<n?A.props[i]:null;
     for(;;){
@@ -15572,7 +15655,7 @@ function townDraw(){
     for(;;){const kb=cut<cn?cr[cut].base:1e9, pb=youCut?1e9:pfy; if(Math.min(kb,pb)>=b)break;
       if(pb<=kb){gc.drawImage(spr.c,pfx-8-cx,pfy-22-cy); youCut=true;} else townCrowdDraw(gc,A,cr[cut++],cx,cy,false,true);}
     gc.globalCompositeOperation='source-over';};
-  for(const o of A.em){cutTo(o.base); if(o.fl)gc.drawImage(o.fl[still?0:(tq+o.ph)%o.fl.length],o.x-cx,o.y-cy); else gc.drawImage(o.c,o.x-cx,o.y-cy);}
+  for(const o of A.em){cutTo(o.base); if(o.book)gc.drawImage(lodgeBookEm(o.g,BK.s,BK.b,o.n),o.x-cx,o.y-cy); else if(o.fl)gc.drawImage(o.fl[still?0:(tq+o.ph)%o.fl.length],o.x-cx,o.y-cy); else gc.drawImage(o.c,o.x-cx,o.y-cy);}
   /* and whoever stands in front of the last glow of all */
   cutTo(1e9);
   bc.drawImage(TWN.glow,0,0);
@@ -15662,6 +15745,7 @@ $('#townTools').addEventListener('click',ev=>{
 $('#townDrop').addEventListener('click',()=>{if(TWN.build)bldDrop();});
 $('#townCancel').addEventListener('click',()=>{if(TWN.build)bldCancel();});
 $('#townStow').addEventListener('click',()=>{if(TWN.build)bldStow();});
+$('#townScrap').addEventListener('click',()=>{if(TWN.build)bldScrap();});
 /* Dye (Expansion 4, step 4): a lifted piece takes its next colourway, for tallow; the first time says how it goes */
 $('#townDye').addEventListener('click',()=>{if(!TWN.build)return; if(bldDye()&&tipFresh('lodgedye')){TWN.tipFor='lodgedye'; townShowTip();}});
 /* ⟳ (Expansion 4, step 2): a tap turns the lifted piece a step clockwise; held, it turns it back a step, and the click that

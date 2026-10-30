@@ -105,6 +105,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   /* 5. shadows: each light throws what stands near it across the floor away from it, and what has a light behind it stands dark;
      nothing to throw, no layer; computed only when the room changes */
   const sh=await p.evaluate(`(()=>{const T=__t, D=(${setup})(), o={}, L=T.lodgeRoom();
+    L.furn=L.furn.filter(d=>d.id!=='grimoire'); T.lodgeSync();   /* the podium would throw a shadow of its own into the patch looked at */
     T.lodgePlace('floorlamp',4,4); T.lodgePlace('chest',4,6);
     let A=T.lodgeArt(); const at=(x,y)=>A.sil?A.sil.getContext('2d').getImageData(x,y,1,1).data[3]:0;
     /* the lamp stands on tile (4,4), the chest on (4..5,6): its shadow falls south of it, and nothing north of the lamp */
