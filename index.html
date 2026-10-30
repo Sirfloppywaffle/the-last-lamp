@@ -13994,11 +13994,18 @@ function lodgeArt(){
    room's light is carved out of it (townDraw()), so a shadow is the dark coming back; the Keeper's own lantern lights it away.
    Stepped and dithered like every pool of light. null when there is nothing to throw ---- */
 const SHADE_A=150, SIL_A=120;
+/* what of a piece's canvas is drawn, read once per canvas (they are kept by lodgeFA()) */
+const SHADE_MASK=new WeakMap();
+function shadeMask(cv){
+  let op=SHADE_MASK.get(cv); if(op)return op;
+  const w=cv.width, h=cv.height, d=cv.getContext('2d').getImageData(0,0,w,h).data; op=new Uint8Array(w*h);
+  for(let i=0;i<w*h;i++)op[i]=d[i*4+3]>=128?1:0;
+  SHADE_MASK.set(cv,op); return op;
+}
 function lodgeShade(sol,lights,m){
   if(!sol.length||!lights.length)return null;
   const W=LODGE_W*16, H=LODGE_H*16, S=new Uint8Array(W*H);
-  for(const P of sol){const w=P.cv.width, h=P.cv.height, d=P.cv.getContext('2d').getImageData(0,0,w,h).data, op=new Uint8Array(w*h);
-    for(let i=0;i<w*h;i++)op[i]=d[i*4+3]>=128?1:0; P.op=op;}
+  for(const P of sol)P.op=shadeMask(P.cv);
   const mine=(P,X,Y)=>{const u=X-P.x, v=Y-P.y; return u>=0&&v>=0&&u<P.cv.width&&v<P.cv.height&&P.op[v*P.cv.width+u];};
   for(const P of sol){
     const w=P.cv.width, h=P.cv.height, pcx=P.x+w/2;
