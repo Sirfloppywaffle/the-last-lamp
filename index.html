@@ -532,7 +532,7 @@ input[type=range]::-moz-range-track {
 .town-tb b{font-weight:500;color:var(--bone)}
 .town-tb:disabled{opacity:.4;cursor:default}
 .town-tb-go{color:var(--bone);border-color:var(--tallow)}
-#townLiftBar .town-tb{min-width:76px}
+#townLiftBar .town-tb{min-width:62px;padding:0 6px}
 /* ⟳ (Expansion 4, step 2) is held to turn back: no text selection or callout under the thumb */
 #townLiftBar #townTurn{min-width:52px;font-size:1.15rem;letter-spacing:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
 .town-trow{min-height:64px}
@@ -540,6 +540,12 @@ input[type=range]::-moz-range-track {
 .town-chip.town-stored b{position:absolute;top:2px;right:4px;font-family:var(--f-num);font-size:.6rem;font-weight:500;color:var(--bone)}
 .town-chip.town-stored{position:relative}
 .town-chip.town-salv{justify-content:center}
+/* the Lodge's sets (Expansion 4, step 4): the chip that names the set on show, and the padlock on a set not yet bought */
+.town-chip.town-setchip{position:relative;border-color:var(--brine)}
+.town-chip.town-setchip b{position:absolute;top:2px;right:4px;font-family:var(--f-num);font-size:.55rem;font-weight:500;color:var(--ash)}
+.town-chip.locked img{opacity:.35}
+.town-chip.locked{position:relative}
+.town-chip img.town-lock{position:absolute;top:4px;right:4px;opacity:.9}
 .town-chip.town-salv span{font-size:.62rem}
 @media (min-width:640px){.town-tbot{flex-direction:row;align-items:center}.town-tools{flex:0 0 auto;width:318px;justify-content:center}.town-trow{flex:1 1 auto;min-width:0}}
 </style>
@@ -623,7 +629,7 @@ input[type=range]::-moz-range-track {
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, Kindle sets a creature burning and running, lighting the dark around it, and its Signal Mirror, built in the lamp's own light, reflects it in a 5-tile beam you aim between waves (it locks while the dark comes); you can build in the beam, and it burns what crosses it. The Galvanist builds a power grid: Pylons string live wires that shock, stun and light what crosses them, if a pylon stands in the lamp's own light to power the rest; his Arc Lamps burn bright but flicker; his Lightning Rods plant where they strike and join the grid; Overload fires every wire at once for 2 oil, and run hot it fries his pylons; he binds nothing by ritual: his Grounding Anchor forces nearby pylons to link to it, and a bindable creature that dies inside one of its triangles is caught in a cage to tap (the Keeper's core waits 15 seconds for a cage, and its fall readies the Anchor), each capture drawing 2 Heat out of the grid; his lamp's Dynamo branch ends in a Static Burst. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Bellringer, Agathe Vell, sees by sound: her Toll rings the lamp, and whatever its ring touches is heard for 1.5 seconds, outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost; each Toll makes 1 Noise (it fades 1 every 8 seconds), and at 5 the dark answers with two Abyssal Stalkers; the Great Bell is heard across the whole floor for 3 Noise; her Bell Wires can be strung anywhere on the path, even in the dark, and hear what crosses them; she builds no candles: her Tuning Forks give no light but hum, standing within 5 tiles of the lamp or 3.5 of another fork, and she can build inside a hum even in the dark, though wards there strike only what is heard; a toll that reaches a fork rings again from it; a toll from the lamp echoes back off the walls of the floor; heavy things leave red footsteps where they tread unseen, but Shades, Stalkers and fliers make none; her Clapper Harpoons ring what they strike and knock it back, and the path's edges show for her even where it is dark; her lamp's Peal branch makes it toll on its own, with no Noise, but that heartbeat finds only the ordinary dark; tap Toll on the beat (a ring closes on the lamp, and the button glows) for a Perfect Toll that reaches half again as far and rings out faster, though it makes as much Noise as any toll; her Tolls, Great Bell, Bell Wires, Clapper bolts and Tocsin shells crack what they strike, and three cracks shatter it, hurting and cracking what stands beside it (bosses take 8, Behemoths and elites 5); her Tocsin shells any Bell Wire that jangles, however far away. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it; Haul Away casts a whaling net that hauls everything under it, and everything on its lines, 3 tiles back and tangles it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The Roster.</b> Five went down the stair the night Saltmouth drowned: Ambrose Fenn the lamplighter, Jonah Tolland the harpooner, the Nameless, Dr. Lucan Voss and Agathe Vell. Each carries the lamp their own way. Some are earned by a deed on the stair, some in the Ember Hall. Every kind of horror you bind or capture, on any descent, adds its eyes to the Nameless’s hood, for good: there are six to find.</li>
-        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it on the square: cobbles, boardwalk, street-lamps, braziers, fences and trees. Tap a piece you built to lift it and set it down elsewhere; ⟳, or a tap on the lifted piece, turns it an eighth at a time (paths and fences a quarter), and holding turns it back; Store puts it away whole, to set down again for nothing, and Salvage in Storage gives back all it cost; Undo takes back your last ten deeds. Grid sets pieces on the tiles, Free wherever your thumb puts them. Nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy. The Keepers you have freed stand in the square, each at their own footing; a dark footing is one you have not freed, and a tap on it says what frees them. Talk to a Keeper to carry the lamp down as them, or to set them to a chore: while you are down they put timber, iron, tallow or curios by for every floor you clear, and the haul brings it up. Never embers, nothing on the stair. Nothing built may stand on a Keeper's place or wall one in. Five ruined workshops stand around the square — the Ember Brazier, the Try-Works, the Galvanic Smithy, the Cracked Belfry and the Ossuary Menagerie — and the haul restores them, then lights their windows. Each restored workshop offers a town gift at its door: you may carry one town gift down per descent, and each one exacts a price on the stair; it is off on a replayed stair and on any floor under a Trial. Some landings after floors 2, 3 and 4 hang a cage behind one door, at most once a descent: pay the lock and whoever is in it climbs to Saltmouth with your haul, even if your lamp goes out. The Croupier lights the Drowned Oar again and plays knucklebones for timber or tallow, and the Loaded Bone is his. The Toothmonger opens her stall: she trades materials at fixed rates, and for 25 tallow, paid at once, she pawns a relic you name so that nothing on your next descent offers it; it holds your one town gift until you go down. Three graves in the cemetery have been opened to the Drowned Mother, the Wrong Sun and the Many-Mouthed: raise one with iron, tallow and curios and its black candle is a town gift. Its patron's Attention starts at 1, so its first tier is on from floor 1 (and is the price), and it reaches out at the first break. Three tide-pools on the south shore hold a little timber, iron, tallow or a curio, and now and then a bottle; they fill again after each descent. Restore the Keeper's Lodge on the west side of the square with timber and iron, and step inside: one room to lay a floor and a wall in and set furniture down, lifted, stored and salvaged as in the square, and a Grimoire shelf with a spine for every creature met and relic found; tap it to read the book. A hatch in its floor opens on the Flooded Cellar, a ladder by its shelf climbs to the Attic: open each with the haul, and each is a room of its own to lay a floor and a wall in and furnish, its pieces turned, stored and salvaged as below. With the Lodge standing, two Keepers can work at chores at once.</li>
+        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it on the square: cobbles, boardwalk, street-lamps, braziers, fences and trees. Tap a piece you built to lift it and set it down elsewhere; ⟳, or a tap on the lifted piece, turns it an eighth at a time (paths and fences a quarter), and holding turns it back; Store puts it away whole, to set down again for nothing, and Salvage in Storage gives back all it cost; Undo takes back your last ten deeds. Grid sets pieces on the tiles, Free wherever your thumb puts them. Nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy. The Keepers you have freed stand in the square, each at their own footing; a dark footing is one you have not freed, and a tap on it says what frees them. Talk to a Keeper to carry the lamp down as them, or to set them to a chore: while you are down they put timber, iron, tallow or curios by for every floor you clear, and the haul brings it up. Never embers, nothing on the stair. Nothing built may stand on a Keeper's place or wall one in. Five ruined workshops stand around the square — the Ember Brazier, the Try-Works, the Galvanic Smithy, the Cracked Belfry and the Ossuary Menagerie — and the haul restores them, then lights their windows. Each restored workshop offers a town gift at its door: you may carry one town gift down per descent, and each one exacts a price on the stair; it is off on a replayed stair and on any floor under a Trial. Some landings after floors 2, 3 and 4 hang a cage behind one door, at most once a descent: pay the lock and whoever is in it climbs to Saltmouth with your haul, even if your lamp goes out. The Croupier lights the Drowned Oar again and plays knucklebones for timber or tallow, and the Loaded Bone is his. The Toothmonger opens her stall: she trades materials at fixed rates, and for 25 tallow, paid at once, she pawns a relic you name so that nothing on your next descent offers it; it holds your one town gift until you go down. Three graves in the cemetery have been opened to the Drowned Mother, the Wrong Sun and the Many-Mouthed: raise one with iron, tallow and curios and its black candle is a town gift. Its patron's Attention starts at 1, so its first tier is on from floor 1 (and is the price), and it reaches out at the first break. Three tide-pools on the south shore hold a little timber, iron, tallow or a curio, and now and then a bottle; they fill again after each descent. Restore the Keeper's Lodge on the west side of the square with timber and iron, and step inside: one room to lay a floor and a wall in and set furniture down, lifted, stored and salvaged as in the square, and a Grimoire shelf with a spine for every creature met and relic found; tap it to read the book. A hatch in its floor opens on the Flooded Cellar, a ladder by its shelf climbs to the Attic: open each with the haul, and each is a room of its own to lay a floor and a wall in and furnish, its pieces turned, stored and salvaged as below. The Lodge’s pieces come in five sets, Fisherman’s and the Old Library from the start and the Drowned Chapel, the Brass Observatory and the Deep-One Coral by a blueprint from the Peddler; the set chip on the tray shows the next. Some hang on the back wall, and small things stand on a desk, a chest, a shelf or a table and go wherever it goes. Dye gives a lifted piece another colourway for tallow. With the Lodge standing, two Keepers can work at chores at once.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. The stair's name decides which, and a saved floor keeps its own.</li>
@@ -656,7 +662,7 @@ input[type=range]::-moz-range-track {
   <div class="town-actwrap"><button class="btn call town-act" id="townAct" type="button" hidden>Descend the stair</button></div>
   <div class="town-tray" id="townTray" hidden><div class="town-tmsg" id="townTmsg" aria-live="polite"></div><div class="town-tbot">
     <div class="town-tools" id="townTools"><div class="town-seg" role="group" aria-label="Show"><button type="button" class="town-tb" data-tab="pieces" aria-pressed="true">Pieces</button><button type="button" class="town-tb" data-tab="store" aria-pressed="false">Storage <b id="townStoreN">0</b></button></div><div class="town-seg" role="group" aria-label="Placing"><button type="button" class="town-tb" data-snap="grid" aria-pressed="true">Grid</button><button type="button" class="town-tb" data-snap="free" aria-pressed="false">Free</button></div><button type="button" class="town-tb" id="townUndo" disabled>Undo</button></div>
-    <div class="town-tools" id="townLiftBar" hidden><button type="button" class="town-tb town-tb-go" id="townDrop">✓ Place</button><button type="button" class="town-tb" id="townTurn" aria-label="Turn it. Hold to turn it back">⟳</button><button type="button" class="town-tb" id="townCancel">✕ Cancel</button><button type="button" class="town-tb" id="townStow">Store</button></div>
+    <div class="town-tools" id="townLiftBar" hidden><button type="button" class="town-tb town-tb-go" id="townDrop">✓ Place</button><button type="button" class="town-tb" id="townTurn" aria-label="Turn it. Hold to turn it back">⟳</button><button type="button" class="town-tb" id="townDye" aria-label="Dye it: its next colourway" hidden>Dye</button><button type="button" class="town-tb" id="townCancel">✕ Cancel</button><button type="button" class="town-tb" id="townStow">Store</button></div>
     <div class="town-trow" id="townTrow" aria-label="Build"></div></div></div>
   <div class="town-cardwrap" id="townCardWrap" hidden><button class="town-card" id="townCard" type="button"></button></div>
 </div>
@@ -701,7 +707,7 @@ const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='19.3.0';
+const GAME_VERSION='19.4.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -10745,6 +10751,9 @@ const TIPS={
   townlift:{where:'town',when:()=>false,title:'Lift, turn, store, salvage',text:'Tap a piece you built to lift it. Drag it, or tap where it goes, then Place; Cancel sets it back exactly where it stood. Store puts it away whole, and it waits in Storage on the tray to be set down again for nothing. Salvage, in Storage, gives back all it cost. Undo takes back your last ten deeds until you close Build. ⟳, or a tap on the lifted piece, turns it an eighth; hold either to turn it back. A chair in a corner can face the room.'},
   townfree:{where:'town',when:()=>false,title:'Grid or Free',text:'Grid sets every piece square on the tiles. Free sets it where your thumb puts it, to the pixel, wherever its footprint fits; it still blocks the tiles it covers most of, and nothing may wall off a door or a Keeper’s place. Paths and fences keep to the tiles. Build remembers which you chose.'},
   lodge:{where:'town',when:()=>false,title:'The Keeper’s Lodge',text:'One room above the stair, and it is yours. Build here as in the square: tap a floor or a wall on the tray to lay it over the room, or choose a piece of furniture and tap the floor. Tap a piece to lift it, as in the square; a floor or a wall you change gives back all it cost. The shelf by the back wall holds the Grimoire. With the Lodge standing, two Keepers can work at chores at once. The hatch in the floor and the ladder by the shelf lead to two more rooms, opened with the haul. The door takes you back out into the rain.'},
+  lodgemount:{where:'town',when:()=>false,title:'Wall mounts',text:'A mount hangs on the back wall, never on the floor: tap the wall, or any square of the room, and it goes up in that column. It cannot hang over the ladder, the shelf or a lamp, and no two share a place. Lift one and it moves along the wall like any piece.'},
+  lodgesmall:{where:'town',when:()=>false,title:'Small things',text:'Candles, books, a skull: choose one and tap a desk, a chest, a shelf or a table. It stands in the free place nearest your thumb, half a tile from the next. Tap one to lift it and move it, or Store it. Lift the table and everything on it comes too.'},
+  lodgedye:{where:'town',when:()=>false,title:'Dyes',text:'Dye, while a piece is lifted, gives it its next colourway: each costs 2 tallow, and going back to its own colours gives the tallow back. Every piece has two to four. Undo takes a dye back.'},
   lodgecellar:{where:'town',when:()=>false,title:'The Flooded Cellar',text:'Brine stands over the cellar floor and never drains. It is a room like the one above, with its own floor, wall and furniture: set a piece down and it stands in the water; it comes up for all it cost. Storage is the same in every room. The ladder takes you back up.'},
   lodgeattic:{where:'town',when:()=>false,title:'The Attic',text:'A room under the roof, with its own floor, wall and furniture, built as below. The round window looks out on the rain over Saltmouth, and lets a little of the night in. Storage is the same in every room. The hatch takes you back down.'},
   lodgeshelf:{where:'town',when:()=>false,title:'The Grimoire shelf',text:'One spine for every creature you have met and every relic you have found, on any descent: the cold ones creatures, the warm ones relics. Tap the shelf to read the Grimoire; close it and you are back in the Lodge.'},
@@ -12233,13 +12242,14 @@ const LODGE_KEEP=[[4,8,'door'],[5,8,'door'],[4,3,'shelf'],[5,3,'shelf'],[2,2,'la
    fixed shallow level here: brine, in art pixels, for step 9 to move); the Attic a round window onto the rain. floor and wall:
    what a room has before you change it, free in that room. Costs are shape only, for playtest ---- */
 const LODGE_ROOMS={
-  main:{n:'The Keeper’s Lodge',map:LODGE_MAP,keep:LODGE_KEEP,in:LODGE_IN,floor:'planks',wall:'damp',night:'rgba(3,4,8,.7)'},
+  main:{n:'The Keeper’s Lodge',map:LODGE_MAP,keep:LODGE_KEEP,in:LODGE_IN,floor:'planks',wall:'damp',night:'rgba(3,4,8,.7)',
+    hang:[[32,48,'ladder'],[64,96,'shelf'],[17,27,'sconce'],[115,125,'sconce']]},
   cellar:{n:'The Flooded Cellar',tip:'lodgecellar',cost:{iron:25,tallow:10},floor:'flags',wall:'damp',brine:3,night:'rgba(3,4,8,.76)',
     map:['#######U##','#######U##','#........#','#........#','#........#','#........#','#........#','#........#','#........#','##########'],
-    keep:[[7,2,'ladder']],in:{x:7.5,y:2.6}},
+    keep:[[7,2,'ladder']],in:{x:7.5,y:2.6},hang:[[112,128,'ladder'],[36,44,'sconce']]},
   attic:{n:'The Attic',tip:'lodgeattic',cost:{timber:30,curios:2},floor:'planks',wall:'damp',night:'rgba(3,4,8,.72)',
     map:['##########','##########','#.H......#','#........#','#........#','#........#','#........#','#........#','#........#','##########'],
-    keep:[[2,3,'hatch']],in:{x:2.5,y:3.6}}};
+    keep:[[2,3,'hatch']],in:{x:2.5,y:3.6},hang:[[0,40,'roof'],[64,96,'window'],[120,160,'roof']]}};
 const LODGE_ROOM_KEYS=['cellar','attic'];
 for(const m in LODGE_ROOMS){const R=LODGE_ROOMS[m]; R.kept=new Set(R.keep.map(([x,y])=>y*LODGE_W+x));}
 const LODGE_KEPT=LODGE_ROOMS.main.kept;
@@ -12266,17 +12276,101 @@ function lodgeCost(id,m){const I=LODGE_ITEMS[id], R=LODGE_ROOMS[m||lodgeCur()]; 
    radius of its pool, green for the banker's lamp. Changing or taking up anything gives back all it cost. faces (Expansion 4,
    step 2): how many facings it is drawn in (faceSrc()); diag: its footprint on a drawn diagonal, the tiles it covers facing SW */
 const LODGE_ITEMS={
-  planks:{k:'floor',n:'Rotted Ship-Planks',s:'Planks',cost:{}},
-  parquet:{k:'floor',n:'Diamond Parquet',s:'Parquet',cost:{timber:20}},
-  flags:{k:'floor',n:'Cistern Flagstones',s:'Flags',cost:{iron:20}},
-  damp:{k:'wall',n:'Damp Stone',s:'Stone',cost:{}},
-  library:{k:'wall',n:'Mahogany Library',s:'Library',cost:{timber:30}},
-  brass:{k:'wall',n:'Brass-Ribbed Bulkhead',s:'Brass',cost:{iron:30}},
-  desk:{k:'furn',n:'Banker’s Desk',s:'Desk',cost:{timber:12,iron:4},w:2,light:30,green:true,faces:4},
-  stove:{k:'furn',n:'Cast-Iron Stove',s:'Stove',cost:{iron:10,tallow:2},light:36,faces:4},
-  rug:{k:'furn',n:'Ritual Rug',s:'Rug',cost:{tallow:8,curios:1},w:3,h:3,flat:true,faces:1},
-  chair:{k:'furn',n:'Armchair',s:'Chair',cost:{timber:8,tallow:2},faces:8,diag:[[0,0]]},
-  shelf:{k:'furn',n:'Bookshelf',s:'Shelf',cost:{timber:10},faces:4}};
+  planks:{k:'floor',set:'rooms',n:'Rotted Ship-Planks',s:'Planks',cost:{}},
+  parquet:{k:'floor',set:'rooms',n:'Diamond Parquet',s:'Parquet',cost:{timber:20}},
+  flags:{k:'floor',set:'rooms',n:'Cistern Flagstones',s:'Flags',cost:{iron:20}},
+  damp:{k:'wall',set:'rooms',n:'Damp Stone',s:'Stone',cost:{}},
+  library:{k:'wall',set:'rooms',n:'Mahogany Library',s:'Library',cost:{timber:30}},
+  brass:{k:'wall',set:'rooms',n:'Brass-Ribbed Bulkhead',s:'Brass',cost:{iron:30}},
+  /* Fisherman's (open from the start) */
+  stove:{k:'furn',set:'fisher',n:'Cast-Iron Stove',s:'Stove',cost:{iron:10,tallow:2},light:36,glow:'vkab89',faces:4,dyes:['rust']},
+  chest:{k:'furn',set:'fisher',n:'Sea Chest',s:'Chest',cost:{timber:10,iron:3},w:2,faces:4,top:4,dyes:['tar','wine','bleach']},
+  wheel:{k:'furn',set:'fisher',n:'Ship’s Wheel',s:'Wheel',cost:{timber:6,iron:2},mount:true,h:2,faces:1,dyes:['tar','bleach']},
+  baro:{k:'furn',set:'fisher',n:'Barometer',s:'Barometer',cost:{iron:6,tallow:1},mount:true,h:2,faces:1,dyes:['verd','tar']},
+  shiplamp:{k:'furn',set:'fisher',n:'Ship’s Lantern',s:'Wall lantern',cost:{iron:4,tallow:2},mount:true,h:2,light:30,glow:'a9c',faces:1,dyes:['rust','tar']},
+  anchor:{k:'furn',set:'fisher',n:'Rusted Anchor',s:'Anchor',cost:{iron:8},mount:true,h:2,faces:1,dyes:['tar','verd']},
+  lantern:{k:'furn',set:'fisher',n:'Hurricane Lantern',s:'Lantern',cost:{iron:2,tallow:2},small:true,light:26,glow:'9abc',faces:1,dyes:['rust','tar']},
+  bottle:{k:'furn',set:'fisher',n:'Ship in a Bottle',s:'Bottle',cost:{timber:2,curios:1},small:true,faces:1,dyes:['verd']},
+  /* Old Library (open from the start) */
+  chair:{k:'furn',set:'library',n:'Armchair',s:'Chair',cost:{timber:8,tallow:2},faces:8,diag:[[0,0]],dyes:['wine','tar','bleach']},
+  desk:{k:'furn',set:'library',n:'Banker’s Desk',s:'Desk',cost:{timber:12,iron:4},w:2,faces:4,top:4,dyes:['tar','wine','bleach']},
+  shelf:{k:'furn',set:'library',n:'Bookshelf',s:'Shelf',cost:{timber:10},faces:4,top:2,dyes:['tar','wine','bleach']},
+  rug:{k:'furn',set:'library',n:'Ritual Rug',s:'Rug',cost:{tallow:8,curios:1},w:3,h:3,flat:true,faces:1,dyes:['tar','wine']},
+  portrait:{k:'furn',set:'library',n:'Drowned Portrait',s:'Portrait',cost:{timber:5,tallow:2},mount:true,h:2,faces:1,dyes:['wine','tar']},
+  sconce:{k:'furn',set:'library',n:'Candle Sconce',s:'Sconce',cost:{iron:2,tallow:2},mount:true,h:2,light:28,glow:'bc',faces:1,dyes:['bleach','verd']},
+  floorlamp:{k:'furn',set:'library',n:'Standing Lamp',s:'Lamp',cost:{iron:6,tallow:3},light:40,steady:true,glow:'bac',faces:1,dyes:['verd','tar']},
+  candle:{k:'furn',set:'library',n:'Candle in a Saucer',s:'Candle',cost:{tallow:1},small:true,light:22,glow:'abc',faces:1,dyes:['bleach']},
+  books:{k:'furn',set:'library',n:'Stack of Books',s:'Books',cost:{timber:3},small:true,faces:1,dyes:['wine','tar','bleach']},
+  ink:{k:'furn',set:'library',n:'Inkwell and Quill',s:'Ink',cost:{iron:1,tallow:1},small:true,faces:1,dyes:['wine']},
+  /* Drowned Chapel (a blueprint from the Peddler) */
+  pew:{k:'furn',set:'chapel',n:'Chapel Pew',s:'Pew',cost:{timber:12},w:2,faces:4,dyes:['tar','wine','bleach']},
+  font:{k:'furn',set:'chapel',n:'Holy-Water Font',s:'Font',cost:{iron:10,tallow:2},faces:1,dyes:['ash','blush']},
+  lectern:{k:'furn',set:'chapel',n:'Chapel Lectern',s:'Lectern',cost:{timber:8,iron:2},faces:4,dyes:['tar','wine','bleach']},
+  icon:{k:'furn',set:'chapel',n:'Drowned Saint',s:'Saint',cost:{timber:4,curios:1},mount:true,h:2,faces:1,dyes:['tar','wine']},
+  bell:{k:'furn',set:'chapel',n:'Ship’s Bell',s:'Bell',cost:{iron:8,tallow:1},mount:true,h:2,faces:1,dyes:['verd','rust']},
+  votive:{k:'furn',set:'chapel',n:'Votive Rack',s:'Votives',cost:{iron:3,tallow:4},mount:true,h:2,light:26,glow:'abc9',faces:1,dyes:['rust','tar']},
+  candelabra:{k:'furn',set:'chapel',n:'Candelabra',s:'Candles',cost:{iron:6,tallow:4},light:34,glow:'bc',faces:1,dyes:['rust','bleach']},
+  skull:{k:'furn',set:'chapel',n:'Pilgrim’s Skull',s:'Skull',cost:{curios:1},small:true,faces:1,dyes:['ash']},
+  /* Brass Observatory (a blueprint from the Peddler) */
+  telescope:{k:'furn',set:'observ',n:'Brass Telescope',s:'Telescope',cost:{iron:12,timber:4},faces:4,dyes:['tar','rust']},
+  orrery:{k:'furn',set:'observ',n:'Orrery',s:'Orrery',cost:{iron:14,curios:2},faces:1,dyes:['verd','tar']},
+  chart:{k:'furn',set:'observ',n:'Chart Table',s:'Chart table',cost:{timber:12,iron:3},w:2,faces:4,top:4,dyes:['tar','wine','bleach']},
+  clock:{k:'furn',set:'observ',n:'Stopped Clock',s:'Clock',cost:{iron:6,timber:2},mount:true,h:2,faces:1,dyes:['verd','tar']},
+  stars:{k:'furn',set:'observ',n:'Star Chart',s:'Star chart',cost:{timber:3,tallow:2},mount:true,h:2,faces:1,dyes:['wine','bleach']},
+  walllamp:{k:'furn',set:'observ',n:'Brass Wall Lamp',s:'Wall lamp',cost:{iron:6,tallow:2},mount:true,h:2,light:30,steady:true,glow:'ab9c',faces:1,dyes:['verd','tar']},
+  hourglass:{k:'furn',set:'observ',n:'Brass Hourglass',s:'Hourglass',cost:{iron:2,tallow:1},small:true,faces:1,dyes:['verd','rust']},
+  /* Deep-One Coral (a blueprint from the Peddler) */
+  coral:{k:'furn',set:'coral',n:'Coral Cluster',s:'Coral',cost:{tallow:6,curios:1},faces:1,dyes:['blush','ash']},
+  urn:{k:'furn',set:'coral',n:'Brine Urn',s:'Urn',cost:{tallow:6,iron:2},faces:1,dyes:['tar','verd']},
+  ctable:{k:'furn',set:'coral',n:'Coral Table',s:'Coral table',cost:{tallow:8,curios:1},w:2,faces:1,top:4,dyes:['blush','ash']},
+  fan:{k:'furn',set:'coral',n:'Coral Fan',s:'Fan',cost:{tallow:5,curios:1},mount:true,h:2,faces:1,dyes:['blush','ash']},
+  mask:{k:'furn',set:'coral',n:'Pearl-Eyed Mask',s:'Mask',cost:{tallow:4,curios:2},mount:true,h:2,faces:1,dyes:['ash','blush']},
+  anemone:{k:'furn',set:'coral',n:'Glow-Anemone',s:'Anemone',cost:{tallow:6,curios:1},mount:true,h:2,light:30,steady:true,col:'cold',glow:'gfc',faces:1,dyes:['blush','ash']},
+  shell:{k:'furn',set:'coral',n:'Conch Shell',s:'Shell',cost:{tallow:2},small:true,faces:1,dyes:['blush','ash']}};
+/* ---- Expansion 4, step 4: the catalogue. Seven pieces give light (light: radius; steady: no flicker; col: its colour): a wall light for each set, a standing lamp and a candelabra. Five themed sets and the Lodge's own floors and walls. A set is open from the start
+   (open) or bought as a blueprint from the Peddler (step 6), kept in ll-town.blueprints; developer mode shows them all. A wall
+   mount (mount) hangs on the back wall: its footprint is wall tiles, never floor, 1 tile wide and 2 tall, and where it may
+   hang is each room's hang list. A small thing (small) stands on a surface: a piece with top: n slots along its top, half a
+   tile apart, holds up to n of them, kept in the host's on list, so lifting, storing or salvaging the host takes them with it.
+   dyes: its other colourways (LODGE_DYES), one tallow each (DYE_COST); the piece's own colours are the first. Costs: shape ---- */
+const LODGE_SETS={
+  rooms:{n:'The Lodge’s own',s:'Lodge',open:true,rep:'parquet'},
+  fisher:{n:'Fisherman’s',s:'Fisher',open:true,rep:'chest'},
+  library:{n:'Old Library',s:'Library',open:true,rep:'desk'},
+  chapel:{n:'Drowned Chapel',s:'Chapel',rep:'pew'},
+  observ:{n:'Brass Observatory',s:'Brass',rep:'telescope'},
+  coral:{n:'Deep-One Coral',s:'Coral',rep:'coral'}};
+const LODGE_SET_KEYS=Object.keys(LODGE_SETS);
+const DYE_COST={tallow:2};
+/* a colourway is a swap of palette letters, whatever the piece is drawn in: no new art */
+const LODGE_DYES={
+  tar:{n:'Tarred',sw:{5:'1',6:'2',7:'3',o:'4',p:'4',8:'3',9:'4'}},
+  wine:{n:'Wine-dark',sw:{5:'l',6:'m',7:'n',o:'j',p:'k',8:'j',9:'k'}},
+  bleach:{n:'Salt-bleached',sw:{5:'6',6:'7',7:'o',o:'d',p:'d',8:'9',9:'o'}},
+  verd:{n:'Verdigris',sw:{9:'f',a:'g',b:'g',p:'e',o:'e',c:'g'}},
+  rust:{n:'Rust',sw:{1:'8',2:'8',3:'9',4:'9',r:'9',q:'8'}},
+  blush:{n:'Blushed',sw:{f:'j',g:'k',y:'l'}},
+  ash:{n:'Ash',sw:{f:'3',g:'4',y:'1',d:'e',u:'3'}}};
+/* its letters as colours, for tRows(); made when first asked for, once PX is there */
+const LODGE_DYE_PAL={};
+function dyePal(k){
+  if(!k||!LODGE_DYES[k])return null;
+  if(!LODGE_DYE_PAL[k]){const P=LODGE_DYE_PAL[k]={}; for(const a in LODGE_DYES[k].sw)P[a]=PX[LODGE_DYES[k].sw[a]];}
+  return LODGE_DYE_PAL[k];
+}
+/* the sets open to you now: the free ones, a blueprint you hold, or all of them in developer mode (which never writes) */
+function lodgeSetOpen(k,T){const S=LODGE_SETS[k]; if(!S)return false; if(S.open||devOn)return true; T=T||townData(); return Array.isArray(T.blueprints)&&T.blueprints.includes(k);}
+function blueprintsFix(b){return [...new Set((Array.isArray(b)?b:[]).filter(k=>LODGE_SETS[k]&&!LODGE_SETS[k].open))];}
+/* one piece's cost as it stands: what it cost, a colourway not its own, and everything standing on it */
+function lodgeCostOf(d){
+  const I=d&&LODGE_ITEMS[d.id]; if(!I)return {};
+  const c=Object.assign({},I.cost);
+  if(d.dye)for(const k in DYE_COST)c[k]=(c[k]|0)+DYE_COST[k];
+  for(const o of Array.isArray(d.on)?d.on:[]){const q=lodgeCostOf(o); for(const k in q)c[k]=(c[k]|0)+q[k];}
+  return c;
+}
+/* a saved colourway, or none: only one the piece has */
+function dyeFix(dye,I){return I&&I.dyes&&I.dyes.includes(dye)?dye:null;}
 function lodgeCh(x,y,m){return x<0||y<0||x>=LODGE_W||y>=LODGE_H?'#':LODGE_ROOMS[m||lodgeCur()].map[y][x];}
 function lodgeKept(x,y,m){return LODGE_ROOMS[m||lodgeCur()].kept.has(y*LODGE_W+x);}
 function lodgeTiles(id,c,r,f){const t=pieceFoot(LODGE_ITEMS[id],f).t, out=[]; for(const [x,y] of t)out.push([c+x,r+y]); return out;}
@@ -12344,18 +12438,42 @@ function lodgeRoomFix(l,m,res,built){
   const pay=c=>{if(res)for(const k in c)res[k]+=c[k];}, used=new Set();
   for(const d of built&&Array.isArray(l.furn)?l.furn:[]){
     if(!d||!kind(d.id,'furn'))continue;
-    const I=LODGE_ITEMS[d.id], c=d.c|0, r=d.r|0, f=faceFix(d.f,I), tiles=lodgeTiles(d.id,c,r,f);
-    if(!tiles.every(([x,y])=>lodgeCh(x,y,m)==='.'&&(I.flat||!lodgeKept(x,y,m))&&!used.has(y*LODGE_W+x))){pay(I.cost); continue;}
+    const I=LODGE_ITEMS[d.id], c=d.c|0, r=I.mount?0:d.r|0, f=faceFix(d.f,I), tiles=lodgeTiles(d.id,c,r,f);
+    /* a small thing stands on a piece (its host's on list); one found loose comes up */
+    if(I.small){pay(lodgeCostOf(d)); continue;}
+    /* a mount hangs where the wall takes it (Expansion 4, step 4); anything else on floor that is free */
+    const X=Number.isInteger(d.x)&&Math.round(d.x/16)===c?d.x:c*16;
+    if(I.mount?lodgeMountWhy(d.id,c,X,m)||tiles.some(([x,y])=>used.has(y*LODGE_W+x))
+      :!tiles.every(([x,y])=>lodgeCh(x,y,m)==='.'&&(I.flat||!lodgeKept(x,y,m))&&!used.has(y*LODGE_W+x))){pay(lodgeCostOf(d)); continue;}
     for(const [x,y] of tiles)used.add(y*LODGE_W+x);
-    o.furn.push(freeFix({id:d.id,c,r,f,x:d.x,y:d.y},I,o.furn,(x,y)=>lodgeTouchOK(x,y,m)));
+    const e=freeFix({id:d.id,c,r,f,x:d.x,y:I.mount?0:d.y},I,o.furn,(x,y)=>I.mount?lodgeCh(x,y,m)==='#':lodgeTouchOK(x,y,m));
+    if(I.mount&&e.x!=null&&lodgeMountWhy(d.id,c,e.x,m)){delete e.x; delete e.y;}
+    const dye=dyeFix(d.dye,I); if(dye)e.dye=dye;
+    /* what stands on it: only small things, one to a slot of its top; the rest come up and pay back */
+    if(Array.isArray(d.on)){const seen=new Set(), on=[];
+      for(const q of d.on){const J=q&&LODGE_ITEMS[q.id];
+        if(!J)continue;
+        if(!J.small||!I.top||!Number.isInteger(q.s)||q.s<0||q.s>=I.top||seen.has(q.s)){pay(lodgeCostOf(q)); continue;}
+        seen.add(q.s); const e2={id:q.id,s:q.s}, dd=dyeFix(q.dye,J); if(dd)e2.dye=dd; on.push(e2);}
+      if(on.length)e.on=on;}
+    o.furn.push(e);
   }
   /* oldest first, every solid piece that still leaves the door, the shelf and the ways between the rooms in reach stays */
-  const solid=o.furn.filter(d=>!LODGE_ITEMS[d.id].flat);
+  const solid=o.furn.filter(d=>!LODGE_ITEMS[d.id].flat&&!LODGE_ITEMS[d.id].mount);
   if(solid.length&&!lodgeKeepOK(solid,m)){const keep=[];
-    for(const d of solid){if(lodgeKeepOK(keep.concat([d]),m))keep.push(d); else pay(LODGE_ITEMS[d.id].cost);}
-    o.furn=o.furn.filter(d=>LODGE_ITEMS[d.id].flat||keep.indexOf(d)>=0);}
+    for(const d of solid){if(lodgeKeepOK(keep.concat([d]),m))keep.push(d); else pay(lodgeCostOf(d));}
+    o.furn=o.furn.filter(d=>LODGE_ITEMS[d.id].flat||LODGE_ITEMS[d.id].mount||keep.indexOf(d)>=0);}
   for(const k in l)if(!(k in o)&&k!=='rooms')o[k]=l[k];
   return o;
+}
+/* why a mount can't hang with its left edge at X (art pixels) in room m: '' if it can. The wall's face runs from the left wall's
+   edge to the right one's, and each room names what is already on it (hang: from, to, what) */
+function lodgeMountWhy(id,c,X,m){
+  const I=LODGE_ITEMS[id], R=LODGE_ROOMS[m||lodgeCur()], W=(I.w||1)*16;
+  if(X<16||X+W>144)return 'The wall ends there.';
+  for(const [a,b,w] of R.hang)if(X<b&&a<X+W)return 'The '+w+' is in the way.';
+  for(const [tx,ty] of footTiles(footRects(X,0,{w:I.w||1,h:2,full:true,t:[]})))if(lodgeCh(tx,ty,m)!=='#')return 'There is no wall there.';
+  return '';
 }
 function lodgeBuilt(T){T=T||townData(); return !!(T.lodge&&T.lodge.built);}
 function townRescued(k,T){T=T||townData(); return Array.isArray(T.rescued)&&T.rescued.includes(k);}
@@ -12686,6 +12804,8 @@ function townFix(t){
     lore:[...new Set((Array.isArray(t.lore)?t.lore:[]).filter(i=>Number.isInteger(i)&&i>=0&&i<TOWN_BOTTLES.length))]};
   /* Expansion 4, step 1: what waits in storage, and whether Build places on the grid or freely */
   o.store=storeFix(t.store); o.free=t.free===true;
+  /* Expansion 4, step 4: the furniture sets bought as blueprints (the Peddler, step 6) */
+  o.blueprints=blueprintsFix(t.blueprints);
   /* step 9: the Lodge, and its second chore slot (a Keeper of its own, never the first slot's) */
   o.lodge=lodgeFix(t.lodge,o.res);
   o.chore2=o.lodge.built&&KITS[t.chore2]&&TOWN_CHORES[t.chore2]&&t.chore2!==o.chore?t.chore2:null;
@@ -12762,8 +12882,12 @@ function storeFix(a){
     const s=e.s==='lodge'||e.s==='town'?e.s:null, I=s==='lodge'?LODGE_ITEMS[e.id]:s==='town'?TOWN_DECOS[e.id]:null;
     if(!I||(s==='lodge'&&I.k!=='furn'))continue;
     const o={s,id:e.id,cost:haulFix(e.cost&&typeof e.cost==='object'?e.cost:I.cost)}, f=faceFix(e.f,I);
-    /* it keeps the way it faced (Expansion 4, step 2) */
+    /* it keeps the way it faced (Expansion 4, step 2), the colourway it was dyed, and what stood on it (step 4) */
     if(f)o.f=f;
+    if(s==='lodge'&&dyeFix(e.dye,I))o.dye=e.dye;
+    if(s==='lodge'&&I.top&&Array.isArray(e.on)){const seen=new Set(), on=[];
+      for(const q of e.on){const J=q&&LODGE_ITEMS[q.id]; if(!J||!J.small||!Number.isInteger(q.s)||q.s<0||q.s>=I.top||seen.has(q.s))continue; seen.add(q.s); const e2={id:q.id,s:q.s}; if(dyeFix(q.dye,J))e2.dye=q.dye; on.push(e2);}
+      if(on.length)o.on=on;}
     if(s==='town'&&I.grave&&Number.isInteger(e.g)&&e.g>0)o.g=e.g;
     out.push(o);
   }
@@ -13456,106 +13580,87 @@ const LODGE_CHAIR=[
   ['...................555..','..................57765.','.................5555765','...............557776555','..............577o755555','........555.557765555555','.......57o75566655555555','.......5o66o75555555555.','.......5666665555555555.','........566665555555555.','.555..55576665555555555.','56775566566665555555555.','5667775557665555555555..','5566677656665555555555..','.55556665o665555555555..','.555555556665555555555..','.565555556665555555555..','.566655566655555555555..','.566666666655555555555..','.555666666655555555555..','.575556666555555555565..','.555.555565555555...55..','.......555555555........','.........55555..........','..........555...........','..........575...........','...........5............'],
   ['.55555..........','5775665.........','57756665........','55555665........','57o7o565........','55556o55........','55565755........','56566655........','56666p5.........','.566675.........','.566756.........','.566p555555555..','.56665556666665.','.566p5555555555.','.566656777777775','.566656665667665','.566655565555665','..56655555555555','..56665555555575','..56666656666665','..566666666666o5','..55666666666665','..55556666655575','..55555555555555','..575........575','..55..........55'],
   ['..........55555........','.......555676o75.......','.....557757557765......','...55677655655675......','.5557776655655665......','5o7657666656556o5......','556o756666565565.......','5556o56566665565.......','5565665566665575.......','566577565666556555.....','.5666756566655567755...','.566755656665555677755.','.5666556666555555667765','.5667555665555555556675','.5666555556666665555665','..56567656666667765565.','..56556777566666777565.','..56555677756666776575.','..56555567675677666565.','..56655555765765665575.','..55665555665666556555.','..55566655565655665575.','..5755566657556655..55.','...55.5556565655.......','........555755.........','.........5555..........','.........5675..........','..........55...........']];
+/* ---- Expansion 4, step 4: the catalogue's art. Every piece from PixelLab through tools/png2rows.py (EXPANSION4_RUNBOOK.md §3,
+   expansion/ART_UPGRADE.md §3): on the town's palette (no new letters), its edge taken a shade up from pure dark to its own darkest
+   (--outline), straight facings 16 wide a tile. Keyed by the facing drawn (0 S, 2 W, 4 N; a piece drawn one way has only 0) ---- */
+const LODGE_ROWS={
+  chest:{0:['...5...555.......555...5...','..505557o055555550oo55505..','.5o07707e0ooooood0oo0770o5.','.5e0yu0oo06yyy7yy0o80o70e5.','.5o07p0880ooooddo08o0dn0o5.','.5e0d60oo07poouuo09o0oo0e5.','.5o0oo08u0p7puuoo0o90oo0o5.','.5o0nn07u07p222220oo0n20o5.','.5o0uu097077o7ud70o90uu0o5.','.5u0yy07o0nn2nnn20oo0yy0u5.','50u00007o000000000970000u05','70uu99o77uu99ouuu77777uuu07','70000000000000000000000000o','70oouuu9o770ooo07o79uuuuu07','70u000077000u07000770000u07','50u0n20oo0n0o0o0y0u70n20u05','.5u0nn0uo020uuu0n0uu0nd0u5.','.5ody70ou072000770uo0n22p5.','.5d7dy0uo0222227y0890y2du5.','.57dyy0u70y77777y08u0yy5u5.','.5d7d50uo0551111508u01ppu5.','.5udy70uo067777d707u07opu5.','.5555555555555555555555555.'],2:['.....555555.....','...559eeooo55...','..5oo0000007o5..','.5o00o7o76u00o5.','5o0d7o7o76duy0o5','507o7d7o7d7uyns5','527o7000000uy725','577009ee8e800725','5709oyyyyy3o8025','50oyy00000033o05','5o700177777003o5','5o00mm11115m00o5','5y0m266y666yy0y5','5yy77uu8777uu7y5','5000000000000005','577e7e7uou777775','5700000000000075','57070o6772o07075','5o050900009050u5','py0yy099oo06y075','po0y77000066y0y5','u70115mmmm55d0y5','u706dy77777pn0y5','5u05ydmmm222d0y5','5u7dyyydyyuy3yy5','5555555555555555'],4:['..55...55.........55...55..','.5o0555oo555555555oo5550e5.','.5e0oo0oo0ooooooo09o0do0o5.','.5e0yy0eo0y77777y09e06y0e5.','.5e0ou0e90ooooodo0990ey0o5.','.5o0u6088066666oy0e907o0e5.','.5o0uu08u0eoodooo0eo0oo0o5.','.5o05507u02oo57550eo0550o5.','.5u0770ou0666666607o0y70u5.','50u0000oo000000000oo0000u05','70uuu000000uuuuu000000uuu07','700000oooo0000000o77o000007','70uuu000000u77uu000000uuu07','50u000077000000000oo0000u05','.5u0mn0u702yyyyyy0uo0yy0u5.','.57pp50uo055555110u80000u5.','.5em2o0u90y7n2d660uu0770u5.','.5p2pu09u077776d60uu0y70u5.','.5upp00ou000555550uu00d0u5.','.5u0270uu0yy777yy0uu0p2pu5.','.5u0yy09u0nnnnndd0u90ypyu5.','.5555555555555555555555555.']},
+  stove:{0:['.......11.......','......1251......','......12y1......','......1261......','......1ss1......','....11nnnn11....','...1n67777661...','..1m67777776m1..','.1n6677777766m1.','.1n6647777766m1.','1n6676n6666766l1','166766ssss6676m1','1666ns77u6s66651','166nsnv5k56s6651','156snvkyv5v6sm51','.16s6vkya5kjs61.','.15s6ab6b5v6s51.','..15s0ana6ms51..','...15s6786s51...','...1s1ssss1s1...','..1m1.1111.161..','..11........11..'],2:['.............11.','............1m51','............1ym1','......111...1ym1','....1167611.1ym1','...1n7777n61s751','..16y7777762smm1','.1s7y77777662s51','13s7637773y6ms1.','13s67737y3y6351.','1ns6y77ny366351.','1ysy376666665m1.','1ks6y33366y3m61.','1ks763336n3nms1.','1ns666y3n3mm51..','.1s66633mm6601..','..1066nmn6601...','...1056m6551....','....1s05l1s1....','....16111.1n1...','...121.....11...','...11...........'],4:['.......11.......','......1ym1......','......1ym1......','.....1syms1.....','....13synsn1....','...1n7snns361...','..1n76s6ns37n1..','.16766s7nsn6761.','.1733nsn5sm6671.','17636n5ss56n66n1','176266n556nnn661','15yn6ym6nnm6n6m1','15n26nnn66m66651','156y6nnn66nnn6l1','.166n66662n6661.','.156nnn6n6666s1.','..155666n66601..','...1556666551...','..1ss05ll50ss1..','...1511111151...','..1q1......1m1..','..11........11..']},
+  desk:{0:['.555555555555555555555555555555.','567777o7777777o7oo77777777777765','57755u666dcdd55555dddeuuuuu55775','5o757777ccdccc776ucceedcde7u5oo5','5o75777ccddceoc7ucdedccecu7657o5','5775u777dccodcc7edeceeecd77u5775','577577ueeeudcecu777ddccu77775775','576uu7777e77eduuuyocccc777uu5775','5oo5555555555u55556eeeu555y57775','5o77oo7777oo7777oo777777o77777o5','56666666666666666666666666666665','5ssssssssssssssssssssssssssssss5','.5555o55o55555555555555o55o5555.','.55665ap6666556666556666ap66655.','.555550055555s0000s555550055555.','.557777777656s5555s657777777755.','.556666666656s5555s656666666665.','.5666p66p66565....56566p66p6755.','.5y666bp666565....565665ap66765.','.5u66666666565....5656665566u55.','5su655555555y5....57555550557u05','507u776666u775....5766666u6uuu55','55565555555555....55555555556655','5665......5665....5665......5665','555........555....555........555'],2:['.55555555555555.','5777777777oo7775','5o757777yy755775','57757edcccy757o5','577yyyeecdcy57o5','5775ecdded775775','5o75eecd77765775','5o75oy7777765775','5o757u7777776775','5o75e777e7776775','5775y7ecc7766775','577eccdoecce5775','577edccococo7775','5775yyydcduy5775','5775uuuyyu7657o5','5777556666677775','5o77o7oo77777775','5ssssssssssssss5','.55555555555555.','.56666666665555.','.56555555555565.','.56556666665565.','.56566666667565.','.565666u666u565.','.57566uu6u6u565.','.5u566yuuu7u565.','.5uu66yyuuyuy65.','.5uu55555yyuu65.','.5uuu76uuuu6u65.','.56666666667y55.','.576s555555s6y5.','.5555......5555.'],4:['.555555555555555555555555555555.','577o77777eee777777667667777777o5','5o775ou55ccccey7yudoy77yyyy557o5','5o75o77yuccdduuuccecduoeuoyo5775','5o75777ccpecudd77cceeccoe77y6775','577577ecpccoddc7uceceddcc77o5775','5775o77uuudcccc777uccccc77775775','5o75577777eeeeu55555edcyy7755775','57765555555555566666666666667775','5ooo7o7756o777777777777777777775','56666555555555555566655666666665','.5ssssssssssssssssssssssssssss5.','.56666666666s555555s66666666665.','.56555555566s555555s66555555565.','.56566666566s555555s66566666565.','.56566666566s555556su6566666565.','.56566666566s5555y6su6566666565.','.565u66665u6s555567s7u56666u565.','.5u57u6665u6s555556su756666uy65.','.5u6uu66u5u6s55y567suu5u666uyu5.','.5uyyuu6757us55y6y5su75666uyuu5.','.57u7yu5u65us555555su7y765y55u5.','.5u5yuuuy66u5......5u666yuyu6u5.','.566655556665......566655555765.','.5u55....56u5......5uu5....5565.','.555......555......555......555.']},
+  shelf:{0:['.55555555555555.','5suuuuyuuuuuuss5','57u2yy3yyu333uu5','5220222223111215','5ssssssssssssss5','.5yy9nfqg11ans5.','.53y9qfqg129ns5.','.5j79qfqg139ns5.','.5myyyyn2n66ns5.','.5ssssssssssss5.','.5a293gygnmgts5.','.5a293eyenmg0s5.','.5aq93eyenmg1s5.','.5yy6nnyyny3ys5.','.5ssssssssssss5.','.5k2u2gnfy62as5.','.5k242enfy58b05.','.5kqunengynja05.','.5123m3n232y9t5.','.555555555555s5.','.5...........55.'],2:['.55555555','5uuyu3u15','5uyyuyuu5','5s0000005','.5ssssss5','.51n5m555','.5yuy7175','.5y3uy175','.5y2uy7y5','.5y2uyyy5','.5y2uyyy5','.57yyyun5','.5777yuy5','.57yyyuy5','.57ynyuy5','.5yyy7uy5','.574nyuy5','.57uny6y5','.5y6yynr5','.5ny0y2n5','.55555555'],4:['.55555555555555.','5suuuuuuuuuuyss5','5033uuy3uur4uus5','5s222222y3y122s5','5ssssssssssssss5','.511202313512s5.','.5m331n414l32s5.','.5n330nr14132s5.','.5000s00ssssss5.','.5ryr74r44u43s5.','.50000ss0sssss5.','.56y5103235y2s5.','.5n3y12r53532s5.','.5233123235n1s5.','.5ssssssssssss5.','.5y333yy3yy33s5.','.510000000000s5.','.5s2121y52112s5.','.512121352mn2s5.','.555555555555s5.','.5...........55.']},
+  rug:{0:['..................55l555..................','................5588878855o...............','............555588888868880l55............','..........557888800000l0l7088855..........','.........588880088888808880088885.........','.......5588l0088888080088888l078865.......','......5788l088880808l0888888870688o5......','.....57770888688088088800888008008875.....','.....56708888006588800888080888870886.....','....5870708888860080880808008858860885....','...588078787886888888808880888088808885...','...588088800880888088880880588806880885...','..58808888588885500000000050880088880885..','..58008888880888506600000088888888880885..','.58807808888888000000000m0008888087080885.','.5870778088888000000000000008880008880885.','.5858878880878000000000000008086508688085.','57808888888800000000000000000088788888087.','568088888880000000000000000050088888885885','l880808588080600000000000000m0808800886885','58068008808800000000000000000088l808856185','580608680888000000000000000000888086085185','587088888088000000000000000000880880885l85','5870888888080m000000000000006080888888l875','57708800708000000000000000006008808888l875','.50l886080880l000000000000000088808888l85.','.l867888888856000000000000000088805880585.','.5880880800858000000000000008888058880885.','.55807808887888007000000o0l88868588870875.','..576688888888880077005ll088888888880085..','..5880888008888080888888l868888088880785..','...586088888880888088880888788888880885...','...5887578o7888088088880800888868860885...','....588577088l8ol8808808o8887880070885....','.....588l6888888808850888800888800885.....','......5885078888888858888808888008885.....','......558670888888885888808888008865......','........56880078888580888880068865........','.........568888000888888000888855.........','..........5578888800000l8788885...........','............55767888878888l655............','..............5555885588555...............','..................55..55..................']},
+  pew:{0:['..55........................55..','.5775......................5775.','.577055555555555555555555550775.','.577067776777777777776777660775.','.566055555555555555551555510665.','.566056666666666666666666610665.','.5660566666666666666666666l0665.','.566056666666666666666666650665.','.566056666666666666666666650665.','.5650l66666666666666666665l0565.','.510055666666666666665665550055.','.566055555666666666651555550665.','.577001111555555555511111100775.','.577016666666666666655556610775.','.5660l5555556666666666665510665.','.566055566666666666666666650665.','.500056666666666666666666650005.','.555067777767777777777776650565.','.56505yy55555556666666uyyy50665.','.566s5555555555555555555555s665.','50u65......................5yy05','50uu5......................5uu05','5yuy5......................5yuy5','5yuu5......................5yuy5','55555......................55555'],2:['.........5555..','........567775.','........565ss5.','........555075.','........511075.','........511s75.','........511s75.','........515075.','.......5051065.','.5555556500005.','57766665s77775.','51155l55s76665.','511l5ll5s66ll5.','.5000000s656l5.','.5666665066565.','.5766666066565.','.5766666065565.','.5666660065665.','.5sssss5765665.','57777777556665.','56666665566665.','56665166665665.','.5615606656565.','.5616656566565.','.56066565660u5.','.5y066565660y5.','.5u156565650y5.','.5u5155y5550u5.','5yuuyyyyyyuuuy5','5uuuyuuu5yyuuy5','555555555555555'],4:['.55..........................55.','5775........................5775','57605555555555555555555555550675','56616777677777777777777777761665','56611115156666666666666651111665','56611666566666666666666666611665','56616666666666666666666666651665','56616666666666666666666666661665','56616666666666666666666666661665','56616666666666666666666666661665','56616666666666666666666666665665','56616666666666666666666666665665','56656666666666666666666666665665','56611666666666666666666666665665','56611666656666666666666566611665','56611yy66566666666666665yyy116u5','5u61115u61155u66uuuu6665y55156u5','5u6s555555555555555555555555suu5','5uu5........................5yu5','5uy5........................5uu5','5uu5........................5uu5','5555........................5555']},
+  font:{0:['.....q22mm2.....','..n22ddddddnnn..','.2deduuuuuueeem.','mduuuummmmuuuucq','lduyuymmmmmuuud2','mdd323mmmmm2ncdq','muucd4mmmmnddeul','.2ueeedddcq2uum.','.t3ueeeeeupeu2..','..2u3eddddurn...','...tnueeeen2....','....nd23nme2....','....ndeeuuem....','....ndddeeem....','...22pddeeu2q...','..teedddee3uum..','.ndueddeeuuuuul.','.mdeueddddeuyem.','.2edpeeeuuuuddm.','.l2uddddddde42m.','...1meeeeeenmn..','.....mmmmm2.....']},
+  lectern:{0:['.1t5555.5555555.','5ooppod5pppooop5','5pspdddoddddpso1','5psodddpddddp0p5','5ospdddodpddp0p5','5o0pdddoddpdp5p5','5p0pdddpddppp0o5','5pspppooppooo0p5','5p500000sss00so5','57ooooooooooooo5','.555550sss5t555.','......5665......','.....5676s5.....','.....56o7o5.....','.....16o655.....','....506757s5....','...5755oo5s65...','...5o5ool7so5...','...5o5ooooso5...','...5o555551o5...','...5oooooooo5...','...tt11111tt5...'],2:['.......5t5t5','.....55ddop5','...55ddeplo5','.55cddpo05o5','.1ddp501oo55','56e707pp002.','5o5noo0165..','5ooo005765..','.550776775..','.5.5000005..','....56o75...','....56o65...','...to76675..','...576o675..','...5607055..','....56665...','...1l5o7055.','.15565o56565','.5o0ooooolo5','.5o0555555o5','.1poooooooo5','.511lllllll5'],4:['..5tt55.5t555...','..popop5ooooo5..','555l55l1lll55055','5ppppppppppppppt','555m666666555555','.575s000sss767t.','..67065656s765..','..55075756051...','....566o575.....','.....56675......','.....56755......','....5766675.....','....576o765.....','....1657175.....','.....55555......','...25667505l....','..55075757071...','..5o5oooooso5...','..5o5555555o5...','..5oooooooopl...','..5lll5l11lll...']},
+  telescope:{0:['......222......','.....2odo2.....','.....25y52.....','.....2uef2.....','.....25652.....','.....2fff2.....','....2uny632....','....26abb62....','....2bpypc2....','....2a2yya2....','...2sa2yyas2...','...2sao2oas2...','...26sbbbs62...','..2762sss2672..','..272.262.272..','..262.262.272..','.272..222..272.','.262.......262.','272.........262','222.........222'],2:['................','.2..............','.2222...........','2yeef22.........','25feeep22.......','2pffffbyu22.....','.2yyfup5eef22...','..2yyo62ofeeo...','...22s6e6yffb222','.....2su0syyoop2','....2fsssfs220o2','....22fffy2..22.','....2ssnys2.....','...256s6s22.....','...26ss62.62....','..2562s72.62....','..252.272.272...','..552.272.262...','..52..272..26...','..2...272...2...','......272.......','......222.......'],4:['.....22222.....','....2oodp72....','....295y582....','....2muef62....','....2ufefy2....','....2ufefy2....','....2upbey2....','....2p665o2....','....27fef62....','....2sfefs2....','...2fsfefsy2...','...25s66ys22...','..266s6e6s652..','..26sspdpss52..','.2652so1os2662.','.262.2o972.262.','2662..2s2..2662','262...262...252','22....272....22','......272......','......272......','......222......']},
+  orrery:{0:['.......oo.......','....ooopo77o....','...57p76.oodo...','..7dd5.....5po..','.6pp5..oop..1p7.','.7p5.oo667oopoo.','1p6p7y7.b.66psp6','1p665..bca..10p6','op6....bca...7p7','7p6o...bbb...7o7','16o7oo..b..oo775','.16551oobp77571.','.1o75.677o6.6o1.','..1o71...dc5o1..','...11o71.1so1...','.....17p1d11....','.......1s1...11.','.......1s012.1..','......14sqs111..','......1q4t4.....','......1srs1.....','.......111......']},
+  chart:{0:['55555555555555555555555555555555','5ppp777777777777777777777777ppd5','5p67775cc55555555555566cb57777p5','5o55555ccccccccccccbbcccc66665o5','577776bceebcpcccbeebcececb777775','577775ccepeecccpeeeeppeccc577775','566665ccceecccpeeeeeeecccc566665','57775bcccccccccpeepeeeebbc677775','57775ccceecccccccpcceeeebcb77775','5555bccceeecccccppccceeebbc55555','5775bbbcceeccbcccccpppebbcc57775','5p675555cbcccpbbcbccbccccc5666p5','5bo777775555555555bcccc555677op5','5dpp777777777777775bbb57777oppd5','5p77755555555555555bb555555777o5','5sssssssssssssssssssbssssssssss5','.555s555555555s55555s555555s555.','.566s6666ooo66s6666o7766666s665.','.566s5555555555555555555555s675.','.5765......................5675.','.576s5555555555555555555555s675.','.576s6666666666666666666665s675.','.576s5555555555555555555555s675.','.5765......................5675.','.5765......................5665.','.5665......................5555.','.5555......................5555.'],2:['.55555555555555.','5ppp77676777ppp5','5p766666665577p5','5756ccccbbbb5775','55bcceccppbc5775','5bceeeecepcc6775','5ccccccccecc6775','pbcccccpcccc6775','bbpppccpeccc6775','bbcccceeeecc6775','bcccepeeepec6775','bbbcceeeppcc6775','b555bbccccc56775','5p775555555777p5','5pp757575777ppp5','5pppo757577pppd5','577oo555555777o5','5ssssssssssssss5','.565s555555s555.','.565s555555s565.','.5655......5665.','.5755......5665.','.5755......5665.','.575s555555s665.','.575s666666s665.','.575s555555s665.','.5655......5675.','.5655......5555.','.5555......5555.'],4:['..................5555..........','555555555555555555bbbb5555555555','5ppo66666ccccbbbbbcccecb5666opp5','5p776cccceppccccbccceeccbcc577p5','57776ccbeeeccceebcccceecccb57775','556666cbeeeeeeeccccccccccc566665','577775cbbeeepeeeccccebcccc577775','577775ccceeeeeeeccceeeeccb566665','567775bceccpeeepceeceebcc6677775','5766665cccppbbccccccccccc66666o5','5po77765555555555555555557777op5','5dppo7777777777777777777777oppp5','5o7775555555555555555555555o7775','5ssssssssssssssssssssssssssssss5','.566s5555555555555555555555s665.','.566s5566666666666666666655s675.','.576s5666666666666666666665s665.','.576s5666666666666666666665s675.','.576s5666666666666666666665s675.','.576s5666666666666666666665s675.','.576s5666666666666666666665s675.','.576s5555555555555555555555s675.','.5665......................5675.','.5665......................5665.','.5555......................5555.']},
+  coral:{0:['......1g........','.....1g1........','....1ee1...11...','..11ue1.1..1d1..','..gude11g1.1d1..','..1dd1.1fe1ge1..','.1.1gf1.5ecgs1..','1c.1udftguclee1.','1e1gycdfdcydleg1','.1eefycucyfteyg1','.1dd0eddfugsgg1.','1d4cc0edysffd2e1','.1ssdcedfdddeg1.','..r4sgdgdg0ft1..','.188vsgggs204s1.','1u6v82sg22434ts1','1u4tu4uq3u6vttt1','1114ut01u598t011','.1t4198ttttt11..','..11t8v11111....','....111.........']},
+  urn:{0:['......5555......','...555o77o555...','..577711107775..','..57syfffyy0u5..','.50s7ussseff55..','.57ssoooo0gy575.','5607ss0sssffus75','56s7665660fuus55','5s6od7777yffycs5','577o7pc7o0gff5u5','57c7oc77o0gffsc5','5777o7oscosffsu5','56s7oc5soosf5fy5','567s67o7oo70fyy5','.57s56dd0sosfy5.','.57ps7oosoosfy5.','.5pc0ooo57sfey5.','..570cos6770ff5.','..55057s7776f5..','...5oosc7776y5..','...567s677m65...','....55l55555....','......5555......']},
+  ctable:{0:['.........222222222222.........','.....2222ddddcccccddd2222.....','...22ddccccccccccccccccdd22...','..2ddccccddccccccccccccccdd2..','.2dcccdddccccccccccccccccccd2.','2dcccdccccccccccccccccccccccd2','2dccccccccccccccccccccccccccg2','2edccccccccccccccccccccccccgf2','2egddddddcccccccccccddccccgff2','.2ggudcccddddcccddddcccdeugf2.','..2fdfgggccccccccccgeeguduf2..','...22ffgfdgggggggggdudgufg2...','.....222fudfgggggfgueu2222....','........22sssssssss222........','..........2syfyyyu2...........','...........2yffyfyf2..........','..........2sfyfff2d2..........','..........2deyfgff2...........','.........2ssudygffs22.........','........2uuygffgffyyu2........','.......2ugyfyyggfyfygu2.......','.......2uugyggygygufuu2.......','........22uguggugugu22........','..........2uuuuuuuu2..........','...........22222222...........']},
+  wheel:{0:['.......6.......','.......6.......','..7..mmm66..7..','...556666655...','...66..6..66...','..66.6.7.6.65..','..66..6p7..65..','665665p6p666l56','..66..6p6..65..','..66.6.7.6.65..','...n6..7..56...','...556666556...','..6..m5555..5..','.......6.......','.......6.......']},
+  baro:{0:['....oo....','...o..o...','....77....','...77oo...','..opppoo..','.opddddoo.','opcdddydp7','opcce1ddp7','opcdydddpo','opdpddddpo','.opdcddpo.','..oppppo..','...oooo...']},
+  anchor:{0:['......66......','.....5..6.....','.....m66n.....','......55......','...67777666...','...55mn6mm6...','......65......','6.....66.....5','565...66...666','56....66....66','.66...66...76.','..6666666666..','...66666666...','......66......']},
+  portrait:{0:['t5t55555555t55','5u4uuuuuuuu4u5','54ttttt111tt45','5utt1feee1t14t','5uttuuddee11u5','5uttfddddet145','tuttedrduet145','tutteddede114t','tut11eddet11u5','tut1t3ddytt145','5ut1ueuuuu1145','5u11ufffuf11r5','5u4rrr333rr4r5','55ttt5ttttttt5']},
+  icon:{0:['555tttt55ttt','5uuupppauuut','5uupuuuuauut','tuauu0suuaut','tuausufsupu5','tuausuu0uaut','tuypsuu0auu5','tuuusty0uuf5','5ufsuu1y0uut','5fs2uutytuut','5fsyusfyysut','5fsysufyysu5','5usysf2yysu5','5ttt5t55ttt5']},
+  bell:{0:['1......1....','5uyyy2yyyy22','2..1..111...','2.1...1.t...','21...11y21..','21...yuyy1..','5...yuyyy21.','2...1uyyyy1.','....1uyyyy1.','....5fyyyyt.','...1yssssss1','...1uy222222','......ts1...','.......1....']},
+  clock:{0:['.....tt11.....','...115mn611...','..1m6dddpnl1..','.165dd2dddm61.','.16dddmdddd61.','11edddmd2ddel1','1mddddttddddl1','1ldoddeeddopl1','11dddddddddpl1','.1nddddddddl1.','.1m6pddddelm1.','..1mmdddenm5..','...112nnn11...','.....1111.....']},
+  stars:{0:['55ttttt5555t55','5pu777777777pt','5733333y33ry75','57ypyr3p333ryt','57333p3333py3t','t7rrrrr333333t','t73yy3ryp33p7t','t733uurp33r37t','t7333333rrrr7t','t7r3r3prruyr7t','573prr3rryoy75','t733rrrr3r3375','5p777777777795','5tt555tt555ttt']},
+  fan:{0:['...d.d........','...ddd.d......','....pd.dd.d...','dd.d.d.dp.d.d.','.ddd.pdd..ddd.','d.dd..op.dd...','ppddp.op.dp.dd','..pddpo.pp.dd.','...dddodpdpp..','..pppdodpp....','.....dodo.....','....3qqqq3....','...3333333r...']},
+  mask:{0:['...dddd...','..dddddd..','.dddddddd.','.d5edde5d.','.d15dd55d.','.dddddpdd.','.yddddddy.','.ydd5yddy.','.uydy5dyuu','uuyyyuy.yu','uu.uy.yy.u','.u.uu.yu.u','...u..yu..','...u..u...']},
+  lantern:{0:['...11...','..1..1..','..1111..','.12n311.','1347onr1','111ttst1','1oaaaa81','19acca81','19bccb81','19abba81','123rrqq1','.111111.']},
+  bottle:{0:['.5555555....','5ededdgd5...','5eededegi55.','5eedddeeedu5','5e7uedeeeeu5','5fe6p66fe55.','542fu4445...','.5555555....']},
+  candle:{0:['...b.....','...bb....','..bcb....','...bb5...','..5pob...','..cdcb...','..bcpb...','..bcdp...','.5ddpp55.','5ebop5ee5','.544eus5.','..55554..']},
+  books:{0:['....5.ll5....','..m555o7u55..','.llu213l7uuu5','.1313r21uo55.','mylm11al51ppl','l557p6lllml5.','lblmnpo57ppll','m2moollmlllpp','.5llo96lppp7m','.....1mllll..','......mm.....']},
+  skull:{0:['....55....','...5dd55..','..5ddedo5.','.5ddddde5.','5esdddueo5','5desddeu5.','.5usoes5..','.5eed55...','.5e7d.....','..555.....']},
+  hourglass:{0:['..5555..','65ooppp7','6yuuu765','6seeee0m','605ep556','65.5u.55','6s5ee555','6secee55','6seppe05','76uoou55','7p777oo6','55pop5..']},
+  shell:{0:['55.5555....','5dododo5...','5odpdodd5..','5poddddde..','.5pdopddd..','..5pd26dd5.','...5opu7dd5','....55pe1p5','......55.o.']},
+  ink:{0:['.......21','.....mdd1','....1dce1','...1ccd1.','..1ded1..','..1ed1...','.1u231...','.14s11...','14r4311..','1rssss1..','1rssss1..','.13221...']},
+  shiplamp:{0:['......2n','..m212mm','1t2t.l..','t..tt1..','...1o1..','..lo7om.','.8o767om','.9d9aa8e','.6.aa9.1','.m.acb.l','.6.aca.l','.6.896.1','..5oo91.','..6mn6d.']},
+  sconce:{0:['......b...','.....bb...','.....bcb..','......p...','.....pbo..','.....pbo..','.1...obo..','12m..obo..','1e1..obpp.','11l.1d1dpu','141.l1l56.','1lm1..1...','13l111..o.','.tm..1....']},
+  votive:{0:['.......a.......','......bc.......','......c9.......','......op..a....','....b7bb8.9....','...ab.9c8.9....','...a6.adp7co...','..dp.4do.7bo...','..co.pdo.7bc...','..7po7bo7ob6...','766cp7bbpdb766.','6oo6bb67b77a55m','.nml77767777m..','..r.ll1ll1mm...']},
+  walllamp:{0:['.....9999..','....8babb9.','...9ac9bbao','...9bbcbbb9','...9bbbbbbo','....7bbbb8.','....68aa8..','ooo..6777..','7p7...76...','77ab667....','7776777....','777........','.67........']},
+  anemone:{0:['.lll1l2llmll5.','5mr44uff4444l5','lfl1223g2222fl','lflgy3gyf4f2fl','5flgggfrgfg5fl','lfgfgggggcfgul','lf2gfgfgggcy4l','lug4gfggg3fmfl','1f1g3fgg3gglfl','1fmnucggg223ul','l4lngfggrr2lul','l41232fr222l4l','11444444uu442l','.llllllmmmmmm.']},
+  candelabra:{0:['.......b........','.......bb.......','.......cy.......','..b...ccc....b..','..b...ccc1...ba.','.cup..cbc1..dey.','.ccp.1ccs1..dcc.','.bbd.1pbp1..dbb.','.7b1.1sss1..1bp.','1ube1.171..1upp1','1l31..1u1...14u1','.11..1sus11..11.','..1ed1sus11pdse.','..1sb.1u1..e51..','...1p.1u1..u1...','....o.1u1..o....','......1u1.......','......1y1.......','......1y1.......','.....12y11......','.....3u5331.....','.....111111.....']},
+  floorlamp:{0:['.........111.11.','........1oo11u1.','....1.111...11..','...1p10p....1...','..1spso1...1s11.','...1ps01...123s1','...1ps1...19aaa1','...1o1....1acbb1','...1o1....1bccbb','..1so1.1..1bccal','..1sos11...1bb1.','..1so1.....1881.','...1o1......11..','...1o1..........','...1o1..........','..1so1..........','...1o1..........','...1o1..........','.11sos11........','101s2srs1.......','1s21u33s1.......','.1111111........']}};
+/* where small things stand on a surface, facing by facing: the two ends of its lane in the art's canvas, [x0, y0, x1, y1]; a piece's
+   top slots are the middles of that many equal parts of it */
+const LODGE_TOPS={
+  chest:{0:[3,5,24,5],2:[8,5,8,16],4:[3,5,24,5]},
+  desk:{0:[1,7,31,7],2:[8,3,8,15],4:[1,8,31,8]},
+  shelf:{0:[3,3,15,3],2:[2,3,7,3],4:[3,3,15,3]},
+  chart:{0:[2,8,30,8],2:[8,3,8,15],4:[2,7,30,7]},
+  ctable:{0:[4,7,26,7]}};
 /* a canvas mirrored left to right (the east side drawn from the west) */
 function tFlip(src){const [cv,c]=tCanvas(src.width,src.height); c.translate(src.width,0); c.scale(-1,1); c.drawImage(src,0,0); return cv;}
-/* each piece of furniture facing f, painted once: a canvas, where it stands over its footprint (dx, dy from the footprint's
-   top-left; by default centred on it and standing on its bottom edge), what of it glows (em, at ex, ey) and where its light
-   sits (lx, ly). A facing not drawn is the one faceSrc() names, mirrored where it says */
-function lodgeFurnArt(id,f){
-  const I=LODGE_ITEMS[id], src=faceSrc(I,f|0), F=pieceFoot(I,f|0), a=lodgeFurnDraw(id,src[0]);
-  if(src[1]){const w=a.cv.width; a.cv=tFlip(a.cv); if(a.em){a.ex=w-a.ex-a.em.width; a.em=tFlip(a.em);} if(a.lx!=null)a.lx=w-a.lx;}
+/* each piece of furniture facing f in colourway dye, painted once: a canvas, where it stands over its footprint (dx, dy from the
+   footprint's top-left; by default centred on it and standing on its bottom edge), what of it glows (em, at ex, ey) and where its
+   light sits (lx, ly), and, for a surface, where small things stand on it (top: one [x, y] in the canvas for each slot). A facing
+   not drawn is the one faceSrc() names, mirrored where it says */
+function lodgeFurnArt(id,f,dye){
+  const I=LODGE_ITEMS[id], src=faceSrc(I,f|0), F=pieceFoot(I,f|0), a=lodgeFurnDraw(id,src[0],dye);
+  if(src[1]){const w=a.cv.width; a.cv=tFlip(a.cv); if(a.em){a.ex=w-a.ex-a.em.width; a.em=tFlip(a.em);} if(a.lx!=null)a.lx=w-a.lx; if(a.top)a.top=a.top.map(p=>[w-p[0],p[1]]);}
   a.dx=Math.round((F.w*16-a.cv.width)/2);
   if(a.dy==null)a.dy=F.h*16-a.cv.height;
   return a;
 }
-function lodgeFurnDraw(id,s){
-  if(id==='desk'&&s===2){
-    const [cv,c]=tCanvas(16,42);
-    /* turned on its side, two tiles deep: the top runs away from you, the drawers face west (their brass at its left edge), the
-       end panel and two legs toward you; the banker's lamp at the far end */
-    tp(c,1,12,'6',14,19); tp(c,1,12,'7',14,1); tp(c,1,12,'7',1,19); tp(c,14,13,'5',1,18); tp(c,1,31,'5',14,1);
-    tp(c,1,17,'a',1,1); tp(c,1,25,'a',1,1);
-    tp(c,4,19,'d',7,5); tp(c,5,20,'1',4,1); tp(c,5,22,'1',3,1); tp(c,10,26,'0',2,2);
-    tp(c,2,32,'5',12,7); tp(c,3,33,'6',10,4); tp(c,2,39,'5',2,2); tp(c,12,39,'5',2,2); tp(c,2,41,'0',12,1);
-    tp(c,6,14,'9',4,1); tp(c,7,10,'a',1,4); tp(c,4,7,'f',7,3); tp(c,4,7,'g',7,1); tp(c,4,10,'1',7,1);
-    const [e,ec]=tCanvas(7,2); tp(ec,0,0,'g',7,1); tp(ec,1,1,'i',5,1);
-    return {cv,em:e,ex:4,ey:8,lx:7,ly:16};
-  }
-  if(id==='desk'&&s===4){
-    const [cv,c]=tCanvas(32,26);
-    /* from behind: a plain back panel with two rails, the lamp now at its right, the papers and the ink at its left */
-    tp(c,1,10,'7',30,1); tp(c,1,11,'6',30,4); tp(c,1,14,'5',30,1);
-    tp(c,2,15,'5',28,8); tp(c,3,16,'6',26,1); tp(c,3,21,'6',26,1);
-    tp(c,2,23,'5',2,3); tp(c,28,23,'5',2,3); tp(c,2,25,'0',28,1);
-    tp(c,7,8,'d',8,4); tp(c,9,9,'1',5,1); tp(c,6,7,'d',6,1); tp(c,4,9,'0',2,2);
-    tp(c,22,10,'9',4,1); tp(c,24,6,'a',1,4); tp(c,21,3,'f',7,3); tp(c,21,3,'g',7,1); tp(c,21,6,'1',7,1);
-    const [e,ec]=tCanvas(7,2); tp(ec,0,0,'g',7,1); tp(ec,1,1,'i',5,1);
-    return {cv,dy:-10,em:e,ex:21,ey:4,lx:24,ly:12};
-  }
-  if(id==='desk'){
-    const [cv,c]=tCanvas(32,26);
-    /* the top, the front with two drawers, the legs; papers and an inkwell; the banker's lamp: brass foot, green glass shade */
-    tp(c,1,10,'7',30,1); tp(c,1,11,'6',30,4); tp(c,1,14,'5',30,1);
-    tp(c,2,15,'5',28,8); tp(c,3,16,'6',11,5); tp(c,18,16,'6',11,5); tp(c,8,18,'a',2,1); tp(c,23,18,'a',2,1);
-    tp(c,2,23,'5',2,3); tp(c,28,23,'5',2,3); tp(c,2,25,'0',28,1);
-    tp(c,17,8,'d',8,4); tp(c,18,9,'1',5,1); tp(c,20,7,'d',6,1); tp(c,26,9,'0',2,2);
-    tp(c,6,10,'9',4,1); tp(c,7,6,'a',1,4); tp(c,4,3,'f',7,3); tp(c,4,3,'g',7,1); tp(c,4,6,'1',7,1);
-    const [e,ec]=tCanvas(7,2); tp(ec,0,0,'g',7,1); tp(ec,1,1,'i',5,1);
-    return {cv,dy:-10,em:e,ex:4,ey:4,lx:7,ly:12};
-  }
-  if(id==='stove'){
-    const [cv,c]=tCanvas(16,28);
-    /* a pot-bellied iron stove: its pipe up to the ceiling's dark, a grate where the fire shows, four feet. Turned to the west its
-       grate is a sliver at its left; from behind there is only a seam, but the fire still lights the room */
-    tp(c,6,0,'1',4,10); tp(c,6,0,'3',1,10); tp(c,4,9,'2',8,2);
-    tp(c,3,11,'1',10,13); tp(c,2,13,'1',12,9); tp(c,3,12,'3',1,10); tp(c,12,13,'0',1,9); tp(c,3,11,'4',10,1);
-    tp(c,3,24,'0',2,3); tp(c,11,24,'0',2,3); tp(c,2,27,'0',12,1);
-    if(s===4){tp(c,4,17,'2',8,1); tp(c,5,19,'0',1,1); tp(c,10,19,'0',1,1); return {cv,dy:-12,lx:8,ly:18};}
-    if(s===2){tp(c,2,16,'0',3,4); tp(c,2,15,'2',3,1);
-      const [e,ec]=tCanvas(3,4); tp(ec,0,1,'9',3,3); tp(ec,0,2,'a',2,2); tp(ec,0,3,'b',1,1); tp(ec,1,0,'8');
-      return {cv,dy:-12,em:e,ex:2,ey:16,lx:4,ly:18};}
-    tp(c,5,16,'0',6,4); tp(c,5,15,'2',6,1);
-    const [e,ec]=tCanvas(6,4); tp(ec,0,1,'9',6,3); tp(ec,1,2,'a',4,2); tp(ec,2,3,'b',2,1); tp(ec,1,0,'8'); tp(ec,4,0,'8');
-    return {cv,dy:-12,em:e,ex:5,ey:16,lx:8,ly:18};
-  }
-  if(id==='chair'){
-    /* a wing-backed armchair in worn leather, brass studs, wooden feet */
-    const R=LODGE_CHAIR[s], [cv,c]=tCanvas(R[0].length,R.length); tRows(c,R,0,0);
-    return {cv};
-  }
-  if(id==='shelf'&&s===2){
-    const [cv,c]=tCanvas(16,30);
-    /* side on: its end board, the shelves' lips and the books' last covers at its left, where it faces */
-    tp(c,5,0,'5',7,30); tp(c,6,1,'7',5,1); tp(c,6,2,'6',5,27); tp(c,11,2,'5',1,27);
-    for(let row=0;row<3;row++){const y0=3+row*9, P=LODGE_SPINE_RELIC.concat(LODGE_SPINE_FOE)[(thash(0,row,164)*10)|0]; tp(c,4,y0+2,P[0],1,6); tp(c,4,y0+8,'6',1,1);}
-    tp(c,4,29,'0',8,1);
-    return {cv,dy:-14};
-  }
-  if(id==='shelf'&&s===4){
-    const [cv,c]=tCanvas(16,30);
-    /* from behind: its back, four rough boards */
-    tp(c,0,0,'5',16,30); for(const x of [1,5,9])tp(c,x,2,'6',3,27); tp(c,13,2,'6',2,27); tp(c,1,1,'7',14,1); tp(c,0,29,'0',16,1);
-    return {cv,dy:-14};
-  }
-  if(id==='shelf'){
-    const [cv,c]=tCanvas(16,30);
-    tp(c,0,0,'5',16,30); tp(c,1,1,'7',14,2); tp(c,1,3,'6',1,26); tp(c,14,3,'6',1,26); tp(c,2,3,'l',12,26);
-    for(let row=0;row<3;row++){const y0=3+row*9; tp(c,2,y0+8,'6',12,1);
-      for(let j=0;j<4;j++){const P=LODGE_SPINE_RELIC.concat(LODGE_SPINE_FOE)[(thash(j,row,164)*10)|0], top=y0+1+((thash(j,row,165)*3)|0), x=2+j*3;
-        tp(c,x,top,P[1],1,y0+8-top); tp(c,x+1,top,P[0],1,y0+8-top);}}
-    tp(c,0,29,'0',16,1);
-    return {cv,dy:-14};
-  }
-  /* the rug: a dark ritual circle on red-brown, chalk round its rim and marks at its quarters */
-  const [cv,c]=tCanvas(48,48);
-  for(let y=0;y<48;y++)for(let x=0;x<48;x++){
-    const ex=x<3||y<3||x>44||y>44, q=Math.hypot(x-23.5,y-23.5);
-    if(x===0||y===0||x===47||y===47){tp(c,x,y,'5'); continue;}
-    if(ex){tp(c,x,y,(x+y)&1?'8':'j'); continue;}
-    tp(c,x,y,q>19.5&&q<20.6?'d':q<19.5?(q>17.5&&q<18.5?'8':'0'):((x^y)&4?'8':'7'));}
-  for(let a=0;a<4;a++){const t=a/4*TAU+TAU/8, x=Math.round(23.5+Math.cos(t)*14), y=Math.round(23.5+Math.sin(t)*14); tp(c,x-1,y,'k',3,1); tp(c,x,y-1,'k',1,3);}
-  tp(c,22,22,'j',4,4); tp(c,23,23,'k',2,2);
-  return {cv,dy:0,flat:true};
+/* every piece is rows of PX letters (LODGE_ROWS, from PixelLab through tools/png2rows.py, EXPANSION4_RUNBOOK.md §3), drawn with
+   tRows(), a colourway as a swap of its letters. glow: the letters that burn, drawn again after the dark, the middle of them where
+   its light sits; a mount hangs at the height of the wall's face; a surface's lane for small things is LODGE_TOPS: its two ends in
+   the canvas, and the slots are the middles of top equal parts of it, half a tile apart */
+function lodgeFurnDraw(id,s,dye){
+  const I=LODGE_ITEMS[id], R=id==='chair'?LODGE_CHAIR:LODGE_ROWS[id], rows=R[s]||R[0], [cv,c]=tCanvas(rows[0].length,rows.length), pal=dyePal(dye), o={cv};
+  tRows(c,rows,0,0,pal);
+  if(I.glow){
+    let sx=0, sy=0, n=0; for(let y=0;y<rows.length;y++)for(let x=0;x<rows[y].length;x++)if(I.glow.indexOf(rows[y][x])>=0){sx+=x; sy+=y; n++;}
+    if(n){const [e,ec]=tCanvas(cv.width,cv.height); tRows(ec,rows,0,0,pal,I.glow); o.em=e; o.ex=0; o.ey=0;}
+    o.lx=n?Math.round(sx/n):cv.width>>1; o.ly=n?Math.round(sy/n):Math.round(cv.height*.6);}
+  if(I.flat){o.flat=true; o.dy=0;}
+  if(I.mount)o.dy=Math.max(5,Math.round(16-cv.height/2));
+  if(I.top){
+    const T=LODGE_TOPS[id][s]||LODGE_TOPS[id][0], n=I.top; o.top=[];
+    for(let i=0;i<n;i++)o.top.push([Math.round(T[0]+(T[2]-T[0])*(i+.5)/n),Math.round(T[1]+(T[3]-T[1])*(i+.5)/n)]);}
+  return o;
 }
 /* ---- Expansion 4, step 3: the ways between the rooms, and what the Cellar and the Attic have of their own. Art from PixelLab
    through tools/png2rows.py (EXPANSION4_RUNBOOK.md §3), every colour on a PX letter ---- */
@@ -13637,7 +13742,7 @@ let LODGE_ART=null, LODGE_STALE=true;
 function lodgeArt(){
   LODGE_STALE=false;
   const T=townData(), m=lodgeCur(), RM=LODGE_ROOMS[m], L=lodgeRoom(T,m), S=lodgeSpines(), wet=RM.brine|0;
-  const sig=m+'|'+LODGE_ROOM_KEYS.map(k=>lodgeRoom(T,k).built?1:0).join('')+'|'+L.floor+'|'+L.wall+'|'+L.furn.map(d=>d===BLD_SKIP?'':d.id+d.c+','+d.r+'/'+(d.f|0)+(d.x!=null?'@'+d.x+','+d.y:'')).join(';')+'|'+S.n+'/'+S.cap;
+  const sig=m+'|'+LODGE_ROOM_KEYS.map(k=>lodgeRoom(T,k).built?1:0).join('')+'|'+L.floor+'|'+L.wall+'|'+L.furn.map(d=>d===BLD_SKIP?'':d.id+d.c+','+d.r+'/'+(d.f|0)+(d.x!=null?'@'+d.x+','+d.y:'')+(d.dye?'~'+d.dye:'')+(d.on?'['+d.on.map(o=>o===BLD_SKIP?'':o.id+o.s+(o.dye||'')).join(',')+']':'')).join(';')+'|'+S.n+'/'+S.cap;
   if(LODGE_ART&&LODGE_ART.sig===sig)return LODGE_ART;
   const TA=townArt(), props=[], lights=[], em=[];
   const sc=lodgeSconce(), sf=lodgeSconceFlame(), sconce=x=>{props.push({c:sc,x,y:10,base:31}); em.push({c:sf,x:x+2,y:10,base:31}); lights.push({x:x+3,y:14,r:34,f:.6});};
@@ -13664,13 +13769,21 @@ function lodgeArt(){
   const K=LODGE_ART&&LODGE_ART.cache||{};
   for(const d of L.furn){
     if(d===BLD_SKIP)continue;
-    /* in the Cellar every piece stands in the brine: its feet (all of it, lying flat) under the water */
-    const I=LODGE_ITEMS[d.id], k=d.id+(d.f|0), dry=K[k]||(K[k]=lodgeFurnArt(d.id,d.f)), a=!wet?dry:K['w'+k]||(K['w'+k]=Object.assign({},dry,{cv:lodgeWet(dry.cv,wet,dry.flat)}));
-    const R=pieceRect(d,I), x=R.x+a.dx, y=R.y;
-    props.push({c:a.cv,x,y:y+a.dy,base:a.flat?y:y+R.h});
+    /* in the Cellar every piece stands in the brine: its feet (all of it, lying flat) under the water; a mount hangs above it */
+    const I=LODGE_ITEMS[d.id], k=d.id+(d.f|0)+(d.dye||''), dry=lodgeFA(d.id,d.f,d.dye), a=!wet||I.mount?dry:K['w'+k]||(K['w'+k]=Object.assign({},dry,{cv:lodgeWet(dry.cv,wet,dry.flat)}));
+    const R=pieceRect(d,I), x=R.x+a.dx, y=R.y, base=I.mount?30:a.flat?y:y+R.h;
+    props.push({c:a.cv,x,y:y+a.dy,base});
     /* a lamp turned away still lights the room; only what can be seen of its flame glows */
-    if(a.em)em.push({c:a.em,x:x+a.ex,y:y+a.dy+a.ey,base:y+R.h});
-    if(I.light)lights.push({x:x+a.lx,y:y+a.dy+a.ly,r:I.light,f:I.green?.2:.8,col:I.green?'green':''});
+    if(a.em)em.push({c:a.em,x:x+a.ex,y:y+a.dy+a.ey,base:I.mount?30:y+R.h});
+    if(I.light)lights.push({x:x+a.lx,y:y+a.dy+a.ly,r:I.light,f:I.steady||I.green?.2:.8,col:I.col||(I.green?'green':'')});
+    /* what stands on it (Expansion 4, step 4), one canvas each, drawn just after it; a candle or a lantern lights the room */
+    for(const q of d.on||[]){
+      if(q===BLD_SKIP)continue;
+      const J=LODGE_ITEMS[q.id], qa=lodgeFA(q.id,0,q.dye), t=a.top[q.s], qx=x+t[0]-(qa.cv.width>>1), qy=y+a.dy+t[1]-qa.cv.height;
+      props.push({c:qa.cv,x:qx,y:qy,base:base+.5});
+      if(qa.em)em.push({c:qa.em,x:qx,y:qy,base:base+.5});
+      if(J.light)lights.push({x:qx+qa.lx,y:qy+qa.ly,r:J.light,f:J.steady?.2:.8,col:J.col||''});
+    }
   }
   props.sort((a,b)=>a.base-b.base); em.sort((a,b)=>a.base-b.base);
   LODGE_ART={sig,room:m,night:RM.night,mw:LODGE_W*16,mh:LODGE_H*16,ground:lodgeGround(L.floor,L.wall,m),props,lights,em,spines,cache:K,
@@ -13681,7 +13794,7 @@ function lodgeArt(){
 /* the furniture's solid tiles and which piece covers each, from ll-town.lodge; run after any change and on coming in */
 function lodgeSync(){
   LODGE_BLOCK.clear(); LODGE_AT.clear(); LODGE_STALE=true;
-  for(const d of lodgeRoom().furn)if(d!==BLD_SKIP)for(const [x,y] of lodgeTiles(d.id,d.c,d.r,d.f)){LODGE_AT.set(y*LODGE_W+x,d); if(!LODGE_ITEMS[d.id].flat)LODGE_BLOCK.add(y*LODGE_W+x);}
+  for(const d of lodgeRoom().furn)if(d!==BLD_SKIP)for(const [x,y] of lodgeTiles(d.id,d.c,d.r,d.f)){LODGE_AT.set(y*LODGE_W+x,d); if(!LODGE_ITEMS[d.id].flat&&!LODGE_ITEMS[d.id].mount)LODGE_BLOCK.add(y*LODGE_W+x);}
 }
 
 /* ---- the visit ---- */
@@ -13916,6 +14029,8 @@ function townBuildTap(tx,ty){bldTap(tx,ty);}
    pixel the thumb crosses), never per frame */
 function townGhostAt(tx,ty,wx,wy){
   if(TWN.lift)return;
+  /* a small thing is set on a surface (its slot is found when it is set down): no footprint to show */
+  if(TWN.inside&&TWN.pick&&LODGE_ITEMS[TWN.pick]&&LODGE_ITEMS[TWN.pick].small){TWN.ghost=null; return;}
   /* over a piece already built, the thumb would lift it: that piece's footprint, in gold. Inside the Lodge, its furniture */
   const d=TWN.build?bldPieceAt(tx,ty,wx,wy):null;
   if(!TWN.build||(!TWN.pick&&!d)){TWN.ghost=null; return;}
@@ -13945,10 +14060,18 @@ function townIcon(id){
 /* chip pictures, painted once each */
 const BLD_ICON={};
 function bldIcon(scene,id){const k=scene+id; return BLD_ICON[k]||(BLD_ICON[k]=scene==='lodge'?lodgeIcon(id):townIcon(id));}
+/* the set on show in the Lodge's tray, and a padlock for a set not yet bought (painted once) */
+function lodgeSetCur(){return LODGE_SETS[TWN.set]?TWN.set:'rooms';}
+let BLD_LOCK=null;
+function bldLockIcon(){
+  if(BLD_LOCK)return BLD_LOCK;
+  const [cv,c]=tCanvas(7,9); tRows(c,['..444..','.4...4.','.4...4.','4444444','4aaaaa4','4aa0aa4','4aa0aa4','4aaaaa4','4444444'],0,0,{4:'#7a8a74',a:'#4f3829',0:'#07090c'});
+  return (BLD_LOCK=cv.toDataURL());
+}
 function townTrayBuild(){
   /* the square's pieces, or inside the Lodge (step 9) its floors, walls and furniture: the tray is rebuilt when the place changes.
      The Storage tab (Expansion 4, step 1) is rebuilt whenever it is asked for: what waits there changes as you build */
-  const row=$('#townTrow'), scene=TWN.inside?'lodge':'town', store=TWN.tab==='store', key=scene+(store?'|store':'');
+  const row=$('#townTrow'), scene=TWN.inside?'lodge':'town', store=TWN.tab==='store', set=lodgeSetCur(), key=scene+(store?'|store':TWN.inside?'|'+set:'');
   if(!store&&row.childElementCount&&row.dataset.scene===key)return;
   row.textContent=''; row.dataset.scene=key;
   const dpr=Math.min(3,window.devicePixelRatio||1), s=Math.max(1,Math.round(2*dpr))/dpr;
@@ -13962,11 +14085,23 @@ function townTrayBuild(){
       const t=document.createElement('span'); t.textContent=I.s; const c=document.createElement('b'); c.textContent='×'+n[id];
       b.append(im,t,c); row.appendChild(b);}
   }
-  else if(TWN.inside)for(const id in LODGE_ITEMS){
-    const b=document.createElement('button'); b.type='button'; b.className='town-chip'; b.dataset.lodge=id; b.setAttribute('aria-label',LODGE_ITEMS[id].n);
-    const im=document.createElement('img'); im.alt=''; im.src=bldIcon('lodge',id); im.style.width=(16*s)+'px'; im.style.height=(20*s)+'px';
-    const t=document.createElement('span'); t.textContent=LODGE_ITEMS[id].s;
-    b.append(im,t); row.appendChild(b);
+  else if(TWN.inside){
+    /* Expansion 4, step 4: the first chip is the set on show (tap it for the next); then that set's pieces, the ones of a set not
+       yet bought shown shut, with a padlock */
+    const S=LODGE_SETS[set], open=lodgeSetOpen(set), sb=document.createElement('button'); sb.type='button'; sb.className='town-chip town-setchip'+(open?'':' locked'); sb.id='townSet'; sb.dataset.lodgeset=set;
+    sb.setAttribute('aria-label','Set: '+S.n+(open?'':', locked')+'. Tap for the next set');
+    const sim=document.createElement('img'); sim.alt=''; sim.src=bldIcon('lodge',S.rep); sim.style.width=(16*s)+'px'; sim.style.height=(20*s)+'px';
+    const st=document.createElement('span'); st.textContent=S.s; const sn=document.createElement('b'); sn.textContent=(LODGE_SET_KEYS.indexOf(set)+1)+'/'+LODGE_SET_KEYS.length;
+    sb.append(sim,st,sn); row.appendChild(sb);
+    for(const id in LODGE_ITEMS){
+      const I=LODGE_ITEMS[id]; if(I.set!==set)continue;
+      const b=document.createElement('button'); b.type='button'; b.className='town-chip'+(open?'':' locked'); b.dataset.lodge=id; b.setAttribute('aria-label',I.n+(open?'':', locked: ask the Peddler'));
+      const im=document.createElement('img'); im.alt=''; im.src=bldIcon('lodge',id); im.style.width=(16*s)+'px'; im.style.height=(20*s)+'px';
+      const t=document.createElement('span'); t.textContent=I.s;
+      b.append(im,t);
+      if(!open){const lk=document.createElement('img'); lk.alt=''; lk.className='town-lock'; lk.src=bldLockIcon(); lk.style.width=(7*s)+'px'; lk.style.height=(9*s)+'px'; b.appendChild(lk);}
+      row.appendChild(b);
+    }
   }
   else for(const id in TOWN_DECOS){
     const b=document.createElement('button'); b.type='button'; b.className='town-chip'; b.dataset.deco=id; b.setAttribute('aria-label',TOWN_DECOS[id].n);
@@ -13986,6 +14121,9 @@ function townTrayUI(){
     townTrayBuild();
     const L=TWN.lift, U=TWN.undo||[];
     $('#townTools').hidden=!!L; $('#townLiftBar').hidden=!L; $('#townTrow').classList.toggle('held',!!L);
+    /* Dye is the Lodge's (the square's pieces have one colour); a small thing does not turn */
+    const dyed=L&&TWN.inside&&LODGE_ITEMS[L.id]&&LODGE_ITEMS[L.id].dyes&&LODGE_ITEMS[L.id].dyes.length;
+    $('#townDye').hidden=!TWN.inside; $('#townDye').disabled=!dyed; $('#townTurn').disabled=!!(L&&L.item);
     $('#townStoreN').textContent=bldStored(null,T).length;
     for(const b of $('#townTools').querySelectorAll('[data-tab]'))b.setAttribute('aria-pressed',b.dataset.tab===(TWN.tab||'pieces')?'true':'false');
     for(const b of $('#townTools').querySelectorAll('[data-snap]'))b.setAttribute('aria-pressed',(b.dataset.snap==='free')===(T.free===true)?'true':'false');
@@ -14036,6 +14174,11 @@ function bldAt(d,I,x,y){
    centred on it); placing freely, its footprint centred on the thumb to the art pixel, held inside the map. f: the way it faces */
 function bldAnchor(id,tx,ty,wx,wy,f){
   f=f|0; const I=bldTab()[id], F=pieceFoot(I,f), w=F.w*16, h=F.h*16;
+  /* a mount (Expansion 4, step 4) hangs on the back wall, in the column under the thumb whatever the row: on the grid by tiles,
+     freely by the pixel, held between the side walls */
+  if(I.mount){
+    if(bldFree()&&wx!=null){const x=clamp(Math.round(wx-w/2),16,144-w); return {c:Math.round(x/16),r:0,x,y:0,f,free:true};}
+    const c=clamp(tx-((F.w-1)>>1),1,9-F.w); return {c,r:0,x:c*16,y:0,f,free:false};}
   if(bldFree()&&!I.snap&&wx!=null){
     const W=(TWN.inside?LODGE_W:TOWN_W)*16, H=(TWN.inside?LODGE_H:TOWN_H)*16;
     const x=clamp(Math.round(wx-w/2),0,W-w), y=clamp(Math.round(TWN.inside?wy-h/2:wy-h+8),0,H-h);
@@ -14068,6 +14211,17 @@ function bldWalkCheck(I){if(!I.path&&!I.flat&&TWN.path&&TWN.path.some(p=>townSol
 function bldTap(tx,ty){
   const px=TWN.tapPx, wx=px?px[0]:tx*16+8, wy=px?px[1]:ty*16+8; TWN.tapPx=null;
   if(TWN.lift){bldLiftTap(tx,ty,wx,wy); return;}
+  /* Expansion 4, step 4: a small thing chosen on the tray goes on whatever surface the tap lands on (from Storage, for nothing);
+     with nothing chosen, a tap on one lifts it */
+  const pk=TWN.inside&&TWN.pick&&LODGE_ITEMS[TWN.pick];
+  if(pk&&pk.small){
+    const id=TWN.pick, st=TWN.tab==='store'?bldStored(id)[0]:null, why=lodgePlaceSmall(id,wx,wy,st);
+    TWN.ghost=null;
+    if(why){townSay(why); return;}
+    if(st){const n=bldStored(id).length; townSay('From storage: the '+pk.n+'.'+(n?' '+n+' more wait.':'')); if(!n)TWN.pick=null; townTrayUI();}
+    else townSay(lodgePickLine(id));
+    return;}
+  if(TWN.inside){const it=lodgeItemAt(wx,wy); if(it){bldLiftItem(it.host,it.o); return;}}
   const d=bldPieceAt(tx,ty,wx,wy);
   if(d){bldLift(d); return;}
   if(!TWN.pick){TWN.goal=null; TWN.path=townPathTo(tx,ty); if(TWN.path&&TWN.path.length){const e=TWN.path[TWN.path.length-1]; TWN.mark=.6; TWN.mx=e.x; TWN.my=e.y;} return;}
@@ -14085,6 +14239,7 @@ function bldPlaceStored(id,c,r,x,y){
   const T=townData(), s=bldScene(), i=T.store.findIndex(e=>e.s===s&&e.id===id); if(i<0)return 'Nothing like it waits in storage.';
   const st=T.store[i], I=bldTab()[id], f=st.f|0, why=bldFits(id,c,r,x,y,f); if(why)return why;
   const d=bldAt({id,c,r},I,x,y); if(st.g)d.g=st.g; if(f)d.f=f;
+  if(st.dye)d.dye=st.dye; if(st.on)d.on=st.on.map(q=>Object.assign({},q));
   T.store.splice(i,1); bldList(T).push(d); bldDid({a:'place',d,st});
   townSave(); bldSync(); townHud(); townTrayUI(); bldWalkCheck(I);
   return '';
@@ -14102,11 +14257,27 @@ function bldLift(d){
   townTrayUI(); townSay('You lift the '+I.n+'. Drag it, or tap where it goes. ⟳ turns it.');
   return true;
 }
+/* lift a small thing off its surface (Expansion 4, step 4): it stays in its host's list, unseen, until it is set down, stored or
+   cancelled, so a lift that is never finished loses nothing. Its x, y are the point it stands on (a slot's, or the thumb's) */
+function bldLiftItem(h,o){
+  if(!TWN.build||TWN.lift||!h||!o||!h.on||h.on.indexOf(o)<0)return false;
+  const sp=lodgeSlotPoint(h,o.s), I=LODGE_ITEMS[o.id];
+  TWN.lift={d:o,item:true,host:h,s:o.s,id:o.id,from:{host:h,s:o.s},x:sp[0],y:sp[1],c:0,r:0,f:0,why:'',key:null,free:false,art:null};
+  BLD_SKIP=o; TWN.pick=null; TWN.ghost=null; TWN.path=null; TWN.goal=null; TWN.mark=0;
+  bldSync(); TWN.lift.art=bldArt(o,0);
+  townTrayUI(); townSay('You lift the '+I.n+'. Drag it, or tap where it goes.');
+  return true;
+}
 /* the lifted piece's look facing f, made when it is lifted and each time it turns, relative to its footprint's top-left: what
-   stands and what glows (it casts no light while held) */
+   stands and what glows (it casts no light while held), and, in the Lodge, its colourway and what stands on it; a small thing
+   is relative to the point it stands on */
 function bldArt(d,f){
   f=f|0;
-  if(TWN.inside){const K=LODGE_ART&&LODGE_ART.cache||{}, a=K[d.id+f]||lodgeFurnArt(d.id,f), o=[{c:a.cv,x:a.dx,y:a.dy}]; if(a.em)o.push({c:a.em,x:a.dx+a.ex,y:a.dy+a.ey}); return o;}
+  if(TWN.inside){
+    if(LODGE_ITEMS[d.id].small){const a=lodgeFA(d.id,0,d.dye); return [{c:a.cv,x:-(a.cv.width>>1),y:-a.cv.height}];}
+    const a=lodgeFA(d.id,f,d.dye), o=[{c:a.cv,x:a.dx,y:a.dy}]; if(a.em)o.push({c:a.em,x:a.dx+a.ex,y:a.dy+a.ey});
+    if(d.on&&a.top)for(const q of d.on){const ia=lodgeFA(q.id,0,q.dye), t=a.top[q.s]; o.push({c:ia.cv,x:a.dx+t[0]-(ia.cv.width>>1),y:a.dy+t[1]-ia.cv.height});}
+    return o;}
   const props=[], lights=[], em=[]; townDecoProps({id:d.id,c:d.c,r:d.r,f,g:d.g},0,0,props,lights,em,true);
   return props.concat(em.map(o=>o.fl?{c:o.fl[0],x:o.x,y:o.y}:o));
 }
@@ -14114,8 +14285,16 @@ function bldArt(d,f){
    freely it stays to the pixel. Whether it can go there is worked out only when it moves. true if it moved */
 function bldLiftTo(x,y){
   const L=TWN.lift; if(!L)return false;
+  /* a small thing: the slot of the surface nearest the thumb, or red where there is none */
+  if(L.item){
+    x=Math.round(x); y=Math.round(y); const key='i'+x+','+y; if(key===L.key)return false; L.key=key;
+    const h=lodgeHostAt(x,y), s=h?lodgeSlotNear(h,x,y,L.d):-1;
+    if(h&&s>=0){const sp=lodgeSlotPoint(h,s); L.host=h; L.s=s; L.x=sp[0]; L.y=sp[1]; L.why='';}
+    else{L.host=null; L.s=-1; L.x=x; L.y=y; L.why=h?'There is no room left on it.':'Set it on a desk, a chest, a shelf or a table.';}
+    return true;}
   const I=bldTab()[L.id], F=pieceFoot(I,L.f), w=F.w*16, h=F.h*16, free=bldFree()&&!I.snap;
   x=clamp(Math.round(x),0,(TWN.inside?LODGE_W:TOWN_W)*16-w); y=clamp(Math.round(y),0,(TWN.inside?LODGE_H:TOWN_H)*16-h);
+  if(I.mount){y=0; x=clamp(x,16,144-w);}
   if(!free){x=Math.round(x/16)*16; y=Math.round(y/16)*16;}
   const key=x+','+y+','+free+','+L.f; if(key===L.key)return false;
   L.key=key; L.x=x; L.y=y; L.c=Math.round(x/16); L.r=Math.round(y/16); L.free=free;
@@ -14131,6 +14310,7 @@ function bldOnLift(wx,wy){
    (Expansion 4, step 2). Held there, it turns back (the pointer handlers) */
 function bldLiftTap(tx,ty,wx,wy){
   const L=TWN.lift;
+  if(L.item){bldLiftTo(wx,wy); townSay(bldLiftLine()); return;}
   if(bldOnLift(wx,wy)){bldTurn(1); return;}
   const a=bldAnchor(L.id,tx,ty,wx,wy,L.f); bldLiftTo(a.x,a.y); townSay(bldLiftLine());
 }
@@ -14139,6 +14319,7 @@ function bldLiftTap(tx,ty,wx,wy){
 const BLD_HOLD=450;
 function bldTurn(dir){
   const L=TWN.lift; if(!L)return false;
+  if(L.item){townSay('A small thing does not turn.'); return false;}
   const I=bldTab()[L.id];
   L.f=(L.f+(I.snap?2:1)*(dir<0?-1:1)+8)&7; L.key=null; L.art=bldArt(L.d,L.f);
   bldLiftTo(L.x,L.y);
@@ -14151,6 +14332,16 @@ function bldLiftLine(){const L=TWN.lift; return !L?'':L.why||'The '+bldTab()[L.i
 function bldDrop(){
   const L=TWN.lift; if(!L)return 'Nothing is lifted.';
   if(L.why){townSay(L.why); return L.why;}
+  /* a small thing: onto its slot (it may change surface); nothing else about it changes */
+  if(L.item){
+    const o=L.d, from=L.from, to=L.host, I=LODGE_ITEMS[o.id];
+    BLD_SKIP=null; TWN.lift=null;
+    if(to!==from.host||L.s!==from.s){
+      from.host.on.splice(from.host.on.indexOf(o),1); if(!from.host.on.length)delete from.host.on;
+      o.s=L.s; (to.on||(to.on=[])).push(o); bldDid({a:'moveitem',o,from,to});}
+    townSave(); bldSync(); townTrayUI(); AUDIO.place&&AUDIO.place();
+    townSay('You set the '+I.n+' down.');
+    return '';}
   const d=L.d, I=bldTab()[d.id], f=L.from;
   BLD_SKIP=null; TWN.lift=null;
   d.c=L.c; d.r=L.r; d.f=L.f; if(L.free){d.x=L.x; d.y=L.y;} else{delete d.x; delete d.y;}
@@ -14169,11 +14360,24 @@ function bldCancel(){
 /* Store: the lifted piece is put away whole, with what it cost, to be set down again for nothing */
 function bldStow(){
   const L=TWN.lift; if(!L)return false;
-  const T=townData(), list=bldList(T), d=L.d, i=list.indexOf(d), I=bldTab()[d.id];
+  const T=townData(), d=L.d, I=bldTab()[d.id];
+  /* a small thing comes off its surface and waits whole in Storage, with its colourway (Expansion 4, step 4) */
+  if(L.item){
+    const h=L.from.host, i=h.on?h.on.indexOf(d):-1; BLD_SKIP=null; TWN.lift=null;
+    if(i<0){bldSync(); townTrayUI(); return false;}
+    h.on.splice(i,1); if(!h.on.length)delete h.on;
+    const st={s:'lodge',id:d.id,cost:haulFix(lodgeCostOf(d))}; if(d.dye)st.dye=d.dye;
+    T.store.push(st); bldDid({a:'storeitem',host:h,o:d,st,slot:L.from.s});
+    townSave(); bldSync(); townHud(); townTrayUI();
+    townSay('The '+I.n+' goes into storage.');
+    return true;}
+  const list=bldList(T), i=list.indexOf(d);
   BLD_SKIP=null; TWN.lift=null;
   if(i<0){bldSync(); townTrayUI(); return false;}
   list.splice(i,1);
-  const st={s:bldScene(),id:d.id,cost:haulFix(I.cost)}; if(d.g)st.g=d.g; if(L.f)st.f=L.f;
+  /* a Lodge piece is stored with its colourway and everything that stood on it, and all that cost */
+  const st={s:bldScene(),id:d.id,cost:haulFix(TWN.inside?lodgeCostOf(d):I.cost)}; if(d.g)st.g=d.g; if(L.f)st.f=L.f;
+  if(TWN.inside){if(d.dye)st.dye=d.dye; if(d.on&&d.on.length)st.on=d.on;}
   T.store.push(st); bldDid({a:'store',d,i,st});
   townSave(); bldSync(); townHud(); townTrayUI();
   townSay('The '+I.n+' goes into storage.');
@@ -14195,7 +14399,18 @@ function bldUndo(){
   if(e.s!==bldScene()){U.length=0; townTrayUI(); return false;}
   const T=townData(), list=bldList(T), tab=bldTab(), no=why=>{townSay(why==='You are standing there.'?'You are standing where it stood. Step aside first.':why); return false;};
   let say;
-  if(e.a==='place'){const i=list.indexOf(e.d); if(i<0){U.pop(); townTrayUI(); return false;}
+  /* Expansion 4, step 4: a small thing set on a surface, moved, stored, or a piece dyed */
+  if(e.a==='small'){const h=e.host, i=h.on?h.on.indexOf(e.o):-1; if(i<0||list.indexOf(h)<0){U.pop(); townTrayUI(); return false;}
+    h.on.splice(i,1); if(!h.on.length)delete h.on; const n=tab[e.o.id].n;
+    if(e.st){T.store.push(e.st); say='The '+n+' goes back into storage.';}
+    else{T.res=haulFix(T.res); for(const k in e.cost)T.res[k]+=e.cost[k]; const back=townCostText(e.cost); say='You take back the '+n+(back?': '+back+' back.':'.');}}
+  else if(e.a==='moveitem'){const to=e.to, i=to.on?to.on.indexOf(e.o):-1, h=e.from.host;
+    if(i<0||list.indexOf(h)<0||(h.on||[]).some(q=>q.s===e.from.s)){U.pop(); townTrayUI(); return false;}
+    to.on.splice(i,1); if(!to.on.length)delete to.on; e.o.s=e.from.s; (h.on||(h.on=[])).push(e.o); say='The '+tab[e.o.id].n+' goes back where it stood.';}
+  else if(e.a==='storeitem'){const j=T.store.indexOf(e.st), h=e.host; if(j<0||list.indexOf(h)<0||(h.on||[]).some(q=>q.s===e.slot))return no('Something stands where it stood.');
+    T.store.splice(j,1); (h.on||(h.on=[])).push(e.o); e.o.s=e.slot; say='The '+tab[e.o.id].n+' comes out of storage, back where it stood.';}
+  else if(e.a==='dye'){const r=bldDyeSet(e.d,e.from); if(r)return no(r); say='The '+tab[e.d.id].n+' is '+(e.from?LODGE_DYES[e.from].n.toLowerCase():'its own colour')+' again.';}
+  else if(e.a==='place'){const i=list.indexOf(e.d); if(i<0){U.pop(); townTrayUI(); return false;}
     list.splice(i,1); const n=tab[e.d.id].n;
     if(e.st){T.store.push(e.st); say='The '+n+' goes back into storage.';}
     else{T.res=haulFix(T.res); for(const k in e.cost)T.res[k]+=e.cost[k]; const back=townCostText(e.cost); say='You take back the '+n+(back?': '+back+' back.':'.');}}
@@ -14224,8 +14439,10 @@ function bldStoredLine(id){const S=bldStored(id); return !S.length?bldStoreLine(
 /* which tip build mode shows: the tray, then (once something stands to lift) lifting and storing, then Grid or Free. One card a
    time you open Build, so the three never queue up in front of the thumb; the one showing stays until it is read */
 const BLD_TIPS=['townbuild','townlift','townfree'];
+const BLD_PIECE_TIPS=['lodgemount','lodgesmall','lodgedye'];
 function bldTip(){
-  const c=TWN.card; if(c&&BLD_TIPS.includes(c)&&tipFresh(c))return c;
+  const c=TWN.card; if(c&&(BLD_TIPS.includes(c)||BLD_PIECE_TIPS.includes(c))&&tipFresh(c))return c;
+  if(TWN.tipFor&&BLD_PIECE_TIPS.includes(TWN.tipFor)&&tipFresh(TWN.tipFor))return TWN.tipFor;
   if(TWN.bldTip)return null;
   const k=tipFresh('townbuild')?'townbuild':bldList().length&&tipFresh('townlift')?'townlift':tipFresh('townfree')?'townfree':null;
   if(k)TWN.bldTip=true;
@@ -14524,6 +14741,14 @@ function lodgeShort(id,T){
 /* '' if the piece can stand there, or why not; x, y and f as townFits(), over the room's floor */
 function lodgeFits(id,c,r,x,y,f){
   const I=LODGE_ITEMS[id]; if(!I||I.k!=='furn')return 'Choose a piece first.';
+  /* Expansion 4, step 4: a mount hangs on the back wall (its tiles are wall, never floor); a small thing stands on a surface, and
+     is set on one by lodgePlaceSmall() */
+  if(I.mount){
+    const X=x!=null&&y!=null?x:c*16, why=lodgeMountWhy(id,c,X); if(why)return why;
+    const RS=footRects(X,0,pieceFoot(I,f));
+    if(lodgeRoom().furn.some(d=>d!==BLD_SKIP&&LODGE_ITEMS[d.id].mount&&rectsHit(RS,pieceRects(d,LODGE_ITEMS[d.id]))))return 'Something hangs there already.';
+    return '';}
+  if(I.small)return 'Set it on a desk, a chest, a shelf or a table.';
   const free=x!=null&&y!=null; if(free){c=Math.round(x/16); r=Math.round(y/16);}
   const tiles=lodgeTiles(id,c,r,f), RS=footRects(free?x:c*16,free?y:r*16,pieceFoot(I,f));
   for(const [x,y] of free?footTiles(RS):tiles){
@@ -14549,6 +14774,7 @@ function lodgeFits(id,c,r,x,y,f){
   return '';
 }
 function lodgeCanPlace(id,c,r,x,y){
+  const I=LODGE_ITEMS[id]; if(I&&!lodgeSetOpen(I.set))return 'The '+LODGE_SETS[I.set].n+' is locked. Ask the Peddler for its blueprint.';
   const why=lodgeFits(id,c,r,x,y); if(why)return why;
   const short=lodgeShort(id,townData()); if(short)return 'You need '+short+'.';
   return '';
@@ -14564,9 +14790,9 @@ function lodgePlace(id,c,r,x,y){
 /* a piece taken straight up, and all it cost comes back */
 function lodgeTakeUp(d){
   const T=townData(), L=lodgeRoom(T), i=d?L.furn.indexOf(d):-1; if(i<0)return false;
-  const I=LODGE_ITEMS[d.id]; L.furn.splice(i,1); for(const k in I.cost)T.res[k]+=I.cost[k];
+  const I=LODGE_ITEMS[d.id], back=lodgeCostOf(d); L.furn.splice(i,1); for(const k in back)T.res[k]+=back[k];
   townSave(); lodgeSync(); townHud(); townTrayUI();
-  townSay('You take up the '+I.n+(townCostText(I.cost)?': '+townCostText(I.cost)+' back.':'.'));
+  townSay('You take up the '+I.n+(townCostText(back)?': '+townCostText(back)+' back.':'.'));
   return true;
 }
 /* lay a floor or hang a wall over the whole room: the one it replaces gives back all it cost. '' when done, or why not */
@@ -14591,7 +14817,85 @@ function lodgeStyle(id){
 function lodgeBuildTap(tx,ty){bldTap(tx,ty);}
 function lodgePickLine(id){
   if(!id)return 'Lay a floor or a wall, choose a piece, or tap one to lift it.';
-  const I=LODGE_ITEMS[id], c=townCostText(lodgeCost(id)); return I.n+(c?' · '+c:' · free');
+  const I=LODGE_ITEMS[id], c=townCostText(lodgeCost(id)); return I.n+(c?' · '+c:' · free')+(I.small?' · tap a surface':I.mount?' · tap the wall':'');
+}
+/* ---- Expansion 4, step 4: small things on surfaces, and colourways ---- */
+/* each piece's art in each facing and colourway, made once: lodgeFurnArt() (the Cellar's wet variants are made from it) */
+const LODGE_FA=new Map();
+function lodgeFA(id,f,dye){
+  const k=id+'|'+(f|0)+'|'+(dye||''); let a=LODGE_FA.get(k);
+  if(!a)LODGE_FA.set(k,a=lodgeFurnArt(id,f,dye));
+  return a;
+}
+/* the point a small thing stands on at slot i of a surface (the middle of its foot), in the scene's art pixels */
+function lodgeSlotPoint(h,i){
+  const R=pieceRect(h,LODGE_ITEMS[h.id]), a=lodgeFA(h.id,h.f,h.dye), t=a.top[i];
+  return [R.x+a.dx+t[0],R.y+a.dy+t[1]];
+}
+/* the surface under an art pixel: a piece with a top whose footprint or drawn art holds it; the nearest to you if two do */
+function lodgeHostAt(x,y){
+  let best=null, by=-1;
+  for(const d of lodgeRoom().furn){
+    const I=LODGE_ITEMS[d.id]; if(d===BLD_SKIP||!I.top)continue;
+    const R=pieceRect(d,I), a=lodgeFA(d.id,d.f,d.dye), cx=R.x+a.dx, cy=R.y+a.dy;
+    if(((x>=R.x&&x<R.x+R.w&&y>=R.y&&y<R.y+R.h)||(x>=cx&&x<cx+a.cv.width&&y>=cy&&y<cy+a.cv.height))&&R.y+R.h>by){best=d; by=R.y+R.h;}
+  }
+  return best;
+}
+/* the free slot of a surface nearest an art pixel, or -1 (the small thing in skip is not in the way) */
+function lodgeSlotNear(h,x,y,skip){
+  const n=LODGE_ITEMS[h.id].top, taken=new Set((h.on||[]).filter(q=>q!==skip).map(q=>q.s));
+  let best=-1, bd=1e9;
+  for(let i=0;i<n;i++){if(taken.has(i))continue; const p=lodgeSlotPoint(h,i), d=Math.hypot(p[0]-x,p[1]-3-y); if(d<bd){bd=d; best=i;}}
+  return best;
+}
+/* the small thing under an art pixel, standing on its surface: {host, o} (what is lifted is not there) */
+function lodgeItemAt(x,y){
+  for(const h of lodgeRoom().furn){
+    if(h===BLD_SKIP||!h.on)continue;
+    for(const o of h.on){if(o===BLD_SKIP)continue;
+      const a=lodgeFA(o.id,0,o.dye), p=lodgeSlotPoint(h,o.s), w=a.cv.width, hh=a.cv.height;
+      if(x>=p[0]-w/2-2&&x<=p[0]+w/2+2&&y>=p[1]-hh-2&&y<=p[1]+3)return {host:h,o};}
+  }
+  return null;
+}
+/* set a small thing on the surface under an art pixel, in the free slot nearest it. A new one is bought; one from Storage (st)
+   costs nothing. '' when done, or why not */
+function lodgePlaceSmall(id,wx,wy,st){
+  const I=LODGE_ITEMS[id]; if(!I||!I.small)return 'Choose a small thing first.';
+  if(!st&&!lodgeSetOpen(I.set))return 'The '+LODGE_SETS[I.set].n+' is locked. Ask the Peddler for its blueprint.';
+  const h=lodgeHostAt(wx,wy); if(!h)return 'Set it on a desk, a chest, a shelf or a table.';
+  const s=lodgeSlotNear(h,wx,wy); if(s<0)return 'There is no room left on it.';
+  const T=townData();
+  if(!st){const short=lodgeShort(id,T); if(short)return 'You need '+short+'.';}
+  const o={id,s}; if(st&&st.dye)o.dye=st.dye;
+  if(st)T.store.splice(T.store.indexOf(st),1); else{T.res=haulFix(T.res); for(const k in I.cost)T.res[k]-=I.cost[k];}
+  (h.on||(h.on=[])).push(o); bldDid({a:'small',host:h,o,cost:st?null:I.cost,st:st||null});
+  townSave(); lodgeSync(); townHud(); townTrayUI(); AUDIO.place&&AUDIO.place();
+  return '';
+}
+/* a piece or a small thing takes colourway dye (a key of LODGE_DYES, or null for its own): the difference in tallow is paid or
+   paid back at once. '' when done, or why not */
+function bldDyeSet(d,dye){
+  const T=townData(), was=d.dye?DYE_COST:{}, will=dye?DYE_COST:{}; T.res=haulFix(T.res);
+  const need={}; for(const k of HAUL_KEYS){const n=(will[k]|0)-(was[k]|0); if(n>0)need[k]=n;}
+  const short=townShort(need,T.res); if(short)return 'You need '+short+'.';
+  for(const k of HAUL_KEYS)T.res[k]+=(was[k]|0)-(will[k]|0);
+  if(dye)d.dye=dye; else delete d.dye;
+  townSave(); townHud(); bldSync();
+  const L=TWN.lift; if(L&&L.d===d)L.art=bldArt(d,L.f);
+  return '';
+}
+/* Dye, while a piece is lifted: its next colourway, its own colours after the last. Each costs tallow; going back gives it back */
+function bldDye(){
+  const L=TWN.lift; if(!L||!TWN.inside)return false;
+  const d=L.d, I=LODGE_ITEMS[d.id];
+  if(!I.dyes||!I.dyes.length){townSay('The '+I.n+' has only its own colours.'); return false;}
+  const ways=[null].concat(I.dyes), cur=d.dye||null, nx=ways[(ways.indexOf(cur)+1)%ways.length], why=bldDyeSet(d,nx);
+  if(why){townSay(why); return false;}
+  bldDid({a:'dye',d,from:cur}); townTrayUI(); AUDIO.place&&AUDIO.place();
+  townSay('The '+I.n+(nx?' is '+LODGE_DYES[nx].n.toLowerCase()+' · '+townCostText(DYE_COST):' is its own colour again.'));
+  return true;
 }
 /* a chip's picture: a patch of the floor or the wall, or the piece itself, at a whole number of device pixels an art pixel */
 function lodgeIcon(id){
@@ -14908,6 +15212,8 @@ $('#townTools').addEventListener('click',ev=>{
 $('#townDrop').addEventListener('click',()=>{if(TWN.build)bldDrop();});
 $('#townCancel').addEventListener('click',()=>{if(TWN.build)bldCancel();});
 $('#townStow').addEventListener('click',()=>{if(TWN.build)bldStow();});
+/* Dye (Expansion 4, step 4): a lifted piece takes its next colourway, for tallow; the first time says how it goes */
+$('#townDye').addEventListener('click',()=>{if(!TWN.build)return; if(bldDye()&&tipFresh('lodgedye')){TWN.tipFor='lodgedye'; townShowTip();}});
 /* ⟳ (Expansion 4, step 2): a tap turns the lifted piece a step clockwise; held, it turns it back a step, and the click that
    follows the hold is let go */
 let bldHeld=0;
@@ -14932,10 +15238,18 @@ $('#townTrow').addEventListener('click',ev=>{
   const sb=ev.target.closest('[data-stored]');
   if(sb){const id=sb.dataset.stored; TWN.pick=TWN.pick===id?null:id; TWN.ghost=null; townTrayUI(); townSay(TWN.pick?bldStoredLine(id):bldStoreLine()); return;}
   /* the Lodge's chips (step 9): a floor or a wall is laid at once; a piece of furniture is chosen, then set down with a tap */
+  /* Expansion 4, step 4: the set chip shows the next set; a piece of a set not yet bought says who sells it */
+  const ss=ev.target.closest('[data-lodgeset]');
+  if(ss){const k=lodgeSetCur(), nx=LODGE_SET_KEYS[(LODGE_SET_KEYS.indexOf(k)+1)%LODGE_SET_KEYS.length]; TWN.set=nx; TWN.pick=null; TWN.ghost=null; townTrayUI();
+    townSay(LODGE_SETS[nx].n+(lodgeSetOpen(nx)?'':' · locked: ask the Peddler for its blueprint')); return;}
   const lb=ev.target.closest('[data-lodge]');
-  if(lb){const id=lb.dataset.lodge; TWN.ghost=null;
-    if(LODGE_ITEMS[id].k!=='furn'){townSay(lodgeStyle(id)); return;}
-    TWN.pick=TWN.pick===id?null:id; townTrayUI(); townSay(lodgePickLine(TWN.pick)); return;}
+  if(lb){const id=lb.dataset.lodge, I=LODGE_ITEMS[id]; TWN.ghost=null;
+    if(!lodgeSetOpen(I.set)){townSay('The '+LODGE_SETS[I.set].n+' is locked. Ask the Peddler for its blueprint.'); return;}
+    if(I.k!=='furn'){townSay(lodgeStyle(id)); return;}
+    TWN.pick=TWN.pick===id?null:id; townTrayUI(); townSay(lodgePickLine(TWN.pick));
+    /* the first wall mount or small thing you choose says how it goes */
+    if(TWN.pick&&(I.mount||I.small)){TWN.tipFor=I.mount?'lodgemount':'lodgesmall'; townShowTip();}
+    return;}
   const b=ev.target.closest('[data-deco]'); if(!b||!TWN.build)return;
   TWN.pick=TWN.pick===b.dataset.deco?null:b.dataset.deco; TWN.ghost=null;
   townTrayUI(); townSay(townPickLine(TWN.pick));
