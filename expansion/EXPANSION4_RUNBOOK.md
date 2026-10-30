@@ -15,8 +15,8 @@
 | 2 | 8-way rotation and the PixelLab art pipeline | #138 | merged | 19.2.0 |
 | 3 | Lodge rooms: the Flooded Cellar and the Attic | #139 | merged | 19.3.0 |
 | 4 | The catalogue: themed sets, wall mounts, small things on surfaces (with the art kit, `ART_UPGRADE.md` §3) | #140 | merged | 19.4.0 |
-| A1 | Art pass 1: fire, water, weather (`ART_UPGRADE.md` §4) | #141 | open | 19.5.0 |
-| 5 | Light and dark indoors; boss trophies | | | 19.6.0 |
+| A1 | Art pass 1: fire, water, weather (`ART_UPGRADE.md` §4) | #141 | merged | 19.5.0 |
+| 5 | Light and dark indoors; boss trophies | #143 | open | 19.6.0 |
 | A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | | | 19.7.0 |
 | 6 | The Peddler: a rescued soul with a stall by the stairs | | | 19.8.0 |
 | A3 | Art pass 3: scenery (buildings, ground, props) | | | 19.9.0 |
@@ -160,6 +160,8 @@ Numbers marked *shape* are for playtest.
 
 **Test** `tests/t/lodgelight.test.js`: a room with no lights is darker; trophies only for beaten bosses; codex never changes. Shots: one lit and one dark room per device.
 
+- *As built (#143):* each room has a `night` with nothing burning (0.8 to 0.82, under the square's 0.83) and a `dim` once lit (0.58 to 0.64), reached at `LODGE_WARM` = 3 of warm light (a light's radius over 36; a cold one half; the Attic's window and the hatch's spill nothing). "Dark until you light them" covers the rooms' **own sconces** too: cold until a tap lights them (a room's `sconces`, so an old Lodge loads cold), and any piece that burns can be put out the same way (`out`; it comes down lit). Outside Build a tap on a light or a trophy walks you to it and `#townAct` offers it. **Sharp silhouettes** are a layer worked out once per room signature (`lodgeShade()`): each light throws every floor piece's shadow away from it, and a piece lit from behind stands dark with its top edge caught. A **Stone Fireplace** (the Lodge's own set, two tiles, light 52; `faces: 4`, on its side 1 by 2, so it backs onto a side wall: Criss on #143) answers "a fireplace". **Trophies** are `k:'trophy'` rows in `LODGE_ITEMS` with a `foe`, on a tray page `trophy`; `lodgePiece()` is what every place that meant furniture now asks. Earned in `killFoe()` into `run.trophies`, carried up by `haulCredit()` into `ll-town.trophies`; an old town is given what `ll-best` shows. One of each, free, no dye. The Keeper Below's Maw (a wall mount) rumbles when tapped and on its own every 16 to 32 s; the Primordial's Eye (a plinth) glows violet (new `PX` `w`, `x`). Expansion 5 earns more through `trophyEarn()`.
+
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 5) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 5 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for art pass A2.
 
@@ -168,7 +170,7 @@ Numbers marked *shape* are for playtest.
 **Build:** `expansion/ART_UPGRADE.md` §4, Art 2. **Pilot first:** Ambrose the Lamplighter only, 4 facings (Criss: no 8), walk and idle, side by side with today's rows in the shots, and stop for Criss's verdict. If he likes it, the other Keepers and the rescued souls follow in the same PR or the next; if not, the hand-made rows stay and the pass ends. **Test:** `town.test.js`, `keepers.test.js`, `rescue.test.js` untouched; sprite sizes stay 16×24.
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A2) and expansion/ART_UPGRADE.md. Build art pass A2's pilot: Ambrose the Lamplighter from PixelLab, 4 facings, walk and idle, through runbook §3, following the runbook's §4 workflow. Show him beside today's sprite and stop for Criss's verdict before redrawing anyone else. Tick the status table. End with the prompt for step 6.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A2) and expansion/ART_UPGRADE.md. Build art pass A2's pilot: Ambrose the Lamplighter from PixelLab, 4 facings, walk and idle, through runbook §3, following the runbook's §4 workflow. Show him beside today's sprite, in the square and in a dark Lodge room (step 5: his lantern is the only light there until something is lit), and stop for Criss's verdict before redrawing anyone else. Tick the status table (step 5 is #143). End with the prompt for step 6.
 
 ### Step 6: The Peddler (Claude: Opus 5.5, high)
 

@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 art pass A1 - new pixel art (runbook §3), loops that animate, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 5 - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -71,6 +71,13 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] **Frames, never live drawing:** a loop is a few canvases made once (from rows: `fireFrames()`, `tPts()` for sparse moving pixels), and `townDraw()` picks one by the clock: a prop with `fr` (and `ph`; `wk` steps it at the water's pace), a glow with `fl`. Frame 0 is the still, and Lite and Reduce Motion show only it.
 - [ ] **A new Lodge piece that burns** (`glow` and `light`, neither `steady` nor `col`) needs a `LODGE_FIRE` row: frames of its flame's zone in its own rows, facing 0, the first exactly its rows (`loops.test.js` checks both). Its light follows the frame through `fk`.
 - [ ] Anything new that animates draws nothing per frame it could cache (rule 17) and has its still.
+
+## Light and dark indoors, and trophies (Expansion 4, step 5)
+
+- [ ] **A new light** in the Lodge is a `LODGE_ITEMS` row with `light` and `glow` (and a `LODGE_FIRE` row if it burns). `lodgeArt()` gives it its weight `w` (radius over 36; `col:'cold'` half), so the room's dark (`A.dark`, between the room's `night` and `dim`) follows; it can be put out (`out`) with a tap outside Build, and its glow letters turn to soot through `LODGE_SNUFF` (add a letter there if yours is new). A fixed light of a room (like the window) is a light with `w:0` and its floor point `fx, fy`.
+- [ ] **Shadows** come from `lodgeShade()`, once per room signature: every floor piece that is not flat or a mount throws one from each light. Anything new that changes how the room looks belongs in `lodgeArt()`'s `sig`, or the shadows go stale.
+- [ ] **Something tappable in a room** (outside Build) goes in `lodgeArt()`'s `acts` (`act(n, tiles…, hit box…, base)`), with a stable offer `n` (`lact:true`; `lodgeActOf()` keeps one per piece); `lodgeActLabel()` names it and `lodgeActOn()` does it. `townNearAct()` and `lodgeTapTile()` already read `acts`.
+- [ ] **A new trophy** is a `LODGE_ITEMS` row with `k:'trophy'`, `set:'trophy'`, `cost:{}`, `faces:1`, its rows, and either `foe` (the `FOES` key whose death earns it in `killFoe()`) or a call to `trophyEarn(id)` from the deed that earns it (Expansion 5's Ledger); a line in `TROPHY_TEXT`. Anything that asks "is this furniture?" asks `lodgePiece(I)`, never `I.k==='furn'`.
 
 ## Tests
 

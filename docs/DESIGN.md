@@ -65,16 +65,17 @@ Restoring the Lodge costs **30 timber, 15 iron**. Inside, one floor and one wall
 
 ### The catalogue (Expansion 4, step 4)
 
-The Lodge's pieces come in five themed sets, plus its own floors and walls. A set is **open** from the start or **bought as a blueprint** from the Peddler (step 6), until then shown locked on the tray. A **wall mount** hangs on the back wall (wall tiles, never floor, 1 tile wide). A **small thing** stands on a surface (a piece with slots on its top, half a tile apart) and goes wherever its host goes. Every piece has two to four **colourways**: its own, and a dye of 2 tallow each, a swap of palette letters (going back to its own colours gives the tallow back). Costs are shape only.
+The Lodge's pieces come in five themed sets, plus its own floors, walls and fireplace, and the trophies (step 5: one per boss put down on the stair, free, one of each). A set is **open** from the start or **bought as a blueprint** from the Peddler (step 6), until then shown locked on the tray. A **wall mount** hangs on the back wall (wall tiles, never floor, 1 tile wide). A **small thing** stands on a surface (a piece with slots on its top, half a tile apart) and goes wherever its host goes. Every piece has two to four **colourways**: its own, and a dye of 2 tallow each, a swap of palette letters (going back to its own colours gives the tallow back). Costs are shape only.
 
 | Set | Pieces | Open |
 |---|---|---|
-| The Lodge’s own | 6: Rotted Ship-Planks, Diamond Parquet, Cistern Flagstones, Damp Stone, Mahogany Library, Brass-Ribbed Bulkhead | from the start |
+| The Lodge’s own | 7: Rotted Ship-Planks, Diamond Parquet, Cistern Flagstones, Damp Stone, Mahogany Library, Brass-Ribbed Bulkhead, Stone Fireplace | from the start |
 | Fisherman’s | 8: Cast-Iron Stove, Sea Chest, Ship’s Wheel, Barometer, Ship’s Lantern, Rusted Anchor, Hurricane Lantern, Ship in a Bottle | from the start |
 | Old Library | 10: Armchair, Banker’s Desk, Bookshelf, Ritual Rug, Drowned Portrait, Candle Sconce, Standing Lamp, Candle in a Saucer, Stack of Books, Inkwell and Quill | from the start |
 | Drowned Chapel | 8: Chapel Pew, Holy-Water Font, Chapel Lectern, Drowned Saint, Ship’s Bell, Votive Rack, Candelabra, Pilgrim’s Skull | blueprint |
 | Brass Observatory | 7: Brass Telescope, Orrery, Chart Table, Stopped Clock, Star Chart, Brass Wall Lamp, Brass Hourglass | blueprint |
 | Deep-One Coral | 7: Coral Cluster, Brine Urn, Coral Table, Coral Fan, Pearl-Eyed Mask, Glow-Anemone, Conch Shell | blueprint |
+| Trophies | 2: The Keeper Below’s Maw, The Primordial’s Eye | earned on the stair, one of each |
 
 | Dye | Swaps |
 |---|---|
@@ -94,6 +95,7 @@ The Lodge's pieces come in five themed sets, plus its own floors and walls. A se
 | Damp Stone | Lodge | Wall | free | the room |  |  |  |
 | Mahogany Library | Lodge | Wall | 30 timber | the room |  |  |  |
 | Brass-Ribbed Bulkhead | Lodge | Wall | 30 iron | the room |  |  |  |
+| Stone Fireplace | Lodge | Furniture | 12 iron, 4 timber, 3 tallow | 2×1 | 52 | 4 | 2 |
 | Cast-Iron Stove | Fisher | Furniture | 10 iron, 2 tallow | 1×1 | 36 | 4 | 2 |
 | Sea Chest | Fisher | Surface (4 slots) | 10 timber, 3 iron | 2×1 |  | 4 | 4 |
 | Ship’s Wheel | Fisher | Wall mount | 6 timber, 2 iron | 1×2 |  | 1 | 3 |
@@ -134,6 +136,8 @@ The Lodge's pieces come in five themed sets, plus its own floors and walls. A se
 | Pearl-Eyed Mask | Coral | Wall mount | 4 tallow, 2 curios | 1×2 |  | 1 | 3 |
 | Glow-Anemone | Coral | Wall mount | 6 tallow, 1 curio | 1×2 | 30 | 1 | 3 |
 | Conch Shell | Coral | Small thing | 2 tallow | 1×1 |  | 1 | 3 |
+| The Keeper Below’s Maw | Trophies | Trophy (wall mount, The Keeper Below) | free | 1×2 |  | 1 | 1 |
+| The Primordial’s Eye | Trophies | Trophy (plinth, The Primordial) | free | 1×1 |  | 1 | 1 |
 
 ## Creatures
 
