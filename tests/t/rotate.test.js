@@ -61,7 +61,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     T.tab='store'; T.pick='chair'; __t.bldTap(6,6); o.down=(D2.lodge.furn.find(e=>e.id==='chair')||{}).f;
     __t.townBuildSet(false); __t.lodgeLeave(); __t.townClose();
     const fx=__t.townFix({lodge:{built:true,furn:[{id:'chair',c:2,r:5},{id:'desk',c:4,r:5,f:9},{id:'shelf',c:7,r:5,f:'2'}]},decos:[{id:'fence',c:3,r:15,f:3},{id:'lamp',c:5,r:15,f:5}],store:[{s:'lodge',id:'chair',f:5},{s:'lodge',id:'chair',f:-1}]});
-    o.old=fx.lodge.furn.map(e=>e.f); o.decos=fx.decos.map(e=>e.f); o.fxStore=fx.store.map(e=>e.f);
+    o.old=fx.lodge.furn.filter(e=>e.id!=='grimoire'&&e.id!=='sconce').map(e=>e.f); o.decos=fx.decos.map(e=>e.f); o.fxStore=fx.store.map(e=>e.f);
     return o;});
   ok(keep.reload===1,'the facing survives a reload',keep);
   ok(keep.stored[0]===3&&keep.reStored[0]===3&&keep.down===3,'a stored piece keeps how it faced, through a reload, and is set down that way',keep);

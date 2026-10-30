@@ -160,7 +160,7 @@ const DEV=[
       /* a piece lifted: the bar of five */
       T.set='fisher'; __t.townTrayUI(); __t.bldTap(1,3); __t.townFrame(1/30);
       const lb=[...document.querySelectorAll('#townLiftBar .town-tb')].map(q).filter(Boolean), chips=[...document.querySelectorAll('#townTrow .town-chip')].filter(c=>!c.hidden).map(q);
-      o.lift=!!T.lift; o.lb=lb.length; o.liftOk=lb.length===5&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips.some(c=>over(r,c)))&&hud()===h0;
+      o.lift=!!T.lift; o.lb=lb.length; o.liftOk=lb.length===6&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips.some(c=>over(r,c)))&&hud()===h0;
       return o;},ins);
     await p.waitForTimeout(120);
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-catlift-'+nm+'.png'});
@@ -193,8 +193,8 @@ const DEV=[
       const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44;
       const D=__t.townData(), T=__t.TWN; if(!T.inside)__t.lodgeEnter(); if(__t.lodgeCur()!=='main')__t.lodgeGo('main');
       const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
-      D.lodge.floor='planks'; D.lodge.wall='damp'; D.lodge.sconces=[];
-      D.lodge.furn=[{id:'hearth',c:6,r:3,out:true},{id:'chair',c:3,r:5,f:1},{id:'desk',c:6,r:6,on:[{id:'candle',s:1,out:true}]},{id:'keeper',c:6,r:0},{id:'primordial',c:1,r:4}];
+      D.lodge.floor='planks'; D.lodge.wall='damp'; 
+      D.lodge.furn=[{id:'grimoire',c:4,r:2,free:true},{id:'sconce',c:1,r:0,free:true,out:true},{id:'hearth',c:6,r:3,out:true},{id:'chair',c:3,r:5,f:1},{id:'desk',c:6,r:6,on:[{id:'candle',s:1,out:true}]},{id:'keeper',c:6,r:0},{id:'primordial',c:1,r:4}];
       __t.lodgeSync(); T.p.x=5; T.p.y=8.4; T.path=null; T.cx=null; __t.townFrame(1/30);
       const o={dark:__t.lodgeArt().dark};
       return o;},ins);
@@ -206,14 +206,14 @@ const DEV=[
       const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
       const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44;
       const T=__t.TWN, L=__t.lodgeRoom(), o={};
-      for(const d of L.furn)if(d.out)__t.lodgeToggle(__t.lodgeActOf(d));
+      for(const d of L.furn)if(d.out&&d.id!=='sconce')__t.lodgeToggle(__t.lodgeActOf(d));
       const dk=L.furn.find(d=>d.id==='desk'); __t.lodgeToggle(__t.lodgeActOf(dk.on[0],dk));
       /* stand under the left-hand sconce: the button offers to light it */
       T.p.x=1.6; T.p.y=2.6; T.path=null; T.near=undefined; __t.townFrame(1/30); __t.townFrame(1/30);
       const act=document.getElementById('townAct'), a=q(act), hud0=JSON.stringify([q(document.getElementById('townBack')),q(document.getElementById('townBuild')),q(document.getElementById('townRes')),q(document.getElementById('townCv'))]);
       o.label=act.textContent; o.act=inside(a)&&thumb(a);
       act.click(); __t.townFrame(1/30); __t.townFrame(1/30);
-      o.sconce=L.sconces.join(); o.label2=act.textContent;
+      o.sconce=L.furn.filter(d=>d.id==='sconce').map((d,i)=>d.out?'':i).join(); o.label2=act.textContent;
       /* the button names what it offers, so its own width follows its words; nothing else moves */
       o.still=hud0===JSON.stringify([q(document.getElementById('townBack')),q(document.getElementById('townBuild')),q(document.getElementById('townRes')),q(document.getElementById('townCv'))])&&inside(q(act));
       T.p.x=5; T.p.y=6.2; T.cx=null; __t.townFrame(1/30); __t.townFrame(1/30);
@@ -254,7 +254,7 @@ const DEV=[
       o.bar=bar; o.barOk=bar.length===5&&bar.every(r=>inside(r)&&thumb(r))&&apart(bar)&&!bar.some(r=>over(r,m0)||ch.some(c=>over(r,c)));
       __t.bldTap(14,15); __t.townFrame(1/30);
       const lb=[...document.querySelectorAll('#townLiftBar .town-tb')].map(q).filter(Boolean);
-      o.lb=lb; o.liftOk=!!T.lift&&lb.length===4&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips().some(c=>over(r,c)))
+      o.lb=lb; o.liftOk=!!T.lift&&lb.length===5&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips().some(c=>over(r,c)))
         &&JSON.stringify(q(document.getElementById('townTrow')))===JSON.stringify(row0)&&hud()===h0;
       return o;},ins);
     await p.waitForTimeout(120);
