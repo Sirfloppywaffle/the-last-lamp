@@ -13114,8 +13114,9 @@ function townSprites(){
 /* which frame a figure shows: walking, the walk's frame from how far it has walked (one stride pair as the old four steps took);
    standing, its idle by the clock (frame 0 with Lite or Reduce Motion, which is how it stands still) */
 function townFigPick(L,moving,wt,t,still){
-  if(moving)return L.walk[Math.floor(wt*TOWN_SPEED*2.4*L.walk.length/4)%L.walk.length];
-  return still?L.idle[0]:L.idle[Math.floor(t/FIG_IDLE_DT)%L.idle.length];
+  /* a clock below zero (loops.test.js) still picks a frame: never a negative index */
+  if(moving)return L.walk[Math.max(0,Math.floor(wt*TOWN_SPEED*2.4*L.walk.length/4))%L.walk.length];
+  return still?L.idle[0]:L.idle[Math.max(0,Math.floor(t/FIG_IDLE_DT))%L.idle.length];
 }
 /* the ground, painted once: Blood Forest's purple-brown earth in big dithered patches, the graveyard's rounded cobbles, the
    cliff and the black sea below it. Dark, and close in value, so that only what is lit stands out */
