@@ -17,7 +17,7 @@
 | 4 | The catalogue: themed sets, wall mounts, small things on surfaces (with the art kit, `ART_UPGRADE.md` §3) | #140 | merged | 19.4.0 |
 | A1 | Art pass 1: fire, water, weather (`ART_UPGRADE.md` §4) | #141 | merged | 19.5.0 |
 | 5 | Light and dark indoors; boss trophies | #143 | merged | 19.6.0 |
-| A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | #144 | open (pilot: Ambrose; waiting on Criss's verdict) | 19.7.0 |
+| A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | #144 (pilot), the rest next | pilot merged; the rest in progress (candidates posted, waiting on Criss's picks) | 19.7.0 |
 | 6 | The Peddler: a rescued soul with a stall by the stairs | | | 19.8.0 |
 | A3 | Art pass 3: scenery (buildings, ground, props) | | | 19.9.0 |
 | 7 | The village: decorations, paths, paint, Keepers' huts | | | 19.10.0 |
