@@ -86,7 +86,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.keepOK=T.lodgeKeepOK(td.lodge.furn.filter(d=>!T.LODGE_ITEMS[d.id].flat));
     out.saved=JSON.parse(localStorage.getItem('ll-town')).lodge.furn.length===td.lodge.furn.length;
     for(const d of td.lodge.furn.slice())T.lodgeTakeUp(d);
-    out.empty=td.lodge.furn.length===0&&!T.townSolid(1,3);
+    out.empty=td.lodge.furn.every(d=>d.id==='grimoire')&&!T.townSolid(1,3);
     out.refund=JSON.stringify(td.res)===R0;
     out.poorWhy=(td.res={timber:0,iron:0,tallow:0,curios:0},T.lodgeCanPlace('desk',1,3));
     td.res=JSON.parse(R0);
@@ -95,11 +95,11 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(f.parquet==='Diamond Parquet laid.'&&f.r1.timber===80,'the parquet takes 20 timber',f);
   ok(/gives back 20 timber/.test(f.flags)&&f.r2.timber===100&&f.r2.iron===80,'a new floor gives back the old one in full',f);
   ok(f.same==='The room has it already.'&&f.r3&&f.r4,'the free floor and wall put everything back',f);
-  ok(/door/.test(f.onDoor)&&/shelf/.test(f.onShelfFront)&&/Grimoire/.test(f.onShelf)&&/no floor/.test(f.onWall)&&f.rugDoor==='','nothing solid on the ways to the door or the shelf, nor on the walls; the rug may lie anywhere',f);
+  ok(/door/.test(f.onDoor)&&f.onShelfFront===''&&/already/.test(f.onShelf)&&/no floor/.test(f.onWall)&&f.rugDoor==='','nothing solid on the way to the door, nor on the walls, nor on the Grimoire shelf, which is a piece; the rug may lie anywhere',f);
   ok(f.desk===''&&f.rd.timber===88&&f.rd.iron===96&&f.deskSolid&&/already/.test(f.overlap),'the desk is paid for, stands on two tiles, and nothing stands on it',f);
   ok(f.rug===''&&f.rugWalk,'the rug is walked over',f);
   ok(f.rowLeft>=1&&f.keepOK,'a piece that would wall off the door is refused',f.row);
-  ok(f.saved&&f.empty&&f.refund,'everything taken up gives back all it cost',f);
+  ok(f.saved&&f.empty&&f.refund,'everything taken up gives back all it cost; the Grimoire stays (it is never taken up)',f);
   ok(/You need/.test(f.poorWhy),'short of the haul, it says what is missing',f.poorWhy);
 
   /* 4. the Grimoire shelf: one spine per creature met and relic found, the book over the room, and back to the room */
@@ -162,7 +162,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(c.wage[0]&&c.wage[0].timber===5&&c.wage[1]&&c.wage[1].iron===8&&/Agathe/.test(c.line)&&/Voss/.test(c.line),'each Keeper’s pay is shown on its own line',c);
   ok(c.one[0]==='whaler'&&c.one[1]===null&&c.chore2NoLodge===null,'without the Lodge, one slot',c);
   ok(c.old.join()==='false,planks,damp,0,whaler,','an old town has a ruined Lodge and no second chore',c.old);
-  ok(c.bad[0]==='planks'&&c.bad[1]==='brass'&&c.bad[2]==='chair,rug'&&c.bad[3]===10&&c.bad[4]===2,'a broken Lodge keeps what fits and pays back what does not',c.bad);
+  ok(c.bad[0]==='planks'&&c.bad[1]==='brass'&&c.bad[2]==='grimoire,chair,rug,sconce,sconce'&&c.bad[3]===10&&c.bad[4]===2,'a broken Lodge keeps what fits and pays back what does not',c.bad);
 
   /* 6. developer mode never writes ll-town */
   const d=await p.evaluate(()=>{const T=__t, out={};

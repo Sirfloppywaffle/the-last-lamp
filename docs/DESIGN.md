@@ -69,7 +69,7 @@ The Lodge's pieces come in five themed sets, plus its own floors, walls and fire
 
 | Set | Pieces | Open |
 |---|---|---|
-| The Lodge’s own | 7: Rotted Ship-Planks, Diamond Parquet, Cistern Flagstones, Damp Stone, Mahogany Library, Brass-Ribbed Bulkhead, Stone Fireplace | from the start |
+| The Lodge’s own | 8: Rotted Ship-Planks, Diamond Parquet, Cistern Flagstones, Damp Stone, Mahogany Library, Brass-Ribbed Bulkhead, Grimoire Shelf, Stone Fireplace | from the start |
 | Fisherman’s | 8: Cast-Iron Stove, Sea Chest, Ship’s Wheel, Barometer, Ship’s Lantern, Rusted Anchor, Hurricane Lantern, Ship in a Bottle | from the start |
 | Old Library | 10: Armchair, Banker’s Desk, Bookshelf, Ritual Rug, Drowned Portrait, Candle Sconce, Standing Lamp, Candle in a Saucer, Stack of Books, Inkwell and Quill | from the start |
 | Drowned Chapel | 8: Chapel Pew, Holy-Water Font, Chapel Lectern, Drowned Saint, Ship’s Bell, Votive Rack, Candelabra, Pilgrim’s Skull | blueprint |
@@ -95,6 +95,7 @@ The Lodge's pieces come in five themed sets, plus its own floors, walls and fire
 | Damp Stone | Lodge | Wall | free | the room |  |  |  |
 | Mahogany Library | Lodge | Wall | 30 timber | the room |  |  |  |
 | Brass-Ribbed Bulkhead | Lodge | Wall | 30 iron | the room |  |  |  |
+| Grimoire Shelf | Lodge | Furniture | free | 2×1 |  | 1 | 1 |
 | Stone Fireplace | Lodge | Furniture | 12 iron, 4 timber, 3 tallow | 2×1 | 52 | 4 | 2 |
 | Cast-Iron Stove | Fisher | Furniture | 10 iron, 2 tallow | 1×1 | 36 | 4 | 2 |
 | Sea Chest | Fisher | Surface (4 slots) | 10 timber, 3 iron | 2×1 |  | 4 | 4 |

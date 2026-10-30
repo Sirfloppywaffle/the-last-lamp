@@ -15,8 +15,12 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   /* a real town with the Lodge and its rooms; trophies as given (null: the field left out, as an old save) */
   const setup=`(tr)=>{localStorage.removeItem('ll-town'); localStorage.removeItem('ll-best'); __t.townReset(); __t.setDev(false); __t.townOpen();
     const D=__t.townData(); D.res={timber:900,iron:900,tallow:900,curios:90}; __t.townRestoreLodge(); D.res={timber:900,iron:900,tallow:900,curios:90};
-    D.lodge.rooms.cellar.built=true; D.lodge.rooms.attic.built=true; D.free=false; if(tr!==undefined)D.trophies=tr; __t.lodgeEnter();
+    D.lodge.rooms.cellar.built=true; D.lodge.rooms.attic.built=true; __t.lodgeSeed(D.lodge.rooms.cellar,'cellar'); __t.lodgeSeed(D.lodge.rooms.attic,'attic'); D.free=false; if(tr!==undefined)D.trophies=tr; __t.lodgeEnter();
     while(!document.getElementById('townCardWrap').hidden)document.getElementById('townCard').click(); __t.TWN.p.x=5; __t.TWN.p.y=8.4; return D;}`;
+
+  /* the room's own sconces are pieces now (free, cold): sc(i) is the i-th one's offer, lits() which of them burn */
+  await p.evaluate(()=>{const T=__t; T.sc=(i,m)=>T.lodgeActOf(T.lodgeRoom(null,m).furn.filter(d=>d.id==='sconce')[i]);
+    T.lits=m=>T.lodgeRoom(null,m).furn.filter(d=>d.id==='sconce').map((d,i)=>d.out?'':i).join('');});
 
   /* 1. the data: the fireplace (a light that burns, with its fire's loop), two trophies of one kind, each on its boss */
   const d=await p.evaluate(()=>{const T=__t, I=T.LODGE_ITEMS, o={};
@@ -42,14 +46,13 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const dk=await p.evaluate(`(()=>{const T=__t, D=(${setup})(), o={}, L=T.lodgeRoom(), R=T.LODGE_ROOMS.main;
     const shot=()=>{T.TWN.cx=null; for(let i=0;i<3;i++)T.townFrame(1/30); const c=document.getElementById('townCv'), x=c.getContext('2d'), w=c.width, h=c.height, g=x.getImageData(0,0,w,h).data; let s=0; for(let i=0;i<g.length;i+=4)s+=g[i]+g[i+1]+g[i+2]; return s/(g.length/4);};
     T.TWN.p.x=5; T.TWN.p.y=8.4;
-    let A=T.lodgeArt(); o.empty=[A.dark,A.lights.length,(L.sconces||[]).length]; o.b0=shot();
-    o.label=T.lodgeActLabel(T.LODGE_SCONCE_ACT.main[0]);
-    T.lodgeToggle(T.LODGE_SCONCE_ACT.main[0]); A=T.lodgeArt(); o.one=[A.dark,A.lights.length,L.sconces.join()];
-    T.lodgeToggle(T.LODGE_SCONCE_ACT.main[1]); T.lodgePlace('hearth',2,5); T.lodgePlace('floorlamp',8,5);
+    let A=T.lodgeArt(); o.empty=[A.dark,A.lights.length,T.lits().length]; o.b0=shot();
+    o.label=T.lodgeActLabel(T.sc(0));
+    T.lodgeToggle(T.sc(0)); A=T.lodgeArt(); o.one=[A.dark,A.lights.length,T.lits()];
+    T.lodgeToggle(T.sc(1)); T.lodgePlace('hearth',2,5); T.lodgePlace('floorlamp',8,5);
     A=T.lodgeArt(); o.lit=[A.dark,A.lights.length,+A.warm.toFixed(2)]; o.b1=shot();
     /* every light out: back to its night */
     for(const d of L.furn)if(T.LODGE_ITEMS[d.id].light&&!d.out)T.lodgeToggle(T.lodgeActOf(d));
-    T.lodgeToggle(T.LODGE_SCONCE_ACT.main[0]); T.lodgeToggle(T.LODGE_SCONCE_ACT.main[1]);
     A=T.lodgeArt(); o.out=[A.dark,A.lights.length,L.furn.filter(d=>d.out).map(d=>d.id).join()];
     /* a snuffed piece draws its flame as soot and glows not at all */
     const on=T.lodgeFA('hearth',0,null), off=T.lodgeFA('hearth',0,null,true); o.art=[!!on.em,!!on.fr,!!off.em,!!off.fr,off.out];
@@ -60,36 +63,41 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(dk.one[0]<dk.empty[0]&&dk.one[1]===1&&dk.one[2]==='0','a lit sconce lights the room and lifts the dark',dk.one);
   ok(dk.lit[0]<dk.one[0]&&Math.abs(dk.lit[0]-dk.dim)<1e-9&&dk.lit[1]===4,'two sconces, a fireplace and a lamp: as light as the room gets',dk.lit);
   ok(dk.b1>dk.b0*1.25,'a room with no lights is darker on screen',[dk.b0,dk.b1]);
-  ok(Math.abs(dk.out[0]-dk.night)<1e-9&&dk.out[1]===0&&dk.out[2].split(',').sort().join()==='floorlamp,hearth','put out, every light goes and the room is as dark as it was',dk.out);
+  ok(Math.abs(dk.out[0]-dk.night)<1e-9&&dk.out[1]===0&&dk.out[2].split(',').sort().join()==='floorlamp,hearth,sconce,sconce','put out, every light goes and the room is as dark as it was',dk.out);
   ok(dk.art.join()==='true,true,false,false,true','put out, a fire is soot: nothing glows and nothing moves',dk.art);
 
   /* 3. saved: what is lit and what is out survives a reload (a candle on a desk too); a new piece comes down lit; a cold room in an
      old save loads cold; a stored lamp comes back lit */
   const sv=await p.evaluate(`(()=>{const T=__t, D=(${setup})(), o={}, L=T.lodgeRoom();
-    T.lodgeToggle(T.LODGE_SCONCE_ACT.main[1]); T.lodgePlace('hearth',2,5); T.lodgePlace('desk',6,6);
+    T.lodgeToggle(T.sc(1)); T.lodgePlace('hearth',2,5); T.lodgePlace('desk',6,6);
     const dk=L.furn.find(d=>d.id==='desk'); T.lodgePlaceSmall('candle',...T.lodgeSlotPoint(dk,0)); T.lodgePlaceSmall('candle',...T.lodgeSlotPoint(dk,1));
     o.fresh=[L.furn.find(d=>d.id==='hearth').out,dk.on.map(q=>q.out).join()];
     T.lodgeToggle(T.lodgeActOf(L.furn.find(d=>d.id==='hearth'))); T.lodgeToggle(T.lodgeActOf(dk.on[1],dk));
-    T.lodgeGo('cellar'); T.lodgeToggle(T.LODGE_SCONCE_ACT.cellar[0]); T.lodgeGo('main');
+    T.lodgeGo('cellar'); T.lodgeToggle(T.sc(0)); T.lodgeGo('main');
     T.townSave(); T.townReset(); const S=T.townData();
-    o.saved=[S.lodge.sconces.join(),S.lodge.rooms.cellar.sconces.join(),S.lodge.rooms.attic.sconces.join(),S.lodge.furn.find(d=>d.id==='hearth').out,S.lodge.furn.find(d=>d.id==='desk').on.map(q=>q.id+(q.out?'!':'')).join()];
+    o.saved=[T.lits('main'),T.lits('cellar'),T.lits('attic'),S.lodge.furn.find(d=>d.id==='hearth').out,S.lodge.furn.find(d=>d.id==='desk').on.map(q=>q.id+(q.out?'!':'')).join()];
     /* an old save: no sconces field, a lamp with a stray out on something that does not burn */
     localStorage.setItem('ll-town',JSON.stringify({v:1,lodge:{built:true,floor:'planks',wall:'damp',furn:[{id:'floorlamp',c:2,r:5},{id:'chair',c:4,r:5,out:true}]}}));
-    T.townReset(); const O=T.townData(); o.old=[O.lodge.sconces.join(),O.lodge.furn.map(d=>d.id+(d.out?'!':'')).join()];
+    T.townReset(); const O=T.townData(); o.old=[O.lodge.furn.map(d=>d.id+(d.out?'!':'')).join()];
+    /* and a Lodge from when the sconces were fixtures: the ones it had lit stay lit, as pieces; none comes back once taken */
+    localStorage.setItem('ll-town',JSON.stringify({v:1,lodge:{built:true,sconces:[1],furn:[]}}));
+    T.townReset(); const P=T.townData(); o.legacy=[T.lits('main'),P.lodge.sconces===undefined,P.lodge.own];
+    P.lodge.furn=P.lodge.furn.filter(d=>d.id!=='sconce'); T.townSave(); T.townReset(); o.gone=T.townData().lodge.furn.filter(d=>d.id==='sconce').length;
     return o;})()`);
   ok(sv.fresh[0]===undefined&&sv.fresh[1]===',','a new piece comes down lit',sv.fresh);
   ok(sv.saved.join('|')==='1|0||true|candle,candle!','which sconces are lit in each room, a fireplace put out and a candle put out are saved',sv.saved);
-  ok(sv.old.join('|')==='|floorlamp,chair','an old Lodge loads with its sconces cold and its lamp lit; out only on what burns',sv.old);
+  ok(sv.old.join('|')==='grimoire,floorlamp,chair,sconce!,sconce!','an old Lodge loads with its sconces cold and its lamp lit; out only on what burns',sv.old);
+  ok(sv.legacy.join()==='1,true,true'&&sv.gone===0,'a Lodge from before keeps the sconces it had lit, as pieces; one taken away does not come back',sv);
 
   /* 4. tap a light outside Build: you walk to it, the button offers it, and a tap on the button lights it */
   const tap=await p.evaluate(`(()=>{const T=__t, D=(${setup})(), o={}, W=T.TWN;
-    T.lodgeArt(); const x=19+3, y=12; W.tapPx=[x,y]; T.lodgeTapTile(1,0); W.tapPx=null;
-    o.goal=!!(W.goal&&W.goal.lact&&W.goal.sconce===0); o.path=!!W.path;
+    T.lodgeArt(); const sd=T.lodgeRoom().furn.find(d=>d.id==='sconce'), R=T.pieceRect(sd,T.LODGE_ITEMS.sconce), x=R.x+8, y=14; W.tapPx=[x,y]; T.lodgeTapTile(1,0); W.tapPx=null;
+    o.goal=!!(W.goal&&W.goal.lact&&W.goal.lp===sd); o.path=!!W.path;
     for(let i=0;i<200&&(W.path||W.goal);i++)T.townFrame(1/30);
-    o.lit=T.lodgeRoom().sconces.join();
+    o.lit=T.lits();
     /* again, from where you stand: now it puts it out (the button reads so first) */
     for(let i=0;i<3;i++)T.townFrame(1/30); const act=document.getElementById('townAct'); o.label=act.textContent; o.shown=!act.hidden;
-    act.click(); o.after=T.lodgeRoom().sconces.join();
+    act.click(); o.after=T.lits();
     return o;})()`);
   ok(tap.goal&&tap.path&&tap.lit==='0','a tap on a cold sconce walks you there and lights it',tap);
   ok(tap.shown&&tap.label==='Put out the sconce'&&tap.after==='','standing at it, the button puts it out',tap);
@@ -148,8 +156,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(one.place===''&&one.free,'a trophy earned hangs for nothing',one);
   ok(/here already/.test(one.again)&&/is in the Keeper’s Lodge/.test(one.attic),'one of each: a second says where the first is',one);
   ok(one.stored===1&&/waits in Storage/.test(one.waits)&&one.back==='','it stores like any piece, and comes back from Storage',one);
-  ok(one.plinth===''&&one.where.join()==='main,main'&&one.saved==='keeper,primordial','the Primordial’s stands on its plinth; both are saved',one);
-  ok(one.tidy==='primordial','loading, a trophy not earned and a second copy are let go',one.tidy);
+  ok(one.plinth===''&&one.where.join()==='main,main'&&one.saved==='grimoire,sconce,sconce,keeper,primordial','the Primordial’s stands on its plinth; both are saved',one);
+  ok(one.tidy==='grimoire,sconce,sconce,primordial','loading, a trophy not earned and a second copy are let go',one.tidy);
 
   /* 8. an old town: no trophies field. ll-best past the fourth floor gives the Keeper Below's; a win both; nothing, none */
   const seed=await p.evaluate(()=>{const T=__t, o={};
@@ -183,12 +191,12 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   /* 10. developer mode: every trophy shown, lights lit and put out, nothing written */
   const dev=await p.evaluate(`(()=>{const T=__t; (${setup})([]); T.townSave(); const s0=localStorage.getItem('ll-town'), c0=localStorage.getItem('ll-codex');
     T.setDev(true); T.townReset(); T.townOpen(); T.lodgeEnter(); const o={earned:T.trophyEarned('keeper')&&T.trophyEarned('primordial')};
-    o.place=T.lodgePlace('keeper',3,0); T.lodgeToggle(T.LODGE_SCONCE_ACT.main[0]); T.lodgePlace('hearth',2,5);
+    o.place=T.lodgePlace('keeper',3,0); T.lodgeToggle(T.sc(0)); T.lodgePlace('hearth',2,5);
     T.lodgeToggle(T.lodgeActOf(T.lodgeRoom().furn.find(d=>d.id==='hearth'))); T.townSave(); T.townClose();
     o.same=localStorage.getItem('ll-town')===s0&&localStorage.getItem('ll-codex')===c0;
-    T.setDev(false); T.townReset(); o.real=T.townData().lodge.furn.length+'/'+T.townData().lodge.sconces.length;
+    T.setDev(false); T.townReset(); o.real=T.townData().lodge.furn.map(d=>d.id).join();
     return o;})()`);
-  ok(dev.earned&&dev.place===''&&dev.same&&dev.real==='0/0','developer mode shows every trophy and lights the room, and writes nothing',dev);
+  ok(dev.earned&&dev.place===''&&dev.same&&dev.real==='grimoire,sconce,sconce','developer mode shows every trophy and lights the room, and writes nothing',dev);
 
   ok(!errs.length,'no page errors',errs);
   await b.close();

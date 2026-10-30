@@ -29,11 +29,11 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.bad=[bad.lodge.rooms.cellar.floor,bad.lodge.rooms.cellar.furn.map(d=>d.id).join(),bad.lodge.rooms.attic.wall,bad.lodge.rooms.attic.furn.length,bad.res.iron,bad.res.timber,bad.res.tallow,bad.res.curios];
     return out;});
   console.log(JSON.stringify(o));
-  ok(o.main[0]===true&&o.main[1]==='parquet'&&o.main[2]==='library'&&o.main[3]==='chair3,4/2 rug5,5/0','an old Lodge loads as the main room, as it was',o.main);
+  ok(o.main[0]===true&&o.main[1]==='parquet'&&o.main[2]==='library'&&o.main[3]==='grimoire4,2/0 chair3,4/2 rug5,5/0 sconce1,0/0 sconce7,0/0','an old Lodge loads as the main room, as it was, with its Grimoire and the two sconces it was built with',o.main);
   ok(o.paid[0]===10&&o.paid[1]===2&&o.paid[2]===10,'a stove on the new hatch and a shelf on the ladder’s foot come up and pay back',o.paid);
   ok(o.rooms[0].join()==='false,flags,damp,0'&&o.rooms[1].join()==='false,planks,damp,0','both other rooms start shut and bare, each with its own floor and wall',o.rooms);
   ok(o.none.join()==='false,false,false'&&o.odd.join()==='false,0','no Lodge, no rooms',o);
-  ok(o.bad[0]==='flags'&&o.bad[1]==='chair'&&o.bad[2]==='brass'&&o.bad[3]===0&&o.bad[4]===10+4&&o.bad[5]===12&&o.bad[6]===2+8&&o.bad[7]===1,'a broken room keeps what fits and pays back the rest',o.bad);
+  ok(o.bad[0]==='flags'&&o.bad[1]==='chair,sconce'&&o.bad[2]==='brass'&&o.bad[3]===0&&o.bad[4]===10+4&&o.bad[5]===12&&o.bad[6]===2+8&&o.bad[7]===1,'a broken room keeps what fits and pays back the rest',o.bad);
 
   /* 2. the main room's hatch and ladder: solid, kept clear, tapped, and shut until bought; buying takes the whole cost, once */
   const r=await p.evaluate(()=>{const T=__t, W=T.TWN, out={};
@@ -142,10 +142,10 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const re=T.townFix(JSON.parse(localStorage.getItem('ll-town'))); out.reload=re.lodge.rooms.attic.furn.map(d=>d.id+'/'+(d.f|0)).join();
     return out;});
   console.log(JSON.stringify(f));
-  ok(f.cellar0.join()==='flags,0,0,0','the Cellar starts on its own free flagstones, bare',f.cellar0);
+  ok(f.cellar0.join()==='flags,1,0,0','the Cellar starts on its own free flagstones, bare but for the one sconce it is built with',f.cellar0);
   ok(/Ship-Planks laid/.test(f.planks)&&JSON.stringify(f.r1)===f.rc&&JSON.stringify(f.r2)===f.rc,'its first floor gives back nothing (it was free there) and costs nothing to lay again',f);
   ok(/Library hung/.test(f.library)&&f.r3.timber===f.r2.timber-30,'a wall costs the same in any room',f.r3);
-  ok(f.place===''&&f.solid&&f.cellarN===1&&f.mainN===1&&f.mainFloor==='parquet','furniture and floors are kept per room',f);
+  ok(f.place===''&&f.solid&&f.cellarN===2&&f.mainN===4&&f.mainFloor==='parquet','furniture and floors are kept per room',f);
   ok(/ladder/.test(f.ladderFoot)&&/no floor|ladder/.test(f.wallOff),'the ladder’s foot is kept clear',f);
   ok(f.row>=1&&f.keepOK,'a piece that would wall off the ladder is refused',f);
   ok(f.stored==='lodge:chair/2','a piece stored in one room keeps its facing',f.stored);
@@ -153,7 +153,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(f.attic==='chair5,5/2'&&f.free,'and is set down in another room for nothing, still turned',f);
   ok(f.turns[0]===2&&f.turns[1]==='34567012'&&f.f===3,'a piece turns in the Attic as in the main room',f.turns);
   ok(f.diag.every(Boolean),'turned to a diagonal, the chair keeps to its own tile',f.diag);
-  ok(f.saved.join('|')==='parquet|1|library|flags|0|chair/3'&&f.reload==='chair/3','each room is saved apart, facings with it',f.saved);
+  ok(f.saved.join('|')==='parquet|4|library|flags|1|chair/3'&&f.reload==='chair/3','each room is saved apart, facings with it',f.saved);
 
   /* 5. the brine and the rain, drawn: wet feet below the waterline, dry above; drops only inside the glass */
   const d=await p.evaluate(()=>{const T=__t, out={};
