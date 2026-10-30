@@ -44,7 +44,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const f=await p.evaluate(()=>{const T=__t, out={};
     const px=cv=>cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;
     out.body=Object.keys(T.LODGE_FIRE).map(k=>{const F=T.LODGE_FIRE[k], a=T.lodgeFA(k,0), w=a.cv.width, z=F.f[0];
-      if(!a.fr||a.fr.length!==F.f.length||a.emf.length!==F.f.length)return [k,'no frames'];
+      const N=F.f.length*(F.hold||1); if(!a.fr||a.fr.length!==N||a.emf.length!==N)return [k,'no frames'];
       const p0=px(a.fr[0]), c0=px(a.cv); let still=0, moved=0, outside=0;
       for(let i=0;i<p0.length;i++)if(p0[i]!==c0[i])still++;
       for(let n=1;n<a.fr.length;n++){const pn=px(a.fr[n]); let ch=0;
@@ -54,9 +54,11 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       return [k,still,moved,outside];});
     /* the light follows: for each flame, the frame with the most of b and c gets the widest light */
     out.follow=[['brazier',T.TOWN_FIRE.brazier],['lamp',T.TOWN_FIRE.lamp],...Object.keys(T.LODGE_FIRE).map(k=>[k,T.LODGE_FIRE[k]])].map(([k,F])=>{
-      const fk=T.fireFk(F), L={x:0,y:0,r:30,f:1,fk,ph:0}, n=F.f.map(r=>r.join('').split('').filter(c=>c==='b'||c==='c').length);
+      const fk=T.fireFk(F), L={x:0,y:0,r:30,f:1,fk,ph:0}, n=F.f.map(r=>r.join('').split('').filter(c=>c==='b'||c==='c').length).flatMap(x=>Array(F.hold||1).fill(x));
       const flick=fk.map((_,i)=>T.townFlick(L,i,false)), bi=n.indexOf(Math.max(...n)), lo=n.indexOf(Math.min(...n));
-      return [k,flick[bi]===Math.max(...flick),flick[lo]===Math.min(...flick),Math.max(...flick)>Math.min(...flick),T.townFlick(L,3,true)===0];});
+      /* a flame whose frames are near alike in brightness (the street-lamp's glass) keeps its light steady */
+      const even=Math.max(...n)-Math.min(...n)<=.1*Math.max(...n);
+      return [k,flick[bi]===Math.max(...flick),flick[lo]===Math.min(...flick),even||Math.max(...flick)>Math.min(...flick),T.townFlick(L,3,true)===0];});
     /* a pool with something in it: frame 0 is the pool as it was, and later frames change only water pixels */
     const q={k:'iron'}, P0=px(T.townPool(q,0)), P1=px(T.townPool(q));
     let same=true; for(let i=0;i<P0.length;i++)if(P0[i]!==P1[i])same=false;
@@ -66,10 +68,19 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       for(let i=0;i<Pk.length;i+=4){if(Pk[i]===P0[i]&&Pk[i+1]===P0[i+1]&&Pk[i+2]===P0[i+2])continue; moved++;
         const h='#'+[P0[i],P0[i+1],P0[i+2]].map(v=>v.toString(16).padStart(2,'0')).join(''); if(P0[i+3]&&!['#0a1118','#262e3b'].includes(h))rimMoved++;}}
     out.pool=[same,moved,rimMoved];
+    /* Criss on #141: the brazier's flame meets its bowl in every frame (no dull bar under it); the street-lamp's glass never goes
+       dark and, like the hurricane lantern, holds each frame a fifth of a second or more; the lantern's light swings a pixel at most */
+    const bright=rows=>rows.join('').split('').filter(c=>c==='b'||c==='c').length;
+    out.brazier=T.TOWN_FIRE.brazier.f.map(f=>/[abc]/.test(f[f.length-1])&&!/8888/.test(f[f.length-1]+f[f.length-2]));
+    const lb=T.TOWN_FIRE.lamp.f.map(bright); out.lamp=[Math.min(...lb)/Math.max(...lb),T.TOWN_FIRE.lamp.hold*.11,T.LODGE_FIRE.lantern.hold*.11];
+    const LL={x:0,y:0,r:26,f:.8,fk:T.fireFk(T.LODGE_FIRE.lantern),ph:0}; out.lantern=Math.max(...LL.fk.map((_,i)=>Math.abs(T.townFlick(LL,i,false))));
     return out;});
   console.log(JSON.stringify(f));
   ok(f.body.every(t=>t[1]===0&&t[2]>=2&&t[3]===0),'a burning piece’s first frame is the piece, its other frames move only its flame’s zone',f.body);
-  ok(f.follow.every(t=>t[1]&&t[2]&&t[3]&&t[4]),'a flame’s light is widest on its brightest frame and narrowest on its dimmest; still with Lite',f.follow);
+  ok(f.follow.every(t=>t[1]&&t[2]&&t[3]&&t[4]),'a flame’s light is widest on its brightest frame and narrowest on its dimmest (steady when its frames are alike); still with Lite',f.follow);
+  ok(f.brazier.every(Boolean),'the brazier’s flame meets its bowl in every frame',f.brazier);
+  ok(f.lamp[0]>=.7&&f.lamp[1]>=.2&&f.lamp[2]>=.2,'the street-lamp never goes dark, and it and the lantern hold each frame a fifth of a second',f.lamp);
+  ok(f.lantern<=1,'the lantern’s light swings a pixel at most',f.lantern);
   ok(f.pool[0]&&f.pool[1]>0&&f.pool[2]===0,'a pool’s still is the pool as it was; its frames move only the dark water, never the rim or what lies in it',f.pool);
 
   /* 3. drawn: the Lodge lit by everything that burns, in Full the room moves and in Lite it holds still. Developer mode, so
@@ -121,12 +132,19 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       for(const t of [.35,.8,1.6,2.5]){W.t=t; pin(); T.townDraw(); seen.push(diff(a,which==='sea'?W.buf.getContext('2d').getImageData(0,0,W.vw,W.vh).data:glow(),which==='sea'?Math.round(W.vh*.4):0));}
       T.setLite(false); return seen;};
     out.fire=[run(false,'fire'),run(true,'fire')]; out.sea=[run(false,'sea'),run(true,'sea')];
+    /* Criss on #141: the shore read as a wall in the dark. The foam line at the cliff's foot shows through the night: brighter
+       than the dark water a few rows below it, with no light near */
+    {W.p.x=12; W.p.y=20.5; W.cx=null; W.t=0; T.townFrame(1/60); W.dt=0; T.townDraw();
+      const y0=T.townArt().surf[0].y0-W.lcy, img=W.buf.getContext('2d').getImageData(0,0,W.vw,W.vh).data;
+      const lum=y=>{let v=0; for(let x=0;x<W.vw;x++){const i=(y*W.vw+x)*4; v+=img[i]*.3+img[i+1]*.59+img[i+2]*.11;} return v/W.vw;};
+      out.shore=[+lum(y0).toFixed(1),+lum(y0+20).toFixed(1),y0];}
     W.crowd=crowd; W.dt=1/60;
     /* a clock a little below zero (the first frame after Start in Saltmouth can be stamped before the last) still draws */
     try{W.t=-.4; T.townDraw(); T.townFrame(-.02); out.neg=W.t>=-.4;}catch(e){out.neg=String(e);}
     return out;});
   console.log(JSON.stringify(sq));
   ok(sq.fire[0].some(n=>n>10)&&sq.fire[1].every(n=>n===0),'the braziers’ fire moves in Full and holds still in Lite',sq.fire);
+  ok(sq.shore[0]>sq.shore[1]+6&&sq.shore[0]>12,'the surf shows as a pale line at the cliff’s foot in the dark',sq.shore);
   ok(sq.neg===true,'a clock below zero still draws, and a frame never runs it backwards',sq.neg);
   ok(sq.sea[0].some(n=>n>0)&&sq.sea[1].every(n=>n===0),'the sea along the shore moves in Full and holds still in Lite',sq.sea);
   await p.evaluate(()=>{const W=__t.TWN; W.p.x=12; W.p.y=19.5; W.cx=null; W.t=1; __t.townFrame(1/60); __t.townFrame(1/60);}); await p.waitForTimeout(80);
