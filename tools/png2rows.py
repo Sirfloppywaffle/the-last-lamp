@@ -128,7 +128,8 @@ def write_png(path, w, h, px):
 
 def contact_sheet(path, blocks, pal, cols, k=4, bg=(22, 26, 32)):
     """each block's rows painted on its PX colours, k times up, numbered from 1 in the corner of its cell"""
-    cell_w = max(len(r[0]) for _, r in blocks) * k + 8
+    label_w = 8 * len(str(len(blocks))) - 2  # a two-digit number must fit its cell
+    cell_w = max(max(len(r[0]) for _, r in blocks) * k, label_w) + 8
     cell_h = max(len(r) for _, r in blocks) * k + 8 + 7 * 2
     cols = max(1, min(cols, len(blocks))); n_rows = (len(blocks) + cols - 1) // cols
     W, H = cols * cell_w, n_rows * cell_h
@@ -169,7 +170,7 @@ def main():
     argv, pend = sys.argv[1:], None
     for i, s in enumerate(argv):
         if s == '--name': pend = argv[i + 1]
-        elif s.lower().endswith('.png') and (i == 0 or argv[i - 1] not in ('--name', '--pal', '--width', '--height', '--max', '--sheet', '--cols', '--outline')):
+        elif s.lower().endswith('.png') and not s.startswith('-') and (i == 0 or argv[i - 1] not in ('--name', '--pal', '--width', '--height', '--max', '--sheet', '--cols', '--outline')):
             files.append(s); names.append(pend); pend = None
     if not files:
         ap.print_help(); return
