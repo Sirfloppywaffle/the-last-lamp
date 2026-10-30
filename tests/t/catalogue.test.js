@@ -284,9 +284,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(old.b[0]==='coral'&&old.b[1]==='-'&&old.b[2]==='candle1bleach,ink0'&&old.b[3]==='tar','a dye or a slot that is not valid is dropped; one that is stays',old.b);
   ok(old.b[4]===3+6&&old.b[5]===0&&old.b[6]===1&&old.b[7]===2,'what comes up pays back: a book in a slot taken, a candle past the top, a wheel that is no small thing',old.b);
   const junk=await p.evaluate(()=>{const res={timber:0,iron:0,tallow:0,curios:0}; let err=null, f=null;
-    try{f=__t.lodgeRoomFix({furn:[{id:'desk',c:0,r:0,on:[{id:'nope',s:0},null,{id:'candle',s:1}]},{id:'chest',c:7,r:5,on:'x'}]},'main',res,true);}catch(e){err=String(e);}
+    try{f=__t.lodgeRoomFix({furn:[{id:'desk',c:0,r:0,on:[{id:'nope',s:0},null,{id:'candle',s:1}]},{id:'chest',c:7,r:5,on:'x'},{id:'shelf',c:0,r:1,on:{}}]},'main',res,true);}catch(e){err=String(e);}
     return {err,furn:f&&f.furn.map(e=>e.id).join(),tallow:res.tallow,timber:res.timber};});
-  ok(!junk.err&&junk.furn==='chest'&&junk.tallow===1&&junk.timber===12,'a saved piece carrying an item that does not exist is repaired, not fatal, and pays back what is real',junk);
+  ok(!junk.err&&junk.furn==='chest'&&junk.tallow===1&&junk.timber===22,'a saved piece carrying an item that does not exist, or an `on` that is no list, is repaired, not fatal, and pays back what is real',junk);
   ok(old.store==='chest-0,chairwine0,lamp-0,desk-1','Storage keeps a piece’s colourway and what stood on it, and only valid ones',old.store);
 
   /* 10. taught: a card for wall mounts, small things and dyes, the first time each is chosen; the rules line grows */
