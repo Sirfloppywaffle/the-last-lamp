@@ -16,8 +16,8 @@
 | 3 | Lodge rooms: the Flooded Cellar and the Attic | #139 | merged | 19.3.0 |
 | 4 | The catalogue: themed sets, wall mounts, small things on surfaces (with the art kit, `ART_UPGRADE.md` §3) | #140 | merged | 19.4.0 |
 | A1 | Art pass 1: fire, water, weather (`ART_UPGRADE.md` §4) | #141 | merged | 19.5.0 |
-| 5 | Light and dark indoors; boss trophies | #143 | open | 19.6.0 |
-| A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | | | 19.7.0 |
+| 5 | Light and dark indoors; boss trophies | #143 | merged | 19.6.0 |
+| A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | #144 | open (pilot: Ambrose; waiting on Criss's verdict) | 19.7.0 |
 | 6 | The Peddler: a rescued soul with a stall by the stairs | | | 19.8.0 |
 | A3 | Art pass 3: scenery (buildings, ground, props) | | | 19.9.0 |
 | 7 | The village: decorations, paths, paint, Keepers' huts | | | 19.10.0 |
@@ -55,6 +55,7 @@ Everything in `EXPANSION3_RUNBOOK.md` §2 still applies (additive only, pixel ar
    - It crops to what is drawn, and `--width`/`--height` narrow it by taking out the interior columns (rows) most like their neighbour, so outlines stay whole.
    - **Every colour snaps to the nearest `PX` letter**, read from `index.html`. A colour with no letter within `--max` (RGB distance, default 28) gets a new lowercase letter, reported as `NEW`: add it to `PX` with a comment, **say so in the PR**, and pass `--pal <letter>=#hex` on later runs so the letters agree. Free lowercase letters left: `w x z` (uppercase belong to each Keeper's palette).
    - It prints the rows as JavaScript; paste them into the piece's art table and draw them with `tRows()`.
+   - **A Keeper** (art pass A2): `--kit <name>` snaps to that Keeper's own letters (`TOWN_KITS[name].pal`, or a soul's `art.pal`) plus `0`, and makes every edge pixel `0` (a character's outline is pure dark); `--frames N` cuts a strip of N frames, all cropped to one box and narrowed alike, so a walk never jitters. Fitted to 16 by 24 with `--width 16 --height 24`.
 3. **Match the town's art** (`EXPANSION3_TOWN.md` §0.4): no anti-aliasing, outlines one shade darker than the fill (pure dark only on characters), and the town's sizes. A piece is **16 px wide for each tile of its footprint**, up to 24 on a diagonal, and its height rises above the tile like the other props (it stands on its footprint's bottom edge: the Armchair is 26 to 28 tall over one tile). Crop or narrow to fit; where narrowing leaves a seam or an outline breaks, hand-touch it, in the rows or with `pixelart_workbench` (`inspect`, `lint`, `repair`) on the PNG before converting.
 4. **Look at it in the 14-device shots** (`cd tests && npm run shots`) and up close, at every facing. Fix stray pixels yourself rather than sending the art back, and list the fixes in the PR.
 
@@ -168,6 +169,8 @@ Numbers marked *shape* are for playtest.
 ### Art pass A2: the Keepers and the souls (Claude: Opus 5.5, high)
 
 **Build:** `expansion/ART_UPGRADE.md` §4, Art 2. **Pilot first:** Ambrose the Lamplighter only, 4 facings (Criss: no 8), walk and idle, side by side with today's rows in the shots, and stop for Criss's verdict. If he likes it, the other Keepers and the rescued souls follow in the same PR or the next; if not, the hand-made rows stay and the pass ends. **Test:** `town.test.js`, `keepers.test.js`, `rescue.test.js` untouched; sprite sizes stay 16×24.
+
+- *As built (the pilot, #144):* Ambrose only. A Keeper drawn whole is a `TOWN_FIG` entry (a walk and an idle per facing drawn, `d`, `u`, `r`; `l` mirrored), compiled by `townFigFrame()` onto each facing's list in `TOWN_SPR` as `.walk` and `.idle`, beside the three steps everything else reads (the idle's first frame and two of the walk, so `town.test.js` still counts 84); `townFigPick()` chooses the frame (the walk by distance, a stride pair as the old four steps; standing, the idle every `FIG_IDLE_DT`; still with Lite or Reduce Motion), for you and for a Keeper at his post (`townCrowdDraw()`, no head bob). Nine candidates were made (standard, v3 and pro modes, sizes 18 to 32). Criss first chose the pro-mode one on his own palette (`08d71ea5-…`); on the Fold its mottled face read as frightening at 16×24, and he settled on the standard one at size 22 with a brown greatcoat (`219111a0-…`, re-imported with its lantern as `0f61ca97-…`). Next time, show the contact sheet and let him pick before building, and show the pick at game scale before calling it done. Template animations (`walking`, `breathing-idle`, 1 generation a facing) keep the figure but drop what he holds and ignore the palette; the lantern is laid back into every frame from the still, and his own letters fix the colours (his buckle is `Y`, gold that does not glow). Spend: 35 generations. `figure.test.js`.
 
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A2) and expansion/ART_UPGRADE.md. Build art pass A2's pilot: Ambrose the Lamplighter from PixelLab, 4 facings, walk and idle, through runbook §3, following the runbook's §4 workflow. Show him beside today's sprite, in the square and in a dark Lodge room (step 5: his lantern is the only light there until something is lit), and stop for Criss's verdict before redrawing anyone else. Tick the status table (step 5 is #143). End with the prompt for step 6.

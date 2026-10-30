@@ -18,6 +18,12 @@ What it does, in order, to every PNG (8-bit, not interlaced; what PixelLab expor
      PixelLab draws its edge in the palette's near-black. Every pixel of 0 or s that touches clear ground (or the canvas
      edge) becomes letter X (the piece's own darkest: 5 for wood, 1 or 2 for iron or stone); dark pixels inside stay.
 Prints JavaScript (an array of strings per file, or an object keyed by --name) to stdout; the report goes to stderr.
+--kit NAME snaps to a Keeper's own palette instead (art pass A2): the letters of TOWN_KITS[NAME].pal (or a rescued soul's art.pal),
+read as tRows() reads them, plus 0 for the outline, which every pixel at the figure's edge becomes. No new letter is made (a Keeper's colours are fixed), so --max is ignored;
+the report lists how far each colour moved.
+--frames N cuts each PNG into N equal frames side by side (a strip), each converted as its own file and named <name>N; every frame
+of a strip is cropped to the same box (the union of what any frame draws), and --width / --height take the same columns (rows) out
+of every frame, so a walk never jitters.
 --sheet out.png also writes a contact sheet of what it made: every file as converted (so on its PX colours, narrowed), numbered
 from 1 in the order given, 4 times up on a dark ground, --cols to a row (default 6). That is how a batch of candidates is looked at
 and chosen from, and how a piece is checked once it is converted.
@@ -94,6 +100,31 @@ def dist(a, b):
     return sum((x - y) ** 2 for x, y in zip(a, b)) ** .5
 
 
+def kit_palette(name):
+    """a Keeper's letters (TOWN_KITS or TOWN_SOULS[...].art), then every PX letter the Keeper does not take over"""
+    src = open(os.path.join(ROOT, 'index.html'), encoding='utf8').read()
+    m = re.search(r"\n  %s:\{(?:art:\{)?pal:\{(.*?)\}" % re.escape(name), src, re.S)
+    if not m:
+        sys.exit('index.html: no Keeper or soul called %s with a pal' % name)
+    own = {k: hexrgb(v) for k, v in re.findall(r"'?([0-9a-zA-Z])'?:'(#[0-9a-fA-F]{6})'", m.group(1))}
+    # a Keeper's colours stay on his own letters (ART_UPGRADE.md §2.2); the only shared one is the pure dark of the outline
+    return own, {**own, '0': game_palette()['0']}
+
+
+def split(g, n):
+    w = len(g[0]) // n
+    return [[r[i * w:(i + 1) * w] for r in g] for i in range(n)]
+
+
+def box(gs):
+    on = [(x, y) for g in gs for y, r in enumerate(g) for x, p in enumerate(r) if p]
+    if not on:
+        return gs
+    x0, x1 = min(x for x, _ in on), max(x for x, _ in on)
+    y0, y1 = min(y for _, y in on), max(y for _, y in on)
+    return [[r[x0:x1 + 1] for r in g[y0:y1 + 1]] for g in gs]
+
+
 def crop(g):
     on = [(x, y) for y, r in enumerate(g) for x, p in enumerate(r) if p]
     if not on:
@@ -163,6 +194,8 @@ def main():
     ap.add_argument('--pal', action='append', default=[], help='an extra letter, e.g. o=#755941')
     ap.add_argument('--no-crop', action='store_true')
     ap.add_argument('--outline', help='the letter an edge pixel of 0 or s becomes (the piece\'s own darkest; see 5.)')
+    ap.add_argument('--kit', help='snap to this Keeper\'s own palette (TOWN_KITS key or rescued soul)')
+    ap.add_argument('--frames', type=int, default=1, help='each PNG is a strip of this many frames side by side')
     ap.add_argument('--sheet', help='also write a contact sheet of the converted art to this PNG (numbered, 4x)')
     ap.add_argument('--cols', type=int, default=6, help='cells a row on the sheet (default 6)')
     a, files, names = ap.parse_known_args()[0], [], []
@@ -170,27 +203,55 @@ def main():
     argv, pend = sys.argv[1:], None
     for i, s in enumerate(argv):
         if s == '--name': pend = argv[i + 1]
-        elif s.lower().endswith('.png') and not s.startswith('-') and (i == 0 or argv[i - 1] not in ('--name', '--pal', '--width', '--height', '--max', '--sheet', '--cols', '--outline')):
+        elif s.lower().endswith('.png') and not s.startswith('-') and (i == 0 or argv[i - 1] not in ('--name', '--pal', '--width', '--height', '--max', '--sheet', '--cols', '--outline', '--kit', '--frames')):
             files.append(s); names.append(pend); pend = None
     if not files:
         ap.print_help(); return
     PX = game_palette()
+    if a.kit:
+        own, PX = kit_palette(a.kit)
+        a.max = 1e9
     extra = {}
     for s in a.pal:
         k, v = s.split('=')
         extra[k] = hexrgb(v)
     letters, new, semi, used, blocks = {}, {}, 0, {}, []
     pool = [c for c in FREE if c not in PX and c not in extra]
+    jobs = []
     for path, nm in zip(files, names):
         g = read_png(path)
         for r in g:
             for p in r:
                 if 0 < p[3] < 255: semi += 1
         g = [[p[:3] if p[3] >= 128 else None for p in r] for r in g]
-        if not a.no_crop: g = crop(g)
+        if a.frames > 1:
+            gs = split(g, a.frames)
+            if not a.no_crop: gs = box(gs)
+            # narrowed as one strip, so every frame loses the same columns (rows) and the figure never jitters between frames
+            if a.width or a.height:
+                w0, j = len(gs[0][0]), [sum((g[y] for g in gs), []) for y in range(len(gs[0]))]
+                if a.height:
+                    t = narrow([list(c) for c in zip(*j)], a.height)
+                    j = [list(r) for r in zip(*t)]
+                if a.width:
+                    # the interior columns most like their neighbour across every frame at once
+                    while w0 > a.width:
+                        n, mid = w0, (w0 - 1) / 2
+                        best = min(range(2, n - 2), key=lambda i: (sum(r[f * n + i] != r[f * n + i - 1] for r in j for f in range(len(gs))), abs(i - mid)))
+                        j = [sum((r[f * n:f * n + best] + r[f * n + best + 1:(f + 1) * n] for f in range(len(gs))), []) for r in j]
+                        w0 -= 1
+                gs = [[r[f * w0:(f + 1) * w0] for r in j] for f in range(len(gs))]
+            base = nm or os.path.splitext(os.path.basename(path))[0]
+            jobs += [('%s[%d]' % (path, i), '%s%d' % (base, i), f) for i, f in enumerate(gs)]
+        else:
+            jobs.append((path, nm, crop(g) if not a.no_crop else g))
+    names = [nm for _, nm, _ in jobs]
+    for path, nm, g in jobs:
         size0 = (len(g[0]), len(g))
-        if a.width: g = narrow(g, a.width)
-        if a.height:
+        if a.frames > 1: pass
+        elif a.width: g = narrow(g, a.width)
+        if a.frames > 1: pass
+        elif a.height:
             t = narrow([list(c) for c in zip(*g)], a.height)
             g = [list(r) for r in zip(*t)]
         rows = []
@@ -208,6 +269,13 @@ def main():
                     letters[p] = k
                 k = letters[p]; used[k] = used.get(k, 0) + 1; s += k
             rows.append(s)
+        if a.kit:
+            # a character's outline is pure dark (runbook §3.3; tOutline() does it for the hand-made rows): every pixel at the edge of
+            # the figure becomes 0, so what PixelLab drew in a shade of the coat or the hat at the rim still reads as outline
+            n, m = len(rows), len(rows[0])
+            clear = lambda x, y: x < 0 or y < 0 or x >= m or y >= n or rows[y][x] == '.'
+            rows = [''.join('0' if ch != '.' and any(clear(x + dx, y + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))) else ch
+                            for x, ch in enumerate(r)) for y, r in enumerate(rows)]
         if a.outline:
             n, m = len(rows), len(rows[0])
             clear = lambda x, y: x < 0 or y < 0 or x >= m or y >= n or rows[y][x] == '.'
