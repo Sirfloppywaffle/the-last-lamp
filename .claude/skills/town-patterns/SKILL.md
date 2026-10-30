@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 5 and art pass A2's pilot - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 5 and art pass A2 - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -84,7 +84,9 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] **A figure from PixelLab** is a `TOWN_FIG` entry: `walk` and `idle`, each `{d, u, r}` lists of frames (rows up to 16 by 24, stood on the bottom row; `l` is `r` mirrored), on the Keeper's own letters: `png2rows.py --kit <name> --frames N --width 16 --height 24` on a strip (runbook §3). `townSprites()` puts them on `TOWN_SPR[k][f].walk`/`.idle` and keeps the three steps (`[idle0, walk1, walk(1+n/2)]`), so `town.test.js` still counts 84 frames; `townFigPick()` is the only place that chooses one.
 - [ ] **What glows** is the Keeper's `em` letters, drawn again after the dark. Mark only the thing that burns with them: gold elsewhere goes on a letter of the Keeper's own that does not glow (Ambrose's buckle is `Y`).
 - [ ] PixelLab's template walk and idle redraw the head every frame; a pixel's wobble reads as the face swelling. Lock the head rows to the standing frame in every frame of a facing (`figure.test.js` checks it).
-- [ ] PixelLab's template walk and idle drop what the figure holds: lay it back from the still in every frame and check the contact sheet (`figure.test.js` saves `figure-compare.png`).
+- [ ] PixelLab's template walk and idle drop what the figure holds: lay it back from the still in every frame and check the contact sheet (`figure.test.js` saves `figure-compare.png`). Give a thin tool a dark ring before converting, or `--kit`'s edge rule turns a 1 px shaft into outline. A thing drawn in one view only gets painted into the others from it.
+- [ ] **Its palette** comes from the standing frames (the still and the idle); the walk snaps onto it (the templates tint and invent colours). New colours go on letters of the figure's own after its `art pass A2` comment in its `pal`; no colour that does not glow may be as near a glowing letter as one that does not (a tie goes to the letter listed first, so Ambrose's buckle, the lantern's own gold, needed `Y` set by hand): keep glowing colours apart, and check where the `em` letters fall after converting. A soul's palette is its `art.pal` (`--kit croupier` works).
+- [ ] **Every figure now has an entry** (#145). The Peddler (step 6) is a new `TOWN_SOULS` entry with its `art.pal` and a `TOWN_FIG` entry made the same way; `figure.test.js` lists the figures it expects, so add him there.
 
 ## Tests
 
