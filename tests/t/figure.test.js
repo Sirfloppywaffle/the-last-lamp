@@ -7,6 +7,7 @@
 // - What a figure holds is in every frame: the template animations drop it, and it is laid back from the still.
 // - Walking runs every frame of the walk once a stride pair; standing, the idle by the clock; Lite and Reduce Motion stand a
 //   figure still on the idle's first frame. Freed Keepers and souls standing at their posts breathe the same way.
+// - A Keeper not yet freed stands as the shade of the figure drawn whole.
 // - In a Lodge room with nothing lit, Ambrose's lantern is the only light: bright round him, dark in the far corner.
 // - A comparison sheet (today's rows beside each figure, every facing, and the walk facing you) and a lineup in the square at
 //   game scale are saved for the PR. Nothing is saved in developer mode.
@@ -63,6 +64,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       /* l is r, mirrored, pixel for pixel */
       for(let i=0;i<6;i++){const a=px(A.r.walk[i].c), m=px(A.l.walk[i].c);
         for(let y=0;y<24;y++)for(let x=0;x<16;x++){const u=(y*16+x)*4, j=(y*16+15-x)*4; if(a[u+3]!==m[j+3]||a[u]!==m[j])o.mirror=false;}}}
+    /* a Keeper not yet freed stands as a shade: the silhouette of the figure drawn whole, not of the old rows */
+    o.shade=['whaler','occultist','galvanist','bellringer'].every(k=>{const a=px(T.townShade(k)), b=px(S[k].d.idle[0].c);
+      for(let i=3;i<a.length;i+=4)if(!!a[i]!==!!b[i])return false; return true;});
     o.bad=o.bad.slice(0,12);
     /* the walk: over one stride pair (as the old four steps took) every frame shows once, in order; standing, the idle by the
        clock; still (Lite, Reduce Motion), the idle's first frame whatever the clock says */
@@ -78,6 +82,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(c.steps,'the three steps everything else reads are still there, the first the idle’s still',c);
   ok(c.glow&&c.dark,'what glows glows through the dark in every frame of a facing that shows it, and nothing else does',c);
   ok(c.mirror,'facing left is facing right mirrored',c);
+  ok(c.shade,'a Keeper not yet freed stands as the shade of the figure drawn whole',c);
   ok(c.walk==='0,1,2,3,4,5','a stride pair walks through all six frames in order',c);
   ok(c.idle==='0,1,2,3'&&c.still,'standing, a figure breathes in four frames; Lite and Reduce Motion hold the first',c);
   ok(c.neg,'a clock below zero still picks a frame',c);

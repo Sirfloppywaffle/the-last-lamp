@@ -13464,7 +13464,8 @@ function townFooting(){
 /* a Keeper not yet yours, standing dark: their own silhouette (so each reads as someone), flat black with a cold rim, nothing
    lit. Whoever walks up with a light sees who is missing */
 function townShade(k){
-  const [cv,c]=tCanvas(16,24); c.drawImage(townKeeper(k,'d',0).c,0,0);
+  /* a figure drawn whole (art pass A2) casts its own silhouette, the one it will have once freed */
+  const [cv,c]=tCanvas(16,24); c.drawImage(TOWN_FIG[k]?townSprites()[k].d.idle[0].c:townKeeper(k,'d',0).c,0,0);
   const img=c.getImageData(0,0,16,24), d=img.data;
   for(let y=0;y<24;y++)for(let x=0;x<16;x++){const i=(y*16+x)*4; if(!d[i+3])continue;
     const edge=x===0||x===15||y===0||y===23||!d[i-4+3]||!d[i+4+3]||!d[i-64+3]||!d[i+64+3];
