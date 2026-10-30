@@ -12363,9 +12363,10 @@ function lodgeSetOpen(k,T){const S=LODGE_SETS[k]; if(!S)return false; if(S.open|
 function blueprintsFix(b){return [...new Set((Array.isArray(b)?b:[]).filter(k=>LODGE_SETS[k]&&!LODGE_SETS[k].open))];}
 /* one piece's cost as it stands: what it cost, a colourway not its own, and everything standing on it */
 function lodgeCostOf(d){
-  const I=LODGE_ITEMS[d.id], c=Object.assign({},I.cost);
+  const I=d&&LODGE_ITEMS[d.id]; if(!I)return {};
+  const c=Object.assign({},I.cost);
   if(d.dye)for(const k in DYE_COST)c[k]=(c[k]|0)+DYE_COST[k];
-  for(const o of d.on||[]){const q=lodgeCostOf(o); for(const k in q)c[k]=(c[k]|0)+q[k];}
+  for(const o of Array.isArray(d.on)?d.on:[]){const q=lodgeCostOf(o); for(const k in q)c[k]=(c[k]|0)+q[k];}
   return c;
 }
 /* a saved colourway, or none: only one the piece has */

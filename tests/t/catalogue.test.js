@@ -198,14 +198,14 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
 
   /* 6. surfaces in the other rooms: the Cellar (the host stands in the brine, what is on it stays dry) and the Attic */
   const rm=await p.evaluate(`(()=>{const T=__t, o={}, D=(${setup})('main');
-    for(const m of ['cellar','attic']){T.lodgeGo(m); T.lodgePlace('chest',4,4); const h=T.lodgeRoom().furn.find(e=>e.id==='chest');
-      o[m]=[T.lodgePlaceSmall('lantern',...T.lodgeSlotPoint(h,0)),T.lodgePlaceSmall('books',...T.lodgeSlotPoint(h,1)),h.on.length,T.lodgeArt().lights.length];
+    for(const m of ['cellar','attic']){T.lodgeGo(m); T.lodgePlace('chest',4,4); const h=T.lodgeRoom().furn.find(e=>e.id==='chest'), n0=T.lodgeArt().lights.length;
+      o[m]=[T.lodgePlaceSmall('lantern',...T.lodgeSlotPoint(h,0)),T.lodgePlaceSmall('books',...T.lodgeSlotPoint(h,1)),h.on.length,T.lodgeArt().lights.length-n0];
       T.townFrame&&T.townFrame(1/30);}
     T.lodgeGo('main'); o.main=T.lodgeRoom().furn.length;
     T.townSave(); T.townReset(); const L=T.townData().lodge; o.saved=[L.rooms.cellar.furn[0].on.map(q=>q.id+q.s).join(),L.rooms.attic.furn[0].on.map(q=>q.id+q.s).join()];
     return o;})()`);
   ok(rm.cellar[0]===''&&rm.cellar[1]===''&&rm.cellar[2]===2&&rm.attic[2]===2&&rm.main===0&&rm.saved.join()==='lantern0,books1 lantern0,books1'.replace(' ',','),'small things stand on a chest in the Cellar and the Attic, each in its own room, and are saved there',rm);
-  ok(rm.cellar[3]>rm.attic[3]-1,'a lantern lights the room it stands in',rm);
+  ok(rm.cellar[3]===1&&rm.attic[3]===1,'a lantern lights the room it stands in: one more light in each room, and a book none',rm);
 
   /* 7. dyes: the next colourway for tallow, back to the piece’s own for the tallow back; a swap of palette letters */
   const dy=await p.evaluate(`(()=>{const T=__t, o={}, D=(${setup})('main'); T.townBuildSet(true);
@@ -283,6 +283,10 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(old.furn==='desk2,4/0 stove5,5/2 rug5,6/0 chair2,7/5 shelf8,3/0'&&old.bp.length===0,'a Lodge from before the catalogue loads exactly as it was',old);
   ok(old.b[0]==='coral'&&old.b[1]==='-'&&old.b[2]==='candle1bleach,ink0'&&old.b[3]==='tar','a dye or a slot that is not valid is dropped; one that is stays',old.b);
   ok(old.b[4]===3+6&&old.b[5]===0&&old.b[6]===1&&old.b[7]===2,'what comes up pays back: a book in a slot taken, a candle past the top, a wheel that is no small thing',old.b);
+  const junk=await p.evaluate(()=>{const res={timber:0,iron:0,tallow:0,curios:0}; let err=null, f=null;
+    try{f=__t.lodgeRoomFix({furn:[{id:'desk',c:0,r:0,on:[{id:'nope',s:0},null,{id:'candle',s:1}]},{id:'chest',c:7,r:5,on:'x'}]},'main',res,true);}catch(e){err=String(e);}
+    return {err,furn:f&&f.furn.map(e=>e.id).join(),tallow:res.tallow,timber:res.timber};});
+  ok(!junk.err&&junk.furn==='chest'&&junk.tallow===1&&junk.timber===12,'a saved piece carrying an item that does not exist is repaired, not fatal, and pays back what is real',junk);
   ok(old.store==='chest-0,chairwine0,lamp-0,desk-1','Storage keeps a piece’s colourway and what stood on it, and only valid ones',old.store);
 
   /* 10. taught: a card for wall mounts, small things and dyes, the first time each is chosen; the rules line grows */
