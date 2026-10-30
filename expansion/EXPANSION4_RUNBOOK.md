@@ -15,7 +15,7 @@
 | 2 | 8-way rotation and the PixelLab art pipeline | #138 | merged | 19.2.0 |
 | 3 | Lodge rooms: the Flooded Cellar and the Attic | #139 | merged | 19.3.0 |
 | 4 | The catalogue: themed sets, wall mounts, small things on surfaces (with the art kit, `ART_UPGRADE.md` §3) | #140 | merged | 19.4.0 |
-| A1 | Art pass 1: fire, water, weather (`ART_UPGRADE.md` §4) | (this PR) | open | 19.5.0 |
+| A1 | Art pass 1: fire, water, weather (`ART_UPGRADE.md` §4) | #141 | open | 19.5.0 |
 | 5 | Light and dark indoors; boss trophies | | | 19.6.0 |
 | A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | | | 19.7.0 |
 | 6 | The Peddler: a rescued soul with a stall by the stairs | | | 19.8.0 |
