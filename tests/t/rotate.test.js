@@ -92,9 +92,10 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   /* 6. a mirrored facing draws: the desk facing east is its west side flipped, its lamp's glow moved with it; the stove from
      behind still lights the room */
   const mir=await p.evaluate(()=>{
-    const W=__t.lodgeFurnArt('desk',2), E=__t.lodgeFurnArt('desk',6), px=(cv,x,y)=>[...cv.getContext('2d').getImageData(x,y,1,1).data].join(',');
-    let same=W.cv.width===E.cv.width&&W.cv.height===E.cv.height;
-    for(let y=0;same&&y<W.cv.height;y++)for(let x=0;x<W.cv.width;x++)if(px(W.cv,x,y)!==px(E.cv,W.cv.width-1-x,y)){same=false; break;}
+    /* the desk's banker's lamp went with its redraw (Expansion 4, step 4), so the glow moves with the stove's fire instead */
+    const D2=__t.lodgeFurnArt('desk',2), D6=__t.lodgeFurnArt('desk',6), W=__t.lodgeFurnArt('stove',2), E=__t.lodgeFurnArt('stove',6), px=(cv,x,y)=>[...cv.getContext('2d').getImageData(x,y,1,1).data].join(',');
+    let same=D2.cv.width===D6.cv.width&&D2.cv.height===D6.cv.height;
+    for(let y=0;same&&y<D2.cv.height;y++)for(let x=0;x<D2.cv.width;x++)if(px(D2.cv,x,y)!==px(D6.cv,D2.cv.width-1-x,y)){same=false; break;}
     const S=__t.lodgeFurnArt('stove',4), C=__t.lodgeFurnArt('chair',5), C3=__t.lodgeFurnArt('chair',3);
     return {same,ex:[W.ex,E.ex,W.em.width,W.cv.width],lx:[W.lx,E.lx],stove:[!!S.em,S.lx,S.ly],ne:C.cv.width,nw:C3.cv.width,
       side:__t.townSide({id:'board',f:2}),front:__t.townSide({id:'board',f:4})};});

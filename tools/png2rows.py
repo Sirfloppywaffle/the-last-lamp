@@ -14,7 +14,13 @@ What it does, in order, to every PNG (8-bit, not interlaced; what PixelLab expor
   4. Every colour snaps to the nearest letter in PX, read from index.html so it never drifts from the game. A colour with no
      letter within --max (RGB distance, default 28) gets a new lowercase letter, reported as NEW so the PR can say so and the
      letter can be added to PX. --pal o=#755941 gives such a letter up front, so later runs agree.
+  5. --outline X: the runbook's rule is an outline one shade darker than the fill, pure dark on characters only (§3.3), and
+     PixelLab draws its edge in the palette's near-black. Every pixel of 0 or s that touches clear ground (or the canvas
+     edge) becomes letter X (the piece's own darkest: 5 for wood, 1 or 2 for iron or stone); dark pixels inside stay.
 Prints JavaScript (an array of strings per file, or an object keyed by --name) to stdout; the report goes to stderr.
+--sheet out.png also writes a contact sheet of what it made: every file as converted (so on its PX colours, narrowed), numbered
+from 1 in the order given, 4 times up on a dark ground, --cols to a row (default 6). That is how a batch of candidates is looked at
+and chosen from, and how a piece is checked once it is converted.
 Standard library only.
 """
 import argparse, os, re, struct, sys, zlib
@@ -106,6 +112,47 @@ def narrow(g, w):
     return g
 
 
+DIGITS = {'0': '111101101101111', '1': '010110010010111', '2': '111001111100111', '3': '111001111001111', '4': '101101111001001',
+          '5': '111100111001111', '6': '111100111101111', '7': '111001001001001', '8': '111101111101111', '9': '111101111001111'}
+
+
+def write_png(path, w, h, px):
+    """px: rows of (r, g, b) tuples; an 8-bit RGB PNG"""
+    raw = b''.join(b'\0' + bytes(c for p in row for c in p) for row in px)
+    def chunk(kind, body):
+        c = struct.pack('>I', len(body)) + kind + body
+        return c + struct.pack('>I', zlib.crc32(kind + body) & 0xffffffff)
+    with open(path, 'wb') as f:
+        f.write(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 2, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(raw, 9)) + chunk(b'IEND', b''))
+
+
+def contact_sheet(path, blocks, pal, cols, k=4, bg=(22, 26, 32)):
+    """each block's rows painted on its PX colours, k times up, numbered from 1 in the corner of its cell"""
+    label_w = 8 * len(str(len(blocks))) - 2  # a two-digit number must fit its cell
+    cell_w = max(max(len(r[0]) for _, r in blocks) * k, label_w) + 8
+    cell_h = max(len(r) for _, r in blocks) * k + 8 + 7 * 2
+    cols = max(1, min(cols, len(blocks))); n_rows = (len(blocks) + cols - 1) // cols
+    W, H = cols * cell_w, n_rows * cell_h
+    img = [[bg] * W for _ in range(H)]
+    for i, (_, rows) in enumerate(blocks):
+        ox, oy = (i % cols) * cell_w + 4, (i // cols) * cell_h + 4 + 14
+        for y, row in enumerate(rows):
+            for x, ch in enumerate(row):
+                if ch == '.': continue
+                c = pal[ch]
+                for dy in range(k):
+                    for dx in range(k):
+                        img[oy + y * k + dy][ox + x * k + dx] = c
+        tx = ox
+        for ch in str(i + 1):
+            for j, bit in enumerate(DIGITS[ch]):
+                if bit == '1':
+                    for dy in range(2):
+                        for dx in range(2): img[oy - 12 + (j // 3) * 2 + dy][tx + (j % 3) * 2 + dx] = (230, 220, 190)
+            tx += 8
+    write_png(path, W, H, img)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('files', nargs='*')
@@ -115,12 +162,15 @@ def main():
     ap.add_argument('--max', type=float, default=28, help='largest RGB distance that still counts as close (default 28)')
     ap.add_argument('--pal', action='append', default=[], help='an extra letter, e.g. o=#755941')
     ap.add_argument('--no-crop', action='store_true')
+    ap.add_argument('--outline', help='the letter an edge pixel of 0 or s becomes (the piece\'s own darkest; see 5.)')
+    ap.add_argument('--sheet', help='also write a contact sheet of the converted art to this PNG (numbered, 4x)')
+    ap.add_argument('--cols', type=int, default=6, help='cells a row on the sheet (default 6)')
     a, files, names = ap.parse_known_args()[0], [], []
     # --name applies to the file after it
     argv, pend = sys.argv[1:], None
     for i, s in enumerate(argv):
         if s == '--name': pend = argv[i + 1]
-        elif s.lower().endswith('.png') and (i == 0 or argv[i - 1] not in ('--name', '--pal', '--width', '--height', '--max')):
+        elif s.lower().endswith('.png') and not s.startswith('-') and (i == 0 or argv[i - 1] not in ('--name', '--pal', '--width', '--height', '--max', '--sheet', '--cols', '--outline')):
             files.append(s); names.append(pend); pend = None
     if not files:
         ap.print_help(); return
@@ -158,6 +208,11 @@ def main():
                     letters[p] = k
                 k = letters[p]; used[k] = used.get(k, 0) + 1; s += k
             rows.append(s)
+        if a.outline:
+            n, m = len(rows), len(rows[0])
+            clear = lambda x, y: x < 0 or y < 0 or x >= m or y >= n or rows[y][x] == '.'
+            rows = [''.join(a.outline if ch in '0s' and any(clear(x + dx, y + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))) else ch
+                            for x, ch in enumerate(r)) for y, r in enumerate(rows)]
         blocks.append((nm or os.path.splitext(os.path.basename(path))[0], rows))
         print('%s: %dx%d -> %dx%d' % (path, size0[0], size0[1], len(rows[0]), len(rows)), file=sys.stderr)
     print('semi-transparent pixels decided: %d' % semi, file=sys.stderr)
@@ -166,6 +221,9 @@ def main():
         print("  #%02x%02x%02x -> '%s' (#%02x%02x%02x, distance %d)" % (p + (k,) + src + (round(dist(p, src)),)), file=sys.stderr)
     for k, (p, near) in new.items():
         print("NEW letter '%s': '#%02x%02x%02x' (nearest PX '%s' at %d). Add it to PX and say so in the PR." % ((k,) + p + (near[0], round(near[1]))), file=sys.stderr)
+    if a.sheet:
+        contact_sheet(a.sheet, blocks, {**PX, **extra}, a.cols)
+        print('contact sheet: %s (%d pieces, numbered from 1 in the order given)' % (a.sheet, len(blocks)), file=sys.stderr)
     js = lambda rows: '[' + ','.join("'%s'" % r for r in rows) + ']'
     if len(blocks) == 1 and not names[0]:
         print(js(blocks[0][1]))

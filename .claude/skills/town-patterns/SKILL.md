@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 3 - new pixel art (runbook §3), turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch and its rooms, test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 4 - new pixel art (runbook §3), turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -56,6 +56,15 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] A new piece declares `faces` (1, 2, 4 or 8) and, if its diagonals are drawn and cover other tiles than its straight footprint, `diag` (its tiles facing SW). Its painter takes the drawn facing `s` (`lodgeFurnDraw(id,s)`); mirrors come from `faceSrc()`.
 - [ ] Read a footprint with `pieceFoot(I,d.f)` / `pieceRect(d,I)` / `decoTiles(id,c,r,f)`, never `I.w`: a piece on its side swaps w and h. Anything that places, checks or draws a piece passes its `f`.
 - [ ] A new field on a piece rides along with `f`: in `bldStow()`, `storeFix()`, `bldPlaceStored()` and `townFix()`/`lodgeFix()`.
+
+## The catalogue (Expansion 4, step 4)
+
+- [ ] **A new Lodge piece** is a row in `LODGE_ITEMS` with a `set` (a key of `LODGE_SETS`), `cost` (the four materials only), `faces`, `dyes` (2 to 4 colourways in all, so 1 to 3 keys of `LODGE_DYES`), and its rows in `LODGE_ROWS` (from PixelLab, `tools/png2rows.py --outline <the piece's darkest letter>`, §3). Floor pieces need `w`/`h` and the rows of every facing `faces` says is drawn: just 0 for `faces: 1`, 0 and 2 for `faces: 2`, 0, 2 and 4 for `faces: 4`, and 0 to 7 for `faces: 8` (a facing with no rows silently shows facing 0). `glow: 'letters'` for what burns (and `light: r`).
+- [ ] **A wall mount** is `mount:true, h:2`: wall tiles, `r` 0, never solid. Each room's `hang` list in `LODGE_ROOMS` holds the wall ranges already taken (`[from, to, what]`); a mount may not overlap one. A new fixed fixture on a back wall (a lamp, a door) adds its range there.
+- [ ] **A surface** is `top: n` plus `LODGE_TOPS[id][facing]` (the two ends of its lane in the art's canvas, for each drawn facing). **A small thing** is `small:true`; it is never in `furn` itself, only in its host's `on`. Cost, dye and storage of a piece all go through `lodgeCostOf(d)`; never `I.cost` for a piece that exists.
+- [ ] **A new dye** is a swap in `LODGE_DYES` (letters to letters); a piece lists the keys it takes.
+- [ ] **A new set** is a row in `LODGE_SETS` (`rep` is the piece its chip shows; no `open` means a blueprint in `ll-town.blueprints`, which step 6's Peddler sells). The tray, the locked chips and "Ask the Peddler" follow from it; the tests check each set has a floor piece, a wall mount and a small thing.
+- [ ] Anything that reads or writes a Lodge piece keeps `dye` and `on` with it (`bldStow()`, `bldPlaceStored()`, `storeFix()`, `lodgeRoomFix()`).
 
 ## Tests
 
