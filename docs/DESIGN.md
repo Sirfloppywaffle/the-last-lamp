@@ -95,7 +95,7 @@ The Lodge's pieces come in five themed sets, plus its own floors, walls and fire
 | Damp Stone | Lodge | Wall | free | the room |  |  |  |
 | Mahogany Library | Lodge | Wall | 30 timber | the room |  |  |  |
 | Brass-Ribbed Bulkhead | Lodge | Wall | 30 iron | the room |  |  |  |
-| Stone Fireplace | Lodge | Furniture | 12 iron, 4 timber, 3 tallow | 2×1 | 52 | 1 | 2 |
+| Stone Fireplace | Lodge | Furniture | 12 iron, 4 timber, 3 tallow | 2×1 | 52 | 4 | 2 |
 | Cast-Iron Stove | Fisher | Furniture | 10 iron, 2 tallow | 1×1 | 36 | 4 | 2 |
 | Sea Chest | Fisher | Surface (4 slots) | 10 timber, 3 iron | 2×1 |  | 4 | 4 |
 | Ship’s Wheel | Fisher | Wall mount | 6 timber, 2 iron | 1×2 |  | 1 | 3 |
