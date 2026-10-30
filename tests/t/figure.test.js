@@ -102,6 +102,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const ln=await p.evaluate(()=>{const T=__t, W=T.TWN, D=T.townData(); D.rescued=['croupier','toothmonger']; T.townKeepers(); T.townFrame(1/60);
     const order=['whaler','occultist','galvanist','bellringer','croupier','toothmonger'];
     W.crowd.forEach(e=>{const i=order.indexOf(e.k); e.x=W.p.x+(i-2.5)*1.15; e.y=W.p.y+2.3; e.base=Math.round(e.y*16); e.face='d';});
+    /* each figure's own pool of light goes with it (townKeepers() laid them at the posts) */
+    const A=T.townArt(); A.lights=A.lightsD.concat(W.crowd.map(e=>({x:Math.round(e.x*16),y:Math.round((e.y-.82)*16)+2,r:22,f:.35})));
     W.crowd.sort((a,b)=>a.base-b.base); W.t=.1; T.townFrame(1/60); return W.crowd.map(e=>e.k).sort().join();});
   await p.waitForTimeout(80);
   await p.screenshot({path:shots+'/figure-lineup.png'});

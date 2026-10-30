@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Where the art stands (after step 3, #139)
+## 1. Where the art stands (after step 3, #139; the Keepers' row after A2, #145)
 
 | What | How it is made now |
 |---|---|
