@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 5 - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 5 and art pass A2's pilot - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -78,6 +78,12 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] **Shadows** come from `lodgeShade()`, once per room signature: every floor piece that is not flat or a mount throws one from each light. Anything new that changes how the room looks belongs in `lodgeArt()`'s `sig`, or the shadows go stale.
 - [ ] **Something tappable in a room** (outside Build) goes in `lodgeArt()`'s `acts` (`act(n, tiles…, hit box…, base)`), with a stable offer `n` (`lact:true`; `lodgeActOf()` keeps one per piece); `lodgeActLabel()` names it and `lodgeActOn()` does it. `townNearAct()` and `lodgeTapTile()` already read `acts`.
 - [ ] **A new trophy** is a `LODGE_ITEMS` row with `k:'trophy'`, `set:'trophy'`, `cost:{}`, `faces:1`, its rows, and either `foe` (the `FOES` key whose death earns it in `killFoe()`) or a call to `trophyEarn(id)` from the deed that earns it (Expansion 5's Ledger); a line in `TROPHY_TEXT`. Anything that asks "is this furniture?" asks `lodgePiece(I)`, never `I.k==='furn'`.
+
+## A Keeper drawn whole (art pass A2)
+
+- [ ] **A figure from PixelLab** is a `TOWN_FIG` entry: `walk` and `idle`, each `{d, u, r}` lists of frames (rows up to 16 by 24, stood on the bottom row; `l` is `r` mirrored), on the Keeper's own letters: `png2rows.py --kit <name> --frames N --width 16 --height 24` on a strip (runbook §3). `townSprites()` puts them on `TOWN_SPR[k][f].walk`/`.idle` and keeps the three steps (`[idle0, walk1, walk(1+n/2)]`), so `town.test.js` still counts 84 frames; `townFigPick()` is the only place that chooses one.
+- [ ] **What glows** is the Keeper's `em` letters, drawn again after the dark. Mark only the thing that burns with them (Ambrose: `J` and `Y` are his tan and gold, one glowing, one not), or a mottled coat sparkles through the dark.
+- [ ] PixelLab's template walk and idle drop what the figure holds: lay it back from the still in every frame and check the contact sheet (`figure.test.js` saves `figure-compare.png`).
 
 ## Tests
 
