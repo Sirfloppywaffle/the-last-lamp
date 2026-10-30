@@ -14,8 +14,8 @@
 | 1 | Build tools: lift, move, storage, undo, Grid/Free toggle | #137 | merged | 19.1.0 |
 | 2 | 8-way rotation and the PixelLab art pipeline | #138 | merged | 19.2.0 |
 | 3 | Lodge rooms: the Flooded Cellar and the Attic | #139 | merged | 19.3.0 |
-| 4 | The catalogue: themed sets, wall mounts, small things on surfaces (with the art kit, `ART_UPGRADE.md` §3) | #140 | open | 19.4.0 |
-| A1 | Art pass 1: fire, water, weather (`ART_UPGRADE.md` §4) | | | 19.5.0 |
+| 4 | The catalogue: themed sets, wall mounts, small things on surfaces (with the art kit, `ART_UPGRADE.md` §3) | #140 | merged | 19.4.0 |
+| A1 | Art pass 1: fire, water, weather (`ART_UPGRADE.md` §4) | (this PR) | open | 19.5.0 |
 | 5 | Light and dark indoors; boss trophies | | | 19.6.0 |
 | A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | | | 19.7.0 |
 | 6 | The Peddler: a rescued soul with a stall by the stairs | | | 19.8.0 |
@@ -144,6 +144,8 @@ Numbers marked *shape* are for playtest.
 ### Art pass A1: fire, water, weather (Claude: Opus 5.5, high)
 
 **Build:** `expansion/ART_UPGRADE.md` §4, Art 1: flames that loop (brazier, street-lamp, sconce, stove, banker's lamp), the sea, the tide-pools and the brine, rain splashes and the Attic window's rain, a puff of dust on placing or salvaging. A still frame for Lite and Reduce Motion. No balance, no new mechanics. **Test:** each loop has its still; `devices` frame time does not rise; shots.
+
+- *As built (A1):* the banker's lamp left with step 4's redraw, so the Lodge's flames are every `LODGE_ITEMS` row that burns (`glow` and `light`, neither `steady` nor `col`: the stove, the lantern and the candle, the ship's lantern, the candle sconce, the votive rack, the candelabra) and the room's own sconces; the lamps and the anemone stay steady. A flame loop is `TOWN_FIRE` / `LODGE_FIRE`: frames of its zone's rows, the piece's body never moving, frame 0 the art as it was (the still). Lights follow their flame's frame (`fireFk()`, `townFlick()`). Water: `TOWN_SEA`, `TOWN_POOL_WATER`, `LODGE_BRINE` (moving pixels as `T64` triplets, `tPts()`), stepping every `WATER_DT`. Rain: `TOWN_SPLASH` (crown, drips, ring) and the window loop (`lodgeWinFrames()`). Dust: `TOWN_PUFF`, `townPuff()`/`townPuffAt()` on placing, setting down, storing and salvaging (Full only). Lite now stills the flames too (it used to keep the 3-frame flicker). Spend: 15 animate_image generations (32 to 64 px, 1 each; the estimate was about 150); the effects tool is free. `tests/t/loops.test.js`.
 
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A1) and expansion/ART_UPGRADE.md. Build art pass A1 exactly as ART_UPGRADE.md §4 says, through runbook §3, following the runbook's §4 workflow. Log every piece in ART_UPGRADE.md §6. Tick the status table. End with the prompt for step 5.

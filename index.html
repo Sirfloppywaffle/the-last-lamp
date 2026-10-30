@@ -707,7 +707,7 @@ const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='19.4.0';
+const GAME_VERSION='19.5.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -13139,15 +13139,49 @@ function townBrazier(){
   tp(c,3,4,'8',10,1); tp(c,4,3,'8',8,1);
   return cv;
 }
-/* the fire, three frames, all glow: a white core, gold, amber, rust at the tips */
-function townFlames(){
-  return [0,1,2].map(f=>{const [cv,c]=tCanvas(10,13);
-    for(let y=0;y<13;y++)for(let x=0;x<10;x++){const cx=4.5+Math.sin(y*.7+f*2.1)*1.1, w=(y/12)*4.2*(.85+.15*Math.sin(f*1.7+y)), dx=Math.abs(x-cx);
-      if(dx>w)continue; const q=dx/(w||1), hy=12-y;
-      tp(c,x,y,hy<3&&q<.45?'c':q<.45&&hy<7?'b':q<.75?'a':'9');}
-    tp(c,(3+f*2)%9,0,'v'); tp(c,(7+f*3)%9,1+(f&1),'b');
-    return cv;});
+/* ---- Art pass A1 (expansion/ART_UPGRADE.md §4): fire, water and weather. Every loop is a few frames made once from rows (from
+   PixelLab's animate_image and its effects tool, through tools/png2rows.py; the log is ART_UPGRADE.md §6), and each draw picks
+   its frame from the clock, so nothing is made a frame. Frame 0 is the still: Lite and Reduce Motion show only it (rule 18).
+   A flame holds a frame FIRE_DT seconds and water WATER_DT; a light by a flame follows it (fireFk(), townFlick()).
+   TOWN_FIRE / LODGE_FIRE: a flame's frames, the rows of its zone {x, y} in the art it burns in (the brazier, the street-lamp's
+   glass and the Lodge's own sconces are a flame drawn over a body that never moves; a Lodge piece's zone replaces those rows of
+   its own art, facing 0, so its body never moves either). TOWN_SEA, LODGE_BRINE: the pixels that move on a 64-pixel tile of
+   the sea and of the Cellar's brine, as x, y, letter (T64); TOWN_POOL_WATER: what changes in a tide-pool's water;
+   LODGE_WIN_STREAK: drops running down the Attic's window. TOWN_SPLASH and TOWN_PUFF: a raindrop's splash and the dust a piece
+   raises, frames with an anchor (ox, oy); the splash is in the rain's own colours (RAIN_PAL) ---- */
+const FIRE_DT=.11, WATER_DT=.3, WIN_DT=.08, PUFF_DT=1/12, T64='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+const RAIN_PAL={A:'#33424e',B:'#566c7c',C:'#6d8494',D:'#93abbb'};
+const TOWN_FIRE={brazier:{x:0,y:0,f:[['......v.........','........a.b.....','........9a......','........aa......','.......9a.......','......9aa.......','.....9bb9.......','.....abba.......','.....abbb9......','.....9abba9.....','......9acca.....','......9acca9....','......9ccca9....','....88888888....','...8888888888...'],['................','................','..........b.....','.......9.a......','......9aav......','.....9aa9.......','....9aa...b.....','...9ab9.........','...9abb99.......','...99abba9......','.....9abbb9.....','......9accb9....','...b..9accca9...','....99acccca9...','...9ccccccca9...'],['................','................','................','................','....9v..........','...9a...........','...99...........','................','...b..va........','.......a9.......','......9aa9......','.....9abb9......','....9abba98.b...','..b9accaaaa9....','...9acccccca9...'],['................','................','................','....9...........','................','.......8........','.......8........','.......9a8......','.......aa.......','......9b9.......','.....9bb9...b...','.....acca8......','..b.9acca88.....','....9accca98....','...vaccccca99...'],['................','................','................','................','.......8a.......','.......9a.......','......va9.......','......va........','.......a9.......','.....b.aa.......','...b..9aa9......','....9aabaa9.....','....9acccaa.....','....9acccca9....','...vacccccca9...'],['................','................','................','................','.......a8.......','......8a........','......8a........','.......a9.......','....a..aa9......','....8.9aaa9.....','......9abaa.....','.......abbav....','.......acca8....','....99accca9....','...vaaccccca9...'],['................','.......8........','.......v........','.....va.........','.....v..........','........9.......','........a9......','.......9aa9.....','.......9aa9.....','......9aab9.....','......9abb9.....','.....9abba9.....','....9aacca9.....','....9acccca9....','...vacccccca9...']]},
+  lamp:{x:0,y:0,f:[['aaa9aa','abbbba','abccba','abccba','abccba','abbbba','aaaaaa'],['aaacaa','abbcba','abccba','abccba','abccba','abbbba','aaaaaa'],['aaacaa','abbcba','abccba','abccba','abccba','abbbba','aaaaaa'],['aaacaa','abbcba','abccba','abccba','abccba','abbbba','aaaaaa'],['aaacaa','abbcba','abccba','abccba','abccba','abbbba','aaaaaa'],['999999','9aaaa9','9acca9','9acca9','9acca9','9aaaa9','999999']]},
+  sconce:{x:0,y:0,f:[['...c..','..ba..','..ba..','..aa..'],['..ba..','..ba..','..aa..','..c...'],['...c..','..ba..','..ba..','......'],['..ba..','..ba..','..aa..','..c...'],['...c..','..ba..','..ba..','..aa..']]}};
+const LODGE_FIRE={stove:{x:4,y:13,f:[['snv5k56s','nvkyv5v6','6vkya5kj','6ab6b5v6','s0ana6ms'],['snv5k56s','nvkyk5v6','6bbyb5aj','69b6b5v6','s0ana6ms'],['snb5k56s','nabyb5a6','6bbyb5bj','6bb6b5b6','s0ana6ms'],['sn95b56s','n9byb5a6','6bbyb5bj','6ab6b5a6','s0ana6ms'],['snv5556s','nvvyv5v6','6vvyv5vj','6va6b5v6','s0ana6ms'],['snm5656s','n6vyk5v6','6vvya5vj','6vk6b5v6','s0ana6ms'],['snu5u56s','n6kyk5v6','6vvyb5vj','6vb6b5v6','s0ana6ms']]},
+  shiplamp:{x:2,y:7,f:[['d9aa8','.aa9.','.acb.','.aca.','.896.'],['daaa8','.aaa.','.aab.','.aca.','.896.'],['daca8','.ccc.','.ccb.','.ccc.','.8c6.'],['d9a98','.9a9.','.cab.','.aca.','.8c6.'],['dt9t8','.996.','.99b.','.999.','.896.'],['daaa8','.aaa.','.ccb.','.aca.','.896.'],['dcac8','.aaa.','.aab.','.aca.','.8c6.']]},
+  votive:{x:2,y:0,f:[['.....a....','....bc....','....c9....','....op..a.','..b7bb8.9.','.ab.9c8.9.'],['.....c....','....o.....','....co....','..b.op..9.','..b7bb8.9.','.ab.9b8.9.'],['..........','....o.....','....co....','..b.op..9.','..b7bb8.9.','.ab.9b8.9.'],['..........','....o.....','....co....','.bb.op....','.cb79b8.9.','cab.9b8ca.'],['..........','....o.....','....co....','..b.opc...','.ab79b8ca.','cab.9b8ca.'],['..........','....o.....','....co....','..b.op....','..b79b8.9.','.ab.9b8ca.'],['.....c....','....oc....','....co....','..b.op..9.','..b79b8.9.','.ab.9b8.9.']]},
+  candelabra:{x:0,y:0,f:[['.......b........','.......bb.......','.......cy.......','..b...ccc....b..','..b...ccc1...ba.'],['.......b........','.......bb.......','..b....cy....b..','..b...ccc....b..','..b...ccc1...ba.'],['................','..b.....y....b..','..b...ccy....b..','..b...ccc....b..','..c...ccc1...ea.'],['................','......c.y.......','......ccy.......','......ccc.......','..c...ccc1....a.'],['................','......c.y.......','......ccy.......','......ccc.......','..c...ccc1....a.']]},
+  lantern:{x:1,y:6,f:[['oaaaa8','9acca8','9bccb8','9abba8'],['oacca8','7acca8','7abba8','7acca8'],['o9aa98','99aa98','9aaaa8','9abba8'],['o77a78','77aa78','7aaaa8','7aaaa8']]},
+  candle:{x:1,y:0,f:[['..b...','..bb..','.bcb..','..bb5.'],['...b..','..bb..','.bcb..','..bb5.'],['..b...','..bb..','.bcb..','..bb5.'],['......','..b...','.bcb..','..bb5.'],['..b...','..bb..','..cb..','..bb5.'],['..b...','.bb...','.bcb..','..bb5.']]},
+  sconce:{x:3,y:0,f:[['...b..','..bb..','..bcb.'],['....b.','..bb..','..bcb.'],['...b..','..bb..','..bcb.'],['......','...b..','..bcb.'],['...b..','...b..','..bcb.'],['..b...','..bb..','..bcb.']]}};
+const TOWN_SEA=['o0tp0tq0tr0t81t91ta1tb1tE3tH3ts6tt6tu6tv6tY6tZ6t-6t_6tc8td8te8tf8tw8tx8ty8tz8tk9tl9tm9tAbtBbtCbtDbtgcthctictjct0dt1dt2dt3dtMdtNdtOdtPdtIgtJgtKgtLgtkhtlhtmhtnhtUktVktWktXktAltBltCltDlt0mt1mt2mt3mtkntlntmntnntEntFntGntHntoptpptqptrptQrtRrtSrtTrtYstZst-st_stMttNttOttPttcutduteutfutQvtRvtSvtTvt','90ta0tb0to0tp0tq0tr0tE3tH3ts5tt5tu5tv5tY5tZ5t-5t_5tw7tk9tl9tm9tAatBatCatDatgcthctictjctMctNctOctPctkhtlhtmhtnhtAhtBhtChtDhtEhtFhtGhtIjtJjtKjtLjtUjtVjtWjtXjtAktBktCktDktkmtlmtmmtnmtEmtFmtGmtHmtootpotqotrotoptpptqptrptQqtRqtSqtTqtYrtZrt-rt_rtMstNstOstPstcttdttettfttoutputqutQutRutSutTut7vttvtKvt','b0to0tp0tq0ts4tt4tu4tv4tY4tZ4t-4t_4tw6ty6tm8tn8to8tp8tMbtNbtObtPbtkgtlgtmgtngtAgtBgtCgtDgtEgtFgtGgtIitJitKitLitUitVitWitXitEjtEmtFmtGmtHmtnntQotRotSotTotoptpptQptYqtZqt-qt_qtMrtNrtOrtPrtQrtcttdttettottpttqttrttsttQttRttSttTtt0vt1vt2vt5vtsvttvtJvtKvtLvtMvtNvtOvtPvt','b0to0tp0tq0tY2tZ2t-2t_2ts3tt3tu3tv3tw5ty5tz5t-6t_6tm7tn7to7tp7tq7tr7tMatNatOatPatkftlftmftnftoftpftzftAftBftCftDftEftFftGftUhtVhtWhtXhtFltGltHltQntRntSntTntQotYptZpt-pt_ptnqtMqtNqtOqtPqtQqtcstdstestfstostpstqstrstsststttutuutvutIvtJvtKvtLvtMvtNvtOvtPvt','b0to0tp0tq0tY1tZ1t-1ts2tt2tu2tv2tw4ty4tz4tm6tn6to6tp6tq6tr6ts6tt6tu6tM9tN9tO9tP9tkdtldtmdtndtzetAetBetCetDetEetFetGetIgtJgtKgtLgtUgtVgtWgtXgtFktGktHktYotZot-ot_otnptMptNptOptPptcrtdrtertfrtRrtSrtTrtrststttttuttvttJttKttLttMttNttOttPttQttvutAutButCut6vt7vt8vtwvtxvtyvtzvtAvtBvtCvtDvtUvtVvtWvtXvt','b0to0tp0tZ0t-0t_0ts1tt1tu1tw3ty3tz3tk5tl5tm5tn5to5tp5tq5tr5ts5tt5tu5tv5tkdtldtmdtndtydtzdtAdtBdtCdtDdtEdtFdtUftVftWftXftAhtBhtChtDhtFjtGjtHjtImtJmtKmtYntZnt-nt_ntMotNotOotPotQotcqtdqteqtfqtAstOstPstyttzttAttBttGttHttIttJttKttLttMttNttoutputqutrutyutzutUutVutWutxvtyvtzvt','b0to0tp0ts1tt1tu1tv2tx2ty2tz2tj3tk3tl3tm3tn4to4tp4tq4tr4ts4tt4tu4tkctlctmctnctwctxctyctzctEctUetVetWetXetAgtBgtCgtDgtYntZnt-nt_ntLotMotNotOotPotcptdpteptfptKrtLrtMrtNrtOrtGstHstIstJstKstLstPstottpttqttrttUttVttWttXttrut0vt1vt','b0to0tp0ts1tj3tk3tl3tm3tn4to4tp4tq4tr4ts4tt4tzbtAbtBbtCbtDbtEbtFbtUdtVdtWdtXdtyhtzhtAhtBhtChtDhtEhtFhtGhtRhtShtThtUhtYmtZmt-mt_mtnntMntNntOntPntcotdoteotfotoptpptqptkqtGqtHqtIqtKqtLqtMqtsrttrturtJrtKrtLrtlstmstnstostUttVttWttXttqutrutsuttutuut0vtgvthvtivtjvtRvtSvtTvt'];
+const TOWN_POOL_WATER=['','89t9938a38ct','89t9938a38ct','98389ta939a38ct','69389ta938ct','86359389t8c3','86358389t8c3'];
+const LODGE_BRINE=['ntfUzfVzfWzfXzfTRfURfDSfFSflTfmTfETfFTf3Zf4ZfL-f','5gf6gf7gfQifRzfSzfTzfUzf2RfRRfSRflTfmTfnTfoTf4Zf5ZfJ-fK-fL-f','QifSifTifdpfOzfPzfQzfYGf4RfIRfNRfISfnTfoTfpTfCTfITfDUfHUfEVf4Zf7ZfG-fH-fI-f','7if8if9ifaifUifdpflrfksfLzfNzfNAfOAfPAfWGfYGfZGfGRfJRfKRfLRfMRfnTfoTfpTf4ZfE-fF-fG-f','bifcifeiftsfQsfjtfUGfMRfsTftTf4ZfE-ff_fg_fh_f','eiffifgiftsfusfQsfRsfSsfTsfRGfMRfsTftTfN_f','GgfTsfUsfVsfWsfotfQtfcGfdGffHffIfCRfMRfrSfHSfsTfvTfwTfxTfCUfDUff-fg-fc_fh_fL_fO_f','WsfYsfTufQvffIfMRfySfCSfDSfqTfvTfDTfETfDVfEVf'];
+const LODGE_WIN_STREAK=['563','a3e','b3r44eb4ec4e45eb5e36ea6e','c54462b62c6e97388q98q49ea9e3ae','b3ea4e4a4aae4beabe','53444e354b9ed9eabe9ce','35236e69e99q5aecae5be','95277q87q6aebae6be6ce'];
+const TOWN_SPLASH={ox:5,oy:4,f:[['...AA..AAA.','.AABBAAABBA','ABACBBAAACA','ACBDCCABBDA','ADCADDABCA.','.ADADAACDA.','..A.A..ADA.','........A..','...........'],['...........','...A.......','.AABAAAA.A.','ABACBBAAABA','ACBDCCABBCA','ADCDDAACBDA','.ADADAADCA.','..A.A.AADA.','.......AA..'],['...........','...AAAAA...','..ADDDDDA..','..AADBCA...','..ADACAA...','...AAAA....','.....A.....','...........','...........'],['....A..A...','..AADAADA..','.ADDDDDCA..','.AAACBBAA..','.ABDABABA..','..AAAAAA...','...........','...........','...........'],['...AA.AAA..','..ADCABCDA.','.ADDBBBDA..','.AAAAACDA..','.ADACCAAA..','..A.AA.A...','...........','...........','...........']]};
+const TOWN_PUFF={ox:10,oy:10,f:[['....................','....................','....................','....................','....................','.........5555.......','......5557ooo5......','.....5doooddo5......','.....5ododddo5......','.....57ddddoo75.....','....5oodoooddo5.....','.....5oo7557oo5.....','.....5755..555......','......5.............','....................'],['....................','....................','....................','.........5555.......','.....5.557oo755.....','....57577ooooo75....','...57oo77ooooo5.....','...57ooo7ooooo75....','...57oooodoooo55....','...55ooooddoooo75...','..5oooo7oooooooo65..','.57oooo767667ooo75..','..55o776555555775...','...57555......55....','....5...............'],['....................','....................','........55555.......','....55.567oo7555....','...577577oooooo75...','...5o7o777ooooo65...','..57ooo757ooooo75...','..57ooo77ooooo75....','...57o77oooooo775...','..567o77oooooooo75..','.57ooo777oo7ooooo75.','57oooo7557757777o75.','57777775.55.556555..','.557755.......5.....','...55...............'],['....................','.........55555......','....55..577777555...','...5775577oo777765..','...5777777777o7765..','..577777667777775...','.567777757o777765...','..577777oooo77755...','..557777oooo7777755.','.5777777ooooo7o77765','.5777776777777777775','5777776555555677665.','5777765......55555..','.55775..............','...55...............'],['..........5.........','.........56555......','....555.57777755....','...56765577777675...','...57777557777775...','..57777755565775....','..5777755775.555....','..577665ooo7576655..','..5665557oo76777775.','.577775567766777775.','.57777655555566665..','5777755......5555...','.56675..............','..555...............','....................'],['............5.......','...........565......','.....5.....56555....','....575.....55665...','...56775......55....','...5775...5.........','....55...565........','........5775...55...','...55....55...5665..','..5675.........55...','..5665..............','...55...............','....................','....................','....................']]};
+/* a loop's frame now: 0 when still */
+function loopK(n,dt,ph){return reduceMotion||gfxLite||n<2?0:(Math.floor(TWN.t/dt)+(ph|0))%n;}
+/* x, y, letter triplets (T64) painted at (x0, y0) */
+function tPts(c,s,x0,y0){for(let i=0;i+2<s.length;i+=3)tp(c,x0+T64.indexOf(s[i]),y0+T64.indexOf(s[i+1]),s[i+2]);}
+/* a flame's frames, as canvases of its zone */
+function fireFrames(F,pal){return F.f.map(rows=>{const [cv,c]=tCanvas(rows[0].length,rows.length); tRows(c,rows,0,0,pal); return cv;});}
+/* how bright each frame of a flame is against the others, -1 to 1 (its pixels of b and c): the light beside it swells and
+   shrinks with it. Kept on the flame */
+function fireFk(F){
+  if(F.fk)return F.fk;
+  const n=F.f.map(rows=>{let k=0; for(const r of rows)for(const ch of r)if(ch==='b'||ch==='c')k++; return k;}), m=n.reduce((a,b)=>a+b,0)/n.length||1;
+  return (F.fk=n.map(k=>Math.max(-1,Math.min(1,(k-m)/m*2))));
 }
+/* the brazier's fire: PixelLab's frames over the bowl, all glow */
+function townFlames(){return fireFrames(TOWN_FIRE.brazier);}
 /* Blood Forest's trees: a round black crown, rust and blood-amber leaves, a crooked trunk */
 function townTree(tx,ty){
   const [cv,c]=tCanvas(32,44), s=tx*7+ty*13;
@@ -13243,12 +13277,14 @@ function townShrineFlame(p){
   tp(c,1,0,m[1]); tp(c,0,1,m[1],1,2); tp(c,2,1,m[1],1,2); tp(c,1,1,m[2],1,2); tp(c,1,3,m[0]);
   return cv;
 }
-/* a tide-pool (step 8): a rim of wet stones round dark water, with what it holds lying in it. Empty, it is only a pool */
-function townPool(q){
+/* a tide-pool (step 8): a rim of wet stones round dark water, with what it holds lying in it. Empty, it is only a pool. k: the
+   water's frame (art pass A1, TOWN_POOL_WATER); what lies in it never moves */
+function townPool(q,k){
   const [cv,c]=tCanvas(16,16);
   for(let y=0;y<16;y++)for(let x=0;x<16;x++){
     const dx=(x-7.5)/7.4, dy=(y-9)/4.2, d=dx*dx+dy*dy; if(d>1)continue;
     tp(c,x,y,d>.74?(thash(x,y,81)<.3?'4':'3'):d>.6?'1':(thash(x,y,82)<.1?'q':'t'));}
+  if(k)tPts(c,TOWN_POOL_WATER[k],0,0);
   if(q&&q.bottle){tp(c,5,8,'f',5,2); tp(c,4,9,'g',1,1); tp(c,10,8,'f',3,1); tp(c,6,8,'i');}
   else if(q&&q.k==='timber'){tp(c,4,8,'7',6,2); tp(c,4,8,'6',6,1); tp(c,8,10,'7',5,1); tp(c,7,6,'6',4,1);}
   else if(q&&q.k==='iron'){tp(c,5,8,'4',3,2); tp(c,9,9,'r',3,2); tp(c,7,6,'4',2,1); tp(c,5,8,'#9aa3ab');}
@@ -13268,7 +13304,8 @@ function townLampPost(){
   tp(c,5,31,'y'); tp(c,9,32,'e'); tp(c,10,31,'y');
   return cv;
 }
-function townLampGlass(){const [cv,c]=tCanvas(6,7); tp(c,0,0,'a',6,7); tp(c,1,1,'b',4,5); tp(c,2,2,'c',2,3); tp(c,3,0,'9',1,1); return cv;}
+/* its glass, burning: PixelLab's frames (art pass A1), the first today's glass */
+function townLampGlass(){return fireFrames(TOWN_FIRE.lamp);}
 /* where a piece would go: its footprint outlined, a sparse dither inside, in the town's green or its red */
 const TOWN_GHOST={};
 function townGhost(ch){
@@ -13331,7 +13368,7 @@ function townArt(){
   const brz=townBrazier(), fl=townFlames();
   for(let ty=0;ty<TOWN_H;ty++)for(let tx=0;tx<TOWN_W;tx++){
     const ch=TOWN_MAP[ty][tx];
-    if(ch==='o'){add(brz,tx*16,ty*16-6,(ty+1)*16); em.push({fl,x:tx*16+3,y:ty*16-16,base:(ty+1)*16,ph:tx*3+ty}); lights.push({x:tx*16+8,y:ty*16+2,r:50,f:1});}
+    if(ch==='o'){add(brz,tx*16,ty*16-6,(ty+1)*16); em.push({fl,x:tx*16,y:ty*16-16,base:(ty+1)*16,ph:tx*3+ty}); lights.push({x:tx*16+8,y:ty*16+2,r:50,f:1,fk:fireFk(TOWN_FIRE.brazier),ph:tx*3+ty});}
     if(ch==='T')add(townTree(tx,ty),tx*16-8,ty*16-28,(ty+1)*16);
     if(ch==='+')add(townGrave(tx,ty),tx*16,ty*16,(ty+1)*16);
     if(ch==='|')add(townFence(tx,ty),tx*16,ty*16-4,(ty+1)*16-1);
@@ -13342,7 +13379,7 @@ function townArt(){
   }
   /* the tide-pools (step 8): flat on the ground, drawn before anyone standing by them */
   {const pg=townPoolGlint(), pools=poolsFix(townData().pools);
-    TOWN_POOLS.forEach(([x,y],i)=>{const q=pools[i]; add(townPool(q),x*16,y*16,y*16+8); if(q){em.push({c:pg,x:x*16+7,y:y*16+7,base:y*16+8}); lights.push({x:x*16+8,y:y*16+9,r:16,f:.35});}});}
+    TOWN_POOLS.forEach(([x,y],i)=>{const q=pools[i], fr=TOWN_POOL_WATER.map((w,k)=>townPool(q,k)); props.push({c:fr[0],fr,wk:1,ph:i*2,x:x*16,y:y*16,base:y*16+8}); if(q){em.push({c:pg,x:x*16+7,y:y*16+7,base:y*16+8}); lights.push({x:x*16+8,y:y*16+9,r:16,f:.35});}});}
   /* the Toothmonger's stall (step 7): its counter's foot on the bottom of its row; open, its lantern burns */
   {const S=TOWN_SOULS.toothmonger, [bx,by,bw,bh]=S.box, x=bx*16, base=(by+bh)*16, open=townRescued('toothmonger');
     add(townStall(open),x,base-24,base);
@@ -13354,9 +13391,15 @@ function townArt(){
      taken up again: townDecoSync() rebuilds the lists and repaints only the tiles whose paths changed */
   const ground=townGround(), [g0,gc]=tCanvas(ground.width,ground.height); gc.drawImage(ground,0,0);
   TOWN_ART={mw:TOWN_W*16,mh:TOWN_H*16,ground,ground0:g0,props0:props,lights0:lights,em0:em,props:props.slice(),lights:lights.slice(),em:em.slice(),
-    paths:new Map(),cache:{brz,fl},spr:townSprites(),shade:{},ring:townRing(10),dot:townRing(1),mark:townRing(4),shadow:townShadow()};
+    paths:new Map(),cache:{brz,fl},sea:townSea(),spr:townSprites(),shade:{},ring:townRing(10),dot:townRing(1),mark:townRing(4),shadow:townShadow()};
   townDecoSync();
   return TOWN_ART;
+}
+/* the sea along the south shore, moving (art pass A1): each frame the pixels that move on a tile of it, laid along the whole shore
+   (the two rows of ~ at the map's foot), over the ground's still sea */
+function townSea(){
+  const y0=TOWN_MAP.findIndex(r=>r[0]==='~')*16;
+  return TOWN_SEA.map(s=>{const [cv,c]=tCanvas(TOWN_W*16,TOWN_H*16-y0); for(let x=0;x<cv.width;x+=64)tPts(c,s,x,0); cv.y0=y0; return cv;});
 }
 /* one tile of the ground, painted as a path ('_' boardwalk, ',' cobbles), or put back as it was (ch null). side: the path turned
    a quarter, its pattern read across instead of down */
@@ -13395,9 +13438,9 @@ function townDecoSync(){
 function townSide(d){return faceSrc(TOWN_DECOS[d.id],d.f|0)[0]===2;}
 function townDecoProps(d,x,y,props,lights,em,held){
   const K=TOWN_ART.cache, base=y+pieceFoot(TOWN_DECOS[d.id],d.f).h*16;
-  if(d.id==='lamp'){K.post=K.post||townLampPost(); K.glass=K.glass||townLampGlass();
-    props.push({c:K.post,x,y:y-18,base}); em.push({c:K.glass,x:x+5,y:y-14,base}); lights.push({x:x+8,y:y-11,r:TOWN_DECOS.lamp.light,f:.25});}
-  else if(d.id==='brazier'){props.push({c:K.brz,x,y:y-6,base}); em.push({fl:K.fl,x:x+3,y:y-16,base,ph:d.c*3+d.r}); lights.push({x:x+8,y:y+2,r:TOWN_DECOS.brazier.light,f:1});}
+  if(d.id==='lamp'){K.post=K.post||townLampPost(); K.glass=K.glass||townLampGlass(); const ph=d.c*5+d.r;
+    props.push({c:K.post,x,y:y-18,base}); em.push({fl:K.glass,x:x+5,y:y-14,base,ph}); lights.push({x:x+8,y:y-11,r:TOWN_DECOS.lamp.light,f:.25,fk:fireFk(TOWN_FIRE.lamp),ph});}
+  else if(d.id==='brazier'){const ph=d.c*3+d.r; props.push({c:K.brz,x,y:y-6,base}); em.push({fl:K.fl,x,y:y-16,base,ph}); lights.push({x:x+8,y:y+2,r:TOWN_DECOS.brazier.light,f:1,fk:fireFk(TOWN_FIRE.brazier),ph});}
   else if(d.id==='tree'){const k='t'+d.c+','+d.r; props.push({c:K[k]||(K[k]=townTree(d.c,d.r)),x,y:y-12,base});}
   else if(d.id==='stone'){const k='g'+d.c+','+d.r; props.push({c:K[k]||(K[k]=townGrave(d.c,d.r)),x,y,base});}
   else if(d.id==='fence')props.push({c:townFence(d.c,d.r,(fx,fy)=>townCh(fx,fy)==='|'||(TOWN_AT.get(fy*TOWN_W+fx)||{}).id==='fence',townSide(d)),x,y:y-4,base:base-1});
@@ -13567,7 +13610,8 @@ function lodgeShelfArt(S){
 }
 /* a sconce on the back wall: an iron bracket and a candle (its flame glows) */
 function lodgeSconce(){const [cv,c]=tCanvas(6,10); tp(c,0,8,'1',6,1); tp(c,1,9,'1',4,1); tp(c,2,4,'d',2,4); tp(c,2,4,'c',1,1); return cv;}
-function lodgeSconceFlame(){const [cv,c]=tCanvas(2,4); tp(c,0,1,'a',2,3); tp(c,0,1,'b',1,2); tp(c,1,0,'c'); return cv;}
+/* its flame (art pass A1): PixelLab's frames over the candle, the first today's flame */
+function lodgeSconceFlame(){return fireFrames(TOWN_FIRE.sconce);}
 /* the Armchair in its eight facings (Expansion 4, step 2): Criss's PixelLab object "Lodge Armchair", 34 by 34 a facing, through
    tools/png2rows.py (EXPANSION4_RUNBOOK.md §3): cropped, every colour on a PX letter, straight facings narrowed to 16 wide and
    diagonals to 24. Indexed by facing, 0 S to 7 SE; each stands on its tile's bottom edge and rises above it */
@@ -13639,7 +13683,8 @@ function tFlip(src){const [cv,c]=tCanvas(src.width,src.height); c.translate(src.
    not drawn is the one faceSrc() names, mirrored where it says */
 function lodgeFurnArt(id,f,dye){
   const I=LODGE_ITEMS[id], src=faceSrc(I,f|0), F=pieceFoot(I,f|0), a=lodgeFurnDraw(id,src[0],dye);
-  if(src[1]){const w=a.cv.width; a.cv=tFlip(a.cv); if(a.em){a.ex=w-a.ex-a.em.width; a.em=tFlip(a.em);} if(a.lx!=null)a.lx=w-a.lx; if(a.top)a.top=a.top.map(p=>[w-p[0],p[1]]);}
+  if(src[1]){const w=a.cv.width; a.cv=tFlip(a.cv); if(a.em){a.ex=w-a.ex-a.em.width; a.em=tFlip(a.em);} if(a.lx!=null)a.lx=w-a.lx; if(a.top)a.top=a.top.map(p=>[w-p[0],p[1]]);
+    if(a.fr){a.fr=a.fr.map(tFlip); a.emf=a.emf.map(tFlip);}}
   a.dx=Math.round((F.w*16-a.cv.width)/2);
   if(a.dy==null)a.dy=F.h*16-a.cv.height;
   return a;
@@ -13654,7 +13699,14 @@ function lodgeFurnDraw(id,s,dye){
   if(I.glow){
     let sx=0, sy=0, n=0; for(let y=0;y<rows.length;y++)for(let x=0;x<rows[y].length;x++)if(I.glow.indexOf(rows[y][x])>=0){sx+=x; sy+=y; n++;}
     if(n){const [e,ec]=tCanvas(cv.width,cv.height); tRows(ec,rows,0,0,pal,I.glow); o.em=e; o.ex=0; o.ey=0;}
-    o.lx=n?Math.round(sx/n):cv.width>>1; o.ly=n?Math.round(sy/n):Math.round(cv.height*.6);}
+    o.lx=n?Math.round(sx/n):cv.width>>1; o.ly=n?Math.round(sy/n):Math.round(cv.height*.6);
+    /* a flame that burns in loops (art pass A1): each frame is the piece's rows with its flame's zone put in, the whole piece and
+       what of it glows; the first is the piece as it stands. Only the facing the flame was drawn for */
+    const FI=s===0&&LODGE_FIRE[id];
+    if(FI&&o.em){o.fr=[]; o.emf=[]; o.fk=fireFk(FI);
+      for(const z of FI.f){const R2=rows.map((r,y)=>y>=FI.y&&y<FI.y+z.length?r.slice(0,FI.x)+z[y-FI.y]+r.slice(FI.x+z[0].length):r);
+        const [fc,fx]=tCanvas(cv.width,cv.height), [ec2,ex2]=tCanvas(cv.width,cv.height); tRows(fx,R2,0,0,pal); tRows(ex2,R2,0,0,pal,I.glow);
+        o.fr.push(fc); o.emf.push(ec2);}}}
   if(I.flat){o.flat=true; o.dy=0;}
   if(I.mount)o.dy=Math.max(5,Math.round(16-cv.height/2));
   if(I.top){
@@ -13725,16 +13777,34 @@ function lodgeGlints(bc,cx,cy,tq){
   const g=LODGE_GLINT||(LODGE_GLINT=(()=>{const [cv,c]=tCanvas(3,1); tp(c,0,0,'e',3,1); tp(c,1,0,'g'); return cv;})());
   for(let i=0;i<LODGE_GLINTS.length;i++){const P=LODGE_GLINTS[i]; if(((tq>>1)+i*5)%11<2)bc.drawImage(g,P[0]-cx,P[1]-cy);}
 }
-/* the rain outside the Attic's window, falling past the glass: each drop keeps its own column and falls on the clock, so nothing is
-   made a frame; only what is inside the glass is drawn, before the frame goes over it. Lite: half the drops */
-function lodgeWinRain(bc,W,cx,cy,lite){
-  const n=lite?6:12, sp=reduceMotion?20:80, t=TWN.t;
-  for(let i=0;i<n;i++){
-    const dx=Math.round((thash(i,1,170)*2-1)*(W.r-1)), hh=Math.floor(Math.sqrt(W.r*W.r-dx*dx)), len=2+((thash(i,2,171)*3)|0), span=2*hh+len+8;
-    const y=((t*sp*(.75+thash(i,3,172)*.5)+thash(i,4,173)*span)%span)-hh-len-4, y0=Math.max(Math.round(y),-hh), y1=Math.min(Math.round(y)+len,hh);
-    if(y1<=y0)continue;
-    bc.fillStyle=i%3?'#6d8494':'#33424e'; bc.fillRect(W.x+dx-cx,W.y+y0-cy,1,y1-y0);
-  }
+/* the rain outside the Attic's window, falling past the glass, as a loop (art pass A1): each drop keeps its own column and
+   falls once or twice a loop, and PixelLab's drops run down the pane (LODGE_WIN_STREAK). Made once; only what is inside the
+   glass, drawn before the frame goes over it. Still with Lite or Reduce Motion */
+let LODGE_WIN_FR=null;
+function lodgeWinFrames(W){
+  if(LODGE_WIN_FR)return LODGE_WIN_FR;
+  const N=LODGE_WIN_STREAK.length, D=W.r*2+1;
+  return (LODGE_WIN_FR=LODGE_WIN_STREAK.map((st,k)=>{const [cv,c]=tCanvas(D,D);
+    for(let i=0;i<12;i++){
+      const dx=Math.round((thash(i,1,170)*2-1)*(W.r-1)), hh=Math.floor(Math.sqrt(W.r*W.r-dx*dx)), len=2+((thash(i,2,171)*3)|0), span=2*hh+len+8;
+      const y=((k/N*(1+(i&1))+thash(i,4,173))%1)*span-hh-len-4, y0=Math.max(Math.round(y),-hh), y1=Math.min(Math.round(y)+len,hh);
+      if(y1>y0)tp(c,W.r+dx,W.r+y0,i%3?'#6d8494':'#33424e',1,y1-y0);}
+    tPts(c,st,W.r-8,W.r-8);
+    /* nothing outside the glass */
+    const img=c.getImageData(0,0,D,D), d=img.data;
+    for(let y=0;y<D;y++)for(let x=0;x<D;x++)if(Math.hypot(x-W.r,y-W.r)>W.r-.2)d[(y*D+x)*4+3]=0;
+    c.putImageData(img,0,0); return cv;}));
+}
+function lodgeWinRain(bc,W,cx,cy){
+  const F=lodgeWinFrames(W); bc.drawImage(F[loopK(F.length,WIN_DT)],W.x-W.r-cx,W.y-W.r-cy);
+}
+/* the Cellar's brine, moving (art pass A1): each frame the ripples of LODGE_BRINE laid over the floor in tiles, inside its edge's
+   ripple line. Made once */
+let LODGE_BRINE_FR=null;
+function lodgeBrine(){
+  if(LODGE_BRINE_FR)return LODGE_BRINE_FR;
+  const W=LODGE_W*16-34, H=LODGE_H*16-50;
+  return (LODGE_BRINE_FR=LODGE_BRINE.map(s=>{const [cv,c]=tCanvas(W,H); for(let y=0;y<H;y+=64)for(let x=0;x<W;x+=64)tPts(c,s,x,y); return cv;}));
 }
 /* everything compiled for the room, rebuilt only when what is in it changes (its floor, wall, furniture, or the shelf's spines).
    The renderer asks again only after lodgeSync() marks it stale (on coming in, and after any change), never per frame */
@@ -13745,7 +13815,7 @@ function lodgeArt(){
   const sig=m+'|'+LODGE_ROOM_KEYS.map(k=>lodgeRoom(T,k).built?1:0).join('')+'|'+L.floor+'|'+L.wall+'|'+L.furn.map(d=>d===BLD_SKIP?'':d.id+d.c+','+d.r+'/'+(d.f|0)+(d.x!=null?'@'+d.x+','+d.y:'')+(d.dye?'~'+d.dye:'')+(d.on?'['+d.on.map(o=>o===BLD_SKIP?'':o.id+o.s+(o.dye||'')).join(',')+']':'')).join(';')+'|'+S.n+'/'+S.cap;
   if(LODGE_ART&&LODGE_ART.sig===sig)return LODGE_ART;
   const TA=townArt(), props=[], lights=[], em=[];
-  const sc=lodgeSconce(), sf=lodgeSconceFlame(), sconce=x=>{props.push({c:sc,x,y:10,base:31}); em.push({c:sf,x:x+2,y:10,base:31}); lights.push({x:x+3,y:14,r:34,f:.6});};
+  const sc=lodgeSconce(), sf=lodgeSconceFlame(), sconce=x=>{props.push({c:sc,x,y:10,base:31}); em.push({fl:sf,x:x+TOWN_FIRE.sconce.x,y:10+TOWN_FIRE.sconce.y,base:31,ph:x}); lights.push({x:x+3,y:14,r:34,f:.6,fk:fireFk(TOWN_FIRE.sconce),ph:x});};
   /* the ways between the rooms (Expansion 4, step 3): a ladder against the back wall, its feet just over the floor's edge, or a
      hatch lying in the floor. The main room's are shut until the room they lead to is bought */
   const ladder=(tx,ok)=>props.push({c:lodgeWayArt('ladder',ok,wet),x:tx*16,y:34-LODGE_LADDER.length,base:33});
@@ -13770,24 +13840,24 @@ function lodgeArt(){
   for(const d of L.furn){
     if(d===BLD_SKIP)continue;
     /* in the Cellar every piece stands in the brine: its feet (all of it, lying flat) under the water; a mount hangs above it */
-    const I=LODGE_ITEMS[d.id], k=d.id+(d.f|0)+(d.dye||''), dry=lodgeFA(d.id,d.f,d.dye), a=!wet||I.mount?dry:K['w'+k]||(K['w'+k]=Object.assign({},dry,{cv:lodgeWet(dry.cv,wet,dry.flat)}));
-    const R=pieceRect(d,I), x=R.x+a.dx, y=R.y, base=I.mount?30:a.flat?y:y+R.h;
-    props.push({c:a.cv,x,y:y+a.dy,base});
+    const I=LODGE_ITEMS[d.id], k=d.id+(d.f|0)+(d.dye||''), dry=lodgeFA(d.id,d.f,d.dye), a=!wet||I.mount?dry:K['w'+k]||(K['w'+k]=Object.assign({},dry,{cv:lodgeWet(dry.cv,wet,dry.flat),fr:dry.fr&&dry.fr.map(c=>lodgeWet(c,wet,dry.flat))}));
+    const R=pieceRect(d,I), x=R.x+a.dx, y=R.y, base=I.mount?30:a.flat?y:y+R.h, ph=(x*7+y*3)|0;
+    props.push({c:a.cv,fr:a.fr,ph,x,y:y+a.dy,base});
     /* a lamp turned away still lights the room; only what can be seen of its flame glows */
-    if(a.em)em.push({c:a.em,x:x+a.ex,y:y+a.dy+a.ey,base:I.mount?30:y+R.h});
-    if(I.light)lights.push({x:x+a.lx,y:y+a.dy+a.ly,r:I.light,f:I.steady||I.green?.2:.8,col:I.col||(I.green?'green':'')});
+    if(a.em)em.push({c:a.em,fl:a.emf,ph,x:x+a.ex,y:y+a.dy+a.ey,base:I.mount?30:y+R.h});
+    if(I.light)lights.push({x:x+a.lx,y:y+a.dy+a.ly,r:I.light,f:I.steady||I.green?.2:.8,col:I.col||(I.green?'green':''),fk:a.fk,ph});
     /* what stands on it (Expansion 4, step 4), one canvas each, drawn just after it; a candle or a lantern lights the room */
     for(const q of d.on||[]){
       if(q===BLD_SKIP)continue;
-      const J=LODGE_ITEMS[q.id], qa=lodgeFA(q.id,0,q.dye), t=a.top[q.s], qx=x+t[0]-(qa.cv.width>>1), qy=y+a.dy+t[1]-qa.cv.height;
-      props.push({c:qa.cv,x:qx,y:qy,base:base+.5});
-      if(qa.em)em.push({c:qa.em,x:qx,y:qy,base:base+.5});
-      if(J.light)lights.push({x:qx+qa.lx,y:qy+qa.ly,r:J.light,f:J.steady?.2:.8,col:J.col||''});
+      const J=LODGE_ITEMS[q.id], qa=lodgeFA(q.id,0,q.dye), t=a.top[q.s], qx=x+t[0]-(qa.cv.width>>1), qy=y+a.dy+t[1]-qa.cv.height, qp=(qx*7+qy*3)|0;
+      props.push({c:qa.cv,fr:qa.fr,ph:qp,x:qx,y:qy,base:base+.5});
+      if(qa.em)em.push({c:qa.em,fl:qa.emf,ph:qp,x:qx,y:qy,base:base+.5});
+      if(J.light)lights.push({x:qx+qa.lx,y:qy+qa.ly,r:J.light,f:J.steady?.2:.8,col:J.col||'',fk:qa.fk,ph:qp});
     }
   }
   props.sort((a,b)=>a.base-b.base); em.sort((a,b)=>a.base-b.base);
   LODGE_ART={sig,room:m,night:RM.night,mw:LODGE_W*16,mh:LODGE_H*16,ground:lodgeGround(L.floor,L.wall,m),props,lights,em,spines,cache:K,
-    win:m==='attic'?LODGE_WIN:null,wade:wet?lodgeWade():null,glints:wet?LODGE_GLINTS:null,
+    win:m==='attic'?LODGE_WIN:null,wade:wet?lodgeWade():null,glints:wet?LODGE_GLINTS:null,brine:wet?lodgeBrine():null,
     spr:TA.spr,shade:TA.shade,ring:TA.ring,dot:TA.dot,mark:TA.mark,shadow:TA.shadow};
   return LODGE_ART;
 }
@@ -13807,7 +13877,7 @@ function townOpen(){
   TWN.on=true; TWN.inside=false; TWN.room='main'; TWN.kit=townKit(); TWN.p.x=T.px; TWN.p.y=T.py;
   if(!townFree(TWN.p.x,TWN.p.y)){TWN.p.x=TOWN_SPAWN.x; TWN.p.y=TOWN_SPAWN.y;}
   TWN.build=false; TWN.pick=null; TWN.ghost=null; TWN.lift=null; BLD_SKIP=null; TWN.undo=[]; TWN.tab='pieces'; $('#townTray').hidden=true; $('#townBuild').textContent='Build'; $('#townBuild').classList.remove('on'); TWN.p.face='u'; TWN.p.moving=false; TWN.path=null; TWN.goal=null; TWN.ptr=null; TWN.near=null;
-  TWN.lite=gfxLite; TWN.cx=null; TWN.rain=null; TWN.splash=null;
+  TWN.lite=gfxLite; TWN.cx=null; TWN.rain=null; TWN.splash=null; townPuffClear();
   T.visits=(T.visits|0)+1;
   /* the tide-pools have never been filled: they are, once (developer mode fills its own copy and keeps nothing) */
   TWN.tipFor=null;
@@ -14010,7 +14080,7 @@ function townPlace(id,c,r,x,y){
   const T=townData(), D=TOWN_DECOS[id], d=bldAt({id,c,r},D,x,y);
   if(D.grave)d.g=gravesWaiting(T)[0].n;
   for(const k in D.cost)T.res[k]-=D.cost[k];
-  T.decos.push(d); bldDid({a:'place',d,cost:D.cost}); townSave(); townDecoSync(); townHud(); townTrayUI();
+  T.decos.push(d); bldDid({a:'place',d,cost:D.cost}); townSave(); townDecoSync(); townHud(); townTrayUI(); townPuffAt(d,D);
   /* a walk that now runs into it is given up */
   if(!D.path&&TWN.path&&TWN.path.some(p=>townSolid(Math.floor(p.x),Math.floor(p.y)))){TWN.path=null; TWN.goal=null;}
   return '';
@@ -14050,8 +14120,8 @@ function townIcon(id){
   if(id==='cobble'||id==='board'){const img=c.createImageData(16,16), d=img.data;
     for(let y=0;y<16;y++)for(let x=0;x<16;x++){const p=PX_RGB[townGroundPx(80+x,208+y,id==='board'?'_':',')], i=(y*16+x)*4; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;}
     c.putImageData(img,0,4);}
-  else if(id==='lamp'){c.drawImage(townLampPost(),0,0); c.drawImage(townLampGlass(),5,4);}
-  else if(id==='brazier'){c.drawImage(K.fl[0],3,-6); c.drawImage(K.brz,0,4);}
+  else if(id==='lamp'){c.drawImage(townLampPost(),0,0); c.drawImage(townLampGlass()[0],5,4);}
+  else if(id==='brazier'){c.drawImage(K.fl[0],0,-6); c.drawImage(K.brz,0,4);}
   else if(id==='fence')c.drawImage(townFence(-9,-9),0,0);
   else if(id==='tree')c.drawImage(townTree(5,5),0,0,32,44,0,-1,16,22);
   else if(id==='stone'){let x=0; while(x<40&&thash(x,1,70)>=.45)x++; c.drawImage(townGrave(x,1),0,4);}
@@ -14241,7 +14311,7 @@ function bldPlaceStored(id,c,r,x,y){
   const d=bldAt({id,c,r},I,x,y); if(st.g)d.g=st.g; if(f)d.f=f;
   if(st.dye)d.dye=st.dye; if(st.on)d.on=st.on.map(q=>Object.assign({},q));
   T.store.splice(i,1); bldList(T).push(d); bldDid({a:'place',d,st});
-  townSave(); bldSync(); townHud(); townTrayUI(); bldWalkCheck(I);
+  townSave(); bldSync(); townHud(); townTrayUI(); bldWalkCheck(I); townPuffAt(d,I);
   return '';
 }
 /* lift a piece: it leaves the scene (it blocks nothing and lights nothing) and follows the thumb as a ghost, until it is placed,
@@ -14346,7 +14416,7 @@ function bldDrop(){
   BLD_SKIP=null; TWN.lift=null;
   d.c=L.c; d.r=L.r; d.f=L.f; if(L.free){d.x=L.x; d.y=L.y;} else{delete d.x; delete d.y;}
   if(d.c!==f.c||d.r!==f.r||d.x!==f.x||d.y!==f.y||d.f!==f.f)bldDid({a:'move',d,from:f});
-  townSave(); bldSync(); townTrayUI(); bldWalkCheck(I); AUDIO.place&&AUDIO.place();
+  townSave(); bldSync(); townTrayUI(); bldWalkCheck(I); AUDIO.place&&AUDIO.place(); townPuffAt(d,I);
   townSay('You set the '+I.n+' down.');
   return '';
 }
@@ -14375,6 +14445,8 @@ function bldStow(){
   BLD_SKIP=null; TWN.lift=null;
   if(i<0){bldSync(); townTrayUI(); return false;}
   list.splice(i,1);
+  /* it goes from where it was held, raising dust there */
+  townPuffAt({id:d.id,c:L.c,r:L.r,x:L.x,y:L.y,f:L.f},I);
   /* a Lodge piece is stored with its colourway and everything that stood on it, and all that cost */
   const st={s:bldScene(),id:d.id,cost:haulFix(TWN.inside?lodgeCostOf(d):I.cost)}; if(d.g)st.g=d.g; if(L.f)st.f=L.f;
   if(TWN.inside){if(d.dye)st.dye=d.dye; if(d.on&&d.on.length)st.on=d.on;}
@@ -14389,6 +14461,8 @@ function bldSalvage(id){
   const st=T.store[i]; T.store.splice(i,1); T.res=haulFix(T.res); for(const k of HAUL_KEYS)T.res[k]+=st.cost[k];
   bldDid({a:'salvage',st,i});
   townSave(); townHud(); townTrayUI();
+  /* broken up where you stand */
+  townPuff(TWN.p.x*16,TWN.p.y*16);
   const back=townCostText(st.cost); townSay('You salvage the '+bldTab()[id].n+(back?': '+back+' back.':'.'));
   return true;
 }
@@ -14643,7 +14717,7 @@ function townRestoreLodge(){
 function lodgeEnter(){
   if(!TWN.on||!lodgeBuilt())return false;
   if(TWN.build)townBuildSet(false);
-  TWN.inside=true; TWN.room='main'; lodgeSync(); lodgeArt();
+  TWN.inside=true; TWN.room='main'; lodgeSync(); lodgeArt(); townPuffClear();
   TWN.p.x=LODGE_IN.x; TWN.p.y=LODGE_IN.y; TWN.p.face='u'; TWN.p.moving=false;
   TWN.path=null; TWN.goal=null; TWN.ptr=null; TWN.mark=0; TWN.ghost=null; TWN.cx=null; TWN.lcx=null; TWN.lcy=null; TWN.tipFor=null;
   townKeepers(); $('#townAct').hidden=true;
@@ -14654,7 +14728,7 @@ function lodgeEnter(){
 function lodgeLeave(){
   if(!TWN.inside)return false;
   if(TWN.build)townBuildSet(false);
-  TWN.inside=false; TWN.room='main'; TWN.p.x=LODGE_OUT.x; TWN.p.y=LODGE_OUT.y; TWN.p.face='d'; TWN.p.moving=false;
+  TWN.inside=false; TWN.room='main'; townPuffClear(); TWN.p.x=LODGE_OUT.x; TWN.p.y=LODGE_OUT.y; TWN.p.face='d'; TWN.p.moving=false;
   TWN.path=null; TWN.goal=null; TWN.ptr=null; TWN.mark=0; TWN.ghost=null; TWN.cx=null; TWN.lcx=null; TWN.lcy=null; TWN.tipFor=null;
   townKeepers(); $('#townAct').hidden=true;
   townShowTip();
@@ -14672,7 +14746,7 @@ function lodgeGo(m){
   if(!TWN.on||!TWN.inside||!LODGE_ROOMS[m]||!lodgeRoomBuilt(m))return false;
   const from=lodgeCur(); if(m===from)return false;
   if(TWN.build)townBuildSet(false);
-  TWN.room=m; lodgeSync(); lodgeArt();
+  TWN.room=m; lodgeSync(); lodgeArt(); townPuffClear();
   let at=null; for(const k in LODGE_WAYS){const W=LODGE_WAYS[k]; if(W.room===m&&W.to===from)at=W.at;}
   TWN.p.x=at?at[0]+.5:LODGE_ROOMS[m].in.x; TWN.p.y=at?at[1]+.5:LODGE_ROOMS[m].in.y; TWN.p.face='d'; TWN.p.moving=false;
   TWN.path=null; TWN.goal=null; TWN.ptr=null; TWN.mark=0; TWN.ghost=null; TWN.cx=null; TWN.lcx=null; TWN.lcy=null; TWN.tipFor=null;
@@ -14783,7 +14857,7 @@ function lodgePlace(id,c,r,x,y){
   const why=lodgeCanPlace(id,c,r,x,y); if(why)return why;
   const T=townData(), I=LODGE_ITEMS[id], d=bldAt({id,c,r},I,x,y);
   for(const k in I.cost)T.res[k]-=I.cost[k];
-  lodgeRoom(T).furn.push(d); bldDid({a:'place',d,cost:I.cost}); townSave(); lodgeSync(); townHud(); townTrayUI();
+  lodgeRoom(T).furn.push(d); bldDid({a:'place',d,cost:I.cost}); townSave(); lodgeSync(); townHud(); townTrayUI(); townPuffAt(d,I);
   if(!I.flat&&TWN.path&&TWN.path.some(p=>townSolid(Math.floor(p.x),Math.floor(p.y)))){TWN.path=null; TWN.goal=null;}
   return '';
 }
@@ -15021,8 +15095,9 @@ function townStep(dt){
   if(TWN.goal&&TWN.goal.workshop&&!TWN.path&&!R){const wid=TWN.goal.workshop, wk=TOWN_WORKSHOPS[wid]; TWN.goal=null; if(wk&&Math.hypot(P.x-(wk.dx+.5),P.y-(wk.dy+.5))<1.8)townWorkshop(wid);}
   if(TWN.ghost&&TWN.ghost.t>0){TWN.ghost.t-=dt; if(TWN.ghost.t<=0)TWN.ghost=null;}
 }
-/* a flame's light steps a pixel or two in and out (still with Reduce Motion or Lite) */
-function townFlick(L,tq,lite){return reduceMotion||lite?0:Math.round((thash(tq,L.x,L.y)-.5)*4*L.f);}
+/* a flame's light steps a pixel or two in and out (still with Reduce Motion or Lite). A light by a flame drawn in frames (art pass
+   A1, fk) swells and shrinks with the frame its flame shows */
+function townFlick(L,tq,lite){if(reduceMotion||lite)return 0; if(L.fk)return Math.round(L.fk[(tq+L.ph)%L.fk.length]*2*L.f); return Math.round((thash(tq,L.x,L.y)-.5)*4*L.f);}
 /* the rain lives in the buffer's pixels and stays put in the world when the camera moves */
 function townRain(n){
   const R=new Float32Array(n*4); for(let i=0;i<n;i++)townDrop(R,i,true); return R;
@@ -15031,7 +15106,24 @@ function townDrop(R,i,any){const vw=TWN.vw||200, vh=TWN.vh||300; R[i*4]=Math.ran
   R[i*4+2]=(140+Math.random()*90)*(reduceMotion?.35:1); R[i*4+3]=R[i*4+1]+vh*.25+Math.random()*vh;}
 let TOWN_DROPS=null;
 function townDrops(){if(TOWN_DROPS)return TOWN_DROPS; const a=tCanvas(2,4), b=tCanvas(1,2); tp(a[1],1,0,'#566c7c'); tp(a[1],1,1,'#6d8494'); tp(a[1],0,2,'#7f97a8'); tp(a[1],0,3,'#93abbb'); tp(b[1],0,0,'#33424e',1,2);
-  const s=tCanvas(5,2); tp(s[1],0,1,'#6d8494'); tp(s[1],4,1,'#6d8494'); tp(s[1],2,0,'#93abbb'); return (TOWN_DROPS={near:a[0],far:b[0],splash:s[0]});}
+  return (TOWN_DROPS={near:a[0],far:b[0],spl:TOWN_SPLASH.f.map(rows=>{const [cv,c]=tCanvas(rows[0].length,rows.length); tRows(c,rows,0,0,RAIN_PAL); return cv;})});}
+/* how long a splash lasts, its frames spread over it */
+const SPLASH_T=.32;
+/* the dust puff's frames, made once */
+let TOWN_PUFFS=null;
+function townPuffs(){return TOWN_PUFFS||(TOWN_PUFFS=TOWN_PUFF.f.map(rows=>{const [cv,c]=tCanvas(rows[0].length,rows.length); tRows(c,rows,0,0); return cv;}));}
+/* dust where a piece meets the floor (x, y: the middle of its foot, art pixels). Four at once at most; none with Lite or Reduce
+   Motion. Per scene, so a change of scene clears them (townPuffClear()) */
+function townPuff(x,y){
+  if(gfxLite||reduceMotion||!TWN.on)return;
+  const P=TWN.puff||(TWN.puff=new Float32Array(12).fill(-1)); let j=0;
+  for(let i=0;i<P.length;i+=3)if(P[i+2]<0||P[i+2]>P[j+2])j=i;
+  for(let i=0;i<P.length;i+=3)if(P[i+2]<0){j=i; break;}
+  P[j]=x; P[j+1]=y; P[j+2]=0;
+}
+function townPuffClear(){if(TWN.puff)TWN.puff.fill(-1);}
+/* dust under a piece standing on its footprint (a wall mount raises none) */
+function townPuffAt(d,I){if(!d||!I||I.mount||I.small)return; const R=pieceRect(d,I); townPuff(R.x+R.w/2,R.y+R.h-2);}
 /* size the canvas so one art pixel is a whole number of device pixels: about 48 CSS px a tile on any screen */
 function townSize(){
   const o=$('#townOverlay'), cv=$('#townCv'), dpr=Math.min(3,window.devicePixelRatio||1), k=Math.max(1,Math.round(3*dpr));
@@ -15077,16 +15169,25 @@ function townDraw(){
   bc.fillStyle=PX.s; bc.fillRect(0,0,vw,vh);
   const sx=Math.max(0,cx), sy=Math.max(0,cy), sw=Math.min(MW,cx+vw)-sx, sh=Math.min(MH,cy+vh)-sy;
   if(sw>0&&sh>0)bc.drawImage(A.ground,sx,sy,sw,sh,sx-cx,sy-cy,sw,sh);
+  /* art pass A1: flames step every FIRE_DT, water every WATER_DT; still (frame 0) with Lite or Reduce Motion */
+  const still=reduceMotion||lite, tq=Math.floor(TWN.t/FIRE_DT), tw=still?0:Math.floor(TWN.t/WATER_DT);
+  /* the sea moving along the shore, and the Cellar's brine over its floor */
+  if(!IN&&A.sea){const sf=A.sea[tw%A.sea.length]; if(sf.y0-cy<vh)bc.drawImage(sf,-cx,sf.y0-cy);}
+  if(IN&&A.brine)bc.drawImage(A.brine[tw%A.brine.length],17-cx,33-cy);
   /* rain, before the dark: it shows where there is light to see it by */
   const n=IN?0:lite?30:90, D=townDrops(), dt=TWN.dt;
   if(!TWN.rain||TWN.rain.length!==n*4){TWN.rain=townRain(n); TWN.splash=new Float32Array(24*3); TWN.si=0;}
   const R=TWN.rain;
   for(let i=0;i<n;i++){const j=i*4; R[j]-=dcx+R[j+2]*.5*dt; R[j+1]+=R[j+2]*dt-dcy; R[j+3]-=dcy;
-    if(R[j+1]>R[j+3]||R[j+1]>vh+4||R[j]<-6){if(!lite&&!reduceMotion&&R[j+1]<vh){const s=TWN.si*3; TWN.splash[s]=R[j]; TWN.splash[s+1]=R[j+1]; TWN.splash[s+2]=.18; TWN.si=(TWN.si+1)%24;} townDrop(R,i,false);}
+    if(R[j+1]>R[j+3]||R[j+1]>vh+4||R[j]<-6){if(!lite&&!reduceMotion&&R[j+1]<vh){const s=TWN.si*3; TWN.splash[s]=R[j]; TWN.splash[s+1]=R[j+1]; TWN.splash[s+2]=SPLASH_T; TWN.si=(TWN.si+1)%24;} townDrop(R,i,false);}
     else bc.drawImage(i%3===0?D.far:D.near,R[j]|0,R[j+1]|0);}
-  if(!lite&&!IN)for(let i=0;i<24;i++){const s=i*3; if(TWN.splash[s+2]<=0)continue; TWN.splash[s]-=dcx; TWN.splash[s+1]-=dcy; TWN.splash[s+2]-=dt; bc.drawImage(D.splash,(TWN.splash[s]|0)-2,(TWN.splash[s+1]|0)-1);}
+  /* where a drop lands it splashes (art pass A1): a crown, the drips falling back, a ring, frame by frame as its time runs out */
+  if(!lite&&!IN){const SP=D.spl, ns=SP.length;
+    for(let i=0;i<24;i++){const s=i*3; if(TWN.splash[s+2]<=0)continue; TWN.splash[s]-=dcx; TWN.splash[s+1]-=dcy;
+      const k=Math.min(ns-1,((1-TWN.splash[s+2]/SPLASH_T)*ns)|0); TWN.splash[s+2]-=dt;
+      bc.drawImage(SP[k],(TWN.splash[s]|0)-TOWN_SPLASH.ox,(TWN.splash[s+1]|0)-TOWN_SPLASH.oy);}}
   /* inside (Expansion 4, step 3): the rain beyond the Attic's window, and the Cellar's brine catching the light */
-  if(IN&&A.win)lodgeWinRain(bc,A.win,cx,cy,lite);
+  if(IN&&A.win)lodgeWinRain(bc,A.win,cx,cy);
   if(IN&&A.glints&&!lite)lodgeGlints(bc,cx,cy,Math.floor(TWN.t/.11));
   /* what stands, back to front, with the Keeper in among it */
   const pfx=Math.round(P.x*16), pfy=Math.round(P.y*16), face=P.face, cyc=TOWN_WALK[face==='l'?'r':face];
@@ -15102,10 +15203,15 @@ function townDraw(){
       else{townCrowdDraw(bc,A,cr[ci],cx,cy,false); ci++;}
     }
     if(!o||o.x-cx>vw||o.y-cy>vh||o.x+o.c.width-cx<0||o.y+o.c.height-cy<0)continue;
-    bc.drawImage(o.c,o.x-cx,o.y-cy);
+    /* a burning piece or a tide-pool shows its frame (art pass A1) */
+    bc.drawImage(o.fr&&!still?o.fr[((o.wk?tw:tq)+o.ph)%o.fr.length]:o.c,o.x-cx,o.y-cy);
   }
+  /* the dust a piece raises as it is set down or put away (art pass A1; Full only): before the dark, so only light shows it */
+  if(TWN.puff)for(let i=0;i<TWN.puff.length;i+=3){const t=TWN.puff[i+2]; if(t<0)continue; const k=(t/PUFF_DT)|0;
+    if(k>=TOWN_PUFF.f.length){TWN.puff[i+2]=-1; continue;} TWN.puff[i+2]+=TWN.dt;
+    bc.drawImage(townPuffs()[k],(TWN.puff[i]|0)-TOWN_PUFF.ox-cx,(TWN.puff[i+1]|0)-TOWN_PUFF.oy-cy);}
   /* the dark, and the light carved out of it; flames flicker in steps (still, with Reduce Motion) */
-  const mc=TWN.mc, tq=Math.floor(TWN.t/.11);
+  const mc=TWN.mc;
   mc.globalCompositeOperation='source-over'; mc.clearRect(0,0,vw,vh); mc.fillStyle=IN?A.night:TOWN_NIGHT; mc.fillRect(0,0,vw,vh);
   mc.globalCompositeOperation='destination-out';
   for(const L of A.lights){const r=L.r+townFlick(L,tq,lite), x=L.x-cx, y=L.y-cy; if(x+r<0||y+r<0||x-r>vw||y-r>vh)continue; mc.drawImage(townStamp(r,false),x-r,y-r);}
@@ -15124,7 +15230,7 @@ function townDraw(){
     for(;;){const kb=cut<cn?cr[cut].base:1e9, pb=youCut?1e9:pfy; if(Math.min(kb,pb)>=b)break;
       if(pb<=kb){gc.drawImage(spr.c,pfx-8-cx,pfy-22-cy); youCut=true;} else townCrowdDraw(gc,A,cr[cut++],cx,cy,false,true);}
     gc.globalCompositeOperation='source-over';};
-  for(const o of A.em){cutTo(o.base); if(o.fl){const f=reduceMotion?0:(tq+o.ph)%3; gc.drawImage(o.fl[f],o.x-cx,o.y-cy);} else gc.drawImage(o.c,o.x-cx,o.y-cy);}
+  for(const o of A.em){cutTo(o.base); if(o.fl)gc.drawImage(o.fl[still?0:(tq+o.ph)%o.fl.length],o.x-cx,o.y-cy); else gc.drawImage(o.c,o.x-cx,o.y-cy);}
   /* and whoever stands in front of the last glow of all */
   cutTo(1e9);
   bc.drawImage(TWN.glow,0,0);
