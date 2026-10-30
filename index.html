@@ -13168,7 +13168,7 @@ const LODGE_WIN_STREAK=['563','a3e','b3r44eb4ec4e45eb5e36ea6e','c54462b62c6e9738
 const TOWN_SPLASH={ox:5,oy:4,f:[['...AA..AAA.','.AABBAAABBA','ABACBBAAACA','ACBDCCABBDA','ADCADDABCA.','.ADADAACDA.','..A.A..ADA.','........A..','...........'],['...........','...A.......','.AABAAAA.A.','ABACBBAAABA','ACBDCCABBCA','ADCDDAACBDA','.ADADAADCA.','..A.A.AADA.','.......AA..'],['...........','...AAAAA...','..ADDDDDA..','..AADBCA...','..ADACAA...','...AAAA....','.....A.....','...........','...........'],['....A..A...','..AADAADA..','.ADDDDDCA..','.AAACBBAA..','.ABDABABA..','..AAAAAA...','...........','...........','...........'],['...AA.AAA..','..ADCABCDA.','.ADDBBBDA..','.AAAAACDA..','.ADACCAAA..','..A.AA.A...','...........','...........','...........']]};
 const TOWN_PUFF={ox:10,oy:10,f:[['....................','....................','....................','....................','....................','.........5555.......','......5557ooo5......','.....5doooddo5......','.....5ododddo5......','.....57ddddoo75.....','....5oodoooddo5.....','.....5oo7557oo5.....','.....5755..555......','......5.............','....................'],['....................','....................','....................','.........5555.......','.....5.557oo755.....','....57577ooooo75....','...57oo77ooooo5.....','...57ooo7ooooo75....','...57oooodoooo55....','...55ooooddoooo75...','..5oooo7oooooooo65..','.57oooo767667ooo75..','..55o776555555775...','...57555......55....','....5...............'],['....................','....................','........55555.......','....55.567oo7555....','...577577oooooo75...','...5o7o777ooooo65...','..57ooo757ooooo75...','..57ooo77ooooo75....','...57o77oooooo775...','..567o77oooooooo75..','.57ooo777oo7ooooo75.','57oooo7557757777o75.','57777775.55.556555..','.557755.......5.....','...55...............'],['....................','.........55555......','....55..577777555...','...5775577oo777765..','...5777777777o7765..','..577777667777775...','.567777757o777765...','..577777oooo77755...','..557777oooo7777755.','.5777777ooooo7o77765','.5777776777777777775','5777776555555677665.','5777765......55555..','.55775..............','...55...............'],['..........5.........','.........56555......','....555.57777755....','...56765577777675...','...57777557777775...','..57777755565775....','..5777755775.555....','..577665ooo7576655..','..5665557oo76777775.','.577775567766777775.','.57777655555566665..','5777755......5555...','.56675..............','..555...............','....................'],['............5.......','...........565......','.....5.....56555....','....575.....55665...','...56775......55....','...5775...5.........','....55...565........','........5775...55...','...55....55...5665..','..5675.........55...','..5665..............','...55...............','....................','....................','....................']]};
 /* a loop's frame now: 0 when still */
-function loopK(n,dt,ph){return reduceMotion||gfxLite||n<2?0:(Math.floor(TWN.t/dt)+(ph|0))%n;}
+function loopK(n,dt,ph){return reduceMotion||gfxLite||n<2?0:(Math.max(0,Math.floor(TWN.t/dt))+(ph|0))%n;}
 /* x, y, letter triplets (T64) painted at (x0, y0) */
 function tPts(c,s,x0,y0){for(let i=0;i+2<s.length;i+=3)tp(c,x0+T64.indexOf(s[i]),y0+T64.indexOf(s[i+1]),s[i+2]);}
 /* a flame's frames, as canvases of its zone */
@@ -15170,7 +15170,7 @@ function townDraw(){
   const sx=Math.max(0,cx), sy=Math.max(0,cy), sw=Math.min(MW,cx+vw)-sx, sh=Math.min(MH,cy+vh)-sy;
   if(sw>0&&sh>0)bc.drawImage(A.ground,sx,sy,sw,sh,sx-cx,sy-cy,sw,sh);
   /* art pass A1: flames step every FIRE_DT, water every WATER_DT; still (frame 0) with Lite or Reduce Motion */
-  const still=reduceMotion||lite, tq=Math.floor(TWN.t/FIRE_DT), tw=still?0:Math.floor(TWN.t/WATER_DT);
+  const still=reduceMotion||lite, tq=Math.max(0,Math.floor(TWN.t/FIRE_DT)), tw=still?0:Math.max(0,Math.floor(TWN.t/WATER_DT));
   /* the sea moving along the shore, and the Cellar's brine over its floor */
   if(!IN&&A.sea){const sf=A.sea[tw%A.sea.length]; if(sf.y0-cy<vh)bc.drawImage(sf,-cx,sf.y0-cy);}
   if(IN&&A.brine)bc.drawImage(A.brine[tw%A.brine.length],17-cx,33-cy);
@@ -15258,7 +15258,8 @@ function townDraw(){
   const c=TWN.ctx; c.imageSmoothingEnabled=false; c.drawImage(TWN.buf,0,0,vw,vh,0,0,vw*TWN.k,vh*TWN.k);
 }
 function townFrame(raw){
-  TWN.dt=Math.min(.05,raw);
+  /* never back in time: the first frame's stamp can come before the last one taken, and a clock below zero would pick no loop frame */
+  TWN.dt=Math.max(0,Math.min(.05,raw));
   townStep(TWN.dt);
   const t0=performance.now(); townDraw(); TWN.frameMs=TWN.frameMs*.9+(performance.now()-t0)*.1;
 }

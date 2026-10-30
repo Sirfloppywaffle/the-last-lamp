@@ -121,9 +121,13 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       for(const t of [.35,.8,1.6,2.5]){W.t=t; pin(); T.townDraw(); seen.push(diff(a,which==='sea'?W.buf.getContext('2d').getImageData(0,0,W.vw,W.vh).data:glow(),which==='sea'?Math.round(W.vh*.4):0));}
       T.setLite(false); return seen;};
     out.fire=[run(false,'fire'),run(true,'fire')]; out.sea=[run(false,'sea'),run(true,'sea')];
-    W.crowd=crowd; W.dt=1/60; return out;});
+    W.crowd=crowd; W.dt=1/60;
+    /* a clock a little below zero (the first frame after Start in Saltmouth can be stamped before the last) still draws */
+    try{W.t=-.4; T.townDraw(); T.townFrame(-.02); out.neg=W.t>=-.4;}catch(e){out.neg=String(e);}
+    return out;});
   console.log(JSON.stringify(sq));
   ok(sq.fire[0].some(n=>n>10)&&sq.fire[1].every(n=>n===0),'the braziers’ fire moves in Full and holds still in Lite',sq.fire);
+  ok(sq.neg===true,'a clock below zero still draws, and a frame never runs it backwards',sq.neg);
   ok(sq.sea[0].some(n=>n>0)&&sq.sea[1].every(n=>n===0),'the sea along the shore moves in Full and holds still in Lite',sq.sea);
   await p.evaluate(()=>{const W=__t.TWN; W.p.x=12; W.p.y=19.5; W.cx=null; W.t=1; __t.townFrame(1/60); __t.townFrame(1/60);}); await p.waitForTimeout(80);
   await p.screenshot({path:shots+'/loops-shore.png'});
