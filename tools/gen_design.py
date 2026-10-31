@@ -55,7 +55,14 @@ if 'LODGE_ITEMS' in D:
             ps=[v['n'] for v in D['LODGE_ITEMS'].values() if v['set']==k]
             w("| %s | %d: %s | %s |"%(S['n'],len(ps),', '.join(ps),'earned on the stair, one of each' if k=='trophy' else 'from the start' if S.get('open') else 'blueprint'))
         w("")
-        w("| Dye | Swaps |\n|---|---|\n"+"\n".join("| %s | %s |"%(v['n'],', '.join('`%s`→`%s`'%(a,b) for a,b in v['sw'].items())) for v in D['LODGE_DYES'].values()))
+        w("| Dye | Swaps |\n|---|---|\n"+"\n".join("| %s%s | %s |"%(v['n'],' (rare: the Peddler)' if v.get('rare') else '',', '.join('`%s`→`%s`'%(a,b) for a,b in v['sw'].items())) for v in D['LODGE_DYES'].values()))
+        w("")
+    if 'PEDDLER_WARES' in D:
+        w("### The Peddler's wares (Expansion 4, step 6)\n")
+        w("Freed from a cage like the other souls, he keeps a barrow by the Head-frame. He shows **%s** of what you lack, rolled on `SALT.peddler = %s` keyed on `ll-town.trips` (+1 whenever a run ends, won or lost), and keeps that stock in `ll-town.wares` until the next run ends. A blueprint opens its set for good; a rare dye joins every piece it changes (a dozen or more of its pixels), and putting it on costs tallow like any dye.\n"%(D['PEDDLER_N'],D['SALT']['peddler']))
+        w("| Ware | Price |\n|---|---|")
+        for k,v in D['PEDDLER_WARES'].items():
+            w("| %s | %s |"%(('Blueprint: '+D['LODGE_SETS'][v['bp']]['n']) if v.get('bp') else ('Dye: '+D['LODGE_DYES'][v['dye']]['n']),nm(v['cost'])))
         w("")
     w("| Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |\n|---|---|---|---|---|---|---|---|")
     for v in D['LODGE_ITEMS'].values():

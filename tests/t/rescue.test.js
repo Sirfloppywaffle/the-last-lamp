@@ -2,7 +2,7 @@
 // and the Pawned Relic.
 // - The cage roll is pure (SALT.cage): the same seed and landing give the same door and the same soul, every time.
 // - Only on the landings after floors 2, 3 and 4; never a Trial door, a descent door or the Deep Stair; at most once a run.
-// - A soul already home (ll-town.rescued) is never caged again; with both home, no cage hangs.
+// - A soul already home (ll-town.rescued) is never caged again; with every soul home (the Peddler too, Expansion 4 step 6), no cage hangs.
 // - The lock takes CAGE_PRICE essence, never below 0; the soul goes up with the haul's one credit, once, even from a death.
 // - The Drowned Oar is restored and the stall opens once their keeper is home; the Loaded Bone moved to the Oar.
 // - The Croupier's table is played for town materials; the stall's trades always give back less; developer mode writes nothing.
@@ -33,10 +33,10 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
       if(a.filter(x=>x.room==='cage').length>1)out.bad.push([sd,fl,'two cages']);
       if(out.where.length<3)out.where.push([sd,fl,i,a[i].who]);
     }
-    /* the Croupier home: only the Toothmonger is ever caged; both home: no cage hangs */
+    /* the Croupier home: never him again; every soul home (the Peddler joined them in Expansion 4, step 6): no cage hangs */
     Tn.rescued=['croupier']; T.townSave();
     for(let sd=1;sd<=120;sd++){const a=doorsAt(sd,2); for(const x of a)if(x.room==='cage')out.homeWho[x.who]=(out.homeWho[x.who]||0)+1;}
-    Tn.rescued=['croupier','toothmonger']; T.townSave();
+    Tn.rescued=Object.keys(T.TOWN_SOULS); T.townSave();
     for(let sd=1;sd<=120;sd++){const a=doorsAt(sd,2); if(a.some(x=>x.room==='cage'))out.bothHome++;}
     Tn.rescued=[]; T.townSave();
     /* at most once a run: a cage rolled on one landing leaves the next without one */
@@ -57,7 +57,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(roll.offFloors===0,'no cage on the landings after floors 1 or 5',roll.offFloors);
   ok(roll.bad.length===0,'a cage is never on a Trial door or a descent door, and one landing has one at most',roll.bad);
   ok(!roll.homeWho.croupier&&roll.homeWho.toothmonger>0,'a soul already home is never caged again',roll.homeWho);
-  ok(roll.bothHome===0,'with both souls home, no cage hangs',roll.bothHome);
+  ok(roll.bothHome===0,'with every soul home, no cage hangs',roll.bothHome);
   ok(roll.once.first&&roll.once.again===0&&roll.once.mark!=null,'a cage hangs at most once a run',roll.once);
   ok(roll.trialHit===0,'Trial doors, descent doors and the Deep Stair never take the cage',roll.trialHit);
 
