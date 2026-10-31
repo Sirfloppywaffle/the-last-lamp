@@ -17,12 +17,13 @@
 | 4 | The catalogue: themed sets, wall mounts, small things on surfaces (with the art kit, `ART_UPGRADE.md` §3) | #140 | merged | 19.4.0 |
 | A1 | Art pass 1: fire, water, weather (`ART_UPGRADE.md` §4) | #141 | merged | 19.5.0 |
 | 5 | Light and dark indoors; boss trophies | #143 | merged | 19.6.0 |
-| A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | #144 (pilot), #145 (the rest) | pilot merged; the rest open (Criss picked every figure on #145) | 19.7.0 |
-| 6 | The Peddler: a rescued soul with a stall by the stairs | | | 19.8.0 |
-| A3 | Art pass 3: scenery (buildings, ground, props) | | | 19.9.0 |
-| 7 | The village: decorations, paths, paint, Keepers' huts | | | 19.10.0 |
-| 8 | The Hearth Beacon: the rain thins | | | 19.11.0 |
-| 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.12.0 |
+| A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | #144 (pilot), #145 (the rest) | merged | 19.7.0 |
+| — | The Lodge from Criss's playtest: movable sconces, the Grimoire's podium, rugs under furniture | #146 | merged | 19.8.0 |
+| 6 | The Peddler: a rescued soul with a stall by the stairs | #148 | open (Criss picked figure A and barrow 1) | 19.9.0 |
+| A3 | Art pass 3: scenery (buildings, ground, props) | | | 19.10.0 |
+| 7 | The village: decorations, paths, paint, Keepers' huts | | | 19.11.0 |
+| 8 | The Hearth Beacon: the rain thins | | | 19.12.0 |
+| 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.13.0 |
 | 10 | Release v20.0.0 | | | 20.0.0 |
 
 **Order matters.** Never start a step until the previous PR is merged into `main`. The art passes (A1 to A3, Criss on #139: each a middle-number bump, placed before the step that leans on it) are built from `expansion/ART_UPGRADE.md`; their prompts are in §5 below, beside the steps.
@@ -187,6 +188,8 @@ Numbers marked *shape* are for playtest.
 
 **Teach:** a tip, a rules line, a Grimoire entry. **Test** `tests/t/peddler.test.js`: he only appears once freed; stock survives closing and reopening the town, and changes only after a run ends; buying a blueprint unlocks the set; dev mode never writes.
 
+- *As built (#148):* his barrow is two `#` tiles west of the Head-frame, (7, 10) and (8, 10), from PixelLab (one-direction object, 64 candidates at 32 on the town palette); he stands **beside** it at (9, 10), mirroring Voss on the other side of the frame, because its awning would hide him behind it; you stand at (9, 11). Shut, it is the same rows with nothing on it and a torn hem. Wares (`PEDDLER_WARES`, *shape*): the three locked sets' blueprints for 3, 4 and 5 curios, and four **rare dyes** (Drowned Green, Wreck-Gilt, Bone-White, Pearl) for 20 to 25 tallow; a rare dye bought joins the Dye button's cycle on every piece it changes (`dyeWays()`), after the piece's own, and costs `DYE_COST` to put on like any other. The stock is kept in `ll-town.wares` once rolled, so a buy shows "Sold" instead of pulling in a fourth. The Grimoire entry is a list of the souls freed from cages on its Kits tab (??? while caged). With three souls, the cage roll's `cagePool()` has one more name, so a seed that caged the Toothmonger before may cage the Peddler now (the door it hangs on is unchanged). His figure followed A2's way: four candidates on #148, Criss picked A (the big pack and the glass float) and barrow 1, then the walk and idle from the templates (`TOWN_FIG.peddler`; see `ART_UPGRADE.md` §4's note on locking the head after converting). Spend: 20 generations. `town.test.js` now counts 96 sprite frames (eight figures) and steers north up column 15, since column 8 meets the barrow.
+
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 6) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 6 exactly as the runbook says, following its §4 workflow; draw the Peddler the way art pass A2 drew the Keepers and souls (expansion/ART_UPGRADE.md §4, Art 2, and its “Learned” notes): candidates on a contact sheet for Criss to pick before building on one, then the pick at game scale. Log him in ART_UPGRADE.md §6. Tick the status table (A2 is #144 and #145). End with the prompt for art pass A3.
 
@@ -195,7 +198,7 @@ Numbers marked *shape* are for playtest.
 **Build:** `expansion/ART_UPGRADE.md` §4, Art 3: the buildings with their ruined, restored and lit states from one base each, the ground's tiles and edges, trees, fences, headstones, braziers, the Head-frame. `TOWN_MAP`, doors and keep tiles do not move. May split into A3a (buildings) and A3b (ground and props), each its own PR and the same version. **Test:** `town.test.js`, `townbuild.test.js`, `townGift.test.js` untouched; shots of the whole square.
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A3) and expansion/ART_UPGRADE.md. Build art pass A3 exactly as ART_UPGRADE.md §4 says, through runbook §3, following the runbook's §4 workflow. Log every piece in ART_UPGRADE.md §6. Tick the status table. End with the prompt for step 7.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A3) and expansion/ART_UPGRADE.md. Build art pass A3 exactly as ART_UPGRADE.md §4 says, through runbook §3, following the runbook's §4 workflow: candidates on a contact sheet for Criss to pick before building on them, then the picks at game scale in the square. The Peddler's barrow (step 6, `PEDDLER_BARROW`) is already from PixelLab: leave it unless it clashes with the new buildings. Log every piece in ART_UPGRADE.md §6. Tick the status table (step 6 is #148). End with the prompt for step 7.
 
 ### Step 7: The village (Claude: Sonnet 5.5, high)
 

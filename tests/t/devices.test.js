@@ -302,9 +302,11 @@ const DEV=[
     if(!giftTip||giftTip.x<0||giftTip.y<0||giftTip.x+giftTip.width>w+1||giftTip.y+giftTip.height>h+1||JSON.stringify(beforeGift)!==JSON.stringify(afterGift))console.log('FAIL '+nm+': gift inspection shifts board or leaves screen');
     /* step 7: the Toothmonger's stall and the Drowned Oar, with both souls home (developer mode: nothing is written). Every trade
        and every action is thumb-sized and reachable; then the cage on a landing */
-    for(const card of ['stall','oar']){
-      await p.evaluate(c=>{const T=__t.townData(); T.rescued=['croupier','toothmonger']; T.res={timber:500,iron:500,tallow:500,curios:50};
-        __t.townOpen(); if(c==='stall')__t.townStallCard(); else __t.townOar();},card);
+    /* Expansion 4, step 6: the Peddler's barrow, his three wares */
+    for(const card of ['stall','oar','peddler']){
+      await p.evaluate(c=>{const T=__t.townData(); T.rescued=['croupier','toothmonger','peddler']; T.res={timber:500,iron:500,tallow:500,curios:50};
+        __t.townOpen(); if(c==='stall')__t.townStallCard(); else if(c==='peddler')__t.townPeddlerCard(); else __t.townOar();},card);
+      if(card==='peddler'&&await p.locator('#mChoices button').count()!==3)console.log('FAIL '+nm+': the Peddler shows three wares');
       for(const button of await p.locator('#mChoices button, #mActions button').all()){
         await button.scrollIntoViewIfNeeded();
         const r=await button.boundingBox();
