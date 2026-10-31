@@ -179,6 +179,16 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.setDev(false); T.townReset(); out.back=T.townData().trips===7&&T.townData().blueprints.length===0&&T.townData().dyes.length===0;
     return out;});
   ok(dev.buy===''&&dev.same&&dev.back,'developer mode buys and turns the stock over in its own copy, and never writes',dev);
+  /* developer mode can bring him home from his shut barrow's card, to try it, and still writes nothing */
+  const home=await p.evaluate(()=>{const T=__t, out={};
+    const Tn=T.townData(); Tn.rescued=[]; T.townSave(); const before=localStorage.getItem('ll-town');
+    T.townSoulCard('peddler'); out.plain=[...document.querySelectorAll('#mActions button')].some(b=>/developer/.test(b.textContent)); T.closeModal();
+    T.setDev(true); T.townReset(); T.townOpen(); T.townSoulCard('peddler');
+    const btn=[...document.querySelectorAll('#mActions button')].find(b=>/Bring him home/.test(b.textContent)); out.btn=!!btn; if(btn)btn.click();
+    out.crowd=T.TWN.crowd.some(e=>e.k==='peddler'); out.title=document.querySelector('#mTitle').textContent; out.wares=document.querySelectorAll('#mChoices button').length;
+    T.closeModal(); T.townClose(); out.same=localStorage.getItem('ll-town')===before; T.setDev(false); T.townReset(); out.real=T.townRescued('peddler');
+    return out;});
+  ok(!home.plain&&home.btn&&home.crowd&&home.wares===3&&home.same&&!home.real,'developer mode brings him home from his shut barrow, in its own copy only',home);
 
   ok(errs.length===0,'no page errors',errs);
   await b.close();

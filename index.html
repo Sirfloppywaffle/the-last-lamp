@@ -15048,8 +15048,10 @@ function townBark(k,keep){const S=TOWN_SOULS[k]; let n=TWN.said[k]|0; if(!keep||
 function townSoulCard(k){
   TWN.path=null; TWN.goal=null; TWN.ptr=null;
   const S=TOWN_SOULS[k]; if(!S)return;
+  /* developer mode can bring a soul home at once, into its own copy of the town only (rule 24), to try their place */
   if(!townRescued(k)){showModal({title:S.act,body:S.ruin+'<br><span class="statline">Free '+S.who+' from a cage on a landing, after floor 2, 3 or 4, and '+S.place+' opens.</span>',
-    actions:[{label:'Leave',primary:true,fn:closeModal}]}); return;}
+    actions:[{label:'Leave',primary:true,fn:closeModal}].concat(devOn?[{label:'Bring '+S.him+' home (developer mode)',fn:()=>{const T=townData(); T.rescued=(T.rescued||[]).concat(k);
+      closeModal(); townArt(); townKeepers(); townSoulCard(k);}}]:[])}); return;}
   if(k==='croupier')townOar(); else if(k==='peddler')townPeddlerCard(); else townStallCard();
 }
 function townCardTop(){$('#mActions').classList.add('town-workshop-actions'); $('#modal .box').scrollTop=0; moreCue();}
