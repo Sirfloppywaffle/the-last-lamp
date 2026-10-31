@@ -105,6 +105,8 @@ Freed from a cage like the other souls, he keeps a barrow by the Head-frame. He 
 | Dye: Bone-White | 20 tallow |
 | Dye: Pearl | 20 tallow |
 
+### Every piece
+
 | Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |
 |---|---|---|---|---|---|---|---|
 | Rotted Ship-Planks | Lodge | Floor | free | the room |  |  |  |

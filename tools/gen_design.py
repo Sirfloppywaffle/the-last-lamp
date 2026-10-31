@@ -64,6 +64,7 @@ if 'LODGE_ITEMS' in D:
         for k,v in D['PEDDLER_WARES'].items():
             w("| %s | %s |"%(('Blueprint: '+D['LODGE_SETS'][v['bp']]['n']) if v.get('bp') else ('Dye: '+D['LODGE_DYES'][v['dye']]['n']),nm(v['cost'])))
         w("")
+    w("### Every piece\n")
     w("| Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |\n|---|---|---|---|---|---|---|---|")
     for v in D['LODGE_ITEMS'].values():
         piece=v['k'] in ('furn','trophy')
