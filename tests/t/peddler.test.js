@@ -37,8 +37,13 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.costs=Object.values(W).every(v=>v.bp?v.cost.curios>0&&Object.keys(v.cost).length===1:v.cost.tallow>0&&Object.keys(v.cost).length===1);
     /* no trophy and nothing drawn without dyes ever takes one */
     out.noTrophy=rare.every(k=>!T.dyeTouches('keeper',k)&&!T.dyeTouches('primordial',k));
+    /* a town saved before the barrow, with a brazier and a fence where it now stands and you standing on it: both come up and
+       pay back, and you stand at the spawn */
+    const fx=T.townFix({res:{timber:0,iron:0,tallow:0,curios:0},px:7.5,py:10.5,decos:[{id:'brazier',c:7,r:10},{id:'fence',c:8,r:10},{id:'brazier',c:5,r:13}]});
+    out.fix={n:fx.decos.length,iron:fx.res.iron,tallow:fx.res.tallow,px:fx.px,py:fx.py};
     T.townClose();
     return out;});
+  ok(g.fix.n===1&&g.fix.iron>=8&&g.fix.tallow>=6&&!(g.fix.px===7.5&&g.fix.py===10.5),'pieces saved where the barrow now stands come up and pay back; you are moved off it',g.fix);
   ok(g.salt===27&&g.n===3,'the Peddler rolls on SALT.peddler = 27, three wares at a time',g);
   ok(g.box.length===2&&g.box.every(Boolean)&&g.rows,'his barrow is two solid tiles of the square, and the map stays 24 wide',g);
   ok(g.keep&&g.free&&g.reach&&g.keepOK,'where he stands and the tile before his barrow are kept clear and reachable',g);
