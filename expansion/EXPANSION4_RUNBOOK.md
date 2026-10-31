@@ -198,7 +198,7 @@ Numbers marked *shape* are for playtest.
 **Build:** `expansion/ART_UPGRADE.md` §4, Art 3: the buildings with their ruined, restored and lit states from one base each, the ground's tiles and edges, trees, fences, headstones, braziers, the Head-frame. `TOWN_MAP`, doors and keep tiles do not move. May split into A3a (buildings) and A3b (ground and props), each its own PR and the same version. **Test:** `town.test.js`, `townbuild.test.js`, `townGift.test.js` untouched; shots of the whole square.
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A3) and expansion/ART_UPGRADE.md. Build art pass A3 exactly as ART_UPGRADE.md §4 says, through runbook §3, following the runbook's §4 workflow. Log every piece in ART_UPGRADE.md §6. Tick the status table. End with the prompt for step 7.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A3) and expansion/ART_UPGRADE.md. Build art pass A3 exactly as ART_UPGRADE.md §4 says, through runbook §3, following the runbook's §4 workflow: candidates on a contact sheet for Criss to pick before building on them, then the picks at game scale in the square. The Peddler's barrow (step 6, `PEDDLER_BARROW`) is already from PixelLab: leave it unless it clashes with the new buildings. Log every piece in ART_UPGRADE.md §6. Tick the status table (step 6 is #148). End with the prompt for step 7.
 
 ### Step 7: The village (Claude: Sonnet 5.5, high)
 
