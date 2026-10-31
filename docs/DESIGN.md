@@ -87,13 +87,13 @@ The Lodge's pieces come in five themed sets, plus its own floors, walls and fire
 | Blushed | `f`→`j`, `g`→`k`, `y`→`l` |
 | Ash | `f`→`3`, `g`→`4`, `y`→`1`, `d`→`e`, `u`→`3` |
 | Drowned Green (rare: the Peddler) | `5`→`t`, `6`→`y`, `7`→`f`, `8`→`u`, `9`→`e`, `o`→`e`, `p`→`g` |
-| Wreck-Gilt (rare: the Peddler) | `4`→`p`, `7`→`o`, `8`→`9`, `9`→`a`, `o`→`p`, `p`→`b` |
+| Wreck-Gilt (rare: the Peddler) | `4`→`p`, `5`→`6`, `6`→`o`, `7`→`p`, `8`→`9`, `9`→`a`, `o`→`b`, `p`→`b` |
 | Bone-White (rare: the Peddler) | `5`→`3`, `6`→`e`, `7`→`d`, `8`→`d`, `9`→`c`, `o`→`c`, `p`→`c` |
 | Pearl (rare: the Peddler) | `f`→`e`, `g`→`d`, `y`→`3`, `k`→`c`, `j`→`d` |
 
 ### The Peddler's wares (Expansion 4, step 6)
 
-Freed from a cage like the other souls, he keeps a barrow by the Head-frame. He shows **3** of what you lack, rolled on `SALT.peddler = 27` keyed on `ll-town.trips` (+1 whenever a run ends, won or lost), and keeps that stock in `ll-town.wares` until the next run ends. A blueprint opens its set for good; a rare dye joins every piece it changes (a dozen or more of its pixels), and putting it on costs tallow like any dye.
+Freed from a cage like the other souls, he keeps a barrow by the Head-frame. He shows **3** of what you lack, rolled on `SALT.peddler = 27` keyed on `ll-town.trips` (+1 whenever a run ends, won or lost), and keeps that stock in `ll-town.wares` until the next run ends. A blueprint opens its set for good; a rare dye joins every piece it changes (a dozen or more of its pixels, and a tenth of them), and putting it on costs tallow like any dye.
 
 | Ware | Price |
 |---|---|

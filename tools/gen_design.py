@@ -59,7 +59,7 @@ if 'LODGE_ITEMS' in D:
         w("")
     if 'PEDDLER_WARES' in D:
         w("### The Peddler's wares (Expansion 4, step 6)\n")
-        w("Freed from a cage like the other souls, he keeps a barrow by the Head-frame. He shows **%s** of what you lack, rolled on `SALT.peddler = %s` keyed on `ll-town.trips` (+1 whenever a run ends, won or lost), and keeps that stock in `ll-town.wares` until the next run ends. A blueprint opens its set for good; a rare dye joins every piece it changes (a dozen or more of its pixels), and putting it on costs tallow like any dye.\n"%(D['PEDDLER_N'],D['SALT']['peddler']))
+        w("Freed from a cage like the other souls, he keeps a barrow by the Head-frame. He shows **%s** of what you lack, rolled on `SALT.peddler = %s` keyed on `ll-town.trips` (+1 whenever a run ends, won or lost), and keeps that stock in `ll-town.wares` until the next run ends. A blueprint opens its set for good; a rare dye joins every piece it changes (a dozen or more of its pixels, and a tenth of them), and putting it on costs tallow like any dye.\n"%(D['PEDDLER_N'],D['SALT']['peddler']))
         w("| Ware | Price |\n|---|---|")
         for k,v in D['PEDDLER_WARES'].items():
             w("| %s | %s |"%(('Blueprint: '+D['LODGE_SETS'][v['bp']]['n']) if v.get('bp') else ('Dye: '+D['LODGE_DYES'][v['dye']]['n']),nm(v['cost'])))

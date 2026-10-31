@@ -12411,7 +12411,7 @@ const LODGE_DYES={
   /* Expansion 4, step 6: the rare colourways, bought once from the Peddler (ll-town.dyes) and then free to use like any other on
      every piece they change (dyeWays()): the brine's greens, a wreck's gilt, bone, and pearl for what is coral */
   drown:{n:'Drowned Green',rare:true,sw:{5:'t',6:'y',7:'f',o:'e',p:'g',8:'u',9:'e'}},
-  gilt:{n:'Wreck-Gilt',rare:true,sw:{7:'o',o:'p',p:'b',8:'9',9:'a',4:'p'}},
+  gilt:{n:'Wreck-Gilt',rare:true,sw:{5:'6',6:'o',7:'p',o:'b',p:'b',8:'9',9:'a',4:'p'}},
   bone:{n:'Bone-White',rare:true,sw:{5:'3',6:'e',7:'d',o:'c',p:'c',8:'d',9:'c'}},
   pearl:{n:'Pearl',rare:true,sw:{f:'e',g:'d',y:'3',k:'c',j:'d'}}};
 /* its letters as colours, for tRows(); made when first asked for, once PX is there */
@@ -12427,14 +12427,14 @@ function blueprintsFix(b){return [...new Set((Array.isArray(b)?b:[]).filter(k=>L
 /* Expansion 4, step 6: the rare dyes bought from the Peddler, kept in ll-town.dyes */
 function rareDyesFix(b){return [...new Set((Array.isArray(b)?b:[]).filter(k=>LODGE_DYES[k]&&LODGE_DYES[k].rare))];}
 function dyeOwned(k,T){if(!LODGE_DYES[k])return false; if(!LODGE_DYES[k].rare||devOn)return true; T=T||townData(); return Array.isArray(T.dyes)&&T.dyes.includes(k);}
-/* does a rare dye change this piece? Only if enough of its front is drawn in the letters it swaps (a dozen pixels), so a
-   bone-white that touches two rivets is never offered. Worked out once a piece and dye */
+/* does a rare dye change this piece? Only if enough of its front is drawn in the letters it swaps (a dozen pixels, and a tenth
+   of it), so a pearl that touches a pew's two green nails is never offered. Worked out once a piece and dye */
 const DYE_TOUCH={};
 function dyeTouches(id,k){
   const key=id+'|'+k; if(key in DYE_TOUCH)return DYE_TOUCH[key];
   const I=LODGE_ITEMS[id], D=LODGE_DYES[k], R=id==='chair'?LODGE_CHAIR:LODGE_ROWS[id];
-  let n=0; if(I&&D&&R&&R[0]&&I.dyes&&I.dyes.length)for(const r of R[0])for(const ch of r)if(D.sw[ch])n++;
-  return DYE_TOUCH[key]=n>=12;
+  let n=0, all=0; if(I&&D&&R&&R[0]&&I.dyes&&I.dyes.length)for(const r of R[0])for(const ch of r){if(ch==='.')continue; all++; if(D.sw[ch])n++;}
+  return DYE_TOUCH[key]=n>=12&&n>=all*.1;
 }
 /* every colourway a piece can wear: its own list, then each rare dye that changes it. owned: only the ones you hold */
 function dyeWays(id,owned){
