@@ -12707,9 +12707,9 @@ function townSyncBuildings(){
     }
   }
   /* step 7: the Drowned Oar is restored, with both windows lit, and the stall opens, once the one who kept it is home */
-  const T=townData(), oar=TOWN_HOUSES[TOWN_SOULS.croupier.house], oo=townRescued('croupier',T), so=townRescued('toothmonger',T)+'|'+townRescued('peddler',T);
+  const T=townData(), oar=TOWN_HOUSES[TOWN_SOULS.croupier.house], oo=townRescued('croupier',T), so=(townRescued('toothmonger',T)?1:0)+(townRescued('peddler',T)?2:0);
   if(oar.ruin===oo){oar.ruin=!oo; oar.lit=oar.win.map((w,i)=>oo||i===oar.win.length-1); changed=true;}
-  /* and the Peddler's barrow (Expansion 4, step 6) */
+  /* and the Peddler's barrow (Expansion 4, step 6): one number for both, since this runs every frame */
   if(TOWN_STALL!==so){TOWN_STALL=so; changed=true;}
   /* step 8: which shrines are raised and whose candle burns, and what each pool holds */
   const sig=townDressSig(T); if(sig!==TOWN_SIG){TOWN_SIG=sig; changed=true;}
