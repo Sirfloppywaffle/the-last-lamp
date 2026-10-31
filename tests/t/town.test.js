@@ -45,8 +45,9 @@ const shots=process.argv[3]||'.';
     }
     const v=Object.values(sig); out.distinct=new Set(v).size===v.length;
     return out;});
-  /* step 7 adds the two rescued souls (the Croupier, the Toothmonger) to the compiled figures: seven in all */
-  ok(art.kits.length===7&&art.frames===84&&art.sizes&&art.heads,'five Keepers and two rescued souls, four facings, three steps, each 16 by 24',art);
+  /* step 7 adds the two rescued souls (the Croupier, the Toothmonger) to the compiled figures, and Expansion 4's step 6 a third
+     (the Peddler): eight in all */
+  ok(art.kits.length===8&&art.frames===96&&art.sizes&&art.heads,'five Keepers and three rescued souls, four facings, three steps, each 16 by 24',art);
   ok(art.alpha,'no anti-aliasing: every pixel of every Keeper is fully there or not at all',art);
   ok(art.outline,'every Keeper has a dark outline',art);
   ok(art.distinct,'each Keeper looks different',art);
@@ -101,7 +102,8 @@ const shots=process.argv[3]||'.';
   await p.screenshot({path:shots+'/town-steer.png'});
   await p.mouse.up();
   ok(steer.steer&&steer.x>12.8&&steer.face==='r','hold and drag steers the Keeper',steer);
-  const wall=await p.evaluate(()=>{const T=__t.TWN, P=T.p; P.x=8.5; P.y=13; T.path=null;
+  /* up column 15 to the cemetery's east fence (column 8 meets the Peddler's barrow first, Expansion 4 step 6) */
+  const wall=await p.evaluate(()=>{const T=__t.TWN, P=T.p; P.x=15.5; P.y=13; T.path=null;
     T.ptr={id:1,x0:0,y0:0,x:0,y:-80,t0:0,steer:true}; for(let i=0;i<80;i++)__t.townStep(.05); T.ptr=null;
     return {y:+P.y.toFixed(2), free:__t.townFree(P.x,P.y)};});
   ok(wall.free&&wall.y>5.9&&wall.y<6.5,'steering north stops at the cemetery fence, never inside it',wall);

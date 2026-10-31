@@ -1,4 +1,5 @@
-// Saltmouth, art pass A2 (expansion/ART_UPGRADE.md §4, Art 2): every Keeper and both rescued souls drawn whole by PixelLab.
+// Saltmouth, art pass A2 (expansion/ART_UPGRADE.md §4, Art 2): every Keeper and every rescued soul drawn whole by PixelLab
+// (the Peddler joined them in Expansion 4, step 6).
 // - Each figure comes from TOWN_FIG: a walk and an idle for each facing drawn (d, u, r; l is r mirrored), every frame on the
 //   figure's own palette letters (TOWN_KITS[k].pal, or a soul's art.pal) or the outline's 0, no bigger than 16 by 24.
 // - Compiled, every frame is 16 by 24, fully there or not at all, its edge pure dark; what glows (em) shows through the dark on
@@ -37,7 +38,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       o.glow=!em||has(G.idle.d[0]);
       o.emOnly=!em||['d','u','r'].every(f=>has(G.idle[f][0])||!G.walk[f].concat(G.idle[f]).some(has));}
     return out;});
-  ok(Object.keys(d).sort().join()===['lamplighter','whaler','occultist','galvanist','bellringer','croupier','toothmonger'].sort().join(),'every Keeper and both souls are drawn whole',Object.keys(d));
+  ok(Object.keys(d).sort().join()===['lamplighter','whaler','occultist','galvanist','bellringer','croupier','toothmonger','peddler'].sort().join(),'every Keeper and every soul (the Peddler too, Expansion 4 step 6) are drawn whole',Object.keys(d));
   for(const [k,o] of Object.entries(d)){
     ok(/^6,6,6;4,4,4$/.test(o.n),k+': a walk of six frames and an idle of four, for each facing drawn',o);
     ok(o.head.every(n=>n===1),k+': the head is the same in every frame of a facing: only the body walks and breathes',o);
@@ -96,12 +97,12 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   await p.screenshot({path:shots+'/figure-square.png'});
   ok(sq.kit==='lamplighter','the square opens with Ambrose carried',sq);
 
-  /* 3b. the lineup at game scale for the PR: every freed Keeper and both souls (developer mode frees them, in its own copy) stood
+  /* 3b. the lineup at game scale for the PR: every freed Keeper and every soul (developer mode frees them, in its own copy) stood
      in a row below Ambrose on the deck, more than two tiles off so they face you (nearer, a figure turns to Ambrose); then every
      figure's four facings at the square's own scale (TWN.k device pixels an art pixel), on its night */
-  const ln=await p.evaluate(()=>{const T=__t, W=T.TWN, D=T.townData(); D.rescued=['croupier','toothmonger']; T.townKeepers(); T.townFrame(1/60);
-    const order=['whaler','occultist','galvanist','bellringer','croupier','toothmonger'];
-    W.crowd.forEach(e=>{const i=order.indexOf(e.k); e.x=W.p.x+(i-2.5)*1.15; e.y=W.p.y+2.3; e.base=Math.round(e.y*16); e.face='d';});
+  const ln=await p.evaluate(()=>{const T=__t, W=T.TWN, D=T.townData(); D.rescued=['croupier','toothmonger','peddler']; T.townKeepers(); T.townFrame(1/60);
+    const order=['whaler','occultist','galvanist','bellringer','croupier','toothmonger','peddler'];
+    W.crowd.forEach(e=>{const i=order.indexOf(e.k); e.x=W.p.x+(i-3)*1.15; e.y=W.p.y+2.3; e.base=Math.round(e.y*16); e.face='d';});
     /* each figure's own pool of light goes with it (townKeepers() laid them at the posts) */
     const A=T.townArt(); A.lights=A.lightsD.concat(W.crowd.map(e=>({x:Math.round(e.x*16),y:Math.round((e.y-.82)*16)+2,r:22,f:.35})));
     W.crowd.sort((a,b)=>a.base-b.base); W.t=.1; T.townFrame(1/60); return W.crowd.map(e=>e.k).sort().join();});
@@ -115,7 +116,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const sb=await p.evaluate(()=>{const r=document.getElementById('figScale').getBoundingClientRect(); return {x:0,y:0,width:r.width,height:r.height};});
   await p.screenshot({path:shots+'/figure-scale.png',clip:sb});
   await p.evaluate(()=>document.getElementById('figScale').remove());
-  ok(ln===['bellringer','croupier','galvanist','occultist','toothmonger','whaler'].join(),'every freed Keeper and both souls stand in the square',ln);
+  ok(ln===['bellringer','croupier','galvanist','occultist','peddler','toothmonger','whaler'].join(),'every freed Keeper and every soul stand in the square',ln);
 
   /* 4. a dark Lodge room: nothing lit, so his lantern is the only light */
   const dk=await p.evaluate(()=>{const T=__t, W=T.TWN, D=T.townData(); D.res={timber:900,iron:900,tallow:900,curios:90}; T.townRestoreLodge();
