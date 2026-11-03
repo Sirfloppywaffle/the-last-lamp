@@ -108,6 +108,10 @@ Background: runbook ยง3 (the step 2 code) and the Saltmouth row of `AGENTS.md` ย
 - [ ] **A building's colourway** is a swap in `TOWN_PAINTS` (letters to letters; never `a b c`, the glow); a new building that can be painted is a `TOWN_PAINTABLE` row (`up(T)`: when it stands) and its house needs its `TOWN_BLD` panes, which a swap never touches.
 - [ ] **A Keeper's hut** is `hut: <kit>` on a 2 by 2 `snap` piece; its door is the tile below its right half, kept like a station: anything that places, checks or saves pieces already reads `townHutDoors()` (`townFits()`, `townReaches()`, `townKeepOK()`, `townFix()`). `townKeepers()` stands the Keeper at the door unless a chore has them at work.
 
+- A path is a floor: `TOWN_AT` holds what stands on a tile and `TOWN_PAT` the path under it, so `townDecoAt(x,y)` answers a piece first, and `townDecoAt(x,y,true|false)` asks for only a path or only a piece. A piece conflicts with pieces, a path with paths; `townFix()` keys its `used` set the same way. `bldTap` sets a chosen piece down when the tap lands on a path (or a path when it lands on a piece).
+- Check any new Wang set as a lone tile, a pair, an L and a 2 by 2, not only a big block; a cell of one path all round takes that path's own `1111` tile in `townWangSel()`.
+- Developer mode: the tray's `#townLight` chip turns off the square's darkness (`window.devNoDark`, the same flag as the pause menu's Darkness switch).
+
 ## Tests
 
 - [ ] **`tests/hook.js`:** add each function a test calls to the `HOOK` object, on the line for your step (functions by name, tables as getters: `get TOWN_X(){return TOWN_X}`).

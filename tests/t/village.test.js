@@ -141,6 +141,33 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(/^Locked/.test(t.say)&&t.pick===null,'tapping a shut chip says why and chooses nothing',t);
   ok(t.paintTab&&t.tab==='paint'&&/Nothing stands|Paint:/.test(t.msg),'Paint sits in the tray beside Pieces and Storage',t);
 
+  /* 6. a path is a floor: a piece stands on it, a tap with a piece chosen sets it down and a tap with nothing lifts what is on top;
+     a path is never laid over a path; and a cell of one path all round is that path's own full tile, not the cobbles */
+  const fl=await p.evaluate(()=>{const T=__t, o={}; T.setDev(true); T.townReset(); T.townOpen(); const D=T.townData(); D.res={timber:900,iron:900,tallow:900,curios:90}; D.decos=[]; T.townBuildSet(true);
+    o.lay=T.townPlace('shell',2,13)===''; o.lay2=T.townPlace('shell',3,13)===''; T.townPlace('shell',2,14); T.townPlace('shell',3,14);
+    o.again=T.townCanPlace('shell',2,13); o.can=T.townCanPlace('bench1',2,13);
+    T.TWN.tab='pieces'; T.TWN.pick='bench1'; T.townBuildTap(2,13);
+    const here=T.townData().decos.filter(d=>d.c===2&&d.r===13).map(d=>d.id).sort().join(); o.here=here; o.lift=!!T.TWN.lift; o.at=T.townDecoAt(2,13).id;
+    /* nothing chosen: the bench on top is lifted, not the path */
+    T.TWN.pick=null; T.townBuildTap(2,13); o.lifted=T.TWN.lift&&T.TWN.lift.id; if(T.TWN.lift)T.bldCancel&&T.bldCancel();
+    /* a path laid under a piece that stands */
+    o.under=T.townCanPlace('cobble',2,12)===''; T.TWN.pick='cobble'; T.townBuildTap(8,13); o.cob=T.townData().decos.some(d=>d.id==='cobble'&&d.c===8&&d.r===13);
+    const sel=T.townWangSel(3,3,3,3), sel2=T.townWangSel(3,3,3,0), selp=T.townWangSel(7,7,7,7);
+    o.full=sel[0]===T.TOWN_WANG.es&&sel[1]==='1111'; o.part=sel2[0]===T.TOWN_WANG.es&&sel2[1]==='1110'; o.p2=selp[0]===T.TOWN_WANG.ep2&&selp[1]==='1111';
+    T.townBuildSet(false); T.townClose(); T.setDev(false); return o;});
+  ok(fl.lay&&fl.lay2&&/^Something stands there/.test(fl.again)&&fl.can==='','a bench may stand on a laid path, and a path may not be laid on a path',fl);
+  ok(fl.here==='bench1,shell'&&!fl.lift&&fl.at==='bench1','a tap with a bench chosen sets it on the path instead of lifting the path',fl);
+  ok(fl.lifted==='bench1'&&fl.under&&fl.cob,'with nothing chosen the bench is lifted, and a path may be laid under a piece',fl);
+  ok(fl.full&&fl.part&&fl.p2,'a cell all of one path is that path’s own full tile, never the cobbles',fl);
+
+  /* 7. developer mode: a chip in the tray turns the town's darkness off to see by; shut in normal play */
+  const dk=await p.evaluate(()=>{const T=__t, o={}; T.setDev(false); T.townReset(); T.townOpen(); T.townBuildSet(true);
+    o.hidden=document.getElementById('townLight').hidden; T.setDev(true); T.townTrayUI(); o.shown=!document.getElementById('townLight').hidden;
+    document.getElementById('townLight').click(); o.off=window.devNoDark===true; T.townDraw(); o.label=document.getElementById('townLight').textContent;
+    document.getElementById('townLight').click(); o.on=window.devNoDark===false; window.devNoDark=false;
+    T.townBuildSet(false); T.townClose(); T.setDev(false); return o;});
+  ok(dk.hidden&&dk.shown&&dk.off&&dk.on,'a developer-only chip turns the darkness off and on in the square',dk);
+
   /* developer mode wrote nothing to ll-town */
   const after=await p.evaluate(()=>localStorage.getItem('ll-town'));
   ok(typeof after==='string'||after===null,'ll-town is readable');
