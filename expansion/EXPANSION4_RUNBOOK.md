@@ -20,7 +20,7 @@
 | A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | #144 (pilot), #145 (the rest) | merged | 19.7.0 |
 | — | The Lodge from Criss's playtest: movable sconces, the Grimoire's podium, rugs under furniture | #146 | merged | 19.8.0 |
 | 6 | The Peddler: a rescued soul with a stall by the stairs | #148 | merged | 19.9.0 |
-| A3 | Art pass 3: scenery (buildings, ground, props) | #PR | open (candidates on the contact sheets, waiting for Criss's picks) | 19.10.0 |
+| A3 | Art pass 3: scenery (buildings, ground, props) | #149 | open (candidates on the contact sheets, waiting for Criss's picks) | 19.10.0 |
 | 7 | The village: decorations, paths, paint, Keepers' huts | | | 19.11.0 |
 | 8 | The Hearth Beacon: the rain thins | | | 19.12.0 |
 | 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.13.0 |
