@@ -541,6 +541,8 @@ input[type=range]::-moz-range-track {
 .town-tb:disabled{opacity:.4;cursor:default}
 .town-tb-go{color:var(--bone);border-color:var(--tallow)}
 /* six buttons (Place, turn, Dye, Cancel, Store, Salvage) have to fit 318 px and a 360 px phone */
+/* six buttons since the Paint tab (Expansion 4, step 7): tighter on a narrow phone so the bar fits 360 px */
+@media (max-width:480px){#townTools .town-tb{padding:0 6px;min-width:44px}}
 #townLiftBar{gap:3px}#townLiftBar .town-tb{min-width:46px;padding:0 4px;font-size:.6rem;letter-spacing:.02em}
 /* ⟳ (Expansion 4, step 2) is held to turn back: no text selection or callout under the thumb */
 #townLiftBar #townTurn{min-width:44px;font-size:1.15rem;letter-spacing:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
