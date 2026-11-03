@@ -13276,7 +13276,8 @@ function townFix(t){
   for(const d of Array.isArray(t.decos)?t.decos:[]){
     const D=d&&TOWN_DECOS[d.id]; if(!D)continue;
     const c=d.c|0, r=d.r|0, f=faceFix(d.f,D), tiles=decoTiles(d.id,c,r,f);
-    if(!tiles.every(([x,y])=>townBuildable(x,y,!D.path)&&!used.has(y*TOWN_W+x))){
+    const UK=D.path?1e6:0;
+    if(!tiles.every(([x,y])=>townBuildable(x,y,!D.path)&&!used.has(UK+y*TOWN_W+x))){
       for(const k in D.cost)o.res[k]+=D.cost[k];
       /* it stood on a Keeper's place (step 5), which came after it: say so */
       if(tiles.some(([x,y])=>(townKept(x,y)&&townCh(x,y)!=='=')||townCh(x,y)==='S'))moved.push(D.n);
@@ -13284,7 +13285,7 @@ function townFix(t){
     /* a hut (step 7) stands only with open ground before its door, and one to a Keeper */
     if(D.hut){const dx=c+1, dy=r+D.h, ok=townBuildable(dx,dy,false)&&!used.has(dy*TOWN_W+dx)&&!o.decos.some(e=>TOWN_DECOS[e.id].hut===D.hut);
       if(!ok){for(const k in D.cost)o.res[k]+=D.cost[k]; moved.push(D.n); continue;}}
-    for(const [x,y] of tiles)used.add(y*TOWN_W+x);
+    for(const [x,y] of tiles)used.add(UK+y*TOWN_W+x);
     o.decos.push(freeFix(Object.assign({},d,{c,r,f}),D,o.decos,townTouchOK));
   }
   /* nothing built may wall a Keeper in, even when each piece was fine when it went up (step 5). The pieces that stand are kept
@@ -13406,7 +13407,7 @@ function townData(){
 function townSave(){if(devOn)return; store.set('ll-town',townData());}
 function townCh(x,y){return x<0||y<0||x>=TOWN_W||y>=TOWN_H?'^':TOWN_MAP[y][x];}
 /* tiles a built piece stands on (y*TOWN_W+x), and which piece covers each tile; both rebuilt by townDecoSync() */
-const TOWN_BLOCK=new Set(), TOWN_AT=new Map();
+const TOWN_BLOCK=new Set(), TOWN_AT=new Map(), TOWN_PAT=new Map();
 function townSolidOut(x,y){return TOWN_SOLID.indexOf(townCh(x,y))>=0||(x>=0&&y>=0&&x<TOWN_W&&y<TOWN_H&&TOWN_BLOCK.has(y*TOWN_W+x));}
 /* inside the Lodge (step 9) the walk, the paths and every check run on the room instead of the square */
 function townSolid(x,y){return TWN.inside?lodgeSolid(x,y):townSolidOut(x,y);}
@@ -13414,7 +13415,10 @@ function townSolid(x,y){return TWN.inside?lodgeSolid(x,y):townSolidOut(x,y);}
 const LODGE_BLOCK=new Set(), LODGE_AT=new Map();
 function lodgeSolid(x,y){return LODGE_SOLID.indexOf(lodgeCh(x,y))>=0||LODGE_BLOCK.has(y*LODGE_W+x);}
 function lodgeAt(x,y){return x<0||y<0||x>=LODGE_W||y>=LODGE_H?null:LODGE_AT.get(y*LODGE_W+x)||null;}
-function townDecoAt(x,y){return x<0||y<0||x>=TOWN_W||y>=TOWN_H?null:TOWN_AT.get(y*TOWN_W+x)||null;}
+/* what stands on a tile: a piece, else the path laid there. A path is a floor (Expansion 4, step 7), so a bench may stand on it:
+   townDecoAt(x, y, true) asks only for a path, (x, y, false) only for what stands */
+function townDecoAt(x,y,path){if(x<0||y<0||x>=TOWN_W||y>=TOWN_H)return null; const i=y*TOWN_W+x;
+  return path===true?TOWN_PAT.get(i)||null:path===false?TOWN_AT.get(i)||null:TOWN_AT.get(i)||TOWN_PAT.get(i)||null;}
 /* the feet: a small box round where you stand, in tiles */
 function townFree(x,y,S){
   const a=x-.28, b=x+.28, t=y-.22, d=y+.06; S=S||townSolid;
@@ -13587,7 +13591,7 @@ const TOWN_WANG={
     '1100':['3uu42u44444ede34','332u4de4432uu333','4uu344eu44u34uuu','eeu4444u4334ude4','ueeu44ueeu3u4ee2','444434444uu44443','4u4432222222uuuu','44222222222222uu','2222222222222222','22m2222222222222','2222222222222222','2222222lllll2222','222222llmmmm2222','2222lmllmlmml222','222mmlmmmlnnlnn2','nlmmmllllllnllll'],
     '1101':['3uu32eu3444eee34','322u4233322uu333','uuu34uuu34u34uuu','eeu4udeu4334ude4','uee34dde2u344ee2','443u3ee2322u4323','3uu42433uu444uu4','4432uuuu4u34udeu','2222uuue33344ee3','22222uu244443324','222222u4ueu3ee34','2222222ueeu33443','2222222uu2244433','2222222u3uu4uee3','2222222uu33ueeu3','nl2222uuu4u44uu4'],
     '1110':['3uu43u44444dde34','3334udeu332uu333','uuu3uude34u34uuu','eeu4334u443uude4','uee3uue32u344ee2','332u2223322u4323','3eu3uuuuuu444euu','3333eddu4u3434e4','4444edde34342222','ddu42ee244222222','uuu2222242222222','43444u4u22222222','4uuu3eu322222222','24e4332232222222','2u433ee442222nn2','334u433432222lll'],
-    '1111':['3uu32u44444eee34','3324udeu322ue333','uuu3u4ee34u34uuu','eeu3434u443uude4','uee44ee32u343ee2','332u2232322u3323','3ee34uuuuu344uu4','3334eddu4u3uudeu','4444edde34344ee3','edu42ee244443324','uuu32222ueu4ee34','43444u4uueu333u3','4uuu3uu4u3244433','23eu33222u44ude3','2u433ee4433eeeu3','333u433444u44u44']},
+    '1111':['4uu43u344u4eee34','332uuu43333uu343','4uu34u34euu44uuu','ueu433u34434udd4','ued444334u2u4dd2','444432e323224423','2u44eeu32u443eu3','33u44uu4333u43u4','4u4eee344uu43u34','333uu343332uuu43','euu342uu4uu4ee34','44444ud4ueu444u3','4uuu4ud2ue344433','23eu33234444ude3','2u443eu32u44eeu3','333u43u433u44uu4']},
   /* the other candidates, kept as variants (Criss on #151): es2 the first shell set, ep2 tarred panels, ep3 outlined boards */
   es2:{
     '0000':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllllllmmm','llllllnmmllllmmm','lllllnnllnnlmmmm','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
@@ -13605,41 +13609,41 @@ const TOWN_WANG={
     '1100':['44443e4444443edd','44443ed4444443dd','d4333dd44444443e','33344d34d34d4444','444ddeddd34de444','444ddeddd34dd444','443ddlllllld4444','43llllnmmllllm44','lllllnnllnnlmmmm','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
     '1101':['d444444444443edd','44444444444443ed','e44444444444443e','4434444444444444','443dde44d3344444','44444d44d3dde444','44444dd433444444','44444de4d3444444','llll4ed4deed4444','mlmml4444eed4434','mlllll43ddd33434','mllmlml333333444','lllllmlddddd4444','lllmlmlddddd4444','llmmmlm433ed3ee4','nlmmml4d333d3e3d'],
     '1110':['44443e4444443dd4','44443e44444444ed','d43334444444433d','33334e4dd3444444','333dded4d3344444','44344dd4d3dde444','44334eed33d44444','443ddeedd3344444','433d3ed3de44mmmm','43d43333denlmmmm','43343d33dllllllm','44443d33lllllmmm','44444dddmmmmlmmm','444444ddmlmmlmml','444444ddmlnnlnnl','e44444ddlllnllll'],
-    '1111':['d444444444443edd','44444444444443ed','e44444444444443d','4444444444444444','444edd44d3344444','44444444d3dde444','44444ddd33444444','44444dedd3444444','44dd3ed3deed4444','43dd33333eed4434','43333d33ddd33434','44443d3333334444','44443444dddd4444','4444444444dd4444','4444444433ed3ee4','e4444444333d3e3d']},
+    '1111':['d4443dddd4dd4edd','444d3ddd44ddd4dd','d4333d3443ddd43d','433d4l44444dddd4','4434dn4444l3d444','44443m4444nnd444','44e43ee4444444e4','e43d3e3de444443d','d4dd4eddd4443ddd','44ddd4dd444d3ddd','434d4l3dd4343d34','444443d443444444','4444444444dd4444','4444444444dd4444','444444e444e43ee4','e444443de43d3e3d']},
   ep2:{
     '0000':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllllllmmm','llllllnmmllllmmm','lllllnnllnnlmmmm','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '0001':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllm55mm','lmlllmmmn5555555','llllllll5loooooo','llllll55oooooooo','llllln57o5555555','mlmml5oo55nlmmmm','mllll5oo5ollll5m','mllml5oo5olllm5m','lllll5oo5mmmlmmm','lllml5oo5lmmlmml','llmmm5oo5lnnlnnl','nlmmm5oo5llnllll'],
-    '0010':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','55555555nlnnnmmm','oo5oooo5lllllmmm','oolooooo5llllmmm','5555555oo5nlmmmm','mlmmln55oo5lmmmm','mllll755oo5l5llm','mllm5ml5oo5llmmm','llll5ml5oo55lmmm','lllm5ml5oo55lmml','llmm5lm5oo55lnnl','nlmmmll5oo55llll'],
-    '0011':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','5555555555555555','oo7oooooo55ooooo','ooooooooo77ooooo','5555555555555m55','oo5mlnlllnnlmm5m','mo5lllllllllll57','5l5mlmlll5lllm57','5l5l55llmmmmlo5m','5l5ml5llmlmmlm5l','ll5om5mmmlnnln5l','nl5mmllllllnll5l'],
-    '0100':['nllmm5oo5mmmmlnn','nlllm5555mm5mmnn','nlllm5oo5m5o5mmm','mmlll5oo5m5o5mmm','mmlnm5oo5l555mmm','lmlll5oo5lnnnm55','lllll5ooo55555oo','lllll5oooo777577','lllll5oooo7oooo7','mlmmln5ooo7oooo7','mllllll555555555','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmml5ml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '0101':['nllmm57o5mmmmlnn','nlllm57o5mmmmmnn','nlllm5oo5mmmmmmm','mmlll5o75mlmmmmm','mmlnm5775llmmmmm','lmlll5oo5lnnnmmm','lllll5oo57lllmmm','lllll5oo5llllmmm','lllll5775nnlmmmm','mlmml5775nnlmmmm','mllll5775ll5lllm','mllm55o75ll5lmmm','lllll5oo5mmmlmmm','lllml5oo5lmmlmml','llmmm57o5lnnlnnl','nlmmm5oo5llnllll'],
-    '0110':['nllmm5oo57mmmlnn','nll555oo57m5mmnn','nl5o55oo5m5o5mmm','m5ll55oo5m575mmm','mm5n55oo57555mmm','555555oo5777nmm5','ooooooo75777l5oo','ooooooo5o55555o7','55555555o7777777','o5mmlnl5o7777777','5llllll5oo555555','mllmlml5oo5555mm','lllllml5oo55o5mm','lllmlml5oo5555ml','llmmmlm5oo555nnl','nlmmmll57o5nllll'],
-    '0111':['nllmm5oo5mmmmln5','nll555oo5mmmmmo5','nl5o55oo5mmmmmo5','m5ll55oo5mlmmmm5','m557557o5llmmmm5','5555557o5lnnnmm5','ooooooo75llllmm5','ooooooo5mllllmm5','55555555lnnlmmm5','mlmmlnl5lnno7mm5','mllllll5lllolll5','mllmlml5ll777om5','lllllml577oolom5','lllmlml5mlomomm5','llmmmlm5mlnnonn5','nlmmmll5lllnlll5'],
-    '1000':['nllmmmm5oo5mmlnn','nlll5mm5555mmmnn','nll5o5l5555mmmmm','mml57575oo5mmmmm','mm555575oo5mmmmm','555l77m5oo5nnmmm','oo55555ooo5llmmm','77oooooooo5llmmm','77oooooooo5lmmmm','777oooooo5nlmmmm','555555555llllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '1001':['nllmmm75oo55mlnn','nlll5m75oo555mnn','nll5o5l5oo55o5mm','mml5l575oo5575mm','mml555l5oo5555mm','555ll7m5oo555555','oo577775oooooooo','77o5555o5ooooooo','777777oo55555555','7777777o5nnlmmm5','555555oo5llllll5','5l5555oo5llllmmm','5l5o55oo5mmmlmmm','ll5555oo5lmmlmml','llm555oo5lnnlnnl','nlmmm5oo5llnllll'],
-    '1010':['nllmmmm5oo55mlnn','nlllmmm5oo55mmnn','nlllmll5oo55mmmm','mmllll75oo55mmmm','555n5n75oo55mmmm','5mlll575oo55nmmm','5llll575oo5llmmm','5llll575oo5llmmm','5llll575oo5lmmmm','5lmml575oo5lm5mm','57lll575oo5llllm','5llmlmo57o5llmmm','5llllml57o5mlmmm','5llmlml5775mlmml','55mmmlo5o75nlnnl','5lmmmll57o5nllll'],
-    '1011':['5llmmmm5oo5mmlnn','5lllmmm5oo555mnn','5lllmll5oo55o5mm','5mlllll5oo5575mm','5mlnmnl5o75555mm','5mlllmm5oo555555','5lllllo5oooooooo','5lllllno5ooooooo','5olllnnl55555555','5omoonll57nlmmm5','5lloolll5llllllm','5l777oll5llllmmm','5loo7oll5mmmlmmm','57o7omll5lmmlmml','5lmmolmm5lnnlnnl','5lmmmlll5llnllll'],
-    '1100':['no5mmmmmmmmmml5n','no5lmmmmmmmmm75n','nl5lmllmm5555m5m','mm5ollllmm5omo57','77575nllnl55mo57','55577mmmn77n7o55','oo5oooo5577775oo','7755555555555577','7757777777777577','7757777777777577','5555555555555555','mllmlm5l5llllmmm','lllllmllmmmml7mm','lllm5mllmlmm555l','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '1101':['nllmmmmmmommmln5','nlllm5mmmommmmnn','nlllm5lmmommmmmm','mmllllllmmlmmmmm','mmlnmnll5llmmmmm','555llmmm5lnnnmmm','oo55555l5llllmmm','775oooo55llllmmm','777777oo5nnlmmmm','7777777o5nnlmmmm','5555557o5llllllm','ml5555oo5llllmmm','5l5o55oo5mmmlmmm','ll5555oo5lmmlmml','llm555oo5lnnlnnl','nlmmm5oo5llnllll'],
-    '1110':['nllmmmm5mmmmmlnn','nlllmmm5mmmm5mnn','nlllmll5mmmmmmmm','mmlllll5mmlmmmmm','mmlnmnl575lmmmmm','lmlllom575nnnm55','lllllol5l55555oo','lllllon55oooo577','lllllon5oo777777','mlmmlnl5o777oo77','mllllll5oo555555','mllmlml5oo5555mm','lllllml5oo55o5mm','lllmlml5oo5555ml','llmmmlm5oo555nnl','nlmmmll5oo55llll'],
-    '1111':['5l5mmmmmmmmmmo5n','nl5lmmmommmmmm5n','5l5lmllommmmmm5m','mm5ll7ooomlmmm5m','5m5nm7olollmmo5m','lm57lmmmnlnnno5m','ll5llllll5lllo5m','ll5lllnmm5lllo5m','ll57lnnll5nlmm5m','ml57lnlllnnlmm5m','ml57llllllllll5m','ml57lmlllllllm5m','ll575mllmmmmlm5m','ll575mllmlmmlm5l','ll57mlmmmlnnl75l','nl57mllllllnl75l']},
+    '0001':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllllllmmm','llllllnmmollommm','lllllnnlo667o66o','mlmmlnloo677oo6o','mllllllo6666766o','mllmlmlo6666766o','lllllmlo6666666o','lllmlmlo6666666o','llmmmlmo6666666o','nlmmmllo6766666o'],
+    '0010':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllllllmmm','llllllnmmolllmmm','l666666oonnlmmmm','o6666677onnlmmmm','o6666667ollllllm','o7666667oolllmmm','o7666667ommmlmmm','o767o667olmmlmml','o7667667olnnlnnl','o7666667ollnllll'],
+    '0011':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllolllmmm','llllooooooooooom','o7666666o667666o','o7666666o666666o','o7666666o666766o','o7666666o6666o6o','o7666666o6666o6o','o7666666o666666o','o7666666o666666o','o7666666o666666o'],
+    '0100':['nllmmmmo6777776o','nlllmmmo6777776o','nlllmllo6777776o','mmlllllo6777766o','mmlnmnlo6677766o','lmlllmmo6677666o','lllllllo6676766o','llllllnmo676666o','lllllnnloooooooo','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
+    '0101':['nllmmmmo6666666o','nlllmmmo6666766o','nlllmllo6666666o','mmlllllo6666776o','mmlnmnlo6666666o','lmlllmmo6666666o','lllllllo6666667o','llllllno6776777o','lllllnno6676677o','mlmmlnlo6676777o','mllllllo66666l6o','mllmlmlo66666m6o','lllllmlo6766666o','lllmlmlo6666666o','llmmmlmo6776666o','nlmmmllo6676666o'],
+    '0110':['nllmmmmo6776666o','nlllmmmo6776666o','nlllmllo6776666o','mmlllllo6776666o','mmlnmnlo6776666o','lmlllmmo6676666o','lllllllo6677666o','lloloooo6677666o','o6666666oooooooo','o6666666onnlmmmm','o6666666ollllllm','o7676666ollllmmm','o76oo666ommmlmmm','o76oo666olmmlmml','o7666666olnnlnnl','o6666666ollnllll'],
+    '0111':['nllmmmmo666oo66o','nlllmmmo6666666o','nlllmllo6766666o','mmlllllo6766666o','mmlnmnlo6766666o','lmlllmmo6766666o','lllllllo6766666o','llllllo66766666o','o766666o6766666o','o666666o6766666o','o666666o6766666o','o666666o6766676o','o66oo66o6666676o','o66oo6666666676o','o66666666666666o','o66666666666666o'],
+    '1000':['o6666666ommmmlnn','o6666666ommmmmnn','o6666666ommmmmmm','o7666666omlmmmmm','o7666666ollmmmmm','o7666666nlnnnmmm','o7666666oolllmmm','o766666ooolllmmm','oooooooolnnlmmmm','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
+    '1001':['o6666667ommmmlnn','o6666667ommmmmnn','o6666667ommmmmmm','o6666667omlmmmmm','o6666667ollmmmmm','o6666667olnnnmmm','o7666677oolllmmm','o7666667oolllmmm','ooooooo76666666o','mlmmlnlo6666667o','mllllllo6666667o','mllmlmlo6666667o','lllllmlo6666767o','lllmlmlo6666766o','llmmmlmo6666666o','nlmmmllo6666766o'],
+    '1010':['o7666666ommmmlnn','o7666766ommmmmnn','oo766766ommmmmmm','o7666766omlmmmmm','o7666766ollmmmmm','o7666766nlnnnmmm','o7676666oolllmmm','o7667766oolllmmm','o7666666onnlmmmm','o7666666onnlmmmm','o7666666ollllllm','o7666766ollllmmm','o7666666ommmlmmm','o7666767olmmlmml','o7666767olnnlnnl','o7666767ollnllll'],
+    '1011':['6766o666ommmmlnn','67666666ommmmmnn','67666666ommmmmmm','67666666omlmmmmm','67666666ollmmmmm','67666666oonnnmmm','67666666oolllmmm','676666666ooooooo','676666666666666o','676666666666666o','676666766666666o','676666766666666o','676667666666766o','676666666666766o','676666666666766o','676666666666666o'],
+    '1100':['o7666766o666666o','o7666666o666666o','o7666666o666666o','o7666666o666666o','o7666666o666666o','o7666666o666666o','o7667666o666666o','o766666oo666666o','oooooooooooooooo','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
+    '1101':['o6666666o666666o','o6666666o666666o','o7666666o666666o','o6666666o666666m','o6666666o666666o','o6666666o666666o','o6666666o666666o','o66666666667666o','ooooooo66667666o','mlmmlnoo6666666o','mllllllo6666666o','mllmlmlo6667666o','lllllmlooo66666o','lllmlmlo7766666o','llmmmlmo7766666o','nlmmmllo6666666o'],
+    '1110':['66666666o666666o','67666666o666666o','67666666o666666o','67666666o666666o','676o6666o666666o','67666666o666666o','o76666666666666o','o76666666666666o','o76666666ooooooo','o7666666onnlmmmm','o7666666ollllllm','o7666666ollllmmm','o7666666ommmlmmm','o7666666olmmlmml','o7666666olnnlnnl','o7666666ollnllll'],
+    '1111':['o7666666o666666o','o7666666o666666o','o7666666o66666oo','66666666o666666o','76666666o666666o','o6666666o6666ooo','o6677666o666666o','o6777676o666666o','o6777676o666666o','o6776676o666666o','o7676676o666666o','o6777766o666666o','o6676776o666666o','o767l666o66o666o','o6666666o66o666o','o6666666o666767o']},
   ep3:{
     '0000':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllllllmmm','llllllnmmllllmmm','lllllnnllnnlmmmm','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '0001':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnlln5555mmm','lmlllmmmn5555555','llllllll55555555','lllllln555555555','llllln5555555555','mlmml5555nnlmmmm','mllll5555llllllm','mllml5555llllmmm','lllll5555mmmlmmm','lllml5555lmmlmml','llmmm5555lnnlnnl','nlmmm555555nllll'],
-    '0010':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mml55lllmmlmmmmm','mmln5nllnllmmmmm','55555555nlnnnmmm','55555555lllllmmm','555555555llllmmm','5555555555nlmmmm','mlmmlnl5555lmmmm','mllllll5555llllm','mllmlml55555lmmm','lllllml5555mlmmm','lllmlml5555mlmml','llmmmlm5555nlnnl','nlmmmll5555nllll'],
-    '0011':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmll5lllmmlmmmmm','mm5n5nlln5lmmmmm','5555555555555555','6666666666666565','5655666666666565','5555555555555555','mlmmln555nnlmmmm','mllllllll555lllm','mllmlmlll555lmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '0100':['nllmm5555mmmmlnn','nlllm5555m5mmmnn','nlllm5555mmmmmmm','mmlll5555mlmmmmm','mmlnm5555llmmmmm','lmlll5555555nm55','lllll5555555lm55','lllll55555555555','lllll55555555555','mlmmln5555555555','mlllllll55555l55','mllmlmlllllllm5m','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '0101':['nllm556557767655','nlll556557776655','nlll556557776656','mmlll55556676656','mml5m55556666756','lml5l56556657756','lll5l56555555556','lllll56557776656','lllll56557776656','m5mml56557776756','m5lll56556666556','mllml56555555757','lllll56557777756','lllml56556666666','llmmm56556666666','nlmmm56656666666'],
-    '0110':['nllmm55656767666','nll5m56657766666','nlllm55557766767','mm55555556666655','mm5nm55556666657','5555555556665657','6666655556666655','5555555555555555','5555555555555555','mlmmlnl565555555','mllllll55555l555','mllmlml5655llm5m','lllllml5655mlmmm','lllmlml5655mlmml','llmmmlm5665nlnnl','nlmmmll5665nllll'],
-    '0111':['nllmm5555mmmmlnn','nlllm5555mmmmmnn','nlllm5555mmmmmmm','mm5555555mlmmmmm','mmlnm5555llmmmmm','555555555lnnnmmm','555566555llllmmm','55556655mllllmmm','5555555llnnlmmmm','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '1000':['nllmmmm5665mmlnn','nlll55m5665mmmnn','nlllm5l5565mmmmm','mmlll5l5555mmmmm','mmlnm5l5555mmmmm','555ll5m5555nnmmm','555llll5555llmmm','55555555555llmmm','555555555555mmmm','555555555555mmmm','555555555l5llllm','mll5lm55l55llmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '1001':['67666555665mmlnn','66666755665mmmnn','66666765555mmmmm','5666666555555mmm','6666666555555mmm','6666666565555555','5556666566666555','5555555555556555','5555555555555555','555555555nnlmmmm','555555555llllllm','mll555555llllmmm','llll55555mmmlmmm','lll555555lmmlmml','llm555555lnnlnnl','nlmm55555llnllll'],
-    '1010':['65567565665mmlnn','65567665555mmmnn','65576665555mmmmm','65576555555mmmmm','6556566566555mmm','65565766665nnmmm','65565555665llmmm','65576675665llmmm','55555555555lmmmm','66666656655lmmmm','55555555565l5llm','5llmlml556555mmm','5llllml5555mlmmm','lllmlml5555mlmml','llmmmlm5555nlnnl','nlmmmll5555nllll'],
-    '1011':['nllmmmm5555mmlnn','nlllmmm5565mmmnn','nlllmll5555mmmmm','mmlllll555555mmm','mmlnmnl555555mmm','lmlllmm566555555','lllllll566666556','lllllln556566555','lllllnnl55555555','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '1100':['7566665677566756','7556665677555656','6556665555566756','6556665767555555','6556665556666656','6666665556666656','5556665556666655','5555555555555555','5555555555555555','5555555555555555','5555llllllllll55','ml5555555555555m','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
-    '1101':['6766666566666666','6666666566666666','6666666576667666','5666666566766555','6666666565767766','6666666566667666','5556666566666766','5555555556666766','5556666556666766','5555566656666666','5555556656666666','mll5556656666755','llll556556666655','lll5556556666656','llmm556556666656','nlmm556656666657'],
-    '1110':['6656666657666665','6656665657666665','6756666657766775','5656665556666565','7656665656666665','6656566656666665','6656555556666655','6656566555555555','6756556556666555','7756666566655555','565566656655l555','675666656655l55m','56566665555mlmmm','67566665665mlmml','66566665665nlnnl','66576665665nllll'],
-    '1111':['6656656666566666','6656657666566666','6656556677566666','6656556655566766','6656556666566766','6656557766566765','7756665666566666','6656666666566667','6655777666566676','6655666667566666','6655666667566766','m555566666565666','6666666666566666','6666666666556666','6555666666556666','6556666666566666']},
+    '0001':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllllllmmm','llllllnmm5ll5mmm','lllllnnl577o5775','mlmmlnl557oo5575','mllllll57777o775','mllmlml57777o775','lllllml577777775','lllmlml577777775','llmmmlm577777775','nlmmmll57o777775'],
+    '0010':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllllllmmm','llllllnmm5lllmmm','l77777755nnlmmmm','577777oo5nnlmmmm','5777777o5llllllm','5o77777o55lllmmm','5o77777o5mmmlmmm','5o7o577o5lmmlmml','5o77o77o5lnnlnnl','5o77777o5llnllll'],
+    '0011':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllll5lllmmm','llll55555555555m','5o777777577o7775','5o77777757777775','5o7777775777o775','5o77777757777575','5o77777757777575','5o77777757777775','5o77777757777775','5o77777757777775'],
+    '0100':['nllmmmm57ooooo75','nlllmmm57ooooo75','nlllmll57ooooo75','mmlllll57oooo775','mmlnmnl577ooo775','lmlllmm577oo7775','lllllll577o7o775','llllllnm57o77775','lllllnnl55555555','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
+    '0101':['nllmmmm577777775','nlllmmm57777o775','nlllmll577777775','mmlllll57777oo75','mmlnmnl577777775','lmlllmm577777775','lllllll5777777o5','lllllln57oo7ooo5','lllllnn577o77oo5','mlmmlnl577o7ooo5','mllllll577777l75','mllmlml577777m75','lllllml57o777775','lllmlml577777775','llmmmlm57oo77775','nlmmmll577o77775'],
+    '0110':['nllmmmm57oo77775','nlllmmm57oo77775','nlllmll57oo77775','mmlllll57oo77775','mmlnmnl57oo77775','lmlllmm577o77775','lllllll577oo7775','ll5l555577oo7775','5777777755555555','577777775nnlmmmm','577777775llllllm','5o7o77775llllmmm','5o7557775mmmlmmm','5o7557775lmmlmml','5o7777775lnnlnnl','577777775llnllll'],
+    '0111':['nllmmmm577755775','nlllmmm577777775','nlllmll57o777775','mmlllll57o777775','mmlnmnl57o777775','lmlllmm57o777775','lllllll57o777775','llllll577o777775','5o7777757o777775','577777757o777775','577777757o777775','577777757o777o75','5775577577777o75','5775577777777o75','5777777777777775','5777777777777775'],
+    '1000':['577777775mmmmlnn','577777775mmmmmnn','577777775mmmmmmm','5o7777775mlmmmmm','5o7777775llmmmmm','5o777777nlnnnmmm','5o77777755lllmmm','5o77777555lllmmm','55555555lnnlmmmm','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
+    '1001':['5777777o5mmmmlnn','5777777o5mmmmmnn','5777777o5mmmmmmm','5777777o5mlmmmmm','5777777o5llmmmmm','5777777o5lnnnmmm','5o7777oo55lllmmm','5o77777o55lllmmm','5555555o77777775','mlmmlnl5777777o5','mllllll5777777o5','mllmlml5777777o5','lllllml57777o7o5','lllmlml57777o775','llmmmlm577777775','nlmmmll57777o775'],
+    '1010':['5o7777775mmmmlnn','5o777o775mmmmmnn','55o77o775mmmmmmm','5o777o775mlmmmmm','5o777o775llmmmmm','5o777o77nlnnnmmm','5o7o777755lllmmm','5o77oo7755lllmmm','5o7777775nnlmmmm','5o7777775nnlmmmm','5o7777775llllllm','5o777o775llllmmm','5o7777775mmmlmmm','5o777o7o5lmmlmml','5o777o7o5lnnlnnl','5o777o7o5llnllll'],
+    '1011':['7o7757775mmmmlnn','7o7777775mmmmmnn','7o7777775mmmmmmm','7o7777775mlmmmmm','7o7777775llmmmmm','7o77777755nnnmmm','7o77777755lllmmm','7o77777775555555','7o77777777777775','7o77777777777775','7o7777o777777775','7o7777o777777775','7o777o777777o775','7o7777777777o775','7o7777777777o775','7o77777777777775'],
+    '1100':['5o777o7757777775','5o77777757777775','5o77777757777775','5o77777757777775','5o77777757777775','5o77777757777775','5o77o77757777775','5o77777557777775','5555555555555555','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
+    '1101':['5777777757777775','5777777757777775','5o77777757777775','577777775777777m','5777777757777775','5777777757777775','5777777757777775','57777777777o7775','55555557777o7775','mlmmln5577777775','mllllll577777775','mllmlml5777o7775','lllllml555777775','lllmlml5oo777775','llmmmlm5oo777775','nlmmmll577777775'],
+    '1110':['7777777757777775','7o77777757777775','7o77777757777775','7o77777757777775','7o75777757777775','7o77777757777775','5o77777777777775','5o77777777777775','5o77777775555555','5o7777775nnlmmmm','5o7777775llllllm','5o7777775llllmmm','5o7777775mmmlmmm','5o7777775lmmlmml','5o7777775lnnlnnl','5o7777775llnllll'],
+    '1111':['5o77777757777775','5o77777757777775','5o77777757777755','7777777757777775','o777777757777775','5777777757777555','577oo77757777775','57ooo7o757777775','57ooo7o757777775','57oo77o757777775','5o7o77o757777775','57oooo7757777775','577o7oo757777775','5o7ol77757757775','5777777757757775','577777775777o7o5']},
   ep:{
     '0000':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllllllmmm','llllllnmmllllmmm','lllllnnllnnlmmmm','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
     '0001':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllllllmmm','llllllnmm5ll5mmm','lllllnnl56675665','mlmmlnl556775565','mllllll566667665','mllmlml566667665','lllllml566666665','lllmlml566666665','llmmmlm566666665','nlmmmll567666665'],
@@ -13677,6 +13681,10 @@ function townWangSel(a,b,c,d){
   if(m>2){
     /* the highest path terrain in the cell names the set; the cell's other paths count as earth (or as cobbles, with none) */
     const sk=TERR_SET[m], S=W[sk], own=t=>t>2&&TERR_SET[t]===sk?1:0;
+    /* all four corners the one path's: its own full tile, never the cobbles (a 2 by 2 of shells has shells in its middle) */
+    if(S&&!earth&&[a,b,c,d].every(t=>t>2&&TERR_SET[t]===sk)){
+      if(TERR_TURN[a]||TERR_TURN[b]||TERR_TURN[c]||TERR_TURN[d])return [S,'1111',true];
+      return [S,'1111',false];}
     if(earth&&S){
       /* turned a quarter, the tile is read the other way: the cell's corners, turned, name another tile */
       if(TERR_TURN[a]||TERR_TURN[b]||TERR_TURN[c]||TERR_TURN[d])return [S,''+own(b)+own(d)+own(a)+own(c),true];
@@ -15408,8 +15416,8 @@ function townPathTile(id,side){
 let BLD_SKIP=null;
 function townDecoSync(){
   const T=townData(), W=TOWN_W;
-  TOWN_BLOCK.clear(); TOWN_AT.clear();
-  for(const d of T.decos)if(d!==BLD_SKIP)for(const [x,y] of decoTiles(d.id,d.c,d.r,d.f)){TOWN_AT.set(y*W+x,d); if(!TOWN_DECOS[d.id].path)TOWN_BLOCK.add(y*W+x);}
+  TOWN_BLOCK.clear(); TOWN_AT.clear(); TOWN_PAT.clear();
+  for(const d of T.decos)if(d!==BLD_SKIP){const pa=!!TOWN_DECOS[d.id].path; for(const [x,y] of decoTiles(d.id,d.c,d.r,d.f)){(pa?TOWN_PAT:TOWN_AT).set(y*W+x,d); if(!pa)TOWN_BLOCK.add(y*W+x);}}
   const A=TOWN_ART; if(!A)return;
   const want=new Map();
   /* a path turned to its side (Expansion 4, step 2) runs the other way: its tile is painted with the pattern on its side */
@@ -16191,9 +16199,9 @@ function townFits(id,c,r,x,y,f){
     if(!D.path&&x===sx&&y===sy)return 'Keep this ground clear: you climb out here.';
     if(townKept(x,y))return 'A Keeper’s place. Keep it clear.';
     if(!townBuildable(x,y,!D.path))return 'There is no open ground there.';
-    if(townDecoAt(x,y))return 'Something stands there already.';
+    if(townDecoAt(x,y,!!D.path))return 'Something stands there already.';
   }
-  if(townData().decos.some(d=>d!==BLD_SKIP&&rectsHit(RS,pieceRects(d,TOWN_DECOS[d.id]))))return 'Something stands there already.';
+  if(townData().decos.some(d=>d!==BLD_SKIP&&!!TOWN_DECOS[d.id].path===!!D.path&&rectsHit(RS,pieceRects(d,TOWN_DECOS[d.id]))))return 'Something stands there already.';
   /* a Keeper's hut (step 7): its door is a place kept like a station: open ground, walkable, and nothing else may stand on one */
   const doors=townHutDoors();
   for(const [x,y] of free?footTiles(RS):tiles)if(doors.some(q=>q[0]===x&&q[1]===y))return 'A Keeper’s door. Keep it clear.';
@@ -16201,7 +16209,7 @@ function townFits(id,c,r,x,y,f){
   if(D.hut){
     const K=KITS[D.hut], nm=K.who||K.n, dx=c+1, dy=r+D.h;
     if(townData().decos.some(e=>e!==BLD_SKIP&&TOWN_DECOS[e.id].hut===D.hut))return nm+' has a hut already.';
-    if(!townTouchOK(dx,dy)||!townBuildable(dx,dy,false)||townDecoAt(dx,dy))return 'The door needs open ground before it.';
+    if(!townTouchOK(dx,dy)||!townBuildable(dx,dy,false)||townDecoAt(dx,dy,false))return 'The door needs open ground before it.';
     door=[dx,dy];}
   /* something solid may not stand on you, or shut you or the square away from the Head-frame */
   if(!D.path){
@@ -16354,6 +16362,10 @@ function townTrayBuild(){
   const b=document.createElement('button'); b.type='button'; b.id='townMaterials'; b.className='town-chip'; b.hidden=!devOn;
   b.setAttribute('aria-label','Dev: add 100 timber, iron, tallow and curios');
   b.innerHTML='<span>Dev</span><b>+100</b><span>each</span>'; row.prepend(b);
+  /* developer mode: the dark off, to see what is being built (the pause menu's Darkness switch, but for the town) */
+  const dk=document.createElement('button'); dk.type='button'; dk.id='townLight'; dk.className='town-chip'; dk.hidden=!devOn;
+  dk.setAttribute('aria-label','Dev: turn the darkness off or on'); dk.setAttribute('aria-pressed',window.devNoDark?'true':'false');
+  dk.innerHTML='<span>Dev</span><b>Dark</b><span>'+(window.devNoDark?'off':'on')+'</span>'; b.after(dk);
 }
 function townTrayUI(){
   const T=townData();
@@ -16377,6 +16389,7 @@ function townTrayUI(){
     const sv=$('#townSalvage'); if(sv)sv.classList.toggle('poor',!(TWN.tab==='store'&&TWN.pick));
   }
   const grant=$('#townMaterials'); if(grant)grant.hidden=!devOn;
+  const dkb=$('#townLight'); if(dkb)dkb.hidden=!devOn;
   for(const b of $('#townTrow').querySelectorAll('[data-deco]')){const id=b.dataset.deco, D=TOWN_DECOS[id];
     b.classList.toggle('on',TWN.pick===id); b.setAttribute('aria-pressed',TWN.pick===id?'true':'false');
     b.classList.toggle('poor',!!(townShort(D.cost,T.res)||(D.grave&&!gravesWaiting(T).length)));}
@@ -16435,7 +16448,7 @@ function bldAnchor(id,tx,ty,wx,wy,f){
 function bldPieceAt(tx,ty,wx,wy){
   const tab=bldTab();
   /* what stands on a rug is lifted before the rug: a rug answers only where nothing else does */
-  if(wx!=null)for(let pass=0;pass<2;pass++)for(const d of bldList())if(d!==BLD_SKIP&&!!tab[d.id].flat===(pass===1)){const R=pieceRect(d,tab[d.id]); if(wx>=R.x&&wx<R.x+R.w&&wy>=R.y&&wy<R.y+R.h)return d;}
+  if(wx!=null)for(let pass=0;pass<2;pass++)for(const d of bldList())if(d!==BLD_SKIP&&!!(tab[d.id].flat||tab[d.id].path)===(pass===1)){const R=pieceRect(d,tab[d.id]); if(wx>=R.x&&wx<R.x+R.w&&wy>=R.y&&wy<R.y+R.h)return d;}
   /* inside, with nothing chosen on the tray, a tap on a tall piece's drawing above its footprint lifts it too (the front-most one) */
   if(TWN.inside&&wx!=null&&!TWN.pick){let best=null, bb=-1e9;
     for(const d of bldList()){if(d===BLD_SKIP||d.mount||tab[d.id].flat||tab[d.id].small)continue;
@@ -16477,7 +16490,10 @@ function bldTap(tx,ty){
     return;}
   if(TWN.inside){const it=lodgeItemAt(wx,wy); if(it){bldLiftItem(it.host,it.o); return;}}
   const d=bldPieceAt(tx,ty,wx,wy);
-  if(d){bldLift(d); return;}
+  /* a piece chosen on the tray is set down, not lifted, when the tap lands on a path (or a path is chosen and it lands on a piece):
+     a path is the floor under a bench, not a thing in its way */
+  const pk2=!TWN.inside&&TWN.pick&&bldTab()[TWN.pick];
+  if(d&&!(pk2&&!!pk2.path!==!!(bldTab()[d.id]||{}).path)){bldLift(d); return;}
   if(!TWN.pick){TWN.goal=null; TWN.path=townPathTo(tx,ty); if(TWN.path&&TWN.path.length){const e=TWN.path[TWN.path.length-1]; TWN.mark=.6; TWN.mx=e.x; TWN.my=e.y;} return;}
   const id=TWN.pick, I=bldTab()[id], a=bldAnchor(id,tx,ty,wx,wy,bldPickFace(id)), x=a.free?a.x:undefined, y=a.free?a.y:undefined;
   let why, line;
@@ -17584,10 +17600,11 @@ function townDraw(){
      before the Keeper's own lantern carves its pool */
   if(IN&&A.sil){mc.globalCompositeOperation='source-over'; mc.drawImage(A.sil,-cx,-cy); mc.globalCompositeOperation='destination-out';}
   const pr=38, plx=pfx-cx, ply=pfy-10-cy; mc.drawImage(townStamp(pr,false),plx-pr,ply-pr);
-  bc.drawImage(TWN.mask,0,0);
+  const NODARK=devOn&&window.devNoDark;
+  if(!NODARK)bc.drawImage(TWN.mask,0,0);
   /* the surf shows through the dark, faintly */
-  if(!IN&&A.surf){const sf=A.surf[tw%A.surf.length]; if(sf.y0-cy<vh){bc.globalAlpha=SURF_ALPHA; bc.drawImage(sf,-cx,sf.y0-cy); bc.globalAlpha=1;}}
-  if(!lite){bc.globalCompositeOperation='lighter';
+  if(!IN&&A.surf&&!NODARK){const sf=A.surf[tw%A.surf.length]; if(sf.y0-cy<vh){bc.globalAlpha=SURF_ALPHA; bc.drawImage(sf,-cx,sf.y0-cy); bc.globalAlpha=1;}}
+  if(!lite&&!NODARK){bc.globalCompositeOperation='lighter';
     for(const L of A.lights){const r=L.r+townFlick(L,tq,lite), x=L.x-cx, y=L.y-cy; if(x+r<0||y+r<0||x-r>vw||y-r>vh)continue; bc.drawImage(townStamp(r,true,L.col),x-r,y-r);}
     bc.drawImage(townStamp(24,true),plx-24,ply-24);
     bc.globalCompositeOperation='source-over';}
@@ -17704,6 +17721,10 @@ $('#townTurn').addEventListener('click',()=>{if(TWN.turnBack){TWN.turnBack=false
 /* the tray's chips: tap one to choose it, again to put it down (on click, rule 5) */
 $('#townTrow').addEventListener('click',ev=>{
   if(!TWN.build)return;
+  if(ev.target.closest('#townLight')){
+    if(!devOn)return;
+    window.devNoDark=!window.devNoDark; townTrayUI(); townSay(window.devNoDark?'Darkness off. Developer mode.':'Darkness on.'); return;
+  }
   if(ev.target.closest('#townMaterials')){
     if(!devOn)return;
     /* townData keeps developer materials and everything bought with them in its private copy. */
