@@ -212,7 +212,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const d=bc.getImageData(fx-8,fy-22,16,22).data, md=m.getContext('2d').getImageData(fx-8,fy-22,16,22).data, pane=[[217,138,54],[245,194,107],[255,240,194]];
     let hit=0, on=0; for(let i=0;i<d.length;i+=4){if(!md[i+3])continue; on++; if(pane.some(q=>q[0]===d[i]&&q[1]===d[i+1]&&q[2]===d[i+2]))hit++;}
     /* the window itself still glows where nobody stands in front of it */
-    const px=(oar.x+oar.win[0])*16+5-cx, py=(oar.y+oar.h-1)*16+3-cy, w=bc.getImageData(px,py,5,4).data; let lit=0;
+    /* (art pass A3a: the pane is where the Oar's art drew it, TOWN_BLD's first window, on the building stood on its foot) */
+    const H=T.townHouse(oar), [rx,ry,rw,rh]=T.TOWN_BLD[oar.art].win[0][0], hx=oar.x*16+((oar.w*16-H.cv.width)>>1), hy=(oar.y+oar.h)*16-H.cv.height;
+    const px=hx+rx-cx, py=hy+ry-cy, w=bc.getImageData(px,py,rw,rh).data; let lit=0;
     for(let i=0;i<w.length;i+=4)if(pane.some(q=>q[0]===w[i]&&q[1]===w[i+1]&&q[2]===w[i+2]))lit++;
     out.window={hit,on,lit,lit0:oar.lit[0]};
     /* walk the cobbles from west to east at full speed, and watch where you stand on the screen once the camera has caught up */
