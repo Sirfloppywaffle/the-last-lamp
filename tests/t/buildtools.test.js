@@ -110,7 +110,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   await p.reload(); await p.waitForTimeout(400);
   const fr2=await p.evaluate(()=>{
     __t.townOpen(); const D=__t.townData(), d=D.decos.find(e=>e.id==='brazier'), A=__t.townArt();
-    const o={x:d.x,y:d.y,c:d.c,r:d.r,free:D.free,solid:__t.townSolid(d.c,d.r),prop:A.props.some(q=>q.x===d.x&&q.y===d.y-6),
+    const o={x:d.x,y:d.y,c:d.c,r:d.r,free:D.free,solid:__t.townSolid(d.c,d.r),prop:A.props.some(q=>q.x===d.x&&q.y===d.y+__t.BRZ_Y),
       light:A.lights.some(L=>L.x===d.x+8&&L.y===d.y+2)};
     __t.townBuildSet(true); o.pressed=document.querySelector('#townTools [data-snap="free"]').getAttribute('aria-pressed');
     __t.townBuildSet(false); __t.townClose(); return o;

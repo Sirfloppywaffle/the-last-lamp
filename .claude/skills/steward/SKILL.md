@@ -7,6 +7,8 @@ description: Conventions for Claude's own pull requests on The Last Lamp - PR bo
 
 Source: `AGENTS.md` §1 (paused reviewers), §3 (workflow) and `CLAUDE.md`. Criss merges; a merge is the green light. Never push to `main`.
 
+**Lean output (Criss's rule; it costs his usage):** don't narrate bot comments, summary edits or CI runs while watching a PR. Message Criss only when it's ready to merge, CI is red for a real reason, or he needs to decide something. Fix real bugs CodeRabbit finds; skip its trivial and nitpick suggestions without replying.
+
 **Opening**
 - [ ] Branch `claude/<topic>` from `origin/main` (Saltmouth steps: `claude/town-<topic>`). One topic per PR. Draft.
 - [ ] Body, short, in this order (runbook §4.6):
