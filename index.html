@@ -14339,8 +14339,8 @@ const TOWN_BLD_ROWS={
 /* what a building's windows do. win: for each of its house's windows (b.win, b.lit), the rects [x, y, w, h] of its panes in the
    rows. A pane lights by a letter swap (lit, else BLD_LIT), so the glow is exactly the glass the art drew, and what lit letters
    (em, else BLD_EM) it shows burn through the dark; one the art drew lit goes dark by BLD_UNLIT. The Lodge's third pane is its
-   round window, the Attic's, lit once the Attic is built (b.attic). The belfry's light is under its bell, the bell kept dark
-   against it; the smithy's Leyden jars glow their own cold blue */
+   round window, the Attic's, lit once the Attic is built (b.attic). The belfry's are the two tall windows by its door (its
+   pale glass is e, u, f; Criss on #149: lit under the bell, it read as an orange floor); the smithy's Leyden jars glow blue */
 const TOWN_BLD={
   lodge:{win:[[[8,53,10,7]],[[59,53,9,7]],[[35,29,6,6]]]},
   chandler:{win:[[[11,47,8,8]],[]]},
@@ -14349,7 +14349,7 @@ const TOWN_BLD={
   brazier:{win:[[[7,17,9,9]],[[30,15,8,11]]]},
   quay:{win:[[[19,16,5,4]],[[8,27,6,1]]]},
   smithy:{win:[[[16,32,7,5]],[[16,40,6,6]]],em:'abci'},
-  belfry:{win:[[[8,29,9,6]],[[17,29,9,6]]],lit:{'0':'9',s:'8',t:'8'},em:'9'},
+  belfry:{win:[[[7,51,4,7]],[[23,50,4,8]]],lit:{e:'a',u:'9',f:'b'},em:'9ab'},
   menagerie:{win:[[[22,27,6,5]],[]]}};
 const BLD_LIT={s:'a',t:'a','0':'a',q:'b','2':'b','3':'b',r:'b',n:'9',m:'9',l:'9'}, BLD_UNLIT={a:'s',b:'2',c:'3','9':'1','8':'1',p:'2',o:'2',d:'2',i:'4',h:'r'}, BLD_EM='abc';
 /* one building as it stands now: its canvas, what of it glows (em) and where its lit panes throw light (wl, in its rows), made
