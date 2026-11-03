@@ -482,10 +482,16 @@ input[type=range]::-moz-range-track {
   padding:calc(8px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 0 calc(12px + env(safe-area-inset-left))}
 .town-hud .btn{pointer-events:auto;min-height:44px;min-width:64px;background:rgba(14,17,19,.85)}
 .town-name{font-family:var(--f-display);font-size:1.45rem;line-height:1;color:var(--bone);opacity:.75;text-shadow:0 1px 0 #000}
-.town-res{margin-left:auto;display:flex;align-items:center;gap:10px;font-family:var(--f-num);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ash);white-space:nowrap;text-shadow:0 1px 0 #000}
-.town-stat b{display:inline-block;min-width:3ch;text-align:right;color:var(--bone);font-weight:500;font-variant-numeric:tabular-nums}
+.town-res{margin-left:auto;display:flex;align-items:center;gap:10px;font-family:var(--f-num);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ash);white-space:nowrap;text-shadow:0 1px 0 #000}
+.town-stat b{display:inline-block;min-width:3.5ch;text-align:right;color:var(--bone);font-weight:500;font-variant-numeric:tabular-nums}
+/* art pass A3b: the counts sit in a pixel frame from PixelLab (TOWN_HUD_FRAME, a nine-slice six art pixels a corner), each
+   beside its material's icon (TOWN_RES_ICON); --tpx is one art pixel in CSS px. townHudArt() paints them once */
+.town-res{--tpx:1px;border:calc(var(--tpx)*6) solid transparent;border-image:var(--res-frame) 6 / calc(var(--tpx)*6) repeat;image-rendering:pixelated;
+  background:rgba(8,10,13,.86);background-clip:padding-box;padding:calc(var(--tpx)*2) calc(var(--tpx)*5)}
+.town-stat{display:inline-flex;align-items:center;gap:4px}
+.town-ico{flex:0 0 auto;width:calc(var(--tpx)*16);height:calc(var(--tpx)*16);background:center/100% 100% no-repeat;image-rendering:pixelated}
 /* narrow portrait: the four counts sit two by two at the right of the bar, no taller than the Title button */
-@media (max-width:520px){.town-hud{gap:8px}.town-name{font-size:1.2rem}.town-res{display:grid;grid-template-columns:auto auto;column-gap:10px;row-gap:3px;font-size:.66rem;letter-spacing:.06em}.town-stat{text-align:right}}
+@media (max-width:520px){.town-hud{gap:8px}.town-name{font-size:1.2rem}.town-res{--tpx:.75px;line-height:1;display:grid;grid-template-columns:auto auto;column-gap:10px;row-gap:3px;font-size:.8rem;letter-spacing:.04em;padding:calc(var(--tpx)*1) calc(var(--tpx)*4)}.town-stat{gap:3px;justify-content:flex-end}.town-word{display:none}}
 .town-actwrap{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:center;pointer-events:none;
   padding:0 calc(16px + env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
 .town-act{pointer-events:auto;min-height:48px;padding:12px 22px;font-size:1.1rem}
@@ -660,7 +666,7 @@ input[type=range]::-moz-range-track {
 
 <div id="townOverlay" hidden>
   <canvas id="townCv" aria-label="Saltmouth, the town above the stair. Tap the ground to walk there, or hold and drag to steer."></canvas>
-  <div class="town-hud"><button class="btn" id="townBack" type="button">Title</button><span class="town-name">Saltmouth</span><button class="btn town-build" id="townBuild" type="button" aria-pressed="false">Build</button><div class="town-res" id="townRes" aria-label="Saltmouth haul"><span class="town-stat">Timber <b id="townResTimber">0</b></span><span class="town-stat">Iron <b id="townResIron">0</b></span><span class="town-stat">Tallow <b id="townResTallow">0</b></span><span class="town-stat">Curios <b id="townResCurios">0</b></span></div></div>
+  <div class="town-hud"><button class="btn" id="townBack" type="button">Title</button><span class="town-name">Saltmouth</span><button class="btn town-build" id="townBuild" type="button" aria-pressed="false">Build</button><div class="town-res" id="townRes" aria-label="Saltmouth haul"><span class="town-stat" aria-label="Timber"><i class="town-ico" data-ico="timber" aria-hidden="true"></i><span class="town-word">Timber</span> <b id="townResTimber">0</b></span><span class="town-stat" aria-label="Iron"><i class="town-ico" data-ico="iron" aria-hidden="true"></i><span class="town-word">Iron</span> <b id="townResIron">0</b></span><span class="town-stat" aria-label="Tallow"><i class="town-ico" data-ico="tallow" aria-hidden="true"></i><span class="town-word">Tallow</span> <b id="townResTallow">0</b></span><span class="town-stat" aria-label="Curios"><i class="town-ico" data-ico="curios" aria-hidden="true"></i><span class="town-word">Curios</span> <b id="townResCurios">0</b></span></div></div>
   <div class="town-actwrap"><button class="btn call town-act" id="townAct" type="button" hidden>Descend the stair</button></div>
   <div class="town-tray" id="townTray" hidden><div class="town-tmsg" id="townTmsg" aria-live="polite"></div><div class="town-tbot">
     <div class="town-tools" id="townTools"><div class="town-seg" role="group" aria-label="Show"><button type="button" class="town-tb" data-tab="pieces" aria-pressed="true">Pieces</button><button type="button" class="town-tb" data-tab="store" aria-pressed="false">Storage <b id="townStoreN">0</b></button></div><div class="town-seg" role="group" aria-label="Placing"><button type="button" class="town-tb" data-snap="grid" aria-pressed="true">Grid</button><button type="button" class="town-tb" data-snap="free" aria-pressed="false">Free</button></div><button type="button" class="town-tb" id="townUndo" disabled>Undo</button></div>
@@ -13019,8 +13025,130 @@ function haulCredit(r){
   townHud();
   return true;
 }
+/* ---- Art pass A3b: the haul's readout. Its frame is a create_ui_asset panel on the town's colours, shrunk to a quarter (each 4×4
+   block its commonest letter) so its rim is six art pixels; the icons are one-direction objects at 16 (ART_UPGRADE.md §6) ---- */
+const TOWN_HUD_FRAME=[
+  '..eeddedddds3333333333333333333333333rr3r3r333333333rrrrrrrr3333333rrr33srr3333333sddddeddee..',
+  '.ee3uuuuuud7773333333333rrrrr33333333rr33333333rrrrrrrr4rr333333333r333337333333377duuuuuu3ee.',
+  'seruuuoo2uo7333223333333rrrrrr333rr3rrrrrrrr333rrrrrrrrrrrrr33334rrrr333333332n3337euuoooouros',
+  'uuu2uuuoo2n7222223u2uu33222222222222222222222222222222222222247n222rn67333333n22227n2ooou1uudu',
+  'uuuu72222222222222222222222222222222222222222222222222222222222222222222222222220222222227oueu',
+  'u7uo720000000ttttt000000000000000000000t1211111111122211111111tt11tttt0t0tttt000000tt00022ouu7',
+  'uuuo2200012222222tt11222222222112223333333222222222222222222222222222222222222222222tt0022ouu7',
+  'u3ue22001222222332222222222222222233333333322222223333222222222222222222222222222222221022eu46',
+  '7oe7220112222223322222222222222222333333r322222223333322222n2222222222222222222222222110227ou6',
+  's2772200122222222222222222222222222n2233333222222n333nn22nn33n2222222222222222222t333ttt2277ns',
+  '277322022222222222222222222222222222223333322222233333333n12223322n222222222222222233231123662',
+  '273322022222222222222232222222222222222222222222n33nnn3n33333332222222222222233222233221223332',
+  '233322002222222222222nnnnnn22222222222222222222222222nn23333nnnnn2222nnn22223333333332ttn23332',
+  '222222011222222222222222222222222222222nnn222222222222222222n22n22222222nn2223222222221tn23222',
+  '2r2r22022222222222222222222222222222222222222n22222222222n22n222222n2222222222222332222022r2r2',
+  '2rrr220022222222n33333011t00033333nnnn33222222333333332n22222222222332222222000t1132222t22r2r2',
+  '2rrrrn022222223300222222233302tt303n233322221111333332r33222222323000333n33322223212222t22rrr2',
+  '22rr2n02222222222t3332nnn2222222222222222222nn2nnnnnnnnn22222222222nn222222222222222222t223322',
+  '2nrr2n0222222322222122223322222222222222222nnn22n2nnnnnnnnnn2222222222222222222223332220223322',
+  '22rr2202222222222222222222222222222222n2n2222222nnnn2nnn222222222223322222222222233322202233r2',
+  '2rrr22022222222222222222222222n22222222222222222n33332222222222222222222222222222222222022rrr2',
+  '2rrr22022222222222222222222222222222222233222222222222222222222222233322222222222222222022rrr2',
+  '2r3r22022222222222222222222222222222222222222222222222222222n22222222222222222222222222022rrr2',
+  '2rrr22022222222222222222222222222222222222222223322222223222222222222222222222322222222t2233r2',
+  '22rr2202222222222222222222222222222222222222222222222n2222222222222222223222n2222222222t223rr2',
+  '22r32202222222222222222222222332232222222nn3312222nnnn222222222222222222222222222222222t223rr2',
+  '22r7220222222222222222333333n33332n222222nn2222222n222222222222222222222222222n22222222t223332',
+  '2333220002222222202033322222222n22nn333333222222222220000002222220000022211333333222001t2233n2',
+  '23u32202222222221n2222332322222223333322223223333nn322223333333333333n22220202222222222t223un2',
+  '263322022222222222222222222222222222222222222222222233233nn23nnnn2222222222222222222221t223372',
+  '273722011222222222222222222222222222222222n2222n222222222n222nn2222222222222222222222222223372',
+  '2n7722022222222222222222222222222222222222222222222nnn3333333nn333332222222322222222222t2277nn',
+  'su772n0t12222222222222222222222222222222222222222222222222222n2222222222222222222222222t2277us',
+  'uduu22012222222222222222222222222222222222222222222222222222222222222222222222222222221tt2uudu',
+  'uuoe22011222211222222212111122222222222222222222222n22222222222222222222222112222222221ts2uudu',
+  'uu3r220012111111222222222222121222222222222222222222222222222222222222222222222112221200224ueu',
+  'ud4ru2000000ttt0t0000000000t000000000tttt0000000000tt1t1111t0000000000000000000111110000224udu',
+  'udo44222222222222222222222222222222222222222222222222222222222222222222220m2222211222222244udu',
+  'uduu444417777u7337334433uuu3333333666u333e4333333322333333333333333rrr33r422376677777714u4uedu',
+  'suduo444ru177n3n3333333333333333333rrrr3rrrrrr33333333r33333333333rrrr33233rrrrr77764r44uoudds',
+  '.rdeeeeeeue777772333333m3333326rr3rrrrr2rrrrr333333332333433343332rrr336222r3n77777uuo3eedd33.',
+  '..s733r7773s222mm1111mmmmmm222111222112mm112m2111112112222m222mmmm2m2mm111111mmm22s777773rrs..'];
+const TOWN_RES_ICON={
+  timber:[
+    '................',
+    '.........00.0...',
+    '.......75o7665..',
+    '......577767ou5.',
+    '....55o776o7o0e.',
+    '...67ooo77o655s.',
+    '..57o7777o56560.',
+    '.5ooo66oo556700.',
+    '.056ooo75577560.',
+    '..s755o5575560..',
+    '.0o67655o5655...',
+    '.s75066o5550....',
+    '.07o7555500.....',
+    '..0556705.......',
+    '.....000........',
+    '................'],
+  iron:[
+    '................',
+    '......0l50......',
+    '....55888856....',
+    '...67o855oo75...',
+    '...6767777680...',
+    '..687755558880..',
+    '..58o0....soo5..',
+    '..575......s65..',
+    '..575......so5..',
+    '..575......s65..',
+    '..078l....5o75..',
+    '...075....075...',
+    '...057l..5o65...',
+    '...s875..lo75...',
+    '....55....05....',
+    '................'],
+  tallow:[
+    '................',
+    '................',
+    '........676.....',
+    '.....777cbc76...',
+    '...6yacbbcbbc65.',
+    '.77cabbbbbbbbb6.',
+    '.6ccababbbcaaa6.',
+    '.6aaccbbbbpoaa6.',
+    '.6abbbccaaaaaa6.',
+    '.6aabbbbaaaop76.',
+    '.5aaabbbaa7p5...',
+    '..m7oaaaoo66....',
+    '....67pp77......',
+    '......66........',
+    '................',
+    '................'],
+  curios:[
+    '................',
+    '................',
+    '.....666655.....',
+    '....5pddddd5....',
+    '...5dpcpcpdp0...',
+    '..6dddo7p6ddd5..',
+    '..5ddoodododd5..',
+    '.lppp5dopp7pop5.',
+    '.5dddd6p5pd5ppm.',
+    '.5ppd6pp77p6oo5.',
+    '..5ddop76dp5op5.',
+    '..5dpdodpp6oo6..',
+    '...66peeo6555...',
+    '.....5665.......',
+    '................',
+    '................']};
+let TOWN_HUD_ART=false;
+function townHudArt(el){
+  if(TOWN_HUD_ART)return; TOWN_HUD_ART=true;
+  const url=rows=>{const [cv,c]=tCanvas(rows[0].length,rows.length); tRows(c,rows,0,0); return 'url('+cv.toDataURL()+')';};
+  el.style.setProperty('--res-frame',url(TOWN_HUD_FRAME));
+  for(const k of HAUL_KEYS){const i=el.querySelector('[data-ico="'+k+'"]'); if(i)i.style.backgroundImage=url(TOWN_RES_ICON[k]);}
+}
 function townHud(){
   const el=$('#townRes'); if(!el)return;
+  townHudArt(el);
   const R=haulFix(townData().res);
   $('#townResTimber').textContent=R.timber;
   $('#townResIron').textContent=R.iron;
@@ -13311,10 +13439,72 @@ function townGroundPx(x,y,ch){
   const n=tNoise(x/22,y/22,1)*.65+tNoise(x/7,y/7,2)*.35+(B-.5)*.22;
   return n<.42?'l':n<.6?'m':'n';
 }
+/* ---- Art pass A3b (expansion/ART_UPGRADE.md §4, Art 3): the square's earth, cobbles and deck from PixelLab Wang tilesets, on the
+   town's letters. A set holds two terrains, lower (0) and upper (1); each of its 16 tiles is keyed by its corners NW NE SW SE and
+   is 16 rows. The tiles sit on a grid half a tile off the map's, so each corner falls on the middle of a map tile and takes that
+   tile's terrain: every tile of TOWN_MAP is exactly what it was at its centre, and the edges between terrains run along the
+   tiles' borders. ec: earth to cobbles; cd: cobbles to deck. The cliff, the sea and the paths build mode lays keep
+   townGroundPx() ---- */
+const TOWN_WANG={
+  /* E3 (0380610c-a6e3-49a7-9645-120213b1ece9): G1's earth to G3's cobbles, a rim of loose cobbles sunk in mud between them */
+  ec:{
+    '0000':['nllmmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmllmmmmmmmmm','mmllllllmmlmmmmm','mmlnmnllnllmmmmm','lmlllmmmnlnnnmmm','lllllllllllllmmm','llllllnmmllllmmm','lllllnnllnnlmmmm','mlmmlnlllnnlmmmm','mllllllllllllllm','mllmlmlllllllmmm','lllllmllmmmmlmmm','lllmlmllmlmmlmml','llmmmlmmmlnnlnnl','nlmmmllllllnllll'],
+    '0001':['nlllmmmmmmmmmlnn','nlllmmmmmmmmmmnn','nlllmmmmmmmmmmml','mllllmlmmmmmmlll','mmlnmnllnllmmlll','mmllmmmmnlnmllnn','mllllllllllllnnn','mlllllnmmllnnn11','lllllnnmlllnl111','mlmmmnnllnn111qq','lmmmllllnn112q21','mmmmlllnl11q2221','mlmmllnn11111211','lllmlnn111222111','lllllnn111122111','nlllnn1111122211'],
+    '0010':['nlmmmmmmmmmmllnn','nlmmmmmmmmmmmlnn','nmmmmmmmmmmmmmmm','llllmmmmmmlmmmmm','llllmmmmnllmmmmm','nnllmlmmnlnnnmll','nll1lmmlllmlmmml','11llllmlllllmmmm','111llllllnnmmmmm','1111nnl1lnnmmmmm','11331lnllmlllllm','13qq11lnl1lllmmm','1q33211llllmlmmm','13qq3311nn1llmmm','12qqq311nn1mlnnl','113qq111nnlmlllm'],
+    '0011':['nlmmmmmmmmmmmmnn','nlmmmmmmmmmmmmnn','nmmmmmmmlmmmmmml','lmmlllllllmmmlll','1lllllllllnnnlll','nn1nnnn1lll111nn','nnlnllnnnnnnnnnn','11l1111nnnnnnn11','1111111111111111','1111211111111111','11q321113q222211','1qqq23q122222211','1q33qq1122221211','13qqqq2122222211','1222qq111q222111','11q2q111111q2211'],
+    '0100':['nlllnn1111111111','nlllnnnn112qq111','nll1nnnnn1222q11','llml1nnnnl112q11','mlln1lnnnnn12q1q','mmlmm1lnnnnn1112','mmllmm1nnnnnn112','mllmmnmlllnnnn11','mlllmnllllnnnnnn','mllmlnnmlln77nnn','mmlmllmmmlln7nnn','mmmmlmmmmmllllln','mmmmmmmmmmmm1lll','llmmmmmmmmmmmnmm','lllmmmmmmlnnlnnm','nlllmmmmmllnllmm'],
+    '0101':['nlllnn1111111111','nlllnnn111q22111','nlmlnnn1112q2211','mmml1nn111222211','lllm1lnn1122221q','lllm1lnn1122111q','lllm1nn11111111q','lllm1nnn11111112','lllmlnnn113q2221','llmmllnn112q2221','llllllnn11222221','llllllnn11222221','lllmlnn111221211','lllllnn111222211','llll1nn111122211','nlllnn11111q2211'],
+    '0110':['nlllnn1111111111','nlllnnl111122111','llllnnl1111q2211','llllnn1111222211','llllnn1112222213','nnnll111qq222212','nnl1111111111112','1111111111111111','11111111lnn1nnnn','11111111nnnnnnnn','11332111nnnnnnnn','13qq2221nnnnnnnn','1q3q2q21nnllllll','13qqqq31nn1lllln','12qqq311nn1llnnm','113qq111nnlmllmm'],
+    '0111':['nlllnn1111111111','nlllnnn111112111','llllnnn1111q2q11','llllnn1111222211','lllnll11q2222213','nnnnl111qq221113','nnn1111111111112','1111111111111111','1111111113q32221','1111111133332221','1133211132q12221','13qq211122222221','1q33221122221211','13qqqq21q22q2111','12q2qq111qq22111','1132q11111122211'],
+    '1000':['11111111nn1lllnn','1122q21nnnllllnn','332221nnnnllllll','32221nnnnn1lllll','qq211nnnnnlmlllm','qq211nnnnlnnnlll','111lnnnn1mmlllmm','11nnnnnnlllllmmm','nnnnnnnnlnnlmmmm','nnnnnnnllnnlmmmm','nnnnll1lllllllll','llll1llllllllmmm','lllllmmmmmmmmmmm','mmmmlmmmmmmmmmmm','mmmmmmmmmlnnlnnm','nllmmmmlmllnllmm'],
+    '1001':['11111111nn1lllnn','11q22111nn1lllnm','3322q111nn1lllll','3qq2qq11ln1lllll','2qq22q11nnllllll','qqqq2311nnnnnnnn','11111q11lnnnnnnn','1111111111111111','lnnn111111111111','nnnnn11112111112','nnn7nn1112122221','lln7nnn111222221','11nn77n111111211','ll1ln7n111111111','lmm1nnn111111111','nlmlln1111122111'],
+    '1010':['11111111nnlmllnn','11qq2111nnllllnn','33q2q111nnlmllll','3qq2qq11nnlllllm','qqqqqq11nn1llmml','qqqqqq11nn1llmmm','qqqqqq11nn1lllmm','3qqqqq11nn1lllnm','11111111nn1lmmmm','11111111nn1lmmml','11332111nnllmmml','1qqq2221nnlllmmm','1q33qq21nnlllmml','13qqq3q1nn1llmll','122q3311nn1llnnl','11323q11nn1lllmm'],
+    '1011':['11111111nn1lllnn','11222111nn1lllnn','3322q111nn1lllll','3qq2qq111lnlllll','qqq2221111ll1ll1','qq222q11111nnnnn','qqq22q111111lnnn','qqqqq21111111111','1111111113q31111','1111111133q32221','1133111132212121','1q22212122222221','1q3q221122221211','1qq2232122222111','112223111q221111','1132q11111122211'],
+    '1100':['1111111112121111','1122211122312111','3322q11111321211','32222q112q111211','2222111111111212','2211111111111112','22111nnnnnn11111','11nnnnnnnnnnnn11','nnnnnn777nnnnnnn','nnnnnnnnnnn77n7n','nnnnlll1lnnn777n','nlllllllll11lnnl','lllllmmmmlllllll','mmmmmmmmlllmmmmm','mmmmmmmmllnnlnnl','nmmmmmmllllnllmm'],
+    '1101':['1111111111121111','1122211112312111','3322q11111322211','32222q1123222211','222222112222221q','222222112222111q','1111121111111113','1111111111111111','nnnn11111qqq2221','nnnnn1111qqq2221','nnn7nn111q222221','lln7nnn111122221','11nn77n111111211','lm1ln7n111111111','lmm1n7n111111111','mlllln1111111111'],
+    '1110':['1111111112121111','1122211112312111','3322q11112322211','3222qq1123222211','qq22q2112222221q','qqqqqq1122221111','qqqqqq1111111112','qqqqq21111111111','111111111111nnnn','1111111111llnnnn','113321111nnnnnnn','1q222211ln7777nn','123q2211nn77nn1l','1q22q3q1nn7nlllm','1122q311nn71lnmm','11q2qq11nnlmmmmm'],
+    '1111':['1111111112121111','1122211112312111','3322q111113q2211','3q222q1123222211','qq2222112222221q','qqq222111222111q','qqqq2q111111111q','qqqqq11111111111','1111111113q32221','11111111q33q2221','1133211132212221','1q2q2121122222q1','1233221122211q11','13qqq32121222111','12qqq3111q211111','113q311111122211']},
+  /* G3 (29b2f740-a04e-4345-aa7f-a81e4f896206): cobbles to the tarred deck in front of the shaft */
+  cd:{
+    '0000':['1111111112121111','1122211112312111','3322q111113q2211','3q222q1123222211','qq2222112222221q','qqq222111222111q','qqqq2q111111111q','qqqqq11111111111','1111111113q32221','11111111q33q2221','1133211132212221','1q2q2121122222q1','1233221122211q11','13qqq32121222111','12qqq3111q211111','113q311111122211'],
+    '0001':['1111111111111111','1111211112211111','33qq311112431111','3222231123222111','22222211q2222211','22222q11q2131251','22222q5112121511','2222q21111111156','1111111111111616','1111111115157756','1133q11155577756','1q13221114777716','1232221547777716','1212221547776756','5222111777776756','1122211777776716'],
+    '0010':['1111111111511511','2322q11111111111','322233112q33q11q','222211124q223q5q','1222221222222211','5222211222222q11','5122211222222q11','6651111222222q11','6655511112q22221','7656112113q22221','7756611121q22221','76566651112221q1','6656676511221311','665667655q22q211','6656666552222111','6656666555q22111'],
+    '0011':['1111111111111111','1112111111111111','33q1311111331111','322222112q222111','1222211232222211','12222111q2222211','511111151q211551','6616666555515656','6756566166666656','6755566156666656','5716676156666656','6656676545566656','6656777545166616','6756777155517616','6757775161147616','7757775166546716'],
+    '0100':['1111155777776756','1112215777776717','343q411567776755','4qqqq31156776756','qqqq2q1111666756','qqqqqq1111566616','22qqqq1111116616','q2qqqq1111115716','1111111113211556','1111111132222156','1133q11132222q55','132qq11122222q11','112q222122221211','13122221q2223111','1q112q1111q22111','1122215111111111'],
+    '0101':['1111111667666757','1111115677766754','444q315677766756','4qq2qq1777766756','3qqq221577766756','qqqqq21177756756','qqqq221176666756','qqqqq21176776756','1211111144576756','1111111171576716','1133221144576755','121q221166566715','133q221566566616','1311qq1567566616','1qq1125767565716','113q211777566656'],
+    '0110':['1111111777566756','2322321777566755','q222qq1775666716','2222256566666716','2222256566666656','1225176566666756','1115446566666756','6656446111511156','6656446151111556','6656446151112317','665674615113qq11','4616746551322qq1','6655156511q22qq1','6611166111222311','6654556111221111','6656556511111111'],
+    '0111':['1115115777565616','q322q25774566656','q2223q5775666656','2222256565656656','2222256566656656','1221565566656656','5551775566656616','6656775566656756','6656776566656756','7456776577756755','5656776577756755','6656676577756656','6656776577756656','6756445577766756','6756445177766756','7755525577756756'],
+    '1000':['6656676611511511','5656776611111111','6756776511132111','6717577511322211','7715561511222213','7756665112222213','7756711111111113','7455555111111111','4411111113q11121','4512111131111221','1132115132222221','1112221122222qq1','114222112222q315','22222q1122213315','22222q1111321111','1222221115111111'],
+    '1001':['6656665511511111','6656665611111111','6656667511132111','6656666511322111','5656666652222251','5756666655222111','7656666655111151','7756666617766616','7755111567756756','7751111567756756','1111111577756715','11q2551177756616','1322211577756716','1222225677756756','1222225677656756','1222215767656756'],
+    '1010':['6657577655111111','6756577651111111','7756566651131111','7756566651311111','775656665q11111q','765756665111111q','765655665115111q','7756556611111111','7756557611331211','7756667653q22221','5157715411222221','6657715511222121','7756666511121q11','7755566512222211','7757775552222211','77566755551qq211'],
+    '1011':['7756676551111111','6756776551111111','7756776551132111','7756476171q21111','7756446576521111','7756446566651111','7756746166661551','7756776166666656','6656776166656656','4756666166756756','5656776177756756','6656775177756756','6656775177766716','6656445177766716','6656445177766716','7656155167766716'],
+    '1100':['6656676566665756','6656676166665756','6656676166665755','6656676566665656','6655646565666616','6655446561665616','6654666576766616','6614666565565656','6617551111111517','7651111113322555','5513211133222311','1111221122222321','1131121122222q21','22222211q222q315','22222211113q2211','1222221111111111'],
+    '1101':['6656545577565656','6656575566565616','5615156566665656','6615166567665656','6611176555665656','6655566165666656','6656776561666656','6716776166666656','7616776566656656','5556446566656656','1111546176656716','1113156177656715','1332215177656716','1222225677756415','1222225677656455','1222215677666417'],
+    '1110':['7756565577575756','7756575547565616','7756775544565656','7757775544565656','7757776555666615','7757576565576616','7757576565675616','7757576156666616','6656576156666656','7756676166675516','7756676167513355','765667617553qq11','7757677555322q11','7757677152223221','5657577652222211','5657576655222211'],
+    '1111':['7756775176565616','6656775176565616','6656775576565616','6656776566665656','6656676561665655','6656776575665656','6656776566665656','6656776566666656','6656656566656616','6656666166656656','5556675166656653','5656775167756755','6656775177766716','6656775577766716','6656775577766716','6656555577766716']}
+};
+/* a tile's terrain: 0 earth (and everything standing on it), 1 cobbles, 2 deck */
+const WANG_TER={',':1,o:1,H:1,'=':2};
+function townTer(tx,ty){tx=tx<0?0:tx>=TOWN_W?TOWN_W-1:tx; ty=ty<0?0:ty>=TOWN_H?TOWN_H-1:ty; return WANG_TER[TOWN_MAP[ty][tx]]||0;}
+/* one ground pixel from the tiles. Where a deck tile is among the four corners the cd set draws, earth counting as cobbles
+   (on the map the deck only ever meets cobbles); everywhere else ec, the deck counting as cobbles */
+function townWangPx(x,y){
+  const X=x-8, Y=y-8, cx=Math.floor(X/16), cy=Math.floor(Y/16), lx=X-cx*16, ly=Y-cy*16;
+  const a=townTer(cx,cy), b=townTer(cx+1,cy), c=townTer(cx,cy+1), d=townTer(cx+1,cy+1);
+  const cd=TOWN_WANG.cd&&(a===2||b===2||c===2||d===2), S=cd?TOWN_WANG.cd:TOWN_WANG.ec;
+  const k=cd?''+(a>>1)+(b>>1)+(c>>1)+(d>>1):''+(a?1:0)+(b?1:0)+(c?1:0)+(d?1:0);
+  const ch=S[k][ly][lx], e=WANG_EARTH.indexOf(ch);
+  if(e<0)return ch;
+  /* the earth keeps today's big damp patches (townGroundPx's broad noise) over the tiles' texture, a letter darker or lighter,
+     so sixteen-pixel tiles never read as a grid across the open ground */
+  const n=tNoise(x/22,y/22,1)+(tBayer(x,y)-.5)*.16;
+  return WANG_EARTH[Math.max(0,Math.min(2,e+(n<.36?-1:n>.64?1:0)))];
+}
+const WANG_EARTH='lmn';
 function townGround(){
-  const W=TOWN_W*TOWN_T, H=TOWN_H*TOWN_T, [cv,c]=tCanvas(W,H), img=c.createImageData(W,H), d=img.data;
-  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
-    const i=(y*W+x)*4, p=PX_RGB[townGroundPx(x,y,TOWN_MAP[(y/TOWN_T)|0][(x/TOWN_T)|0])]; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;
+  const W=TOWN_W*TOWN_T, H=TOWN_H*TOWN_T, [cv,c]=tCanvas(W,H), img=c.createImageData(W,H), d=img.data, wang=!!TOWN_WANG.ec;
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const ch=TOWN_MAP[(y/TOWN_T)|0][(x/TOWN_T)|0];
+    const i=(y*W+x)*4, p=PX_RGB[wang&&ch!=='^'&&ch!=='~'&&(ch!=='='||TOWN_WANG.cd)?townWangPx(x,y):townGroundPx(x,y,ch)]; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;
   }
   c.putImageData(img,0,0);
   /* pale grass tufts on bare earth, and stray embers by the braziers (Blood Forest's red squares) */
