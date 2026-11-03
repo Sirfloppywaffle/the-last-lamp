@@ -21,7 +21,7 @@
 | — | The Lodge from Criss's playtest: movable sconces, the Grimoire's podium, rugs under furniture | #146 | merged | 19.8.0 |
 | 6 | The Peddler: a rescued soul with a stall by the stairs | #148 | merged | 19.9.0 |
 | A3 | Art pass 3: scenery (buildings, ground, props) | #149 (A3a: buildings and props), #150 (A3b: the ground and the haul's frame) | merged | 19.10.0 |
-| 7 | The village: decorations, paths, paint, Keepers' huts | PRNUM | open | 19.11.0 |
+| 7 | The village: decorations, paths, paint, Keepers' huts | #151 | open | 19.11.0 |
 | 8 | The Hearth Beacon: the rain thins | | | 19.12.0 |
 | 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.13.0 |
 | 10 | Release v20.0.0 | | | 20.0.0 |
