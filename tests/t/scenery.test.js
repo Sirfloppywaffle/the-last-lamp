@@ -23,11 +23,12 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       const H=T.townHouse(Object.assign({},h,{ruin:false})); if(H.cv.width>h.w*16)out.bad.push(k+' too wide '+H.cv.width);
       if(h.ruin!==undefined&&h.art!=='chandler'&&h.art!=='crypt'){const R=T.townHouse(Object.assign({},h,{ruin:true}));
         if(R.cv===H.cv)out.bad.push(k+' ruin is not its own'); if(R.cv.width>h.w*16)out.bad.push(k+' ruin too wide');}}
-    /* the workshops: ruined, restored and lit are three looks; lit panes glow and light, unlit ones do neither */
+    /* the workshops: ruined, restored and lit are three looks (their pixels differ, not just their canvases); lit panes glow and light, unlit ones do neither */
     out.shops={};
     for(const k of ['brazier','quay','smithy','belfry','menagerie']){const W=T.TOWN_WORKSHOPS[k], h=W.house;
       const ruin=T.townHouse(Object.assign({},h,{ruin:true,lit:h.win.map(()=>false)})), rest=T.townHouse(Object.assign({},h,{ruin:false,lit:h.win.map(()=>false)})), lit=T.townHouse(Object.assign({},h,{ruin:false,lit:h.win.map(()=>true)}));
-      out.shops[k]=[ruin.cv!==rest.cv&&rest.cv!==lit.cv, !rest.em&&rest.wl.length===0, glows(lit.em)&&lit.wl.length>0];}
+      const same=(a,b)=>{if(a.width!==b.width||a.height!==b.height)return false; const A=px(a), B=px(b); return A.every((v,i)=>v===B[i]);};
+      out.shops[k]=[!same(ruin.cv,rest.cv)&&!same(rest.cv,lit.cv)&&!same(ruin.cv,lit.cv), !rest.em&&rest.wl.length===0, glows(lit.em)&&lit.wl.length>0];}
     /* the Oar's ruin: a candle in its last window; the Lodge's round window and the Attic */
     const oar=T.TOWN_HOUSES[2], L=T.TOWN_HOUSES[0];
     const oarR=T.townHouse(Object.assign({},oar,{ruin:true,lit:oar.win.map((w,i)=>i===oar.win.length-1)}));
