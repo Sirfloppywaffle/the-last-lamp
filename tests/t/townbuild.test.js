@@ -143,7 +143,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const msg=document.getElementById('townTmsg').textContent;
     const k=T.k/T.dpr; return {card,tray,chips,label,msg,x:((14*16+8)-T.lcx)*k,y:((14*16+8)-T.lcy)*k,iron:__t.townData().res.iron};
   });
-  ok(ui.card==='Build'&&ui.tray&&ui.chips===7&&ui.label==='Done','Build opens the tray and teaches it on a card',ui);
+  ok(ui.card==='Build'&&ui.tray&&ui.chips===6&&ui.label==='Done','Build opens the tray and teaches it on a card',ui);
   ok(/Wet Cobblestone · 2 iron/.test(ui.msg),'choosing a chip names it and its cost',ui.msg);
   await p.mouse.click(ui.x,ui.y); await p.waitForTimeout(80);
   const tap=await p.evaluate(()=>({at:(__t.townDecoAt(14,14)||{}).id,iron:__t.townData().res.iron}));

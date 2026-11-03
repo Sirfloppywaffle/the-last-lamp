@@ -266,7 +266,7 @@ const DEV=[
       const hud=()=>JSON.stringify([q(document.getElementById('townBack')),q(document.getElementById('townBuild')),q(document.getElementById('townRes')),q(document.getElementById('townCv'))]);
       const msg=()=>q(document.getElementById('townTmsg')), chips=()=>[...document.querySelectorAll('#townTrow .town-chip')].filter(c=>!c.hidden).map(q);
       const bar=[...document.querySelectorAll('#townTools .town-tb')].map(q), m0=msg(), row0=q(document.getElementById('townTrow')), h0=hud(), ch=chips();
-      o.bar=bar; o.barOk=bar.length===5&&bar.every(r=>inside(r)&&thumb(r))&&apart(bar)&&!bar.some(r=>over(r,m0)||ch.some(c=>over(r,c)));
+      o.bar=bar; o.barOk=bar.length===6&&bar.every(r=>inside(r)&&thumb(r))&&apart(bar)&&!bar.some(r=>over(r,m0)||ch.some(c=>over(r,c)));
       __t.bldTap(14,15); __t.townFrame(1/30);
       const lb=[...document.querySelectorAll('#townLiftBar .town-tb')].map(q).filter(Boolean);
       o.lb=lb; o.liftOk=!!T.lift&&lb.length===5&&lb.every(r=>inside(r)&&thumb(r))&&apart(lb)&&!lb.some(r=>over(r,msg())||chips().some(c=>over(r,c)))

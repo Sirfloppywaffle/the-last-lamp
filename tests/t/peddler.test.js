@@ -114,7 +114,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* different trips give different stocks, at least sometimes */
     const seen=new Set(); for(let t=10;t<30;t++){T.townData().trips=t; T.townData().wares=null; seen.add(T.peddlerStock().join());} out.varied=seen.size;
     /* everything held: an empty barrow */
-    const Tn2=T.townData(); Tn2.blueprints=['chapel','observ','coral']; Tn2.dyes=Object.keys(T.LODGE_DYES).filter(x=>T.LODGE_DYES[x].rare); Tn2.trips=40; Tn2.wares=null;
+    const Tn2=T.townData(); Tn2.blueprints=['chapel','observ','coral'].concat(Object.keys(T.TOWN_PACKS)); Tn2.dyes=Object.keys(T.LODGE_DYES).filter(x=>T.LODGE_DYES[x].rare); Tn2.trips=40; Tn2.wares=null;
     out.empty=T.peddlerStock().length;
     T.townOpen(); T.townSoulCard('peddler'); out.emptyBody=document.querySelector('#mBody').textContent; T.closeModal(); T.townClose();
     out.saved=JSON.parse(localStorage.getItem('ll-town')).trips;

@@ -20,6 +20,8 @@ const {chromium}=require('playwright');
 
   await toggle(); await open();
   ok(await p.evaluate(()=>__t.devOn&&!__t.run),'materials can be granted before starting any run');
+  /* the lamp is in the Lights group (Expansion 4, step 7): turn the tray's group chip to it */
+  await p.click('#townGrp');
   const poor=await p.locator('[data-deco="lamp"]').getAttribute('class');
   await p.click('#townMaterials'); await p.click('#townMaterials');
   const grant=await p.evaluate(()=>({res:{...__t.townData().res},hud:document.getElementById('townResIron').textContent,
