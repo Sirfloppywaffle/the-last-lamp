@@ -11,7 +11,7 @@
 | What | How it is made now |
 |---|---|
 | Keepers and souls | (A2: all five Keepers and both souls are drawn whole by PixelLab, `TOWN_FIG`; the hand rows below are kept for the comparison sheet and as a fallback.) 16×24 text rows per facing (`d`, `u`, `r`; `l` mirrored), each Keeper with their own uppercase palette (`TOWN_KITS`). Legs are shared (`TOWN_BODY`, `TOWN_LEGS`), with a two-pose walk (`TOWN_WALK`). The glowing parts (`em`) are drawn again after the dark. |
-| Buildings, trees, braziers, fences, headstones, the Head-frame | (A3a: all from PixelLab, `TOWN_BLD_ROWS` and the prop rows; ruins are PixelLab states, lit windows a letter swap.) Painted by code, one function each (`townHouse()`, `townTree()`, `townBrazier()`…). Flames are 3 hand-made frames (A1 replaced them). |
+| Buildings, trees, braziers, fences, headstones, the Head-frame | (A3a) From PixelLab: each painter (`townHouse()`, `townTree()`, `townBrazier()`…) draws its rows from `TOWN_BLD_ROWS` or the prop rows; ruins are PixelLab states, lit windows a letter swap. The flames are A1's loops. |
 | The square's ground | Generated pixel by pixel (`townGround()`). |
 | The Lodge | Armchair, hatch, ladder and round window come from PixelLab. The desk, stove, bookshelf and rug are painted by code (step 2). Floors and walls are generated. |
 | The stair | Painted canvas. **Out of scope** (Criss's call on #116). |
