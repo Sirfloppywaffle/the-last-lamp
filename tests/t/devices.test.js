@@ -30,13 +30,17 @@ const DEV=[
       const back=q(document.getElementById('townBack')), act=q(document.getElementById('townAct')), res0=q(document.getElementById('townRes')), c1=q(cv);
       const D=__t.townData(), keep=D.res; D.res={timber:16,iron:10,tallow:4,curios:1}; __t.townHud();
       const res1=q(document.getElementById('townRes'));
+      /* art pass A3b: the framed readout keeps its size at the largest counts, is no taller than the Title button, and its
+         counts stay readable (12 px or more) */
+      D.res={timber:999,iron:999,tallow:999,curios:99}; __t.townHud(); const res2=q(document.getElementById('townRes'));
+      o.resFont=parseFloat(getComputedStyle(document.getElementById('townResTimber')).fontSize);
       D.res=keep; __t.townHud();
       o.back=back; o.act=act; o.res0=res0; o.res1=res1; o.k=T.k; o.tile=+(16*T.k/T.dpr).toFixed(1);
       o.btns=inside(back)&&inside(act)&&inside(res0)&&inside(res1)&&res0[0]>=back[2]&&thumb(back)&&thumb(act)&&!(back[2]>act[0]&&back[0]<act[2]&&back[3]>act[1]&&back[1]<act[3]);
       o.cover=c0[0]<=0&&c0[1]<=0&&c0[2]>=innerWidth&&c0[3]>=innerHeight;
       o.whole=Number.isInteger(T.k)&&cv.width===Math.round(cv.getBoundingClientRect().width*T.dpr)&&o.tile>=40&&o.tile<=64;
       o.still=JSON.stringify(c0)===JSON.stringify(c1);
-      o.resStill=JSON.stringify(res0)===JSON.stringify(res1);
+      o.resStill=JSON.stringify(res0)===JSON.stringify(res1)&&JSON.stringify(res0)===JSON.stringify(res2)&&inside(res2)&&res0[3]-res0[1]<=back[3]-back[1]&&o.resFont>=12;
       /* build mode (step 4): Build sits in the HUD beside the counts without touching them; opening it shows the tray inside
          the safe area, every chip a thumb, the message line clear of the HUD, and nothing else moves */
       const bb=document.getElementById('townBuild'), hudB0=[back,q(bb),res0], over=(a,c)=>!!a&&!!c&&a[2]>c[0]&&a[0]<c[2]&&a[3]>c[1]&&a[1]<c[3];
