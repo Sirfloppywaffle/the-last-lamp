@@ -18,23 +18,31 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.setDev(true); T.townReset(); T.townOpen();
     const px=cv=>cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;
     const glows=cv=>!!cv&&px(cv).some((v,i)=>i%4===3&&v);
+    const same=(a,b)=>{if(a.width!==b.width||a.height!==b.height)return false; const A=px(a), B=px(b); return A.every((v,i)=>v===B[i]);};
+    /* where a house glows: [pixels inside the rects, pixels outside]; and the light points its panes throw */
+    const inR=(x,y,rs)=>rs.some(([x0,y0,w,h])=>x>=x0&&x<x0+w&&y>=y0&&y<y0+h);
+    const emIn=(cv,rs)=>{const n=[0,0]; if(!cv)return n; const d=px(cv), w=cv.width; for(let i=3;i<d.length;i+=4)if(d[i])n[inR((i>>2)%w,((i>>2)/w)|0,rs)?0:1]++; return n;};
+    const pts=rs=>rs.map(([x0,y0,w,h])=>[x0+(w>>1),y0+h+2]);
     /* every building: art on PX letters, no wider than its footprint */
     for(const h of T.TOWN_HOUSES){const k=h.art; if(!k){out.bad.push('no art '+h.x+','+h.y); continue;}
       const H=T.townHouse(Object.assign({},h,{ruin:false})); if(H.cv.width>h.w*16)out.bad.push(k+' too wide '+H.cv.width);
       if(h.ruin!==undefined&&h.art!=='chandler'&&h.art!=='crypt'){const R=T.townHouse(Object.assign({},h,{ruin:true}));
-        if(R.cv===H.cv)out.bad.push(k+' ruin is not its own'); if(R.cv.width>h.w*16)out.bad.push(k+' ruin too wide');}}
+        if(!T.TOWN_BLD_ROWS[k].ruin)out.bad.push(k+' has no ruin rows'); if(same(R.cv,H.cv))out.bad.push(k+' ruin looks like the restored building');
+        if(R.cv.width>h.w*16)out.bad.push(k+' ruin too wide');}}
     /* the workshops: ruined, restored and lit are three looks (their pixels differ, not just their canvases); lit panes glow and light, unlit ones do neither */
     out.shops={};
     for(const k of ['brazier','quay','smithy','belfry','menagerie']){const W=T.TOWN_WORKSHOPS[k], h=W.house;
       const ruin=T.townHouse(Object.assign({},h,{ruin:true,lit:h.win.map(()=>false)})), rest=T.townHouse(Object.assign({},h,{ruin:false,lit:h.win.map(()=>false)})), lit=T.townHouse(Object.assign({},h,{ruin:false,lit:h.win.map(()=>true)}));
-      const same=(a,b)=>{if(a.width!==b.width||a.height!==b.height)return false; const A=px(a), B=px(b); return A.every((v,i)=>v===B[i]);};
       out.shops[k]=[!same(ruin.cv,rest.cv)&&!same(rest.cv,lit.cv)&&!same(ruin.cv,lit.cv), !rest.em&&rest.wl.length===0, glows(lit.em)&&lit.wl.length>0];}
     /* the Oar's ruin: a candle in its last window; the Lodge's round window and the Attic */
     const oar=T.TOWN_HOUSES[2], L=T.TOWN_HOUSES[0];
     const oarR=T.townHouse(Object.assign({},oar,{ruin:true,lit:oar.win.map((w,i)=>i===oar.win.length-1)}));
-    out.oar=glows(oarR.em)&&oarR.wl.length===1;
+    const oW=T.TOWN_BLD.oar.win, oLast=oW[oW.length-1], oE=emIn(oarR.em,oLast);
+    out.oar=[oE[0]>0&&oE[1]===0, JSON.stringify(oarR.wl)===JSON.stringify(pts(oLast))];
     const l0=T.townHouse(Object.assign({},L,{ruin:false,lit:[true,true],attic:false})), l1=T.townHouse(Object.assign({},L,{ruin:false,lit:[true,true],attic:true}));
-    out.attic=[l0.wl.length,l1.wl.length];
+    const LW=T.TOWN_BLD.lodge.win, side=[...LW[0],...LW[1]], disc=LW[2];
+    out.attic=[l0.wl.length,l1.wl.length, emIn(l0.em,disc)[0]===0&&emIn(l0.em,side)[1]===0, emIn(l1.em,disc)[0]>0&&emIn(l1.em,[...side,...disc])[1]===0,
+      JSON.stringify(l1.wl)===JSON.stringify(pts([...side,...disc]))];
     /* in the square: the Attic's window follows the Attic */
     const D=T.townData(); D.lodge=D.lodge||{}; D.lodge.built=true; T.townArt(); out.sq0=!!T.TOWN_HOUSES[0].attic;
     D.lodge.rooms=D.lodge.rooms||{}; D.lodge.rooms.attic={built:true,floor:'plank',wall:'stone',furn:[]}; T.townArt(); out.sq1=!!T.TOWN_HOUSES[0].attic;
@@ -52,8 +60,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     return out;});
   ok(!r.bad.length,'every building has its art and its ruin, none wider than its footprint',r.bad);
   for(const [k,v] of Object.entries(r.shops))ok(v.every(Boolean),k+': ruined, restored and lit are three looks; dark panes glow nowhere, lit ones glow and throw light',v);
-  ok(r.oar,'the Oar’s ruin keeps a candle burning in one window',r);
-  ok(r.attic[0]===2&&r.attic[1]===3,'the Lodge’s round window (the Attic’s) lights only with the Attic',r.attic);
+  ok(r.oar.every(Boolean),'the Oar’s ruin keeps a candle burning in its last window, and only there',r.oar);
+  ok(r.attic[0]===2&&r.attic[1]===3&&r.attic.slice(2).every(Boolean),'the Lodge’s round window (the Attic’s) lights only with the Attic, and its glow and light sit in that window',r.attic);
   ok(!r.sq0&&r.sq1,'in the square, the round window follows the Attic being built',r);
   ok(r.trees>=2&&r.graves>=2,'the trees and the headstones come in kinds, picked by where they stand',r);
   ok(r.props&&r.housePX,'every building and prop is on the town’s colours and stands on its foot',r);
