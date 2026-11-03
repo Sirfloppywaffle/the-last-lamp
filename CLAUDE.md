@@ -35,3 +35,5 @@ You're the engineer and QA on this project. Gemini, working through Jules, is yo
 
 ## Talking to Criss
 Short and direct. Lead with what changed and what he should try. He's on a phone.
+
+**Keep output lean; it costs Criss's usage.** While watching a PR, don't narrate each bot comment, summary edit or CI run. Message him only when the PR is ready to merge, CI is red for a real reason, or something needs his call. CodeRabbit: fix real bugs it finds; skip trivial or nitpick suggestions (test tightening, style) without replying, unless Criss asks.
