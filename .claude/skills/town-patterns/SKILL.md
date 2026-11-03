@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 6 (the Peddler) and art pass A2 - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 6 (the Peddler) and art passes A2 and A3a - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -93,6 +93,13 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] **A new rescued soul** is a `TOWN_SOULS` row (texts, `st`, `box`, `dx`/`dy`, `art`); `cagePool()`, the landing, `TOWN_KEEP`, `townSoulAt()` and the haul pick it up by themselves. Its place is drawn in `townArt()` and rebuilt through the `TOWN_STALL` signature in `townSyncBuildings()`; `townSoulCard()` sends it to its own card. `rescue.test.js` wants every soul home before no cage hangs.
 - [ ] **A rotating stock** is kept, not recomputed: `peddlerStock()` rolls on its salt keyed on `ll-town.trips` (`townTrip()` from `victory()`/`defeat()`) and saves `{trip, items}`, so buying or reopening never rerolls it. A new ware is a `PEDDLER_WARES` row.
 - [ ] **A rare dye** is a `LODGE_DYES` row with `rare: true`; it reaches a piece through `dyeWays()` only when `dyeTouches()` says it changes it, and `dyeFix()` keeps it on a saved piece.
+
+## The square's buildings and props (art pass A3a)
+
+- [ ] **A building** is a `TOWN_HOUSES` entry with `art` (a key of `TOWN_BLD_ROWS`: `rows`, and `ruin` if it can be ruined) and a `TOWN_BLD` row (`win`: one list of pane rects `[x, y, w, h]` in its rows per entry of its `win`/`lit`). `townHouse(b)` makes it as it stands (ruin, lit panes, the Lodge's `attic`), once per state; `townArt()` stands it on its footprint's foot, centred, and lights its lit panes. Panes light by a letter swap (`BLD_LIT`, or the row's `lit`), never by a second drawing, so the glow is the glass. A new state of a building that changes its look goes into `townHouse()`'s key.
+- [ ] **A prop's canvas stands on its tile's foot:** draw it at `base - canvas.height` (trees, headstones, fences, braziers all do), so new art of another height needs no offsets. The brazier's flame sits at `BRZ_FLAME` over its tile, its body at `BRZ_Y`.
+- [ ] **The fence** is one piece cut in two (`FENCE_PARTS`: a post and a 16 px run of bars): runs east to west are bars with a post at an open end, runs north to south a post a tile.
+- [ ] New square art follows runbook §3: candidates on a contact sheet for Criss, his pick converted with `png2rows.py --outline <darkest letter>`, stray pixels from the job's sheet dropped, logged in `ART_UPGRADE.md` §6.
 
 ## Tests
 

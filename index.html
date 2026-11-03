@@ -709,7 +709,7 @@ const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='19.9.0';
+const GAME_VERSION='19.10.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -12056,10 +12056,10 @@ const TOWN_SOLID='^~#HoTS+|';
 /* the buildings on the map: the Keeper's Lodge (a ruin for now), a chandler's house with a light in one window, the Drowned
    Oar with a candle someone left, and the crypt in the cemetery. win: tile columns of the front windows, lit: which burn */
 const TOWN_HOUSES=[
-  {x:1,y:8,w:5,h:4,door:2,win:[0,4],lit:[false,false],ruin:true},
-  {x:18,y:8,w:5,h:4,door:2,win:[0,4],lit:[true,false],chim:3},
-  {x:16,y:16,w:5,h:4,door:1,win:[0,3],lit:[false,true],ruin:true},
-  {x:10,y:2,w:4,h:2,crypt:true}];
+  {x:1,y:8,w:5,h:4,door:2,win:[0,4],lit:[false,false],ruin:true,art:'lodge'},
+  {x:18,y:8,w:5,h:4,door:2,win:[0,4],lit:[true,false],chim:3,art:'chandler'},
+  {x:16,y:16,w:5,h:4,door:1,win:[0,3],lit:[false,true],ruin:true,art:'oar'},
+  {x:10,y:2,w:4,h:2,crypt:true,art:'crypt'}];
 
 /* Step 6: Workshops and the one town gift, with its price (EXPANSION3_TOWN.md §0.3 & §6.1) */
 const TOWN_BUILDING_KEYS=['brazier','quay','smithy','belfry','menagerie'];
@@ -12127,7 +12127,7 @@ const TOWN_WORKSHOPS={
 };
 for(const k of TOWN_BUILDING_KEYS){
   const W=TOWN_WORKSHOPS[k]; W.dx=W.x+W.door; W.dy=W.y+W.h; W.act={w:k};
-  const hObj={id:W.id,x:W.x,y:W.y,w:W.w,h:W.h,door:W.door,win:W.win.slice(),lit:W.win.map(()=>false),ruin:true,chim:W.chim};
+  const hObj={id:W.id,x:W.x,y:W.y,w:W.w,h:W.h,door:W.door,win:W.win.slice(),lit:W.win.map(()=>false),ruin:true,chim:W.chim,art:W.id};
   W.house=hObj; TOWN_HOUSES.push(hObj);
 }
 /* Step 7: the rescued souls (EXPANSION3_TOWN.md §0.3, §0.5). Freed from a cage on a landing, each comes home and opens a place in
@@ -12716,8 +12716,10 @@ function townSyncBuildings(){
   /* step 8: which shrines are raised and whose candle burns, and what each pool holds */
   const sig=townDressSig(T); if(sig!==TOWN_SIG){TOWN_SIG=sig; changed=true;}
   /* step 9: the Lodge loses its roof hole once restored, and both its windows burn */
-  const lh=TOWN_HOUSES[0], lo=lodgeBuilt(T);
+  const lh=TOWN_HOUSES[0], lo=lodgeBuilt(T), at=lo&&!!(T.lodge.rooms&&T.lodge.rooms.attic&&T.lodge.rooms.attic.built);
   if(lh.ruin===lo){lh.ruin=!lo; lh.lit=lh.win.map(()=>lo); changed=true;}
+  /* art pass A3: and its round window, the Attic's, burns once the Attic is built (read, never made: this runs every frame) */
+  if(!!lh.attic!==at){lh.attic=at; changed=true;}
   return changed;
 }
 let TOWN_STALL=null, TOWN_SIG='';
@@ -13326,88 +13328,1299 @@ function townGround(){
   return cv;
 }
 /* the props, each its own little canvas, drawn in order of where they stand so you can walk behind them */
+/* ---- Art pass A3 (expansion/ART_UPGRADE.md §4, Art 3): the square's buildings and props from PixelLab, on the town's letters
+   (each piece's object and the hand fixes are in ART_UPGRADE.md §6). A building's rows stand on the bottom of its footprint,
+   centred on it, and rise above it like any prop; a ruin is its own rows, a state of the same base (create_object_state), so it
+   keeps the building's shape. TOWN_BLD_ROWS: the rows of each house's art (TOWN_HOUSES' art, a workshop's id), each on its own
+   lines ---- */
+const TOWN_BLD_ROWS={
+  lodge:{rows:[
+    '.........................................................1111111111.........',
+    '........................................................1u3rrrq444u1........',
+    '........................................................1uqssssssqu1........',
+    '........................................................1euuu3uuuuu1........',
+    '........................................................1uruu3urrrr1........',
+    '........................................................1urrrr3urrr1........',
+    '.........................................................1222222221.........',
+    '.........................................................1333322321.........',
+    '.........................................................1urrrq4rr1.........',
+    '..111111.................................................1uuurquur1.111111..',
+    '.17uuuuuuuuuuuuuuuuuu111111111111111111111111111111111111s3qrqqq22s1yyuuuu1.',
+    '.1qqqquuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuseu3eeer2syy55qq71.',
+    '.1qq3q6nnnnnnnnn66667777777776666777777777777777777776666ser3errr2s2m666631.',
+    '..1rrqqq3qqqqq3qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq33q333suu3rrrr2s2222431..',
+    '..1uuu2uuuuu2uuuuu24uuuquurrrrquu444sursrrrr2uuuuuuqrrrrsuu333322ursytyyu1..',
+    '..1qqq2qqqq222qqqq22rrqqrruuurqrqqu2turs2rrr2qqqqrrquur2sureeuquurrstt2221..',
+    '..1rrrrrqqqqqqqqqqqqqqqrrqrrrqrrr32u1urtq2qqqqqqqrrrrrrrsu3rrrqurrrs2222r1..',
+    '..1rrrrrrqrrrrrqrrrrrrrrrrr2rrrrrsru2u4tq2trrrr2rrrrrqrrs23rrrqrr22sqqqrr1..',
+    '..1rrrrruqurrrr2rrrrrquurrrqrrrruuru2uut32qsrrr2rrrrrqursu222eee2ursqqrrr1..',
+    '..13reeqqqqruuu2ruuuu222urq2uuequuru2eut22qqtur2uuuerqru1r44qerr2rrsquur21..',
+    '..1rrr2rrrrrrqqqqqqqqrrr22qqr2srurru2eut22r221rqqqqqrrrrq444urrr2rrt3rrrr1..',
+    '..1rur2rrrrrr2rr444qrrrrqqrrururruru2sst222q2qtrr4qurruuu33333q22224urqur1..',
+    '..1ueu2uuuuue2ueeeu2uueeqqu4s4uruuqus77t22222q2sr42uuuuuuuu3uuu2uuuee4quu1..',
+    '..1qq22222qqqqqqqqqqq222qq2suqururu411t312q22q2qs2rqqqqqqqqqqqqqqqqqqqqqq1..',
+    '..1r4r44r2ruurr4qrrrrr24444suquruutt37rt712q2q2qsrrrrqurrr444qrrr442rrr4r1..',
+    '..1uquuuu2uuuuuu2rrrr4tuuuusuqu422uq7ue411222q2qsrrrr2uuuuuuuquuuu42uuuu41..',
+    '..1q2222222222222uuuqttuuuqsuqu22121111111412q2qs22err22222qqqqqqqqq222221..',
+    '.1q44r3r4rr44qrrrrqrrtttqqusuqu2t21677u7601st32qsqrrrrrrr44uuuuuqrrrrr2r4r1.',
+    '.1ruuu2ruruuu2rr44quuts7trusurt031u71t157ut2rt23sqrrruuuu4r4tss22uuuuu2uu41.',
+    '.1222222eu22222ru4quus367qrsetrt177t2sss1771srtqst22222222ssttt122222222221.',
+    '.1rrrrrrr2rrr44r2qqqq424rrrtq11n1u1qsttts1u1tt22sq3rrqrrrrrruq4rrr4r4rrr441.',
+    '.1rrrrrrr2urruu4qr4u442uuurtt1nn171sttttt1u1tqt2sqrurqrrrrruuquurru4uuuurr1.',
+    '.122ruure2uuueeu2uueuu2uuuuu417n171tttttr1u1tqt4qrruu2uuuuuur2uuur22uqqq221.',
+    '.1rr222222222222222222222222tn7n176stttrs6u127tttttr2222222222qqqrrrrrrrrr1.',
+    '.1rrrr2rrrrrrqrrrrrr2rrrrr331n72s67msrrs676127t22222rrrrrrrrrrrqrurrrrquuu1.',
+    '.1uuuu2uuuuuuquurrrr2rrrrr2423u2utn76tt676tu27tqqrqquuuuruuuuuu2uurrrrqruu1.',
+    '.1qqqqqqqqqqqqqqqqqq2qqqqq22tqu2eu0677u761ue77t22qqqqrqqqqq222qqqqqqqqqqqq1.',
+    '1r44rurrruquuuuqrrrrrrqrrrrrr1u2eeut11111uee27sqqrrrr4quuuurrrrrrrrrrrrrrur1',
+    '14r4qurrruquuuu2rrrrr4qurrrrrt72uueeuuuuueeut7sqrrrrru2uuuurqruuuuuuuuurqru1',
+    '1rqqqruuuq2qq222quuuuqqruruursss222222222222tssrruuuuu2qruuuqqqqqqqqqqurrqr1',
+    '1rrrrr2qrrrr4244tqqqrrrqqq22qqrrrrrrrrrrrrrrr3qqqqqq22rrrqqqq4uu2rrrrrqrrrr1',
+    '1uuuuu2uuuuusrrrsrrrrrrrrrr2rrrrr2rrrrrr2rrrr2rrrrrrqrrrrrquuuur2uuuuuquuu41',
+    '13rrrr2rrrrrsssssuuuruuuuuu2uuuuu2uuuuuu2uuuu2uuuuuuquuuuu222222sqqqqqqqqq31',
+    '.11ssttttttt7ssss2qqq2qqq2222222222222222222222222qqqqq322sssssssssssssss11.',
+    '...1nns33q277r332sssssssssssssssssssssssssssssssssssssssssq333rrqqqqqsmm1...',
+    '...1nnsqq1777rrrrrqqsnnsqqq3131sqqqqqqqqqqq3s6nl3qqqsnnsqq447777rrqqqsnn1...',
+    '...1nns7qr7rrr4rrurrsnnsru1171trrrrrrrrrrrrrrsn7muuusnnsruuuuuuuuuqqqsnn1...',
+    '...1q3sq4uueeeeeuuursqqsus77137uuuuuuu4ruuuuuusn7msus7ns4ueeeeeeeeerqsqq1...',
+    '...166s3uuueueeeeerus67s77711ueeeeeeeeeeeeeeeeesn76ss77suueeeeeeeeeers771...',
+    '...167sueeuuueeeeuuus77s7711ueeeeesssssssseeeeuusn76s77suueeueueeeeers771...',
+    '...167sttsssssssst11s77s711eeeeesss777777mseeeeuusn7s77s11111111tstsss771...',
+    '...177s7777777777777s77stuuueees777mmmmmm7776eeeeuums77s7777777777777s771...',
+    '...177stssssssssttsss77s3ueeeee776ssssssss677eeeeeuls77sssssssssssssss771...',
+    '...177sutqssnnsstnuus77sreeeees76t1tttttttt67seeeee4s77s4u6sssnnssq2us771...',
+    '...177sut7ssqnsstqeus77sreueees71s1t22t2tlsm7seeeeuus77sue2sssnqss42esu71...',
+    '...177set7ssqqsstqees77srrqees7ns1n122tn1n1sn7seeeeus77sue7sssqrssr2esu71...',
+    '...177se17777q77tqees77sueqees7ns1ntn6tn162sn7seeeeus77sue7s7r6r7rr2es771...',
+    '...177se1rss7qsstqeet77sueeqes7ns2ntn6tq16msn7seerees77sue7sssqrssr2es771...',
+    '...177se1rss7qsstqeut77suueues7ns2qtn6t616mtn7ser3ees77sue7sssq7ssr2es771...',
+    '...177su2r777qrr22eus77s4uuu4s7nt23166t616mtn7srruuus77srunn44q77rr2es771...',
+    '...177s222222221tttts77sttttss7nt2q166t61nntn7sssstss77s1t11111t11111s771...',
+    '...177s7777777777773s77s77776s7ns26166t6sestn7s77776s77sq777777777777s771...',
+    '...177snnnnqqqqq77q3s77s67776s7ns26t66ttususn7sq7776s77sq7777nnn7777qs771...',
+    '...177sqqq22eeeqtttss77sttttts7ns26166ttnu1sn7sttttts77s2222quutttttts771...',
+    '...177s44ureeeuuquuus77sruuu4s7ns2q166tqtsns67suuuuus77suuuruuuuquuuus771...',
+    '...137s4qqqquuuuqrrrs77s2rqqqs7ns2q166tq1nns67sqr2rrs77sqqee24uuqq222s771...',
+    '...177s222uu22222222s77srrrrus76s2q166t61nntq7sqqr22s77suruuu222uuuuqs771...',
+    '...1q7suuuuuu2uuuuu4s77suuquus76s2qtqmt61nntq7suuruus77surruuquuuu2uus771...',
+    '...1671qqqqqqtrrrrr3176sqq2qqs7612ntm21m1nnt67sqq2r3s76sqqq11rrrrr2r31771...',
+    '...111.1111111111111.11111111111.11111111111111111111111111..11111111.111...'],
+   ruin:[
+    '................................................................111.........',
+    '...............................................................1rru1........',
+    '................................................................13u1........',
+    '..........................................................1..1.1uuu1........',
+    '..........................................................114212urr1........',
+    '.........................................................1u2222u2rr1........',
+    '.........................................................1u2222s221.........',
+    '.........................................................1uu222sr21.........',
+    '.........................................................1ufs2serr1.........',
+    '..111111.................................................1uuus3uur1.111111..',
+    '.17uuuuu11111...........111111111111111111111111111111111sqq4qqq22s1yyuuuu1.',
+    '.1qqqquuuuuuu11.....1111uuu6uuu6uuuuuuuuuuuuuuuuuuuuuuuuuseuqeeer2syy55qq71.',
+    '.1qqqq66u66666711...1776777776666777777777777777777776666serqerrr2s226666q1.',
+    '..1rrqqqqqqqqs6771..1s66qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsuuqrrrr2s22224q1..',
+    '..1uuu2uuuuu2ss111.m7777surrrrquurr4sursrrrr2uuuuuuqrrrrsuuqqqq22u2s3ty3u1..',
+    '..1qq222qqqsss1....11111sruuurqrqqu1surs2rrr2qqqqrrquur2su2eeuquuq2stt2221..',
+    '..1rrrrrssssss1.........12222rrrr31utursq2qqqqqqqrrrrrrrsu2urr3urr2sy222r1..',
+    '..1rrrrrrsssss71.....1116ss2rrrrrsru2urtq2srrrr2rrrrrqrrs2u2ur3tr22syy2rr1..',
+    '..1rrrrrussssss71...17777772rrrruuru2uutq2qsrrr2rrrrrqursu312eee1uys22rrr1..',
+    '..1qreessssssssss111ssss666suue2uuru2eut22qqsur2uuuerqrusu2uteq32yys2uur21..',
+    '..1rrr2rrrrsssss7s66n6667ssss2srurru2eut22r22srqqqqqrrruuyyru2r32yyy2urrr1..',
+    '..1rur2rrrrrrsss77s6nsssssrrururruru2sst222q2qsrrrqurruru2yyyu22222ruuqur1..',
+    '..1ueu2uuuuusssss7nss6666su4sruruuqus77t22222q2srr2uuuuuuuu2uuu2uuuueqquu1..',
+    '..1qq222222ssssss77ssssssr2suqururu4sts3t2q22q2qs2rqqqqqqu222uuuy2uq2qqqq1..',
+    '..1r4rrrr2ruurrsss76sssr444suquruust37rt7t2q2q2qsrrrrqurrr2ur22u2rr2rrrrr1..',
+    '..1uquuuu2uuuussss77sssuuuusuqur22uq7ue4t1222q2qsrrrr2uuuuu2u2u2u2r2uuuur1..',
+    '..1q22222r222sssss7nnssuuu3suqu22t2ttt1tt14t2q2qs22err22222u22222ryy222221..',
+    '.1qrrrqrrrrr42rrsstnusssqqusuqu2t2t677u76ststq2qsqrrrrrrrrr2uuuu2uuq3r2r4r1.',
+    '.1ruuu2ruruus2rrrsquuss7srusurss3tu642s57ut2rs2qsqrrruuuurru2ssu2uu2uu2uu41.',
+    '.1222222eu22r22rssquus3n72rsesr1t77442sst77ts4sqst222222222u2uu2u22u2222221.',
+    '.1rrrrrrr2rrrrrrsqqqq424rrrsqttntutss4ss4tuttt22sqqrrqrrrrrru2r22rr2rrr2rr1.',
+    '.1rrrrrrr2urruurqr4u442uuurtttnnt7tssssss1uttqt2sqrurqrrrreuu2uu22u2uuuurr1.',
+    '.122ruure2uuueeu2uueuu2uuuuu4t7nt7tsssssstuttqt4qrruu2uuuuuur2uuu222u2qq221.',
+    '.1rr222222222222222222222222tn7nt7544ss4s6ut27tttttr22222222222222uu2qrrrr1.',
+    '.1rrrr2rrrrrrqrrrrur2rrrrrqqun72s6714s44m76t27t22222rrrrrrrrrrrq2uu22rquuu1.',
+    '.1uuuu2uuuuuuquuruur2rrrrruu3qu2us676s4m76su27tqqrqquuuuruuuuuu1uuu22rqruu1.',
+    '.1qqqqqqqqqqqqqqqqu2rqqqqquyuqu2eus677u76sue77s22qqqqrqqqqq2222qqqqqqrqqqq1.',
+    '1r44rurrruquuuuqurrrurqrrrruuuu2eeussttttuee27sqqrrrrrquuuurrrrrrrrrr2rrrur1',
+    '14rrqurrruquuuu2uurrru2uruuryu72uueeuuuuueeut7sqrrrrru2uuuurqruuuuuuuuurqru1',
+    '1rqqqruuu2222222qu2uu22ruquuy22s222222222222tssrruuuuu2qruuuqqqqqqqqqqurrqr1',
+    '1rrrrr2qrrrrr24rsqu22rrqqquuuuurrrrrrrrrrrrrrqqqqqqq22rrrqqqq4uu2rrrrrqrrrr1',
+    '1uuuuu2uuuuusrrrsrrrrrrrruyurryrr2rrrrrr2rrrr2rrrrrrqrrrrrquuuur2uuuuuquuur1',
+    '1qrrrr2rrrrrsusssuuuruuuyyu2uuyuu2uuuuuu2uuuu2uuuuuuquuuuu222222sqqqqqqqqq31',
+    '.11sssttttts7tuys2qqq23yyu222222222222222222222222qqqqqq22sssssssssssssss11.',
+    '...1nns333277r2u2sssuuyuusuuususssssssssssssssssssssssssssqqqqrrqqqqqsnn1...',
+    '...1nnsqqt777rrruquu3nuu3uuu2yssqqqqqqqqqqqqsnnuuyuusnnsqqrr7777rrqqqsnn1...',
+    '...1nns7qr7rrrrrrur3snnu3uu17strrrrrrrrrrrrqqsn75uyuumnsruuuuuuuuuqqqsnn1...',
+    '...133sqruueeeeeuuurs3nuy277t37uuuuuuurruuuu3usn7msuy7nsrueeeeeeeeerqs331...',
+    '...166s3uuueueeeeerusn7su7711uueeeeeeeeeeeeeu3usn7nsu77suueeeeeeeeeers771...',
+    '...167sueeuuueeeeuuusu7s77t1ueeeeesssssssseeueuusn7nuu7susseueueeussrs771...',
+    '...167sssssssssssttts77s711eyeeesss7777uums5eeeuusn7u77ss77st1ttts77ss771...',
+    '...177s777sssss777777s7ssuuueees777mmmmmmuu71eeeuus7u77ss76s77777ss6ss771...',
+    '...177sss77777766nn1us7s3ueeuee776ssssssssyuuyeeueyuy77ss76sssssss77ss771...',
+    '...17s477666666777776s7sreeuees76s12ssss1ts67seeeeeus77ss76sssnnss77ss771...',
+    '...17s666666sssssssss77sreueees71s12sssstysu7seeeeu3s77ss76sssnqs777ssu71...',
+    '...17sssssssqqsssques77srrqees7ns1n2ssss2uysn7seeeeus77ss76sss3rs77susu71...',
+    '...177ses7777q77sssss77sueqees7ns2n2ssss2uysn7seeeeus77ssssss3nrs77susu71...',
+    '...177sesrssssss77777s7sueeqes7ns3n2ussu2uytn7seerees7s777777ssss77susu71...',
+    '...177ssss77777777666s7suueqes7ns332uusu2uy1n7serqees7s71666677777ssssu71...',
+    '...17s77777777766ssss77sruuu3s7nt3326utu2uy1u7srruuus7s777777666667777s71...',
+    '...17s76777ssssssssts77ssuuuus7ns3326u1u2ny1u7ssuyuss77sssss6777776466s71...',
+    '...177sssss777777773s77s777uus7ns3s2663uses1u7s77u76s77ss77ssssss6777s771...',
+    '...177snnnnqqqqq77qqsu7s6u7u6s7us3s26633usu1n7s35uu6s77s3sss7nnn7sssss771...',
+    '...177sqqq22eeeqsssssuussususs7us3su6633nu1s67stuttts77s22222uusttttts771...',
+    '...177s44ureeeuuquuusyyurquq4s7ususu6u3r2sys67suuuuuu77suuuruuuuquuuus771...',
+    '...137s4qqqquuuuqrrrsuyuurqqqs7usuuu6usrnnysumsqr2ru377sqqee2ruuqq222s771...',
+    '...177s222uu22222222uyyuyrrrusuusuu1uusunnytu6sqqr22uy7suruuu222uuuu2s771...',
+    '...137suuuuuu2uuuuursuyyyuquusuusuu2ussusyusu6suuruuyuusurruuquuuu2uus771...',
+    '...1y71qqqqqqsrrrrr3uuuyuyyu3suu1uu3sususuusu6sqq2uyyyyuqqq11rrrrr2rq1771...',
+    '...111.1111111111u3uuyyyyuuy1111.1111111111111111uyuu1yuu11..11111111.111...']},
+  chandler:{rows:[
+    '......................................................111111111.........',
+    '.....................................................13222222331........',
+    '.....................................................13usssss331........',
+    '.....................................................13u33333321........',
+    '.....................................................13333r33221........',
+    '.....................................................12222222221........',
+    '......................................................1sssssss1.........',
+    '1111111...............................................13322332s111111111',
+    '1uuuuuuuuuu17777r1111111111111111111111111111111111111s2221222s43uuuuu41',
+    '13333333333s37773uuuuuuuuuuuuuuuuuuuruuuuuuuuuuuuuuu3ns3233222sn23333331',
+    '11222222222s3nn333333333333333333333333333333333333222s2112222s112222221',
+    '.13333333t333332322222211111l11111111ttttttttttts00ssss3331442s33133331.',
+    '.13r33333tuuuuu2u33332333333r1rrrrrrr13333143333tr332ss2221221s33133331.',
+    '.1uuuuuu3tttt1113uuu40uuuu3rr1rrrrrrrt33rr13uuuu04432stu22uu3usu30uuu41.',
+    '.1221211133333332111t222222213222222222222222222t1ttst02222232sttttttt1.',
+    '.1333333333233333r233333332rrrr4t33rrrrt3r3333333333sss2232t32s3333rrr1.',
+    '.1uuusuuuuu14444443uu44uuut4uuu300uuuuus3rrrr223344303sssss0sss344rr441.',
+    '.10ss2ttttt33n2222233ttttttt0ss033ttttt32t00ss03322ssnn33n333n0s11tttt1.',
+    '.1333333tn33333233333333223333333333t333333t33333322221111t112n13133331.',
+    '.1rrrrrus44444444u333r33333331rrrrr4244444t33333rr233r3rrr1rrrr3rtrr4r1.',
+    '.14uuuu311uuuuu322112223tuu3tt12444r2t3ttts4uuuu32t4uu44urt11sssst44441.',
+    '.121111333222222n3n333221111332222n3333ttttttt1tttt0t11t3331222211t1111.',
+    '.123333333133333331333r33t3333332333332t1tt0s003ssss23rt333333333333r31.',
+    '.13rru33uutruuuuursruuuuut3rrrrut344uu2344444ts4u4u43rusuuuuuusuuuuru31.',
+    '.1n22212221sssss0031ttttt11tttt1t11ttttttt000ttttttttttttttttt22tttt211.',
+    '.133313ssssssst3333333sssssn3nn3333233333nn3333333330tttts2222233333331.',
+    '.133ut32sssssst3444444sssss13333333tn3333t3333313333tttt1s333333u3urru1.',
+    '.13u20ssssssssstt1t111ss0333un34r3ttt333nsuuuu213332tt32ssssuuuu32tuuu1.',
+    '1111t332222222sn333sssss0ssstttttt333tt0s000tt1n2nnn333sssssst1123311111',
+    '123333333344441r4uus12ss00333333233334313333333r2333333sssssss3333333331',
+    '13uu4uu4401111tttts23r331034444u1444431t3uuuuuu3r3u44uusssssssuuuuu3ruu1',
+    '12111tttt233333333222222tt111111122tttt0t111111ttt1t0t3rrrrrr33333222221',
+    '14444t333333333333233323333323333rrttt0s0u13r3333334ttttt0ssssssss33rrr1',
+    '1uuu3suuuuu34uu444t3uu2uuuu423rrr43ss000s13u3ruu4443tsssssss000tss4uuuu1',
+    '112222tt11103333n2t111111ttt11121t1ssssss0ttn00000ttsst11222tttss02211t1',
+    '1233333133300st333333333333332213333333333333333233333331333333333333331',
+    '1r44444t33sssss44s77rrr43ur3333t43r44441444rr334144444u3s3rrr41444444u41',
+    '11222l2ssssttsssss22222n12nn33302222222122222222s11l22tsssssssssst111111',
+    '..1ssssttt112stts0sssssssssssssssssssssssssssssssssssss0ttttttsssssss1..',
+    '..111s1221122021s11ttststtttttstttttt0ttstttt111s111t111211222s111s2l1..',
+    '..12ms2221322t22s2221s2s222s21s222t21s21s211tss202222222321n22s222snm1..',
+    '..1nns2221322t221222202s222s22s222t22s22s222su32t2n2222n321n22s322snm1..',
+    '..1nns2221322t22t2222t2s222t22s2221220320222suen0s11ttttss1n22s322s6n1..',
+    '..1n6s2231322t22t2222t2s322222s222121032s222sut1s4uu443uus1222s322s6n1..',
+    '..166s2231ntttt1ttt22t203221n2s222121032s222ttt0r0t00s3ss0ttt20322s661..',
+    '..166s2231t7777777712t20322sss0000ssss0ssss0t210u02210us63667t0322s661..',
+    '..166s2231066666666t2t20322s7777777777777777t2tsesssssussn666t0322s661..',
+    '..166s22312sssssssst2t20322smmmmmmmmmnnnnnnn0271usuuuune7ssss10322s661..',
+    '..166s22313s2st2012t2t2t322sssssssssssssss0s227uuuuuuuuu7ssls20322s661..',
+    '..166s2t313s2t13tt2t2t2t3221s6stttttttttts6s227ul7lumu6u701msnsr2ns661..',
+    '..167s2t3t3sn22322nt2t2t322106s1t12t22t2ts6s227uuuuuuuuu7tm3s3sr2ns661..',
+    '..167s2tnt3sn2331nnt2t2t322106s2213122tnts6s227u1u16mmuu7t17s3s32ns661..',
+    '..167s223t3snt13t1nt2t2t322106s22231n2tn1s6s227u1u11lluu7t16s303nns661..',
+    '..1n7s223t3sn013t1nt2t2t322t06s22231nn131s6s2267777777776tt6s303nns661..',
+    '..167s223t3snnnntn6tntnt322t06s22231nn131s6s22sssssssssss1n3s303nns661..',
+    '..1n6s222116666666672tnt322t06s222313n131s6s1222232t22mmmmnn7lt3nns661..',
+    '..1n7s2t3116666666661t20322tt6s22131n2tuts6s1221232t6666666661trn2s661..',
+    '..1n7s2t311ssssssss01120322tt6s22131ntests6s12222222ssssssss0tt3n2s661..',
+    '..1n7stttt00t00nsssss000n00tt6s2213131es1s6ssssssssssssssssssssssss661..',
+    '..166s633333666666666666666606s221312nt01s6s6666663333366666666666m661..',
+    '..1ssss0000s0ssssssssstttt0006s22131nnt21s6ssssssssssssssssssssssssss1..',
+    '..1344uuu344r4444rrr3u2u3uu306s221312nt21s6suuu344r32uu43rrr333r334441..',
+    '..1uuuuuu3uu2uuuuuruur2u3u4306s2113123tn1s6suuu2uuur3uuu2uuu2uuu42uu41..',
+    '..132222uu323323333332n2n22306s1113123tn1s6s3222322334r32rr32uu4r22221..',
+    '..1u24u4031uuuu2uuuuu2ueeu2u06s11t2122t31s6sunuuuu2ueuuuu2uuuu31uuuuu1..',
+    '..1224rrtr33rr314444423444l306s1111111111s6s32rrrr32rrrr42u44442333331..',
+    '...1111111111111111111111111111..........1111111111111111111111111111...']},
+  oar:{rows:[
+    '1111111........................................................1111111',
+    '144u443111111111111111111111111111111111111111111111111111111113rr33r1',
+    '1333332rrr3324rrrrrrrrrrrrr2444rrrrrr4u4rrr34rrrrrrrrr423333rrr2222221',
+    '1s000ssssssst1111111111222222222222222222222221111111tttttttttt00ssss1',
+    '.1333t3332220ssssssssssssssssssssssssssssssssssssssssssss332123r222q1.',
+    '.1rrrtr33rt3t22223333rr2222222222222222222232t333333222t0rrrt3uu13331.',
+    '.1rr402tttt322333srrrrrt33333333333233333133313333333u3ssrr4t4u313ur1.',
+    '.1ts022222ttt2222ttuu333uuuu222233u1uu44utuur31uu444113uu422tttttu301.',
+    '.1q3q3333qqqq3322222211122222222332222111111t22111112q2ttttttt22221r1.',
+    '.13333ru3333331333333tr33333qq33u33333323333t333323333323333r2u3324r1.',
+    '.1ruur4u3uuuurtuuuuuutuuu1ruuuu143uuuurtuuuutur3utuuuurtuuuuu1uuu1uu1.',
+    '.1tttttttttttttttttt1tttttttttt232tttttttt0tt1ttttttttttttttt11112tt1.',
+    '.133333333232222232333332333222q3332333332222t33333233331333332333331.',
+    '1uu3tu3rr424uuuuuu13uuuutu3uu3uuuuutuu4uu2u4utu4u2u2uuuutuuuuut44uu031',
+    '1212222tttt11111111111t111ttttttttttttttttttttttttttttttttttttttttt331',
+    '133333r33333331233333233332q3q3333233233333333333233332333333333t333r1',
+    '1uuuuu33uuuuuu1uuuuuu2uuuu13333u2u3342u333333uuuu2uuuu2uuuuu2444tu4441',
+    '1tttttt22tttttttttttt111112uuuu3t1tttt3uuuuut1222111221323rtttt111tt01',
+    '1q22233333333333322323t3333ttttttttttttttttt12333333332333333333333331',
+    '1u4r24rruu4r24333tr444233333333333333333333333q3333333333r333333333u41',
+    '1ttttttttttttt43r1ttttt1uuuu1uuuuu3tuuuuu2uu4u413uuuu2uu1u44tuuuuuttt1',
+    '13333333333334uurrr3333322211ttttt222tttttttttt111tt11t1122231tttt2321',
+    '133333333uuuuuuuuuu443333333333333333323333333333322333333333333233331',
+    '1uuu1uuuutt11222212uruuur1uuuur2444444tuuuuurtuuuu4tuuu4tuuuuuuu0uuuu1',
+    '1ttt1tttt3333t3333tttttt11tttttttttttt2tt0tttttttttttttttttttttt2tttt1',
+    '1333332333332ss3333333333333323332333333333333332333333333332222223331',
+    '1rrrr4s2tssss11sssss344uuuuu23uuutuuuu2444444uu31uuu4u1uuuuut44443r4r1',
+    '11ttttss0ttt11111110ss11120t32222022211112220tt1s11111111111111111tt11',
+    '..1sssst11t11111111t0sssssesssssssssssssssssessssssssssssssssssssss1..',
+    '..111st122112ll11l11s1111s3s2121s111111011ttus11t111201111111111s111..',
+    '..1lls22232232222222s2121ses2222s211ll2s11t1esl202222s221111t211sl11..',
+    '..122s22232232222t22s2l220us2222s22tn12s2201us22222sst2212t2t222smm1..',
+    '..1m6s22232232222t22s222222s222ms22tnn202n2t1ssssssuus2212t2t222snn1..',
+    '..1m6s22232232222t22smm22sessss2s220nn2sssssesuuuuul6s22l2t2t222sn61..',
+    '..1m6s22232232222tnns22ssss7eeusssssssseuuuuuussssssss2222t21222s661..',
+    '..1n6s222322322221n0s0seeeeuu77uu7ueeee7ssssss22s22t202222tnt222s661..',
+    '..1n6s2222223122n13seuuu77777uuuuu0sssss22222s22022t202222tnt222s6n1..',
+    '..1n6s2223122122213su77uu777uu7ssst1222s22222s22s22t2t222203t222s6n1..',
+    '..1n6sssssssssssssssuuu7uuuu7ssssssssssssssssssssssssssssssssssss7n1..',
+    '..1n6s7777777777777sseeuusssssn666677776777777777777777777766677s7n1..',
+    '..1n7snnnmmmmmmmmmmmnssssnnnnnnnnnmmmmmmmmmmnnnnnnnnnnnnnnnnnnnns7n1..',
+    '..1n7ssssssssssssssssssssssssssssssssssssssssssssssssss0000ssssss7n1..',
+    '..1n6s20222202222t22211111111222t222222221111122022222222211l211s7n1..',
+    '..1n6s2tnssssssssssssssssst122nnt30sssssssssn122tn1ssssss00s1222s7n1..',
+    '..1n6s2tns7777777777777777s122nn130366666772n2220nt337777777s222s7n1..',
+    '..1n6s2tns666666n666666666s12nnnt31sssssssss32220n2sssssssss0222s7n1..',
+    '..166sn1n1sssssssssssssssst12nnnt32s2m2tl2ls322203201mmt22ls2222s7n1..',
+    '..166sn1n2s61sts2snnsn1s6s11n2nnt32s2paspp1032220n2t1ppspp1s22n2s761..',
+    '..166s21n2s6mstsm16606ls6s21n2nnt32s1aasbb1032220n201pbsbb102nn2s761..',
+    '..166s2122snms2s617617ms6s21nlnnt32s20tt1t2t3t220n2020tt001s2n22s661..',
+    '..166s2122s6ms2s667717ms7s21nlnn132s1bbtbb2t3t22sn201bbtbb102222s661..',
+    '..166s2122s6msm06677m7ms7s11nlnnt32s1bb0bb2t3t22sn202bb0bb1s22s2s661..',
+    '..166s2122s6m0nl6677n7ns6s113l3nt32s1bb0bb1t3tn2sn2slbb0bb1s22s2s761..',
+    '..166s2122s6n0nmn77n66ns6s113l3nt32s1111111t3tn2sn2s1111111s12s2s7n1..',
+    '..166s1122s6n0nnn77n1nns6s112122t307777777771tn2snt777777777tns2s6n1..',
+    '..166s1222s6nsnnn77n1ems6s11n122t3tttt10001t1tnn0nt11ttttttttn0ts6n1..',
+    '..16601222s610nnn77n31ms7s112122t2222211111l2tnnt321l111112222000661..',
+    '.1t00t2111s710n1n77n1e1s7st00000ttttttt0sss00ttttttttt000ttttt11tt0t1.',
+    '.1uuu2uuu4s7t0n1n77n6t6s6sruuuu3ueuueut44uu2uueeuueeuu4uuu4reeeee13u1.',
+    '.133u2u4r4s7ttn0n67m666s6s3rr3r2uuu33u143332uuuur3uuu42uu443uuu332u41.',
+    '.14222ruurs71tn0667l676s6s2333333uuruureeuu2333u4224442rr333uuu3324r1.',
+    '.1ueur2222s7ttn06671676s6s33eeuuu3nnn3u33333222eeuu323u23233333222n21.',
+    '.1u333u32us6ttn06l70676s6s33uu44u1uuuuuu2uuuu3eru333euee2uuuu32uuuuu1.',
+    '.12333333rs601111111111s6s3n4rr431rr3333233333333322urrr3rr3331333331.',
+    '..11111111111..........111111111111111111111111111111111111111111111..'],
+   ruin:[
+    '1111111........................................................1111111',
+    '1rrurr3111111111111111111111111111111111111111111111111111111113rr33r1',
+    '1qqqqq2rrr332rrrrrrrrrrrrrr2rrrrrrrrrrrrrrrrrrrrrrrrrrr23333rrr2222221',
+    '1ssssssssssstttt111111112222222222222222222222tttttttttttssstssssssss1',
+    '.1333tq33222sssssssssssssssssssssssssssssssssssssssssssss332t23r22231.',
+    '.1rrrsr33rs3t222233qqrr222222222233s6mms66666s66s666m666srrrtquut3331.',
+    '.1rrrs2tttt322333srrrrrsq3q3q333sssssmmms6ssss76sss66ssssrrrsuuqtqur1.',
+    '.1sss22222ttt2222tsuuqqquuuutssssssssommssssss766sss6ssr2srstttttuqs1.',
+    '.1q3qqqqqqqqqqq222222ttt222133rt67ooso7msssssso67ssssssrq2s3tt2222sr1.',
+    '.1qqqqruqqqqqqtqqqqqqtr333333rrrs6666so7ssssssso7sss7oosqqqqr2uqq2rr1.',
+    '.1ruurruquuuursuuuuuusuuutruussssst1sso77ssssssoss77776suuuuutuuutuu1.',
+    '.1tttttttttttttttttttttttttss66666ssss67ossssss6ssss666sssstttttt2ss1.',
+    '.13333qq332q222222233qqq2333s7777ssssssoossssssssssssss77s33332qqq331.',
+    '1uuqtuqrrr2uuuuuuut3uuuutuquus5l777sssso6ossssssssssso77suuuuusrruus31',
+    '12t1222ttttttttttttttttttttss3qqssssssss67ssssssssssssssssssss3ssss331',
+    '133qqqrqqqqqqqt2qqqqq233qq13qq3q277777o7ssssssssssss11sss66sq3q3tqqqr1',
+    '1uuuuuqquuuuuutuuuuuu1uuuutqqqqusns6667oooosssssss7sssooo6su2q3qturrr1',
+    '1tttttt11ttttttttttttttttt2uuuuq3s3ss66666677sssssos77555s3stttt1ttss1',
+    '13222qqqqq3333qqq22q2qt333qtttttqq33sssss6mssss671sossssss33qqqqqqq331',
+    '1urr2rrruurr1rqqqtrrrr2qqqq3q3qqqq33s555soms666751so6s6s2rqq33qqqqqur1',
+    '1tttttttttttttrqrtttttttuuuutuuuuussssmmms77s76ss1s6os6u1rrrsuuuuusss1',
+    '1q3qqqqqqqqqqruurrrqqqqq111tttttts233sssssoosss1111sqqst1222qsssss2321',
+    '1qqqqqqqquuuuuuuuuurrqqqqqqqqq3333333qsso7so7s1111osqqqqqq3qqqqq2qqqq1',
+    '1uuutuuuusttt2222t2uruuurtuuuur1rrrrrrs577ssoss1lsssuuurtuuuuuuusuuuu1',
+    '1stttttttqqqqsqqqqttttttttttttttttttts23tlq3s3q313q3tttttttttttt2tttt1',
+    '13qq3323qqqq2ssqq3q3q3qqqqqq323332qqqqqqqqqqqqqq2qqqqqqqqqqq22222233q1',
+    '1rrrrrs2tssss11sssss3rruuuuu13uuusuuuu1rrrrrruuqtuuuru1uuuuutrrrr3rrr1',
+    '11ttttssstt11111111ssst111st32222s2221111222stt1s11111111111111111t111',
+    '..1ssss111t111111111ssssssesssssssssssssssssessssssssssssssssssssss1..',
+    '..1l1s1t22112s111111s1111sqs2121s111111s11ttus1111112s1111111111s111..',
+    '..1lls2223smss122222s2121ses2222s211112s111tes12s22s2ssm1111t211sl11..',
+    '..12ms222s6mssss2t22s2122sus2222s22tn12s22stus2222222s6m12t2t222smm1..',
+    '..1m6s222s6m3sss2t22s22222ts2222s22tnn2s2222us2222222s6612t2t222snn1..',
+    '..1m6s222s6m3sss2t22s2222sessss2s22snn2s222ses22222s2s6662t2t222sn61..',
+    '..166s222s6m3sss2tnns22ssss7eeusssssnn2s222sus22s22t2s6666t2t222s661..',
+    '..166s222s623nss2tnsssseeeeuu77uu7uesn2s2222ss22s22t2s6617tnt222s661..',
+    '...16s2222623nss2tqseuuu77777uuuuuss2n2s22222s22s22t2s6117t3t222s6n1..',
+    '...16s222q622nss2t3su77uu777uu7sss11222s22222s22s22t2s111ms3t222s6n1..',
+    '...16sssss6sssssssssuuu7uuuu7sssssssssssssssssssssssss1111sssssss7n1..',
+    '..1s6s77nsssss77777sseeuusssss66666777767777777777776ssms7766677s7n1..',
+    '..1n7snnnn777mllmmmnnssssnnnnnnnnnmmmmmmmmmmmmnnnslllll77nnnnnnns7n1..',
+    '..1n7ssssssssssssssssssssssssssssssssssssssssssssssss666sssssssss7n1..',
+    '..1n6s2s2222s2222222211111111222t222222221111122s222222222112211s7n1..',
+    '..1n6s2snsssssssssssssssss1122nntqssssssssssn122sntsssssssss1222s7n1..',
+    '..1n6s2tns7777777777777777s122nntqs3666667722222sns337777777s222s7n1..',
+    '..166s2tns6666666666666666s12nsntq1sssssssssq222sn2ssssssssss222s7n1..',
+    '..166sntn1ssssssssssssssss112nsntq2s1ms0s2msq22ss32s111ss21s2222s7s1..',
+    '..166sntn2s6s1ssssssssss6s11nssntq2s2sssss1sq22ssn2s1ssss31s22n2s7s1..',
+    '..166s2tn2s6s1s6ssssssss6s21mssntq2s1sssss1sq2s2sn2s1sssss1s2nn2s71...',
+    '..166s2t22s6s6s6lss7ssss6s21ms16tq2ssssss33tqts2sn2s2ssss11s2n22s61...',
+    '..166s2122s6sns76ss7ssss7s21ms16tq2s1sssss3tqts2sn2sssssss1s2222s61...',
+    '..176s2122s6sns76ss7ssss7s1166s6tq2s13ssss3t3ts2sn2s2ss1s31s22s2s61...',
+    '..176s2t22s6snt767s7ssss6s1136s6tq2s33s1s31tqtn2sn2s13st331s22s2s7s1..',
+    '..177s2122s6snm77ns6ssss6s1536s6t32s111t111sqtn2sn2stttttttst2s2s7n1..',
+    '..177s1122s6sn777nt6ssss6s155mu6t3s77777sss7ttn1tns777777777tns2s6n1..',
+    '..177st222s6snn77ntessss6s15nnrmt3tttt777n66ttnnsntttttttttttnsty661..',
+    '..177s1222s6snnn7nrs6sss7s1551u1t22222ttt11t2tnnt3211111112222ssy661..',
+    '.1tsst2ttts7ssnn7nse6sss7s155511tttttttssss1stttttttttssstttt2yyytst1.',
+    '.1uuu2uuurs7tsnn7m7s6sss6sr55u1nueuueutssss1uuefuueeuu5yy5rqe5euy13u1.',
+    '.122u2urrrs7tsnn7l766sss6sqr55r1uuu22uttsss11uuur2uuur1u5rrqu1uqq1ur1.',
+    '.1r222ruurs7ts6n7s676sss6s2555qqquuruu3ee111mqqur22rrr11r22quyuqq1rr1.',
+    '.1ueur2222s7ts6s7s676sss6sq55euuuqmmm2uqqq33111eeuuqt2u131qqqqq112221.',
+    '.1uqqquq2us6ts6s7sssssss6sq55urrusuuuuuu15u1uqer3qqqeuee1myyuq1uu1yu1.',
+    '.12qqqqqqrs6s1111111111s6s35yrrrqsrrqqqq5y5y5qqqqq212333nr5yy51qqq3q1.',
+    '..11111111111..........111111111111111111111111111111111111111111111..']},
+  crypt:{rows:[
+    '....................................1e1.........................',
+    '....................................1eu1........................',
+    '.............1uruqruuuu1443uruee222qruuurt1.....................',
+    '.........1u4yuu2d23eruuuu34uu4uu23uruuu4uuu1....................',
+    '......1uurtdt4uquu3u2uuuue43u3d2uuq2uu412ruue11.................',
+    '.....1uurrr14u2uuu2d3uuue34ut22reuuu411rr22ruue1................',
+    '....1uu3uuruur3uuu23uuuu3uu1d2ue44u41rrrrrr22ufe1...............',
+    '..1tuu222uuu43uuuuuuuuu3uuu3e2druu42r3r4u4rr314uu1..............',
+    '..4uu2ed3u223uuuuuuuuu3uuuu3tduuur1r3rueee4343truu11............',
+    '..reu2u2u2ey2uuuuuuuu3uuuuu2d3uur1rrreeeeee2r4r1rue41..1........',
+    '..3reu2uy32yuuuuuuue3uuuuu2d3uur1r42ueeeeeeu2u4r224ue11et1......',
+    '..2r3ruuynyuuuuuuueruuuuuuqquur24u2ru23eeu1u2u2urr24uet23e1.....',
+    '..1t3333232uuuuuurru3uuuueuuur24u22re22uer1u23e244r2rue2uue1....',
+    '...10t3272euuuru3d33uuuueruur2442e2r4eefuueu23fe234r2ruue34u1...',
+    '...133tu23uee3e3d3t12uueruur2442equ2e42442uu2f2ue22uu22uuere1...',
+    '...1rrtn2r2rreu12quee2u3uur24r2ueqe2reu22ueqfu2uuu223ur2uueu1...',
+    '...1rrt72t2r3re2yeuure1uur24r2uerf4u224uuu23uu2222feuurr2uuu1...',
+    '...1rrt7213t3rrtur3ueu1ur24r24uu33uuqu2222uu3uuueeuu3rr3r2s1....',
+    '...1rrr2ytr3ttrt443u3uu324423333uuu3euuqqruuequffrrreeuuuu1.....',
+    '...1rrrtytr333ttr43uuu32rrueeuuuuu3u334eee33uu33reuu333uuu1.....',
+    '...1rr3222rrr3330qrrrtq3qrrr4eeeu3e3reurruee3uuuuurreeeq4u1.....',
+    '...1rrrt332rrrr32tttt334uuuurrrrreruerssst23e3uuurueqq2equ1.....',
+    '...1rrrtr1r2rrrr3qq334uuu333uuuuurre4ss6ss22uereureqfer2uu1.....',
+    '...1rrrt4rr113rrrr3quuur3eeerruuure4sss6s6s2reruu433ee42241.....',
+    '...1rrrrr3rq112rrrrruurre22qereure4s7ss6s6st2reruu3u222f3e1.....',
+    '...1rrrrrr431443r2rreu3e2uuqquure41070s6s6s023erueuqfff3uu1.....',
+    '...1rrrrrrr3t444r2rrefq2qeeu22urur0070s6s6sstr3e3uuu333uuu1.....',
+    '...1tttrrrr3rr44r2rrruqu32qqu33eu06s60s6s6s02r3eruuuuuuuet......',
+    '...1uuu10rr3rr4442rrruu3uuuu3u3eus6lo66o6o667t3eruuu222uuu1.....',
+    '..112rrfrtr3rr4r42qrruuu3333uuru2m7l6006s6s0703eruu2eef2uu1.....',
+    '..3s42q44t33rrr4443ruuuueuuuuuru2s6s70t7s60070qe3u2u22ee2u1.....',
+    '..ysqq41r2r21111rrrrruuqefq2e23u2s6s7007s67s6sqeuteuuuqfr41.....',
+    '..3sqq41r421uuuu1rrrruqefq4u2u3f2s6s70s7s6m76sqe4tuuuqfe441.....',
+    '.1ysqqru2r3u2224f1rrq3ffu2fuuu3u2s6s70s6s6ss6sqeutqqqfefr31.....',
+    '1ryst2qr3quqrr224r1rqqeff2uuuuqu2s6s70s6s6ss6squu1fueeuuqe1.....',
+    '12tr411qu1t111uqqu1r43uerr2uuu3e2s7s7ss6s6ss6squr1eeuuuqere1....',
+    '13t44442trrrruq4qu133fr4ufuqqqqu2s7s7ss6s6ss6squ41e4f4qer4q1....',
+    '13tu4u444t1rqqur2rf114errueffe3u2s6s666o6o676squ42qqq2er3e321...',
+    '13s23u42221tqr3f2rq4fe4ef4rreuqu26o6o6s6s6ss6s3u4t4feu44e43sy1..',
+    '13r22324u4rq0qr3f2qq3rr4222fr4f2rs6s6ss6s7ss6s3u33t4rf3r2ttuu4..',
+    '13323232eouurtt33u11efqquee24er2qs7s7ss6ssssss3ut7uttttssru2ee..',
+    '133213322ueuu4rt2q3422qeerufuru33ssssssssyuuur3130trot4ret3u2e..',
+    '13rr2rr2rq4eu1132tqqufeuuuerrfr3ttuuuuuuuuuu312r1yyssu04t31u3r..',
+    '.12r2rr23434tru2y3t2rr4rrr2111tt2uuuuuuuuuuueeeeeus72nusu33tor..',
+    '..2m2rr223r0ro2214uttttt1222ruuu3u0truerreeeeeu32qt2usysuuutr3..',
+    '..122rr2rqrtoms2uuu4ueee4eeeeu2u70r4ue13o4333344r1ysys3ttrrtru..',
+    '...12222rr270rsrreuueeeuueeruuyysss0tyuur444444rrsys3ys7tsrtrr..',
+    '....1222rr17srsrrreeru44eurrr07y2r4443rr444r221ttsy3s3yt77sut4..',
+    '.....11223trsrsrrrurruu43urr4s722rrrrrr21112uuueeusyo0us33rsu11l',
+    '.......12syytrsr2r3uuuu33urrus72stttttr2uoou33eeee2t1su7syy113u1',
+    '......1t2syytrsq23ruuuurruqu4sut3eeeeu100t1oysu333rrrs3us1ut201.',
+    '....11662y2syrsr322uuururr32tsy1rtrr2233rr03yrrrrr3222s61ssr71..',
+    '.....11112su27sr3r2uuurur3uu4sy2rr3u44444r3s7t0tt1uuuuutuuustu..',
+    '.........1u27ys33r2u3uruq4ur3s3trr3444r2221s7teeeeeeeeeu1t27sy..',
+    '.......12711yy12rr2u333ryrr3syu03r22224uuuuusrteeeeee3q2r3s271..',
+    '........11..12011r2r3utr3111su73tr43ueeeeeee3t4u333rru44rsu271..',
+    '.............16..11111ul100027y1t3urt4r22333ruu3uuu44411ssnt71..',
+    '..............1........1uuu1ty1r113rr2rrrru33ruuu41111001707su..',
+    '........................11t7oy11..11r2ru4ur1l11111....o1u1oyum..',
+    '...........................111......1111111...........111..111..']},
+  brazier:{rows:[
+    '1111111111111111111111111111111111111111',
+    '1uuuuyuuunuruuuy44u3nuuumuuyuuuuyuuuuuu1',
+    '11mmmmmmmnmnmmmmmmyymmm55mmm000011m2mnm1',
+    '1oyuuunuuuumuuuuunuuuunuuunuuuumuuunuuu1',
+    '1y6uuumn6nnu16nnnnnm6m7nnnnnnnmunnnnny61',
+    '1uu0tmuu77uooaoooouu3uppopuunuuuuyuuu7u1',
+    '1oouopbamsssss5oyyn6mmaaabomnuuuuyuuu1u1',
+    '1uyupa71sussusoaauuuuuso77suuuyussunnys1',
+    '1uuuoou6sueeusooaoyuuu0euuu1uuuyno3uuuu1',
+    '1mummu65s4nynsop6y776m5nnyyynn6u777mmmm1',
+    '1oooosapsueeus99pooosoooo0ooo0oooo0oooo1',
+    '1666ys7nsyuu3s666666s666ysnyysyyyys66yy1',
+    '.1ssssssssssssssssssssssssssssssssssss1.',
+    '.1y33s33srrn4rs311333y333333330333334n1.',
+    '.13uu313s4euu4s344ssssssssssss3u3u434n1.',
+    '.12ny2usunnnn0rsr4s7777777777s11s1012n1.',
+    '.1uoyuseueeeee4us4s6ssssssss6sesb0asuu1.',
+    '.1uo3su7uu7777u3uss7s666566s7sus6scsry1.',
+    '.1111s7uu1155uuunss7s767676s7suscscseu1.',
+    '.1u44sru1o99956u4ss7s767676s7susesdsuy1.',
+    '.1uo3semo9aa996puss7s767676s7ssooooosu1.',
+    '.122rsu59ababa6uuss7s76767os7ssssssssu1.',
+    '.1urssu5777bo6560ss7s76767ss7see77b7a71.',
+    '.1ursu5577a766osuss7s767676s7subs7cscu1.',
+    '.133spppaaaaao6ouss7s767676s7ssodsdsds1.',
+    '.134sru3uuuuoouuuss7s666676s7socoodoao1.',
+    '.1y4s33uuurrr4432ss7s111111s7s777777771.',
+    '.111s3uyussss2uu4s111......11s5ssssss51.',
+    '....1rr4so77os4yy1...........16suuuus61.',
+    '.....111111111111............1711111161.',
+    '..............................1......11.'],
+   ruin:[
+    '111111111111111111111111111......1111111',
+    '1uuuu1uuuluyuuus4ru22uuu0uu1....1uuu2yo1',
+    '10mltmmmmn2ml3ssssyy2y1lllss1..1sss2mmn1',
+    '1o2s1omuuuuluut2s2uyyumuuu2ss1.1ssf5uuu1',
+    '12sssssmmn2u1myynmnmmmum2nmnss1ssnmmm21.',
+    '1uysss2o76ooolo27ouu3uu72uuumsssyyuuml..',
+    '1uo2s2u22ssssslo53mmll2lesolmuuuuyuuu1..',
+    '1u2y3270sussusonyuu66uso6lsuuuyussummq1.',
+    '1uurooolsu1eusooyoyur4se73fsuuu2no3uu6f1',
+    '10ulloylsus52souyn66n50n12nmnmmo387ll1n1',
+    '1oooos27sueuusyyyooosoooosoooso67oso2yo1',
+    '16666sy6syut2s666666s6yyysyyysy2yysyyyy1',
+    '.1ssssssssssssssssssssssssssssssssssss1.',
+    '.1qy2sq3s4rsurs3ss3332333q0r33srqqqs4q1.',
+    '.13yurs3s4e034sq44ssssssss0sssr43uuqsl1.',
+    '.122y5q0uq2us04srrs7777777llls0ss2sts61.',
+    '..toy40eeee32e44srs0ssssssss5sesssss3u1.',
+    '..1o3sunfuul77rs4ss6s6s6ssns6syssssss5..',
+    '.1ss0s7lus2ssesumss7s7s6ssnl7sussssse1..',
+    '.14rssyutssssssuuss7s7s7s66s7susssssf21.',
+    '.14s3setsss2sssuuss7s7s7s66s7ss7oo6osr1.',
+    '..11rs7sss121ssuuss7s7s7s76s6ssssssssf1.',
+    '.14rss4s2qssq2s20ss7s777s7ss6suu777su01.',
+    '.14rsfsqs2srsrqsussss77777ss5syuy77yuu1.',
+    '.12ssu3qu24040suuss6s7s7176s5sssssssss1.',
+    '.1t4stu34uue27eutss7sos7s7lsmsoopo7fs71.',
+    '.124srsuuuruuu4s4ss7s117170sms76q0rnon1.',
+    '.111s1uyusstssuyqs111..l.1111ssssssss01.',
+    '....144rs04oosu3t1...........16syuyysm1.',
+    '.....111111111111............1711111161.',
+    '..............................1......11.']},
+  quay:{rows:[
+    '..............................11111111......',
+    '..............................14ssss41......',
+    '...................111........12433321......',
+    '..................12411.......1snn20s1......',
+    '.................132u121.......1ssss1.......',
+    '................1r32u1121......122s21.......',
+    '...............1r232u11121.....102201.......',
+    '.............11r2332u1110211...12s121.......',
+    '............13323322u11111221..1ssss1.......',
+    '...........1r223rsr2u111120221.122s31.......',
+    '..........1r231rs14231111220221stss01.......',
+    '.........1r222rs23rsss331122t22s2sr11.......',
+    '.......11r2r2r2234synns33111121ss2s001......',
+    '......133232r2224sn7n7ns33111211ss2s21......',
+    '.....1332r2322r4s167n77ys33111212ss2s1......',
+    '....1232r1322r4sn112nnm7ns2r121222sss1......',
+    '...12324222243snynsssss7m6s142211212s1......',
+    '...1y2rr032u2sny7nssssn7y67s1312122121......',
+    '...1nrr133u1snm77ns777s7m76ys1412t2211......',
+    '...1yr133u1sn7577nsssss7m76uys1412t221......',
+    '...13223u1sn77577n777y77m76uy3ssu22t01......',
+    '...1223uss0ssssssssssssssssssssss42211......',
+    '...12rusm6777777777777777777777yns4211......',
+    '...1uusssssssssssssssssssssssssssssun1......',
+    '...1nsysyyyyyyyyyyy6yyyyy6y633333sms41......',
+    '.....16s1mmmnnsssssssssss10mnnn12s7ss1......',
+    '.....16sy7y77ysy66yyyy3ysusssssy3s7s2m11....',
+    '.....17s000000sysssssssys0ssssssss7snn2y1...',
+    '.....17srun7r4sys11ssssys4sssssu4s7s1n2ss1..',
+    '.....17s3yuuu2sys11ssssysysssssyys7s2ss6661.',
+    '.111.17s3777y3sys121sssysysssssn3s7s1sn57761',
+    '.1141s7ss11100sys121sssysss1sss11s1sss2m22n1',
+    '1yymrs7sn7ruuusys111susysr3s777symm666s66721',
+    '137rms7syyyyy3sys111sss6s1s67766s067761s1161',
+    '1o667s7s000000sys111s1s6s3s61116smmmm0ys6y61',
+    '16eeys7s2rr3trsys111s1s6s2s6777ms17uu6ms33m1',
+    '16y6ys6s2230rys6s1t1s1s6s2s61mm6s161116smyn1',
+    '1ueuns6s022t12s6sssssssysns67776015777msss1.',
+    '166n6s1s000000s01111111ms00277710077rmms5nm.',
+    '16y6511111111111.......11102722200u111m1....',
+    '.1111.....................1666661166651.....',
+    '...........................11111..1111......'],
+   ruin:[
+    '....................................111......',
+    '...............................141..141......',
+    '....................131........12411q21......',
+    '...................1euy1.......1sq03ss1......',
+    '..................1fuu0y1.......1ssss1.......',
+    '.................1uuurssy1......122s21.......',
+    '................1f242usysy1......12ss1.......',
+    '..............11f12r2ussysy11...12s221.......',
+    '.............12rq33quussssstq1..1tt01........',
+    '............1r2srr0u1ussss11221.122sr1.......',
+    '...........14ss04su42ysss1001211sssss1.......',
+    '..........1rs7s4s234sssqq0100122s2s3s1.......',
+    '........114ss77s2q4s626s3q010ls0ss2sss1......',
+    '.......13qs7s6ss24sm7172s3qs1s7s2ss2sq1......',
+    '......133s27s2sr4ssn7l772s3qs706stssqs1......',
+    '.....1u3s4s7s544s2ss1mnm71s1402s7s2sss1......',
+    '....yuym4ss524qsnmmsssss7t6ss4s2s611qs1......',
+    '....1y2r2s3yu1s2m7mssss3725yss202s220u1......',
+    '.....1rrsr2f0s21y7ms777s7175yssr12t25uy......',
+    '....144s3yussm7sy7msssss7t7loysso02sfsu......',
+    '.....1r3russ277017m777y7717muyyssf22041......',
+    '......5uusssssssssssssssssssssssssr0r1.......',
+    '.....1uusl677uyyy777777777777yyyyys451.......',
+    '....1uussssssssssssssssssssssyssssssuu1......',
+    '....1ysysyyyyy2uu5fy5yyyyy5ymnyyyysys4r......',
+    '.....ysysyyy1y2sssssssssss1s2m2y12syss1......',
+    '......1ysy767yusyyyyy660ysusssssu3sys2211....',
+    '......17sssysyssysssssssuslssssssssysnnyu1...',
+    '......17sy407y4syst2st0s1susssssuus7styyss1..',
+    '......17syuuuyys7st4sss2ysysssssy3s7stss6551.',
+    '..111.1us2777uys7sttsts2ysysssss33sys2sm077m1',
+    '..1141sussssssssus13s1ssrsssysys0ssysss1l0521',
+    '.1rr24sys177u72s2s0s4tly2suusy2y0ussssys6n711',
+    '.130rss3syyyyuus6stt01u0usssyssy6ss7ss6ls00l1',
+    '.1nss7ssssssssss7s311s0s7sys5ms06s1m7ssysy6m1',
+    '.1s51so66suu3sfs7s311s207sys6o076s17usu1s3201',
+    '17s71os707srsuus0s032sss7s2sns6snss6l6s3s12y1',
+    '16707670756ss0ys2203sstsys2s37m76s1l7l72s111.',
+    '135ot70775ss2s2s011tt1t1ysss2677tss77utt1....',
+    '.1n060yy616111111...q11.111s2y2t2ss60y6m1....',
+    '..11111ys61................11yyyn11yyyy1.....',
+    '.......111..................11111..1111......']},
+  smithy:{rows:[
+    '..........................ee....',
+    '........................eee0ee..',
+    '.......................eeeeee...',
+    '........................eeeeee..',
+    '.......................eeeee....',
+    '.....................11ueoer....',
+    '....................1uerue441...',
+    '....................1usye0ru1...',
+    '....................1ussyusu1...',
+    '....................1usssssu1...',
+    '....................1uuuuuuu1...',
+    '............111111..1ryryy331...',
+    '..........11ruuu2r..1rur3yuy1...',
+    '.........1e0uu72611.101t01s1....',
+    '........1u0ru7725221s331r3r1....',
+    '.......1u5o74o7u722ss33rrrr1....',
+    '......1u5oo7467u6222s1uu2431....',
+    '.....1u5ooo74o7u752ys1u24fr1....',
+    '....1u0oo7o7u67u6526s1u24rr1....',
+    '...1usooooo7uo7oo526srr24ur1....',
+    '...u07ooo6oru77u622usrsssss31...',
+    '..10u77o7oouuo7uo227suueuuu41...',
+    '.1f7u6ooo77uu67y2227sy2rru231...',
+    '1u07uoooo7oufeeef352s33yr3431...',
+    '1s7yu6ooo7ou3rr343572ss4u3yy1...',
+    '177yuoooo7e24u2y44f526s1r2yy1...',
+    '177yu67o7e2ussssss3f262s22221...',
+    '1777uo77e2us626626r3f26ss2y31...',
+    '1777u7ue2us7667772su3f62ys33s1..',
+    '1777ure2us67767472ys43fyrys3s7..',
+    '177rre2us666666666y6s333e27ss7..',
+    '1777equs666oooo7uu77rsru326707..',
+    '177equsy0000007rs7sy52s43u2777..',
+    '17y2usr0o7pp677ubsdssbss33e217..',
+    '1yeus2sd000s6ss0bsdssbs6s33f27..',
+    '1u2s666057770e06p0o0sp0yys32ur..',
+    '13us66se5000ps06ososso0y5ss233..',
+    '1rss6u077pddss76sysu1s777syssu..',
+    '.1ys66s6ss00os56uuuuuuu22s33ss1.',
+    '.1ys77s76ddd00r77s777ssrusyus2s1',
+    '.11s76076000o07uses4seesusuys5s1',
+    '.13s77077dpp007ud4qseufsus34s661',
+    '.1rs66s70000os77de4siedrus34ss61',
+    '.14suus67ppp0s67de4sieeuus34sr61',
+    '.13s66s7000077d1d4fsiffuusu4sse1',
+    '.12s7uusopapsss1eessefessst3s331',
+    '.1rs7777ss0007u1ss7rsssyys3rsyr1',
+    '.1ysuuu7uu7uuyr122yyyy2yys3rs3r1',
+    '.14s722y22666627ss0000000su4syr1',
+    '.12sy1u4444444sy115555551s1rsyr1',
+    '.1rs5ssssssssssyuyyuu7uy4srrsy31',
+    '.1rs7s4s2125srs0sssssss31sr4sy31',
+    '.1usrs4s3232s4s01y0y0y041s44sy31',
+    '.11s7s4s32y2srs02ss0sss41s24sy31',
+    '.14s7s4sr232s4ss12y5y02r1s44s331',
+    '.13s7s4sr2res4s0sssssssr5sy4s331',
+    '.1fsus4sr2res4ss666771yy5s4rs11.',
+    '.11s7srsr2r2srs2ssssssss0str1...',
+    '.14s7s4sr2r2srsuuuuuoo6uys4r1...',
+    '.13srs4sr2r2s4s666uu66uyysyr1...',
+    '.13s7susr2rys4sy77ruruyyysr41...',
+    '.1111111111111111111111111111...'],
+   ruin:[
+    '.....................11.........',
+    '....................1uu1........',
+    '....................1u0y1.11....',
+    '....................1u00020u1...',
+    '....................1uu0000u1...',
+    '............11111...177uu07u1...',
+    '..........11uuuuy1..1r7uuu7u1...',
+    '.........17770666y..1y7yu6yy1...',
+    '..........110000751.155yyyy1....',
+    '............100076y10u5yryy1....',
+    '...........1000y76500u3yruu1....',
+    '........1.10001y76560yuurr71....',
+    '......11y100yyys7656syurry71....',
+    '....110u010y00ys7656suyuury1....',
+    '...1u00y7uss00us7656032yruy1....',
+    '...1o0y0suss0uu77656s32yyyy1....',
+    '..17o050su7s07u77656s6yyyyy71...',
+    '.107u055su7777u77656066yyy371...',
+    '1s77uy051uu7uu777666s666yy371...',
+    '177yuss0oy666666y6666066yyyy1...',
+    '177yu70oouu2r22ryy6666066yyy1...',
+    '177yu77oo0s0sss000666660666y1...',
+    '1777u77oe666666yyyyy666606661...',
+    '1777u7ue2666yyy66y0yy666606601..',
+    '17y7ure2u667yyyy7yy0y66666s6s6..',
+    '1y7rre2u06666yyyy6yy0y66666ss6..',
+    '1777e2us6ooooy77uy66y0y66666s6..',
+    '177e2usy0507yyy70y0y5ys2666666..',
+    '17y2u0yo7o75oyyuo0o007ss266556..',
+    '1yeusy0o0o00o557o0o0070y02y656..',
+    '1u2s660o6o00o57uo0o00o0yysyy65..',
+    '13u0660o0o007yyu707007sy50syy6..',
+    '1r00660o0o077yyu0y0yy07770y00y..',
+    '.1y0660o0o05o6yuyyyyyyu220yy001.',
+    '.1y0670o0o02o7yu7077700ru0yy05s1',
+    '.1ys770o0o077uuus003s330u0yy06s1',
+    '.1ys77soo707uu6us0s3s030u0yys671',
+    '.1y0660o070777yu3ss3ss30u0yus671',
+    '.1y0uu070o06o7uu00s3ss30u0yu0671',
+    '.1r066070777o1uu30s3s000u04r0671',
+    '.1r07uu77700111033003330004r0y61',
+    '.1r07777077uu1rr007r000yy04r0y61',
+    '.1r0uu26u7yru122yyyyyyyyy04r0y61',
+    '.1r072222662770000000000004r0y61',
+    '.140yuu2yrr06y6555555555504r0y61',
+    '.1r0600000007yuuuyyuu7uyr04r0yy1',
+    '.1407010101060r02002sssr504r0yy1',
+    '.1u0r01s1s10o0r2s002000r504ysy51',
+    '.1y0701s1s0050rssss0002r50yy0551',
+    '.1ys701sss0070r2s0sss02r50yys651',
+    '.1y0701ss00060r20s0s020r50yys551',
+    '.1u0u01ss000u0y66yy771yy50yy011.',
+    '.1y07011ss00610sss000s0000yy1...',
+    '.1y05011s0006u67uuyyoo6uy0yy1...',
+    '.1y0y0111010666666yyy6uyy0yy1...',
+    '.1y0y01110106y6677yyyyyyy0yy1...',
+    '.1111111111111111111111111111...']},
+  belfry:{rows:[
+    '................11................',
+    '..............11e411..............',
+    '............11e2e41311............',
+    '...........1f442e413331...........',
+    '.........11ff4e2e4122rr11.........',
+    '........1er4e4e2e4t4222r41........',
+    '......11ere4e442u30224222411......',
+    '....11ue44ff44e2e4tr22242r4311....',
+    '...1fe3ee4ere4e2e4t324242r412r1...',
+    '..1ff443erere442e4t222342r1244411.',
+    '.1e4ee3usr3f44e2qqtr24222t4244241.',
+    '.1e444rsererf4rssssr3224240202231.',
+    '.1r4ee33frure3s2ss1s34242441r42r1.',
+    '.1e4esrefrerssss77ssss442441rr2r1.',
+    '.1essfree4ts0s777777s2st44r1301r1.',
+    '.1qreerf12s2syy777777s2ssrr1rr211.',
+    '.1e3ee43ss2ssssssssssss5ssrrr2241.',
+    '.1f344ss562222222222222555ssr4241.',
+    '1f44ss5sssss1ssssssss1sssss0ss4rr1',
+    '1f1s055s066101ssssss101251s555s141',
+    '11.125ys66100122112t10016ys7521.11',
+    '...165ys6100113r222211001ysy521...',
+    '...1667s100013fer320110001s6661...',
+    '...1y671000013f33r2211000016661...',
+    '...1y671000013r33r2211000016y61...',
+    '...1y67100012qrr3r2222100016yy1...',
+    '...1767s111s2qrrrrrq22s111s76y1...',
+    '...1767s22sr223q2rr2tt2s52s76y1...',
+    '...1777s55s34e322222r32s55s76y1...',
+    '...1777s000s22eeee440ts000s76y1...',
+    '...1727s0000ssssssssss0000s76y1...',
+    '...1727s0000000s22s0000000s7661...',
+    '...1756s00000000ss00000000s72y1...',
+    '...1756s000000000000000000s7271...',
+    '...1757s000000000000000000s6y71...',
+    '..1s666s666526666666666666s667s1..',
+    '..172227777777776777777777652771..',
+    '..1667772226666yy722222225666661..',
+    '..16666666665522222222y226666661..',
+    '..1ssssssssssssssssssssssssssss1..',
+    '...152sr4sy6srrrr444ys2ys44s551...',
+    '...126susyysu4uu44uuuus66s4s551...',
+    '...166ssy6s4uuee4eeeuuus66ssy61...',
+    '...166s26s4eeeeeeeeeeeeus66sy61...',
+    '...12ys2s4eeeeeefeeeeeeuus6sy61...',
+    '...1yyss44e4eeeeuuee4uue4fssyy1...',
+    '...17yssssssssssssssssssssssyy1...',
+    '...177s77777777777777777777syy1...',
+    '...16ys52222226666666666666syy1...',
+    '...16yssssssssssssssssssssssyy1...',
+    '...166s44resyy6666666yseuu4sy61...',
+    '...166sufeesss551505s0seue4s6y1...',
+    '...166sueees6s565657syseueesy71...',
+    '...16ysueues6s2y5657syseeeusy71...',
+    '...167sueues6s675657sysefuus771...',
+    '...167sueefs6s6757d5syseeeusy71...',
+    '...177sueeus6s67270dsysefeus771...',
+    '...177s3uuus6s672770sys4errs771...',
+    '..1s77s3uu3s6s67275ys6s4uurs77s1..',
+    '..1ussu0uu3s6s67575ysysruu1ess41..',
+    '..1uedu0uuus6s675757s7sr4u1uddu1..',
+    '..1ruu411111111111111111111uuuu1..',
+    '..11111....................11111..'],
+   ruin:[
+    '................11................',
+    '..............11er11..............',
+    '............11etersq11............',
+    '...........1e3e2e3s3qq1...........',
+    '.........11fe2e1ersq13411.........',
+    '........1u4yeqe2ersrss2441........',
+    '......11erert34qe3s0ts22t311......',
+    '....11uur0tqsre2ers41s2ssr4311....',
+    '...1ee2f44sssrf2erstu3ssstrsr21...',
+    '..1uutq2essseqfqerssus2rsssr4131..',
+    '.1e43e0sfssuq3eqq3tr242s2sr2r42y1.',
+    '.1ess42sfss44qqs11s32tsr14ssss431.',
+    '.1uufesss4e4e3s1001124sstr4s430s1.',
+    '.1ese0reu2e2ss10000011rr1s4s332y1.',
+    '.1fsserreqs0u0100000001q2qssss2y1.',
+    '..24ey3rss1uys10000001ussrrsyys1..',
+    '..1sfet4sss2s3s1100166ssssrsu2ys1.',
+    '.1fyrrss6655llu771001y50nsss3yys3.',
+    '1euess5sssss11ss1101s1ss5ss0ssu7y1',
+    '1f1ss55ss66100110000101s6ss655s131',
+    '11.1n0ys6610001100000017sys7s51.11',
+    '...165ys6100001s10000us7sys5ys1...',
+    '...1yy6s10000001100001su11syy61...',
+    '...1y5u10000000010000171001yy61...',
+    '...1yy6100000000000006s1001yu51...',
+    '....1s71000000000000011000175y1...',
+    '.....151000000000000000000175y1...',
+    '.....eys510000000000000001s7uy1...',
+    '....1e5s550000000000000016s70u1...',
+    '....157s5s100000000000001ss761....',
+    '....1u6s166100000000011016s71.....',
+    '...1fyu1016010000001010356s7y1....',
+    '...1eyu100166100005s170ss7su051...',
+    '...175u10001551001osus7s7ssu261...',
+    '...176ys111ss5s11sssyysssssfn61...',
+    '..1s7yusuuu7uss6667yuyffeusuuys1..',
+    '..1uun0u6667yus75uu767u1uyff5yu1..',
+    '..1yul7700067ssuno222luuuu76yu51..',
+    '..1m75555666s6m5222222u0yy576661..',
+    '..1sssssssssssssssssssstyssssss1..',
+    '...155s44s66s44ussuuusyys44s551...',
+    '...151s4sy5suur4suuquus66srs551...',
+    '...165ssyy04uuees2eetefs65ssy61...',
+    '...165s22sreeeeeeseeeseus6ysy51...',
+    '...122s2sueeeeee4ueee3eu4s6sy1....',
+    '...122ss4re0eeee4yee0suet4ss121...',
+    '...176sssssssssssssss1ysssssy21...',
+    '...177s7777677077uuuuuuu777syl1...',
+    '...175s0m22sss665756yyyu566syy1...',
+    '...17yssssssssssssssssssssssuu1...',
+    '....16s442es0ssssssss5seuu3sy61...',
+    '.....7suuees5s55sls5s5seueusu1....',
+    '....17sueues5s5ss6s6sysetyusy61...',
+    '...170su0eesms5ys6s6s5seee4s661...',
+    '....57sueses5s65sssns5usfs4s71....',
+    '...1fusuesqs6s65sssss6usqeus561...',
+    '...1e6s4ee0s6s67sssss66sse4s761...',
+    '...1eysuu0us6s67s5sss6sseq4s761...',
+    '...1sysusuts6s60s7s6s6ssususs61...',
+    '..1eusesfuqs6s60s7sysysssuseude1..',
+    '..1eyeusuyus6s67s7s717ssuuseyud1..',
+    '..1se0e1111111111111.11111133s31..',
+    '..11111....................11111..']},
+  menagerie:{rows:[
+    '........................11......................',
+    '.......................1f41.....................',
+    '.......................1f41.....................',
+    '......................12ers1....................',
+    '.....................1f2ers21...................',
+    '.....................1f2ers21...................',
+    '....................1uf2er0321..................',
+    '...................1s4f2fr0321..................',
+    '...................1fre2er14221.................',
+    '..................1frfe2er1qq211................',
+    '.................1f3ef32e4tq23211...............',
+    '.................1e3ere1f4t32qt21...............',
+    '................1e33e4e1e4t32rt121..............',
+    '...............1f3e3e4ete4tt2rt4tt1.............',
+    '..............14e3e3e4u1e4032q1413t1............',
+    '..............14r4e3e4f034022qt314t1............',
+    '.............1fre4e334esss0tqtt41q031...........',
+    '............1f3rere3e4es2ysr241rt40331..........',
+    '...........1f3ererere4s2ss3s241rtrt1231.........',
+    '..........1f4uu3errrffss33ss2q22trt33131........',
+    '.........1f44uurq3e44s3s33s3s323ttt331131.......',
+    '........1f44ef2rf3e4sys33yrsys23tr2s341231......',
+    '.......1fu44ererf4es2s333y4ys2s32r2rt413141.....',
+    '......14ererere444es2s34urey02s3222rt31r1231....',
+    '.....14urrere4r4eus2ssssss0sss3s2422tr1rt1211...',
+    '.....1erf4rrere4esys30uuuuuus4s2s42rt41s2u131...',
+    '.....1er44fre4e4s3srrssssssss3rs3s2rt2t32q1r1...',
+    '.....143erfr34e4ss34res0000seer3ys2r2213t41r1...',
+    '.....144e3frf4fsss3yees0000se4443s0r2rt3t4111...',
+    '.....1e4433rf4ss3u2eee00000se4ee33ss2rtt11131...',
+    '.1111se4e3erfssyru1eee00000se4eeu33ssr2r1r23s11.',
+    '.1y77s34e3e4sssyrr40ee200000eeeyy3usss2r232ts61.',
+    '..1s1se4e3fsss2suuee1e2ssssueuee4esrss2r1313s1..',
+    '...101e2ffssrsys44ffyrrrruu2eueerrsrs3s1q213s1..',
+    '...10123ess34ss0eeeeeuusss0eeeeee3ussy3s23ts1...',
+    '...101ffss3uus2seeeeeeeuuu1uee333ususu3ss3301...',
+    '..101sfsss444s2ueeeeeeeuuuyufeeeee3uss3rss331...',
+    '.e15s1usssss00000000005555511000000es0sssss31.1.',
+    '.10e1.1s266677s77777777777776677770esy6666s11101',
+    '10101..1ssssssyssssssssssssssssssss4ssssss1..1d1',
+    '10105..1rrru041uyuuuuuyuuu4uuuuuuuu2s44uuu1..111',
+    '1221r..14fussrs103ueuureeeeuueeuuss3useuuu1..101',
+    '10101..1uuus403seseeee2eeeeef2eeesusuusuuu1..101',
+    '10101..1suusu0u0e0eeeee2e4sss11esy3use0fue1..101',
+    '10101...1ee001u110e00000suuuuuu0sey0sssfee1..101',
+    '10111...1eesu011f0etuuuuusssst0es20eyesffu1..111',
+    '11151...1ee0u0u1e0e11ssss555s41esfsss1sff1...1y1',
+    '124e3...1uf0u0u0e0e1rs51155ysu1esetus3sey1....1.',
+    '.1111...1ue1u0u0e0e14s11y55ysu1ese1ys2suu1......',
+    '........1e21s2010041ysy1y55ysu14se24suse31......',
+    '.........1et242ut4e1usy1y55ysu1us03s0usre1......',
+    '.........1uuu1tttff1usy1y5d1s31u0uy40ssu1.......',
+    '.........1uyyeeee221usy1y5srsr2ee3y40us31.......',
+    '........1u2uue1eeff1usy1y121sr2eesssssu331......',
+    '........1uu344222221usy1y1yysu2r2eeer1uuu1......',
+    '........1rr244444uu24sy1y1yys4244uu3243r31......',
+    '........1332s44221u24sy1y1yys42413311133r1......',
+    '.........11111111112411111111r21111...1111......',
+    '...................11........11.................'],
+   ruin:[
+    '.......................11.......................',
+    '......................1e41......................',
+    '......................1f41......................',
+    '.....................12ers1.....................',
+    '....................1f2ersq1....................',
+    '....................1f2ers21....................',
+    '...................1uf2ers321...................',
+    '..................1f2rtf3s3t1...................',
+    '..................1fssqers4121..................',
+    '.................1fssr1erst4121.................',
+    '................1fq0s41ersrtq221................',
+    '................1eqruetrrsrqsq21................',
+    '...............1e44d3dtersr2ssrt1...............',
+    '..............1e2d443e0ers24sssq1...............',
+    '.............1443y4d340eqs3t2sss1...............',
+    '.............1s4ssqe2esrqsrt3sss68..............',
+    '............101sss3s2essssrtsqss11..............',
+    '...........141ssss3eres2qs42rsr101..............',
+    '..........1fuyssssre42qssqs2rss1001.............',
+    '.........1erssssssreuss33ssqrsrs101.71..........',
+    '........1f40ssssee34sss3ysqsrtrsq1o1101e1.......',
+    '.......1rtsrsssr4ees3sr33rsqssrssssse1esst......',
+    '......1f4412sss44es2s3333rssqsq24s7sesus21......',
+    '.....14eudetse444es2s4uu6essqs3trs1ss0ses21.....',
+    '....1qf4ud0414rdus3srq0tysdssqs2rtsese04ss21....',
+    '....1dufss4e2eresttrsfyuyyssrsqs324tq4ssqs41....',
+    '....1e4s3y4e3e2s3srrssss012srrsqs24trqr02s41....',
+    '....1ssr0f4tre3ssrrruyssss12e44ts241r0rsqss1....',
+    '.....11f3e2fress333eu2sses7e4rrrssr122rsss1.....',
+    '..1.1e342qrersss4uuesfssss4eree44ss2r121sso.1...',
+    '..51se3e3erfsss4fr3esfsssste4eeeusssr24srs1.81..',
+    '..17ssre3e4ssus444qessssss1uee4q4syss24trss1s5..',
+    '...1seqe3ess7us4eeesusssdsse2feues52ss40ss4s71..',
+    '..11se2u4ss2susyu4uqr0desurueuef0yys30strs41....',
+    '..1.133esyyys6tueudesssysyuudueesy3s4ystqss1.1..',
+    '....1eesseuus7seyuueue7eseueeyy2e0usu3ssqss1....',
+    '....1esss4rrs7s5ysseueree0uueeygu0us04rssr41.1..',
+    '....1ssssslss73yyudss0yssssysssssou2s00sss41.1..',
+    '..1..1s4777us7s666euuo0o77o5ooo07sys44132s11....',
+    '......1sssss1usssss0s1ssssssssssss4ssssss1...1..',
+    '......1uu44s1u0fe0esfuuuufuuu0urusrssed0e1...1..',
+    '......1ffssuyyyy0yetyfeeeeu2sfed0ss3e1yuf1......',
+    '......1ff1ysnsssne5fe2uueeee0eusuuuessffs1...1..',
+    '....818syussse06seeeee5g0sssssuysstss6f4f1......',
+    '...16seseeses6s0u0ssssss0uu0uydessssqle4e1......',
+    '...1s0eeeesf44srsesn0ffsffs4s0uessss3rue01......',
+    '..1e60eseesssyssseussysusssss1f0yys2syse1.......',
+    '..os8ssylesys7sosgdsrsuuso77s4suyssssyss1.......',
+    '..8psesfeee1s7s07sss42sssssosusstsssst41........',
+    '..10sssseqfsssse04sufss77ssuseesu03r0es41.......',
+    '..158sfs4u1ee0e3essf0ssslse0sesysyyseesf1....1..',
+    '.1sss2yussssys4ss20esess6syysmef22sssssf31.11o..',
+    '.1ssssus7s422poer0sessssssesrsfesstsu1yss1.1no1.',
+    '.1smu0usnsssyouyffsesyyysdesrs0e77lu0yyuo91psu1.',
+    '.1e9sesrs4s4srr4uy2ssssssses4teqeeess8s6sssses81',
+    '.1s8uuss04s2sers8us43s4r0essrseuuf4ts8snsosfss81',
+    '186s0ess4s6sosrs65sussrsfs4sr1eu2u1.18ls9s9s0s81',
+    '18sosss44s618s1s114s333sss411.1111e.16ss8s8s8o1.',
+    '.17susu0s71.1101..1111s3s31.1.....1..18ssses81..',
+    '..11seo111...11.......11111..........177so071...',
+    '....111......1........................18ss811...',
+    '.......................................1o11.....',
+    '........................................1.......']},
+  frame:{rows:[
+    '........................................55555.............',
+    '......................................55s33rr54...........',
+    '..................................55553333r2225...........',
+    '..............................55552333r441t2uu5...........',
+    '...........................555233r44u321222s32r5..........',
+    '................55..55555553333uu2222222222s3235..........',
+    '...............5s055rru33rruu31112222222ssss3225..........',
+    '.............5524rr33rt31112222222222ssststs2235..........',
+    '.............5232443ts3rrs22222tttsss3fsts1st235..........',
+    '............5tr2r3tt1s34rs22555...5qq33fss11s2325.........',
+    '............5t1222111s32rts5.....50tt33fss11s2335.........',
+    '............5tts2r11ts13t02u5ttt1223q13rfsstst335.........',
+    '............5rstsssss1122s2rut32r2r14123usus1s335.........',
+    '............5rs13tsss1122s23ft2r241rt41qus2s1s33t5........',
+    '...........52rs332rs03s22s23rf1333321r1qusstts3325........',
+    '...........52rsr3u2s23s22ss33f124222t41qus5t1s3235........',
+    '...........53rs3232s33s22s233f1232222t22u5.5ts2235........',
+    '...........532sr323s3rs22ss33ftq225tt22435.5ts2235........',
+    '...........53ssr142s3rs22s233ft25t..5243s5.5t1s2r5........',
+    '..........533s11255s3rs22s23r455.5..5ssst5.5t1s235........',
+    '..........5n3s115..53rs22s2345...5.ts1s1t5..51s2335.......',
+    '..........53rs15...533s22s555...5s52s1s215..51s2335.......',
+    '..........533s15...533s225...5551s21s1s115..51s2n35.......',
+    '..........5r2s15...533s22sttt1111s11s1s115...ts2n35.......',
+    '.........53rs115...533s22s111111ts55s1s225...t2stss5......',
+    '.........5r2s11s5t1s33s22s1111t555..51s225...5ss4uu5......',
+    '.......55srss1s1221s33s22s25555..5..51s22s555ru4f2u5......',
+    '.....552rsrs11s111ts33s2255......5..5ssstrrr3sufu2u5......',
+    '..555nr32srs22s115ss33s2t........555s24432233sf2uuu5......',
+    '55rr3sssssrs22s55.5233s212....55513rr222222220q4sss5......',
+    '5rt05totsuts225...53r3s2t5.555r4422222222222tssss2q5......',
+    '.tu5..tosos225....5r7sssst53rr22222222222ss5.5s1s335......',
+    '.td5..50mys6t5....577suuuuuu2222y2222sssss1s5ts1s335......',
+    '.505...5sos6t5....57usftf404222y5s55ststts11s1s1s2335.....',
+    '.535...571su15....57usuu44ur5555.t..51sttsstt1s11s335.....',
+    '533r5..5ussum5....57usf4u555.....5..51s1tss2tt511s335.....',
+    '5tt05.5russnu5...5srusss5........5..51s11sss2t.52s335.....',
+    '5b2a5.5u7s1su25..5s6us225........5..51s11sttstts2s2325....',
+    '5bmb5.5u7s1su25.57s6usqq5........5..51s1ss2ts1ts2s2335....',
+    '5bmb5.5u7s1su2s5o6srusqq5........5..51sts21ts1ts1s1335....',
+    '51m2557u3s1su2sm76srrs2q5........5..51sss1t552ts11s335....',
+    '.555.5u7st25nusuns1r3s225........5..51ss2t5..52s11s325....',
+    '.....57ns1t.5utn5s2rs2225........5..51stt5...52s11s325....',
+    '.....543sts5tut5.524s2225........5..51sss5....51s1s325....',
+    '....5s42s1s7num5.5y4s2225........5..51st2255..51s1s335....',
+    '....544sts76l2u5.534s2225........5..51sst23355.ts1s2335...',
+    '....543sso625sut.534s3225........5..51stst113352s1ts335...',
+    '...50r2s7625.5u25s3rs3q5.........5..51s1sstttt30s11s335...',
+    '...5tts77n5..5ry0srrs3q5.........5..52s11s55t1122s2s335...',
+    '...5u2s7n5....57tsrrs335.........5..52s115..55122s2s335...',
+    '...5rf20s5....57tsrrs3q5.........5..52s115....522s2s3325..',
+    '...5u23u325...571sr3s3q5.........5..52s215.....55s22t325..',
+    '...5su33uu355..t4sr3sqq5........5s5.52s215.......522s335..',
+    '..222s233244n5.54sr3sq35.....555u3u5s2s215.......522s3315.',
+    '..3231ss223nu4ts4sr3sqq5..555uuuusuuuss215.......512s3325.',
+    '..53rs11552334u3ssrns3qs55uuuueeuseuuuutt5........52s3315.',
+    '..533s15..552333ust3s32sooueee223s2eeuues5........522s335.',
+    '..5rs115....5133te4ss22suuu22233rs322eeuuu55......522s335.',
+    '.53rs115...5sss21u3412ss11123333rs33323eeueu55....521s335.',
+    '.53rs11s555uuuussu4t22ss33313332rs333323oeuueu55..511s335.',
+    '.532s21suoo43uu4s44s22s2333133t22s33332333eeuueu5..51s235.',
+    '.53s12sruuueut23ssss22s2333ttt313s33332rrr33eeouu5ts1s135.',
+    '523s22sr3eerrrtts33s22stttt3333t3s33222rrrr33ueeeuusss1r35',
+    '533s12sr3q3eeuu3s33s22s33333333t3s332323rrrrttt22oeu4ttr35',
+    '532t215q33rrueuus23s22s223332ttt2s223322rtttueeeeeueert335',
+    '.5t215.523rrr3ees33s22s23ttt2222ts2233ssteeeeeeeeuu222t3r5',
+    '..555...5533rr32s33s22st1122222t2s2sss4ueeeeeeu2222rrrs335',
+    '..........5233r2s33s22ssst1222ssstteeee33euu222rrrrrrrt555',
+    '...........55232s33s22surs1sssruueeeeeee4222rrrrrrr3555...',
+    '.............552s33s22suuusuuuuu4rueu22232rrrrrr3555......',
+    '...............ts33s22souuuuuuuuer222rrrr2rr35555.........',
+    '...............5233s22s2eeeeeu222r2rrrrrr2555.............',
+    '...............5333s22s333u222rrrr2rrr3555................',
+    '...............5333s22s333u2rrrrrr25555...................',
+    '...............53352225333u2rrr3555.......................']}};
+/* what a building's windows do. win: for each of its house's windows (b.win, b.lit), the rects [x, y, w, h] of its panes in the
+   rows. A pane lights by a letter swap (lit, else BLD_LIT), so the glow is exactly the glass the art drew, and what lit letters
+   (em, else BLD_EM) it shows burn through the dark; one the art drew lit goes dark by BLD_UNLIT. The Lodge's third pane is its
+   round window, the Attic's, lit once the Attic is built (b.attic). The belfry's light is under its bell, the bell kept dark
+   against it; the smithy's Leyden jars glow their own cold blue */
+const TOWN_BLD={
+  lodge:{win:[[[8,53,10,7]],[[59,53,9,7]],[[35,29,6,6]]]},
+  chandler:{win:[[[11,47,8,8]],[]]},
+  oar:{win:[[[36,46,6,7]],[[52,46,6,7]]]},
+  crypt:{win:[]},
+  brazier:{win:[[[7,17,9,9]],[[30,15,8,11]]]},
+  quay:{win:[[[19,16,5,4]],[[8,27,6,1]]]},
+  smithy:{win:[[[16,32,7,5]],[[16,40,6,6]]],em:'abci'},
+  belfry:{win:[[[8,29,9,6]],[[17,29,9,6]]],lit:{'0':'9',s:'8',t:'8'},em:'9'},
+  menagerie:{win:[[[22,27,6,5]],[]]}};
+const BLD_LIT={s:'a',t:'a','0':'a',q:'b','2':'b','3':'b',r:'b',n:'9',m:'9',l:'9'}, BLD_UNLIT={a:'s',b:'2',c:'3','9':'1','8':'1',p:'2',o:'2',d:'2',i:'4',h:'r'}, BLD_EM='abc';
+/* one building as it stands now: its canvas, what of it glows (em) and where its lit panes throw light (wl, in its rows), made
+   once for each way it can stand */
+const TOWN_HOUSE_ART={};
 function townHouse(b){
-  const W=b.w*16, Hc=b.h*16+10, [cv,c]=tCanvas(W,Hc), wallT=Hc-16;
-  if(b.crypt){
-    /* the crypt: blue-grey brick, a slate roof, a cross on the ridge, an iron gate, moss */
-    for(let y=wallT;y<Hc;y++)for(let x=0;x<W;x++){const ly=y-wallT, row=ly>>2, mx=(x+(row&1)*3)%6;
-      tp(c,x,y,ly%4===3||mx===5?'1':thash(x>>1,row,61)<.2?'q':'r');}
-    for(let y=6;y<wallT;y++){const inset=Math.max(0,8-y); for(let x=inset;x<W-inset;x++)tp(c,x,y,(y-6)%3===2?'1':((x+((y-6)/3|0))%5===0?'2':'q'));}
-    tp(c,0,wallT-1,'1',W,1); tp(c,W/2-1,0,'4',2,9); tp(c,W/2-3,2,'4',6,2);
-    const dx=W/2-4; tp(c,dx,wallT+3,'0',8,13); for(let x=dx+1;x<dx+8;x+=2)tp(c,x,wallT+3,'4',1,13); tp(c,dx,wallT+2,'4',8,1);
-    for(let i=0;i<10;i++){const x=(thash(i,b.x,62)*W)|0, y=Hc-1-((thash(i,b.y,63)*5)|0); tp(c,x,y,i&1?'e':'y');}
-    return cv;
-  }
-  /* ashlar wall, a mossy plinth, the eaves' shadow */
-  for(let y=wallT;y<Hc;y++)for(let x=0;x<W;x++){const ly=y-wallT, row=Math.floor(ly/3), mx=(x+(row&1)*3)%6;
-    let p=ly%3===2||mx===5?'1':thash((x+(row&1)*3)/6|0,row,b.x*31+b.y)<.25?'2':'r';
-    if(ly>=13)p=thash(x,ly,b.x+70)<.3?'y':'2';
-    tp(c,x,y,p);}
-  tp(c,0,wallT,'1',W,1);
-  /* slate courses, staggered, a ridge cap */
-  for(let y=2;y<wallT;y++){const course=Math.floor((y-2)/3), ly=(y-2)%3;
-    for(let x=0;x<W;x++){const j=(x+course*2)%5;
-      tp(c,x,y,y===2?'3':ly===2?'1':j===4?'1':ly===0?'r':'q');}}
-  for(let x=0;x<W;x++)if(thash(x,b.y,80)<.12)tp(c,x,wallT-2-((thash(x,b.x,81)*8)|0),'y');
-  if(b.chim){const x=b.chim*16+4; tp(c,x,0,'r',5,8); tp(c,x,0,'0',5,1); tp(c,x+4,1,'1',1,7);}
-  if(b.ruin){
-    /* a hole in the roof: black inside, rafters across it, broken slates round its edge */
-    const hx=Math.round(W*.62), hy=Math.round(wallT*.48), rx=Math.max(6,W*.18), ry=Math.max(5,wallT*.24);
-    for(let y=2;y<wallT;y++)for(let x=0;x<W;x++){const q=((x-hx)/rx)**2+((y-hy)/ry)**2+(thash(x,y,90)-.5)*.5;
-      if(q<1)tp(c,x,y,'0'); else if(q<1.35)tp(c,x,y,'2');}
-    for(let i=-ry;i<ry;i++){tp(c,hx-rx*.6+i*.4,hy+i,'6'); tp(c,hx+rx*.4+i*.4,hy+i,'5');}
-  }
-  /* the door: an arch of planks with iron studs */
-  const dx=b.door*16+5, dy=wallT+5;
-  for(let y=dy;y<Hc;y++)for(let x=dx;x<dx+6;x++){if(y===dy&&(x===dx||x===dx+5))continue; tp(c,x,y,b.ruin&&x>dx+2?'0':(x-dx)%2?'5':'6');}
-  tp(c,dx-1,dy+1,'1',1,Hc-dy-1); tp(c,dx+6,dy+1,'1',1,Hc-dy-1); tp(c,dx+1,dy+4,'4'); tp(c,dx+1,dy+8,'4');
-  /* windows: lit ones glow through the dark (their panes go in TWN.em too), dark ones show a glint */
-  (b.win||[]).forEach((wx,i)=>{const x=wx*16+5, y=wallT+3;
-    tp(c,x-1,y-1,'5',7,8); tp(c,x,y,b.lit[i]?'a':'0',5,6); if(!b.lit[i])tp(c,x+3,y+1,'1');
-    tp(c,x+2,y,'5',1,6); tp(c,x,y+2,'5',5,1); tp(c,x-1,y+6,'2',7,1);});
-  return cv;
+  const A=TOWN_BLD_ROWS[b.art], W=TOWN_BLD[b.art], key=b.art+(b.ruin?'r':'')+(b.lit||[]).map(Number).join('')+(b.attic?'a':'');
+  if(TOWN_HOUSE_ART[key])return TOWN_HOUSE_ART[key];
+  const src=b.ruin&&A.ruin?A.ruin:A.rows, rows=src.map(r=>[...r]), glow=src.map(r=>Array(r.length).fill('.')), wl=[], E=W.em||BLD_EM, L=W.lit||BLD_LIT;
+  W.win.forEach((rects,i)=>{const on=b.lit&&i<b.lit.length?b.lit[i]:!!b.attic;
+    for(const [x0,y0,w,h] of rects){
+      for(let y=y0;y<y0+h&&y<rows.length;y++)for(let x=x0;x<x0+w&&x<rows[y].length;x++){const ch=rows[y][x]; if(ch==='.')continue;
+        const n=on?(L[ch]||ch):(BLD_UNLIT[ch]||ch); rows[y][x]=n; if(on&&E.includes(n))glow[y][x]=n;}
+      if(on)wl.push([x0+(w>>1),y0+h+2]);}});
+  const R=rows.map(r=>r.join('')), [cv,c]=tCanvas(R[0].length,R.length); tRows(c,R,0,0);
+  let em=null; if(wl.length){const [e,ec]=tCanvas(cv.width,cv.height); tRows(ec,glow.map(r=>r.join('')),0,0); em=e;}
+  return (TOWN_HOUSE_ART[key]={cv,em,wl});
 }
-/* a lit window's panes alone, for the glow pass */
-function townPane(){const [cv,c]=tCanvas(5,6); tp(c,0,0,'a',5,6); tp(c,0,0,'b',2,2); tp(c,3,3,'b',2,2); tp(c,2,0,'5',1,6); tp(c,0,2,'5',5,1); return cv;}
-/* the Head-frame: a mining port's timber tower over the shaft, a sheave wheel at its head, the cable running down into the
-   dark, and a lantern hung from its crossbeam. It is the light the square gathers round */
+/* the Head-frame: a timber tower over the shaft, its winding drum at the head and a lantern hung off its side, whose glass
+   (FRAME_GLASS, in its rows) burns through the dark: it is the light the square gathers round */
+const FRAME_GLASS=[0,35,5,7];
+let TOWN_FRAME=null;
 function townFrame0(){
-  const [cv,c]=tCanvas(64,76), F0=44;
-  const line=(x0,y0,x1,y1,ch,w)=>{const n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0)); for(let i=0;i<=n;i++){const x=Math.round(x0+(x1-x0)*i/n), y=Math.round(y0+(y1-y0)*i/n); tp(c,x,y,ch,w||1,1);}};
-  /* the shaft's stone collar, its back wall, and the dark */
-  tp(c,14,F0,'4',36,32); tp(c,16,F0+2,'2',32,28);
-  for(let y=F0+2;y<F0+30;y++){const p=y<F0+6?'2':y<F0+9?'1':'0'; tp(c,16,y,p,32,1);}
-  for(let x=14;x<50;x+=4){tp(c,x,F0,'3',3,1); tp(c,x,F0+30,'3',3,1);}
-  tp(c,14,F0+31,'1',36,1);
-  /* the iron grate over the near half */
-  for(let y=F0+18;y<F0+30;y+=3)tp(c,16,y,'4',32,1); for(let x=18;x<48;x+=5)tp(c,x,F0+16,'3',1,14);
-  /* footings for the legs */
-  tp(c,0,F0+18,'3',12,12); tp(c,52,F0+18,'3',12,12); tp(c,0,F0+18,'4',12,1); tp(c,52,F0+18,'4',12,1); tp(c,0,F0+29,'1',12,1); tp(c,52,F0+29,'1',12,1);
-  /* back legs, then the cable, then the front legs and crossbeams */
-  line(10,F0+16,30,10,'5',2); line(53,F0+16,33,10,'5',2);
-  for(let y=16;y<F0+24;y++)tp(c,32,y,y%3?'3':'1');
-  line(4,F0+20,29,10,'6',3); line(5,F0+20,30,10,'7',1);
-  line(59,F0+20,34,10,'6',3); line(58,F0+20,33,10,'5',1);
-  tp(c,14,30,'6',36,2); tp(c,14,30,'7',36,1); tp(c,9,F0+6,'6',46,2); tp(c,9,F0+6,'7',46,1);
-  line(14,32,47,F0+5,'5',1); line(49,32,16,F0+5,'5',1);
-  /* the sheave wheel */
-  for(let a=0;a<64;a++){const t=a/64*TAU; tp(c,Math.round(32+Math.cos(t)*7),Math.round(9+Math.sin(t)*7),'4');}
-  for(let a=0;a<4;a++){const t=a/4*TAU+.4; line(32,9,Math.round(32+Math.cos(t)*6),Math.round(9+Math.sin(t)*6),'2',1);}
-  tp(c,31,8,'7',2,2);
-  /* the lantern's chain and cage (its glass is in the glow pass) */
-  tp(c,24,32,'1',1,3); tp(c,22,35,'1',5,1); tp(c,22,36,'a',5,5); tp(c,22,41,'1',5,1); tp(c,24,36,'1',1,5);
-  return cv;
+  if(TOWN_FRAME)return TOWN_FRAME;
+  const R=TOWN_BLD_ROWS.frame.rows, [x0,y0,w,h]=FRAME_GLASS, [cv,c]=tCanvas(R[0].length,R.length), [e,ec]=tCanvas(cv.width,cv.height);
+  tRows(c,R,0,0); tRows(ec,R.map((r,y)=>y<y0||y>=y0+h?'.'.repeat(r.length):'.'.repeat(x0)+r.slice(x0,x0+w)+'.'.repeat(Math.max(0,r.length-x0-w))),0,0,null,'abc');
+  return (TOWN_FRAME={cv,em:e,lx:x0+(w>>1),ly:y0+h-2});
 }
-function townFrameGlass(){const [cv,c]=tCanvas(5,5); tp(c,0,0,'1',5,5); tp(c,1,0,'a',3,5); tp(c,1,1,'b',3,3); tp(c,2,1,'c',1,3); return cv;}
-function townBrazier(){
-  const [cv,c]=tCanvas(16,22);
-  tp(c,4,20,'0',8,1); tp(c,3,19,'l',10,1);
-  for(let i=0;i<9;i++){tp(c,5-(i>>2),10+i,'1'); tp(c,10+(i>>2),10+i,'1'); tp(c,8,10+i,i<5?'3':'1');}
-  tp(c,6,13,'3',4,1);
-  tp(c,2,5,'4',12,1); tp(c,2,6,'1',12,2); tp(c,3,8,'1',10,1); tp(c,4,9,'0',8,1); tp(c,2,6,'3',1,1); tp(c,13,6,'0',1,2);
-  tp(c,3,4,'8',10,1); tp(c,4,3,'8',8,1);
-  return cv;
-}
+const TOWN_TREE_ROWS=[[
+  '..........56665...........',
+  '........5688998665........',
+  '......55888989889965......',
+  '.....5998898889988885.....',
+  '....599889899998988885....',
+  '...57889988898988788885...',
+  '...588989898887668889985..',
+  '...5687798989876688998985.',
+  '..578677768989888998997875',
+  '.5888887677778868898778786',
+  '599989987867797688777877c5',
+  '58988989898768867687786875',
+  '.677887898868665m66688675.',
+  '578866778686676s2sss668775',
+  '576668565066sss21s66768675',
+  '.5768860s06ss20ss67768775.',
+  '..586866s10sys6677776675..',
+  '...666766ssy10666576755...',
+  '.....576650325..5.5.5.....',
+  '......555.512255..........',
+  '...........5s33s5.........',
+  '............5s1315........',
+  '.............5m225........',
+  '............522215........',
+  '..........553m2s5.........',
+  '.......6653312ss666.......',
+  '......66smm0110s6666......',
+  '...66677sm1ss10ss7776.....',
+  '....6670mss66s066777777...',
+  '......66656888556766.7....',
+  '...........78.............'],[
+  '........55....5........',
+  '.........55...5........',
+  '..........55.55........',
+  '5.........1255.........',
+  '.5.......51s5...5...555',
+  '..5555...515.....555...',
+  '.55.555..515.....55....',
+  '55....555225.....55....',
+  '.......555ms5...55555..',
+  '..........5205..55...5.',
+  '...........52255r5.....',
+  '...5........52ss5......',
+  '.5..5...5...5s2s5......',
+  '..5..555s5...52y5....5.',
+  '...5555.515..5135...5..',
+  '..56.....515.5y05..5...',
+  '.595.....51s5325..5555.',
+  '..5.......5s330s55n..55',
+  '..........53y0s55506...',
+  '.........5s33s5...686..',
+  '........5y22s5....686..',
+  '.......5222s5......67..',
+  '......5312s5...........',
+  '......53ys15...........',
+  '.....5213s1s55.........',
+  '....50031s0s0s5........',
+  '...55ss30s00sss5.......',
+  '..5..m205500su555......',
+  '....5555..5555.........'],[
+  '............5.............',
+  '...........6a6............',
+  '...........697..67....88..',
+  '..87..777..676.5a6...6a98.',
+  '..5a658a6...68559...56698.',
+  '...670a5.....5s85..b05....',
+  '....575.....51595..55..55.',
+  '.....55....515.6...5s55995',
+  '....5025...515....5mmm55a6',
+  '.665122255.5m5...50055..56',
+  'b890555s015ss5..5m05......',
+  '5a55...500mss5.5205.......',
+  '65....5a0001ss5205....56..',
+  '.....6a555s222s20s555596..',
+  '....5966..5s22s1s2m2097...',
+  '....85a....522s22m55ss5...',
+  '...........52122s5..51555.',
+  '..........5231205....75895',
+  '.........51y131s5....7a577',
+  '.........52130s5......6.56',
+  '........521y005...........',
+  '........5212005...........',
+  '........5200005...........',
+  '........511101s5..........',
+  '........500m001s55........',
+  '......5510020100s05.......',
+  '.....5100s11s00ss005......',
+  '....5555m1m5550000155.....',
+  '........505...55s55.......',
+  '........55......5.........']];
+const TOWN_GRAVE_ROWS=[[
+  '....11..........',
+  '..1yee1.........',
+  '...uyuu1..1111..',
+  '...uyuuy11eee1..',
+  '...yeuuyudeeyu1.',
+  '..1yeuuuuuuyyu1.',
+  '1yeeeuuyuuuyuu1.',
+  '1ryuuuuuuuuu111.',
+  '12uuuuuu3111....',
+  '.1uuuuuuy1......',
+  '.11s1uuyu1......',
+  '...12uyuu1......',
+  '....1yuuu1......',
+  '....12uuuu1.....',
+  '.....1yuyu1.....',
+  '.....13uuuu1....',
+  '....1y0uuuusu1..',
+  '....1y0uu5usu02.',
+  '...1yy00se0u1eyy',
+  '..uuyyyeuseu5yey',
+  '...3yyyuuuyy3y3.',
+  '....yyyyyy......'],[
+  '......111.......',
+  '.....1ede1......',
+  '...11eeryu11....',
+  '..1uereyu2ue1...',
+  '..1e31uuu1re3...',
+  '..e31.1uu.13e1..',
+  '11u1..1uu..1uu11',
+  '1eee11euu12eeee1',
+  '1e33ueuuuuu33ye1',
+  '1euu21eeum2uuuu1',
+  '112y1.1uu.103211',
+  '..uu1.1uu.1uu1..',
+  '..13u1uuu1uu1...',
+  '..1suueuuuu11...',
+  '...11yeuu211....',
+  '.....1euu1......',
+  '...1usuuusu1....',
+  '..1uuuyyyuuu1...',
+  '..1ueeeyyeyy11..',
+  '..1uyyyuyyuu51..',
+  '..1yuyuuyuy321..',
+  '..111111111111..'],[
+  '.......1y.......',
+  '......udu1......',
+  '.....1eeee1.....',
+  '....1euyeee1....',
+  '...1eu222eeu1...',
+  '...1eu2ey2ee1...',
+  '...1e2eeuyyes1..',
+  '..1eu2eeemyeu1..',
+  '..1u24e0emryu1..',
+  '..1r3ueeemu3u1..',
+  '..1u3uyeyuu3u1..',
+  '..1u3uuyuuu3u1..',
+  '..1e3u33uuu3u1..',
+  '..1e3uuuu3u3u1..',
+  '.1su333yy333us1.',
+  '1ysyuueeeuuuus11',
+  '1usmy22222222su1',
+  '1euueueeuuuuyuu1',
+  '1ueeeeuueeueeee1',
+  '1urr33euyyueyyr1',
+  '1y44rrru33yyyy21',
+  '1111111111111111'],[
+  '......111.......',
+  '.....1eed1......',
+  '.....10uee1.....',
+  '......1uueu1....',
+  '....1.4uueue1...',
+  '...1e12uuuue1...',
+  '..1euusuuuue1...',
+  '..1eu33surue1...',
+  '..1euuusuuue1...',
+  '..1euyuruuue1...',
+  '..1euuuuuuue1...',
+  '..1euu3uuuue1...',
+  '..1euuuuuuue1...',
+  '..1euuuu2uu01...',
+  '..1euruueu101...',
+  '..1euuuue0eu1...',
+  '..yy15uuuu2e1...',
+  '..yuyy0yuuuese..',
+  '.1eyuuyy1mues1..',
+  '5yyyyuyyyyyyyy5y',
+  'yyyyyyyyyyyyyyy1',
+  '.yyyyyyyyyyyyyu.']];
+const TOWN_BRAZIER_ROWS=[
+  '.......1........',
+  '...11..15..51...',
+  '...161.15.161...',
+  '16..165s5m65...5',
+  '16..151051s5..11',
+  '171151.11.161171',
+  '.15.11.51.15.171',
+  '.17171.55.17171.',
+  '.16177167176161.',
+  '.16.16966o61.51.',
+  '.16.170n6s71.51.',
+  '.1o159067075171.',
+  '.1o058067r75071.',
+  '..167776707761..',
+  '..170786796061..',
+  '..170706757s61..',
+  '..16s71m796s61..',
+  '...1675560661...',
+  '....11666611....',
+  '......1ss1......',
+  '.......5m1......',
+  '.......5m1......',
+  '.......661......',
+  '.......761......',
+  '.....1m76s1.....',
+  '...1mmy76smmn...',
+  '...1m2m66symm...',
+  '...mm22ss2ymm...',
+  '....mmy2ymmm....'];
+const TOWN_FENCE_ROWS=[
+  '..11..................',
+  '.1eu1.................',
+  '1uduu1................',
+  '1uuuu1................',
+  '.1s21.................',
+  '1ys0s1................',
+  '1em2u1................',
+  '1ruuu1u...11..1...11..',
+  '.1111.11..11..11..11..',
+  '.1y2112211yy1123113311',
+  '.133011y1122112211mm11',
+  '.1331.11..11..11..11..',
+  '.1331.11..11..11..11..',
+  '.1331.11..11..11..11..',
+  '.13r1.11..11..11..11..',
+  '.13r1.11..11..11..11..',
+  '.1yr1.11..11..11..11..',
+  '.13r1.11..11..11..15..',
+  '.1rr1.11..11..11..15..',
+  '.1y31.11..11..11..11..',
+  '.1y31.11..11..11..11..',
+  '.1y31.11..11..11..15..',
+  '.1y3s11s11ss110111s211',
+  '.13rss0011s01111110111',
+  '10yrss01..11..11..11..',
+  '1u52rs01..11..11..11..',
+  '13uuus22mm221122mmm2y1',
+  '211115yym2yy22mmmm2ym.'];
+/* the brazier: a fire basket on an iron post; the A1 flame (TOWN_FIRE.brazier, 16 by 15) burns in its basket, BRZ_FLAME above
+   the tile's top, the basket BRZ_Y */
+const BRZ_Y=16-TOWN_BRAZIER_ROWS.length, BRZ_FLAME=BRZ_Y+5-15;
+function townBrazier(){const R=TOWN_BRAZIER_ROWS, [cv,c]=tCanvas(16,R.length); tRows(c,R,0,0); return cv;}
 /* ---- Art pass A1 (expansion/ART_UPGRADE.md §4): fire, water and weather. Every loop is a few frames made once from rows (from
    PixelLab's animate_image and its effects tool, through tools/png2rows.py; the log is ART_UPGRADE.md §6), and each draw picks
    its frame from the clock, so nothing is made a frame. Frame 0 is the still: Lite and Reduce Motion show only it (rule 18).
@@ -13456,37 +14669,21 @@ function fireFk(F){
 }
 /* the brazier's fire: PixelLab's frames over the bowl, all glow */
 function townFlames(){return fireFrames(TOWN_FIRE.brazier);}
-/* Blood Forest's trees: a round black crown, rust and blood-amber leaves, a crooked trunk */
-function townTree(tx,ty){
-  const [cv,c]=tCanvas(32,44), s=tx*7+ty*13;
-  tp(c,10,41,'0',12,2); tp(c,14,28,'5',4,14); tp(c,14,28,'l',1,14); tp(c,12,40,'5',2,2); tp(c,18,40,'5',2,2); tp(c,17,32,'7',1,5);
-  for(let y=0;y<34;y++)for(let x=0;x<32;x++){
-    const q=((x-16)/14.5)**2+((y-15)/13.5)**2+(thash(x,y,s)-.5)*.18; if(q>=1)continue;
-    if(q>.78){tp(c,x,y,'0'); continue;}
-    const n=tNoise(x/3.6,y/3.6,s);
-    let p=n>.6?'9':n>.3?'8':'5';
-    if(n>.7&&x+y<30)p='a';
-    if(y>23&&n<.45)p='l';
-    tp(c,x,y,p);
-  }
-  tp(c,12,27,'5',2,3); tp(c,19,26,'5',2,3);
-  return cv;
-}
-function townGrave(tx,ty){
-  const [cv,c]=tCanvas(16,16), cross=thash(tx,ty,70)<.45;
-  tp(c,3,14,'0',10,1); tp(c,4,13,'2',8,1);
-  if(cross){tp(c,7,2,'r',3,11); tp(c,4,4,'r',9,3); tp(c,7,2,'4',1,11); tp(c,4,4,'4',9,1); tp(c,9,7,'2',1,6);}
-  else{tp(c,5,4,'r',7,9); tp(c,6,3,'r',5,1); tp(c,7,2,'r',3,1); tp(c,5,4,'4',1,9); tp(c,11,4,'2',1,9); tp(c,7,6,'2',3,1); tp(c,7,8,'2',3,1);}
-  tp(c,5,12,'e',2,1); tp(c,9,12,'y',3,1);
-  return cv;
-}
-/* the cemetery's railings: spear-topped bars, rails top and bottom; a run north to south is seen side on */
-/* a fence joins the fences beside it; one standing alone runs east to west, or north to south when turned (side) */
+/* the trees (art pass A3): three from PixelLab, two in leaf and one dead, picked by where each stands; 32 wide, standing on
+   their tile's foot */
+function townTree(tx,ty){const R=TOWN_TREE_ROWS[(thash(tx,ty,64)*TOWN_TREE_ROWS.length)|0], [cv,c]=tCanvas(32,R.length); tRows(c,R,(32-R[0].length)>>1,0); return cv;}
+/* a headstone (art pass A3): four kinds, a cross, a ringed cross, a skull and a broken stone, picked by where it stands */
+function townGrave(tx,ty){const R=TOWN_GRAVE_ROWS[(thash(tx,ty,70)*TOWN_GRAVE_ROWS.length)|0], [cv,c]=tCanvas(16,R.length); tRows(c,R,(16-R[0].length)>>1,0); return cv;}
+/* the cemetery's railings (art pass A3): one PixelLab piece, a post with a ball on it and a run of spiked bars, cut in two. A run
+   east to west is bars, a 16 px repeat, with a post at each open end; one north to south is seen end on, a post a tile; a fence
+   standing alone runs east to west, or north to south when turned (side) */
+let FENCE_PARTS=null;
 function townFence(tx,ty,isF,side){
   isF=isF||((x,y)=>townCh(x,y)==='|');
-  const [cv,c]=tCanvas(16,20), ew=isF(tx-1,ty)||isF(tx+1,ty), ns=isF(tx,ty-1)||isF(tx,ty+1)||(side&&!ew);
-  if(ew||!ns){tp(c,0,8,'1',16,1); tp(c,0,16,'1',16,1); for(let x=1;x<16;x+=3){tp(c,x,6,'1',1,12); tp(c,x,5,'4');}}
-  if(ns){tp(c,7,0,'1',2,19); tp(c,7,0,'4',1,19); for(let y=1;y<18;y+=4)tp(c,6,y,'4',4,1);}
+  const R=TOWN_FENCE_ROWS, P=FENCE_PARTS||(FENCE_PARTS={post:R.map(r=>r.slice(0,6)),bars:R.map(r=>r.slice(6,22))});
+  const w=isF(tx-1,ty), e=isF(tx+1,ty), ew=w||e, ns=isF(tx,ty-1)||isF(tx,ty+1)||(side&&!ew), [cv,c]=tCanvas(16,R.length);
+  if(ew||!ns){tRows(c,P.bars,0,0); if(!w&&!ns)tRows(c,P.post,0,0); if(!e&&!ns)tRows(c,P.post,10,0);}
+  if(ns)tRows(c,P.post,5,0);
   return cv;
 }
 /* the Toothmonger's stall (step 7), 2 tiles wide, seen from the front: a counter of boards and a post at its left. Open, the
@@ -13649,19 +14846,20 @@ function townArt(){
   if(TOWN_ART)return TOWN_ART;
   const props=[], lights=[], em=[];
   const add=(cv,x,y,base)=>props.push({c:cv,x,y,base});
+  /* each building stands on its footprint's foot, centred on it (art pass A3); its lit panes glow and throw a little light */
   for(const b of TOWN_HOUSES){
-    add(townHouse(b),b.x*16,b.y*16-10,(b.y+b.h)*16);
-    (b.win||[]).forEach((wx,i)=>{if(!b.lit[i])return; const x=(b.x+wx)*16+5, y=(b.y+b.h-1)*16+3;
-      em.push({c:townPane(),x,y,base:(b.y+b.h)*16}); lights.push({x:x+2,y:y+9,r:26,f:.5});});
+    const H=townHouse(b), base=(b.y+b.h)*16, x=b.x*16+((b.w*16-H.cv.width)>>1), y=base-H.cv.height;
+    add(H.cv,x,y,base); if(H.em)em.push({c:H.em,x,y,base});
+    for(const [lx,ly] of H.wl)lights.push({x:x+lx,y:y+ly,r:26,f:.5});
   }
-  add(townFrame0(),160,100,176); em.push({c:townFrameGlass(),x:182,y:136,base:176}); lights.push({x:184,y:142,r:60,f:.6});
+  {const F=townFrame0(), x=160+((64-F.cv.width)>>1), y=176-F.cv.height; add(F.cv,x,y,176); em.push({c:F.em,x,y,base:176}); lights.push({x:x+F.lx,y:y+F.ly,r:60,f:.6});}
   const brz=townBrazier(), fl=townFlames();
   for(let ty=0;ty<TOWN_H;ty++)for(let tx=0;tx<TOWN_W;tx++){
     const ch=TOWN_MAP[ty][tx];
-    if(ch==='o'){add(brz,tx*16,ty*16-6,(ty+1)*16); em.push({fl,x:tx*16,y:ty*16-16,base:(ty+1)*16,ph:tx*3+ty}); lights.push({x:tx*16+8,y:ty*16+2,r:50,f:1,fk:fireFk(TOWN_FIRE.brazier),ph:tx*3+ty});}
-    if(ch==='T')add(townTree(tx,ty),tx*16-8,ty*16-28,(ty+1)*16);
-    if(ch==='+')add(townGrave(tx,ty),tx*16,ty*16,(ty+1)*16);
-    if(ch==='|')add(townFence(tx,ty),tx*16,ty*16-4,(ty+1)*16-1);
+    if(ch==='o'){add(brz,tx*16,ty*16+BRZ_Y,(ty+1)*16); em.push({fl,x:tx*16,y:ty*16+BRZ_FLAME,base:(ty+1)*16,ph:tx*3+ty}); lights.push({x:tx*16+8,y:ty*16+2,r:50,f:1,fk:fireFk(TOWN_FIRE.brazier),ph:tx*3+ty});}
+    if(ch==='T'){const t=townTree(tx,ty); add(t,tx*16-8,(ty+1)*16-t.height,(ty+1)*16);}
+    if(ch==='+'){const g=townGrave(tx,ty); add(g,tx*16,(ty+1)*16-g.height,(ty+1)*16);}
+    if(ch==='|'){const f=townFence(tx,ty); add(f,tx*16,(ty+1)*16-f.height,(ty+1)*16-1);}
     /* a patron's shrine (step 8): ruined until raised; its candle burns only while it is the one carried */
     if(ch==='S'){const k=SHRINE_AT[ty*TOWN_W+tx], S=TOWN_SHRINES[k], built=townShrineBuilt(k), lit=built&&townData().gift===S.gift;
       add(townShrineArt(S.p,built),tx*16,ty*16-12,(ty+1)*16);
@@ -13747,10 +14945,10 @@ function townDecoProps(d,x,y,props,lights,em,held){
   const K=TOWN_ART.cache, base=y+pieceFoot(TOWN_DECOS[d.id],d.f).h*16;
   if(d.id==='lamp'){K.post=K.post||townLampPost(); K.glass=K.glass||townLampGlass(); const ph=d.c*5+d.r;
     props.push({c:K.post,x,y:y-18,base}); em.push({fl:K.glass,x:x+5,y:y-14,base,ph}); lights.push({x:x+8,y:y-11,r:TOWN_DECOS.lamp.light,f:.25,fk:fireFk(TOWN_FIRE.lamp),ph});}
-  else if(d.id==='brazier'){const ph=d.c*3+d.r; props.push({c:K.brz,x,y:y-6,base}); em.push({fl:K.fl,x,y:y-16,base,ph}); lights.push({x:x+8,y:y+2,r:TOWN_DECOS.brazier.light,f:1,fk:fireFk(TOWN_FIRE.brazier),ph});}
-  else if(d.id==='tree'){const k='t'+d.c+','+d.r; props.push({c:K[k]||(K[k]=townTree(d.c,d.r)),x,y:y-12,base});}
-  else if(d.id==='stone'){const k='g'+d.c+','+d.r; props.push({c:K[k]||(K[k]=townGrave(d.c,d.r)),x,y,base});}
-  else if(d.id==='fence')props.push({c:townFence(d.c,d.r,(fx,fy)=>townCh(fx,fy)==='|'||(TOWN_AT.get(fy*TOWN_W+fx)||{}).id==='fence',townSide(d)),x,y:y-4,base:base-1});
+  else if(d.id==='brazier'){const ph=d.c*3+d.r; props.push({c:K.brz,x,y:y+BRZ_Y,base}); em.push({fl:K.fl,x,y:y+BRZ_FLAME,base,ph}); lights.push({x:x+8,y:y+2,r:TOWN_DECOS.brazier.light,f:1,fk:fireFk(TOWN_FIRE.brazier),ph});}
+  else if(d.id==='tree'){const k='t'+d.c+','+d.r, t=K[k]||(K[k]=townTree(d.c,d.r)); props.push({c:t,x,y:base-t.height,base});}
+  else if(d.id==='stone'){const k='g'+d.c+','+d.r, g=K[k]||(K[k]=townGrave(d.c,d.r)); props.push({c:g,x,y:base-g.height,base});}
+  else if(d.id==='fence'){const f=townFence(d.c,d.r,(fx,fy)=>townCh(fx,fy)==='|'||(TOWN_AT.get(fy*TOWN_W+fx)||{}).id==='fence',townSide(d)); props.push({c:f,x,y:base-f.height,base:base-1});}
   /* a path is laid into the ground; lifted, it is drawn as a patch of it */
   else if(TOWN_DECOS[d.id].path&&held){const sd=townSide(d), k='p'+d.id+sd; props.push({c:K[k]||(K[k]=townPathPatch(d.id,sd)),x,y,base:y});}
 }
@@ -14564,10 +15762,10 @@ function townIcon(id){
     for(let y=0;y<16;y++)for(let x=0;x<16;x++){const p=PX_RGB[townGroundPx(80+x,208+y,id==='board'?'_':',')], i=(y*16+x)*4; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;}
     c.putImageData(img,0,4);}
   else if(id==='lamp'){c.drawImage(townLampPost(),0,0); c.drawImage(townLampGlass()[0],5,4);}
-  else if(id==='brazier'){c.drawImage(K.fl[0],0,-6); c.drawImage(K.brz,0,4);}
-  else if(id==='fence')c.drawImage(townFence(-9,-9),0,0);
-  else if(id==='tree')c.drawImage(townTree(5,5),0,0,32,44,0,-1,16,22);
-  else if(id==='stone'){let x=0; while(x<40&&thash(x,1,70)>=.45)x++; c.drawImage(townGrave(x,1),0,4);}
+  else if(id==='brazier'){c.drawImage(K.fl[0],0,-11); c.drawImage(K.brz,0,-2);}
+  else if(id==='fence'){const f=townFence(-9,-9); c.drawImage(f,0,20-f.height);}
+  else if(id==='tree'){const t=townTree(5,5); c.drawImage(t,0,0,32,t.height,0,20-(t.height>>1),16,t.height>>1);}
+  else if(id==='stone'){const g=townGrave(1,1); c.drawImage(g,0,20-g.height);}
   return cv.toDataURL();
 }
 /* chip pictures, painted once each */

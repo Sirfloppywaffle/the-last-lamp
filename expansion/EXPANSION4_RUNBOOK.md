@@ -20,7 +20,7 @@
 | A2 | Art pass 2: the Keepers and the souls, one Keeper piloted first | #144 (pilot), #145 (the rest) | merged | 19.7.0 |
 | — | The Lodge from Criss's playtest: movable sconces, the Grimoire's podium, rugs under furniture | #146 | merged | 19.8.0 |
 | 6 | The Peddler: a rescued soul with a stall by the stairs | #148 | merged | 19.9.0 |
-| A3 | Art pass 3: scenery (buildings, ground, props) | #149 | open (candidates on the contact sheets, waiting for Criss's picks) | 19.10.0 |
+| A3 | Art pass 3: scenery (buildings, ground, props) | #149 (A3a: buildings and props) | open (Criss's picks built; A3b, the ground, to follow) | 19.10.0 |
 | 7 | The village: decorations, paths, paint, Keepers' huts | | | 19.11.0 |
 | 8 | The Hearth Beacon: the rain thins | | | 19.12.0 |
 | 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.13.0 |
@@ -197,6 +197,11 @@ Numbers marked *shape* are for playtest.
 
 **Build:** `expansion/ART_UPGRADE.md` §4, Art 3: the buildings with their ruined, restored and lit states from one base each, the ground's tiles and edges, trees, fences, headstones, braziers, the Head-frame. `TOWN_MAP`, doors and keep tiles do not move. May split into A3a (buildings) and A3b (ground and props), each its own PR and the same version. **Test:** `town.test.js`, `townbuild.test.js`, `townGift.test.js` untouched; shots of the whole square.
 
+- *As built (A3a, #149):* the buildings and props; the ground is A3b. Candidates first (75 generations, five 1-direction jobs on the town palette with one `item_descriptions` entry a slot, so one job of 16 covers three buildings), on five contact sheets; Criss picked one per building (and asked the Lodge for a round dormer window, the Attic's, and a chimney: a `create_object_state` of his pick). Each ruin is a state of its building (7 states, 10 generations each); the lit windows are a letter swap of the panes the art drew (`TOWN_BLD`), not a state, so the glow lines up to the pixel. Every piece stands on its footprint's foot, centred; nothing on `TOWN_MAP` moved. The four Wang tilesets (standard and pro) were flatter than today's hand-coded cobbles at 16 px, so the ground stays for A3b, Criss leaning to G1 or G3. Spend: 155 generations. +66 KB raw, +22 KB gzipped.
+
+**Prompt (A3b, the ground):**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A3) and expansion/ART_UPGRADE.md (§4 Art 3 and its A3a notes). Build art pass A3b, the square's ground, through runbook §3, following the runbook's §4 workflow: start from the Wang tilesets Criss leaned to on #149 (G1 `d3121d50-4ebc-44f5-8d10-45abbe432bb2`, earth to cobble, or G3 `29b2f740-a04e-4345-aa7f-a81e4f896206`, cobble to deck), snapped to `PX`, with candidates side by side with today's ground at game scale for Criss to pick before building on them. `TOWN_MAP`, the paths build mode lays (`townGroundPx()`) and every keep tile stay as they are. Log every piece in ART_UPGRADE.md §6. Tick the status table. End with the prompt for step 7.
+
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 art pass A3) and expansion/ART_UPGRADE.md. Build art pass A3 exactly as ART_UPGRADE.md §4 says, through runbook §3, following the runbook's §4 workflow: candidates on a contact sheet for Criss to pick before building on them, then the picks at game scale in the square. The Peddler's barrow (step 6, `PEDDLER_BARROW`) is already from PixelLab: leave it unless it clashes with the new buildings. Log every piece in ART_UPGRADE.md §6. Tick the status table (step 6 is #148). End with the prompt for step 7.
 
@@ -212,7 +217,7 @@ Numbers marked *shape* are for playtest.
 **Test** `tests/t/village.test.js`; devices.
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 7) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 7 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 8.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 7) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 7 exactly as the runbook says, following its §4 workflow. The square's buildings are PixelLab rows after art pass A3a (#149, `TOWN_BLD_ROWS`), so each restored building's 3 palettes are letter swaps of its rows, like the Lodge's dyes. New town pieces come from PixelLab through runbook §3: start from the 32 extras A3's props job made (`d1ea1410-815d-4fbc-a4d9-0f81a4ec0877`, still in review, frames 32–63; sheet 4 on `claude/shots-custom-scenery`), candidates on a contact sheet for Criss to pick before building on them. Log every piece in ART_UPGRADE.md §6. Tick the status table (A3 is #149). End with the prompt for step 8.
 
 ### Step 8: The Hearth Beacon (Claude: Opus 5.5, high)
 
