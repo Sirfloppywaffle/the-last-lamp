@@ -34,7 +34,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.rare=rare.length; out.dyeWares=Object.values(W).filter(v=>v.dye).map(v=>v.dye).sort().join()===rare.slice().sort().join();
     out.dyeUse=rare.map(k=>[k,Object.keys(T.LODGE_ITEMS).filter(id=>T.dyeTouches(id,k)).length]);
     out.dyePX=rare.every(k=>Object.values(T.LODGE_DYES[k].sw).every(ch=>T.PX[ch]));
-    out.costs=Object.values(W).every(v=>v.bp?v.cost.curios>0&&Object.keys(v.cost).length===1:v.cost.tallow>0&&Object.keys(v.cost).length===1);
+    out.costs=Object.values(W).every(v=>v.bp||v.pk?v.cost.curios>0&&Object.keys(v.cost).length===1:v.cost.tallow>0&&Object.keys(v.cost).length===1);
     /* no trophy and nothing drawn without dyes ever takes one */
     out.noTrophy=rare.every(k=>!T.dyeTouches('keeper',k)&&!T.dyeTouches('primordial',k));
     /* a town saved before the barrow, with a brazier and a fence where it now stands and you standing on it: both come up and

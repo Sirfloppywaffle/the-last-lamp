@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 6 (the Peddler) and art passes A2 and A3a - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 7 (the village), step 6 (the Peddler) and art passes A2 and A3a - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -100,6 +100,13 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] **A prop's canvas stands on its tile's foot:** draw it at `base - canvas.height` (trees, headstones, fences, braziers all do), so new art of another height needs no offsets. The brazier's flame sits at `BRZ_FLAME` over its tile, its body at `BRZ_Y`.
 - [ ] **The fence** is one piece cut in two (`FENCE_PARTS`: a post and a 16 px run of bars): runs east to west are bars with a post at an open end, runs north to south a post a tile.
 - [ ] New square art follows runbook §3: candidates on a contact sheet for Criss, his pick converted with `png2rows.py --outline <darkest letter>`, stray pixels from the job's sheet dropped, logged in `ART_UPGRADE.md` §6.
+
+## The village (Expansion 4, step 7)
+
+- [ ] **A new piece for the square from PixelLab** is a `TOWN_DECOS` row with `art` (a key of `TOWN_PIECE_ROWS`: rows from `tools/png2rows.py --outline <darkest letter>`, on PX letters, each on its own line), a `grp` in `TOWN_GROUPS`, `w`/`h` (default 1; a piece up to ~24 px wide takes a tile, wider two; art may overhang a few pixels like eaves) and `cost`. Give it `light` and the lantern's glass on letters `a b c` for a glow and a light; the painter is `townPieceArt()` through `townDecoProps()`, standing on the footprint's foot, centred. `pack: <key of TOWN_PACKS>` shuts it until the Peddler's pack (a `pk:` row in `PEDDLER_WARES`, kept in `ll-town.blueprints`); the first piece of a kind has none. `townLockWhy()` is the one place that says why a piece is shut (a pack, or a Keeper not freed).
+- [ ] **A path** has `terr` (a code in `TERR_SET`; `terrT` the turned board's) and a Wang set in `TOWN_WANG` (16 tiles on PX letters, whatever the set drew as earth being `ec`'s own earth tile). It is painted by `townWangRepaint()` from `townDecoSync()`; never paint a laid tile by hand.
+- [ ] **A building's colourway** is a swap in `TOWN_PAINTS` (letters to letters; never `a b c`, the glow); a new building that can be painted is a `TOWN_PAINTABLE` row (`up(T)`: when it stands) and its house needs its `TOWN_BLD` panes, which a swap never touches.
+- [ ] **A Keeper's hut** is `hut: <kit>` on a 2 by 2 `snap` piece; its door is the tile below its right half, kept like a station: anything that places, checks or saves pieces already reads `townHutDoors()` (`townFits()`, `townReaches()`, `townKeepOK()`, `townFix()`). `townKeepers()` stands the Keeper at the door unless a chore has them at work.
 
 ## Tests
 

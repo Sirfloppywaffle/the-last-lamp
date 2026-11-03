@@ -49,9 +49,20 @@ const DEV=[
       const tray=q(document.getElementById('townTray')), msg=q(document.getElementById('townTmsg')), chips=[...document.querySelectorAll('#townTrow [data-deco]')].map(q);
       const hudB1=[q(document.getElementById('townBack')),q(bb),q(document.getElementById('townRes'))];
       o.build={btn:hudB0[1],tray,msg,first:chips[0],n:chips.length};
-      o.buildOk=inside(hudB0[1])&&thumb(hudB0[1])&&!over(hudB0[1],res0)&&!over(hudB0[1],back)&&inside(q(document.getElementById('townTrow')))&&inside(msg)&&chips.length===7
+      o.buildOk=inside(hudB0[1])&&thumb(hudB0[1])&&!over(hudB0[1],res0)&&!over(hudB0[1],back)&&inside(q(document.getElementById('townTrow')))&&inside(msg)&&chips.length===6
         &&chips.every(c=>c[3]-c[1]>=44&&c[2]-c[0]>=44&&c[3]<=innerHeight-ins.bottom+1)&&inside(chips[0])
         &&!hudB1.some(r=>over(r,msg))&&JSON.stringify(hudB0)===JSON.stringify(hudB1)&&JSON.stringify(q(cv))===JSON.stringify(c1);
+      /* the village (Expansion 4, step 7): the group chip turns through the groups and the tray keeps its box; the Paint tab, and its
+         chips, sit inside the safe area, each a thumb, and opening it moves nothing under the thumb (rule 2) */
+      const row0=JSON.stringify(q(document.getElementById('townTrow'))), tray0=JSON.stringify(tray), grp=document.getElementById('townGrp'), g0=q(grp);
+      let grpOk=inside(g0)&&thumb(g0), shut=0, still=true; const ids=['ground'];
+      for(let i=0;i<7;i++){grp.click(); const ch=[...document.querySelectorAll('#townTrow .town-chip')].filter(c=>!c.hidden).map(q); grpOk=grpOk&&ch.every(c=>thumb(c)&&c[3]<=innerHeight-ins.bottom+1);
+        shut+=document.querySelectorAll('#townTrow img.town-lock').length; still=still&&JSON.stringify(q(document.getElementById('townTray')))===tray0;}
+      const pt=document.querySelector('#townTools [data-tab="paint"]'), ptr=q(pt); pt.click();
+      const pch=[...document.querySelectorAll('#townTrow [data-paint]')].map(q);
+      o.village={grpOk,shut,still,paintTab:inside(ptr)&&thumb(ptr),pch:pch.length,pchOk:pch.every(c=>inside(c)&&thumb(c)),tray:still&&JSON.stringify(q(document.getElementById('townTray')))===tray0};
+      document.querySelector('#townTools [data-tab="pieces"]').click();
+      o.villageOk=o.village.grpOk&&o.village.shut>=20&&o.village.still&&o.village.paintTab&&o.village.pchOk&&o.village.tray;
       return o;},ins);
     await p.waitForTimeout(200);
     await p.screenshot({path:(process.argv[3]||'.')+'/town-build-'+nm+'.png'});
@@ -334,7 +345,7 @@ const DEV=[
     await p.evaluate(()=>{document.getElementById('modal').hidden=true;});
     await p.evaluate(()=>{__t.setDev(false);});
     await p.evaluate(()=>__t.townClose());
-    const townOk=town.walkIn&&town.btns&&town.resStill&&town.cover&&town.whole&&town.still&&town.buildOk;
+    const townOk=town.walkIn&&town.btns&&town.resStill&&town.cover&&town.whole&&town.still&&town.buildOk&&town.villageOk;
     if(!townOk)console.log('FAIL '+nm+': Saltmouth on this screen',JSON.stringify(town));
     await p.evaluate(()=>{const T=__t; T.newRun(); T.run.floor=2; T.beginFloor(null); T.run.ess=900; T.forceUI();});
     await p.waitForTimeout(400);
