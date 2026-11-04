@@ -88,8 +88,9 @@ const {chromium}=require('playwright');
     T.F.cd.pillar=5; T.forceUI(); const pb=document.querySelector('#rites [data-r="pillar"]');
     o.cool={dis:pb.disabled, play:getComputedStyle(pb.querySelector('.rite-ic')).animationPlayState};
     T.F.cd.pillar=0; T.forceUI(); o.ready={play:getComputedStyle(pb.querySelector('.rite-ic')).animationPlayState, flash:fl(pb), others:bs().filter(b=>b!==pb).map(fl)};
+    pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();});
     T.setMode('pillar'); T.forceUI(); o.armed=pb.classList.contains('armed')&&getComputedStyle(pb).borderImageSource!==getComputedStyle(bs().find(b=>b!==pb)).borderImageSource;
-    T.setMode(null); T.forceUI();
+    T.setMode(null); T.forceUI(); o.cancel=fl(pb);
     o.rn=getComputedStyle(document.getElementById('cmdbar')).getPropertyValue('--rn').trim();
     return o;});
   ok(rite.sig.every(([k,c])=>c.split(' ').includes('ui-ic-rt-'+k))&&rite.sig.length===3&&rite.span,'every rite wears its own sigil, and its status is still its first span',rite.sig);
@@ -97,6 +98,7 @@ const {chromium}=require('playwright');
   ok(rite.cool.dis&&rite.cool.play==='paused'&&rite.ready.play==='running','a cooling rite’s sigil holds still, a ready one moves',rite);
   ok(rite.ready.flash>=1&&rite.ready.others.every(n=>n===0),'the rite that comes ready flashes, and only it',rite.ready);
   ok(rite.armed,'an armed rite lights its runes');
+  ok(rite.cancel===0,'putting down a target you were choosing does not flash the rite',rite.cancel);
   ok(rite.rn==='3','the command bar knows how many rites it holds, to give the tray back their sigils’ width',rite.rn);
 
   // I: the build tray. A horror's count rides on its slot, a ward a Trial seals carries a lock, and a ward you can newly afford
@@ -110,14 +112,27 @@ const {chromium}=require('playwright');
     T.run.ess=40; T.forceUI();
     const items=T.trayItems(), fl=[...document.querySelectorAll('#tray .titem')].filter(b=>b.getAnimations().some(a=>!(a instanceof CSSAnimation))).map(b=>items[+b.dataset.ix]);
     o.flash=fl.map(i=>i.type); o.want=items.filter(i=>{const c=i.kind==='ward'?T.wardCost(i.type):i.kind==='horror'?T.horrorCost(i.type):0; return c>0&&c<=40&&(i.kind!=='horror'||T.avail(i.type)>0);}).map(i=>i.type);
-    T.run.floor=1; T.run.trial='sealed'; T.beginFloor(null); T.forceUI();
+    T.run.floor=1; T.run.trial='sealed'; T.beginFloor(null); T.run.ess=0; T.forceUI();
     o.sealed=[...document.querySelectorAll('#tray .titem')].map(b=>[b.classList.contains('is-barred'),!!b.querySelector('.tray-lock')]);
-    T.run.trial=null;
+    /* Rationed: the sixth ward beside the path bars the rest. One you already could not afford is barred and still out of
+       reach: it must not flash as if you could now afford it */
+    T.newRun('lamplighter'); T.run.floor=1; T.run.trial='rationed'; T.beginFloor(null); T.setP(true); T.run.ess=9000; T.forceUI();
+    const spot=w=>{for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++)if(!T.placeProblem({kind:'ward',type:w},c,r))return [c,r]; return null;};
+    const put=w=>{const t=spot(w); if(!t)return false; T.setSel({kind:'ward',type:w}); T.tryPlace(t[0],t[1]); T.setSel(null); return true;};
+    while(T.rationN()<5&&put('harpoon'));
+    T.run.ess=T.wardCost('harpoon'); T.forceUI();
+    const dear=T.run.wards.filter(w=>T.wardCost(w)>T.run.ess&&!T.trialBarred({kind:'ward',type:w}));
+    const t6=spot('harpoon'); T.setSel({kind:'ward',type:'harpoon'}); T.tryPlace(t6[0],t6[1]);
+    const els=[...document.querySelectorAll('#tray .titem')], it2=T.trayItems();
+    o.once={n:T.rationN(), dear, barred:dear.filter(w=>{const b=els.find(e=>it2[+e.dataset.ix].type===w); return b&&b.classList.contains('is-barred');}),
+      flash:els.filter(e=>dear.includes(it2[+e.dataset.ix].type)&&e.getAnimations().some(x=>!(x instanceof CSSAnimation))).map(e=>it2[+e.dataset.ix].type)};
+    T.setSel(null); T.run.trial=null;
     return o;});
   ok(tray.tags.length>=2&&tray.tags.every(([a,b])=>a===b)&&!tray.noTag,'each horror’s slot carries its count, and no ward’s does',tray);
   ok(!tray.start,'a floor’s first tray flashes nothing',tray.start);
   ok(tray.flash.length&&tray.flash.join()===tray.want.join(),'the slots you can newly afford flash, and only they',tray);
   ok(tray.sealed.some(([a])=>a)&&tray.sealed.every(([a,b])=>a===b),'a sealed ward wears the lock, and only a sealed one',tray.sealed);
+  ok(tray.once.n===6&&tray.once.barred.length>0&&!tray.once.flash.length,'Rationed: a ward the sixth ward bars while you cannot afford it does not flash',tray.once);
 
   // F: Reduce Motion: no floats, and every icon holds still on its first frame
   const q=await b.newPage({viewport:{width:412,height:860}}); await q.emulateMedia({reducedMotion:'reduce'});
