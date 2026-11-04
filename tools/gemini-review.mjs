@@ -17,6 +17,12 @@ const REPO = env.GITHUB_REPOSITORY;
 const MARK = '<!-- gemini-review -->';
 const MAX_COMMENT = 60000;          // GitHub's limit is 65,536 characters
 const BUDGET = 900_000;             // characters of context we're willing to send
+/* A changed line that is pixel-art data (a row table: thousands of characters of quoted strings) says nothing a reviewer can
+   check, and an art PR's tables used to push the code and tests past the diff's cut (#151: 353 KB, the logic after 250 KB).
+   Such a line is kept as a one-line marker, so the hunk still shows that the data changed */
+const trimData = (diff) => diff.split('\n').map((l) =>
+  /^[+-](?![+-]{2} )/.test(l) && l.length > 1500 && (l.match(/'/g) || []).length > 20
+    ? `${l[0]}  … (${l.length} characters of art data, left out for the reviewer)` : l).join('\n');
 const MODEL_TIMEOUT = +(env.GEMINI_TIMEOUT_MS || 120_000);   // a slow model shouldn't stall the review: move on to the next
 
 const log = (...a) => console.log(...a);
@@ -144,7 +150,7 @@ async function main() {
 
   currentPR = number;
   const pr = await gh(`/repos/${REPO}/pulls/${number}`);
-  const diff = await gh(`/repos/${REPO}/pulls/${number}`, { accept: 'application/vnd.github.v3.diff', raw: true });
+  const diff = trimData(await gh(`/repos/${REPO}/pulls/${number}`, { accept: 'application/vnd.github.v3.diff', raw: true }));
   let game = '';
   try { game = await gh(`/repos/${REPO}/contents/index.html?ref=${pr.head.sha}`, { accept: 'application/vnd.github.raw+json', raw: true }); } catch (e) { log('could not read index.html at head:', e.message); }
   const brief = fs.existsSync('AGENTS.md') ? fs.readFileSync('AGENTS.md', 'utf8') : '';
