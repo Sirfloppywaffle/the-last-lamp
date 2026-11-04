@@ -60,16 +60,18 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       {id:'lamp',c:20,r:2},{id:'lamp',c:2,r:12},{id:'lamp',c:2,r:6}],
     store:[{s:'town',id:'fence',cost:{timber:2}}]};
   const mv=await p.evaluate(v1=>{const T=__t, o={};
-    T.setDev(false); localStorage.setItem('ll-town',JSON.stringify(v1)); T.townReset(); T.setTownGrew(null);
+    T.setDev(false); localStorage.setItem('ll-town',JSON.stringify(v1)); T.townReset();
     const D=T.townData(), saved=JSON.parse(localStorage.getItem('ll-town'));
-    o.v=D.v; o.savedV=saved.v; o.px=[D.px,D.py];
+    o.v=D.v; o.savedV=saved.v; o.px=[D.px,D.py]; o.savedGrew=Array.isArray(saved.grew)&&saved.grew.length;
+    /* the card waits through a reload until it is read */
+    T.townReset(); o.kept=JSON.stringify(T.TOWN_GREW)===JSON.stringify(saved.grew);
     o.decos=D.decos.map(d=>[d.id,d.c,d.r,d.x,d.y]);
     o.store=D.store.map(e=>[e.id,e.cost.iron||0,e.cost.tallow||0]); o.res=D.res;
     o.grew=T.TOWN_GREW&&T.TOWN_GREW.slice();
     T.tutSet({walk:'done',seen:[],off:true}); T.townOpen();
     o.card=!document.getElementById('townCardWrap').hidden&&document.querySelector('#townCard b').textContent;
     o.cardText=document.getElementById('townCard').textContent;
-    document.getElementById('townCard').click(); o.gone=document.getElementById('townCardWrap').hidden&&!T.TOWN_GREW;
+    document.getElementById('townCard').click(); o.gone=document.getElementById('townCardWrap').hidden&&!T.TOWN_GREW&&JSON.parse(localStorage.getItem('ll-town')).grew===null;
     T.townClose();
     /* once only: a reload reads v 2 and moves nothing */
     const s1=localStorage.getItem('ll-town'); T.townReset(); const D2=T.townData();
@@ -84,10 +86,16 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(mv.res.iron===4&&mv.res.tallow===5,'nothing is paid back for what went into Storage',mv.res);
   ok(mv.px[0]===18&&mv.px[1]===23,'where you stood moves with the square',mv.px);
   ok(mv.grew&&mv.grew.length===3&&mv.card==='The town grew'&&/Storage/.test(mv.cardText)&&/Street-Lamp/.test(mv.cardText),'a card says the town grew and names what waits in Storage',mv);
+  ok(mv.savedGrew===3&&mv.kept,'the names wait in the save, through a reload, until the card is read',mv);
   ok(mv.gone&&mv.again,'the card goes on click; a reload moves nothing again',mv);
 
+  /* where you stood in the old cemetery yard goes up with it */
+  const yard=await p.evaluate(()=>{const T=__t; localStorage.setItem('ll-town',JSON.stringify({v:1,px:14.5,py:3.5,visits:1}));
+    T.townReset(); const D=T.townData(); return [D.px,D.py];});
+  ok(yard[0]===9.5&&yard[1]===3.5,'where you stood in the old cemetery yard moves with the yard',yard);
+
   /* 4. developer mode moves only its own copy (rule 24) */
-  const dev=await p.evaluate(v1=>{const T=__t; localStorage.setItem('ll-town',JSON.stringify(v1)); T.townReset(); T.setTownGrew(null);
+  const dev=await p.evaluate(v1=>{const T=__t; localStorage.setItem('ll-town',JSON.stringify(v1)); T.townReset();
     T.setDev(true); const D=T.townData(); const o={v:D.v,n:D.decos.length,raw:JSON.parse(localStorage.getItem('ll-town')).v,grew:T.TOWN_GREW};
     T.townOpen(); T.townClose(); o.after=JSON.parse(localStorage.getItem('ll-town')).v;
     T.setDev(false); T.townReset(); localStorage.removeItem('ll-town'); T.townReset(); return o;},v1);
