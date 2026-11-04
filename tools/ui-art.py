@@ -5,13 +5,15 @@
     python3 tools/ui-art.py --check    # exit 1 if the block in index.html is not what the sources make
 
 Sources live in art/ui/: one folder per icon (base.png, the still PixelLab drew, and f000.png … the frames of its
-animation, when it has one), plus frame.png (the landing's iron frame) and pieces.png (the stone card, the glass tube, the
-round badge and the plaque, on one sheet). Dice are drawn here, pip by pip, so a face never shows the wrong count.
+animation, when it has one; rt-<rite> for each rite), plus frame.png (the landing's iron frame), pieces.png (the stone card,
+the glass tube, the round badge and the plaque, on one sheet) and slots.png (the build tray's slots and the rites' tablets,
+drawn three times too big and brought down by third()). Dice are drawn here, pip by pip, so a face never shows the wrong count.
 
 What it writes, all CSS (the game's own rules for these classes sit by the HUD and modal rules, not in this block):
   .ui-ic-<name>   background-image: a strip of frames side by side, --uf the count. An animated icon also gets its own
                   @keyframes and animation (steps, so a frame is a frame); a still one is a single frame.
-  --ui-<piece>    custom properties on :root, a url() each, for border-image (frame, card, tube) and background (badge, plaque).
+  --ui-<piece>    custom properties on :root, a url() each, for border-image (frame, card, tube, slot, tablet) and background
+                  (badge, plaque).
 Every PNG is written indexed (a palette and tRNS), which is what keeps this small. Standard library only.
 """
 import os, struct, sys, zlib, base64, importlib.util
@@ -43,6 +45,11 @@ ICONS = {
     'lock': ('still', 0, 0), 'bonebag': ('still', 0, 0), 'coin': ('still', 0, 0), 'vortex': ('still', 0, 0),
     # the boss bar
     'skull': ('still', 0, 0),
+    # the rites (RITES): each moves only while it is ready (the game's CSS holds a cooling one on its first frame)
+    'rt-flare': ('loop', 110, 0), 'rt-pillar': ('loop', 140, 0), 'rt-bell': ('still', 0, 0), 'rt-wisp': ('loop', 120, 0),
+    'rt-name': ('swing', 180, 0), 'rt-kindle': ('loop', 100, 0), 'rt-anchor': ('loop', 90, 0), 'rt-overload': ('loop', 90, 0),
+    'rt-haul': ('loop', 160, 0), 'rt-raise': ('loop', 150, 0), 'rt-unbind': ('still', 0, 0), 'rt-toll': ('loop', 110, 0),
+    'rt-greatbell': ('loop', 150, 0), 'rt-ebb': ('loop', 130, 0), 'rt-feed': ('loop', 140, 0),
 }
 # the bone faces, 16 by 16, drawn below
 DICE = 6
@@ -110,6 +117,27 @@ def flatten(g, stop, col):
     return g
 
 
+def third(g, k=3):
+    """a piece drawn large, made small: each k by k block becomes the colour most of it is (a clear block stays clear), so the
+    small piece keeps the big one's palette and its edges stay hard. A thin line (the near-black outline, a rivet, a rune) is
+    a minority in its block, so a colour that dark or that bright wins its block from two pixels of nine: the lines stay lines"""
+    lum = lambda p: .3 * p[0] + .59 * p[1] + .11 * p[2]
+    sat = lambda p: max(p[:3]) - min(p[:3])
+    h, w = len(g) // k, len(g[0]) // k
+    out = []
+    for y in range(h):
+        row = []
+        for x in range(w):
+            n = {}
+            for j in range(k):
+                for i in range(k):
+                    p = g[y * k + j][x * k + i]; n[p] = n.get(p, 0) + 1
+            line = [p for p in n if p[3] and n[p] >= 2 and (lum(p) < 16 or sat(p) > 70)]
+            row.append(max(line, key=lambda p: (sat(p), n[p])) if line else max(n, key=lambda p: (n[p], p[3])))
+        out.append(row)
+    return out
+
+
 def die(n):
     """a knucklebone's face, 16 by 16: bone with a shaded lower edge, a near-black outline and n dark pips"""
     O, B, S, H, P = (8, 9, 10, 255), (228, 221, 204, 255), (184, 174, 152, 255), (255, 247, 230, 255), (43, 31, 26, 255)
@@ -161,6 +189,12 @@ def build():
     root.append('--ui-tube:' + uri(crop(pc, 14, 123, 242, 157)))
     root.append('--ui-badge:' + uri(crop(pc, 13, 171, 79, 240)))
     root.append('--ui-plaque:' + uri(crop(pc, 95, 171, 244, 240)))
+    # the build tray's slots (stone; brass for the one you hold; violet runes for a horror) and the rites' stone tablets (the
+    # teal-runed one is a rite waiting for its target), drawn at three times the size they are shown and brought down here
+    sl = clear_alpha(read_png(os.path.join(SRC, 'slots.png')))
+    for name, box in (('slot', (23, 23, 161, 167)), ('slot-on', (192, 24, 321, 168)), ('slot-h', (354, 24, 489, 168)),
+                      ('tablet', (24, 220, 246, 319)), ('tablet-on', (268, 220, 490, 319))):
+        root.append('--ui-%s:%s' % (name, uri(third(crop(sl, *box)))))
     css.append(':root{' + ';'.join(root) + '}')
     for name, (mode, ms, hold) in ICONS.items():
         base, fs = frames_of(name)

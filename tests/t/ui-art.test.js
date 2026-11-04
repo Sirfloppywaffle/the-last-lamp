@@ -1,4 +1,5 @@
-// The descent's pixel UI (tools/ui-art.py, art/ui/): the HUD's icons and what they do, the landing's door pictures, the toll gauge.
+// The descent's pixel UI (tools/ui-art.py, art/ui/): the HUD's icons and what they do, the landing's door pictures, the toll gauge,
+// the build tray's slots and the rites' sigils.
 // None of it changes a rule: every check here is about what is shown, and that it shows nothing it should not.
 const {chromium}=require('playwright');
 (async()=>{
@@ -11,10 +12,10 @@ const {chromium}=require('playwright');
   const art=await p.evaluate(()=>{
     const has=k=>{const i=document.createElement('i'); i.className='ui-ic ui-ic-'+k; document.body.appendChild(i);
       const cs=getComputedStyle(i), r=/^url\(/.test(cs.backgroundImage)&&+cs.getPropertyValue('--uf')>=1; i.remove(); return r;};
-    const T=__t, want=['oil','ess','mad0','mad1','mad2','mad3','ward','rite','relic','binding','patron','vial','chalice','satchel','bonebag','skull',
-      'trial','descent','omen','die1','die2','die3','die4','die5','die6'].concat(['merchant','shrine','event','rest','reliquary','bones','deep','cage']);
+    const T=__t, want=Object.keys(T.RITES).map(k=>'rt-'+k).concat(['oil','ess','mad0','mad1','mad2','mad3','ward','rite','relic','binding','patron','vial','chalice','satchel','bonebag','skull',
+      'trial','descent','omen','die1','die2','die3','die4','die5','die6'].concat(['merchant','shrine','event','rest','reliquary','bones','deep','cage']));
     const root=getComputedStyle(document.documentElement);
-    return {missing:want.filter(k=>!has(k)),pieces:['--ui-frame','--ui-frame-low','--ui-card','--ui-tube','--ui-badge','--ui-plaque'].filter(v=>!/^\s*url\(/.test(root.getPropertyValue(v)))};
+    return {missing:want.filter(k=>!has(k)),pieces:['--ui-frame','--ui-frame-low','--ui-card','--ui-tube','--ui-badge','--ui-plaque','--ui-slot','--ui-slot-on','--ui-slot-h','--ui-tablet','--ui-tablet-on'].filter(v=>!/^\s*url\(/.test(root.getPropertyValue(v)))};
   });
   ok(!art.missing.length,'every icon has its art',art.missing);
   ok(!art.pieces.length,'every frame piece is defined',art.pieces);
@@ -78,12 +79,88 @@ const {chromium}=require('playwright');
   }
   ok(toll[4].none,'with no essence there is no gauge',toll[4]);
 
+  // H: the rites. Each wears its own sigil, which moves only while the rite is ready; it flashes the moment it comes ready, never
+  // when it is first drawn; armed, the tablet's runes light
+  const rite=await p.evaluate(async()=>{
+    const T=__t; T.closeModal(); T.newRun('lamplighter'); T.beginFloor(null); T.setP(true); T.run.rites.push('flare'); T.forceUI();
+    const bs=()=>[...document.querySelectorAll('#rites .rite')], fl=b=>b.getAnimations().filter(a=>!(a instanceof CSSAnimation)).length;
+    const o={sig:bs().map(b=>[b.dataset.r,b.querySelector('.rite-ic').className]), first:bs().map(fl), span:bs().every(b=>b.querySelector('span')===b.children[2])};
+    T.F.cd.pillar=5; T.forceUI(); const pb=document.querySelector('#rites [data-r="pillar"]');
+    o.cool={dis:pb.disabled, play:getComputedStyle(pb.querySelector('.rite-ic')).animationPlayState};
+    T.F.cd.pillar=0; T.forceUI(); o.ready={play:getComputedStyle(pb.querySelector('.rite-ic')).animationPlayState, flash:fl(pb), others:bs().filter(b=>b!==pb).map(fl)};
+    pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();});
+    T.setMode('pillar'); T.forceUI(); o.armed=pb.classList.contains('armed')&&getComputedStyle(pb).borderImageSource!==getComputedStyle(bs().find(b=>b!==pb)).borderImageSource;
+    T.setMode(null); T.forceUI(); o.cancel=fl(pb);
+    /* a rite charge arms a cooling rite at once (its F.cd goes to 0 while you aim): that is not the rite coming ready */
+    T.run.charge={floor:T.run.floor,n:1}; T.F.phase='wave'; T.F.queue=[]; T.F.cd.pillar=12; T.forceUI(); pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();});
+    T.setP(false); T.castRite('pillar'); T.setP(true); T.forceUI(); o.charged={mode:T.mode,cd:T.F.cd.pillar,flash:fl(pb)};
+    /* land it with its old wait already run out: the cast sets the Pillar's wait and the charge gives back none, so it is ready,
+       but that is the charge settling, not a cooldown ending */
+    T.F.chg.left=0; pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();});
+    T.setP(false); T.castPillar(T.F.lx,T.F.ly); T.update(.05); T.setP(true); T.forceUI(); o.landed={cd:T.F.cd.pillar, chg:!!T.F.chg, flash:fl(pb)};
+    T.F.phase='build'; T.run.charge=null; T.F.cd.pillar=0; T.forceUI();
+    /* a rite still cooling when the floor ends is ready on the next: that is the floor beginning, not the rite coming ready */
+    T.F.cd.pillar=8; T.forceUI(); pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();}); T.beginFloor(null); T.setP(true); T.forceUI();
+    const pb2=document.querySelector('#rites [data-r="pillar"]'); o.floor={same:pb2===pb, cd:T.F.cd.pillar||0, flash:fl(pb2)};
+    o.rn=getComputedStyle(document.getElementById('cmdbar')).getPropertyValue('--rn').trim();
+    /* Lite (slower phones) skips both flashes, as it skips the icons' motion */
+    T.setLite(true); T.F.cd.pillar=4; T.run.ess=0; T.forceUI(); T.F.cd.pillar=0; T.run.ess=900; T.forceUI();
+    o.lite=[...document.querySelectorAll('#cmdbar button')].reduce((n,b)=>n+b.getAnimations().filter(a=>!(a instanceof CSSAnimation)).length,0);
+    T.setLite(false); T.forceUI();
+    return o;});
+  ok(rite.sig.every(([k,c])=>c.split(' ').includes('ui-ic-rt-'+k))&&rite.sig.length===3&&rite.span,'every rite wears its own sigil, and its status is still its first span',rite.sig);
+  ok(rite.first.every(n=>n===0),'a rite drawn ready does not flash',rite.first);
+  ok(rite.cool.dis&&rite.cool.play==='paused'&&rite.ready.play==='running','a cooling rite’s sigil holds still, a ready one moves',rite);
+  ok(rite.ready.flash>=1&&rite.ready.others.every(n=>n===0),'the rite that comes ready flashes, and only it',rite.ready);
+  ok(rite.armed,'an armed rite lights its runes');
+  ok(rite.cancel===0,'putting down a target you were choosing does not flash the rite',rite.cancel);
+  ok(rite.floor.same&&rite.floor.cd===0&&rite.floor.flash===0,'a rite cooling as a floor ends does not flash as the next begins',rite.floor);
+  ok(rite.landed.cd===0&&!rite.landed.chg&&rite.landed.flash===0,'a charged cast that lands does not flash its rite',rite.landed);
+  ok(rite.charged.mode==='pillar'&&rite.charged.cd===0&&rite.charged.flash===0,'a charge arming a cooling rite does not flash it',rite.charged);
+  ok(rite.lite===0,'Lite: no tray or rite flashes',rite.lite);
+  ok(rite.rn==='3','the command bar knows how many rites it holds, to give the tray back their sigils’ width',rite.rn);
+
+  // I: the build tray. A horror's count rides on its slot, a ward a Trial seals carries a lock, and a ward you can newly afford
+  // flashes once (but never as a floor begins)
+  const tray=await p.evaluate(()=>{
+    const T=__t, o={};
+    T.newRun('occultist'); T.beginFloor(null); T.setP(true); T.run.ess=0; T.run.roster.shrieker=2; T.forceUI();
+    o.tags=[...document.querySelectorAll('#tray .titem.horror')].map(b=>{const i=T.trayItems()[+b.dataset.ix]; return [(b.querySelector('.tray-cnt')||{}).textContent,'×'+T.avail(i.type)];});
+    o.noTag=[...document.querySelectorAll('#tray .titem:not(.horror) .tray-cnt')].length;
+    o.start=[...document.querySelectorAll('#tray .titem')].filter(b=>b.getAnimations().some(a=>!(a instanceof CSSAnimation))).length;
+    T.run.ess=40; T.forceUI();
+    const items=T.trayItems(), fl=[...document.querySelectorAll('#tray .titem')].filter(b=>b.getAnimations().some(a=>!(a instanceof CSSAnimation))).map(b=>items[+b.dataset.ix]);
+    o.flash=fl.map(i=>i.type); o.want=items.filter(i=>{const c=i.kind==='ward'?T.wardCost(i.type):i.kind==='horror'?T.horrorCost(i.type):0; return c>0&&c<=40&&(i.kind!=='horror'||T.avail(i.type)>0);}).map(i=>i.type);
+    T.run.floor=1; T.run.trial='sealed'; T.beginFloor(null); T.run.ess=0; T.forceUI();
+    o.sealed=[...document.querySelectorAll('#tray .titem')].map(b=>[b.classList.contains('is-barred'),!!b.querySelector('.tray-lock')]);
+    /* Rationed: the sixth ward beside the path bars the rest. One you already could not afford is barred and still out of
+       reach: it must not flash as if you could now afford it */
+    T.newRun('lamplighter'); T.run.floor=1; T.run.trial='rationed'; T.beginFloor(null); T.setP(true); T.run.ess=9000; T.forceUI();
+    const spot=w=>{for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++)if(!T.placeProblem({kind:'ward',type:w},c,r))return [c,r]; return null;};
+    const put=w=>{const t=spot(w); if(!t)return false; T.setSel({kind:'ward',type:w}); T.tryPlace(t[0],t[1]); T.setSel(null); return true;};
+    while(T.rationN()<5&&put('harpoon'));
+    T.run.ess=T.wardCost('harpoon'); T.forceUI();
+    const dear=T.run.wards.filter(w=>T.wardCost(w)>T.run.ess&&!T.trialBarred({kind:'ward',type:w}));
+    const t6=spot('harpoon'); T.setSel({kind:'ward',type:'harpoon'}); T.tryPlace(t6[0],t6[1]);
+    const els=[...document.querySelectorAll('#tray .titem')], it2=T.trayItems();
+    o.once={n:T.rationN(), dear, barred:dear.filter(w=>{const b=els.find(e=>it2[+e.dataset.ix].type===w); return b&&b.classList.contains('is-barred');}),
+      flash:els.filter(e=>dear.includes(it2[+e.dataset.ix].type)&&e.getAnimations().some(x=>!(x instanceof CSSAnimation))).map(e=>it2[+e.dataset.ix].type)};
+    T.setSel(null); T.run.trial=null;
+    return o;});
+  ok(tray.tags.length>=2&&tray.tags.every(([a,b])=>a===b)&&!tray.noTag,'each horror’s slot carries its count, and no ward’s does',tray);
+  ok(!tray.start,'a floor’s first tray flashes nothing',tray.start);
+  ok(tray.flash.length&&tray.flash.join()===tray.want.join(),'the slots you can newly afford flash, and only they',tray);
+  ok(tray.sealed.some(([a])=>a)&&tray.sealed.every(([a,b])=>a===b),'a sealed ward wears the lock, and only a sealed one',tray.sealed);
+  ok(tray.once.n===6&&tray.once.barred.length>0&&!tray.once.flash.length,'Rationed: a ward the sixth ward bars while you cannot afford it does not flash',tray.once);
+
   // F: Reduce Motion: no floats, and every icon holds still on its first frame
   const q=await b.newPage({viewport:{width:412,height:860}}); await q.emulateMedia({reducedMotion:'reduce'});
   await q.goto('file://'+process.argv[2]); await q.waitForTimeout(300);
   const rm=await q.evaluate(()=>{const T=__t; T.newRun(); T.beginFloor(null); T.forceUI(); T.run.ess+=40; T.forceUI();
-    return {floats:document.querySelectorAll('.hud-float').length,anim:[...document.querySelectorAll('#hud .ui-ic')].map(x=>getComputedStyle(x).animationName)};});
-  ok(!rm.floats&&rm.anim.every(a=>a==='none'),'Reduce Motion: no floats, no moving icons',rm);
+      T.F.cd[T.run.rites[0]]=3; T.forceUI(); T.F.cd[T.run.rites[0]]=0; T.run.ess+=500; T.setSel({kind:'ward',type:T.run.wards[0]}); T.forceUI();
+      const flashes=[...document.querySelectorAll('#cmdbar button')].reduce((n,b)=>n+b.getAnimations().length,0);
+      return {floats:document.querySelectorAll('.hud-float').length,flashes,anim:[...document.querySelectorAll('#hud .ui-ic,#rites .ui-ic,#tray .titem')].map(x=>getComputedStyle(x).animationName)};});
+  ok(!rm.floats&&!rm.flashes&&rm.anim.every(a=>a==='none'),'Reduce Motion: no floats, no flashes, no moving icons or slots',rm);
 
   // G: the HUD keeps its three counts apart, and none of it reaches the board (rule 1), folded and unfolded
   for(const [w,h] of [[412,860],[832,694],[915,356],[393,659]]){
