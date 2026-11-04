@@ -64,28 +64,28 @@ const shots=process.argv[3]||'.';
 
   /* the light: bright by the Head-frame's braziers, dark out on the south road */
   /* two patches of 2 by 2 tiles in one frame: the cobbles between the braziers, and bare earth by the cliff, far from any light */
-  const lit=await p.evaluate(()=>{const T=__t.TWN, P=T.p; P.x=12; P.y=14; T.cx=null; __t.townFrame(1/30);
+  const lit=await p.evaluate(()=>{const T=__t.TWN, P=T.p; P.x=__t.ax(12); P.y=__t.ay(14); T.cx=null; __t.townFrame(1/30);
     const lum=(wx,wy)=>{const d=T.bc.getImageData(wx*16-Math.round(T.cx),wy*16-Math.round(T.cy),32,32).data; let s=0; for(let i=0;i<d.length;i+=4)s+=d[i]*.3+d[i+1]*.59+d[i+2]*.11; return s/(d.length/4);};
-    return {sq:+lum(11,12).toFixed(1),dark:+lum(4,18).toFixed(1)};});
+    return {sq:+lum(__t.ax(11),__t.ay(12)).toFixed(1),dark:+lum(3,25).toFixed(1)};});
   ok(lit.sq>lit.dark*3,'the square is lit, the earth far from any fire is dark',lit);
   await p.screenshot({path:shots+'/town-square.png'});
 
   /* tap to walk: a path round the solid things, and the feet never stand in one */
-  const walk=await p.evaluate(()=>{const T=__t.TWN, P=T.p; P.x=12; P.y=14; T.path=null; T.goal=null; T.ptr=null;
+  const walk=await p.evaluate(()=>{const T=__t.TWN, P=T.p; P.x=__t.ax(12); P.y=__t.ay(14); T.path=null; T.goal=null; T.ptr=null;
     const out={};
-    __t.townTapTile(20,13); out.path=!!(T.path&&T.path.length);
+    __t.townTapTile(...__t.at(20,13)); out.path=!!(T.path&&T.path.length);
     let bad=0; for(let i=0;i<200&&T.path;i++){__t.townStep(.05); if(!__t.townFree(P.x,P.y))bad++;}
-    out.at=[+P.x.toFixed(2),+P.y.toFixed(2)]; out.bad=bad; out.arrived=Math.hypot(P.x-20.5,P.y-13.5)<.1;
+    out.at=[+P.x.toFixed(2),+P.y.toFixed(2)]; out.bad=bad; out.arrived=Math.hypot(P.x-__t.ax(20.5),P.y-__t.ay(13.5))<.1;
     /* round the Head-frame: from below it to the north side of the square */
-    P.x=12; P.y=13.5; __t.townTapTile(12,6);
+    P.x=__t.ax(12); P.y=__t.ay(13.5); __t.townTapTile(...__t.at(12,6));
     for(let i=0;i<300&&T.path;i++){__t.townStep(.05); if(!__t.townFree(P.x,P.y))bad++;}
-    out.north=Math.hypot(P.x-12.5,P.y-6.5)<.1; out.bad2=bad;
+    out.north=Math.hypot(P.x-__t.ax(12.5),P.y-__t.ay(6.5))<.1; out.bad2=bad;
     /* beside the tower, not under it: a tap there walks there and opens nothing */
-    P.x=12; P.y=13.5; __t.townTapTile(10,7); out.side=T.goal===null; for(let i=0;i<300&&T.path;i++)__t.townStep(.05);
-    out.sideAt=Math.hypot(P.x-10.5,P.y-7.5)<.1&&document.getElementById('modal').hidden;
+    P.x=__t.ax(12); P.y=__t.ay(13.5); __t.townTapTile(...__t.at(10,7)); out.side=T.goal===null; for(let i=0;i<300&&T.path;i++)__t.townStep(.05);
+    out.sideAt=Math.hypot(P.x-__t.ax(10.5),P.y-__t.ay(7.5))<.1&&document.getElementById('modal').hidden;
     /* a tap on a building walks to the nearest open ground beside it */
-    __t.townTapTile(20,9); for(let i=0;i<300&&T.path;i++)__t.townStep(.05);
-    out.house=[+P.x.toFixed(2),+P.y.toFixed(2)]; out.houseOk=__t.townFree(P.x,P.y)&&Math.hypot(P.x-20.5,P.y-9.5)<2.6;
+    __t.townTapTile(...__t.at(20,9)); for(let i=0;i<300&&T.path;i++)__t.townStep(.05);
+    out.house=[+P.x.toFixed(2),+P.y.toFixed(2)]; out.houseOk=__t.townFree(P.x,P.y)&&Math.hypot(P.x-__t.ax(20.5),P.y-__t.ay(9.5))<2.6;
     out.face=P.face;
     return out;});
   ok(walk.path&&walk.arrived&&walk.bad===0,'a tap walks there, never through anything solid',walk);
@@ -94,7 +94,7 @@ const shots=process.argv[3]||'.';
   ok(walk.houseOk,'a tap on a building walks to the open ground nearest it',walk);
 
   /* hold and drag: a real touch-like pointer, held then dragged right, steers; a wall stops you */
-  await p.evaluate(()=>{const T=__t.TWN; T.p.x=12; T.p.y=14; T.path=null; T.cx=null;});
+  await p.evaluate(()=>{const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.path=null; T.cx=null;});
   const box=await p.locator('#townCv').boundingBox(), sx=box.x+box.width/2, sy=box.y+box.height*.7;
   await p.mouse.move(sx,sy); await p.mouse.down(); await p.waitForTimeout(320);
   await p.mouse.move(sx+60,sy,{steps:4}); await p.waitForTimeout(600);
@@ -102,29 +102,29 @@ const shots=process.argv[3]||'.';
   await p.screenshot({path:shots+'/town-steer.png'});
   await p.mouse.up();
   ok(steer.steer&&steer.x>12.8&&steer.face==='r','hold and drag steers the Keeper',steer);
-  /* up column 15 to the cemetery's east fence (column 8 meets the Peddler's barrow first, Expansion 4 step 6) */
-  const wall=await p.evaluate(()=>{const T=__t.TWN, P=T.p; P.x=15.5; P.y=13; T.path=null;
+  /* up column 15 of the old square to the foot of the cliff (map expansion, M1: the cemetery is on the Rise now) */
+  const wall=await p.evaluate(()=>{const T=__t.TWN, P=T.p; P.x=__t.ax(15.5); P.y=__t.ay(13); T.path=null;
     T.ptr={id:1,x0:0,y0:0,x:0,y:-80,t0:0,steer:true}; for(let i=0;i<80;i++)__t.townStep(.05); T.ptr=null;
     return {y:+P.y.toFixed(2), free:__t.townFree(P.x,P.y)};});
-  ok(wall.free&&wall.y>5.9&&wall.y<6.5,'steering north stops at the cemetery fence, never inside it',wall);
-  const tap=await p.evaluate(()=>{const T=__t.TWN; T.p.x=12; T.p.y=14; T.cx=null; __t.townFrame(0); return true;});
-  const tpt=await p.evaluate(()=>{const T=__t.TWN, k=T.k/T.dpr; return {x:(13*16+8-Math.round(T.cx))*k, y:(15*16+8-Math.round(T.cy))*k};});
+  ok(wall.free&&wall.y>14.9&&wall.y<15.5,'steering north stops at the foot of the cliff, never inside it',wall);
+  const tap=await p.evaluate(()=>{const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.cx=null; __t.townFrame(0); return true;});
+  const tpt=await p.evaluate(()=>{const T=__t.TWN, k=T.k/T.dpr; return {x:(19*16+8-Math.round(T.cx))*k, y:(24*16+8-Math.round(T.cy))*k};});
   await p.touchscreen.tap(box.x+tpt.x,box.y+tpt.y); await p.waitForTimeout(80);
   const tp=await p.evaluate(()=>{const T=__t.TWN, e=T.path&&T.path[T.path.length-1]; return e?[e.x,e.y]:null;});
-  ok(tp&&tp[0]===13.5&&tp[1]===15.5,'a quick tap on the screen walks to the tile under it',{tp,tpt});
+  ok(tp&&tp[0]===19.5&&tp[1]===24.5,'a quick tap on the screen walks to the tile under it',{tp,tpt});
   /* a slow tap (held 0.4 s, never moved) still walks there; a hold of a second that never moves does nothing */
-  await p.evaluate(()=>{const T=__t.TWN; T.path=null; T.p.x=12; T.p.y=14; T.cx=null; __t.townFrame(0);});
+  await p.evaluate(()=>{const T=__t.TWN; T.path=null; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.cx=null; __t.townFrame(0);});
   await p.mouse.move(box.x+tpt.x,box.y+tpt.y); await p.mouse.down(); await p.waitForTimeout(400); await p.mouse.up(); await p.waitForTimeout(60);
   const slow=await p.evaluate(()=>{const T=__t.TWN, e=T.path&&T.path[T.path.length-1]; return e?[e.x,e.y]:null;});
-  await p.evaluate(()=>{const T=__t.TWN; T.path=null; T.p.x=12; T.p.y=14; T.cx=null; __t.townFrame(0);});
+  await p.evaluate(()=>{const T=__t.TWN; T.path=null; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.cx=null; __t.townFrame(0);});
   await p.mouse.down(); await p.waitForTimeout(1000); await p.mouse.up(); await p.waitForTimeout(60);
   const held=await p.evaluate(()=>({path:__t.TWN.path, x:__t.TWN.p.x, y:__t.TWN.p.y}));
-  ok(slow&&slow[0]===13.5&&slow[1]===15.5,'a slow tap still walks there',slow);
-  ok(!held.path&&held.x===12&&held.y===14,'a long still hold goes nowhere',held);
+  ok(slow&&slow[0]===19.5&&slow[1]===24.5,'a slow tap still walks there',slow);
+  ok(!held.path&&held.x===18&&held.y===23,'a long still hold goes nowhere',held);
 
   /* the Head-frame */
-  const hf=await p.evaluate(()=>{const T=__t.TWN, P=T.p; P.x=12; P.y=14; T.path=null; T.ptr=null;
-    __t.townTapTile(12,9); const goal=T.goal;
+  const hf=await p.evaluate(()=>{const T=__t.TWN, P=T.p; P.x=__t.ax(12); P.y=__t.ay(14); T.path=null; T.ptr=null;
+    __t.townTapTile(...__t.at(12,9)); const goal=T.goal;
     for(let i=0;i<200&&(T.path||T.goal);i++)__t.townStep(.05);
     return {goal, at:[+P.x.toFixed(2),+P.y.toFixed(2)], btn:!document.getElementById('townAct').hidden,
       modal:!document.getElementById('modal').hidden, title:document.getElementById('mTitle').textContent};});
@@ -141,13 +141,13 @@ const shots=process.argv[3]||'.';
   const run=await p.evaluate(()=>({town:__t.TWN.on, shown:!document.getElementById('townOverlay').hidden, F:!!__t.F, floor:__t.run&&__t.run.floor, kit:__t.run&&__t.run.kit,
     title:document.getElementById('title').hidden, saved:JSON.parse(localStorage.getItem('ll-town'))}));
   ok(!run.town&&!run.shown&&run.F&&run.floor===0&&run.kit==='lamplighter'&&run.title,'Descend the stair closes the town and starts the run on the Cistern',run);
-  ok(run.saved&&run.saved.v===1&&Math.abs(run.saved.px-12)<1.2&&Math.abs(run.saved.py-11.6)<.6,'ll-town keeps where you stood',run.saved);
+  ok(run.saved&&run.saved.v===2&&Math.abs(run.saved.px-18)<1.2&&Math.abs(run.saved.py-20.6)<.6,'ll-town keeps where you stood',run.saved);
 
   /* a saved run is asked about from the Head-frame, never thrown away by one tap */
   await p.evaluate(()=>{__t.checkpoint(); document.getElementById('pauseBtn').click();});
   await p.evaluate(()=>{[...document.querySelectorAll('#mActions button')].find(x=>/quit to title/.test(x.textContent)).click();});
   await p.click('#townBtn'); await p.waitForTimeout(200);
-  const ask=await p.evaluate(()=>{const T=__t.TWN; T.p.x=12; T.p.y=11.6; __t.townStep(.05); __t.townDescend();
+  const ask=await p.evaluate(()=>{const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(11.6); __t.townStep(.05); __t.townDescend();
     return {title:document.getElementById('mTitle').textContent, acts:[...document.querySelectorAll('#mActions button')].map(b=>b.textContent), save:!!localStorage.getItem('ll-save-v2')&&localStorage.getItem('ll-save-v2')!=='null'};});
   ok(/still waiting/.test(ask.title)&&ask.acts.join('|')==='Continue|Start a new descent|Stay in Saltmouth'&&ask.save,'with a run saved, the Head-frame asks first',ask);
   await p.evaluate(()=>{[...document.querySelectorAll('#mActions button')].find(x=>x.textContent==='Continue').click();}); await p.waitForTimeout(200);
@@ -176,26 +176,26 @@ const shots=process.argv[3]||'.';
   await p.reload(); await p.waitForTimeout(400);
   const dev=await p.evaluate(()=>{
     const before=localStorage.getItem('ll-town');
-    __t.setDev(true); __t.townReset(); __t.townOpen(); const T=__t.TWN; T.p.x=16; T.p.y=13; __t.townData().startInTown=true; __t.townSave(); __t.townClose();
+    __t.setDev(true); __t.townReset(); __t.townOpen(); const T=__t.TWN; T.p.x=__t.ax(16); T.p.y=__t.ay(13); __t.townData().startInTown=true; __t.townSave(); __t.townClose();
     __t.townOpen(); __t.townClose();
     const after=localStorage.getItem('ll-town');
     __t.setDev(false); __t.townReset();
     const real=__t.townData();
     return {same:before===after, px:real.px, start:real.startInTown};});
-  ok(dev.same&&dev.start===false&&dev.px!==16,'developer mode never writes ll-town; turning it off puts the town back as it was',dev);
+  ok(dev.same&&dev.start===false&&dev.px!==22,'developer mode never writes ll-town; turning it off puts the town back as it was',dev);
   const k0=await snapKeys();
-  await p.evaluate(()=>{__t.townOpen(); for(let i=0;i<30;i++)__t.townFrame(1/30); __t.townTapTile(8,13); for(let i=0;i<60;i++)__t.townStep(.05); __t.townClose();});
+  await p.evaluate(()=>{__t.townOpen(); for(let i=0;i<30;i++)__t.townFrame(1/30); __t.townTapTile(...__t.at(8,13)); for(let i=0;i<60;i++)__t.townStep(.05); __t.townClose();});
   const k1=await snapKeys();
   ok(JSON.stringify(k0)===JSON.stringify(k1),'a walk in the town changes no other save key',{k0,k1});
   /* an old or broken ll-town loads: a spot that is solid now puts you back at the square */
   const mig=await p.evaluate(()=>{localStorage.setItem('ll-town',JSON.stringify({v:1,px:12,py:10,startInTown:true,future:{a:1}})); __t.townReset(); const t=__t.townData();
     localStorage.setItem('ll-town','"junk"'); __t.townReset(); const u=__t.townData(); localStorage.removeItem('ll-town'); __t.townReset();
     return {t,u};});
-  ok(mig.t.px===12&&mig.t.py===14&&mig.t.startInTown===true&&mig.t.future&&mig.t.future.a===1&&mig.u.v===1&&mig.u.startInTown===false,'ll-town loads old, broken or newer shapes safely',mig);
+  ok(mig.t.px===18&&mig.t.py===23&&mig.t.v===2&&mig.t.startInTown===true&&mig.t.future&&mig.t.future.a===1&&mig.u.v===2&&mig.u.startInTown===false,'ll-town loads old, broken or newer shapes safely',mig);
 
   /* every Keeper walks the square as the kit last carried */
   for(const k of ['whaler','occultist','galvanist','bellringer']){
-    const got=await p.evaluate(k=>{localStorage.setItem('ll-meta',JSON.stringify({lastKit:k,unlocked:[]})); __t.townOpen(); const T=__t.TWN; T.p.x=12; T.p.y=13; T.p.face='d'; T.cx=null; __t.townFrame(1/30); const r=T.kit; return r;},k);
+    const got=await p.evaluate(k=>{localStorage.setItem('ll-meta',JSON.stringify({lastKit:k,unlocked:[]})); __t.townOpen(); const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(13); T.p.face='d'; T.cx=null; __t.townFrame(1/30); const r=T.kit; return r;},k);
     ok(got===k,'the Keeper in the square is the kit last carried: '+k,got);
     await p.screenshot({path:shots+'/town-'+k+'.png'});
     await p.evaluate(()=>__t.townClose());
@@ -216,16 +216,16 @@ const shots=process.argv[3]||'.';
   await p.evaluate(()=>{__t.townClose(); __t.townOpen();});
   const again=await p.evaluate(()=>!document.getElementById('townCardWrap').hidden);
   await p.evaluate(()=>{__t.townClose(); __t.tutSet({walk:'done',seen:[],off:true});});
-  ok(teach.card&&/hold and drag/.test(teach.text)&&teach.tip&&teach.rules&&teach.still,'the first visit shows a card; a TIPS entry and a rules line teach it',teach);
+  ok(teach.card&&/hold and drag/.test(teach.text)&&/Up either stair/.test(teach.text)&&teach.tip&&teach.rules&&teach.still,'the first visit shows a card; a TIPS entry and a rules line teach it',teach);
   ok(teach2.gone&&teach2.seen&&!again,'the card goes on click and does not come back',{teach2,again});
 
   /* frame time on a folded Fold (412 × 860 at 2.625), the CPU slowed four times: Full and Lite */
   const cdp=await ctx.newCDPSession(p);
-  await p.evaluate(()=>{__t.townOpen(); const T=__t.TWN; T.p.x=12; T.p.y=13; T.cx=null; for(let i=0;i<20;i++)__t.townFrame(1/60);});
+  await p.evaluate(()=>{__t.townOpen(); const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(13); T.cx=null; for(let i=0;i<20;i++)__t.townFrame(1/60);});
   const measure=async lite=>{await p.evaluate(v=>__t.setLite(v),lite);
     await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});
     const r=await p.evaluate(()=>{const T=__t.TWN, P=T.p, ms=[]; for(let i=0;i<10;i++)__t.townFrame(1/60);
-      for(let i=0;i<180;i++){P.x=8+8*(.5+.5*Math.sin(i/30)); P.y=13; const t0=performance.now(); __t.townFrame(1/60); ms.push(performance.now()-t0);}
+      for(let i=0;i<180;i++){P.x=14+8*(.5+.5*Math.sin(i/30)); P.y=22; const t0=performance.now(); __t.townFrame(1/60); ms.push(performance.now()-t0);}
       ms.sort((a,b)=>a-b); return {avg:+(ms.reduce((a,b)=>a+b,0)/ms.length).toFixed(2), p95:+ms[Math.floor(ms.length*.95)].toFixed(2), max:+ms[ms.length-1].toFixed(2)};});
     await cdp.send('Emulation.setCPUThrottlingRate',{rate:1}); return r;};
   const full=await measure(false), lite=await measure(true);

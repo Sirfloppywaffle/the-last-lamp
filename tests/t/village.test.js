@@ -43,10 +43,10 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const k=await p.evaluate(()=>{const T=__t, o={}; T.setDev(false); T.townReset(); T.townOpen();
     const Tn=T.townData(); Tn.res={timber:900,iron:900,tallow:900,curios:90}; Tn.rescued=['peddler']; Tn.blueprints=[];
     const spot=(id)=>{for(let r=2;r<22;r++)for(let c=1;c<22;c++)if(!T.townCanPlace(id,c,r)||T.townCanPlace(id,c,r).startsWith('Locked'))if(T.townCanPlace(id,c,r)==='')return [c,r]; return null;};
-    o.shut=T.townCanPlace('post2',3,14); o.open1=T.townCanPlace('post1',3,14);
+    o.shut=T.townCanPlace('post2',...__t.at(3,14)); o.open1=T.townCanPlace('post1',...__t.at(3,14));
     o.why=T.townLockWhy('bench3'); o.free=T.townLockWhy('bench1');
     Tn.wares={trip:Tn.trips|0,items:['pk:posts']}; T.townSave(); o.buy=T.peddlerBuy('pk:posts');
-    o.bought=T.townData().blueprints.includes('posts'); o.after=T.townCanPlace('post2',3,14);
+    o.bought=T.townData().blueprints.includes('posts'); o.after=T.townCanPlace('post2',...__t.at(3,14));
     o.spent=900-0; o.curios=T.townData().res.curios;
     o.stillShut=T.townLockWhy('bench3');
     T.setDev(true); o.dev=T.townLockWhy('bench3'); T.setDev(false);
@@ -99,14 +99,15 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.st0=[at().tx,at().ty];
     o.placed=T.townPlace('hut_whaler',c,r)==='';
     o.doorStand=[at().tx,at().ty]; o.doors=JSON.stringify(T.townHutDoors());
-    o.twice=T.townCanPlace('hut_whaler',c+4>20?c-4:c+4,r);
+    /* map expansion, M1: the first other spot where a hut's ground is open says why not */
+    o.twice=''; for(let rr=12;rr<30&&!o.twice;rr++)for(let cc=1;cc<34&&!o.twice;cc++){if(Math.abs(cc-c)<3&&Math.abs(rr-r)<3)continue; const m=T.townCanPlace('hut_whaler',cc,rr); if(m&&!/open ground|Something stands|Keep it clear|wall off|deck|tower/.test(m))o.twice=m;}
     o.onDoor=T.townCanPlace('tree',door[0],door[1]-1); o.bench=T.townCanPlace('bench1',door[0],door[1]);
     o.reach=!!T.townPathTo(door[0],door[1]); o.keepOK=T.townKeepOK(T.townData().decos);
     /* at work, the Keeper is at their workplace instead */
     Tn.chore='whaler'; T.townSave(); T.townDecoSync(); o.work=[at().tx,at().ty]; Tn.chore=null; T.townDecoSync();
     /* a reload keeps the hut; a town saved with a tree on the door gives the hut back and pays */
     const raw=JSON.parse(JSON.stringify(T.townData())); const fx=T.townFix(raw); o.kept=fx.decos.some(d=>d.id==='hut_whaler');
-    const bad=T.townFix({res:{timber:0,iron:0,tallow:0,curios:0},decos:[{id:'tree',c:door[0],r:door[1]-1},{id:'hut_whaler',c:c,r:r}]});
+    const bad=T.townFix({v:2,res:{timber:0,iron:0,tallow:0,curios:0},decos:[{id:'tree',c:door[0],r:door[1]-1},{id:'hut_whaler',c:c,r:r}]});
     o.bad={huts:bad.decos.filter(d=>d.id==='hut_whaler').length,timber:bad.res.timber,iron:bad.res.iron};
     /* taking it up puts the Keeper back at their footing */
     const d=T.townData().decos.find(e=>e.id==='hut_whaler'); T.townTakeUp(d); o.back=[at().tx,at().ty]; o.refund=T.townData().res.timber;
@@ -144,14 +145,14 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   /* 6. a path is a floor: a piece stands on it, a tap with a piece chosen sets it down and a tap with nothing lifts what is on top;
      a path is never laid over a path; and a cell of one path all round is that path's own full tile, not the cobbles */
   const fl=await p.evaluate(()=>{const T=__t, o={}; T.setDev(true); T.townReset(); T.townOpen(); const D=T.townData(); D.res={timber:900,iron:900,tallow:900,curios:90}; D.decos=[]; T.townBuildSet(true);
-    o.lay=T.townPlace('shell',2,13)===''; o.lay2=T.townPlace('shell',3,13)===''; T.townPlace('shell',2,14); T.townPlace('shell',3,14);
-    o.again=T.townCanPlace('shell',2,13); o.can=T.townCanPlace('bench1',2,13);
-    T.TWN.tab='pieces'; T.TWN.pick='bench1'; T.townBuildTap(2,13);
-    const here=T.townData().decos.filter(d=>d.c===2&&d.r===13).map(d=>d.id).sort().join(); o.here=here; o.lift=!!T.TWN.lift; o.at=T.townDecoAt(2,13).id;
+    o.lay=T.townPlace('shell',3,26)===''; o.lay2=T.townPlace('shell',4,26)===''; T.townPlace('shell',3,27); T.townPlace('shell',4,27);
+    o.again=T.townCanPlace('shell',3,26); o.can=T.townCanPlace('bench1',3,26);
+    T.TWN.tab='pieces'; T.TWN.pick='bench1'; T.townBuildTap(3,26);
+    const here=T.townData().decos.filter(d=>d.c===3&&d.r===26).map(d=>d.id).sort().join(); o.here=here; o.lift=!!T.TWN.lift; o.at=T.townDecoAt(3,26).id;
     /* nothing chosen: the bench on top is lifted, not the path */
-    T.TWN.pick=null; T.townBuildTap(2,13); o.lifted=T.TWN.lift&&T.TWN.lift.id; if(T.TWN.lift)T.bldCancel&&T.bldCancel();
+    T.TWN.pick=null; T.townBuildTap(3,26); o.lifted=T.TWN.lift&&T.TWN.lift.id; if(T.TWN.lift)T.bldCancel&&T.bldCancel();
     /* a path laid under a piece that stands */
-    o.under=T.townCanPlace('cobble',2,12)===''; T.TWN.pick='cobble'; T.townBuildTap(8,13); o.cob=T.townData().decos.some(d=>d.id==='cobble'&&d.c===8&&d.r===13);
+    o.under=T.townCanPlace('cobble',3,25)===''; T.TWN.pick='cobble'; T.townBuildTap(9,26); o.cob=T.townData().decos.some(d=>d.id==='cobble'&&d.c===9&&d.r===26);
     const sel=T.townWangSel(3,3,3,3), sel2=T.townWangSel(3,3,3,0), selp=T.townWangSel(7,7,7,7);
     o.full=sel[0]===T.TOWN_WANG.es&&sel[1]==='1111'; o.part=sel2[0]===T.TOWN_WANG.es&&sel2[1]==='1110'; o.p2=selp[0]===T.TOWN_WANG.ep2&&selp[1]==='1111';
     T.townBuildSet(false); T.townClose(); T.setDev(false); return o;});
@@ -163,7 +164,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   /* 8. turning (Criss on #151: every view the same piece): a one-tile piece (post, statue, barrel, urn) turns an eighth at a time
      through eight drawn views on the same tile; a two-tile piece (bench, trough, fence) a quarter at a time through four, covering
      1 by 2 tiles end-on. Each view is its own rows (TOWN_PIECE_TURN, on PX letters), none a mirror, and no two alike */
-  const tr=await p.evaluate(()=>{const T=__t, o={one:{},two:{},bad:[]}; T.setDev(true); T.townReset(); T.townOpen(); const D=T.townData(); D.res={timber:900,iron:900,tallow:900,curios:90}; D.decos=[]; T.townBuildSet(true); T.TWN.p.x=18.5; T.TWN.p.y=13.5;
+  const tr=await p.evaluate(()=>{const T=__t, o={one:{},two:{},bad:[]}; T.setDev(true); T.townReset(); T.townOpen(); const D=T.townData(); D.res={timber:900,iron:900,tallow:900,curios:90}; D.decos=[]; T.townBuildSet(true); T.TWN.p.x=__t.ax(18.5); T.TWN.p.y=__t.ay(13.5);
     const dat=(c)=>c.toDataURL();
     for(const id in T.TOWN_DECOS){const I=T.TOWN_DECOS[id]; if(!I.art||I.hut)continue;
       const R=T.TOWN_PIECE_TURN[I.art], want=(I.w||1)>1?[2,4,6]:[1,2,3,4,5,6,7];
@@ -172,14 +173,14 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       const seen=new Set(); for(let f=0;f<8;f++){const [g,m]=T.townPieceFace({id,f}); if(m)o.bad.push(id+' '+f+' mirrored'); seen.add(dat(T.townPieceArt(id,g,m).cv));}
       if(seen.size!==want.length+1)o.bad.push(id+' shows '+seen.size+' views');}
     for(const id of ['post2','statue3','planter4']){
-      T.townPlace(id,4,13); const d=D.decos.find(e=>e.id===id); T.bldLift(d); const fs=[], tiles=new Set();
+      T.townPlace(id,...__t.at(4,14)); const d=D.decos.find(e=>e.id===id); T.bldLift(d); const fs=[], tiles=new Set();
       for(let k=0;k<8;k++){T.bldTurn(1); fs.push(T.TWN.lift.f); tiles.add(T.decoTiles(id,d.c,d.r,T.TWN.lift.f).join());}
       o.one[id]=[fs.join(),tiles.size]; T.bldCancel(); D.decos=[]; T.townDecoSync();}
     for(const id of ['bench1','bench4','planter1','rail1','rail2','rail3','rail4']){
-      const ok=T.townPlace(id,3,13)===''; const d=D.decos.find(e=>e.id===id); T.bldLift(d); T.bldTurn(1); const f=T.TWN.lift.f, t=T.decoTiles(id,d.c,d.r,f);
+      const ok=T.townPlace(id,...__t.at(3,14))===''; const d=D.decos.find(e=>e.id===id); T.bldLift(d); T.bldTurn(1); const f=T.TWN.lift.f, t=T.decoTiles(id,d.c,d.r,f);
       o.two[id]=[ok,f,t.length,new Set(t.map(q=>q[0])).size,new Set(t.map(q=>q[1])).size,T.TWN.lift.why]; T.bldCancel(); D.decos=[]; T.townDecoSync();}
     /* a turned piece stands, is saved turned, and comes back turned */
-    T.townPlace('bench2',5,13); const b=D.decos.find(e=>e.id==='bench2'); b.f=6; T.townDecoSync(); o.saved=T.townFix(JSON.parse(JSON.stringify(D))).decos.filter(e=>e.id==='bench2').map(e=>e.f).join();
+    T.townPlace('bench2',...__t.at(5,14)); const b=D.decos.find(e=>e.id==='bench2'); b.f=6; T.townDecoSync(); o.saved=T.townFix(JSON.parse(JSON.stringify(D))).decos.filter(e=>e.id==='bench2').map(e=>e.f).join();
     o.diagSaved=T.townFix({decos:[{id:'statue1',c:6,r:13,f:3},{id:'post1',c:8,r:13,f:5}]}).decos.map(e=>e.f).join();
     T.townBuildSet(false); T.townClose(); T.setDev(false); return o;});
   ok(!tr.bad.length,'every new piece has a view of its own for each facing it turns to, on PX letters, none a mirror',tr.bad);
@@ -199,7 +200,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const after=await p.evaluate(()=>localStorage.getItem('ll-town'));
   ok(typeof after==='string'||after===null,'ll-town is readable');
   const dev=await p.evaluate(()=>{const T=__t; T.setDev(false); T.townReset(); const s0=localStorage.getItem('ll-town'); T.setDev(true); T.townOpen(); const D=T.townData(); D.res={timber:900,iron:900,tallow:900,curios:90}; D.rescued=['croupier']; D.lodge.built=true;
-    T.townPaintCycle('lodge'); T.townPlace('post3',3,14); T.townPlace('hut_whaler',12,13); T.townClose(); T.setDev(false); return [s0,localStorage.getItem('ll-town')];});
+    T.townPaintCycle('lodge'); T.townPlace('post3',...__t.at(3,14)); T.townPlace('hut_whaler',12,13); T.townClose(); T.setDev(false); return [s0,localStorage.getItem('ll-town')];});
   ok(dev[0]===dev[1],'developer mode paints and builds without writing ll-town',dev.map(x=>x&&x.slice(0,80)));
   if(errs.length)fails.push('page errors: '+errs.join(' | '));
   await b.close();

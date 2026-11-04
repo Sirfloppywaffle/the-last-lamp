@@ -40,7 +40,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const w=await p.evaluate(()=>{const T=__t, W=T.TWN, out={};
     T.townKeepers(); out.crowd0=W.crowd.length;
     /* a tap on the Lodge from across the square walks to its door and goes in */
-    W.p.x=12; W.p.y=14; T.townTapTile(2,9); out.goal=W.goal;
+    W.p.x=T.TOWN_SPAWN.x; W.p.y=T.TOWN_SPAWN.y; const LH=T.TOWN_HOUSES[0]; T.townTapTile(LH.x+1,LH.y+1); out.goal=W.goal;
     for(let i=0;i<600&&!W.inside;i++)T.townStep(1/30);
     out.inside=!!W.inside; out.at=[W.p.x,W.p.y]; out.crowd=W.crowd.length;
     while(!document.getElementById('townCardWrap').hidden)document.getElementById('townCard').click();
@@ -51,7 +51,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.townDraw(); out.art=!!T.LODGE_ART&&T.LODGE_ART.mw===160;
     T.lodgeTapTile(4,9); out.doorGoal=W.goal; for(let i=0;i<300&&W.inside;i++)T.townStep(1/30);
     out.out=!W.inside; out.outAt=[+W.p.x.toFixed(2),+W.p.y.toFixed(2)]; out.crowdBack=W.crowd.length;
-    out.squareSolid=T.townSolid(2,9);
+    out.squareSolid=T.townSolid(T.TOWN_HOUSES[0].x+1,T.TOWN_HOUSES[0].y+1);
     /* closed from inside: kept before the door */
     T.lodgeEnter(); T.townClose(); const td=T.townData(); out.closed=[td.px,td.py]; out.insideAfterClose=!!W.inside;
     T.townOpen(); out.reopen=[W.p.x,W.p.y,!!W.inside];
@@ -62,9 +62,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(Math.abs(w.at[0]-5)<.01&&Math.abs(w.at[1]-8.4)<.01&&w.crowd===0,'inside, you stand by the door and nobody from the square is about',w);
   ok(w.label==='Leave the Lodge'&&w.wall&&w.art,'the room’s walls, shelf and door are solid, its floor is not; the door reads Leave the Lodge',w);
   ok(w.walked[0]===2&&w.walked[1]===4,'you walk the room',w.walked);
-  ok(w.doorGoal==='door'&&w.out&&Math.abs(w.outAt[0]-3.5)<.01&&Math.abs(w.outAt[1]-12.5)<.01,'the door puts you on the square before the Lodge',w);
+  ok(w.doorGoal==='door'&&w.out&&Math.abs(w.outAt[0]-17.5)<.01&&Math.abs(w.outAt[1]-8.5)<.01,'the door puts you on the square before the Lodge',w);
   ok(w.crowdBack===w.crowd0&&w.squareSolid,'back outside, the Keepers stand again and the square is the square',w);
-  ok(w.closed[0]===3.5&&w.closed[1]===12.5&&!w.insideAfterClose&&w.reopen[0]===3.5&&w.reopen[1]===12.5&&!w.reopen[2],'closing from inside keeps your place before the door',w);
+  ok(w.closed[0]===17.5&&w.closed[1]===8.5&&!w.insideAfterClose&&w.reopen[0]===17.5&&w.reopen[1]===8.5&&!w.reopen[2],'closing from inside keeps your place before the door',w);
 
   /* 3. floors, walls and furniture: paid, refunded in full, and kept off the ways to the door and the shelf */
   const f=await p.evaluate(()=>{const T=__t, W=T.TWN, td=T.townData(), out={};

@@ -70,13 +70,13 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   const mig=await p.evaluate(()=>{
     __t.setTownNote([]); __t.townReset();
     const S=__t.TOWN_STAND.whaler.st, W=__t.TOWN_STAND.galvanist.wk;
-    const fx=__t.townFix({res:{iron:0,timber:0,tallow:0,curios:0},decos:[{id:'lamp',c:S[0],r:S[1]},{id:'cobble',c:W[0],r:W[1]},{id:'lamp',c:3,r:15}]});
+    const fx=__t.townFix({v:2,res:{iron:0,timber:0,tallow:0,curios:0},decos:[{id:'lamp',c:S[0],r:S[1]},{id:'cobble',c:W[0],r:W[1]},{id:'lamp',c:3,r:15}]});
     return {ids:fx.decos.map(d=>d.id+d.c+','+d.r),res:fx.res};
   });
   ok(mig.ids.length===1&&mig.ids[0]==='lamp3,15'&&mig.res.iron===8&&mig.res.tallow===4,'pieces standing on a Keeper’s place are taken up and paid back (lamp 6 iron 4 tallow, cobble 2 iron)',mig);
   const card=await p.evaluate(()=>{
     localStorage.setItem('ll-tut',JSON.stringify({walk:'done',seen:[],off:false}));
-    __t.setTownNote(['Street-lamp']); __t.townClose(); __t.townOpen();
+    __t.setTownGrew(null); __t.setTownNote(['Street-lamp']); __t.townClose(); __t.townOpen();
     const t=document.querySelector('#townCard b')?document.querySelector('#townCard b').textContent:'';
     __t.setTownNote([]); return t;});
   ok(card==='Taken up','a one-time card says what was taken up',card);

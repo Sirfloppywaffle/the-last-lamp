@@ -16,7 +16,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.solid=[];
     for(let y=H.y;y<H.y+H.h;y++)for(let x=H.x;x<H.x+H.w;x++)out.solid.push(T.townSolid(x,y)&&T.TOWN_MAP[y][x]==='B');
     out.front=H.front.map(([x,y])=>({free:!T.townSolid(x,y),reach:!!T.townPathTo(x,y),kept:T.TOWN_KEEP.some(k=>k[0]===x&&k[1]===y)}));
-    out.rows=T.TOWN_MAP.every(r=>r.length===24);
+    out.rows=T.TOWN_MAP.length===36&&T.TOWN_MAP.every(r=>r.length===36);
     out.lv=T.hearthLv(); out.saved=JSON.parse(localStorage.getItem('ll-town')||'{}').hearth;
     out.carve=T.HEARTH_CARVE.length>100&&T.HEARTH_CARVE.every(r=>r.length===T.HEARTH_CARVE[0].length);
     out.cost=T.HEARTH_COST.length===T.HEARTH_MAX&&T.HEARTH_COST.every(c=>Object.keys(c).every(k=>k==='tallow'||k==='curios'));
@@ -24,14 +24,14 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   console.log(JSON.stringify(g));
   ok(g.solid.length===4&&g.solid.every(Boolean),'the Hearth stands on four solid B tiles',g.solid);
   ok(g.front.every(f=>f.free&&f.reach&&f.kept),'the ground before it is open, reachable and kept clear',g.front);
-  ok(g.rows,'every map row is still 24 long');
+  ok(g.rows,'the map is 36 by 36 (map expansion, M1)');
   ok(g.lv===0,'a new town’s Hearth is cold',g);
   ok(g.carve,'the carving is rows of one width');
   ok(g.cost,'each level costs tallow and curios only, one cost per level',g);
 
   /* 2. walking up to it and its card */
   const w=await p.evaluate(async()=>{const T=__t, H=T.HEARTH, W=T.TWN, out={};
-    W.p.x=12.5; W.p.y=19.5; T.townTapTile(H.x,H.y);
+    W.p.x=__t.ax(12.5); W.p.y=__t.ay(19.5); T.townTapTile(H.x,H.y);
     out.goal=W.goal; for(let i=0;i<400&&(W.path||W.goal);i++)T.townStep(1/30);
     out.open=!document.querySelector('#modal').hidden; out.title=document.querySelector('#mTitle').textContent;
     out.btn=[...document.querySelectorAll('#mActions button')].map(b=>b.textContent);

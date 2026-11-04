@@ -126,7 +126,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const glow=()=>W.glow.getContext('2d').getImageData(0,0,W.vw,W.vh).data.slice();
     const diff=(a,c,y0)=>{let n=0; for(let i=y0*W.vw*4;i<c.length;i+=4)if(c[i]!==a[i]||c[i+1]!==a[i+1]||c[i+2]!==a[i+2])n++; return n;};
     const crowd=W.crowd; W.crowd=[];
-    const run=(lite,which)=>{T.setLite(lite); W.p.x=which==='sea'?12:12; W.p.y=which==='sea'?20.5:12.6; W.cx=null; W.t=0; T.townFrame(1/60); W.dt=0;
+    const run=(lite,which)=>{T.setLite(lite); W.p.x=__t.ax(12); W.p.y=which==='sea'?__t.ay(20.5):__t.ay(12.6); W.cx=null; W.t=0; T.townFrame(1/60); W.dt=0;
       const pin=()=>{if(W.rain)for(let i=0;i<W.rain.length;i+=4){W.rain[i+1]=-30; W.rain[i+3]=1e9;} if(W.splash)W.splash.fill(0);};
       pin(); T.townDraw(); const a=which==='sea'?W.buf.getContext('2d').getImageData(0,0,W.vw,W.vh).data.slice():glow(); const seen=[];
       for(const t of [.35,.8,1.6,2.5]){W.t=t; pin(); T.townDraw(); seen.push(diff(a,which==='sea'?W.buf.getContext('2d').getImageData(0,0,W.vw,W.vh).data:glow(),which==='sea'?Math.round(W.vh*.4):0));}
@@ -134,7 +134,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.fire=[run(false,'fire'),run(true,'fire')]; out.sea=[run(false,'sea'),run(true,'sea')];
     /* Criss on #141: the shore read as a wall in the dark. The foam line at the cliff's foot shows through the night: brighter
        than the dark water a few rows below it, with no light near */
-    {W.p.x=12; W.p.y=20.5; W.cx=null; W.t=0; T.townFrame(1/60); W.dt=0; T.townDraw();
+    {W.p.x=__t.ax(12); W.p.y=__t.ay(21.5); W.cx=null; W.t=0; T.townFrame(1/60); W.dt=0; T.townDraw();
       const y0=T.townArt().surf[0].y0-W.lcy, img=W.buf.getContext('2d').getImageData(0,0,W.vw,W.vh).data;
       const lum=y=>{let v=0; for(let x=0;x<W.vw;x++){const i=(y*W.vw+x)*4; v+=img[i]*.3+img[i+1]*.59+img[i+2]*.11;} return v/W.vw;};
       out.shore=[+lum(y0).toFixed(1),+lum(y0+20).toFixed(1),y0];}
@@ -147,9 +147,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(sq.shore[0]>sq.shore[1]+6&&sq.shore[0]>12,'the surf shows as a pale line at the cliff’s foot in the dark',sq.shore);
   ok(sq.neg===true,'a clock below zero still draws, and a frame never runs it backwards',sq.neg);
   ok(sq.sea[0].some(n=>n>0)&&sq.sea[1].every(n=>n===0),'the sea along the shore moves in Full and holds still in Lite',sq.sea);
-  await p.evaluate(()=>{const W=__t.TWN; W.p.x=12; W.p.y=19.5; W.cx=null; W.t=1; __t.townFrame(1/60); __t.townFrame(1/60);}); await p.waitForTimeout(80);
+  await p.evaluate(()=>{const W=__t.TWN; W.p.x=__t.ax(12); W.p.y=__t.ay(19.5); W.cx=null; W.t=1; __t.townFrame(1/60); __t.townFrame(1/60);}); await p.waitForTimeout(80);
   await p.screenshot({path:shots+'/loops-shore.png'});
-  await p.evaluate(()=>{const W=__t.TWN; W.p.x=12; W.p.y=12.6; W.cx=null; __t.townFrame(1/60); __t.townFrame(1/60);}); await p.waitForTimeout(80);
+  await p.evaluate(()=>{const W=__t.TWN; W.p.x=__t.ax(12); W.p.y=__t.ay(12.6); W.cx=null; __t.townFrame(1/60); __t.townFrame(1/60);}); await p.waitForTimeout(80);
   await p.screenshot({path:shots+'/loops-square.png'});
 
   /* 5. dust: setting a piece down raises a puff where it stands (Full only), which runs its frames and is gone; storing one
@@ -157,7 +157,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const du=await p.evaluate(()=>{const T=__t, W=T.TWN, out={}; T.townBuildSet(true);
     const live=()=>W.puff?[...W.puff].filter((v,i)=>i%3===2&&v>=0).length:0;
     const D=T.townData(); D.res={timber:500,iron:500,tallow:500,curios:50};
-    out.place=T.townPlace('brazier',15,13)===''; out.n1=live();
+    out.place=T.townPlace('brazier',...__t.at(15,13))===''; out.n1=live();
     out.at=W.puff?[...W.puff].slice(0,2):null;
     for(let i=0;i<60;i++)T.townFrame(1/60); out.n2=live();
     const d=D.decos[D.decos.length-1]; T.bldLift(d); T.bldStow(); out.n3=live();
@@ -167,7 +167,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const sp=T.townDrops().spl; out.spl=[sp.length,sp[0].width,sp[0].height];
     return out;});
   console.log(JSON.stringify(du));
-  ok(du.place&&du.n1===1&&du.at&&Math.abs(du.at[0]-(15*16+8))<1&&Math.abs(du.at[1]-(14*16-2))<1,'setting a piece down raises a puff at its foot',du);
+  ok(du.place&&du.n1===1&&du.at&&Math.abs(du.at[0]-(21*16+8))<1&&Math.abs(du.at[1]-(23*16-2))<1,'setting a piece down raises a puff at its foot',du);
   ok(du.n2===0&&du.n3===1,'the puff runs its frames and is gone; storing a piece raises one where it was held',du);
   ok(du.salv&&du.n4===0,'no puff with Lite',du);
   ok(du.spl[0]===d.splash[0]&&du.spl[1]>2,'the rain’s splash is drawn from its frames',du.spl);
@@ -180,7 +180,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       if(w==='cellar'){const D=T.townData(); D.res={timber:500,iron:500,tallow:500,curios:50}; T.townRestoreLodge(); T.lodgeEnter(); if(!T.lodgeRoomBuilt('cellar'))T.lodgeBuyRoom('cellar');
         T.lodgeRoom(D,'cellar').furn=[{id:'stove',c:3,r:4},{id:'candelabra',c:6,r:5}]; T.lodgeGo('cellar');}
       const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
-      W.p.x=w==='cellar'?4.5:12; W.p.y=w==='cellar'?6:13; W.cx=null; for(let i=0;i<20;i++)T.townFrame(1/60);},where);
+      W.p.x=w==='cellar'?4.5:__t.ax(12); W.p.y=w==='cellar'?6:__t.ay(13); W.cx=null; for(let i=0;i<20;i++)T.townFrame(1/60);},where);
     await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});
     const r=await p.evaluate(()=>{const ms=[]; for(let i=0;i<180;i++){const t0=performance.now(); __t.townFrame(1/60); ms.push(performance.now()-t0);}
       ms.sort((a,b)=>a-b); return {avg:+(ms.reduce((a,b)=>a+b,0)/ms.length).toFixed(2),p95:+ms[Math.floor(ms.length*.95)].toFixed(2)};});
