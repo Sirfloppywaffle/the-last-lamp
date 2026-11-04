@@ -311,6 +311,7 @@ const DEV=[
     await p.evaluate(()=>{
       __t.townClose(); __t.newRun(); __t.renderRelics();
     });
+    await p.waitForTimeout(400); /* let the new run's layout settle: the board's box is measured before and after the gift is opened */
     const beforeGift=await p.locator('#board').boundingBox();
     await p.locator('#relChips .is-gift').click();
     const giftTip=await p.locator('#relTip').boundingBox(), afterGift=await p.locator('#board').boundingBox();
