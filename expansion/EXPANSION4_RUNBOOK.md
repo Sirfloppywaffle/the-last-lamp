@@ -21,8 +21,8 @@
 | — | The Lodge from Criss's playtest: movable sconces, the Grimoire's podium, rugs under furniture | #146 | merged | 19.8.0 |
 | 6 | The Peddler: a rescued soul with a stall by the stairs | #148 | merged | 19.9.0 |
 | A3 | Art pass 3: scenery (buildings, ground, props) | #149 (A3a: buildings and props), #150 (A3b: the ground and the haul's frame) | merged | 19.10.0 |
-| 7 | The village: decorations, paths, paint, Keepers' huts | #151 | open | 19.11.0 |
-| 8 | The Hearth Beacon: the rain thins | | | 19.12.0 |
+| 7 | The village: decorations, paths, paint, Keepers' huts | #151 | merged | 19.11.0 |
+| 8 | The Hearth Beacon: the rain thins | #153 | open | 19.12.0 |
 | 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.13.0 |
 | 10 | Release v20.0.0 | | | 20.0.0 |
 
@@ -234,6 +234,8 @@ Numbers marked *shape* are for playtest.
 
 **Teach:** a tip, a rules line. **Test** `tests/t/hearth.test.js`: rain density falls with level; carvings appear; no run field changes.
 
+- *As built (step 8):* `HEARTH` stands at tiles (11, 15) to (12, 16), `B` on `TOWN_MAP` (solid, cobbles under it), at the mouth of the south lane just south of where you climb out (`TOWN_SPAWN` (12, 14) stays free: tests and saves lean on it); you feed it from (11, 17) or (12, 17), both in `TOWN_KEEP`. Its look is PixelLab (`HEARTH_ROWS`, 44 by 44, candidate 1 of 16; three others kept), cold until fed; its fire is the brazier's A1 frames, one to three flames by level (`HEARTH_FLAMES`, `hearthArt()`), with a light that grows (`HEARTH_LIGHT`). Five levels, `HEARTH_COST` in tallow and curios. The rain: inside `HEARTH_RAIN[lv]` px of its middle a drop falls faint, and only `HEARTH_KEEP[lv]` of them fall at all (each drop by its own fixed share, softening toward the edge), so no drop blinks; `TWN.rainN` counts what was drawn. The dark: a stamp as wide, at `HEARTH_LIFT[lv]`. The carving: `HEARTH_CARVE`, a 160 px PixelLab image (1 of 4) centred in the open square (`HEARTH.kx`/`ky`), its eye between the braziers, its tones ranked onto the cobbles' letters (`0 1 2 q 3 r 4`), shown within `HEARTH_SHOW[lv]` px with a dithered cut edge, on stone only and never under a laid path (`hearthCarve()`, rebuilt from `townDecoSync()`). `ll-town.hearth` is `{lv}` (`hearthFix()`), read every frame by `hearthLv()` for `townDressSig()`. The card is `townHearth()`, feeding `hearthFeed()`. *For step 9:* the Hearth's waypoint is its front (`HEARTH.front`, `HEARTH.sx`/`sy`); a Keeper lingering there stands on a kept tile, so nothing can wall them in. *For the true ending:* `ll-town.hearth.lv` is the number to read; its card at level 5 says it will burn no higher.
+
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 8) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 8 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 9.
 
@@ -247,7 +249,7 @@ Numbers marked *shape* are for playtest.
 **Test** `tests/t/keepers4.test.js`.
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 9) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 9 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 10.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 9, with step 7's and step 8's as-built notes) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 9 exactly as the runbook says, following its §4 workflow. Step 7 left the Keepers standing at their hut doors (they do not walk yet); the Hearth Beacon's waypoint is the ground before it (`HEARTH.front`), and a lit Hearth (`hearthLv() > 0`) is the one to gather at. New art comes from PixelLab through runbook §3 (the chalk marks, the kelp and barnacles), candidates on a contact sheet for Criss. Tick the status table (step 8 is #153). End with the prompt for step 10.
 
 ### Step 10: Release v20.0.0 (Claude: Sonnet 5.5, low)
 
