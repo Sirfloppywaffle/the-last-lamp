@@ -160,6 +160,27 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(fl.lifted==='bench1'&&fl.under&&fl.cob,'with nothing chosen the bench is lifted, and a path may be laid under a piece',fl);
   ok(fl.full&&fl.part&&fl.p2,'a cell all of one path is that path’s own full tile, never the cobbles',fl);
 
+  /* 8. turning: a post, a statue and a planter flip (the picture the other way about, the same tiles); a bench and a fence have a
+     side view, so turned a quarter they cover their tiles the other way and show it */
+  const tr=await p.evaluate(()=>{const T=__t, o={}; T.setDev(true); T.townReset(); T.townOpen(); const D=T.townData(); D.res={timber:900,iron:900,tallow:900,curios:90}; D.decos=[]; T.townBuildSet(true); T.TWN.p.x=18.5; T.TWN.p.y=13.5;
+    const dat=(c)=>c.toDataURL();
+    for(const id of ['post2','statue3','planter4']){
+      T.townPlace(id,4,13); const d=D.decos.find(e=>e.id===id); T.bldLift(d); const t0=T.decoTiles(id,d.c,d.r,0).join();
+      T.bldTurn(1); o[id+'f']=T.TWN.lift.f; const t1=T.decoTiles(id,d.c,d.r,T.TWN.lift.f).join();
+      o[id+'same']=t0===t1; o[id+'diff']=dat(T.townPieceArt(id,false,false).cv)!==dat(T.townPieceArt(id,false,true).cv);
+      T.bldTurn(1); o[id+'back']=T.TWN.lift.f; T.bldCancel(); D.decos=[]; T.townDecoSync();}
+    for(const id of ['bench1','bench4','rail1','rail2','rail3','rail4']){
+      const ok=T.townPlace(id,3,13)===''; const d=D.decos.find(e=>e.id===id); T.bldLift(d); T.bldTurn(1); const f=T.TWN.lift.f, t=T.decoTiles(id,d.c,d.r,f);
+      o[id]=[ok,f,t.length,new Set(t.map(q=>q[0])).size,new Set(t.map(q=>q[1])).size,T.townSide({id,f}),T.TWN.lift.why];
+      o[id+'art']=!!T.TOWN_PIECE_ROWS[T.TOWN_DECOS[id].art+'s']; T.bldCancel(); D.decos=[]; T.townDecoSync();}
+    /* a turned piece stands, is saved turned, and comes back turned */
+    T.townPlace('bench2',5,13); const b=D.decos.find(e=>e.id==='bench2'); b.f=2; T.townDecoSync(); o.saved=T.townFix(JSON.parse(JSON.stringify(D))).decos.filter(e=>e.id==='bench2').map(e=>e.f).join();
+    o.flipSaved=T.townFix({decos:[{id:'post1',c:6,r:13,f:4},{id:'post1',c:8,r:13,f:3}]}).decos.map(e=>e.f).join();
+    T.townBuildSet(false); T.townClose(); T.setDev(false); return o;});
+  for(const id of ['post2','statue3','planter4'])ok(tr[id+'f']===4&&tr[id+'same']&&tr[id+'diff']&&tr[id+'back']===0,'the '+id+' flips: the same tiles, the picture the other way, and back',[id,tr[id+'f'],tr[id+'same'],tr[id+'diff'],tr[id+'back']]);
+  for(const id of ['bench1','bench4','rail1','rail2','rail3','rail4'])ok(tr[id][0]&&tr[id][1]===2&&tr[id][2]===2&&tr[id][3]===1&&tr[id][4]===2&&tr[id][5]&&tr[id+'art'],'the '+id+' turns a quarter to run north to south, with a side view',tr[id]);
+  ok(tr.saved==='2'&&tr.flipSaved==='4,0','a turned bench is kept turned, a flip keeps front or turned round and nothing between',tr);
+
   /* 7. developer mode: a chip in the tray turns the town's darkness off to see by; shut in normal play */
   const dk=await p.evaluate(()=>{const T=__t, o={}; T.setDev(false); T.townReset(); T.townOpen(); T.townBuildSet(true);
     o.hidden=document.getElementById('townLight').hidden; T.setDev(true); T.townTrayUI(); o.shown=!document.getElementById('townLight').hidden;
