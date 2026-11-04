@@ -65,6 +65,14 @@ if 'LODGE_ITEMS' in D:
             lab=('Blueprint: '+D['LODGE_SETS'][v['bp']]['n']) if v.get('bp') else ('Dye: '+D['LODGE_DYES'][v['dye']]['n']) if v.get('dye') else ('Pack: '+D.get('TOWN_PACKS',{}).get(v['pk'],{}).get('n',v['pk'])) if v.get('pk') else k
             w("| %s | %s |"%(lab,nm(v['cost'])))
         w("")
+    if 'HEARTH_COST' in D:
+        w("### The Hearth Beacon (Expansion 4, step 8)\n")
+        w("A fixed place at the mouth of the south lane, fed a level at a time up to **%s**, saved as `ll-town.hearth`. Each level thins the rain in a circle round it (only a share of the drops fall there, all faint), lifts the dark there a little, and shows more of the carving in the stone under the square. It changes nothing on the stair.\n"%D['HEARTH_MAX'])
+        w("| Level | Cost to reach it | Rain thins within (px) | Drops left | Dark lifted | Carving shown within (px) |\n|---|---|---|---|---|---|")
+        for i,c in enumerate(D['HEARTH_COST']):
+            lv=i+1
+            w("| %d | %s | %s | %d%% | %d%% | %s |"%(lv,nm(c),D["HEARTH_RAIN"][lv],round(D["HEARTH_KEEP"][lv]*100),round(D["HEARTH_LIFT"][lv]*100),D["HEARTH_SHOW"][lv]))
+        w("")
     w("### Every piece\n")
     w("| Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |\n|---|---|---|---|---|---|---|---|")
     for v in D['LODGE_ITEMS'].values():

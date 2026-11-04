@@ -111,6 +111,18 @@ Freed from a cage like the other souls, he keeps a barrow by the Head-frame. He 
 | Dye: Bone-White | 20 tallow |
 | Dye: Pearl | 20 tallow |
 
+### The Hearth Beacon (Expansion 4, step 8)
+
+A fixed place in the middle of the south square, fed a level at a time up to **5**, saved as `ll-town.hearth`. Each level thins the rain in a circle round it (only a share of the drops fall there, all faint), lifts the dark there a little, and shows more of the carving in the stone under the square. It changes nothing on the stair.
+
+| Level | Cost to reach it | Rain thins within (px) | Drops left | Dark lifted | Carving shown within (px) |
+|---|---|---|---|---|---|
+| 1 | 15 tallow, 1 curio | 56 | 60% | 8% | 28 |
+| 2 | 30 tallow, 2 curios | 88 | 45% | 12% | 42 |
+| 3 | 45 tallow, 3 curios | 120 | 34% | 16% | 56 |
+| 4 | 65 tallow, 4 curios | 152 | 25% | 20% | 68 |
+| 5 | 90 tallow, 5 curios | 192 | 16% | 25% | 80 |
+
 ### Every piece
 
 | Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |
