@@ -124,9 +124,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   const wall=await p.evaluate(()=>{
     localStorage.removeItem('ll-town'); __t.townReset(); const D=__t.townData(); D.res={timber:500,iron:500,tallow:500,curios:50}; D.free=true;
     __t.townOpen(); const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.path=null; __t.townBuildSet(true);
-    const o={}; o.w=[__t.townPlace('fence',...__t.at(10,11)),__t.townPlace('fence',...__t.at(13,11)),__t.townPlace('fence',...__t.at(11,12))];
-    o.freeCut=__t.townCanPlace('lamp',...__t.at(12,12),18*16,21*16+5);
-    o.hangDeck=__t.townCanPlace('lamp',...__t.at(12,12),18*16,20*16+9);
+    const o={}; o.w=[__t.townPlace('fence',16,18),__t.townPlace('fence',19,18),__t.townPlace('fence',17,19)];
+    o.freeCut=__t.townCanPlace('lamp',18,19,18*16,19*16+5);
+    o.hangDeck=__t.townCanPlace('lamp',18,19,18*16,18*16+9);
     __t.townBuildSet(false);
     __t.townRestoreLodge(); __t.lodgeEnter(); __t.townBuildSet(true);
     for(let x=1;x<=7;x++)o['s'+x]=__t.lodgePlace('shelf',x,5);
@@ -153,7 +153,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     __t.bldUndo(); o.unlaid=D.lodge.floor==='planks'&&D.res.timber===t0;
     __t.townBuildSet(false); __t.lodgeLeave();
     /* town storage stays in the town: the Lodge's Storage shows only the Lodge's */
-    __t.townBuildSet(true); __t.bldTap(...__t.at(10,11)); __t.bldStow(); __t.townBuildSet(false); __t.lodgeEnter(); __t.townBuildSet(true);
+    __t.townBuildSet(true); __t.bldTap(16,18); __t.bldStow(); __t.townBuildSet(false); __t.lodgeEnter(); __t.townBuildSet(true);
     T.tab='store'; __t.townTrayUI(); o.split=__t.bldStored().length===0&&document.getElementById('townStoreN').textContent==='0';
     __t.townBuildSet(false); __t.lodgeLeave(); __t.townBuildSet(true); T.tab='store'; __t.townTrayUI();
     o.townSide=__t.bldStored('fence').length===1&&!!document.querySelector('#townTrow [data-stored="fence"]');

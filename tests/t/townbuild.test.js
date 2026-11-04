@@ -17,7 +17,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   /* 1. an old ll-town (step 3's shape) loads with nothing built and no graves; a piece that can't stand is paid back */
   const old=await p.evaluate(()=>{
     const fx=__t.townFix({v:1,startInTown:false,px:12,py:14,visits:3,res:{timber:5,iron:5,tallow:0,curios:0}});
-    const bad=__t.townFix({v:2,res:{iron:0},decos:[{id:'lamp',c:17,r:20},{id:'cobble',c:9,r:23},{id:'cobble',c:9,r:23},{id:'nope',c:10,r:23}]});
+    const bad=__t.townFix({v:2,res:{iron:0},decos:[{id:'lamp',c:17,r:18},{id:'cobble',c:9,r:23},{id:'cobble',c:9,r:23},{id:'nope',c:10,r:23}]});
     return {decos:fx.decos,graves:fx.graves,res:fx.res,visits:fx.visits,bad:bad.decos,badRes:bad.res};
   });
   ok(Array.isArray(old.decos)&&!old.decos.length&&Array.isArray(old.graves)&&!old.graves.length&&old.res.timber===5&&old.visits===3,'an old ll-town loads with empty decos and graves, keeping its haul',old);
@@ -34,15 +34,15 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     o.solidNow=__t.townSolid(...__t.at(3,15)); o.at=(__t.townDecoAt(...__t.at(3,15))||{}).id;
     o.cob=__t.townPlace('cobble',...__t.at(4,14)); o.cobWalk=!__t.townSolid(...__t.at(4,14));
     o.tree=__t.townPlace('tree',...__t.at(6,17)); o.treeTiles=[__t.at(6,17),__t.at(7,17),__t.at(6,18),__t.at(7,18)].every(([x,y])=>__t.townSolid(x,y));
-    o.deck=__t.townCanPlace('lamp',...__t.at(11,11)); o.rock=__t.townCanPlace('lamp',...__t.at(0,5)); o.house=__t.townCanPlace('fence',2,19);
+    o.deck=__t.townCanPlace('lamp',17,18); o.rock=__t.townCanPlace('lamp',...__t.at(0,5)); o.house=__t.townCanPlace('fence',2,19);
     o.taken=__t.townCanPlace('fence',...__t.at(3,15)); o.treeOver=__t.townCanPlace('fence',...__t.at(7,18)); o.spawn=__t.townCanPlace('fence',...__t.at(12,14));
-    o.spawnPath=__t.townCanPlace('cobble',...__t.at(12,14)); o.frame=__t.townCanPlace('lamp',...__t.at(11,7));
+    o.spawnPath=__t.townCanPlace('cobble',...__t.at(12,14)); o.frame=__t.townCanPlace('lamp',17,15);
     T.p.x=__t.ax(8.5); T.p.y=__t.ay(14.5); o.onYou=__t.townCanPlace('fence',...__t.at(8,14)); T.p.x=__t.ax(12); T.p.y=__t.ay(14);
     o.stoneNone=__t.townCanPlace('stone',...__t.at(2,13));
     const R=__t.townData().res; const keep=Object.assign({},R); R.tallow=1; o.poor=__t.townCanPlace('lamp',...__t.at(2,13)); Object.assign(R,keep);
-    /* wall the deck in on three sides: the fourth is refused */
-    o.w1=__t.townPlace('fence',...__t.at(10,11)); o.w2=__t.townPlace('fence',...__t.at(13,11)); o.w3=__t.townPlace('fence',...__t.at(11,12));
-    o.cut=__t.townCanPlace('fence',...__t.at(12,12)); o.cutPath=__t.townCanPlace('cobble',...__t.at(12,12));
+    /* wall the deck in on three sides: the fourth is refused (the deck is row 18 since the Head-frame went up under the cliff) */
+    o.w1=__t.townPlace('fence',16,18); o.w2=__t.townPlace('fence',19,18); o.w3=__t.townPlace('fence',17,19);
+    o.cut=__t.townCanPlace('fence',18,19); o.cutPath=__t.townCanPlace('cobble',18,19);
     o.reach=__t.townReaches(12,14);
     const before=Object.assign({},__t.townData().res), n0=__t.townData().decos.length;
     o.up=__t.townTakeUp(__t.townDecoAt(...__t.at(3,15))); o.refund=__t.townData().res.iron-before.iron===6&&__t.townData().res.tallow-before.tallow===4;

@@ -111,6 +111,26 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(art.rows&&art.drawn,'each stair is PixelLab rows of 32 by 32 on PX letters, laid into the ground',art);
   ok(art.tip&&art.rules,'the first-visit tip and the rules line teach the Rise and its stairs',art);
 
+  /* 6. the Hearth's carving, whole at its last level: every tile under its circle is the square's cobbles (no Head-frame, no deck,
+     no earth), and its letters glow blue and violet, cut where something stands, in the glow layer over the dark (Criss on #155) */
+  const hc=await p.evaluate(()=>{const T=__t, H=T.HEARTH, o={}; localStorage.removeItem('ll-town'); T.townReset(); T.setDev(false);
+    const D=T.townData(); D.hearth={lv:5}; T.townOpen(); T.townFrame(1/30); const A=T.townArt(), R=T.HEARTH_SHOW[5];
+    o.ground=[]; for(let y=0;y<T.TOWN_H;y++)for(let x=0;x<T.TOWN_W;x++){
+      const nx=Math.max(x*16,Math.min(H.cx,x*16+16)), ny=Math.max(y*16,Math.min(H.cy,y*16+16));
+      if(Math.hypot(nx-H.cx,ny-H.cy)<R-4&&!',oB'.includes(T.TOWN_MAP[y][x]))o.ground.push([x,y,T.TOWN_MAP[y][x]]);}
+    o.frameClear=T.TOWN_FRAME_AT.y+T.TOWN_FRAME_AT.h+1<=Math.floor((H.cy-R)/16);
+    const g=A.glyph, gd=g&&g.getContext('2d').getImageData(0,0,g.width,g.height).data; let blue=0, violet=0;
+    if(gd)for(let i=0;i<gd.length;i+=4){if(!gd[i+3])continue; if(gd[i+1]>gd[i])blue++; else violet++;}
+    o.blue=blue; o.violet=violet; o.halo=!!A.glyphHalo;
+    /* a lamp set on a letter hides it */
+    D.res={timber:99,iron:99,tallow:99,curios:9}; const before=blue+violet; T.townPlace('lamp',13,24); const g2=T.townArt().glyph.getContext('2d').getImageData(0,0,g.width,g.height).data;
+    let b2=0; for(let i=0;i<g2.length;i+=4)if(g2[i+3])b2++; o.cut=b2<before;
+    D.hearth={lv:0}; T.townArt(); T.townClose(); o.cold=!T.townArt().glyph;
+    localStorage.removeItem('ll-town'); T.townReset(); return o;});
+  ok(!hc.ground.length&&hc.frameClear,'the Hearth\'s whole carving lies on the cobbles, clear of the Head-frame and its deck',hc);
+  ok(hc.blue>200&&hc.violet>100&&hc.halo,'the carving\'s letters glow blue and its rim violet, with a halo',hc);
+  ok(hc.cut,'a piece standing on a letter hides its glow',hc);
+
   ok(!errs.length,'no page errors',errs);
   for(const f of fails)console.log('FAIL '+f);
   console.log(fails.length?fails.length+' failed':'shelves ok');

@@ -12039,7 +12039,9 @@ const TOWN_W=36, TOWN_H=36, TOWN_T=16;
    Hearth Beacon, the Peddler's barrow, the Toothmonger's stall, the chandler's house; the lane to the west with the Ember Brazier,
    the Galvanic Smithy and the Drowned Oar; the Ossuary Menagerie to the east), then the shore (rows 30 to 32: shingle, the
    tide-pools, the Try-Works) and the sea. Today's square, as it stood up to v19.12.0 on a map of 24 by 24, is the middle of the
-   Square, moved by TOWN_V2 (townV2() moves what was built with it, once).
+   Square, moved by TOWN_V2 (townV2() moves what was built with it, once). The Head-frame and its two braziers stand at the top of
+   the Square, under the cliff, and the cobbles round the Hearth reach as far as its carving does (HEARTH_CARVE), so the whole
+   design shows at its last level (Criss on #155).
    ^ rock (the cliff face too), ~ the sea, # a building, H the Head-frame over the shaft, o a brazier, T a tree, + a grave, | an
    iron fence, S a patron's shrine, B the Hearth Beacon, x a plot (TOWN_PLOTS): none can be walked. . earth, , cobbles, = the
    Head-frame's deck, where you stand to go down, / a stair up the cliff, : the shore's shingle. The two # tiles west of the
@@ -12060,20 +12062,20 @@ const TOWN_MAP=[
   '^xxxx|.............................^',
   '^^^^^^^^//^^^^^^^^^^^^^^^^//^^^^^^^^',
   '^^^^^^^^//^^^^^^^^^^^^^^^^//^^^^^^^^',
-  '^......T.........,,.........T......^',
-  '^.T.........,,,,,,,,,,,,.........T.^',
-  '^...........,,,o,,,,o,,,#####.###..^',
-  '^#####......,,,,HHHH,,,,#####.###..^',
-  '^#####.##...,##,HHHH,,,,#####.###..^',
-  '^#####.#####,,,,,==,,,,,#####......^',
+  '^......T.....,,,,,,,,,,.....T......^',
+  '^.T.........,,,,HHHH,,,,.........T.^',
+  '^...........,,,oHHHHo,,,#####.###..^',
+  '^#####......,,,,,==,,,,,#####.###..^',
+  '^#####.##...,##,,,,,,,,,#####.###..^',
+  '^#####.#####,,,,,,,,,,,,#####......^',
   '^#####.#####,,,,o,,o,,,,...........^',
   '^,,,,,,,,,,,,,,,,,,,,,,,......T....^',
   '^.......T...,,,,,,,,,,,,..T........^',
   '^...........,,,,,BB,,,,,.....xxxxxx^',
-  '^...T.....T......BB.......T..xxxxxx^',
-  '^................,,.........Txxxxxx^',
-  '^T......T.##.....,,....T.....xxxxxx^',
-  '^....T...........,,..........xxxxxx^',
+  '^...T.....T.,,,,,BB,,,,,..T..xxxxxx^',
+  '^...........,,,,,,,,,,,,....Txxxxxx^',
+  '^T......T.##.,,,,,,,,,,T.....xxxxxx^',
+  '^....T........,,,,,,,,.......xxxxxx^',
   '^............................xxxxxx^',
   '^xxxxxx::::::::::::::###:::::::::::^',
   '^xxxxxx::::::::::::::###:::::::::::^',
@@ -12103,7 +12105,7 @@ const TOWN_HOUSES=[
   {x:1,y:18,w:5,h:4,door:1,win:[0,3],lit:[false,true],ruin:true,art:'oar'},
   {x:5,y:2,w:4,h:2,crypt:true,art:'crypt'}];
 /* the Head-frame over the shaft: its four tiles by two, and where its tower rises over the rows behind it */
-const TOWN_FRAME_AT={x:16,y:18,w:4,h:2};
+const TOWN_FRAME_AT={x:16,y:16,w:4,h:2};
 
 /* Step 6: Workshops and the one town gift, with its price (EXPANSION3_TOWN.md §0.3 & §6.1) */
 const TOWN_BUILDING_KEYS=['brazier','quay','smithy','belfry','menagerie'];
@@ -12285,6 +12287,10 @@ const HEARTH_MAX=5;
 const HEARTH_COST=[{tallow:15,curios:1},{tallow:30,curios:2},{tallow:45,curios:3},{tallow:65,curios:4},{tallow:90,curios:5}];
 const HEARTH_RAIN=[0,56,88,120,152,192], HEARTH_KEEP=[1,.6,.45,.34,.25,.16], HEARTH_LIFT=[0,.08,.12,.16,.2,.25];
 const HEARTH_SHOW=[0,28,42,56,68,80], HEARTH_LIGHT=[0,40,48,56,64,72];
+/* the carving's letters glow (map expansion, M1: Criss on #155): the ring of letters (radii in the carving's pixels, from its
+   middle) blue, the writing round its rim violet; the halo's reach; how bright it burns at each level, and how far it swells and
+   fades over its slow breath (a period in seconds; still with Lite or Reduce Motion). Shape only, for playtest */
+const HEARTH_GLYPH={ring:[54,63],rim:[63.5,73],blue:'h',violet:'w',halo:3,lv:[0,.35,.45,.55,.65,.8],swing:.25,breath:4.5};
 const HEARTH_TEXT={
   cold:'A broad iron basket on a plinth of three steps, cold, its coals black with old rain. Someone built it to be seen from the sea. Nobody has lit it since the water came.',
   lv:['The coals take. Round the plinth the rain falls thinner, and where the cobbles dry you can see they were laid over something older: a groove cut deep in the stone, curving away under them.',
@@ -12881,7 +12887,7 @@ function townWorkshop(id,note){
 }
 
 /* you stand here to go down: the deck in front of the shaft */
-const TOWN_DECK={x:18,y:20.6}, TOWN_SPAWN={x:18,y:23};
+const TOWN_DECK={x:18,y:18.6}, TOWN_SPAWN={x:18,y:23};
 const TOWN_SPEED=3.4, TOWN_NIGHT='rgba(3,4,8,.83)';
 /* the art palette (0.4 and the draft's P_PAL, with the Blood Forest's purple-brown earth). Uppercase letters belong to each
    Keeper's own colours (TOWN_KITS); everything else is shared */
@@ -13097,7 +13103,7 @@ const TOWN_BARKS={
   bellringer:['Listen to the rain on the slate. Every roof has its own note.','I cannot see you. I can hear that you are afraid.']};
 /* what must always be walkable to: the Head-frame's deck, and every Keeper's station and workplace. townCanPlace() refuses any
    piece that would cut one off from the Head-frame's side of the square, and nothing may stand on one (townBuildable) */
-const TOWN_KEEP=[[17,20],[18,20]].concat(...Object.values(TOWN_STAND).map(s=>[s.st,s.wk]));
+const TOWN_KEEP=[[17,18],[18,18]].concat(...Object.values(TOWN_STAND).map(s=>[s.st,s.wk]));
 for(const k of TOWN_BUILDING_KEYS)TOWN_KEEP.push([TOWN_WORKSHOPS[k].dx,TOWN_WORKSHOPS[k].dy]);
 /* step 7: where the rescued souls stand, and the ground in front of their places, even before they are home */
 for(const k in TOWN_SOULS)TOWN_KEEP.push(TOWN_SOULS[k].st,[TOWN_SOULS[k].dx,TOWN_SOULS[k].dy]);
@@ -15566,16 +15572,41 @@ function hearthArt(lv){
 /* the carving as far as the fire has dried it (a ring of HEARTH_SHOW[lv], its edge a dithered cut in the cobbles), only where the
    ground is stone and no path is laid over it. Made when the Hearth is fed or a path changes (townDecoSync), never per frame */
 function hearthCarve(A){
-  const lv=A.hearth.lv, R=HEARTH_SHOW[lv]; A.carveLv=lv; A.carve=null;
+  const lv=A.hearth.lv, R=HEARTH_SHOW[lv]; A.carveLv=lv; A.carve=null; A.glyph0=null;
   if(!R)return;
   const rows=HEARTH_CARVE, h=rows.length, w=rows[0].length, x0=HEARTH.kx-(w>>1), y0=HEARTH.ky-(h>>1);
-  const [cv,c]=tCanvas(w,h), img=c.createImageData(w,h), d=img.data;
+  const [cv,c]=tCanvas(w,h), img=c.createImageData(w,h), d=img.data, [gv,gx]=tCanvas(w,h), gim=gx.createImageData(w,h), g=gim.data;
+  const G=HEARTH_GLYPH, GB=PX_RGB[G.blue], GV=PX_RGB[G.violet];
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){const ch=rows[y][x]; if(ch==='.')continue;
     const wx=x0+x, wy=y0+y, tx=wx>>4, ty=wy>>4, m=townCh(tx,ty);
     if((m!==','&&m!=='o'&&m!=='B')||TOWN_LAID.has(ty*TOWN_W+tx))continue;
     const q=Math.hypot(wx-HEARTH.cx,wy-HEARTH.cy)+(tBayer(wx,wy)-.5)*6; if(q>=R)continue;
-    const p=PX_RGB[q>=R-1.5?'1':ch], i=(y*w+x)*4; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;}
+    const p=PX_RGB[q>=R-1.5?'1':ch], i=(y*w+x)*4; d[i]=p[0]; d[i+1]=p[1]; d[i+2]=p[2]; d[i+3]=255;
+    /* the letters in the ring glow blue, the writing round its rim violet (map expansion, M1: Criss on #155) */
+    if(q>=R-1.5)continue;
+    const k=Math.hypot(x-(w>>1),y-(h>>1)), col=k>=G.ring[0]&&k<G.ring[1]&&ch!=='q'?GB:k>=G.rim[0]&&k<G.rim[1]&&ch==='0'?GV:null;
+    if(col){g[i]=col[0]; g[i+1]=col[1]; g[i+2]=col[2]; g[i+3]=255;}}
   c.putImageData(img,0,0); cv.x0=x0; cv.y0=y0; A.carve=cv;
+  gx.putImageData(gim,0,0); A.glyph0=gv;
+}
+/* the glow of the carving's letters, with what stands on the square cut out of it (a lamp or a brazier in front of a letter
+   hides it), and a soft halo round it. Made with the carving and whenever what stands changes (townDecoSync), never per frame */
+function hearthGlow(A){
+  A.glyph=null; A.glyphHalo=null;
+  const g0=A.glyph0, C=A.carve; if(!g0||!C)return;
+  const w=g0.width, h=g0.height, [gv,gx]=tCanvas(w,h); gx.drawImage(g0,0,0);
+  gx.globalCompositeOperation='destination-out';
+  for(const o of A.props){if(o.x>C.x0+w||o.y>C.y0+h||o.x+o.c.width<C.x0||o.y+o.c.height<C.y0)continue; gx.drawImage(o.c,o.x-C.x0,o.y-C.y0);}
+  gx.globalCompositeOperation='source-over';
+  /* the halo: the letters spread by a box blur, three pixels each way, once */
+  const P=HEARTH_GLYPH.halo, W=w+P*2, H=h+P*2, src=gx.getImageData(0,0,w,h).data, [hv,hx]=tCanvas(W,H), im=hx.createImageData(W,H), o=im.data;
+  const acc=new Float32Array(W*H*4);
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4; if(!src[i+3])continue;
+    for(let dy=-P;dy<=P;dy++)for(let dx=-P;dx<=P;dx++){const j=((y+P+dy)*W+x+P+dx)*4; acc[j]+=src[i]; acc[j+1]+=src[i+1]; acc[j+2]+=src[i+2]; acc[j+3]+=1;}}
+  const n=(P*2+1)*(P*2+1);
+  for(let j=0;j<acc.length;j+=4){const a=acc[j+3]; if(!a)continue; o[j]=acc[j]/a; o[j+1]=acc[j+1]/a; o[j+2]=acc[j+2]/a; o[j+3]=Math.min(255,a/n*255*2.2);}
+  hx.putImageData(im,0,0);
+  gv.x0=C.x0; gv.y0=C.y0; hv.x0=C.x0-P; hv.y0=C.y0-P; A.glyph=gv; A.glyphHalo=hv;
 }
 /* the trees (art pass A3): three from PixelLab, two in leaf and one dead, picked by where each stands; 32 wide, standing on
    their tile's foot */
@@ -15874,6 +15905,7 @@ function townDecoSync(){
   for(const d of T.decos)if(d!==BLD_SKIP){const R=pieceRect(d,TOWN_DECOS[d.id]); townDecoProps(d,R.x,R.y,props,lights,em);}
   props.sort((a,b)=>a.base-b.base); em.sort((a,b)=>a.base-b.base);
   A.props=props; A.lightsD=lights; A.em=em;
+  hearthGlow(A);
   townKeepers();
 }
 /* what a built piece puts in the scene with its footprint's top-left at (x, y) in art pixels: what stands, what glows, its light.
@@ -18109,6 +18141,10 @@ function townDraw(){
     for(;;){const kb=cut<cn?cr[cut].base:1e9, pb=youCut?1e9:pfy; if(Math.min(kb,pb)>=b)break;
       if(pb<=kb){gc.drawImage(spr.c,pfx-8-cx,pfy-22-cy); youCut=true;} else townCrowdDraw(gc,A,cr[cut++],cx,cy,false,true);}
     gc.globalCompositeOperation='source-over';};
+  /* the carving's letters (map expansion, M1), under all that glows: on the ground, so every figure standing on them cuts them */
+  if(!IN&&A.glyph&&HS){const k=HEARTH_GLYPH, b=k.lv[HS.lv]*(still?1:1-k.swing*(.5+.5*Math.sin(TWN.t*Math.PI*2/k.breath)));
+    if(!lite){gc.globalAlpha=b*.7; gc.drawImage(A.glyphHalo,A.glyphHalo.x0-cx,A.glyphHalo.y0-cy);}
+    gc.globalAlpha=b; gc.drawImage(A.glyph,A.glyph.x0-cx,A.glyph.y0-cy); gc.globalAlpha=1;}
   for(const o of A.em){cutTo(o.base); if(o.book)gc.drawImage(lodgeBookEm(o.g,BK.s,BK.b,o.n),o.x-cx,o.y-cy); else if(o.fl)gc.drawImage(o.fl[still?0:(tq+o.ph)%o.fl.length],o.x-cx,o.y-cy); else gc.drawImage(o.c,o.x-cx,o.y-cy);}
   /* and whoever stands in front of the last glow of all */
   cutTo(1e9);

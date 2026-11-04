@@ -77,12 +77,13 @@ const shots=process.argv[3]||'.';
     let bad=0; for(let i=0;i<200&&T.path;i++){__t.townStep(.05); if(!__t.townFree(P.x,P.y))bad++;}
     out.at=[+P.x.toFixed(2),+P.y.toFixed(2)]; out.bad=bad; out.arrived=Math.hypot(P.x-__t.ax(20.5),P.y-__t.ay(13.5))<.1;
     /* round the Head-frame: from below it to the north side of the square */
-    P.x=__t.ax(12); P.y=__t.ay(13.5); __t.townTapTile(...__t.at(12,6));
+    P.x=__t.ax(12); P.y=__t.ay(13.5); __t.townTapTile(19,15);
     for(let i=0;i<300&&T.path;i++){__t.townStep(.05); if(!__t.townFree(P.x,P.y))bad++;}
-    out.north=Math.hypot(P.x-__t.ax(12.5),P.y-__t.ay(6.5))<.1; out.bad2=bad;
-    /* beside the tower, not under it: a tap there walks there and opens nothing */
-    P.x=__t.ax(12); P.y=__t.ay(13.5); __t.townTapTile(...__t.at(10,7)); out.side=T.goal===null; for(let i=0;i<300&&T.path;i++)__t.townStep(.05);
-    out.sideAt=Math.hypot(P.x-__t.ax(10.5),P.y-__t.ay(7.5))<.1&&document.getElementById('modal').hidden;
+    out.north=Math.hypot(P.x-19.5,P.y-15.5)<.1; out.bad2=bad;
+    /* beside the tower, not under it: a tap there walks there and opens nothing (map expansion, M1: the Head-frame stands under
+       the cliff, so beside the tower is the square's top row) */
+    P.x=__t.ax(12); P.y=__t.ay(13.5); __t.townTapTile(16,15); out.side=T.goal===null; for(let i=0;i<300&&T.path;i++)__t.townStep(.05);
+    out.sideAt=Math.hypot(P.x-16.5,P.y-15.5)<.1&&document.getElementById('modal').hidden;
     /* a tap on a building walks to the nearest open ground beside it */
     __t.townTapTile(...__t.at(20,9)); for(let i=0;i<300&&T.path;i++)__t.townStep(.05);
     out.house=[+P.x.toFixed(2),+P.y.toFixed(2)]; out.houseOk=__t.townFree(P.x,P.y)&&Math.hypot(P.x-__t.ax(20.5),P.y-__t.ay(9.5))<2.6;
@@ -141,7 +142,7 @@ const shots=process.argv[3]||'.';
   const run=await p.evaluate(()=>({town:__t.TWN.on, shown:!document.getElementById('townOverlay').hidden, F:!!__t.F, floor:__t.run&&__t.run.floor, kit:__t.run&&__t.run.kit,
     title:document.getElementById('title').hidden, saved:JSON.parse(localStorage.getItem('ll-town'))}));
   ok(!run.town&&!run.shown&&run.F&&run.floor===0&&run.kit==='lamplighter'&&run.title,'Descend the stair closes the town and starts the run on the Cistern',run);
-  ok(run.saved&&run.saved.v===2&&Math.abs(run.saved.px-18)<1.2&&Math.abs(run.saved.py-20.6)<.6,'ll-town keeps where you stood',run.saved);
+  ok(run.saved&&run.saved.v===2&&Math.abs(run.saved.px-18)<1.2&&Math.abs(run.saved.py-18.6)<.6,'ll-town keeps where you stood',run.saved);
 
   /* a saved run is asked about from the Head-frame, never thrown away by one tap */
   await p.evaluate(()=>{__t.checkpoint(); document.getElementById('pauseBtn').click();});
@@ -188,7 +189,7 @@ const shots=process.argv[3]||'.';
   const k1=await snapKeys();
   ok(JSON.stringify(k0)===JSON.stringify(k1),'a walk in the town changes no other save key',{k0,k1});
   /* an old or broken ll-town loads: a spot that is solid now puts you back at the square */
-  const mig=await p.evaluate(()=>{localStorage.setItem('ll-town',JSON.stringify({v:1,px:12,py:10,startInTown:true,future:{a:1}})); __t.townReset(); const t=__t.townData();
+  const mig=await p.evaluate(()=>{localStorage.setItem('ll-town',JSON.stringify({v:1,px:12,py:8,startInTown:true,future:{a:1}})); __t.townReset(); const t=__t.townData();
     localStorage.setItem('ll-town','"junk"'); __t.townReset(); const u=__t.townData(); localStorage.removeItem('ll-town'); __t.townReset();
     return {t,u};});
   ok(mig.t.px===18&&mig.t.py===23&&mig.t.v===2&&mig.t.startInTown===true&&mig.t.future&&mig.t.future.a===1&&mig.u.v===2&&mig.u.startInTown===false,'ll-town loads old, broken or newer shapes safely',mig);
