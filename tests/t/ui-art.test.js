@@ -91,6 +91,10 @@ const {chromium}=require('playwright');
     pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();});
     T.setMode('pillar'); T.forceUI(); o.armed=pb.classList.contains('armed')&&getComputedStyle(pb).borderImageSource!==getComputedStyle(bs().find(b=>b!==pb)).borderImageSource;
     T.setMode(null); T.forceUI(); o.cancel=fl(pb);
+    /* a rite charge arms a cooling rite at once (its F.cd goes to 0 while you aim): that is not the rite coming ready */
+    T.run.charge={floor:T.run.floor,n:1}; T.F.phase='wave'; T.F.queue=[]; T.F.cd.pillar=12; T.forceUI(); pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();});
+    T.setP(false); T.castRite('pillar'); T.setP(true); T.forceUI(); o.charged={mode:T.mode,cd:T.F.cd.pillar,flash:fl(pb)};
+    T.castRite('pillar'); T.F.phase='build'; T.run.charge=null; T.F.cd.pillar=0; T.forceUI();
     o.rn=getComputedStyle(document.getElementById('cmdbar')).getPropertyValue('--rn').trim();
     return o;});
   ok(rite.sig.every(([k,c])=>c.split(' ').includes('ui-ic-rt-'+k))&&rite.sig.length===3&&rite.span,'every rite wears its own sigil, and its status is still its first span',rite.sig);
@@ -99,6 +103,7 @@ const {chromium}=require('playwright');
   ok(rite.ready.flash>=1&&rite.ready.others.every(n=>n===0),'the rite that comes ready flashes, and only it',rite.ready);
   ok(rite.armed,'an armed rite lights its runes');
   ok(rite.cancel===0,'putting down a target you were choosing does not flash the rite',rite.cancel);
+  ok(rite.charged.mode==='pillar'&&rite.charged.cd===0&&rite.charged.flash===0,'a charge arming a cooling rite does not flash it',rite.charged);
   ok(rite.rn==='3','the command bar knows how many rites it holds, to give the tray back their sigils’ width',rite.rn);
 
   // I: the build tray. A horror's count rides on its slot, a ward a Trial seals carries a lock, and a ward you can newly afford
