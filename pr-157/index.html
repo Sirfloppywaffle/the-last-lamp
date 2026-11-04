@@ -11431,11 +11431,12 @@ function renderTray(){
   const key=items.map((i,ix)=>i.kind+i.type+':'+costLabel(i)+':'+(i.kind==='horror'?avail(i.type):'')+':'+(run.ess>=itemCost(i)?1:0)+':'+(isSel(i)?1:0)+':'+(bar[ix]?1:0)).join('|');
   if(key===trayKey)return; trayKey=key;
   const el=$('#tray');
-  const poor=items.map((i,ix)=>!bar[ix]&&(run.ess<itemCost(i)||(i.kind==='horror'&&avail(i.type)<=0)));
+  /* what you can afford, apart from what a Trial bars: a ward the sixth ward of Rationed bars is not one you can newly afford */
+  const poor=items.map(i=>run.ess<itemCost(i)||(i.kind==='horror'&&avail(i.type)<=0));
   el.innerHTML=items.map((i,ix)=>'<button class="titem '+i.kind+(isSel(i)?' on':'')+(bar[ix]?' is-barred':poor[ix]?' poor':'')+'" data-ix="'+ix+'" aria-pressed="'+isSel(i)+'"><canvas width="72" height="72"></canvas><span class="nm">'+itemName(i)+'</span><span class="ct">'+costLabel(i)+'</span>'
     +(i.kind==='horror'?'<b class="tray-cnt" aria-label="'+avail(i.type)+' ready">×'+avail(i.type)+'</b>':'')+(bar[ix]?'<i class="ui-ic ui-ic-lock tray-lock" aria-hidden="true"></i>':'')+'</button>').join('');
   const L=TRAY_LAST, now={}; items.forEach((i,ix)=>now[i.kind+i.type]=poor[ix]); TRAY_LAST={F,poor:now};
-  if(L&&L.F===F&&!reduceMotion)el.querySelectorAll('.titem').forEach(b=>{const i=items[+b.dataset.ix], k=i.kind+i.type; if(L.poor[k]&&!now[k])b.animate(TRAY_FLASH,{duration:600,easing:'ease-out'});});
+  if(L&&L.F===F&&!reduceMotion)el.querySelectorAll('.titem').forEach(b=>{const ix=+b.dataset.ix, i=items[ix], k=i.kind+i.type; if(L.poor[k]&&!now[k]&&!bar[ix])b.animate(TRAY_FLASH,{duration:600,easing:'ease-out'});});
   el.querySelectorAll('.titem').forEach(b=>{
     const i=items[+b.dataset.ix];
     b.onclick=()=>{
@@ -11651,11 +11652,11 @@ function renderRites(){
     if(mode===k)txt='Choose a target';
     b.style.setProperty('--cd',frac);
     b.querySelector('span').textContent=txt;
-    const was=b.classList.contains('ready');
     b.classList.toggle('ready',frac===0&&mode!==k);
-    /* the moment a rite comes ready (not when its button is first drawn), it flashes and its sigil leaps */
-    if(b._drawn&&!was&&frac===0&&mode!==k&&!reduceMotion){b.animate(RITE_FLASH,{duration:650,easing:'ease-out'}); b.firstChild.animate(RITE_LEAP,{duration:500,easing:'ease-out'});}
-    b._drawn=true;
+    /* the moment a rite's cooldown runs out (not when its button is first drawn, nor when you put down a target you were
+       choosing), it flashes and its sigil leaps */
+    if(b._cool&&frac===0&&!reduceMotion){b.animate(RITE_FLASH,{duration:650,easing:'ease-out'}); b.firstChild.animate(RITE_LEAP,{duration:500,easing:'ease-out'});}
+    b._cool=frac>0;
     b.classList.toggle('armed',mode===k);
     b.classList.toggle('is-charged',chg&&mode!==k);
     b.disabled=frac>0&&mode!==k&&!chg;
