@@ -54,8 +54,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.trees=new Set(props.tree.map(c=>c.toDataURL())).size; out.graves=new Set(props.grave.map(c=>c.toDataURL())).size;
     out.props=[...props.tree,...props.grave].every(c=>onPX(c)&&foot(c));
     out.housePX=T.TOWN_HOUSES.every(h=>onPX(T.townHouse(h).cv));
-    /* the railings: east to west (row 1) is bars, north to south (column 7) a post a tile */
-    const ew=T.townFence(9,1), ns=T.townFence(7,3), cols=cv=>{const d=px(cv), w=cv.width; let n=0; for(let x=0;x<w;x++){for(let y=0;y<cv.height;y++)if(d[(y*w+x)*4+3]){n++; break;}} return n;};
+    /* the railings: east to west (the cemetery's row 1) is bars, north to south (its column 1) a post a tile */
+    const ew=T.townFence(6,1), ns=T.townFence(1,4), cols=cv=>{const d=px(cv), w=cv.width; let n=0; for(let x=0;x<w;x++){for(let y=0;y<cv.height;y++)if(d[(y*w+x)*4+3]){n++; break;}} return n;};
     out.fence=[cols(ew),cols(ns),foot(ew),foot(ns)];
     return out;});
   ok(!r.bad.length,'every building has its art and its ruin, none wider than its footprint',r.bad);

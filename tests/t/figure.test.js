@@ -91,7 +91,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   /* 3. drawn: in the square he is the figure from TOWN_FIG; a freed Ambrose at his post breathes (another Keeper carried) */
   const sq=await p.evaluate(()=>{const T=__t; T.setDev(true); T.townReset(); T.townOpen();
     const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
-    const W=T.TWN, o={kit:W.kit}; W.p.x=12.5; W.p.y=12.8; W.p.face='d'; W.p.moving=false; W.cx=null; W.path=null; W.t=.1; T.townFrame(1/60); T.townFrame(1/60);
+    const W=T.TWN, o={kit:W.kit}; W.p.x=__t.ax(12.5); W.p.y=__t.ay(12.8); W.p.face='d'; W.p.moving=false; W.cx=null; W.path=null; W.t=.1; T.townFrame(1/60); T.townFrame(1/60);
     return o;});
   await p.waitForTimeout(80);
   await p.screenshot({path:shots+'/figure-square.png'});

@@ -33,7 +33,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   const turn=await p.evaluate(()=>{
     localStorage.removeItem('ll-town'); __t.townReset(); __t.setDev(false);
     const D=__t.townData(); D.res={timber:300,iron:300,tallow:300,curios:30}; D.free=false; __t.townSave();
-    __t.townOpen(); const T=__t.TWN; T.p.x=12; T.p.y=14; T.path=null;
+    __t.townOpen(); const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.path=null;
     __t.townRestoreLodge(); __t.lodgeEnter(); __t.townBuildSet(true);
     const o={place:__t.lodgePlace('chair',3,5)}; const d=D.lodge.furn.find(e=>e.id==='chair');
     __t.bldTap(3,5); o.lifted=!!T.lift; o.seq=[];
@@ -42,7 +42,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     __t.bldTurn(1); __t.bldTurn(1); __t.bldTurn(-1); o.back=T.lift.f;
     __t.bldDrop(); o.saved=d.f;
     __t.townBuildSet(false); __t.lodgeLeave(); __t.townBuildSet(true);
-    __t.townPlace('fence',3,15); __t.bldTap(3,15); o.fseq=[]; for(let i=0;i<4;i++){__t.bldTurn(1); o.fseq.push(T.lift.f);} __t.bldCancel();
+    __t.townPlace('fence',...__t.at(3,15)); __t.bldTap(...__t.at(3,15)); o.fseq=[]; for(let i=0;i<4;i++){__t.bldTurn(1); o.fseq.push(T.lift.f);} __t.bldCancel();
     __t.townBuildSet(false); __t.townClose();
     return o;});
   ok(turn.place===''&&turn.lifted,'the Armchair goes down and lifts',turn);
@@ -71,7 +71,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
      in a corner and the tiles beside it stay free */
   const foot=await p.evaluate(()=>{
     localStorage.removeItem('ll-town'); __t.townReset(); const D=__t.townData(); D.res={timber:300,iron:300,tallow:300,curios:30}; D.free=false;
-    __t.townOpen(); const T=__t.TWN; T.p.x=12; T.p.y=14; __t.townRestoreLodge(); __t.lodgeEnter(); __t.townBuildSet(true); T.p.x=5; T.p.y=8.4;
+    __t.townOpen(); const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(14); __t.townRestoreLodge(); __t.lodgeEnter(); __t.townBuildSet(true); T.p.x=5; T.p.y=8.4;
     const o={desk:__t.lodgePlace('desk',2,5)};
     __t.bldTap(2,5); __t.bldTurn(1); __t.bldTurn(1); o.liftW=[T.lift.f,!!T.lift.why]; __t.bldDrop();
     o.deskTiles=[[2,5],[3,5],[2,6]].map(([x,y])=>!!__t.lodgeAt(x,y));
@@ -106,11 +106,11 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   /* 7. in the room: the lights stay, the art redraws per facing, and a turned boardwalk repaints its tile */
   const scene=await p.evaluate(()=>{
     localStorage.removeItem('ll-town'); __t.townReset(); const D=__t.townData(); D.res={timber:300,iron:300,tallow:300,curios:30}; D.free=false;
-    __t.townOpen(); const T=__t.TWN; T.p.x=12; T.p.y=14; T.path=null;
-    __t.townBuildSet(true); __t.townPlace('board',3,15); __t.townFrame(1/30);
-    const A=__t.townArt(), g=A.ground.getContext('2d'), tile=()=>[...g.getImageData(48,240,16,16).data].join(',');
-    const t0=tile(); __t.bldTap(3,15); __t.bldTurn(1); __t.bldDrop(); const t1=tile();
-    __t.bldTap(3,15); __t.bldTurn(1); __t.bldDrop(); const t2=tile();
+    __t.townOpen(); const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.path=null;
+    __t.townBuildSet(true); __t.townPlace('board',...__t.at(3,15)); __t.townFrame(1/30);
+    const A=__t.townArt(), g=A.ground.getContext('2d'), tile=()=>[...g.getImageData(9*16,24*16,16,16).data].join(',');
+    const t0=tile(); __t.bldTap(...__t.at(3,15)); __t.bldTurn(1); __t.bldDrop(); const t1=tile();
+    __t.bldTap(...__t.at(3,15)); __t.bldTurn(1); __t.bldDrop(); const t2=tile();
     __t.townBuildSet(false);
     __t.townRestoreLodge(); __t.lodgeEnter(); __t.townBuildSet(true); T.p.x=5; T.p.y=8.4;
     __t.lodgePlace('stove',2,4); const n0=__t.lodgeArt().lights.length; const st=D.lodge.furn.find(e=>e.id==='stove');
@@ -124,9 +124,9 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
 
   /* 8. the real UI: ⟳ held turns back, a tap on the lifted piece turns it, a tap elsewhere moves it */
   await p.evaluate(()=>{localStorage.removeItem('ll-town'); __t.townReset(); const D=__t.townData(); D.res={timber:50,iron:50,tallow:50,curios:5}; D.free=false; __t.townSave();
-    __t.townOpen(); const T=__t.TWN; T.p.x=12; T.p.y=14; T.path=null; __t.townPlace('fence',14,14); T.cx=null; __t.townFrame(1/30);
+    __t.townOpen(); const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.path=null; __t.townPlace('fence',...__t.at(14,14)); T.cx=null; __t.townFrame(1/30);
     document.getElementById('townBuild').click(); while(!document.getElementById('townCardWrap').hidden)document.getElementById('townCard').click();});
-  const pos=await p.evaluate(()=>{const T=__t.TWN, k=T.k/T.dpr; return {k,x:((14*16+8)-T.lcx)*k,y:((14*16+8)-T.lcy)*k};});
+  const pos=await p.evaluate(()=>{const T=__t.TWN, k=T.k/T.dpr; return {k,x:((20*16+8)-T.lcx)*k,y:((23*16+8)-T.lcy)*k};});
   await p.mouse.click(pos.x,pos.y); await p.waitForTimeout(60);
   const u0=await p.evaluate(()=>({lift:!!__t.TWN.lift,f:__t.TWN.lift&&__t.TWN.lift.f,turn:!document.getElementById('townTurn').hidden&&!document.getElementById('townLiftBar').hidden}));
   await p.click('#townTurn'); await p.waitForTimeout(40);
@@ -144,14 +144,14 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   const u5=await p.evaluate(()=>({f:__t.TWN.lift.f,c:__t.TWN.lift.c}));
   ok(u0.lift&&u0.turn&&u0.f===0,'lifting shows ⟳ with Place, Cancel and Store',u0);
   ok(u1===2&&u2===0,'⟳ turns the fence a quarter; held, it turns it back',{u1,u2});
-  ok(u3.f===2&&u3.c===14&&u4.f===0&&u4.c===14,'a tap on the lifted piece turns it; held there, it turns back; it never moves',{u3,u4});
-  ok(u5.c===16&&u5.f===0,'a tap beside it still moves it there',u5);
+  ok(u3.f===2&&u3.c===20&&u4.f===0&&u4.c===20,'a tap on the lifted piece turns it; held there, it turns back; it never moves',{u3,u4});
+  ok(u5.c===22&&u5.f===0,'a tap beside it still moves it there',u5);
   await p.evaluate(()=>{__t.townBuildSet(false); __t.townClose();});
 
   /* 9. developer mode turns pieces and writes nothing (rule 24) */
   const dev=await p.evaluate(()=>{
     const before=localStorage.getItem('ll-town');
-    __t.setDev(true); __t.townReset(); __t.townOpen(); const T=__t.TWN; T.p.x=12; T.p.y=14; T.path=null; __t.townBuildSet(true);
+    __t.setDev(true); __t.townReset(); __t.townOpen(); const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.path=null; __t.townBuildSet(true);
     const d=__t.townData().decos.find(e=>e.id==='fence'); __t.bldTap(d.c,d.r); __t.bldTurn(1); __t.bldDrop(); __t.bldTap(d.c,d.r); __t.bldTurn(1); __t.bldStow();
     __t.townBuildSet(false); __t.townClose(); const after=localStorage.getItem('ll-town'); __t.setDev(false); __t.townReset();
     return before===after;});

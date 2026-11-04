@@ -106,7 +106,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(w.attic[0]==='attic'&&w.attic[1]===2.5&&w.attic[2]===3.5&&w.tip2==='lodgeattic'&&w.down==='Down to the Lodge'&&w.awalls.every(Boolean),'up the ladder you stand beside the Attic’s hatch, with its own card',w);
   ok(w.aart.join()==='attic,true,true,true','the Attic has its round window and the night’s cold light through it, and no brine',w.aart);
   ok(w.main[0]==='main'&&w.main[1]===2.5&&w.main[2]===2.5,'down the hatch you stand at the ladder’s foot',w.main);
-  ok(w.closed[0]===3.5&&w.closed[1]===12.5&&!w.closed[2]&&w.closed[3]==='main'&&w.reenter==='main','closing from the Cellar keeps you before the Lodge’s door; going in again is the main room',w);
+  ok(w.closed[0]===17.5&&w.closed[1]===8.5&&!w.closed[2]&&w.closed[3]==='main'&&w.reenter==='main','closing from the Cellar keeps you before the Lodge’s door; going in again is the main room',w);
   ok(!w.noGo[0]&&!w.noGo[1],'no going to the room you are in, or to one that is not',w.noGo);
 
   /* 4. each room its own floor, wall and furniture; a room's first floor and wall are free in it; storage is one for the Lodge */
