@@ -34,7 +34,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.rare=rare.length; out.dyeWares=Object.values(W).filter(v=>v.dye).map(v=>v.dye).sort().join()===rare.slice().sort().join();
     out.dyeUse=rare.map(k=>[k,Object.keys(T.LODGE_ITEMS).filter(id=>T.dyeTouches(id,k)).length]);
     out.dyePX=rare.every(k=>Object.values(T.LODGE_DYES[k].sw).every(ch=>T.PX[ch]));
-    out.costs=Object.values(W).every(v=>v.bp?v.cost.curios>0&&Object.keys(v.cost).length===1:v.cost.tallow>0&&Object.keys(v.cost).length===1);
+    out.costs=Object.values(W).every(v=>v.bp||v.pk?v.cost.curios>0&&Object.keys(v.cost).length===1:v.cost.tallow>0&&Object.keys(v.cost).length===1);
     /* no trophy and nothing drawn without dyes ever takes one */
     out.noTrophy=rare.every(k=>!T.dyeTouches('keeper',k)&&!T.dyeTouches('primordial',k));
     /* a town saved before the barrow, with a brazier and a fence where it now stands and you standing on it: both come up and
@@ -114,7 +114,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* different trips give different stocks, at least sometimes */
     const seen=new Set(); for(let t=10;t<30;t++){T.townData().trips=t; T.townData().wares=null; seen.add(T.peddlerStock().join());} out.varied=seen.size;
     /* everything held: an empty barrow */
-    const Tn2=T.townData(); Tn2.blueprints=['chapel','observ','coral']; Tn2.dyes=Object.keys(T.LODGE_DYES).filter(x=>T.LODGE_DYES[x].rare); Tn2.trips=40; Tn2.wares=null;
+    const Tn2=T.townData(); Tn2.blueprints=['chapel','observ','coral'].concat(Object.keys(T.TOWN_PACKS)); Tn2.dyes=Object.keys(T.LODGE_DYES).filter(x=>T.LODGE_DYES[x].rare); Tn2.trips=40; Tn2.wares=null;
     out.empty=T.peddlerStock().length;
     T.townOpen(); T.townSoulCard('peddler'); out.emptyBody=document.querySelector('#mBody').textContent; T.closeModal(); T.townClose();
     out.saved=JSON.parse(localStorage.getItem('ll-town')).trips;

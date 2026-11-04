@@ -58,7 +58,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.townSave(); T.townReset(); o.kept=T.townData().blueprints; T.townData().blueprints=[];
     /* the tray: the set chip, then that set's pieces */
     T.townBuildSet(true); const row=document.getElementById('townTrow');
-    o.first=row.children[1]&&row.children[1].id; o.chips0=[...row.querySelectorAll('[data-lodge]')].map(b=>b.dataset.lodge).join();
+    const fc=[...row.children].filter(c=>c.id!=='townMaterials'&&c.id!=='townLight')[0]; o.first=fc&&fc.id; o.chips0=[...row.querySelectorAll('[data-lodge]')].map(b=>b.dataset.lodge).join();
     document.getElementById('townSet').click(); o.set1=T.TWN.set; o.chips1=[...row.querySelectorAll('[data-lodge]')].map(b=>b.dataset.lodge).join();
     o.lockedA=row.querySelectorAll('.locked').length;
     for(let i=0;i<2;i++)document.getElementById('townSet').click(); o.set3=T.TWN.set;
