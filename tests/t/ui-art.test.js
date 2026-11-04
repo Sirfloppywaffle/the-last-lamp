@@ -88,12 +88,17 @@ const {chromium}=require('playwright');
   // G: the HUD keeps its three counts apart, and none of it reaches the board (rule 1), folded and unfolded
   for(const [w,h] of [[412,860],[832,694],[915,356],[393,659]]){
     await p.setViewportSize({width:w,height:h}); await p.waitForTimeout(200);
-    const lay=await p.evaluate(()=>{const T=__t; T.closeModal(); T.newRun(); T.beginFloor(null); T.forceUI();
+    const lay=await p.evaluate(()=>{const T=__t; T.closeModal(); T.newRun(); T.beginFloor(null); T.forceUI(); document.getAnimations().forEach(a=>{if(a instanceof CSSAnimation)return; a.finish();});
       const q=e=>{const r=e.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom];};
       const st=[...document.querySelectorAll('#hud .stat')].map(q), ics=[...document.querySelectorAll('#hud .hud-ic')].map(q), board=q(document.getElementById('board'));
       const over=(a,c)=>a[2]>c[0]+.5&&a[0]<c[2]-.5&&a[3]>c[1]+.5&&a[1]<c[3]-.5;
       return {apart:st.every((a,i)=>st.every((c,j)=>i===j||!over(a,c))),inside:ics.every((r,i)=>r[0]>=st[i][0]-.5&&r[2]<=st[i][2]+.5),clear:ics.every(r=>!over(r,board))};});
     ok(lay.apart&&lay.inside&&lay.clear,'at '+w+'×'+h+' the counts stay apart, each icon in its own, none over the board',lay);
+    /* the madness count is as wide as its longest tier: the pause button and the board never move as madness climbs */
+    const still=await p.evaluate(()=>{const T=__t, t=T.tiers(), o=new Set();
+      for(const m of [0,t[0],t[1],t[2]]){T.run.fume={floor:T.run.floor,n:m}; T.forceUI(); const a=document.getElementById('pauseBtn').getBoundingClientRect(), c=document.getElementById('board').getBoundingClientRect(); o.add([a.left,a.top,c.left,c.top,c.width].map(Math.round).join());}
+      T.run.fume=null; return [...o];});
+    ok(still.length===1,'at '+w+'×'+h+' nothing moves as madness climbs through its tiers',still);
   }
 
   ok(!errs.length,'no page errors',errs);

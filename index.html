@@ -43,7 +43,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
   padding:max(6px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 
 /* HUD */
-.hud{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding-block:2px 6px;border-bottom:1px solid var(--seam)}
+.hud{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding-block:2px 6px;border-bottom:1px solid var(--seam)}
 .where{display:flex;flex-direction:column;gap:3px;margin-right:auto;min-width:0}
 .where span{font-family:var(--f-display);font-weight:700;font-size:1.35rem;line-height:.95;color:var(--tallow)}
 .where small{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ash)}
@@ -84,7 +84,7 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .banner.is-rite b{color:var(--brine)}
 .hint{position:absolute;left:50%;bottom:70px;z-index:5;transform:translateX(-50%);max-width:90%;width:max-content;padding:7px 12px;border-radius:6px;background:var(--veil);font-size:.86rem;color:var(--bone);opacity:0;transition:opacity .25s;pointer-events:none;text-align:center}
 .hint.show{opacity:1}
-.relbar{display:flex;align-items:center;gap:6px;flex:1 1 150px;min-width:0;height:36px;justify-content:flex-end}
+.relbar{display:flex;align-items:center;gap:6px;flex:1 1 120px;min-width:0;height:36px;justify-content:flex-end}
 .relchips{display:flex;align-items:center;gap:5px;overflow-x:auto;scrollbar-width:none;min-width:0;height:36px;padding:0 1px}
 .relchips::-webkit-scrollbar{display:none}
 .relchip{flex:0 0 auto;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid var(--tallow);background:radial-gradient(circle at 35% 30%,#3d3224,#15110c 70%);color:var(--tallow);font-family:var(--f-display);font-size:1.05rem;line-height:1;display:grid;place-items:center}
@@ -571,6 +571,9 @@ body.is-lite .ui-ic,body.is-lite .meter i::after,body.is-lite .meter.madm i{anim
 .stat > .hud-ic{grid-column:1;grid-row:1 / span 2;width:26px;height:26px}
 .stat > .meter{grid-column:1 / -1;width:auto;min-width:80px}
 .stat > .meter.madm{min-width:100px}
+/* wide enough for its longest tier (Whispers), so the pause button beside it never slides as madness climbs */
+#app:not(.side) .st-mad{min-width:138px}
+@media (max-width:380px){.stat > .hud-ic{width:22px;height:22px}.hud{column-gap:10px}#app:not(.side) .st-mad{min-width:134px}}
 .st-oil.is-low .hud-ic{filter:drop-shadow(0 0 3px rgba(218,90,75,.95));animation-duration:520ms}
 .st-mad .hud-ic{filter:drop-shadow(0 0 2px rgba(169,124,226,calc(var(--mt,0)*.3)))}
 .ess{display:inline-block;transform-origin:left center}
