@@ -26,7 +26,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.reach=!!T.townPathTo(S.dx,S.dy)&&!!T.townPathTo(S.st[0],S.st[1]); out.keepOK=T.townKeepOK([]);
     /* beside the Head-frame: within a few tiles of its deck */
     out.near=Math.hypot(S.dx-T.TOWN_DECK.x,S.dy-T.TOWN_DECK.y);
-    out.rows=T.TOWN_MAP.every(r=>r.length===24);
+    out.rows=T.TOWN_MAP.every(r=>r.length===36);
     /* his blueprints are exactly the sets not open from the start; every rare dye changes some piece, and lands on PX letters */
     const W=T.PEDDLER_WARES, locked=Object.keys(T.LODGE_SETS).filter(k=>!T.LODGE_SETS[k].open).sort();
     out.bps=Object.values(W).filter(v=>v.bp).map(v=>v.bp).sort().join()===locked.join();
@@ -39,13 +39,13 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.noTrophy=rare.every(k=>!T.dyeTouches('keeper',k)&&!T.dyeTouches('primordial',k));
     /* a town saved before the barrow, with a brazier and a fence where it now stands and you standing on it: both come up and
        pay back, and you stand at the spawn */
-    const fx=T.townFix({res:{timber:0,iron:0,tallow:0,curios:0},px:7.5,py:10.5,decos:[{id:'brazier',c:7,r:10},{id:'fence',c:8,r:10},{id:'brazier',c:5,r:13}]});
+    const fx=T.townFix({v:2,res:{timber:0,iron:0,tallow:0,curios:0},px:13.5,py:19.5,decos:[{id:'brazier',c:13,r:19},{id:'fence',c:14,r:19},{id:'brazier',c:11,r:23}]});
     out.fix={n:fx.decos.length,iron:fx.res.iron,tallow:fx.res.tallow,px:fx.px,py:fx.py};
     T.townClose();
     return out;});
-  ok(g.fix.n===1&&g.fix.iron>=8&&g.fix.tallow>=6&&!(g.fix.px===7.5&&g.fix.py===10.5),'pieces saved where the barrow now stands come up and pay back; you are moved off it',g.fix);
+  ok(g.fix.n===1&&g.fix.iron>=8&&g.fix.tallow>=6&&!(g.fix.px===13.5&&g.fix.py===19.5),'pieces saved where the barrow now stands come up and pay back; you are moved off it',g.fix);
   ok(g.salt===27&&g.n===3,'the Peddler rolls on SALT.peddler = 27, three wares at a time',g);
-  ok(g.box.length===2&&g.box.every(Boolean)&&g.rows,'his barrow is two solid tiles of the square, and the map stays 24 wide',g);
+  ok(g.box.length===2&&g.box.every(Boolean)&&g.rows,'his barrow is two solid tiles of the square, and the map is 36 wide',g);
   ok(g.keep&&g.free&&g.reach&&g.keepOK,'where he stands and the tile before his barrow are kept clear and reachable',g);
   ok(g.near<4,'his barrow stands by the Head-frame',g.near);
   ok(g.bps&&g.dyeWares&&g.rare>=3&&g.costs,'he sells the three locked sets for curios and every rare dye for tallow',g);
@@ -79,7 +79,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* standing before his barrow, the button names it */
     const S=T.TOWN_SOULS.peddler; T.TWN.p.x=S.dx+.5; T.TWN.p.y=S.dy+.5; T.townStep(1/60);
     out.act=document.querySelector('#townAct').textContent;
-    T.tutSet({walk:'done',seen:Object.keys(T.TIPS).filter(k=>k!=='townpeddler'),off:false});
+    T.setTownGrew(null); T.tutSet({walk:'done',seen:Object.keys(T.TIPS).filter(k=>k!=='townpeddler'),off:false});
     T.townSoulCard('peddler'); out.openTitle=document.querySelector('#mTitle').textContent; out.wares=document.querySelectorAll('#mChoices > *').length;
     out.tip=T.TWN.card; T.closeModal(); T.townClose(); T.tutSet({walk:'done',seen:[],off:true});
     return out;});

@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 8 (the Hearth Beacon), step 7 (the village), step 6 (the Peddler) and art passes A2 and A3a - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after map expansion M1 (two shelves), Expansion 4 step 8 (the Hearth Beacon), step 7 (the village), step 6 (the Peddler) and art passes A2 and A3a - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -22,7 +22,8 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 ## Keeping a tile clear
 
 - [ ] Push the tile in front of the new door or station onto `TOWN_KEEP` (the `TOWN_KEEP.push` lines after it are per step). `townCanPlace()` then refuses a piece there or one that walls it off (`townReaches()`), and `townFix()` takes up and pays back any saved piece that does.
-- [ ] Turning earth into building tiles in `TOWN_MAP`? Keep each row 24 long; `townFix()` already pays back what stood there.
+- [ ] Turning earth into building tiles in `TOWN_MAP`? Keep each row 36 long; `townFix()` already pays back what stood there.
+- [ ] **The map since M1** (map expansion): 36 by 36, two shelves joined by two stairs (`TOWN_STAIRS`, foot and head kept clear). Read places from their tables (`TOWN_HOUSES`, `TOWN_WORKSHOPS`, `TOWN_SOULS`, `TOWN_SHRINES`, `HEARTH`, `LODGE_OUT`, `TOWN_FRAME_AT`, `TOWN_SPAWN`), never from numbers. A plot (`TOWN_PLOTS`) is `x` tiles, solid while shut. A change to where things stand in an old town is a migration in `townFix()` (`townV2()` is the model: move by an offset, Storage for what no longer fits, `TOWN_GREW` for the card). In tests, `__t.at(x, y)` is a tile of the old 24 by 24 square.
 
 ## Saved state
 

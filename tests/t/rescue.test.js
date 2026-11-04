@@ -101,16 +101,16 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const oar=T.TOWN_HOUSES[T.TOWN_SOULS.croupier.house];
     T.townArt(); out.ruin0=oar.ruin; out.bone0=T.townSetGift('bone'); T.townOpen(); out.crowd0=T.TWN.crowd.filter(e=>e.soul).length;
     out.keep=Object.values(T.TOWN_SOULS).every(S=>T.townKept(S.st[0],S.st[1])&&T.townKept(S.dx,S.dy)); out.reach=T.townKeepOK([]);
-    out.solid=[[4,18],[5,18]].every(([x,y])=>T.townSolid(x,y));
+    out.solid=[T.at(4,18),T.at(5,18)].every(([x,y])=>T.townSolid(x,y));
     T.townSoulCard('croupier'); out.ruinCard=document.getElementById('mTitle').textContent; document.getElementById('modal').hidden=true; T.townClose();
     Tn.rescued=['croupier','toothmonger']; T.townSave();
     T.townArt(); out.ruin1=oar.ruin; out.lit1=oar.lit.every(Boolean);
     T.townOpen(); out.crowd1=T.TWN.crowd.filter(e=>e.soul).map(e=>e.k).sort().join();
     out.bone1=T.townSetGift('bone'); out.gift1=T.townData().gift;
     /* the near button at each place, and a tap on each place walks there */
-    T.TWN.p.x=17.5; T.TWN.p.y=20.5; out.nearOar=T.townActLabel(T.townNearAct());
-    T.TWN.p.x=4.5; T.TWN.p.y=19.5; out.nearStall=T.townActLabel(T.townNearAct());
-    T.TWN.p.x=12; T.TWN.p.y=14; T.townTapTile(18,17); out.walkOar=!!(T.TWN.path&&T.TWN.path.length)&&T.TWN.goal&&T.TWN.goal.soul;
+    T.TWN.p.x=T.TOWN_SOULS.croupier.dx+.5; T.TWN.p.y=T.TOWN_SOULS.croupier.dy+.5; out.nearOar=T.townActLabel(T.townNearAct());
+    T.TWN.p.x=T.TOWN_SOULS.toothmonger.dx+.5; T.TWN.p.y=T.TOWN_SOULS.toothmonger.dy+.5; out.nearStall=T.townActLabel(T.townNearAct());
+    T.TWN.p.x=T.TOWN_SPAWN.x; T.TWN.p.y=T.TOWN_SPAWN.y; T.townTapTile(oar.x+2,oar.y+1); out.walkOar=!!(T.TWN.path&&T.TWN.path.length)&&T.TWN.goal&&T.TWN.goal.soul;
     for(let i=0;i<400&&T.TWN.goal;i++)T.townStep(1/30); out.oarCard=document.getElementById('mTitle').textContent; document.getElementById('modal').hidden=true;
     /* trades: always less back than given; a short trade changes nothing */
     /* no round of trades comes out ahead: every cycle of rates multiplies to less than 1 (Floyd–Warshall on the best rates) */
@@ -210,7 +210,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
        with nobody before it, is the one that must still glow) */
     const H=T.townHouse(oar), hx=oar.x*16+((oar.w*16-H.cv.width)>>1), hy=(oar.y+oar.h)*16-H.cv.height, P=T.TOWN_BLD[oar.art].win.map(w=>w[0]);
     cr.x=(hx+P[0][0]+P[0][2]/2)/16; cr.y=(hy+P[0][1]+P[0][3]+14)/16; cr.base=Math.round(cr.y*16); T.TWN.crowd.sort((a,b)=>a.base-b.base);
-    T.TWN.p.x=17.5; T.TWN.p.y=13.5; T.TWN.cx=null; T.TWN.path=null; T.townFrame(1/60);
+    T.TWN.p.x=oar.x+2.5; T.TWN.p.y=oar.y+5.5; T.TWN.cx=null; T.TWN.path=null; T.townFrame(1/60);
     const bc=T.TWN.bc, cx=T.TWN.lcx, cy=T.TWN.lcy, fx=Math.round(cr.x*16)-cx, fy=Math.round(cr.y*16)-cy;
     /* only where his figure is: drawn alone, the same way the square draws him, onto a clear canvas */
     const m=document.createElement('canvas'); m.width=bc.canvas.width; m.height=bc.canvas.height; T.townCrowdDraw(m.getContext('2d'),A,cr,cx,cy,false,true);
@@ -221,18 +221,18 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     for(let i=0;i<w.length;i+=4)if(pane.some(q=>q[0]===w[i]&&q[1]===w[i+1]&&q[2]===w[i+2]))lit++;
     out.window={hit,on,lit,lit0:oar.lit[0]};
     /* walk the cobbles from west to east at full speed, and watch where you stand on the screen once the camera has caught up */
-    T.TWN.p.x=6.5; T.TWN.p.y=13.5; T.TWN.cx=null; T.TWN.path=[{x:17.5,y:13.5}]; T.TWN.goal=null;
+    T.TWN.p.x=T.ax(6.5); T.TWN.p.y=T.ay(13.5); T.TWN.cx=null; T.TWN.path=[{x:T.ax(17.5),y:T.ay(13.5)}]; T.TWN.goal=null;
     const xs=[]; for(let i=0;i<190&&T.TWN.path;i++){T.townFrame(1/60); xs.push(Math.round(T.TWN.p.x*16)-T.TWN.lcx);}
     let back=0; const sx=xs.slice(60); for(let i=2;i<sx.length;i++){const a=sx[i-1]-sx[i-2], b2=sx[i]-sx[i-1]; if(a&&b2&&Math.sign(a)!==Math.sign(b2))back++;}
     out.walk={frames:xs.length,back,span:Math.max(...sx)-Math.min(...sx)};
     /* a tap on the first pixel of a tile picks that tile, in a frame where the drawn offset is not the rounded camera (CodeRabbit) */
-    T.TWN.p.x=6.5; T.TWN.p.y=13.5; T.TWN.cx=null; T.TWN.path=[{x:17.5,y:13.5}];
+    T.TWN.p.x=T.ax(6.5); T.TWN.p.y=T.ay(13.5); T.TWN.cx=null; T.TWN.path=[{x:T.ax(17.5),y:T.ay(13.5)}];
     let tried=0, wrong=0; const k=T.TWN.k/T.TWN.dpr;
     for(let i=0;i<190&&T.TWN.path;i++){T.townFrame(1/60); if(Math.round(T.TWN.cx)===T.TWN.lcx)continue; tried++;
-      for(let tx=8;tx<=15;tx++){const got=T.townPtrTile((tx*16-T.TWN.lcx+.2)*k,(13*16-T.TWN.lcy+8)*k); if(got[0]!==tx||got[1]!==13)wrong++;}}
+      for(let tx=T.ax(8);tx<=T.ax(15);tx++){const got=T.townPtrTile((tx*16-T.TWN.lcx+.2)*k,(T.ay(13)*16-T.TWN.lcy+8)*k); if(got[0]!==tx||got[1]!==T.ay(13))wrong++;}}
     out.tap={tried,wrong};
     /* a walk just off the diagonal keeps one facing */
-    T.TWN.p.x=8.5; T.TWN.p.y=14.5; T.TWN.p.face='r'; T.TWN.path=null; T.TWN.ptr={id:1,x0:100,y0:100,x:144,y:139,t0:0,steer:true,far:60};
+    T.TWN.p.x=T.ax(8.5); T.TWN.p.y=T.ay(14.5); T.TWN.p.face='r'; T.TWN.path=null; T.TWN.ptr={id:1,x0:100,y0:100,x:144,y:139,t0:0,steer:true,far:60};
     /* a thumb wobbles: just over and just under the old switch point, frame by frame */
     const faces=new Set(); for(let i=0;i<40;i++){T.TWN.ptr.y=i%2?139:141; T.townStep(1/60); faces.add(T.TWN.p.face);} T.TWN.ptr=null;
     out.faces=[...faces];

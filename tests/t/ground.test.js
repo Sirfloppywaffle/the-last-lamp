@@ -19,8 +19,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     for(const s of ['ec','cd','es','ep','es2','ep2','ep3']){const S=W[s]; if(!S){o.bad.push('no set '+s); continue;}
       for(const k of keys){const t=S[k]; if(!t||t.length!==16||t.some(r=>r.length!==16||[...r].some(ch=>!PX[ch])))o.bad.push(s+' '+k);}}
     /* each tile's middle 4×4 is its own terrain's letters (all but a stray pixel or two: a plank's dark seam reads as mortar) */
-    const L={0:'lmn',1:'01234qrs',2:'4567'}, M=T.TOWN_MAP; o.centre=[];
-    for(let ty=0;ty<24;ty++)for(let tx=0;tx<24;tx++){const ch=M[ty][tx]; if(ch==='^'||ch==='~')continue; const t=T.townTer(tx,ty);
+    const L={0:'lmn',1:'01234qrs',2:'4567',3:'234ued'}, M=T.TOWN_MAP; o.centre=[];
+    /* map expansion, M1: 36 by 36; the stairs are drawn into the ground, not Wang tiles */
+    for(let ty=0;ty<M.length;ty++)for(let tx=0;tx<M[0].length;tx++){const ch=M[ty][tx]; if(ch==='^'||ch==='~'||ch==='/')continue; const t=T.townTer(tx,ty);
       let n=0; for(let y=6;y<10;y++)for(let x=6;x<10;x++)if(L[t].indexOf(T.townWangPx(tx*16+x,ty*16+y))>=0)n++;
       if(n<13)o.centre.push([tx,ty,ch,n]);}
     /* the cliff and the sea untouched, and a laid path is townGroundPx's cobbles */
@@ -30,11 +31,11 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.setDev(true); T.townReset(); T.townOpen();
     const D=T.townData(); D.res={timber:500,iron:500,tallow:500,curios:50};
     const A0=T.townArt(), g0=A0.ground.getContext('2d'), snap=(tx,ty)=>g0.getImageData(tx*16,ty*16,16,16).data, same=(a,b)=>{let n=0; for(let i=0;i<a.length;i++)if(a[i]!==b[i])n++; return n;};
-    const before0=snap(2,13), mid0=snap(3,13); o.rim={};
+    const before0=snap(2,26), mid0=snap(3,26); o.rim={};
     /* each laid kind: its tile's middle is its set's letters, the tile beside it (earth) gains a rim, and taking it up restores both */
     const kinds={cobble:['01234qrs',3,13],shell:['234ued',6,8],board:['5667o',9,13]};
     for(const k in kinds){
-      const [L,tx,need]=kinds[k], ty=13, b0=snap(tx-1,ty), m0=snap(tx,ty);
+      const [L,tx,need]=kinds[k], ty=26, b0=snap(tx-1,ty), m0=snap(tx,ty);
       const ok1=T.townPlace(k,tx,ty)==='', A=T.townArt(), c=A.ground.getContext('2d');
       let n=0; for(let y=6;y<10;y++)for(let x=6;x<10;x++)if(L.indexOf(T.townWangPx(tx*16+x,ty*16+y))>=0)n++;
       const rim=same(snap(tx-1,ty),b0);

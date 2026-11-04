@@ -113,7 +113,7 @@ Freed from a cage like the other souls, he keeps a barrow by the Head-frame. He 
 
 ### The Hearth Beacon (Expansion 4, step 8)
 
-A fixed place in the middle of the south square, fed a level at a time up to **5**, saved as `ll-town.hearth`. Each level thins the rain in a circle round it (only a share of the drops fall there, all faint), lifts the dark there a little, and shows more of the carving in the stone under the square. It changes nothing on the stair.
+A fixed place at the mouth of the south lane, fed a level at a time up to **5**, saved as `ll-town.hearth`. Each level thins the rain in a circle round it (only a share of the drops fall there, all faint), lifts the dark there a little, and shows more of the carving in the stone under the square. It changes nothing on the stair.
 
 | Level | Cost to reach it | Rain thins within (px) | Drops left | Dark lifted | Carving shown within (px) |
 |---|---|---|---|---|---|

@@ -1,6 +1,6 @@
 # Saltmouth, wider: two shelves
 
-Status: **decided, nothing built** (Criss, Gemini and Claude on #154). Criss on #153: the square is getting crowded, so before step 9 the town grows. It gets more ground to build on, walk and explore, a bigger cemetery, buildings moved into quarters of their own, a shore you can walk, and fog. It stays small: smaller than an Animal Crossing island. The three map steps (§6) go into `EXPANSION4_RUNBOOK.md` in the first one's PR.
+Status: **decided; M1 built** (Criss, Gemini and Claude on #154; M1 on #155, where Criss moved the lane to the west so the Hearth's square stays clear, and the Belfry stands on the cliff's edge outside the black wood so it stays reachable while the wood is shut). The runbook's §5 has M1's as-built notes. Criss on #153: the square is getting crowded, so before step 9 the town grows. It gets more ground to build on, walk and explore, a bigger cemetery, buildings moved into quarters of their own, a shore you can walk, and fog. It stays small: smaller than an Animal Crossing island. The three map steps (§6) go into `EXPANSION4_RUNBOOK.md` in the first one's PR.
 
 Everything in the runbook's §2 still holds. Pieces are decorations, pixel art comes from PixelLab (§3), everything is touch only, and it always rains. Developer mode never writes, and `ll-town` only grows.
 

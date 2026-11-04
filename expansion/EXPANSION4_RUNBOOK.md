@@ -22,11 +22,14 @@
 | 6 | The Peddler: a rescued soul with a stall by the stairs | #148 | merged | 19.9.0 |
 | A3 | Art pass 3: scenery (buildings, ground, props) | #149 (A3a: buildings and props), #150 (A3b: the ground and the haul's frame) | merged | 19.10.0 |
 | 7 | The village: decorations, paths, paint, Keepers' huts | #151 | merged | 19.11.0 |
-| 8 | The Hearth Beacon: the rain thins | #153 | open | 19.12.0 |
-| 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.13.0 |
+| 8 | The Hearth Beacon: the rain thins | #153 | merged | 19.12.0 |
+| M1 | Saltmouth, wider: two shelves, the cliff and its stairs, every building in its quarter, the move (`expansion/MAP_EXPANSION.md`) | #155 | open | 19.13.0 |
+| M2 | Plots: gates, unlocking, debris and clearing; the dock | | | 19.14.0 |
+| M3 | Fog over the shore and the cemetery, the outer dark, small touches | | | 19.15.0 |
+| 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.16.0 |
 | 10 | Release v20.0.0 | | | 20.0.0 |
 
-**Order matters.** Never start a step until the previous PR is merged into `main`. The art passes (A1 to A3, Criss on #139: each a middle-number bump, placed before the step that leans on it) are built from `expansion/ART_UPGRADE.md`; their prompts are in §5 below, beside the steps.
+**Order matters.** Never start a step until the previous PR is merged into `main`. The map steps (M1 to M3, Criss on #153 and #154: the square was crowded) come before step 9, each a middle-number bump like the art passes; their design is `expansion/MAP_EXPANSION.md`. The art passes (A1 to A3, Criss on #139: each a middle-number bump, placed before the step that leans on it) are built from `expansion/ART_UPGRADE.md`; their prompts are in §5 below, beside the steps.
 
 ---
 
@@ -238,6 +241,36 @@ Numbers marked *shape* are for playtest.
 
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 8) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 8 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 9.
+
+### Step M1: two shelves (Claude: Opus 5.5, high)
+
+**Goal:** Saltmouth gets room. The town grows to 36 × 36 tiles and climbs the cliff in two shelves (`expansion/MAP_EXPANSION.md` §1 and §2).
+
+**Build:** the PixelLab layout first, for Criss. `TOWN_MAP` at 36 × 36; today's square onto the lower shelf by one offset, with a one-time `ll-town` migration (v 1 → 2: pieces in the square move with it, a piece displaced by a building goes into Storage whole); the Lodge, the cemetery, the shrines, the Belfry, the Try-Works, the Menagerie and the tide-pools to their quarters; the cliff and its two stairs; plots drawn but shut; a helper in the tests for today's tiles.
+
+- *As built (M1):* the layout was painted on PixelLab map `08bab721-0ec7-4803-aace-0a232c25048e` (E3's earth and cobbles, the deck, shell B as the shore's shingle, planks for the stairs and the dock) and drawn over with the buildings for Criss; he liked it and moved **the lane to the west** so the Hearth's square stays clear: the Drowned Oar, the Galvanic Smithy and the Ember Brazier face a cobbled lane at row 22 (so they left the square too). Rows: 0 rock; 1 to 12 the Rise (the cemetery 13 × 8 with today's yard inside it moved by (−5, 0), the north acre under it, the Lodge at (15, 4) in its yard, the black wood, the Belfry at (31, 8) on the cliff's north-east corner, **outside** the wood so it stays reachable while the wood is shut); 13 and 14 the cliff face (`^` inside the border, drawn in ribs by `townGroundPx()`), stairs `/` at columns 8–9 and 26–27 (`TOWN_STAIR_ROWS`, PixelLab `d816dc1f-…` candidate 5 of 64, laid flat into the ground); 15 to 29 the Square (today's rows 6 to 20 at `TOWN_V2` (+6, +9)); 30 to 32 the shore (`:`, terrain 3 of the Wang sets, so it is the shell path's ground; buildable); 33 to 35 the sea (`TOWN_SEA_Y`). Plots are `x` tiles (solid, bramble drawn over the earth) named in `TOWN_PLOTS`. `TOWN_FRAME_AT` is the Head-frame's place (the art and the tower's tiles read it). `townV2()` (called first in `townFix()`) moves what was built: wholly inside today's square (`TOWN_V2.square`) by (dx, dy), wholly inside the old cemetery's yard (`yard`) by (cx, cy), anything else, or anything that would now meet a building, a kept place or another piece, or wall a place off, into Storage whole (`TOWN_GREW` names them); `townData()` saves the moved town at once. Keepers: the Nameless and Agathe still stand before the crypt; the Occultist works at the Menagerie, the Bellringer at the Belfry, the Whaler at the Try-Works. The first-visit tip `town` and the rules line name the Rise and its stairs; an old town gets a card once, *The town grew* (`TOWN_GREW`), which names anything put into Storage. Tests: `__t.at(x, y)` (and `ax`, `ay`) turns a tile of the old square into today's; tests that seed an old `ll-town` get it moved by the migration like a player's. Spend: 10 generations (the stairs). After Criss's look at the preview (#155): the Head-frame, its deck and its two braziers stand two rows higher, under the cliff, and the cobbles reach round the Hearth as far as its carving does, so the whole design shows at level 5 with nothing over it; the carving's letters glow (`HEARTH_GLYPH`: the ring of letters blue, the writing round its rim violet, a soft halo, a slow breath, cut where a piece stands; `hearthGlow()`, made with the carving, drawn in the glow layer so figures cut it).
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4) and expansion/MAP_EXPANSION.md (all of it; §1 is Criss's calls). Build step M1, two shelves, following the runbook's §4 workflow. First paint the layout on a PixelLab map (free: create_map, edit_map, view_map, with the town's Wang tilesets) and show Criss before writing code. Then grow TOWN_MAP to 36 × 36, move today's square onto the lower shelf by one offset with a one-time ll-town migration (v 1 → 2: pieces in the square move with it; a piece displaced by a building goes into Storage whole), move the Lodge, the cemetery, the shrines, the Belfry, the Try-Works, the Menagerie and the tide-pools to their quarters, add the cliff and its two stairs, and give the tests a helper for today's tiles. Plots are drawn but stay shut. Add M1 to M3 to the runbook's status table and §5 (with this prompt and M2's) and shift step 9 to 19.16.0. Tick the status table (step 8 is #153, merged). End with the prompt for M2.
+
+### Step M2: plots and the dock (Claude: Opus 5.5, high)
+
+**Goal:** the new ground opens, a plot at a time, and you clear only what you like (`MAP_EXPANSION.md` §1.4 and §3).
+
+**Build:**
+- **Gates:** each plot in `TOWN_PLOTS` gets a gate, fence or barrier at its edge (PixelLab). A plot is shut until you open it once with the haul (shape cost, like restoring a workshop), from a card at its gate.
+- **Debris:** laid by hand per plot, so every town's plot looks the same when it opens: fallen pines, stumps, brambles, rubble, nets, crates, wreckage, one or two tiles each, solid. A tap in Build shows a card saying what it is and what clearing it costs or gives back (shape; perhaps a little timber from a fallen pine). Nothing clears itself, and nothing has to be cleared. Pieces build only on cleared ground. What already stands in a plot (the trees M1 drew) stays unless it is debris.
+- **Saved** as `ll-town.plots`: each plot's state and the debris cleared from it, by index, so a plot never re-grows. Developer mode never writes it.
+- **The dock:** a pier into the sea from the shore (the layout map has it at columns 27–28, rows 33–35) with a boat tied up, ruined until restored like a workshop. What the boat is for waits for the true ending.
+
+**Teach:** a tip for plots, one for the dock, a rules line. **Test** `tests/t/plots.test.js`: a shut plot can't be walked or built on; opening costs once; clearing one piece frees its tiles and survives a reload; nothing re-grows; the dock restores; dev mode never writes.
+
+**Prompt:**
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step M1's as-built notes) and expansion/MAP_EXPANSION.md (all of it; §1 is Criss's calls, §3 the plots). Build step M2, plots and the dock, following the runbook's §4 workflow. The four plots are TOWN_PLOTS, x tiles on TOWN_MAP that are solid while shut: give each a gate at its edge, opened once with the haul from a card there; lay each plot's debris by hand (solid, one or two tiles each), cleared piece by piece in Build from a card that says what it is and what clearing costs or gives back; pieces build only on cleared ground; save ll-town.plots (each plot's state and the debris cleared, by index). Keep every TOWN_KEEP place reachable whatever is shut or cleared. Add the dock at the shore (columns 27–28 into the sea on the PixelLab layout map 08bab721-0ec7-4803-aace-0a232c25048e), ruined until restored like a workshop, with a boat tied up. New art from PixelLab through runbook §3: candidates on contact sheets for Criss first (the gates, the debris, the dock and its boat, ruined and restored). Tick the status table (M1 is #155). End with the prompt for M3.
+
+### Step M3: fog and the outer dark (Claude: Opus 5.5, high)
+
+**Build:** `MAP_EXPANSION.md` §5's fog (`vfx_workbench`'s `frost_mist`, baked once as a still and a loop in the rain's colours, laid over the shore and the cemetery after the dark at low strength, thinned by the Hearth's circle; Full only, Lite and Reduce Motion show the still) and the outer dark (`TOWN_NIGHT` per area: a shut or unlit plot at full night, darker than the square; only what you build there lights it). Small touches: the Wang edges M1 left hard (the cliff face and the Rise's edge, shingle against earth and against the sea, cemetery moss; about 15 generations each), and whatever Criss reports on M1 and M2.
 
 ### Step 9: Keepers react (Claude: Sonnet 5.5, high)
 

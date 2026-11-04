@@ -281,14 +281,14 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const giftDraw=JSON.stringify([__t.run.draw,__t.run.mapv]);
     const doors=[]; __t.townOpen();
     for(const W of Object.values(__t.TOWN_WORKSHOPS)){
-      __t.TWN.p.x=12; __t.TWN.p.y=14;
+      __t.TWN.p.x=__t.TOWN_SPAWN.x; __t.TWN.p.y=__t.TOWN_SPAWN.y;
       const protectedDoor=__t.TOWN_KEEP.some(([x,y])=>x===W.dx&&y===W.dy)&&__t.townKept(W.dx,W.dy);
       __t.townTapTile(W.x,W.y);
       for(let i=0;i<1000&&__t.TWN.goal;i++)__t.townStep(.05);
       doors.push({id:W.id,protectedDoor,opened:document.getElementById('mTitle').textContent.startsWith(W.n)});
       document.querySelector('#mActions button:last-child').click();
     }
-    const fixed=__t.townFix({res:{},decos:[{id:'fence',c:8,r:17}],buildings:{brazier:99,quay:-1},gift:'unknown'});
+    const fixed=__t.townFix({v:2,res:{},decos:[{id:'fence',c:9,r:20}],buildings:{brazier:99,quay:-1},gift:'unknown'});
     __t.townClose();
     const live=localStorage.getItem('ll-town'); __t.setDev(true);
     __t.townData().res={timber:1000,iron:1000,tallow:1000,curios:100};

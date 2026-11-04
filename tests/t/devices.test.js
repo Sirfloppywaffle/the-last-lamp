@@ -24,7 +24,7 @@ const DEV=[
       const tb=document.getElementById('townBtn'); tb.scrollIntoView({block:'center'});
       const o={walk:q(tb)}; o.walkIn=inside(o.walk)&&o.walk[3]-o.walk[1]>=40;
       tb.click();
-      const T=__t.TWN; T.p.x=12; T.p.y=14; T.cx=null; __t.townFrame(1/30);
+      const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.cx=null; __t.townFrame(1/30);
       const cv=document.getElementById('townCv'), c0=q(cv);
       T.p.x=__t.TOWN_DECK.x; T.p.y=__t.TOWN_DECK.y; __t.townFrame(1/30);
       const back=q(document.getElementById('townBack')), act=q(document.getElementById('townAct')), res0=q(document.getElementById('townRes')), c1=q(cv);
@@ -75,7 +75,7 @@ const DEV=[
       const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
       const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
       const T=__t.TWN, cv=document.getElementById('townCv'); __t.setDev(true); __t.townKeepers();
-      T.p.x=12; T.p.y=14; T.cx=null; __t.townFrame(1/30);
+      T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.cx=null; __t.townFrame(1/30);
       const c0=q(cv), back0=q(document.getElementById('townBack')), res0=q(document.getElementById('townRes'));
       const e=T.crowd.find(x=>x.k==='galvanist'); T.p.x=e.x; T.p.y=e.y+1.2; __t.townFrame(1/30);
       const act=document.getElementById('townAct'), a=q(act), o={a,label:act.textContent,n:T.crowd.filter(x=>!x.shade).length};
@@ -260,7 +260,7 @@ const DEV=[
       const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44, over=(a,c)=>!!a&&!!c&&a[2]>c[0]&&a[0]<c[2]&&a[3]>c[1]&&a[1]<c[3];
       const apart=rs=>rs.every((r,i)=>rs.every((t,j)=>i===j||!over(r,t)));
       __t.setDev(true); const D=__t.townData(); D.res={timber:500,iron:500,tallow:500,curios:50};
-      const T=__t.TWN; T.p.x=12; T.p.y=14; T.path=null; T.cx=null;
+      const T=__t.TWN; T.p.x=__t.ax(12); T.p.y=__t.ay(14); T.path=null; T.cx=null;
       __t.townBuildSet(true); const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
       const o={place:__t.townPlace('lamp',14,15)}; __t.townFrame(1/30);
       const hud=()=>JSON.stringify([q(document.getElementById('townBack')),q(document.getElementById('townBuild')),q(document.getElementById('townRes')),q(document.getElementById('townCv'))]);
