@@ -100,6 +100,12 @@ Freed from a cage like the other souls, he keeps a barrow by the Head-frame. He 
 | Blueprint: Drowned Chapel | 3 curios |
 | Blueprint: Brass Observatory | 4 curios |
 | Blueprint: Deep-One Coral | 5 curios |
+| Pack: posts | 3 curios |
+| Pack: benches | 3 curios |
+| Pack: planters | 3 curios |
+| Pack: statues | 4 curios |
+| Pack: fences | 2 curios |
+| Pack: paving | 3 curios |
 | Dye: Drowned Green | 20 tallow |
 | Dye: Wreck-Gilt | 25 tallow |
 | Dye: Bone-White | 20 tallow |
