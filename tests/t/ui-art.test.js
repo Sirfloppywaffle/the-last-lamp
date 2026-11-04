@@ -104,14 +104,14 @@ const {chromium}=require('playwright');
   const tray=await p.evaluate(()=>{
     const T=__t, o={};
     T.newRun('occultist'); T.beginFloor(null); T.setP(true); T.run.ess=0; T.run.roster.shrieker=2; T.forceUI();
-    o.tags=[...document.querySelectorAll('#tray .titem.horror')].map(b=>{const i=T.trayItems()[+b.dataset.ix]; return [(b.querySelector('.tcnt')||{}).textContent,'×'+T.avail(i.type)];});
-    o.noTag=[...document.querySelectorAll('#tray .titem:not(.horror) .tcnt')].length;
+    o.tags=[...document.querySelectorAll('#tray .titem.horror')].map(b=>{const i=T.trayItems()[+b.dataset.ix]; return [(b.querySelector('.tray-cnt')||{}).textContent,'×'+T.avail(i.type)];});
+    o.noTag=[...document.querySelectorAll('#tray .titem:not(.horror) .tray-cnt')].length;
     o.start=[...document.querySelectorAll('#tray .titem')].filter(b=>b.getAnimations().some(a=>!(a instanceof CSSAnimation))).length;
     T.run.ess=40; T.forceUI();
     const items=T.trayItems(), fl=[...document.querySelectorAll('#tray .titem')].filter(b=>b.getAnimations().some(a=>!(a instanceof CSSAnimation))).map(b=>items[+b.dataset.ix]);
     o.flash=fl.map(i=>i.type); o.want=items.filter(i=>{const c=i.kind==='ward'?T.wardCost(i.type):i.kind==='horror'?T.horrorCost(i.type):0; return c>0&&c<=40&&(i.kind!=='horror'||T.avail(i.type)>0);}).map(i=>i.type);
     T.run.floor=1; T.run.trial='sealed'; T.beginFloor(null); T.forceUI();
-    o.sealed=[...document.querySelectorAll('#tray .titem')].map(b=>[b.classList.contains('is-barred'),!!b.querySelector('.tlock')]);
+    o.sealed=[...document.querySelectorAll('#tray .titem')].map(b=>[b.classList.contains('is-barred'),!!b.querySelector('.tray-lock')]);
     T.run.trial=null;
     return o;});
   ok(tray.tags.length>=2&&tray.tags.every(([a,b])=>a===b)&&!tray.noTag,'each horror’s slot carries its count, and no ward’s does',tray);
