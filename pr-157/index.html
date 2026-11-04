@@ -684,8 +684,8 @@ body.is-lite .bb-skull,body.is-lite .bossbar .bb i::after{animation:none}
 .titem.poor canvas{filter:grayscale(.7) brightness(.8)}
 .titem.is-barred{filter:grayscale(.8)}
 /* a horror's count, on a little iron tag in the slot's corner; a lock on a ward a Trial bars */
-.tcnt{position:absolute;top:2px;right:2px;min-width:15px;padding:1px 3px;border-radius:2px;background:#08090A;box-shadow:0 0 0 1px #4B3A68;font:500 .58rem/1.1 var(--f-num);color:#D9C2FA;font-variant-numeric:tabular-nums;text-align:center;pointer-events:none}
-.tlock{position:absolute;left:50%;top:15px;width:16px;height:16px;margin-left:5px;filter:drop-shadow(0 1px 0 #000)}
+.tray-cnt{position:absolute;top:2px;right:2px;min-width:15px;padding:1px 3px;border-radius:2px;background:#08090A;box-shadow:0 0 0 1px #4B3A68;font:500 .58rem/1.1 var(--f-num);color:#D9C2FA;font-variant-numeric:tabular-nums;text-align:center;pointer-events:none}
+.tray-lock{position:absolute;left:50%;top:15px;width:16px;height:16px;margin-left:5px;filter:drop-shadow(0 1px 0 #000)}
 /* the sigil makes each rite exactly 34 px wider (min-width too), and the tray gives back 34 px a rite (--rn, set by renderRites),
    so the command bar wraps at the same widths as it did before: the board keeps its size on every screen (rule 1) */
 .tray{flex-basis:calc(280px - var(--rn,0) * 34px)}
@@ -11433,7 +11433,7 @@ function renderTray(){
   const el=$('#tray');
   const poor=items.map((i,ix)=>!bar[ix]&&(run.ess<itemCost(i)||(i.kind==='horror'&&avail(i.type)<=0)));
   el.innerHTML=items.map((i,ix)=>'<button class="titem '+i.kind+(isSel(i)?' on':'')+(bar[ix]?' is-barred':poor[ix]?' poor':'')+'" data-ix="'+ix+'" aria-pressed="'+isSel(i)+'"><canvas width="72" height="72"></canvas><span class="nm">'+itemName(i)+'</span><span class="ct">'+costLabel(i)+'</span>'
-    +(i.kind==='horror'?'<b class="tcnt" aria-label="'+avail(i.type)+' ready">×'+avail(i.type)+'</b>':'')+(bar[ix]?'<i class="ui-ic ui-ic-lock tlock" aria-hidden="true"></i>':'')+'</button>').join('');
+    +(i.kind==='horror'?'<b class="tray-cnt" aria-label="'+avail(i.type)+' ready">×'+avail(i.type)+'</b>':'')+(bar[ix]?'<i class="ui-ic ui-ic-lock tray-lock" aria-hidden="true"></i>':'')+'</button>').join('');
   const L=TRAY_LAST, now={}; items.forEach((i,ix)=>now[i.kind+i.type]=poor[ix]); TRAY_LAST={F,poor:now};
   if(L&&L.F===F&&!reduceMotion)el.querySelectorAll('.titem').forEach(b=>{const i=items[+b.dataset.ix], k=i.kind+i.type; if(L.poor[k]&&!now[k])b.animate(TRAY_FLASH,{duration:600,easing:'ease-out'});});
   el.querySelectorAll('.titem').forEach(b=>{
