@@ -37,6 +37,11 @@ if(stage&&/id="modebar"/.test(stage[0]))problems.push('#modebar is inside the st
 const kb=Math.round(Buffer.byteLength(html)/1024);
 if(kb>600)warnings.push(`index.html is ${kb} KB: consider whether something can be trimmed`);
 
+// 8. the descent's pixel UI (tools/ui-art.py) is what its sources in art/ui/ make: nobody edited the block by hand, and new art was packed
+{const r=require('child_process').spawnSync('python3',[path.join(__dirname,'..','tools','ui-art.py'),'--check'],{encoding:'utf8'});
+  if(r.error)warnings.push('python3 not found: the ui-art block was not checked');
+  else if(r.status!==0)problems.push('the ui-art block in index.html is out of date or edited by hand: run python3 tools/ui-art.py ('+(r.stdout+r.stderr).trim()+')');}
+
 for(const w of warnings)console.log('warn  '+w);
 if(problems.length){for(const p of problems)console.log('FAIL  '+p); process.exit(1);}
 console.log(`static checks ok (${scripts.length} script block, ${kb} KB)`);
