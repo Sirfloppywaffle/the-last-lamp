@@ -186,7 +186,7 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
 
   /* 9. the rules line teaches build mode and headstones */
   const rules=await p.evaluate(()=>document.getElementById('rulesList').textContent);
-  ok(/Build spends it on the square/.test(rules)&&/Mossy Headstone/.test(rules),'the Saltmouth rules line teaches Build and headstones',rules.slice(0,200));
+  ok(/Build spends it about the town/.test(rules)&&/Mossy Headstone/.test(rules),'the Saltmouth rules line teaches Build and headstones',rules.slice(0,200));
 
   for(const f of fails)console.log('FAIL '+f);
   console.log(fails.length?fails.length+' failed':'townbuild ok');
