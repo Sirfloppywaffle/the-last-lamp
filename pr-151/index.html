@@ -12584,7 +12584,7 @@ for(const n of [1,2,4,8]){const has=g=>n===8||g===0||(n>1&&g===2)||(n>3&&g===4),
   FACE_SRC[n]=T;}
 function faceSrc(I,f){return FACE_SRC[I.faces>=8?8:I.faces>=4?4:I.faces>=2?2:1][f&7];}
 /* a saved facing, or 0; a piece kept to the tiles only faces straight */
-function faceFix(f,I){f=Number.isInteger(f)&&f>=0&&f<8?f:0; return I&&I.snap?f&6:f;}
+function faceFix(f,I){f=Number.isInteger(f)&&f>=0&&f<8?f:0; return I&&I.flip?f&4:I&&I.snap?f&6:f;}
 /* the tiles a piece covers facing f, from its footprint's top-left ({w, h, t: [[x, y]…], full}): its w by h, a quarter turned
    (h by w) when its side shows, or on a drawn diagonal its own mask (diag: the tiles it covers facing SW, turned a quarter
    for each diagonal after). Worked out once per piece and facing */
@@ -12946,37 +12946,37 @@ const TOWN_DECOS={
   board3:{n:'Outlined Boardwalk',s:'Outlined',cost:{timber:2},path:true,snap:true,faces:2,terr:9,terrT:10,grp:'ground',pack:'paving'},
   lamp:{n:'Iron Street-Lamp',s:'Lamp',cost:{iron:6,tallow:4},light:40,grp:'light'},
   brazier:{n:'Brazier',s:'Brazier',cost:{iron:8,tallow:6},light:50,grp:'light'},
-  post1:{n:'Gibbet Lantern',s:'Gibbet',cost:{iron:6,tallow:4},light:40,art:'lamp1',grp:'light'},
-  post2:{n:'Drift Lantern',s:'Drift',cost:{timber:5,tallow:4},light:40,art:'lamp2',grp:'light',pack:'posts'},
-  post3:{n:'Candle Bollard',s:'Bollard',cost:{iron:5,tallow:4},light:34,art:'lamp3',grp:'light',pack:'posts'},
-  post4:{n:'Hooked Lamp-Post',s:'Hook',cost:{iron:6,tallow:4},light:40,art:'lamp4',grp:'light',pack:'posts'},
-  post5:{n:'Mast-Stump Lantern',s:'Mast',cost:{timber:6,tallow:4},light:40,art:'lamp5',grp:'light',pack:'posts'},
-  post6:{n:'Whale-Rib Lamp',s:'Rib Lamp',cost:{iron:4,curios:1,tallow:4},light:40,art:'lamp6',grp:'light',pack:'posts'},
+  post1:{n:'Gibbet Lantern',s:'Gibbet',cost:{iron:6,tallow:4},light:40,art:'lamp1',flip:true,grp:'light'},
+  post2:{n:'Drift Lantern',s:'Drift',cost:{timber:5,tallow:4},light:40,art:'lamp2',flip:true,grp:'light',pack:'posts'},
+  post3:{n:'Candle Bollard',s:'Bollard',cost:{iron:5,tallow:4},light:34,art:'lamp3',flip:true,grp:'light',pack:'posts'},
+  post4:{n:'Hooked Lamp-Post',s:'Hook',cost:{iron:6,tallow:4},light:40,art:'lamp4',flip:true,grp:'light',pack:'posts'},
+  post5:{n:'Mast-Stump Lantern',s:'Mast',cost:{timber:6,tallow:4},light:40,art:'lamp5',flip:true,grp:'light',pack:'posts'},
+  post6:{n:'Whale-Rib Lamp',s:'Rib Lamp',cost:{iron:4,curios:1,tallow:4},light:40,art:'lamp6',flip:true,grp:'light',pack:'posts'},
   fence:{n:'Wrought-Iron Fence',s:'Fence',cost:{iron:3},snap:true,faces:2,grp:'fence'},
-  rail1:{n:'Picket Fence',s:'Pickets',cost:{timber:3},w:2,art:'fence1',grp:'fence'},
-  rail2:{n:'Plank Rail',s:'Rail',cost:{timber:3},w:2,art:'fence2',grp:'fence',pack:'fences'},
-  rail3:{n:'Greened Railing',s:'Greened',cost:{iron:4},w:2,art:'fence3',grp:'fence',pack:'fences'},
-  rail4:{n:'Rope and Posts',s:'Rope',cost:{timber:3,iron:1},w:2,art:'fence4',grp:'fence',pack:'fences'},
-  bench1:{n:'Plank Bench',s:'Plank',cost:{timber:5},w:2,art:'bench1',grp:'seat'},
-  bench2:{n:'Driftwood Log',s:'Log',cost:{timber:4},w:2,art:'bench2',grp:'seat',pack:'benches'},
-  bench3:{n:'Stone Bench',s:'Slab',cost:{iron:8},w:2,art:'bench3',grp:'seat',pack:'benches'},
-  bench4:{n:'Hatch-Cover Bench',s:'Hatch',cost:{timber:6,iron:2},w:2,art:'bench4',grp:'seat',pack:'benches'},
-  bench5:{n:'Iron-Frame Bench',s:'Iron',cost:{iron:7},w:2,art:'bench5',grp:'seat',pack:'benches'},
-  bench6:{n:'Chapel Pew',s:'Pew',cost:{timber:7,curios:1},w:2,art:'bench6',grp:'seat',pack:'benches'},
+  rail1:{n:'Picket Fence',s:'Pickets',cost:{timber:3},w:2,art:'fence1',faces:2,grp:'fence'},
+  rail2:{n:'Plank Rail',s:'Rail',cost:{timber:3},w:2,art:'fence2',faces:2,grp:'fence',pack:'fences'},
+  rail3:{n:'Greened Railing',s:'Greened',cost:{iron:4},w:2,art:'fence3',faces:2,grp:'fence',pack:'fences'},
+  rail4:{n:'Rope and Posts',s:'Rope',cost:{timber:3,iron:1},w:2,art:'fence4',faces:2,grp:'fence',pack:'fences'},
+  bench1:{n:'Plank Bench',s:'Plank',cost:{timber:5},w:2,art:'bench1',faces:2,grp:'seat'},
+  bench2:{n:'Driftwood Log',s:'Log',cost:{timber:4},w:2,art:'bench2',faces:2,grp:'seat',pack:'benches'},
+  bench3:{n:'Stone Bench',s:'Slab',cost:{iron:8},w:2,art:'bench3',faces:2,grp:'seat',pack:'benches'},
+  bench4:{n:'Hatch-Cover Bench',s:'Hatch',cost:{timber:6,iron:2},w:2,art:'bench4',faces:2,grp:'seat',pack:'benches'},
+  bench5:{n:'Iron-Frame Bench',s:'Iron',cost:{iron:7},w:2,art:'bench5',faces:2,grp:'seat',pack:'benches'},
+  bench6:{n:'Chapel Pew',s:'Pew',cost:{timber:7,curios:1},w:2,art:'bench6',faces:2,grp:'seat',pack:'benches'},
   tree:{n:'Blood-Lichen Tree',s:'Tree',cost:{timber:8,tallow:4},w:2,h:2,grp:'plant'},
-  planter1:{n:'Kelp Trough',s:'Trough',cost:{timber:4,tallow:2},w:2,art:'plant1',grp:'plant'},
-  planter2:{n:'Kelp Barrel',s:'Barrel',cost:{timber:4,tallow:2},art:'plant2',grp:'plant',pack:'planters'},
-  planter3:{n:'Kelp Cauldron',s:'Cauldron',cost:{iron:5,tallow:2},w:2,art:'plant3',grp:'plant',pack:'planters'},
-  planter4:{n:'Kelp Urn',s:'Urn',cost:{iron:3,tallow:2},art:'plant4',grp:'plant',pack:'planters'},
-  planter5:{n:'Boat Planter',s:'Boat',cost:{timber:6,tallow:2},w:2,art:'plant5',grp:'plant',pack:'planters'},
-  planter6:{n:'Kelp Crate',s:'Crate',cost:{timber:4,tallow:2},w:2,art:'plant6',grp:'plant',pack:'planters'},
+  planter1:{n:'Kelp Trough',s:'Trough',cost:{timber:4,tallow:2},w:2,art:'plant1',flip:true,grp:'plant'},
+  planter2:{n:'Kelp Barrel',s:'Barrel',cost:{timber:4,tallow:2},art:'plant2',flip:true,grp:'plant',pack:'planters'},
+  planter3:{n:'Kelp Cauldron',s:'Cauldron',cost:{iron:5,tallow:2},w:2,art:'plant3',flip:true,grp:'plant',pack:'planters'},
+  planter4:{n:'Kelp Urn',s:'Urn',cost:{iron:3,tallow:2},art:'plant4',flip:true,grp:'plant',pack:'planters'},
+  planter5:{n:'Boat Planter',s:'Boat',cost:{timber:6,tallow:2},w:2,art:'plant5',flip:true,grp:'plant',pack:'planters'},
+  planter6:{n:'Kelp Crate',s:'Crate',cost:{timber:4,tallow:2},w:2,art:'plant6',flip:true,grp:'plant',pack:'planters'},
   stone:{n:'Mossy Headstone',s:'Headstone',cost:{iron:5},grave:true,grp:'stone'},
-  statue1:{n:'Lamp-Bearer',s:'Bearer',cost:{iron:10,curios:1},art:'stat1',grp:'stone'},
-  statue2:{n:'Drowned Sailor',s:'Sailor',cost:{iron:10,curios:1},art:'stat2',grp:'stone',pack:'statues'},
-  statue3:{n:'Stone Mermaid',s:'Mermaid',cost:{iron:10,curios:1},art:'stat3',grp:'stone',pack:'statues'},
-  statue4:{n:'Kneeling Figure',s:'Kneeling',cost:{iron:10,curios:1},art:'stat4',grp:'stone',pack:'statues'},
-  statue5:{n:'Blind Saint',s:'Saint',cost:{iron:10,curios:1},art:'stat5',grp:'stone',pack:'statues'},
-  statue6:{n:'Squid Idol',s:'Idol',cost:{iron:10,curios:2},art:'stat6',grp:'stone',pack:'statues'},
+  statue1:{n:'Lamp-Bearer',s:'Bearer',cost:{iron:10,curios:1},art:'stat1',flip:true,grp:'stone'},
+  statue2:{n:'Drowned Sailor',s:'Sailor',cost:{iron:10,curios:1},art:'stat2',flip:true,grp:'stone',pack:'statues'},
+  statue3:{n:'Stone Mermaid',s:'Mermaid',cost:{iron:10,curios:1},art:'stat3',flip:true,grp:'stone',pack:'statues'},
+  statue4:{n:'Kneeling Figure',s:'Kneeling',cost:{iron:10,curios:1},art:'stat4',flip:true,grp:'stone',pack:'statues'},
+  statue5:{n:'Blind Saint',s:'Saint',cost:{iron:10,curios:1},art:'stat5',flip:true,grp:'stone',pack:'statues'},
+  statue6:{n:'Squid Idol',s:'Idol',cost:{iron:10,curios:2},art:'stat6',flip:true,grp:'stone',pack:'statues'},
   /* a Keeper's hut (step 7): 2 by 2, one for each Keeper you have freed. Its door is the tile below its right half (the Keeper
      stands there when not at work, and it is kept clear and walkable like a station: townHutDoors()) */
   hut_lamplighter:{n:'Ambrose’s Hut',s:'Ambrose',cost:{timber:20,iron:6},w:2,h:2,art:'hut1',grp:'hut',hut:'lamplighter',snap:true,light:22},
@@ -15084,17 +15084,30 @@ const TOWN_PIECE_ROWS={
   hut2:['..........................5.................','......................5.56o56oyoo5y.........','...............55...55u5y5oso7yyo5..........','.........me555y7uooooousosueeooeee5.........','......555myoo7ye770ouu66s0euuoo077o.........','.....57o7myoe7o7oyuueooou00oo7o77o755.......','......5ss0soooo77pyuosooussuu7oe77o0o.......','......5o2smsoeoe76uouo0oo76uss2s7oo7u5......','.....56sy06soooo7sosss67777700s7s777775.....','...557y610y2ooss7006su557uooo775ouuu7ou5....','....5620m1y3soo67uu777oyo7o7o7suy76s77ooo...','...56sym6lyyssoooo7oooeuoo7e0ussssusss767...','.1o6mysm7lyyss7ooe77eo77oueuo7sosm00yy7u6...','.5os6sy17lyyys7ueee7oo5e7ue7es55555y6oo7u5..','.5l6sl7l7l6yyys0o7e7oy5e7u77o77o7ou07oo7eo5.','572syy607lyyyyys7e7777o7e7o7o77oo7o7eeso7oo.','67ms1m66y1yy7yms7o6uoooou7770eeoou7e0ey7eeo5','5smsymss0yyoysm0s7poooeooe777e7uee5osso05m05','555s6s777s0mmy6ysu7e7eeoooe777o0eeu0essoss25','..yssssmy7r7yssm6sue77opeuoossos7ss3sssssm25','..ys0rs711yyyyyym2su77ses7lesm1s62y3s0s3s5..','..6s01s77775yy03y227osses610umsss7717s13s5..','..6s003ss67y6se0022se2ssy3s00777s0s11011s5..','..600s2sssssss407122s3ssysy67sssss11s9drso5.','..6s0322sl12s0117l22syssy02sslsmmm70ooo0soc.','..ys0222s0ss3s31ys2ysss5y22sss0ymmllsss1sq45','..ysy22ss13ssyy1ss27ss0m7yysss0ymm7m2s9ssed5','...2s21s1s13sy02sm2717sss2yss1myym7mso9osoe5','...3231s22s3s323mm27muuesyyss12yy0753o7sys5.','..53s0s2s2ss0s320s27s2u4s6yss1y1yl7mssessy5.','..1221sssss0s333s12u0s1ys0yss1ylyl7myy60s7..','.51231ssss200sy3s12u0osesmyss156y17srss777..','512ss02syyss3s2211yusosesmyss116y172272ss7..','5211s12smys31123smyussses0ys51s6m0ul22yss7..','5ss1s30syys3303ssly7lysu77y5.55y50ul3syys5..','.r2s3s3sys111s3slmy7lys077y....555u55ys15...','.5333s21s02s03s3sy67l7sm777..........u5.....','..53s355s13s13r0s5y7m7s577y5................','...555..53ss13s0ysm77777755.................','.......55223s35555y755105...................','.........53225........55y...................','..........5325..........5...................'],
   hut3:['..................u........................','..................eo.e.5e..................','...................e5e1de..................','...................5esue...................','...................5eue1...................','.................55yees0u55................','................5sss5se2s0su..1............','..............5777yssue1slls15e5...........','...........5e5077y07sss75yyyyu0eo..........','..........doe177623soy7s0777yyy305.........','.........uedl777eey10y0yys00syysde5........','........5eey77seeyy1yyyyyy067y7ysse........','.......desy77see1y71m5el6ys7766yysdd.......','......5ssy77yses7771d0us66y0u7677ysdd1.....','.....5esy77yeeey77yde0uoy6y0u7y77uy0d1.....','.....5eyu77sde0u77se0y1dy6yysu667u7y0e5....','....5esu77syesyu7yde0yld1y77suu777u71ee....','...1es777lsdslyu70d0y6ld0yo70sss7o777se....','...5e0s000des715sed0yy0d2yo00yy6soeu7see...','...desy600d0mssssds1yy0d17oo0y6ymsssuusd...','..3es3760dds700s7esyyy0dluus6666yy22ssoe5..','..eesy7ysd3su000desy7y1e2usyy66yysssy0see..','..eusyysde0m77r7dsyy7y1e7os6yss00eu7y01ue5.','..esyyssdsm77u77dsy6u7yeds1syu676mssy10se5.','.5esyssdesuuuo7de0u7o7y0dsuey56sss2syymsee1','.5esyy0desss0orde0u7uuy0dsssssss0s2syysseo5','.5oyyysdssyysssdssussu0sd013ss0sss2s600seo5','.5ossysesyyyyssd2sss000sd0m3ssssssms0r7se5.','5sos30eesyyyy5sds000000sd0myssssssms77yse5.','5suss5eesys775ed000u0000dmmyssssss2s7yyse5.','y1rss5ee0y217sees507s0yseym7ssss0s2s75mse5.','..57y0ee000ys2des507syy0e2m7sssss0yr75soo5.','...ysyseus0ussoes1yyyuyses37s5555syrr0sus5.','..yyyy1u1s7u0see25y57yy1e3275....52500yuss5','.yy55m1ssyyussoes0y57my1es275.....5.5y57s5u','.....51yy7y0u01ees5yys3ses1y5..........5u..','.........5s1u00eos1y1s3so255...............','.........577.ussu5.y5555u5.................','..............555..........................'],
   hut4:['........................55555555.........','................1.5.y55uoeeruu325........','555m55........514ru4e3o442srssurr........','5uu1025555.1..534ssssss03rrs4r3rr5.......','5s0ss234ee5o55000u333rrr2ur3sru3rr.......','.5s55511222224r00r2043rrrmrrsyu0ur.......','.55...52ssss0s2312442r30rr3urs3u0r4......','.55....57m210sssss7u3ryru73u7233u1ur.....','.55.....2u12s0030s277rrr3r7y47s3e3rr5....','.55.....57s11023s20rr7erme7y7771334r2....','.55.....2s7s223ss301rrsereu73473rr14e5...','.55.....4s27s3ss030srrr0emoeyu7r1770oy5..','.55.....2ss6ss0003020rr2ueyyr1u7e27ueeu1.','.55....4s22sys000302037r1uydrr1uye3u2oy4.','.55...52s23ssy7ssr022srrr3ry3y31y7d3uyd75','.55...us223r3sy2sr132s3rrsru3yy0yyuuu1euu','.55...53133r3s6ysr1322srru2dyyyuy5yuyosu5','.53...5313rr3ssysr1432s0rrsueyyu1yy1yusu.','.55....533r33ssy031rr130rrruy77s0ys1y75o.','.5u5...5133333s00r1rr13ssr0uy7us0ys1s5.5.','..545..53313yy32rr1r34330ssssus20ys21..5.','55025..52333333m111r333302ss1u120y121..5.','.33....5323333ye3e31333302sm1y2220021..5.','.......5131001m33r4u13y302111y212202...5.','.......513311000001s133s221113221202...5.','.......533311s000001333s222132231222...5.','.......53r311s0000s331r3221220221212...5.','........2r311s0000s2r3r32212202012121..5.','.......52u211s0000s3r3r31222302212s21..5.','.......322301s0000s2y3r31222312422021..5.','.......52ur01s0000s2332y120231222222u..5.','.......5m1401s0000s2422u1u02212222325..5.','.........ors2s0000sr4y2s13023122213u5..5.','........33us2s000002r32s2402312221715..5.','........30us2s0000s4du2y220320211ms7s515.','......5y3oms2s0000s4er2321r22s12reus7yy5.','......513rm02s000000dee33133m22m22ys1ysy.','......e1de112s0000s4e1232311220e22sy0yyy.','......11y1.3555500s0er3s221213o22ssyy1y5.','...........5....55s0do2s212u1yu4.55y5.y..','..................50eo3s21eeor...........','...................uee3s213..............','....................5el55................'],
-  hut5:['..............................ue55ue........','..........................5u55333ouo5.......','...................55u55557uyys311uu5.......','............yy57755uuu777uuuyyy02ue45.......','...........57uuuuuuuuuuouo77uyyy03445.......','.......uuyu7uuouu7u77uuuouu77uuyuus5........','.......uyy7uuuuouu7yyyyyyo7uuuuuyyyyu5......','......uyyyyyu77uuuuuuuyy7uyyuyyyy7yuyu......','.....yyyssyy7uo77yuu7ouuyuuuyyyy77u7yuu.....','....5yy2s0ryyouuyyuouoouu7uuuuyuuuuuuu7u....','...57y0012syyyyuyyy7yuuuu7uuuuuuyuuyyyuu5...','..57yys1201syyuuuuuyyyuuuu7yy7yyuyyy7yyuy5..','.5uyys1223301yyu7uuuuuyuy77yyyu7uuu7yyyuuy5.','.uyys1m11113syyy7uuouuuuyyyyyyuu7yuuuuuuu75.','5yys121333131syyuu777uuuyuuy77uyyuyuyyyyyy75','yyss10u311133syyyuuyyyyyyuuu7uuuyuyyyyyyy5y5','.5023223131232syyuuuyuuyuuyuyyyyyyysy2ysss5.','.533313331r3112syyuuuyyyuyyyy5syssys2222y5..','.532311111333120yyyyyyyyy0y0s02122333330u5..','.531133333111322syyyyys00202211u23u33201u1..','.53311133133r1142syssys333uuuuur12ss021ou1..','.5321311311143r001012323uu40sss1uu0y041221..','.5301123331111132yu32420sss22203uys34412uu..','.5202201131333123yo33uuu02223202r20r0314ur..','..300221r311133001112ur3033yy303e30rs3s335..','.22233333313323033eo1ro303uyu30030y11321uu..','.500110112001133101e13u303uyu3s2ru2uu41115..','.5300331220231233uou3u4o2ruu2rs214222214ou5.','.2113112y23031211220133114uu23s12r14oo23m35.','.223133112102313314u32uu34uru302ru233341ur5.','.2203122m137033133or133r34uru30s33234ou0335.','.110110mmy1132310222131314uru3s3uuu1233155..','...5311ymm11mm2122ueu23y03u333s2yu10s45.....','.....5133m02yy30224203uu3343s12055555...u...','.......55501y32032uu33442sssrrr4............','..........55520223uu3533534uuur3............','.............5522243..5...3uu...............','...............55555........................']};
+  hut5:['..............................ue55ue........','..........................5u55333ouo5.......','...................55u55557uyys311uu5.......','............yy57755uuu777uuuyyy02ue45.......','...........57uuuuuuuuuuouo77uyyy03445.......','.......uuyu7uuouu7u77uuuouu77uuyuus5........','.......uyy7uuuuouu7yyyyyyo7uuuuuyyyyu5......','......uyyyyyu77uuuuuuuyy7uyyuyyyy7yuyu......','.....yyyssyy7uo77yuu7ouuyuuuyyyy77u7yuu.....','....5yy2s0ryyouuyyuouoouu7uuuuyuuuuuuu7u....','...57y0012syyyyuyyy7yuuuu7uuuuuuyuuyyyuu5...','..57yys1201syyuuuuuyyyuuuu7yy7yyuyyy7yyuy5..','.5uyys1223301yyu7uuuuuyuy77yyyu7uuu7yyyuuy5.','.uyys1m11113syyy7uuouuuuyyyyyyuu7yuuuuuuu75.','5yys121333131syyuu777uuuyuuy77uyyuyuyyyyyy75','yyss10u311133syyyuuyyyyyyuuu7uuuyuyyyyyyy5y5','.5023223131232syyuuuyuuyuuyuyyyyyyysy2ysss5.','.533313331r3112syyuuuyyyuyyyy5syssys2222y5..','.532311111333120yyyyyyyyy0y0s02122333330u5..','.531133333111322syyyyys00202211u23u33201u1..','.53311133133r1142syssys333uuuuur12ss021ou1..','.5321311311143r001012323uu40sss1uu0y041221..','.5301123331111132yu32420sss22203uys34412uu..','.5202201131333123yo33uuu02223202r20r0314ur..','..300221r311133001112ur3033yy303e30rs3s335..','.22233333313323033eo1ro303uyu30030y11321uu..','.500110112001133101e13u303uyu3s2ru2uu41115..','.5300331220231233uou3u4o2ruu2rs214222214ou5.','.2113112y23031211220133114uu23s12r14oo23m35.','.223133112102313314u32uu34uru302ru233341ur5.','.2203122m137033133or133r34uru30s33234ou0335.','.110110mmy1132310222131314uru3s3uuu1233155..','...5311ymm11mm2122ueu23y03u333s2yu10s45.....','.....5133m02yy30224203uu3343s12055555...u...','.......55501y32032uu33442sssrrr4............','..........55520223uu3533534uuur3............','.............5522243..5...3uu...............','...............55555........................'],
+  bench1s:['.....5555555555555......','.....53e3rur1yr3yd1.....','.....yd33rru3rye333.....','.....ry33ruu2ru34e45....','....5urr1uuu2rd33u45....','....5uu314u42ru4444u....','...544u3uuu43u44yu44....','...544u2uuu414442u4u5...','...5uuu5uuuu444u3uuu5...','...1uuu5uuuu444u3uuuu...','..5uuuuuuuuu24uuuuddu5..','..5uyuuuuuuu4uuuuuuuu5..','..yedu1uuuoo3uuuuyuuuu..','..uuuuyuuuoe3uuueyuuuu5.','.5udooyuuuooyeoou2uduc5.','.5uuoduuuuue2oeeodedeuu.','.uduu5uuucdu1ooeoyduuuu.','5ouoouuoeoou1ooeuu5uuuu5','53yye0doodue3y3e331oo3e5','5yyy3syyyyy3s33333sy3335','.555sss555ssss555sss5555','....5s5...5ss5...5s5....','....5ys5511125555s25....','....52y055....553s35....','....53s5........5su5....','...5415..........50u5...','...5r5............5r5...','..54445..........53y45..','..5555............5555..'],
+  bench2s:['......555.5155u.....','.....533253rs35.....','.....533ys34s425....','.....y4r4sy31445....','...553ur40rr2445....','..5u33u3434r3445....','..5y3uu3444333u15...','...53uu344uu41u35...','...53uu444uu41325...','...5yuu4u4uuur045...','...5yu4uu4uuru445...','...53u3u3u4u3uu45...','...y4uueu3uuuuu41...','..54uuueu3ru4uu435..','..5ru4uu443uu4uu35..','.5suu4uu4uruu4ou35..','5u0uu4ue4u3uu2ou4s5.','514u44e4uu3uuuuu4y5.','.1uu1ueuue3uou4ou35.','.1uu2eeeee3oee0eu325','5uu55e2eee0eee1eou35','5uue3r523314y3113yu5','5uy133y3331133313335','5y31333221331y321335','5y1515211222y133y035','.53333yyy12223yyys05','.5233yy31133y133y35.','..52222221111y2335..','...522222yyy22255...','....55555555555.....'],
+  bench3s:['.....333y3y3y33331....','....3eru4urrrre43r1...','....33ruuu44444e43....','...1uuu44444u444441...','...1uuu4444uuu444e1...','...1eu4444uuu44uee1...','..1uuuu444uu4uuuuu21..','..1euu4444uuuuuuuuu1..','..1euuuuuuuuuuuuuuu1..','..3euuuuuuuuuuuuuuuy..','..3euuuuuuuuuuuuueu3..','..eeuuuuuuuuuuuuuueu..','.1euuuuuuuuuuuueuuue1.','.1euuuuueuuuuuueeeey1.','.1uuuuueuuuuuueeee4ur.','yuudeuueuuuuuueeeuu4uy','1ueueeuueueeuuuuuuuru1','1euuueeuuuueueeueuure1','1euueeeeeuuuuueuuuuee1','1eeeeeeeeeeeeeeeeeeee1','1333er33y3y33333r33332','13yu3yrr222uuy3yyu3y31','1sssssssssssssssssss1.','.122222222222222222y1.','.130t223y1eer2233u332.','.1y2s4uu443334u44s2r2.','.1y20u0344rrur1rr2232.','.132u130304u32322r131.','.132223y3y12233322231.','.13uyu3ryr33y3uuy3341.','.11111111111111111111.'],
+  bench4s:['......5555555555225.....','.....5230323133333y.....','.....53y03231323132.....','....5233333333233335....','....5233333323331335....','....5y33233333331335....','....5333333r3r331335....','....533333rryr331335....','...5yrrrr3rr2rrr3r32....','...5yrr1rrrr2rrr43r35...','...53rr0ru4r2ryu44ru5...','...5uyuuruur2uyuuuuu5...','...54y40ruuruu4uuuuu5...','...5uy4s4uru3uuuuuuu5...','..5uur404uruyuuuu1uuu5..','..5euee0eeueyeeeeuuue5..','..5111211110s011111115..','.5s3333y3222s233y033ys5.','.52ssssssss55sssssssss5.','51222222225..530222152y5','5s044443y05..503uu1tr005','513t1111225..5211t21115.','51333ry2y25..52yyy22y25.','.51y3u31y15..51y2u22y15.','.5223431135..5313422225.','.5132uu3115...513u22315.','..51t11135....521122315.','..551rr55......551yy15..','....555..........555....'],
+  bench5s:['...11111111.11....','...133s3s511231...','...135s3s1ys331...','...124s3s13s231...','...13ss3113ss31...','...13rs3.13ss31...','..133rs3.13sssy1..','..1yrs03113ss231..','..1y2033s1r2sr31..','..131sy31030srr1..','..131sr3.13yssru..','..yusyyy1syussuu..','.1uu1.yyssuussuu1.','.1uu1.uuss4us1u41.','.1uu1.uusu4u1.uu1.','.1uu.1uu1.uu1.uu1.','.1yy.1uu..yu1.y31.','13uy.1uu1.uu1.1yy1','1yyy.1uu..uu1.1yy1','1yes12yu12yus1sy31','1uus2uous2yus2see1','1y3s131y11y2s10231','.1s1.111..111.1s1.','.101..........131.','..11..........33..','..1s111111111133..','..1s1111yy211121..','.131..........131.','.11............11.'],
+  bench6s:['..........5555...','.........532225..','........532t005..','........52ts325..','........5tts2y...','........5t0023...','........5ts0245..','.......12ts2145..','.5122222t11213u5.','5rt1122t110223u5.','5211t11110022235.','52sssssss0222u2u5','5sr322021s2242225','5suy33332s2322225','.5u3332r32su22225','5su33y3333su22225','5s4ryu3333s2t2225','5s4r3ur3y3s2t2225','.544y3r3y3s2t2225','.5r0s0433sr2t2225','.51uuu511422t2225','.5322222222222225','.5222222212322325','.5222222212312325','..122222212yy5315','..52222252yy55315','..5222221y1155315','..522225555111225','..51y21....511155','.522115.....5y555','.55555......55555'],
+  fence1s:['...5.','..5d5','..ld5','..ld5','.50dm','.5ldm','5uldm','57ldm','5e5dm','575em','575dm','555dm','..5dm','..5em','555em','5u5em','5u55m','575d5','50ld5','5eld5','550dm','55ldm','5uldm','57ldm','5e0dm','570em','57ldm','55ldm','..ldm','..lem','55lem','5ulem','5u0um','570e5','500e5','5e0u5','570em','570em','550em','..5em','..555'],
+  fence2s:['.57775.','.57o75.','.57o75.','.5oo75.','.5o7o5.','.5ooo5.','.5ooo5.','.57oo5.','.57oo5.','.57o65.','.565o5.','.56565.','.56575.','.5s505.','.55555.','5s050s5','5577755','557o755','557o755','55oo755','55o7o55','55ooo55','55ooo55','557oo55','557oo55','557o655','556oo55','5566655','5567755','55ss055','5556555','5s050s5','5706065','57s60u5','57lumu5','5umumu5','5um7mu5','57575u5','5us55u5','5us50u5','5u06075','5u0o075','5u0l075','5uu7uu5','5666665','5777775','5555555'],
+  fence3s:['..3..','.33..','.32..','.23..','.22..','.22..','23n..','433y.','un3y.','yy1y.','4y3y.','uynn.','uy32.','uy3..','.yn..','.yn..','.y3..','.33..','.32..','.232.','.221.','.222.','23n32','433y1','un3yn','y11y.','433y.','u3nn.','u332.','u33..','.3n..','.3n..','.32..','.32..','.3n..','.322.','.321.','.222.','.2232','.22.1','.22.n','.22..','.2n..'],
+  fence4s:['.....555...','....5rr65..','...556rm5..','...556rm5..','...555655..','...56s0r5..','....5065...','....5565...','....5605...','....5565...','...555605..','...505605..','..55s5ss5..','..5se5ee5..','.57se5du5..','.5ss75u6s5.','55sm5555s55','5msm5rr6515','.56556rm55.','..5556rm5..','...555655..','...56s0r5..','....5065...','....5565...','....5605...','....5565...','...55s605..','...506605..','..55ssss55.','..5seeee55.','.57seddu5..','.5ss77u6s5.','55sm576ms55','5msmmmmms15','.56su6uus5.','..56ssss5..','...55575...','...554u5...','....56u5...','....m7u5...','....57u5...','....57u5...','....m775...','...5m7655..','..5s5665s5.','..55555m65.','...56mm65..','....5555...']};
 const TOWN_PIECE_ART={};
 /* one piece's picture and the glow letters it burns (only a piece with light has any), and where its light falls: the middle of
    what burns, in its rows */
-function townPieceArt(id){
-  if(TOWN_PIECE_ART[id])return TOWN_PIECE_ART[id];
-  const D=TOWN_DECOS[id], R=TOWN_PIECE_ROWS[D.art], [cv,c]=tCanvas(R[0].length,R.length); tRows(c,R,0,0);
+function townPieceArt(id,side,mir){
+  const key=id+(side?'s':'')+(mir?'m':''); if(TOWN_PIECE_ART[key])return TOWN_PIECE_ART[key];
+  const D=TOWN_DECOS[id]; let R=(side&&TOWN_PIECE_ROWS[D.art+'s'])||TOWN_PIECE_ROWS[D.art];
+  /* turned round (a flip, or the other side of a side view): the same rows read from the right */
+  if(mir)R=R.map(r=>[...r].reverse().join(''));
+  const [cv,c]=tCanvas(R[0].length,R.length); tRows(c,R,0,0);
   let em=null, gx=0, gy=0, n=0;
   if(D.light){for(let y=0;y<R.length;y++)for(let x=0;x<R[y].length;x++)if('abc'.includes(R[y][x])){gx+=x; gy+=y; n++;}
     if(n){const [e,ec]=tCanvas(cv.width,cv.height); tRows(ec,R,0,0,null,'abc'); em=e;}}
-  return (TOWN_PIECE_ART[id]={cv,em,lx:n?Math.round(gx/n):cv.width>>1,ly:n?Math.round(gy/n):cv.height>>1});
+  return (TOWN_PIECE_ART[key]={cv,em,lx:n?Math.round(gx/n):cv.width>>1,ly:n?Math.round(gy/n):cv.height>>1});
 }
 /* ---- Art pass A1 (expansion/ART_UPGRADE.md §4): fire, water and weather. Every loop is a few frames made once from rows (from
    PixelLab's animate_image and its effects tool, through tools/png2rows.py; the log is ART_UPGRADE.md §6), and each draw picks
@@ -15439,6 +15452,9 @@ function townDecoSync(){
    Its look comes from its tiles (c, r), so a tree or a stone keeps its own shape wherever it is drawn */
 /* does a two-way piece (a path, a fence) show its side: turned a quarter (Expansion 4, step 2) */
 function townSide(d){return faceSrc(TOWN_DECOS[d.id],d.f|0)[0]===2;}
+/* Expansion 4, step 7: a piece turned round shows its picture the other way about: a flip piece (flip: true) when f is 4, a piece with a
+   side view on its other side (the west of a side view is the east mirrored) */
+function townMirror(d){const D=TOWN_DECOS[d.id]; return D.flip?((d.f|0)&4)>0:!!faceSrc(D,d.f|0)[1];}
 function townDecoProps(d,x,y,props,lights,em,held){
   const K=TOWN_ART.cache, base=y+pieceFoot(TOWN_DECOS[d.id],d.f).h*16;
   if(d.id==='lamp'){K.post=K.post||townLampPost(); K.glass=K.glass||townLampGlass(); const ph=d.c*5+d.r;
@@ -15448,7 +15464,7 @@ function townDecoProps(d,x,y,props,lights,em,held){
   else if(d.id==='stone'){const k='g'+d.c+','+d.r, g=K[k]||(K[k]=townGrave(d.c,d.r)); props.push({c:g,x,y:base-g.height,base});}
   else if(d.id==='fence'){const f=townFence(d.c,d.r,(fx,fy)=>townCh(fx,fy)==='|'||(TOWN_AT.get(fy*TOWN_W+fx)||{}).id==='fence',townSide(d)); props.push({c:f,x,y:base-f.height,base:base-1});}
   /* a piece from PixelLab (step 7): its picture stands on its footprint's foot, centred; a lantern's glass burns through the dark */
-  else if(TOWN_DECOS[d.id].art){const D=TOWN_DECOS[d.id], a=townPieceArt(d.id), px=x+((pieceFoot(D,d.f).w*16-a.cv.width)>>1), py=base-a.cv.height, ph=d.c*5+d.r;
+  else if(TOWN_DECOS[d.id].art){const D=TOWN_DECOS[d.id], a=townPieceArt(d.id,townSide(d)&&!!TOWN_PIECE_ROWS[D.art+'s'],townMirror(d)), px=x+((pieceFoot(D,d.f).w*16-a.cv.width)>>1), py=base-a.cv.height, ph=d.c*5+d.r;
     props.push({c:a.cv,x:px,y:py,base});
     if(D.light){if(a.em)em.push({c:a.em,x:px,y:py,base}); lights.push({x:px+a.lx,y:py+a.ly,r:D.light,f:D.hut?.35:.25,fk:D.hut?undefined:fireFk(TOWN_FIRE.lamp),ph});}}
   /* a path is laid into the ground; lifted, it is drawn as a patch of it */
@@ -16591,9 +16607,9 @@ function bldTurn(dir){
   const L=TWN.lift; if(!L)return false;
   if(L.item){townSay('A small thing does not turn.'); return false;}
   const I=bldTab()[L.id];
-  L.f=(L.f+(I.snap?2:1)*(dir<0?-1:1)+8)&7; L.key=null; L.art=bldArt(L.d,L.f);
+  L.f=(L.f+(I.flip?4:I.snap||(!TWN.inside&&I.faces&&I.faces<8)?2:1)*(dir<0?-1:1)+8)&7; L.key=null; L.art=bldArt(L.d,L.f);
   bldLiftTo(L.x,L.y);
-  townSay(L.why||'The '+I.n+' faces '+FACE_WORD[L.f]+'.');
+  townSay(L.why||'The '+I.n+(I.flip?(L.f&4?' is turned round.':' faces front.'):' faces '+FACE_WORD[L.f]+'.'));
   AUDIO.place&&AUDIO.place();
   return true;
 }
