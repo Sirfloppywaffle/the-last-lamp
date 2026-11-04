@@ -94,11 +94,19 @@ const {chromium}=require('playwright');
     /* a rite charge arms a cooling rite at once (its F.cd goes to 0 while you aim): that is not the rite coming ready */
     T.run.charge={floor:T.run.floor,n:1}; T.F.phase='wave'; T.F.queue=[]; T.F.cd.pillar=12; T.forceUI(); pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();});
     T.setP(false); T.castRite('pillar'); T.setP(true); T.forceUI(); o.charged={mode:T.mode,cd:T.F.cd.pillar,flash:fl(pb)};
-    T.castRite('pillar'); T.F.phase='build'; T.run.charge=null; T.F.cd.pillar=0; T.forceUI();
+    /* land it with its old wait already run out: the cast sets the Pillar's wait and the charge gives back none, so it is ready,
+       but that is the charge settling, not a cooldown ending */
+    T.F.chg.left=0; pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();});
+    T.setP(false); T.castPillar(T.F.lx,T.F.ly); T.update(.05); T.setP(true); T.forceUI(); o.landed={cd:T.F.cd.pillar, chg:!!T.F.chg, flash:fl(pb)};
+    T.F.phase='build'; T.run.charge=null; T.F.cd.pillar=0; T.forceUI();
     /* a rite still cooling when the floor ends is ready on the next: that is the floor beginning, not the rite coming ready */
-    T.F.cd.pillar=8; T.forceUI(); T.beginFloor(null); T.setP(true); T.forceUI();
+    T.F.cd.pillar=8; T.forceUI(); pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();}); T.beginFloor(null); T.setP(true); T.forceUI();
     const pb2=document.querySelector('#rites [data-r="pillar"]'); o.floor={same:pb2===pb, cd:T.F.cd.pillar||0, flash:fl(pb2)};
     o.rn=getComputedStyle(document.getElementById('cmdbar')).getPropertyValue('--rn').trim();
+    /* Lite (slower phones) skips both flashes, as it skips the icons' motion */
+    T.setLite(true); T.F.cd.pillar=4; T.run.ess=0; T.forceUI(); T.F.cd.pillar=0; T.run.ess=900; T.forceUI();
+    o.lite=[...document.querySelectorAll('#cmdbar button')].reduce((n,b)=>n+b.getAnimations().filter(a=>!(a instanceof CSSAnimation)).length,0);
+    T.setLite(false); T.forceUI();
     return o;});
   ok(rite.sig.every(([k,c])=>c.split(' ').includes('ui-ic-rt-'+k))&&rite.sig.length===3&&rite.span,'every rite wears its own sigil, and its status is still its first span',rite.sig);
   ok(rite.first.every(n=>n===0),'a rite drawn ready does not flash',rite.first);
@@ -107,7 +115,9 @@ const {chromium}=require('playwright');
   ok(rite.armed,'an armed rite lights its runes');
   ok(rite.cancel===0,'putting down a target you were choosing does not flash the rite',rite.cancel);
   ok(rite.floor.same&&rite.floor.cd===0&&rite.floor.flash===0,'a rite cooling as a floor ends does not flash as the next begins',rite.floor);
+  ok(rite.landed.cd===0&&!rite.landed.chg&&rite.landed.flash===0,'a charged cast that lands does not flash its rite',rite.landed);
   ok(rite.charged.mode==='pillar'&&rite.charged.cd===0&&rite.charged.flash===0,'a charge arming a cooling rite does not flash it',rite.charged);
+  ok(rite.lite===0,'Lite: no tray or rite flashes',rite.lite);
   ok(rite.rn==='3','the command bar knows how many rites it holds, to give the tray back their sigils’ width',rite.rn);
 
   // I: the build tray. A horror's count rides on its slot, a ward a Trial seals carries a lock, and a ward you can newly afford
