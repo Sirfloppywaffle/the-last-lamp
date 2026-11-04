@@ -11653,10 +11653,12 @@ function renderRites(){
     b.style.setProperty('--cd',frac);
     b.querySelector('span').textContent=txt;
     b.classList.toggle('ready',frac===0&&mode!==k);
-    /* the moment a rite's cooldown runs out (not when its button is first drawn, nor when you put down a target you were
-       choosing), it flashes and its sigil leaps */
-    if(b._cool&&frac===0&&!reduceMotion){b.animate(RITE_FLASH,{duration:650,easing:'ease-out'}); b.firstChild.animate(RITE_LEAP,{duration:500,easing:'ease-out'});}
-    b._cool=frac>0;
+    /* the moment a rite's cooldown (F.cd) runs out, it flashes and its sigil leaps. Not when its button is first drawn, nor
+       when you put down a target you were choosing, nor when a charge arms it (that zeroes F.cd while you aim), nor when a
+       silent rite speaks again or Overload has its oil back */
+    const cooling=(F.cd[k]||0)>0;
+    if(b._cool&&!cooling&&frac===0&&mode!==k&&!reduceMotion){b.animate(RITE_FLASH,{duration:650,easing:'ease-out'}); b.firstChild.animate(RITE_LEAP,{duration:500,easing:'ease-out'});}
+    b._cool=cooling;
     b.classList.toggle('armed',mode===k);
     b.classList.toggle('is-charged',chg&&mode!==k);
     b.disabled=frac>0&&mode!==k&&!chg;
