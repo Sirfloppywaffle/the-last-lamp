@@ -11436,7 +11436,7 @@ function renderTray(){
   el.innerHTML=items.map((i,ix)=>'<button class="titem '+i.kind+(isSel(i)?' on':'')+(bar[ix]?' is-barred':poor[ix]?' poor':'')+'" data-ix="'+ix+'" aria-pressed="'+isSel(i)+'"><canvas width="72" height="72"></canvas><span class="nm">'+itemName(i)+'</span><span class="ct">'+costLabel(i)+'</span>'
     +(i.kind==='horror'?'<b class="tray-cnt" aria-label="'+avail(i.type)+' ready">×'+avail(i.type)+'</b>':'')+(bar[ix]?'<i class="ui-ic ui-ic-lock tray-lock" aria-hidden="true"></i>':'')+'</button>').join('');
   const L=TRAY_LAST, now={}; items.forEach((i,ix)=>now[i.kind+i.type]=poor[ix]); TRAY_LAST={F,poor:now};
-  if(L&&L.F===F&&!reduceMotion)el.querySelectorAll('.titem').forEach(b=>{const ix=+b.dataset.ix, i=items[ix], k=i.kind+i.type; if(L.poor[k]&&!now[k]&&!bar[ix])b.animate(TRAY_FLASH,{duration:600,easing:'ease-out'});});
+  if(L&&L.F===F&&!reduceMotion&&!gfxLite)el.querySelectorAll('.titem').forEach(b=>{const ix=+b.dataset.ix, i=items[ix], k=i.kind+i.type; if(L.poor[k]&&!now[k]&&!bar[ix])b.animate(TRAY_FLASH,{duration:600,easing:'ease-out'});});
   el.querySelectorAll('.titem').forEach(b=>{
     const i=items[+b.dataset.ix];
     b.onclick=()=>{
@@ -11656,8 +11656,9 @@ function renderRites(){
     /* the moment a rite's cooldown (F.cd) runs out, it flashes and its sigil leaps. Not when its button is first drawn, nor
        when you put down a target you were choosing, nor when a charge arms it (that zeroes F.cd while you aim), nor when a
        silent rite speaks again or Overload has its oil back, nor as a new floor (a new F) starts every cooldown over */
-    const cooling=(F.cd[k]||0)>0;
-    if(b._cool===F&&!cooling&&frac===0&&mode!==k&&!reduceMotion){b.animate(RITE_FLASH,{duration:650,easing:'ease-out'}); b.firstChild.animate(RITE_LEAP,{duration:500,easing:'ease-out'});}
+    /* a charged cast (F.chg) sets the rite's own wait, then gives back what was left of the old one; neither is a cooldown ending */
+    const cooling=(F.cd[k]||0)>0&&!(F.chg&&F.chg.k===k);
+    if(b._cool===F&&!cooling&&frac===0&&mode!==k&&!reduceMotion&&!gfxLite){b.animate(RITE_FLASH,{duration:650,easing:'ease-out'}); b.firstChild.animate(RITE_LEAP,{duration:500,easing:'ease-out'});}
     b._cool=cooling?F:null;
     b.classList.toggle('armed',mode===k);
     b.classList.toggle('is-charged',chg&&mode!==k);
