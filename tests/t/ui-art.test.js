@@ -95,6 +95,9 @@ const {chromium}=require('playwright');
     T.run.charge={floor:T.run.floor,n:1}; T.F.phase='wave'; T.F.queue=[]; T.F.cd.pillar=12; T.forceUI(); pb.getAnimations().forEach(a=>{if(!(a instanceof CSSAnimation))a.finish();});
     T.setP(false); T.castRite('pillar'); T.setP(true); T.forceUI(); o.charged={mode:T.mode,cd:T.F.cd.pillar,flash:fl(pb)};
     T.castRite('pillar'); T.F.phase='build'; T.run.charge=null; T.F.cd.pillar=0; T.forceUI();
+    /* a rite still cooling when the floor ends is ready on the next: that is the floor beginning, not the rite coming ready */
+    T.F.cd.pillar=8; T.forceUI(); T.beginFloor(null); T.setP(true); T.forceUI();
+    const pb2=document.querySelector('#rites [data-r="pillar"]'); o.floor={same:pb2===pb, cd:T.F.cd.pillar||0, flash:fl(pb2)};
     o.rn=getComputedStyle(document.getElementById('cmdbar')).getPropertyValue('--rn').trim();
     return o;});
   ok(rite.sig.every(([k,c])=>c.split(' ').includes('ui-ic-rt-'+k))&&rite.sig.length===3&&rite.span,'every rite wears its own sigil, and its status is still its first span',rite.sig);
@@ -103,6 +106,7 @@ const {chromium}=require('playwright');
   ok(rite.ready.flash>=1&&rite.ready.others.every(n=>n===0),'the rite that comes ready flashes, and only it',rite.ready);
   ok(rite.armed,'an armed rite lights its runes');
   ok(rite.cancel===0,'putting down a target you were choosing does not flash the rite',rite.cancel);
+  ok(rite.floor.same&&rite.floor.cd===0&&rite.floor.flash===0,'a rite cooling as a floor ends does not flash as the next begins',rite.floor);
   ok(rite.charged.mode==='pillar'&&rite.charged.cd===0&&rite.charged.flash===0,'a charge arming a cooling rite does not flash it',rite.charged);
   ok(rite.rn==='3','the command bar knows how many rites it holds, to give the tray back their sigils’ width',rite.rn);
 
