@@ -22,7 +22,7 @@
 | 6 | The Peddler: a rescued soul with a stall by the stairs | #148 | merged | 19.9.0 |
 | A3 | Art pass 3: scenery (buildings, ground, props) | #149 (A3a: buildings and props), #150 (A3b: the ground and the haul's frame) | merged | 19.10.0 |
 | 7 | The village: decorations, paths, paint, Keepers' huts | #151 | merged | 19.11.0 |
-| 8 | The Hearth Beacon: the rain thins | PRNUM | open | 19.12.0 |
+| 8 | The Hearth Beacon: the rain thins | #153 | open | 19.12.0 |
 | 9 | Keepers react: waypoints, lore chalk, the cellar's tide | | | 19.13.0 |
 | 10 | Release v20.0.0 | | | 20.0.0 |
 
@@ -249,7 +249,7 @@ Numbers marked *shape* are for playtest.
 **Test** `tests/t/keepers4.test.js`.
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 9, with step 7's and step 8's as-built notes) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 9 exactly as the runbook says, following its §4 workflow. Step 7 left the Keepers standing at their hut doors (they do not walk yet); the Hearth Beacon's waypoint is the ground before it (`HEARTH.front`), and a lit Hearth (`hearthLv() > 0`) is the one to gather at. New art comes from PixelLab through runbook §3 (the chalk marks, the kelp and barnacles), candidates on a contact sheet for Criss. Tick the status table (step 8 is PRNUM). End with the prompt for step 10.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4, and §5 step 9, with step 7's and step 8's as-built notes) and expansion/EXPANSION4_BRAINSTORM.md's decisions. Build Expansion 4, step 9 exactly as the runbook says, following its §4 workflow. Step 7 left the Keepers standing at their hut doors (they do not walk yet); the Hearth Beacon's waypoint is the ground before it (`HEARTH.front`), and a lit Hearth (`hearthLv() > 0`) is the one to gather at. New art comes from PixelLab through runbook §3 (the chalk marks, the kelp and barnacles), candidates on a contact sheet for Criss. Tick the status table (step 8 is #153). End with the prompt for step 10.
 
 ### Step 10: Release v20.0.0 (Claude: Sonnet 5.5, low)
 
