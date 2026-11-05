@@ -16828,9 +16828,9 @@ function keeperWaypoints(T){
     for(const m of ['main',...LODGE_ROOM_KEYS]){
       if(!lodgeRoomBuilt(m,T))continue;
       const L=lodgeRoom(T,m), RM=LODGE_ROOMS[m], blk=new Set(), used=new Set();
-      /* a piece in your hands blocks nothing and counts as nobody's favourite; it stays a waypoint, so whoever stands by it waits
-         for it to be set down and follows it */
-      for(const d of L.furn){const I=d&&d!==BLD_SKIP&&LODGE_ITEMS[d.id]; if(!I||I.mount||I.flat||I.small)continue; for(const [x,y] of lodgeTiles(d.id,d.c,d.r,d.f))blk.add(y*LODGE_W+x);}
+      /* a piece in your hands still holds its tiles (so nobody steps into the place it may go back to) and stays a waypoint, so
+         whoever stands by it waits for it to be set down and follows it; it counts as nobody's favourite meanwhile */
+      for(const d of L.furn){const I=d&&LODGE_ITEMS[d.id]; if(!I||I.mount||I.flat||I.small)continue; for(const [x,y] of lodgeTiles(d.id,d.c,d.r,d.f))blk.add(y*LODGE_W+x);}
       const ok=(x,y)=>x>0&&y>1&&x<LODGE_W-1&&y<LODGE_H-1&&lodgeCh(x,y,m)==='.'&&!blk.has(y*LODGE_W+x)&&!RM.kept.has(y*LODGE_W+x)&&!used.has(y*LODGE_W+x);
       for(const d of L.furn){
         const kind=d&&KEEPER_LODGE[d.id]; if(!kind)continue;

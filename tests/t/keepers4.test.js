@@ -131,6 +131,17 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(lg.inside&&lg.byStove&&lg.offer&&/Talk to/.test(lg.label)&&/Voss/.test(lg.card),'inside, they stand beside the stove, and you can talk to them',lg);
   ok(lg.outside,'back out, they are still in the Lodge',lg);
 
+  /* 5b. a piece lifted in the Lodge keeps its tiles: the Keeper by the chair beside it does not step into its place, so it goes
+     back where it was (CodeRabbit on #160) */
+  await setup(false);
+  const lf=await p.evaluate(()=>{const T=__t, W=T.TWN, D=T.townData();
+    D.lodge.built=true; D.lodge.furn.push({id:'chair',c:4,r:4,f:0},{id:'chair',c:5,r:4,f:0}); T.townArt(); T.townKeepers();
+    W.wps=W.wps.filter(q=>q.kind==='lodge').slice(0,1); __k.hold('galvanist'); __k.run('galvanist',e=>e.away,150);
+    T.lodgeEnter(); const k0=W.crowd.find(q=>q.k==='galvanist'), at0=k0&&[k0.tx,k0.ty];
+    T.townBuildSet(true); T.townBuildTap(5,4); const k1=W.crowd.find(q=>q.k==='galvanist');
+    const o={at0,at1:k1&&[k1.tx,k1.ty],lifted:!!W.lift,back:T.bldFits('chair',5,4,null,null,0)}; T.townBuildSet(false); T.lodgeLeave(); return o;});
+  ok(lf.at0&&lf.lifted&&JSON.stringify(lf.at0)===JSON.stringify(lf.at1)&&lf.back==='','lifting the chair beside a Keeper leaves them where they stand, and it can go back',lf);
+
   /* 6. lore chalk: Ambrose's note, once, saved, read on a tap; developer mode writes none */
   const ch=await p.evaluate(()=>{const T=__t, W=T.TWN, o={};
     localStorage.setItem('ll-meta',JSON.stringify({embers:50,unlocked:['kit_whaler','kit_occultist','kit_galvanist','kit_bellringer'],lastKit:'whaler'}));
