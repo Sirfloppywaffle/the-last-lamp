@@ -16838,10 +16838,13 @@ function keeperWaypoints(T){
         for(const [ox,oy] of order.concat(KEEPER_FACE.map(q=>[q[0],q[1]])))for(const [x,y] of tiles){const a=x+ox, b=y+oy;
           if(spots.length<(kind==='warm'?2:1)&&!tiles.some(t=>t[0]===a&&t[1]===b)&&ok(a,b)){used.add(b*LODGE_W+a);
             spots.push({x:a,y:b,look:kind==='warm'?keeperLookAt(cxx-a,cyy-b):KEEPER_FACE[f][2],by:null});}}
-        if(spots.length)out.push({key:'l'+m+d.id+'@'+d.c+','+d.r+'/'+f,kind:'lodge',room:m,door,spots,fav:near(tiles,null,null,m)});
+        /* keyed by the piece itself, so a Keeper by it follows it when it is moved about the room */
+        if(spots.length)out.push({key:'l'+m+keeperPid(d),kind:'lodge',room:m,door,spots,fav:near(tiles,null,null,m)});
       }}}
   return out;
 }
+const KEEPER_PID=new WeakMap(); let KEEPER_PN=0;
+function keeperPid(d){let n=KEEPER_PID.get(d); if(!n){n=++KEEPER_PN; KEEPER_PID.set(d,n);} return n;}
 /* the Keepers gone in to a piece of the room you stand in, each beside it (made when the scene changes, never per frame) */
 function keepersInside(KS){
   const m=lodgeCur(), out=[];
@@ -17748,6 +17751,8 @@ function lodgeSync(){
   LODGE_BLOCK.clear(); LODGE_AT.clear(); LODGE_STALE=true;
   /* a rug lies under whatever stands on it: a tile's piece is the one on top, and a rug answers only where nothing else is */
   for(const d of lodgeRoom().furn)if(d!==BLD_SKIP)for(const [x,y] of lodgeTiles(d.id,d.c,d.r,d.f)){const k=y*LODGE_W+x, fl=LODGE_ITEMS[d.id].flat; if(!fl||!LODGE_AT.has(k))LODGE_AT.set(k,d); if(!fl&&!LODGE_ITEMS[d.id].mount)LODGE_BLOCK.add(k);}
+  /* a Keeper by a piece that moved or went (Expansion 4, step 9) finds their place again */
+  if(TWN.inside&&TWN.on&&TOWN_ART)townKeepers();
 }
 
 /* ---- the visit ---- */
