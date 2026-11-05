@@ -11027,7 +11027,7 @@ const TIPS={
   townpaint:{where:'town',when:()=>false,title:'Paint and trim',text:'Paint lists every building that stands: the Lodge, the Oar and the workshops you have restored. Tap a building or its chip for its next colourway, Tarred, Kelp-green or Bone-washed, for 4 tallow while it is worn; its own colours give the tallow back. Undo takes a coat back.'},
   lodgedye:{where:'town',when:()=>false,title:'Dyes',text:'Dye, while a piece is lifted, gives it its next colourway: each costs 2 tallow, and going back to its own colours gives the tallow back. Every piece has two to four. Undo takes a dye back.'},
   /* Expansion 4, step 9: the Keepers react */
-  townwander:{where:'town',when:()=>false,title:'The Keepers wander',text:'A Keeper with no chore does not stand at their post all night. They walk to a bench, to the Hearth Beacon once it burns, or in through the Lodge’s door to sit by a stove, a fireplace or an armchair, and come back. Each has a favourite set: Ambrose the Old Library, Jonah the Fisherman’s, the Nameless the Deep-One Coral, Voss the Brass Observatory, Agathe the Drowned Chapel. They stay longer where something of theirs stands, and say so if you talk to them there.'},
+  townwander:{where:'town',when:()=>false,title:'The Keepers wander',text:'A Keeper with no chore does not stand at their post all night. They walk to a bench, to the Hearth Beacon once it burns, or in through the Lodge’s door to stand by a stove, a fireplace or an armchair, and come back. Each has a favourite set: Ambrose the Old Library, Jonah the Fisherman’s, the Nameless the Deep-One Coral, Voss the Brass Observatory, Agathe the Drowned Chapel. They stay longer where something of theirs stands, and say so if you talk to them there.'},
   townchalk:{where:'town',when:()=>false,title:'Chalk on the stones',text:'A Keeper has left a note in chalk by their post: something of their favourite set stands near it. Tap the note to read it. Each Keeper leaves one, once, and it stays. An unread note shows faintly through the dark.'},
   lodgetide:{where:'town',when:()=>false,title:'The tide in the cellar',text:'The brine stands higher than it did. It rises a step each time a lamp goes out on the stair, four at most, and drains when you win the stair. What it reaches it leaves kelp and barnacles on, and they stay until the win after it drains. Nothing on the stair changes.'},
   lodgecellar:{where:'town',when:()=>false,title:'The Flooded Cellar',text:'Brine stands over the cellar floor. It rises a step each time a lamp goes out below, and drains when you win the stair. It is a room like the one above, with its own floor, wall and furniture: set a piece down and it stands in the water; it comes up for all it cost. Storage is the same in every room. The ladder takes you back up.'},
@@ -16803,7 +16803,7 @@ function keeperWaypoints(T){
   const free=(x,y,kept)=>x>0&&y>0&&x<TOWN_W-1&&y<TOWN_H-1&&!townSolidOut(x,y)&&'/=dgG'.indexOf(townCh(x,y))<0&&(kept||!townKept(x,y))&&!doors.some(q=>q[0]===x&&q[1]===y)&&!taken.has(y*TOWN_W+x);
   const near=(tiles,ids,sets,room)=>{const o={};
     for(const k in KEEPER_FAV){const F=KEEPER_FAV[k]; let n=0;
-      if(room){for(const d of lodgeRoom(T,room).furn){if(!d||!LODGE_ITEMS[d.id])continue; const t=lodgeTiles(d.id,d.c,d.r,d.f), hit=t.some(([x,y])=>tiles.some(([a,b])=>Math.max(Math.abs(x-a),Math.abs(y-b))<=KEEPER_FAV_R));
+      if(room){for(const d of lodgeRoom(T,room).furn){if(!d||d===BLD_SKIP||!LODGE_ITEMS[d.id])continue; const t=lodgeTiles(d.id,d.c,d.r,d.f), hit=t.some(([x,y])=>tiles.some(([a,b])=>Math.max(Math.abs(x-a),Math.abs(y-b))<=KEEPER_FAV_R));
         if(!hit)continue; if(LODGE_ITEMS[d.id].set===F.set)n++; for(const q of d.on||[])if(q&&LODGE_ITEMS[q.id]&&LODGE_ITEMS[q.id].set===F.set)n++;}}
       else for(const d of T.decos){if(d===BLD_SKIP||!F.town.includes(d.id))continue; if(decoTiles(d.id,d.c,d.r,d.f).some(([x,y])=>tiles.some(([a,b])=>Math.max(Math.abs(x-a),Math.abs(y-b))<=KEEPER_FAV_R)))n++;}
       o[k]=n;}
@@ -16828,7 +16828,9 @@ function keeperWaypoints(T){
     for(const m of ['main',...LODGE_ROOM_KEYS]){
       if(!lodgeRoomBuilt(m,T))continue;
       const L=lodgeRoom(T,m), RM=LODGE_ROOMS[m], blk=new Set(), used=new Set();
-      for(const d of L.furn){const I=d&&LODGE_ITEMS[d.id]; if(!I||I.mount||I.flat||I.small)continue; for(const [x,y] of lodgeTiles(d.id,d.c,d.r,d.f))blk.add(y*LODGE_W+x);}
+      /* a piece in your hands blocks nothing and counts as nobody's favourite; it stays a waypoint, so whoever stands by it waits
+         for it to be set down and follows it */
+      for(const d of L.furn){const I=d&&d!==BLD_SKIP&&LODGE_ITEMS[d.id]; if(!I||I.mount||I.flat||I.small)continue; for(const [x,y] of lodgeTiles(d.id,d.c,d.r,d.f))blk.add(y*LODGE_W+x);}
       const ok=(x,y)=>x>0&&y>1&&x<LODGE_W-1&&y<LODGE_H-1&&lodgeCh(x,y,m)==='.'&&!blk.has(y*LODGE_W+x)&&!RM.kept.has(y*LODGE_W+x)&&!used.has(y*LODGE_W+x);
       for(const d of L.furn){
         const kind=d&&KEEPER_LODGE[d.id]; if(!kind)continue;
@@ -18994,7 +18996,7 @@ function lodgeTapTile(tx,ty){
   if(TWN.build){lodgeBuildTap(tx,ty); return;}
   const ch=lodgeCh(tx,ty), W=LODGE_WAYS[ch];
   let goal=null, gx=tx, gy=ty;
-  /* a Keeper come in to sit by the fire (Expansion 4, step 9): walk up and talk */
+  /* a Keeper come in to stand by the fire (Expansion 4, step 9): walk up and talk */
   const kp=townKeeperAt(tx,ty);
   if(kp){if(Math.hypot(TWN.p.x-kp.x,TWN.p.y-kp.y)<1.5){TWN.path=null; TWN.goal=null; townMeet(kp); return;}
     TWN.goal={keeper:kp}; TWN.path=townPathTo(kp.tx,kp.ty); if(TWN.path&&TWN.path.length>1)TWN.path.pop();
@@ -19264,7 +19266,7 @@ function townNearAct(){
     const A=LODGE_ART&&LODGE_ART.room===m?LODGE_ART.acts:null;
     /* standing level between two (the shelf and a lamp), the one you tapped is the one offered */
     if(A)for(let i=0;i<A.length;i++){const t=A[i].t; d=Math.hypot(Math.max(t[0]-P.x,0,P.x-t[2]),Math.max(t[1]-P.y,0,P.y-t[3])); if(d<.9&&(d<bd-1e-6||(d<bd+1e-6&&A[i].n===TWN.goal))){bd=d; best=A[i].n;}}
-    /* (Expansion 4, step 9) a Keeper who has come in to sit by the fire */
+    /* (Expansion 4, step 9) a Keeper who has come in to stand by the fire */
     for(let i=0,c=TWN.crowd;i<c.length;i++){const e=c[i]; d=Math.hypot(P.x-e.x,P.y-e.y); if(d<1.3&&d<bd){bd=d; best=e;}}
     return best;
   }
