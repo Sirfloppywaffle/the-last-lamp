@@ -16992,6 +16992,7 @@ function townChalk(k){
   const K=KITS[k], who=K.who||K.n;
   showModal({title:'Chalk on the stones',body:'<span class="statline">Left by '+who+', '+N.hand+'.</span><br>'+N.lines.map(l=>'“'+l+'”').join('<br>'),
     actions:[{label:'Leave it',primary:true,fn:closeModal}]});
+  townCardTop();
   if(!q.read){q.read=true; townSave(); chalkArt(T);}
   return true;
 }
