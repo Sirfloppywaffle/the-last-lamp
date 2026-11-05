@@ -14043,13 +14043,14 @@ function townGroundPx(x,y,ch,rt,soft){
     if((y+(x>>4))%6===0&&thash(x>>2,y,5)<.55)return ly<20?'r':'q';
     return ly<10?'q':ly<20?(B>.5?'q':'t'):(thash(x>>2,y,4)<.15?'q':'t');}
   if(ch==='^'){
-    /* rt: the rock tile a pixel of an edge belongs to (map expansion, M3); soft: inside a Wang edge, which draws its own lip and foot */
+    /* rt: the rock tile a pixel of an edge belongs to (map expansion, M3); soft: inside a Wang edge, which draws its own foot. The lip
+       stays the cliff's own (Criss on #159: the set's lip let the face rise into the Rise's ground, as if the wall clipped through it) */
     const tx=rt?rt[0]:(x/TOWN_T)|0; if(rt)ty=rt[1]; const ly=y-ty*TOWN_T;
     /* map expansion, M1: the cliff between the shelves (rock inside the border). Where the Rise ends, a lip of wet earth over the
        drop; down the face, rock in tall ribs, lit on their west edge; at its foot, the dark it throws */
     if(tx>0&&tx<TOWN_W-1&&ty>0&&ty<TOWN_SEA_Y-1){
       const top=townCh(tx,ty-1)!=='^', foot=townCh(tx,ty+1)!=='^';
-      if(top&&ly<3&&!soft)return ly===0?(B>.5?'n':'m'):ly===1?'4':'3';
+      if(top&&ly<3)return ly===0?(B>.5?'n':'m'):ly===1?'4':'3';
       if(foot&&ly>12&&!soft)return ly>14?'s':(x+ly)%4===0?'1':'0';
       const r=x+((thash(y>>3,ty,71)*3)|0), band=(r/5)|0, bx=r%5, h=thash(band,y>>4,72);
       let p=bx===0?'3':bx===4?'0':h<.35?'1':'2';
@@ -14363,6 +14364,9 @@ function townWangPx(x,y,lay){
   if(own===12||own===13||own===15){const t=own===12?12:13;
     if(a===t&&b===t&&c===t&&d===t){WANG_SRC=t; return townGroundPx(x,y,t===12?'~':'^');}}
   const sel=townWangSel(a,b,c,d);
+  /* the Rise's edge (Criss on #159): the ground above the cliff's face stays ground right to the drop; the face never rises into it,
+     and its top is the cliff's own lip (townGroundPx()). Only the foot and the map's border wander */
+  if(sel[3]===13&&own!==13&&own!==15){const tc=townCh((x/16)|0,((y/16)|0)+1); if(tc==='^'||tc==='/')return townWangPx0(x,y,TOWN_WANG.ec,'0000');}
   if(sel[3]===12||sel[3]===13){const U=TOWN_WANG_UP[NAT_SET[sel[3]]][sel[1]], bit=(parseInt(U.substr(ly*4,4),16)>>(15-lx))&1;
     if(bit){WANG_SRC=sel[3]; return sel[3]===12?townGroundPx(x,y,'~',null,true):townGroundPx(x,y,'^',townRockOf(x,y,cx,cy),true);}}
   else if(own===12||own===13||own===15){WANG_SRC=own===12?12:13; return townGroundPx(x,y,own===12?'~':'^');}
@@ -14377,6 +14381,9 @@ function townWangPx(x,y,lay){
   return WANG_EARTH[Math.max(0,Math.min(2,e+(n<.36?-1:n>.64?1:0)))];
 }
 const WANG_EARTH='lmn', MOSS_FLECK='uel', MOSS_BASE='y';
+/* one pixel of a given tile, the earth stepped by the broad noise as townWangPx() does */
+function townWangPx0(x,y,S,k){const ch=S[k][(y-8)&15][(x-8)&15], e=WANG_EARTH.indexOf(ch); if(e<0)return ch;
+  const n=tNoise(x/22,y/22,1)+(tBayer(x,y)-.5)*.16; return WANG_EARTH[Math.max(0,Math.min(2,e+(n<.36?-1:n>.64?1:0)))];}
 /* the rock tile a pixel of rock in an edge belongs to: the nearest corner of its cell that is rock, so the cliff's ribs and the
    border's stone carry on into the edge from the tile they come from */
 const ROCK_OF=[0,0];
@@ -16500,7 +16507,7 @@ function townSurf(sea){
    and Reduce Motion show the still, frame 0.
    areas: r, its tiles [x, y, w, h], and dy, how far apart its rows of banks lie (the cemetery's thinner); pad: how far past them the
    mist reaches (art px); feather: how far in it thins to nothing; dx: the lattice's step; dt: a frame of the loop */
-const TOWN_FOG={areas:{shore:{r:[[1,30,34,3],[27,33,2,3]],dy:15},cemetery:{r:[[1,1,13,8],[1,9,4,4]],dy:23}},a:.24,pad:6,feather:14,dx:76,dt:.22};
+const TOWN_FOG={areas:{shore:{r:[[1,30,34,3],[27,33,2,3]],dy:15},cemetery:{r:[[1,1,13,8],[1,9,4,4]],dy:23}},a:.17,pad:6,feather:14,dx:76,dt:.22};
 let FOG_ART=null;
 function fogArt(){
   if(FOG_ART)return FOG_ART;
