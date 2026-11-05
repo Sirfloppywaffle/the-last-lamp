@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after map expansion M3 (fog, the outer dark, the ground's Wang edges), M2 (plots and the dock) and M1 (two shelves), Expansion 4 step 8 (the Hearth Beacon), step 7 (the village), step 6 (the Peddler) and art passes A2 and A3a - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after Expansion 4 step 9 (Keepers who walk, lore chalk, the cellar's tide), map expansion M3 (fog, the outer dark, the ground's Wang edges), M2 (plots and the dock) and M1 (two shelves), Expansion 4 step 8 (the Hearth Beacon), step 7 (the village), step 6 (the Peddler) and art passes A2 and A3a - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -142,3 +142,11 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] A Wang set's straight edge repeats a tile; check a new set over a long run (the shore) as well as a blob, and break a whole tile's flecks by the cell (`MOSS_FLECK`) if they read as a grid.
 - [ ] `fog.test.js` counts canvases and image reads over two walks of the square: copy it for anything drawn per frame.
 
+## Keepers who walk, chalk, the tide (Expansion 4, step 9)
+
+- [ ] **A freed Keeper is a state for the visit** (`TWN.kst[k]`, reset in `townOpen()`), and `TWN.crowd` holds those very objects: never rebuild a Keeper as a fresh object in `townKeepers()`, or they blink back to their post. Their place to belong is `keeperHome()`'s; a change while the square is open is walked to. A test that looks where a Keeper stands after a change calls `__t.keepersSettle()` first.
+- [ ] **A new waypoint** is a kind in `keeperWaypoints()` (spots `{x, y, look, by}`, `fav` per Keeper, a `key` that names its piece and place so a held spot survives a rebuild); a Lodge piece is a key of `KEEPER_LODGE`. Its weight is `keeperPick()`'s.
+- [ ] **Nothing per frame:** `keeperStep()`/`keeperWalk()` read the path worked out once into the Keeper's own buffer; no closures, arrays or objects in them (`keepers4.test.js` counts canvases and image reads over a walk, as `fog.test.js` does). Anything that iterates the crowd skips `e.away` (gone into the Lodge).
+- [ ] **A Keeper's line** where they linger is `keeperSays()`; a new reason to speak goes there.
+- [ ] **A chalk note** is `ll-town.chalk[k]`, left by `chalkCheck()` once; the art is `CHALK_ROWS`, drawn from `TWN.chalk` (`chalkArt()`).
+- [ ] **The cellar's water** is `tideBrine()`; what it left is `tideKelp()`. Anything new drawn in the cellar that depends on it goes in `lodgeArt()`'s `sig`.

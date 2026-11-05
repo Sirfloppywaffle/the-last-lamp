@@ -135,9 +135,10 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   await setup(ALL,'lamplighter');
   const ch=await p.evaluate(()=>{
     const o={};
-    __t.townSetChore('whaler'); const e=__t.TWN.crowd.find(x=>x.k==='whaler'), W=__t.TOWN_STAND.whaler;
+    /* since Expansion 4, step 9 a Keeper walks to their work and back: keepersSettle() ends the walk */
+    __t.townSetChore('whaler'); __t.keepersSettle(); const e=__t.TWN.crowd.find(x=>x.k==='whaler'), W=__t.TOWN_STAND.whaler;
     o.at=[e.tx,e.ty]; o.work=e.work; o.want=W.wk;
-    __t.townSetChore('galvanist'); const e2=__t.TWN.crowd.find(x=>x.k==='whaler'); o.back=[e2.tx,e2.ty]; o.backWant=__t.TOWN_STAND.whaler.st; o.one=__t.townData().chore;
+    __t.townSetChore('galvanist'); __t.keepersSettle(); const e2=__t.TWN.crowd.find(x=>x.k==='whaler'); o.back=[e2.tx,e2.ty]; o.backWant=__t.TOWN_STAND.whaler.st; o.one=__t.townData().chore;
     o.stored=JSON.parse(localStorage.getItem('ll-town')).chore;
     __t.townSetChore('whaler'); __t.townSetChore(null); o.cleared=__t.townData().chore;
     return o;

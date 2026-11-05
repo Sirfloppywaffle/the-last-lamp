@@ -152,6 +152,10 @@ Four plots, shut until their gate is opened once with the haul, saved as `ll-tow
 | Wreckage | 2 | gives back 2 timber | The drowned strand (3) |
 | The wreck’s ribs | 2 | never (it stays) | The drowned strand (1) |
 
+### The Keepers react (Expansion 4, step 9)
+
+A freed Keeper with no chore waits at their post 6 to 14 s, walks (1.6 tiles a second) to a waypoint (a bench, the Hearth Beacon once lit, or in the Lodge: Cast-Iron Stove, Stone Fireplace, Armchair), stays 10 to 18 s (1.8 times as long with a favourite of theirs within 4 tiles, and 2 s more a Hearth level), and walks home. The first wait after the square opens is 1.5 to 4.5 s. A favourite of theirs in the square within **3** tiles of their post makes them leave a note in chalk, once (`ll-town.chalk`). The cellar's brine rises **2** art pixels a step for each lamp gone out below, up to **4** steps, and drains on a win; its kelp stays until the win after (`ll-town.tide`). Nothing on the stair changes.
+
 ### Every piece
 
 | Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |
