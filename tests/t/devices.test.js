@@ -339,6 +339,29 @@ const DEV=[
       if(hs.near!=='hearth'||!hs.shown||hs.h<44||hs.b>h+1||hs.l<ins.left||hs.rt>w-(ins.right||0)+1)console.log('FAIL '+nm+': the Hearth Beacon button out of reach',JSON.stringify(hs));
       await p.screenshot({path:(process.argv[3]||'.')+'/town-hearthsq-'+nm+'.png'});
       await p.evaluate(()=>{__t.townData().hearth={lv:0}; __t.townClose();});}
+    /* map expansion, M2: a shut gate's card, a piece of debris's card in Build, and the dock's; then the net-lofts open and partly
+       cleared, and the dock restored with you on it (developer mode: nothing is written) */
+    for(const card of ['gate','debris','dock']){
+      await p.evaluate(c=>{const T=__t, D=T.townData(); D.res={timber:500,iron:500,tallow:500,curios:50}; D.plots={lofts:{open:true,cleared:[]}}; T.townMapSync(D); T.townOpen();
+        if(c==='gate')T.townGate('wood'); else if(c==='dock')T.townDock(); else T.townDebrisCard(T.townDebrisAt(T.TOWN_PLOTS.lofts.debris[0].c,T.TOWN_PLOTS.lofts.debris[0].r));},card);
+      for(const button of await p.locator('#mActions button').all()){
+        await button.scrollIntoViewIfNeeded();
+        const r=await button.boundingBox();
+        if(!r||r.height<44||r.x<ins.left||r.x+r.width>w-(ins.right||0)+1||r.y<0||r.y+r.height>h+1)console.log('FAIL '+nm+': '+card+' control out of reach',r);
+      }
+      await p.locator('#mTitle').scrollIntoViewIfNeeded();
+      await p.screenshot({path:(process.argv[3]||'.')+'/town-'+card+'-'+nm+'.png'});
+      await p.evaluate(()=>{document.getElementById('modal').hidden=true; __t.townClose();});
+    }
+    for(const view of ['lofts','wood','dock']){
+      const vs=await p.evaluate(v=>{const T=__t, W=T.TWN, D=T.townData();
+        D.plots={lofts:{open:true,cleared:[1,4,7,8,9]},wood:{open:true,cleared:[30,31,33,34,36,37]}}; D.dock={lv:v==='dock'?1:0}; T.townMapSync(D); T.townOpen();
+        const at=v==='lofts'?[31,23]:v==='wood'?[24,11]:T.TOWN_DOCK.stand; W.p.x=at[0]+.5; W.p.y=at[1]+.5; W.cx=null; for(let i=0;i<20;i++)T.townFrame(1/30);
+        const b=document.getElementById('townAct'), r=b.getBoundingClientRect(); return {near:W.near,shown:!b.hidden,h:r.height,b:r.bottom,l:r.left,rt:r.right};},view);
+      if(view==='dock'&&(vs.near!=='dock'||!vs.shown||vs.h<44||vs.b>h+1||vs.l<ins.left||vs.rt>w-(ins.right||0)+1))console.log('FAIL '+nm+': the dock button out of reach',JSON.stringify(vs));
+      await p.screenshot({path:(process.argv[3]||'.')+'/town-plot'+view+'-'+nm+'.png'});
+      await p.evaluate(()=>{const D=__t.townData(); D.plots={}; D.dock={lv:0}; __t.townMapSync(D); __t.townClose();});
+    }
     await p.evaluate(()=>{const T=__t; T.newRun('lamplighter',0,{seed:11}); T.run.ess=60; T.F.foes=[]; T.F.queue=[]; T.F.wave=T.F.def.waves.length; T.F.phase='cleared'; T.openDraft(0,0);
       const d=T.F.draft; d.step='fork'; d.doors=[{room:'cage',who:'toothmonger',omen:null},{room:'rest',omen:null}]; T.chooseDoor(d,0);});
     for(const button of await p.locator('#mChoices button, #mActions button').all()){
