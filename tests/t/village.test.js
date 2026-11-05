@@ -97,20 +97,20 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.spot=spot; if(!spot)return o;
     const [c,r]=spot, door=[c+1,r+2], at=()=>T.TWN.crowd.find(e=>e.k==='whaler');
     o.st0=[at().tx,at().ty];
-    o.placed=T.townPlace('hut_whaler',c,r)==='';
+    o.placed=T.townPlace('hut_whaler',c,r)===''; T.keepersSettle(); /* step 9: they walk to it; this ends the walk */
     o.doorStand=[at().tx,at().ty]; o.doors=JSON.stringify(T.townHutDoors());
     /* map expansion, M1: the first other spot where a hut's ground is open says why not (M2: a plot's ground has reasons of its own) */
     o.twice=''; for(let rr=12;rr<30&&!o.twice;rr++)for(let cc=1;cc<34&&!o.twice;cc++){if(Math.abs(cc-c)<3&&Math.abs(rr-r)<3)continue; const m=T.townCanPlace('hut_whaler',cc,rr); if(m&&!/open ground|Something stands|Keep it clear|wall off|deck|tower|shut behind|Clear it first|gateway|the dock/.test(m))o.twice=m;}
     o.onDoor=T.townCanPlace('tree',door[0],door[1]-1); o.bench=T.townCanPlace('bench1',door[0],door[1]);
     o.reach=!!T.townPathTo(door[0],door[1]); o.keepOK=T.townKeepOK(T.townData().decos);
     /* at work, the Keeper is at their workplace instead */
-    Tn.chore='whaler'; T.townSave(); T.townDecoSync(); o.work=[at().tx,at().ty]; Tn.chore=null; T.townDecoSync();
+    Tn.chore='whaler'; T.townSave(); T.townDecoSync(); T.keepersSettle(); o.work=[at().tx,at().ty]; Tn.chore=null; T.townDecoSync();
     /* a reload keeps the hut; a town saved with a tree on the door gives the hut back and pays */
     const raw=JSON.parse(JSON.stringify(T.townData())); const fx=T.townFix(raw); o.kept=fx.decos.some(d=>d.id==='hut_whaler');
     const bad=T.townFix({v:2,res:{timber:0,iron:0,tallow:0,curios:0},decos:[{id:'tree',c:door[0],r:door[1]-1},{id:'hut_whaler',c:c,r:r}]});
     o.bad={huts:bad.decos.filter(d=>d.id==='hut_whaler').length,timber:bad.res.timber,iron:bad.res.iron};
     /* taking it up puts the Keeper back at their footing */
-    const d=T.townData().decos.find(e=>e.id==='hut_whaler'); T.townTakeUp(d); o.back=[at().tx,at().ty]; o.refund=T.townData().res.timber;
+    const d=T.townData().decos.find(e=>e.id==='hut_whaler'); T.townTakeUp(d); T.keepersSettle(); o.back=[at().tx,at().ty]; o.refund=T.townData().res.timber;
     T.townClose(); return o;});
   ok(h.spot,'a hut has somewhere to stand',h);
   if(h.spot){

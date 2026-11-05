@@ -87,6 +87,10 @@ if 'LODGE_ITEMS' in D:
             what='never (it stays)' if v.get('fixed') else ('costs '+nm(v['clear'])) if v.get('clear') else ('gives back '+nm(v['gives'])) if v.get('gives') else 'free'
             w("| %s | %d | %s | %s (%d) |"%(esc(v['n']),v['w'],what,where,n))
         w("")
+    if 'KEEPER_HOME' in D:
+        w("### The Keepers react (Expansion 4, step 9)\n")
+        w("A freed Keeper with no chore waits at their post %s to %s s, walks (%s tiles a second) to a waypoint (a bench, the Hearth Beacon once lit, or in the Lodge: %s), stays %s to %s s (%s times as long with a favourite of theirs within %s tiles, and 2 s more a Hearth level), and walks home. The first wait after the square opens is %s to %s s. A favourite of theirs in the square within **%s** tiles of their post makes them leave a note in chalk, once (`ll-town.chalk`). The cellar's brine rises **%s** art pixels a step for each lamp gone out below, up to **%s** steps, and drains on a win; its kelp stays until the win after (`ll-town.tide`). Nothing on the stair changes.\n"%(
+            D['KEEPER_HOME'][0],D['KEEPER_HOME'][0]+D['KEEPER_HOME'][1],D['KEEPER_SPEED'],', '.join(D['LODGE_ITEMS'][k]['n'] for k in D['KEEPER_LODGE']),D['KEEPER_STAY'][0],D['KEEPER_STAY'][0]+D['KEEPER_STAY'][1],D['KEEPER_LINGER'],D['KEEPER_FAV_R'],D['KEEPER_FIRST'][0],D['KEEPER_FIRST'][0]+D['KEEPER_FIRST'][1],D['CHALK_R'],D['TIDE_PX'],D['TIDE_MAX']))
     w("### Every piece\n")
     w("| Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |\n|---|---|---|---|---|---|---|---|")
     for v in D['LODGE_ITEMS'].values():

@@ -339,6 +339,23 @@ const DEV=[
       if(hs.near!=='hearth'||!hs.shown||hs.h<44||hs.b>h+1||hs.l<ins.left||hs.rt>w-(ins.right||0)+1)console.log('FAIL '+nm+': the Hearth Beacon button out of reach',JSON.stringify(hs));
       await p.screenshot({path:(process.argv[3]||'.')+'/town-hearthsq-'+nm+'.png'});
       await p.evaluate(()=>{__t.townData().hearth={lv:0}; __t.townClose();});}
+    /* Expansion 4, step 9: Ambrose's note in chalk by his footing, the button that reads it, its card; and the Keepers gathered at
+       the lit Hearth (developer mode's copy) */
+    {const cs=await p.evaluate(()=>{const T=__t, W=T.TWN, D=T.townData(), [x,y]=T.TOWN_STAND.lamplighter.st; D.chalk={lamplighter:{x,y:y+1,read:false}};
+        T.townOpen(); W.p.x=x+.5; W.p.y=y+1.6; W.cx=null; for(let i=0;i<20;i++)T.townFrame(1/30);
+        const b=document.getElementById('townAct'), r=b.getBoundingClientRect(); return {near:!!(W.near&&W.near.chalk),label:b.textContent,shown:!b.hidden,h:r.height,b:r.bottom,l:r.left,rt:r.right};});
+      if(!cs.near||!/chalk/.test(cs.label)||!cs.shown||cs.h<44||cs.b>h+1||cs.l<ins.left||cs.rt>w-(ins.right||0)+1)console.log('FAIL '+nm+': the chalk\'s button out of reach',JSON.stringify(cs));
+      await p.screenshot({path:(process.argv[3]||'.')+'/town-chalksq-'+nm+'.png'});
+      await p.evaluate(()=>document.getElementById('townAct').click());
+      if(!/Chalk/.test(await p.locator('#mTitle').textContent()))console.log('FAIL '+nm+': the chalk\'s card missing');
+      for(const button of await p.locator('#mActions button').all()){await button.scrollIntoViewIfNeeded(); const r=await button.boundingBox();
+        if(!r||r.height<44||r.x<ins.left||r.x+r.width>w-(ins.right||0)+1||r.y<0||r.y+r.height>h+1)console.log('FAIL '+nm+': chalk card control out of reach',r);}
+      await p.screenshot({path:(process.argv[3]||'.')+'/town-chalk-'+nm+'.png'});
+      await p.evaluate(()=>{document.getElementById('modal').hidden=true; const T=__t, W=T.TWN, H=T.HEARTH, D=T.townData(); D.chalk={}; D.hearth={lv:3};
+        T.townArt(); T.townKeepers(); for(const k in W.kst)W.kst[k].t=0; for(let i=0;i<1200;i++){T.townFrame(1/20); if(Object.values(W.kst).every(e=>e.mode!=='walk'&&e.mode!=='home'))break;}
+        W.p.x=H.sx; W.p.y=H.sy+2; W.cx=null; for(let i=0;i<10;i++)T.townFrame(1/30);});
+      await p.screenshot({path:(process.argv[3]||'.')+'/town-gather-'+nm+'.png'});
+      await p.evaluate(()=>{__t.townData().hearth={lv:0}; __t.townClose();});}
     /* map expansion, M2: a shut gate's card, a piece of debris's card in Build, and the dock's; then the net-lofts open and partly
        cleared, and the dock restored with you on it (developer mode: nothing is written) */
     for(const card of ['gate','debris','dock']){
