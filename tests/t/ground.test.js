@@ -16,17 +16,21 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const before=await p.evaluate(()=>localStorage.getItem('ll-town'));
   const r=await p.evaluate(()=>{const T=__t, PX=T.PX, W=T.TOWN_WANG, o={bad:[]};
     const keys=[]; for(let i=0;i<16;i++)keys.push(i.toString(2).padStart(4,'0'));
-    for(const s of ['ec','cd','es','ep','es2','ep2','ep3']){const S=W[s]; if(!S){o.bad.push('no set '+s); continue;}
+    for(const s of ['ec','cd','es','ep','es2','ep2','ep3','sh','sw','rk','mo']){const S=W[s]; if(!S){o.bad.push('no set '+s); continue;}
       for(const k of keys){const t=S[k]; if(!t||t.length!==16||t.some(r=>r.length!==16||[...r].some(ch=>!PX[ch])))o.bad.push(s+' '+k);}}
     /* each tile's middle 4×4 is its own terrain's letters (all but a stray pixel or two: a plank's dark seam reads as mortar) */
-    const L={0:'lmn',1:'01234qrs',2:'4567',3:'234ued'}, M=T.TOWN_MAP; o.centre=[];
+    /* map expansion, M3: 11 the shore's shingle, 14 the cemetery's moss */
+    const L={0:'lmn',1:'01234qrs',2:'4567',3:'234ued',11:'1234qr',14:'lyue'}, M=T.TOWN_MAP; o.centre=[];
     /* map expansion, M1: 36 by 36; the stairs are drawn into the ground, not Wang tiles */
-    for(let ty=0;ty<M.length;ty++)for(let tx=0;tx<M[0].length;tx++){const ch=M[ty][tx]; if(ch==='^'||ch==='~'||ch==='/')continue; const t=T.townTer(tx,ty);
+    for(let ty=0;ty<M.length;ty++)for(let tx=0;tx<M[0].length;tx++){const ch=M[ty][tx]; if(ch==='^'||ch==='~'||ch==='/'||ch==='D')continue; const t=T.townTer(tx,ty);
       let n=0; for(let y=6;y<10;y++)for(let x=6;x<10;x++)if(L[t].indexOf(T.townWangPx(tx*16+x,ty*16+y))>=0)n++;
       if(n<13)o.centre.push([tx,ty,ch,n]);}
-    /* the cliff and the sea untouched, and a laid path is townGroundPx's cobbles */
+    /* the cliff and the sea untouched away from their edges (map expansion, M3: where they meet the earth or the shingle, a Wang
+       edge), and a laid path is townGroundPx's cobbles */
     const g=T.townGround(), c=g.getContext('2d'), d=c.getImageData(0,0,g.width,g.height).data, hex=i=>'#'+[d[i],d[i+1],d[i+2]].map(v=>v.toString(16).padStart(2,'0')).join('');
-    o.edge=0; for(let y=0;y<g.height;y+=3)for(let x=0;x<g.width;x+=3){const ch=M[(y/16)|0][(x/16)|0]; if(ch!=='^'&&ch!=='~')continue;
+    const rock=c=>c==='^'||c==='/', sea=c=>c==='~'||c==='D'||c==='d', cell=(x,y)=>{const cx=Math.floor((x-8)/16), cy=Math.floor((y-8)/16); return [T.townCh(cx,cy),T.townCh(cx+1,cy),T.townCh(cx,cy+1),T.townCh(cx+1,cy+1)];};
+    o.edge=0; o.edges=0; for(let y=0;y<g.height;y+=3)for(let x=0;x<g.width;x+=3){const ch=M[(y/16)|0][(x/16)|0]; if(ch!=='^'&&ch!=='~')continue;
+      if(!cell(x,y).every(ch==='^'?rock:sea)){o.edges++; continue;}
       if(hex((y*g.width+x)*4)!==PX[T.townGroundPx(x,y,ch)])o.edge++;}
     T.setDev(true); T.townReset(); T.townOpen();
     const D=T.townData(); D.res={timber:500,iron:500,tallow:500,curios:50};

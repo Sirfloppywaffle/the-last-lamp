@@ -362,6 +362,13 @@ const DEV=[
       await p.screenshot({path:(process.argv[3]||'.')+'/town-plot'+view+'-'+nm+'.png'});
       await p.evaluate(()=>{const D=__t.townData(); D.plots={}; D.dock={lv:0}; __t.townMapSync(D); __t.townClose();});
     }
+    /* map expansion, M3: the fog on the shore and over the cemetery, and the Rise's edge at the west stair (developer mode) */
+    for(const view of ['shore','cemetery','cliff']){
+      await p.evaluate(v=>{const T=__t, W=T.TWN; T.townOpen(); const at=v==='shore'?[12,31]:v==='cemetery'?[7,6]:[9,11];
+        W.p.x=at[0]+.5; W.p.y=at[1]+.5; W.cx=null; for(let i=0;i<20;i++)T.townFrame(1/30);},view);
+      await p.screenshot({path:(process.argv[3]||'.')+'/town-'+view+'-'+nm+'.png'});
+      await p.evaluate(()=>__t.townClose());
+    }
     await p.evaluate(()=>{const T=__t; T.newRun('lamplighter',0,{seed:11}); T.run.ess=60; T.F.foes=[]; T.F.queue=[]; T.F.wave=T.F.def.waves.length; T.F.phase='cleared'; T.openDraft(0,0);
       const d=T.F.draft; d.step='fork'; d.doors=[{room:'cage',who:'toothmonger',omen:null},{room:'rest',omen:null}]; T.chooseDoor(d,0);});
     for(const button of await p.locator('#mChoices button, #mActions button').all()){
