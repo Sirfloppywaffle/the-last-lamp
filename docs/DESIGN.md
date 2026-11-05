@@ -123,6 +123,35 @@ A fixed place at the mouth of the south lane, fed a level at a time up to **5**,
 | 4 | 65 tallow, 4 curios | 152 | 25% | 20% | 68 |
 | 5 | 90 tallow, 5 curios | 192 | 16% | 25% | 80 |
 
+### Plots and the dock (map expansion, M2)
+
+Four plots, shut until their gate is opened once with the haul, saved as `ll-town.plots`. Inside, the debris (laid by hand, the same in every town) stays until you clear it in Build, piece by piece; pieces build only on cleared ground, and nothing grows back. The dock is restored once, saved as `ll-town.dock`. Nothing on the stair changes.
+
+| Plot | Gate opens for | Debris |
+|---|---|---|
+| The north acre | 15 iron | 12 pieces |
+| The black wood | 20 timber, 10 iron, 1 curio | 65 pieces |
+| The net-lofts | 15 timber, 10 iron | 25 pieces |
+| The drowned strand | 10 timber, 10 iron, 5 tallow | 12 pieces |
+| The dock | 40 timber, 20 iron, 10 tallow | (a boat tied at its end) |
+
+| Debris | Tiles | Clearing it | In |
+|---|---|---|---|
+| Brambles | 1 | free | The north acre, The black wood, The net-lofts (43) |
+| A pine stump | 1 | costs 2 iron | The black wood (17) |
+| A fallen pine | 2 | gives back 3 timber | The black wood (9) |
+| Deadfall | 2 | gives back 1 timber | The black wood (6) |
+| Rubble | 1 | costs 1 iron | The north acre (5) |
+| Rusted railings | 1 | gives back 2 iron | The north acre (2) |
+| Rotten nets | 1 | free | The net-lofts (7) |
+| Crates | 1 | gives back 1 timber | The net-lofts (6) |
+| Tar barrels | 1 | gives back 1 tallow | The net-lofts (4) |
+| A stove-in skiff | 2 | gives back 2 timber | The net-lofts (3) |
+| Kelp wrack | 1 | free | The drowned strand (5) |
+| Stones | 1 | costs 1 iron | The drowned strand (3) |
+| Wreckage | 2 | gives back 2 timber | The drowned strand (3) |
+| The wreck’s ribs | 2 | never (it stays) | The drowned strand (1) |
+
 ### Every piece
 
 | Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |

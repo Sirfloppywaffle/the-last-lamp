@@ -21,8 +21,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.stairs=T.TOWN_STAIRS.slice(); o.stairTiles=T.TOWN_STAIRS.every(x=>[13,14].every(y=>M[y][x]==='/'&&M[y][x+1]==='/'));
     o.walkStair=T.TOWN_STAIRS.every(x=>!T.townSolid(x,13)&&!T.townSolid(x+1,14));
     o.cliffSolid=[13,14].every(y=>[...M[y]].every((c,x)=>c==='/'||T.townSolid(x,y)));
-    o.shore=[30,31,32].every(y=>[...M[y]].filter(c=>c===':').length>20); o.sea=M[35].split('').every(c=>c==='~');
-    o.plots=Object.entries(T.TOWN_PLOTS).map(([k,P])=>[k,P.rects.every(([x,y,w,h])=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++){const c=M[j][i]; if(c!=='x'&&c!=='T')return false; if(!T.townSolid(i,j)||T.townBuildable(i,j,true))return false;} return true;})]);
+    o.shore=[30,31,32].every(y=>[...M[y]].filter(c=>c===':').length>20); o.sea=M[35].split('').every(c=>c==='~'||c==='D'||c==='d');
+    o.plots=Object.entries(T.TOWN_PLOTS).map(([k,P])=>[k,P.rects.every(([x,y,w,h])=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++){const c=M[j][i]; if(!'xXGT'.includes(c))return false; if(!T.townSolid(i,j)||T.townBuildable(i,j,true))return false;} return true;})]);
     const wood=T.TOWN_PLOTS.wood.rects, bel=T.TOWN_WORKSHOPS.belfry, inWood=(x,y)=>wood.some(([a,b2,w,h])=>x>=a&&y>=b2&&x<a+w&&y<b2+h);
     o.belfry=!inWood(bel.dx,bel.dy)&&[...Array(bel.w)].every((_,i)=>[...Array(bel.h)].every((_,j)=>M[bel.y+j][bel.x+i]==='#'&&!inWood(bel.x+i,bel.y+j)));
     o.houses=T.TOWN_HOUSES.every(h=>{for(let j=h.y;j<h.y+h.h;j++)for(let i=h.x;i<h.x+h.w;i++)if(M[j][i]!=='#')return false; return true;});
@@ -32,7 +32,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(m.size[0]===36&&m.size[1],'the map is 36 by 36',m.size);
   ok(m.cliff&&m.cliffSolid,'rows 13 and 14 are the cliff, solid but for the stairs',m);
   ok(m.stairs.length===2&&m.stairTiles&&m.walkStair,'two stairs up the cliff, two tiles wide, walkable',m);
-  ok(m.shore&&m.sea,'a shore of shingle along the south, then the sea',m);
+  ok(m.shore&&m.sea,'a shore of shingle along the south, then the sea (the dock, map expansion M2, runs out over it)',m);
   ok(m.plots.length===4&&m.plots.every(([k,v])=>v),'every plot is shut: solid, and nothing is built on it',m.plots);
   ok(m.belfry&&m.houses&&m.lodgeRise,'every building stands on its tiles; the Lodge is on the Rise; the Belfry stays outside the black wood',m);
   ok(m.helper,'__t.at(12, 14), the old spawn, is today\'s spawn',m);

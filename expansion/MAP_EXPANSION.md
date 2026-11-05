@@ -1,6 +1,6 @@
 # Saltmouth, wider: two shelves
 
-Status: **decided; M1 built** (Criss, Gemini and Claude on #154; M1 on #155, where Criss moved the lane to the west so the Hearth's square stays clear, and the Belfry stands on the cliff's edge outside the black wood so it stays reachable while the wood is shut). The runbook's §5 has M1's as-built notes. Criss on #153: the square is getting crowded, so before step 9 the town grows. It gets more ground to build on, walk and explore, a bigger cemetery, buildings moved into quarters of their own, a shore you can walk, and fog. It stays small: smaller than an Animal Crossing island. The three map steps (§6) go into `EXPANSION4_RUNBOOK.md` in the first one's PR.
+Status: **decided; M1 built (#155), M2 built** (Criss, Gemini and Claude on #154; M1 on #155, where Criss moved the lane to the west so the Hearth's square stays clear, and the Belfry stands on the cliff's edge outside the black wood so it stays reachable while the wood is shut). The runbook's §5 has M1's as-built notes. Criss on #153: the square is getting crowded, so before step 9 the town grows. It gets more ground to build on, walk and explore, a bigger cemetery, buildings moved into quarters of their own, a shore you can walk, and fog. It stays small: smaller than an Animal Crossing island. The three map steps (§6) go into `EXPANSION4_RUNBOOK.md` in the first one's PR.
 
 Everything in the runbook's §2 still holds. Pieces are decorations, pixel art comes from PixelLab (§3), everything is touch only, and it always rains. Developer mode never writes, and `ll-town` only grows.
 
@@ -79,13 +79,13 @@ Everything in the runbook's §2 still holds. Pieces are decorations, pixel art c
 
 ## 6. The steps (before step 9)
 
-Each step is a middle-number bump, as the art passes were (Criss on #139). Step 9 becomes 19.16.0 and step 10 stays 20.0.0.
+Each step is a middle-number bump, as the art passes were (Criss on #139). The descent's pixel UI took 19.14.0 and 19.15.0 between M1 and M2, so M2 is 19.16.0, M3 19.17.0 and step 9 19.18.0; step 10 stays 20.0.0.
 
 | Step | What | Version |
 |---|---|---|
 | **M1** | Two shelves: the 36 × 36 map, the cliff and its stairs, every building in its new place, the migration, the tests' helper. Plots are drawn but stay shut (no unlocking yet). The PixelLab layout goes to Criss first. | 19.13.0 |
-| **M2** | Plots: their gates and unlocking, the debris and clearing it, `ll-town.plots`; the dock, restored like a workshop. | 19.14.0 |
-| **M3** | Fog over the shore and the cemetery, the outer dark, small touches. | 19.15.0 |
+| **M2** | Plots: their gates and unlocking, the debris and clearing it, `ll-town.plots`; the dock, restored like a workshop. | 19.16.0 |
+| **M3** | Fog over the shore and the cemetery, the outer dark, small touches. | 19.17.0 |
 
 **Prompt (M1):**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION4_RUNBOOK.md (§2 to §4) and expansion/MAP_EXPANSION.md (all of it; §1 is Criss's calls). Build step M1, two shelves, following the runbook's §4 workflow. First paint the layout on a PixelLab map (free: create_map, edit_map, view_map, with the town's Wang tilesets) and show Criss before writing code. Then grow TOWN_MAP to 36 × 36, move today's square onto the lower shelf by one offset with a one-time ll-town migration (v 1 → 2: pieces in the square move with it; a piece displaced by a building goes into Storage whole), move the Lodge, the cemetery, the shrines, the Belfry, the Try-Works, the Menagerie and the tide-pools to their quarters, add the cliff and its two stairs, and give the tests a helper for today's tiles. Plots are drawn but stay shut. Add M1 to M3 to the runbook's status table and §5 (with this prompt and M2's) and shift step 9 to 19.16.0. Tick the status table. End with the prompt for M2.

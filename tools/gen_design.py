@@ -73,6 +73,20 @@ if 'LODGE_ITEMS' in D:
             lv=i+1
             w("| %d | %s | %s | %d%% | %d%% | %s |"%(lv,nm(c),D["HEARTH_RAIN"][lv],round(D["HEARTH_KEEP"][lv]*100),round(D["HEARTH_LIFT"][lv]*100),D["HEARTH_SHOW"][lv]))
         w("")
+    if 'TOWN_PLOTS' in D:
+        w("### Plots and the dock (map expansion, M2)\n")
+        w("Four plots, shut until their gate is opened once with the haul, saved as `ll-town.plots`. Inside, the debris (laid by hand, the same in every town) stays until you clear it in Build, piece by piece; pieces build only on cleared ground, and nothing grows back. The dock is restored once, saved as `ll-town.dock`. Nothing on the stair changes.\n")
+        w("| Plot | Gate opens for | Debris |\n|---|---|---|")
+        for v in D['TOWN_PLOTS'].values():
+            w("| %s | %s | %d pieces |"%(esc(v['n']),nm(v['cost']),len(v['debris'])))
+        w("| The dock | %s | (a boat tied at its end) |"%nm(D['TOWN_DOCK']['cost']))
+        w("\n| Debris | Tiles | Clearing it | In |\n|---|---|---|---|")
+        for k,v in D['TOWN_DEBRIS'].items():
+            where=', '.join(esc(P['n']) for P in D['TOWN_PLOTS'].values() if any(q['k']==k for q in P['debris']))
+            n=sum(1 for P in D['TOWN_PLOTS'].values() for q in P['debris'] if q['k']==k)
+            what='never (it stays)' if v.get('fixed') else ('costs '+nm(v['clear'])) if v.get('clear') else ('gives back '+nm(v['gives'])) if v.get('gives') else 'free'
+            w("| %s | %d | %s | %s (%d) |"%(esc(v['n']),v['w'],what,where,n))
+        w("")
     w("### Every piece\n")
     w("| Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |\n|---|---|---|---|---|---|---|---|")
     for v in D['LODGE_ITEMS'].values():

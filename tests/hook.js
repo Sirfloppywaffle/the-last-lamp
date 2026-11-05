@@ -20,6 +20,8 @@ const HOOK=`window.__t={get run(){return run},get F(){return F},get sel(){return
  /* map expansion, M1: two shelves. at(x, y) is a tile of the old 24 by 24 square on today's map (TOWN_V2), so tests written for the
     old square keep their numbers: __t.at(12,14) is where you climb out */
  at(x,y){return [x+TOWN_V2.dx,y+TOWN_V2.dy]},ax(x){return x+TOWN_V2.dx},ay(y){return y+TOWN_V2.dy},townV2,get TOWN_V2(){return TOWN_V2},get TOWN_PLOTS(){return TOWN_PLOTS},get TOWN_GREW(){return townData().grew},setTownGrew(v){townData().grew=v},get TOWN_FRAME_AT(){return TOWN_FRAME_AT},get TOWN_STAIR_ROWS(){return TOWN_STAIR_ROWS},get TOWN_STAIRS(){return TOWN_STAIRS},townBuildable,
+ /* map expansion, M2: plots, their gates and debris, and the dock */
+ plotsFix,dockFix,plotOpen,dockBuilt,townMapSync,townDebrisAt,townGateAt,townDockAt,townOpenPlot,townClearDebris,townRestoreDock,townGate,townDebrisCard,townDock,townRowsArt,townCh,get TOWN_MAP0(){return TOWN_MAP0},get TOWN_DEBRIS(){return TOWN_DEBRIS},get TOWN_DEBRIS_ROWS(){return TOWN_DEBRIS_ROWS},get TOWN_GATE_ROWS(){return TOWN_GATE_ROWS},get TOWN_DOCK(){return TOWN_DOCK},get TOWN_DOCK_ROWS(){return TOWN_DOCK_ROWS},get PLOT_KEYS(){return PLOT_KEYS},
  /* Expansion 4, step 8: the Hearth Beacon */
  townHearth,hearthFeed,hearthFix,hearthLv,hearthArt,hearthAt,hearthCarve,get HEARTH(){return HEARTH},get HEARTH_MAX(){return HEARTH_MAX},get HEARTH_COST(){return HEARTH_COST},get HEARTH_RAIN(){return HEARTH_RAIN},get HEARTH_KEEP(){return HEARTH_KEEP},get HEARTH_SHOW(){return HEARTH_SHOW},get HEARTH_CARVE(){return HEARTH_CARVE},get TOWN_ART(){return TOWN_ART},
  /* Expansion 4, step 7: the village: paint, laid paths' edges, huts */
