@@ -99,8 +99,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.st0=[at().tx,at().ty];
     o.placed=T.townPlace('hut_whaler',c,r)==='';
     o.doorStand=[at().tx,at().ty]; o.doors=JSON.stringify(T.townHutDoors());
-    /* map expansion, M1: the first other spot where a hut's ground is open says why not */
-    o.twice=''; for(let rr=12;rr<30&&!o.twice;rr++)for(let cc=1;cc<34&&!o.twice;cc++){if(Math.abs(cc-c)<3&&Math.abs(rr-r)<3)continue; const m=T.townCanPlace('hut_whaler',cc,rr); if(m&&!/open ground|Something stands|Keep it clear|wall off|deck|tower/.test(m))o.twice=m;}
+    /* map expansion, M1: the first other spot where a hut's ground is open says why not (M2: a plot's ground has reasons of its own) */
+    o.twice=''; for(let rr=12;rr<30&&!o.twice;rr++)for(let cc=1;cc<34&&!o.twice;cc++){if(Math.abs(cc-c)<3&&Math.abs(rr-r)<3)continue; const m=T.townCanPlace('hut_whaler',cc,rr); if(m&&!/open ground|Something stands|Keep it clear|wall off|deck|tower|shut behind|Clear it first|gateway|the dock/.test(m))o.twice=m;}
     o.onDoor=T.townCanPlace('tree',door[0],door[1]-1); o.bench=T.townCanPlace('bench1',door[0],door[1]);
     o.reach=!!T.townPathTo(door[0],door[1]); o.keepOK=T.townKeepOK(T.townData().decos);
     /* at work, the Keeper is at their workplace instead */
