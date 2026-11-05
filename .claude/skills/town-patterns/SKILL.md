@@ -1,6 +1,6 @@
 ---
 name: town-patterns
-description: How to add things to Saltmouth (the town in index.html) as the code stands after map expansion M2 (plots and the dock) and M1 (two shelves), Expansion 4 step 8 (the Hearth Beacon), step 7 (the village), step 6 (the Peddler) and art passes A2 and A3a - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
+description: How to add things to Saltmouth (the town in index.html) as the code stands after map expansion M3 (fog, the outer dark, the ground's Wang edges), M2 (plots and the dock) and M1 (two shelves), Expansion 4 step 8 (the Hearth Beacon), step 7 (the village), step 6 (the Peddler) and art passes A2 and A3a - new pixel art (runbook §3), loops that animate, light and dark indoors and trophies, turning pieces, a tappable thing, the #townAct offer, keeping a tile clear, new ll-town and run fields, town tips, the Lodge's scene switch, its rooms and its catalogue (sets, wall mounts, small things, dyes), test hooks and the devices test. Use when building or changing anything in the town.
 ---
 
 # Adding to Saltmouth
@@ -133,3 +133,12 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 - [ ] **A new piece of debris** goes at the **end** of its plot's `lay` rows' reading order, or in a new row below: `ll-town.plots` keeps cleared pieces by index, so reordering a lay regrows or clears the wrong things in every saved town. A new kind is a `TOWN_DEBRIS` letter (`w`, `clear`/`gives`, `fixed`) and its `TOWN_DEBRIS_ROWS`.
 - [ ] **A new plot** is a `TOWN_PLOTS` row (its `x` tiles on `TOWN_MAP`, a `G` gate on its edge, a `front` outside it, which goes into `TOWN_KEEP`), a key in `plotsFix()` by itself, and gate rows (shut, open).
 - [ ] A shut plot's tiles and its debris are solid letters, so `townKeepOK()`, `townReaches()` and `townBuildable()` need nothing new; `plots.test.js` checks every kept place with everything shut, open and cleared.
+
+## Fog, the outer dark and the ground's edges (map expansion, M3)
+
+- [ ] **Fog over a new place** is a key in `TOWN_FOG.areas` (`r`: tiles, `dy`: how far apart its rows of banks lie). Its frames are baked with the square's art (`townFogBake()`), so anything that should change the fog (like the Hearth's level) must already rebuild `townArt()` through `townDressSig()`. Never compose fog per frame: `townFog()` draws one picture an area.
+- [ ] **The outer dark** reads `A.lightsD` in `townOuter()` (from `townDecoSync()`): any new light a player builds counts in the plot it stands in by being in that list. A fixed light of the town's own must never stand in a plot, or the plot is lit before anything is built.
+- [ ] **A new ground terrain** past the paths' is a code above 10 in `WANG_TER` (or `PLOT_TER` for tiles a letter doesn't say), a Wang set in `TOWN_WANG`, and its place in `NAT_SET`, `NAT_UNDER`, `NAT_ORDER`. A terrain that keeps its own procedural pixels (the sea, the rock) also gets a `TOWN_WANG_UP` mask of its pure pixels; `townWangPx()` hands those back to `townGroundPx()`.
+- [ ] A Wang set's straight edge repeats a tile; check a new set over a long run (the shore) as well as a blob, and break a whole tile's flecks by the cell (`MOSS_FLECK`) if they read as a grid.
+- [ ] `fog.test.js` counts canvases and image reads over two walks of the square: copy it for anything drawn per frame.
+
