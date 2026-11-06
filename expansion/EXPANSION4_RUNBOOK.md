@@ -27,7 +27,7 @@
 | M2 | Plots: gates, unlocking, debris and clearing; the dock | #158 | merged | 19.16.0 |
 | M3 | Fog over the shore and the cemetery, the outer dark, small touches | #159 | merged | 19.17.0 |
 | 9 | Keepers react: waypoints, lore chalk, the cellar's tide | #160 | merged | 19.18.0 |
-| 10 | Release v20.0.0 | #161 | open | 20.0.0 |
+| 10 | Release v20.0.0 | #161 | merged | 20.0.0 |
 
 **Versions:** 19.14.0 and 19.15.0 went to the descent's pixel UI (#156, #157, a side project between M1 and M2), so M2 is 19.16.0 and every step after it moves up two.
 
