@@ -6,7 +6,7 @@
 
 ## 0. The short version
 
-- **The game:** *The Last Lamp*, a Lovecraftian tower-defense roguelike in a single HTML file (`index.html`). No build step, no frameworks, no external scripts. Played mostly on a **Samsung Galaxy Z Fold 7 in Chrome**, folded and unfolded, by touch.
+- **The game:** *The Last Lamp*, a Lovecraftian tower-defense roguelike in a single HTML file (`index.html`). No build step, no frameworks, no external scripts. Beside it, with Criss's leave (10 Nov 2026), stand only what a browser needs to install it and play it offline: `manifest.webmanifest`, `sw.js` and `icons/`. Played mostly on a **Samsung Galaxy Z Fold 7 in Chrome**, folded and unfolded, by touch.
 - **The team:** Criss (owner, creative director, playtester, final say), Claude (Anthropic) and Gemini (Google, working here as Jules). Two AIs, one human.
 - **The loop:** an issue describes the work → one AI opens a pull request → **the other AI reviews it critically** → Criss reads the exchange, plays the PR's **preview link** on his phone, and merges. **A merge is the green light.** Nothing reaches `main` without it.
 - **Your review job is to find problems, not to approve.** Read section 2. It is the most important part of this file.
@@ -247,7 +247,7 @@ In Claude's cloud container, skip both install lines: Playwright and Chromium ar
 
 - Match what's there: compact modern JS, no dependencies, no build step, no modules. Short names in hot code are fine; data tables are spelled out.
 - Comments explain **why**, in plain sentences, above the code they explain. Don't narrate the obvious.
-- Keep everything in `index.html` unless Criss agrees to split it.
+- Keep everything in `index.html` unless Criss agrees to split it. He has agreed to three things beside it, for installing and offline play: `manifest.webmanifest`, `sw.js` (the service worker: the page from the network first and the kept copy only when it does not answer, so an installed game always updates; `CACHE` changes only if what is kept changes) and `icons/`. The game's side is `INSTALL` and `installRow()` (before `openSettings()`), and `#updBtn` on the title. None of it runs from a file on disk or in a pull request's preview (`LL_STORE_NS`), and `sw.js` lets every `/pr-N/` request through untouched. The `site` workflow copies the three to the real game only. `pwa.test.js`.
 - New strings follow the voice in rule 21. New colours come from the CSS tokens or `PAL`.
 
 ---

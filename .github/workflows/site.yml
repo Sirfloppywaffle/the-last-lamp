@@ -46,6 +46,9 @@ jobs:
           touch .nojekyll
           if [ "$EVENT" = "push" ]; then
             cp /tmp/game.html index.html
+            # install and offline: the manifest, the service worker and the icons stand beside the real game only
+            cp "$GITHUB_WORKSPACE/manifest.webmanifest" "$GITHUB_WORKSPACE/sw.js" .
+            mkdir -p icons && cp "$GITHUB_WORKSPACE"/icons/*.png icons/
             MSG="Publish main @ ${GITHUB_SHA::7}"
           elif [ "$ACTION" = "closed" ]; then
             rm -rf "pr-$PR"
