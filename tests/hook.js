@@ -31,8 +31,10 @@ const HOOK=`window.__t={get run(){return run},get F(){return F},get sel(){return
  /* Expansion 4, step 7: the village: paint, laid paths' edges, huts */
  townLockWhy,townHutDoors,townPieceArt,townPieceFace,get TOWN_PIECE_TURN(){return TOWN_PIECE_TURN},decoTiles,townTrayBuild,get TOWN_PIECE_ROWS(){return TOWN_PIECE_ROWS},get TOWN_GROUPS(){return TOWN_GROUPS},get TOWN_PACKS(){return TOWN_PACKS},townPaintCycle,townPaintSet,townPaintList,townPaintOf,townPaintAt,townPaintIcon,townPathTile,townWangRepaint,townWangSel,paintFix,get TOWN_PAINTS(){return TOWN_PAINTS},get PAINT_KEYS(){return PAINT_KEYS},get PAINT_COST(){return PAINT_COST},get TOWN_PAINTABLE(){return TOWN_PAINTABLE},get TOWN_LAID(){return TOWN_LAID},
  /* the sound pass: the engine, the scores and what chooses between them */
- get AUDIO(){return AUDIO},get BGM(){return BGM},bgmWant,
+ get TITLE(){return TITLE},titleStrike,titleSubs,showTitle, get AUDIO(){return AUDIO},get BGM(){return BGM},bgmWant,
  get spriteBytes(){try{return spriteBytes}catch(e){return 0}}, get nSprites(){try{return SPRITES.size}catch(e){return 0}}, setLite(v){try{gfxLite=v}catch(e){}}};
+/* the title's light is already struck in tests (title.test.js strikes it itself, on the game as shipped) */
+titleStrike(true);
 /* tests run with the walkthrough and tips switched off; tutorial.test.js turns them back on with __t.tutReset() */
 store.set('ll-tut',{walk:'done',seen:[],off:true});
 /* descents (Expansion 2) settle at once in tests, as if walked cleanly, so a walk through the landings never waits on one;
