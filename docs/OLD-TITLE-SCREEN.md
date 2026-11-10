@@ -54,3 +54,6 @@ function drawTitle(tm){
   drawLamp(tg,0,0,tm,1);
 }
 ```
+
+## The scene after this one (v18.10 to v20.0)
+Gemini's main menu overhaul (a drowned stair under a gothic arch, a swinging lantern, a great slit eye, tentacles and hands) replaced the title above on 23 Oct 2026, and was itself replaced on 10 Nov 2026 by the full-screen pixel scene. Its code is not copied here: it is in git, in `index.html` at commit `281281b`, from `/* title canvas: the new scene` to the `})();` that ends it, with its CSS under `/* === LOVECRAFTIAN TITLE OVERHAUL === */`. The great eye that opens at the head of the stair in today's title is kept from it.

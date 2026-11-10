@@ -6,6 +6,7 @@ const {chromium}=require('playwright');
   for(const [w,h,name] of [[412,860,'fold-folded'],[915,356,'fold-side'],[393,659,'iphone'],[1280,900,'desktop']]){
     const p=await b.newPage({viewport:{width:w,height:h},hasTouch:true});
     await p.goto('file://'+process.env.LL_RAW); await p.waitForTimeout(400);
+    await p.tap('#titleStrike'); await p.waitForTimeout(150);
     await p.tap('#rulesBtn'); await p.waitForTimeout(250);
     const r=await p.evaluate(()=>{
       const box=document.querySelector('#modal .box'), li=document.querySelector('#mChoices li'), rb=li&&li.getBoundingClientRect();
