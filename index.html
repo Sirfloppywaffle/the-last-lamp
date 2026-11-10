@@ -221,6 +221,8 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .btn.big{padding:12px 26px;font-size:1.45rem}
 #holdBtn{min-width:46px;display:inline-flex;align-items:center;justify-content:center;padding:10px 12px}
 #holdBtn.on{border-color:var(--tallow);color:var(--tallow)}
+/* developer mode: the frame's cost, bottom left, taking no taps */
+.perf-line{position:fixed;left:max(6px,env(safe-area-inset-left));bottom:max(2px,env(safe-area-inset-bottom));z-index:9998;pointer-events:none;font:500 10px/1.4 var(--f-num);color:#9fe0c8;background:rgba(0,0,0,.55);padding:0 5px;border-radius:3px}
 .heldpill{position:absolute;left:50%;top:8px;z-index:5;transform:translateX(-50%);padding:5px 12px;border-radius:999px;background:var(--veil);border:1px solid var(--tallow);color:var(--tallow);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;pointer-events:none;white-space:nowrap}
 .peekback{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);transform:translateX(-50%);z-index:60;box-shadow:0 6px 20px var(--shadow)}
 .btn:disabled{opacity:.45;cursor:default}
@@ -10392,6 +10394,11 @@ function drawWake(e,tm){
   for(let k=0;k<2;k++){const f=((tm*1.2+k*.5+e.wob)%1); g.beginPath(); g.ellipse(e.x,e.y+.05,.12+f*.35,(.12+f*.35)*.45,0,0,TAU); g.globalAlpha=1-f; g.stroke();}
   g.globalAlpha=1;
 }
+/* render()'s own lists, kept between frames: the creatures and the towers back to front, what is seen, and the draw list with its
+   pool of entries. It used to copy and sort both arrays, make a Set and an object per thing, every frame (rule 17) */
+const R_FS=[], R_TS=[], R_SEEN=new Set(), R_ITEMS=[], R_POOL=[]; let R_N=0;
+const rByY=(a,b)=>a.y-b.y;
+function rItem(y,k,o){const it=R_POOL[R_N]||(R_POOL[R_N]={y:0,k:0,o:null}); R_N++; it.y=y; it.k=k; it.o=o; return it;}
 function render(){
   const s=T*DPR;
   let sx=0, sy=0;
@@ -10438,8 +10445,8 @@ function render(){
   }
 
   /* everything standing on the floor is drawn back to front, so nearer things overlap farther ones */
-  const fs=F.foes.slice().sort((a,b)=>a.y-b.y);
-  const seen=new Set();
+  const fs=R_FS; fs.length=0; for(let i=0,n=F.foes.length;i<n;i++)fs.push(F.foes[i]); fs.sort(rByY);
+  const seen=R_SEEN; seen.clear();
   for(const e of fs){
     if(e.px!==undefined){const d=e.x-e.px; if(Math.abs(d)>.0015)e.face=d>0?1:-1;}
     e.px=e.x;
@@ -10451,18 +10458,18 @@ function render(){
     g.beginPath(); g.ellipse(h.x,h.y+.05,HUSK_R,HUSK_R*.62,0,tm*.25,tm*.25+TAU); g.stroke(); g.setLineDash([]);}
   for(const gb of F.gibs)if(seen.has(gb)){g.strokeStyle='rgba(214,150,136,'+(.32+.1*Math.sin(tm*9+gb.wob))+')'; g.lineWidth=.03; g.setLineDash([.09,.13]);
     g.beginPath(); g.ellipse(gb.x,gb.y+.04,GIB_R,GIB_R*.62,0,tm*.3,tm*.3+TAU); g.stroke(); g.setLineDash([]);}
-  const ts=F.towers.slice().sort((a,b)=>a.y-b.y);
-  const items=[];
+  const ts=R_TS; ts.length=0; for(let i=0,n=F.towers.length;i<n;i++)ts.push(F.towers[i]); ts.sort(rByY);
+  const items=R_ITEMS; items.length=0; R_N=0;
   for(const t of ts){
     if(t.kind==='ward'&&(t.type==='salt'||t.type==='trap'||t.type==='grasp')){drawWard(g,t,tm,false); continue;}
     /* Bell Wires are drawn over the dark, with the path she hears */
     if(t.type==='bellwire')continue;
     if(t.kind==='ward'&&t.type==='effigy'&&!t.dark){g.strokeStyle='rgba(150,230,120,'+(.16+.06*Math.sin(tm*2))+')'; g.lineWidth=.03; g.setLineDash([.16,.12]); g.beginPath(); g.arc(t.x,t.y,wstat(t).range,tm*.1,tm*.1+TAU); g.stroke(); g.setLineDash([]);}
-    items.push({y:t.y+.05,k:0,o:t});
+    items.push(rItem(t.y+.05,0,t));
   }
-  items.push({y:F.ly+.05,k:1});
-  for(const e of fs)if(seen.has(e))items.push({y:e.y,k:2,o:e});
-  items.sort((a,b)=>a.y-b.y);
+  items.push(rItem(F.ly+.05,1,null));
+  for(const e of fs)if(seen.has(e))items.push(rItem(e.y,2,e));
+  items.sort(rByY);
   for(const it of items){
     if(it.k===0){const t=it.o; if(t.kind==='ward'){drawWard(g,t,tm,false); if(t.ph)drawPhantom(t,tm);
         /* a ward a seen Gibberer is slowing is ringed in pink */
@@ -10641,7 +10648,7 @@ function render(){
   /* the Bellringer hears the path's stone edges in the dark, and where she strung her wires; each toll sweeps over them */
   if(bellKit()){drawPathEcho(tm); drawHums(tm); drawSteps(); for(const t of F.towers)if(t.type==='bellwire')drawBellWire(g,t,tm,false);
     /* she knows where she built in the dark: her forks, and the wards standing in their hum, show over it, dimmed */
-    for(const t of F.towers.slice().sort((a,b)=>a.y-b.y)){if(t.type==='bellwire'||litAt(t.x,t.y))continue; if(t.type!=='fork'&&!inHum(t.x,t.y))continue;
+    for(const t of ts){if(t.type==='bellwire'||litAt(t.x,t.y))continue; if(t.type!=='fork'&&!inHum(t.x,t.y))continue;
       g.globalAlpha=t.type==='fork'?.9:.6; if(t.kind==='ward')drawWard(g,t,tm,false); else drawHorror(g,t,tm); g.globalAlpha=1;}}
   if(F.ghosts.length)drawGhosts(tm);
   /* what moves in the dark: shapes and burning eyes */
@@ -11962,7 +11969,8 @@ function hudFx(){
   if(t>L.t)ic.animate(HUD_FLARE,{duration:700,easing:'ease-out'});
 }
 function tickUI(){if(!F||!run)return; document.body.classList.toggle('is-lite',gfxLite); syncHold(); renderHUD(); renderPreview(); placePreview(); renderTray(); renderSheet(); renderModebar(); renderRites(); renderBossBar();}
-function forceUI(){trayKey=''; sheetKey=''; modeKey=''; previewKey=''; tickUI();}
+function forceUI(){trayKey=''; sheetKey=''; modeKey=''; previewKey=''; boardDirty=true; tickUI();}
+function perfShow(){let e=$('#perfLine'); if(!e){e=document.createElement('div'); e.id='perfLine'; e.className='perf-line'; document.body.appendChild(e);} e.hidden=!devOn; PERF.on=devOn; if(devOn)e.textContent='sim '+PERF.sim.toFixed(1)+' · draw '+PERF.draw.toFixed(1)+' ms · '+PERF.fps+' fps'+(fpsMode==='battery'?' (60 cap)':'');}
 
 /* ---------------- settings, modal, pause & title ---------------- */
 let modalShownAt = 0;
@@ -11979,6 +11987,7 @@ function allowModalInput(e) {
   return (lastInputStart >= modalShownAt + 150);
 }
 
+function fpsLabel(){return 'Frame rate: '+(fpsMode==='battery'?'Battery (60)':'Smooth (the screen’s own)');}
 function openSettings(fromPause){
   paused=true;
   const row=(id,lbl,val)=>`<label style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;color:var(--bone);font-weight:500;">${lbl} <input type="range" id="${id}" min="0" max="1" step="0.05" value="${val}"></label>`;
@@ -11987,6 +11996,7 @@ function openSettings(fromPause){
     html: row('vMast','Master Volume', VOL.master) + row('vMus','Music Volume', VOL.bgm) + row('vSfx','SFX Volume', VOL.sfx)
       + '<button class="btn" id="gfxBtn" style="width:100%;margin-top:4px">Visual effects: '+(gfxLite?'Lite':'Full')+'</button><p class="note" style="margin:6px 0 0;font-size:.78rem;color:var(--ash)">Lite drops fog, drifting dust, stains and rim light, for slower phones.</p>'
       + '<button class="btn" id="capBtn" style="width:100%;margin-top:14px">'+capLabel()+'</button><p class="note" style="margin:6px 0 0;font-size:.78rem;color:var(--ash)">Writes every bell and toll on the board where it rings, for playing without sound. Auto turns it on whenever the sound is muted.</p>'
+      + '<button class="btn" id="fpsBtn" style="width:100%;margin-top:14px">'+fpsLabel()+'</button><p class="note" style="margin:6px 0 0;font-size:.78rem;color:var(--ash)">Battery holds the game to 60 frames a second on a faster screen. It looks the same and runs cooler.</p>'
       + '<button class="btn" id="hapBtn" style="width:100%;margin-top:10px">Vibration: '+(store.get('ll-haptic',true)?'On':'Off')+'</button>'
       + '<button class="btn" id="townSetBtn" style="width:100%;margin-top:14px">'+townSetLabel()+'</button><p class="note" style="margin:6px 0 0;font-size:.78rem;color:var(--ash)">Opens the game in Saltmouth, the town above the stair, instead of on the title.'+(devOn?' Developer mode: not kept.':'')+'</p>'
       + '<button class="btn" id="tutBtn" style="width:100%;margin-top:14px">Replay the walkthrough and tips</button>',
@@ -12008,6 +12018,8 @@ function openSettings(fromPause){
   if(tb)tb.onclick=()=>{tutSave({walk:'',seen:[],off:false}); tb.textContent='They return on your next descent';};
   const cb=document.getElementById('capBtn');
   if(cb)cb.onclick=()=>{const c=store.get('ll-captions',null); store.set('ll-captions',c===null?true:c===true?false:null); cb.textContent=capLabel();};
+  const fb=document.getElementById('fpsBtn');
+  if(fb)fb.onclick=()=>{fpsMode=fpsMode==='battery'?'smooth':'battery'; store.set('ll-fps',fpsMode); frameDue=0; fb.textContent=fpsLabel();};
   const hb=document.getElementById('hapBtn');
   if(hb)hb.onclick=()=>{const v=!store.get('ll-haptic',true); store.set('ll-haptic',v); hb.textContent='Vibration: '+(v?'On':'Off'); if(v)buzz(30);};
   const sb=document.getElementById('townSetBtn');
@@ -19658,6 +19670,12 @@ $('#townTrow').addEventListener('click',ev=>{
 
 /* ---------------- loop ---------------- */
 let last=performance.now(), uiAcc=0;
+/* Battery (10 Nov 2026). A board that is not moving (the pause menu, a landing, the dark held) was painted again every frame, 120
+   times a second on the Fold: now it is painted when something changes (forceUI() marks it) and ten times a second besides.
+   And Settings can hold the whole game to 60 frames a second on a faster screen (ll-fps: 'smooth' the screen's own, 'battery' 60). */
+let boardDirty=true, stillAcc=0, fpsMode=store.get('ll-fps','smooth')==='battery'?'battery':'smooth', frameDue=0;
+/* developer mode: what a frame costs on this device, in milliseconds (the simulation, the painting) and frames a second */
+const PERF={sim:0,draw:0,fps:0,n:0,t0:0,on:false};
 let slowT=0, frameEMA=16;
 function watchPerf(rawMs){
   /* a wave, or a walk in Saltmouth with nothing open over it */
@@ -19672,6 +19690,10 @@ function watchPerf(rawMs){
 }
 function frame(now){
   requestAnimationFrame(frame);
+  /* Battery: on a screen faster than 60 a second, every frame that comes less than 15 ms after the last one drawn is let go */
+  if(fpsMode==='battery'){if(now<frameDue-3)return; frameDue=Math.max(frameDue+1000/60,now-4);}
+  if(devOn){PERF.n++; if(now-PERF.t0>=1000){PERF.fps=Math.round(PERF.n*1000/(now-PERF.t0)); PERF.n=0; PERF.t0=now; perfShow();}}
+  else if(PERF.on){PERF.on=false; $('#perfLine').hidden=true;}
   /* the grid hums while live current runs on a floor being played */
   try{AUDIO.hum(F&&run&&!paused&&$('#title').hidden&&F.grid&&F.grid.edges.some(e=>e.live)&&(F.phase==='wave'||F.phase==='build')?(F.phase==='wave'?.05:.025):0);}catch(e){}
   watchPerf(now-last);
@@ -19699,8 +19721,13 @@ function frame(now){
       if(artWarmQ.length)artWarmStep(F.phase==='wave'?1.5:4);
       {const bc=$('#bossCard'); if(!F.intro){if(!bc.hidden)bc.hidden=true;} else bc.classList.toggle('held',paused);}
       if(F.blocking&&$('#modal').hidden&&!F.peek)showModal(F.blocking);
+      const p0=devOn?performance.now():0;
       {let sim=raw*speed; while(sim>1e-6&&!paused&&F&&F.phase!=='won'){const d=Math.min(.05,sim); update(d); sim-=d;}}
-      render();
+      const p1=devOn?performance.now():0;
+      /* nothing moves on a paused board except what you do to it: paint on a change, and ten times a second for whatever is left */
+      if(!paused||F.intro||F.shake>0){render(); boardDirty=false; stillAcc=0;}
+      else{stillAcc+=raw; if(boardDirty||stillAcc>=.1){render(); boardDirty=false; stillAcc=0;}}
+      if(devOn){const p2=performance.now(); PERF.sim+=(p1-p0-PERF.sim)*.1; PERF.draw+=(p2-p1-PERF.draw)*.1;}
       uiAcc+=raw;
       if(uiAcc>.2){uiAcc=0; tickUI(); coachPoll();}
     }
