@@ -11532,8 +11532,8 @@ const TIPS={
   madness:{when:()=>F.towers.some(t=>t.kind==='horror'),title:'Madness',text:'Every horror you field adds madness. At Whispers the lamp flickers. Deeper, a horror may break loose, and when the dark leans in the lamp shrinks.',target:()=>coachStat('#madV')},
   dark:{when:()=>!flickering()&&F.towers.some(t=>t.dark&&t.kind==='ward'),title:'Cut off',text:'This ward stands outside the lamp’s light, so it does nothing. Light has to connect back to the lamp through lit tiles.',
     target:()=>{const t=F.towers.find(t=>t.dark&&t.kind==='ward'); return t?coachBoard(t.c+.5,t.r+.5,.7):null;}},
-  /* the hourglass: on the second floor's first wave, once the first floor's own tips are behind you */
-  hold:{when:()=>F.phase==='wave'&&run.floor>=1&&!paused,title:'Hold the dark',text:'The hourglass stops everything on the stair, and you can go on building. Wards cost what they cost in a wave: nothing set down while it is held comes back whole. Rites wait, and souls cannot be bound, until you let the dark go.',
+  /* the hourglass: on the second floor's second wave, once the first floor's own tips are behind you and never on the heels of a creature's */
+  hold:{when:()=>F.phase==='wave'&&run.floor>=1&&F.wave>=2&&!paused,title:'Hold the dark',text:'The hourglass stops everything on the stair, and you can go on building. Wards cost what they cost in a wave: nothing set down while it is held comes back whole. Rites wait, and souls cannot be bound, until you let the dark go.',
     target:()=>coachEl('#holdBtn')},
   /* seeds (#95): last, so any tip about the floor itself goes first; in a break after the second floor's first wave, a quiet moment */
   stair:{when:()=>seedOn()&&run.floor>=1&&F.phase==='build'&&F.wave>=1,title:'The stair has a name',
