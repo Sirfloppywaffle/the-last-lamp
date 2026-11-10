@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Last Lamp</title>
+<meta name="theme-color" content="#08090A">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=DM+Mono:wght@400;500&family=Grenze+Gotisch:wght@500;700&display=swap" rel="stylesheet">
@@ -472,6 +475,7 @@ input[type=range]::-moz-range-track {
 #title .tm-tiles .btn{display:flex;flex-direction:column;justify-content:center;gap:1px;min-height:48px;padding:8px 12px}
 #title .tm-tiles small{color:var(--brine);font-family:var(--f-num);font-size:.64rem;letter-spacing:.04em}
 #title .best,#title .ver{text-align:center;text-shadow:0 1px 0 #000}
+#title .title-upd{text-align:center;border-color:var(--brine);color:var(--brine)}
 /* short and wide: the stair stands at the left and the menu takes the right */
 #title.is-side .title-inner{margin:0 0 0 auto;max-width:min(54%,520px);gap:8px;padding-top:calc(env(safe-area-inset-top,0px) + 8px)}
 #title.is-side .title-head{gap:2px}
@@ -866,6 +870,7 @@ body.is-lite .titem.on,body.is-lite .rite.armed{animation:none}
         <button class="btn" id="bonesBtn" hidden>Knucklebones</button>
       </div>
     </div>
+    <button class="btn title-upd" id="updBtn" hidden>A newer version is ready. Tap to load it.</button>
     <p class="best" id="bestLine"></p>
     <p class="ver" id="verLine"></p>
     </div>
@@ -11987,6 +11992,34 @@ function allowModalInput(e) {
   return (lastInputStart >= modalShownAt + 150);
 }
 
+/* ---------------- install and offline (10 Nov 2026) ----------------
+   Two small files stand beside the game, with Criss's leave (the game itself is still this one file): manifest.webmanifest, which
+   lets a phone install it to the home screen and open it with no browser bars, and sw.js, a service worker that keeps the page, the
+   icons and the fonts on the device so it plays with no signal. The worker always asks the network for the page first, so an
+   installed game is today's game whenever it is opened with a signal; when the network is too slow to wait for, it opens the kept
+   one and tells the page a newer one has arrived ('ll-update'), and the title offers it (#updBtn).
+   None of this runs for a file opened from disk (the tests) or for a pull request's preview (LL_STORE_NS): a preview must never be
+   kept in place of the real game. */
+const INSTALL={evt:null,web:false,update:false};
+(function(){
+  const h=location.hostname;
+  INSTALL.web=(location.protocol==='https:'||h==='localhost'||h==='127.0.0.1')&&!window.LL_STORE_NS;
+  if(!INSTALL.web)return;
+  const l=document.createElement('link'); l.rel='manifest'; l.href='manifest.webmanifest'; document.head.appendChild(l);
+  window.addEventListener('beforeinstallprompt',ev=>{ev.preventDefault(); INSTALL.evt=ev;});
+  window.addEventListener('appinstalled',()=>{INSTALL.evt=null;});
+  if(!('serviceWorker' in navigator))return;
+  navigator.serviceWorker.addEventListener('message',ev=>{if(ev.data&&ev.data.type==='ll-update'){INSTALL.update=true; $('#updBtn').hidden=false;}});
+  window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});
+})();
+function installed(){try{return matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true;}catch(e){return false;}}
+function installRow(){
+  if(!INSTALL.web)return '';
+  const note=t=>'<p class="note" style="margin:6px 0 0;font-size:.78rem;color:var(--ash)">'+t+'</p>';
+  if(installed())return '<p class="note" style="margin:14px 0 0;font-size:.86rem;color:var(--bone)">Installed on this device.</p>'+note('It plays with no signal, and loads the newest version whenever it opens with one.');
+  if(INSTALL.evt)return '<button class="btn" id="installBtn" style="width:100%;margin-top:14px">Install the game on this device</button>'+note('It opens from your home screen with no browser bars, plays with no signal, and keeps itself up to date. Your save comes with it.');
+  return '<p class="note" style="margin:14px 0 0;font-size:.86rem;color:var(--bone)">Install: open your browser’s menu and choose Add to Home screen.</p>'+note('It then plays with no signal and keeps itself up to date.');
+}
 function fpsLabel(){return 'Frame rate: '+(fpsMode==='battery'?'Battery (60)':'Smooth (the screen’s own)');}
 function openSettings(fromPause){
   paused=true;
@@ -11999,6 +12032,7 @@ function openSettings(fromPause){
       + '<button class="btn" id="fpsBtn" style="width:100%;margin-top:14px">'+fpsLabel()+'</button><p class="note" style="margin:6px 0 0;font-size:.78rem;color:var(--ash)">Battery holds the game to 60 frames a second on a faster screen. It looks the same and runs cooler.</p>'
       + '<button class="btn" id="hapBtn" style="width:100%;margin-top:10px">Vibration: '+(store.get('ll-haptic',true)?'On':'Off')+'</button>'
       + '<button class="btn" id="townSetBtn" style="width:100%;margin-top:14px">'+townSetLabel()+'</button><p class="note" style="margin:6px 0 0;font-size:.78rem;color:var(--ash)">Opens the game in Saltmouth, the town above the stair, instead of on the title.'+(devOn?' Developer mode: not kept.':'')+'</p>'
+      + installRow()
       + '<button class="btn" id="tutBtn" style="width:100%;margin-top:14px">Replay the walkthrough and tips</button>',
     actions:[{label:fromPause?'Back':'Close', primary:true, fn:()=>{if(fromPause)openPause(); else closeModal();}}]
   });
@@ -12014,6 +12048,8 @@ function openSettings(fromPause){
       if(id==='vSfx') AUDIO.place(); 
     };
   });
+  const ib=document.getElementById('installBtn');
+  if(ib)ib.onclick=()=>{const e=INSTALL.evt; if(!e)return; INSTALL.evt=null; ib.disabled=true; try{e.prompt();}catch(_){}};
   const tb=document.getElementById('tutBtn');
   if(tb)tb.onclick=()=>{tutSave({walk:'',seen:[],off:false}); tb.textContent='They return on your next descent';};
   const cb=document.getElementById('capBtn');
@@ -12286,6 +12322,7 @@ function titleStrike(quiet){
   if(!quiet){AUDIO.init(); AUDIO.strike();}
 }
 $('#titleStrike').addEventListener('click',()=>titleStrike(false));
+$('#updBtn').addEventListener('click',()=>{location.reload();});
 
 /* ---------------- Saltmouth (Expansion 3, the town above the stair) ----------------
    expansion/EXPANSION3_TOWN.md, section 0. A walkable square above the stair, drawn as pixel art (0.4): no anti-aliasing,

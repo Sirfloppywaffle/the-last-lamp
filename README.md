@@ -6,7 +6,7 @@ A Lovecraftian tower-defense roguelike that runs in your browser. Built by **Cri
 
 **▶ Play:** https://sirfloppywaffle.github.io/the-last-lamp/
 
-It works on phones held upright or sideways, foldables, tablets and desktops. Your run saves automatically.
+It works on phones held upright or sideways, foldables, tablets and desktops. Your run saves automatically. On a phone you can install it (Settings, or your browser's Add to Home screen): it then opens full screen, plays with no signal, and updates itself.
 
 ## How this project works
 - **Criss** decides what the game becomes, plays every change, and gives the green light by **merging** a pull request.
