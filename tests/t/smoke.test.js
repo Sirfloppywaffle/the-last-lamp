@@ -6,6 +6,10 @@ const {chromium}=require('playwright');
   const ver=await p.evaluate(()=>document.querySelector('#verLine').textContent);
   console.log('title shows:',ver);
   if(!/^Version \d+(\.\d+)*$/.test(ver)){console.log('FAIL the title screen should show the version'); process.exitCode=1;}
+  // the title opens dark: the menu is not there until the light is struck
+  const dark=await p.evaluate(()=>!document.querySelector('#titleStrike').hidden&&document.querySelector('#title .title-inner').hidden);
+  if(!dark){console.log('FAIL the title should open dark, with only Tap to strike a light'); process.exitCode=1;}
+  await p.click('#titleStrike'); await p.waitForTimeout(300);
   await p.click('#descendBtn'); await p.waitForTimeout(300);
   await p.evaluate(()=>document.querySelectorAll('#mChoices .choice')[0].click()); await p.waitForTimeout(600);
   const fl=await p.evaluate(()=>document.querySelector('#floorNo').textContent);
