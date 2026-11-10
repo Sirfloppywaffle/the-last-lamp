@@ -2524,31 +2524,47 @@ const TIERNAMES=['Calm','Whispers','Slipping','Leaning'];
 
 /* ---------------- sound (synthesized & procedural) ---------------- */
 let VOL=store.get('ll-vol',{master:0.8, bgm:0.6, sfx:1.0});
+/* sound never draws from rnd() or pick(): those can be pointed at a stair's seeded stream (rule 11b), and a sound must not move it */
+const ar=(a,b)=>a+Math.random()*(b-a), ap=a=>a[Math.random()*a.length|0], mtof=m=>440*Math.pow(2,(m-69)/12);
 
 const AUDIO={
-  ctx:null, master:null, bgmGain:null, sfxGain:null, last:{},
+  ctx:null, master:null, bgmGain:null, sfxGain:null, duckG:null, rev:null, bgmSend:null, sfxSend:null, nz:null, dead:false, last:{},
   init(){
-    if(!this.ctx){
+    if(!this.ctx&&!this.dead){
       try{
-        this.ctx=new (window.AudioContext||window.webkitAudioContext)();
-        this.master=this.ctx.createGain();
-        this.bgmGain=this.ctx.createGain();
-        this.sfxGain=this.ctx.createGain();
-        
-        const comp=this.ctx.createDynamicsCompressor();
+        const c=new (window.AudioContext||window.webkitAudioContext)();
+        this.master=c.createGain();
+        this.bgmGain=c.createGain();
+        this.sfxGain=c.createGain();
+        /* the music passes through its own gain on the way out, so a blow to the lamp can duck it without touching the volume set */
+        this.duckG=c.createGain();
+
+        const comp=c.createDynamicsCompressor();
         comp.threshold.value = -12;
         comp.knee.value = 40;
         comp.ratio.value = 12;
-        comp.attack.value = 0;
+        comp.attack.value = 0.003;
         comp.release.value = 0.25;
-        
-        this.bgmGain.connect(this.master);
+
+        this.bgmGain.connect(this.duckG); this.duckG.connect(this.master);
         this.sfxGain.connect(this.master);
         this.master.connect(comp);
-        comp.connect(this.ctx.destination);
+        comp.connect(c.destination);
+        /* one buffer of noise for every sound that needs some: each used to make and fill its own */
+        const n=c.sampleRate*2|0, nb=c.createBuffer(1,n,c.sampleRate), nd=nb.getChannelData(0);
+        for(let i=0;i<n;i++)nd[i]=Math.random()*2-1;
+        this.nz=nb;
+        /* the stair's echo: one long dark room that every sound stands in a little, and bells and horns a lot */
+        const m=c.sampleRate*3|0, ib=c.createBuffer(2,m,c.sampleRate);
+        for(let ch=0;ch<2;ch++){const d=ib.getChannelData(ch); let lp=0; for(let i=0;i<m;i++){const x=(Math.random()*2-1)*Math.pow(1-i/m,2.8); lp+=(x-lp)*.32; d[i]=lp*1.6;}}
+        this.rev=c.createConvolver(); this.rev.buffer=ib;
+        const ro=c.createGain(); ro.gain.value=.55; this.rev.connect(ro); ro.connect(this.master);
+        this.bgmSend=c.createGain(); this.sfxSend=c.createGain(); this.bgmSend.connect(this.rev); this.sfxSend.connect(this.rev);
+        const wet=c.createGain(); wet.gain.value=.1; this.sfxGain.connect(wet); wet.connect(this.rev);
+        this.ctx=c;
         this.updateVols();
         BGM.init();
-      }catch(e){}
+      }catch(e){this.ctx=null; this.dead=true;}
     }
     if(this.ctx&&this.ctx.state==='suspended')this.ctx.resume();
   },
@@ -2557,13 +2573,14 @@ const AUDIO={
     this.master.gain.value = VOL.master;
     this.bgmGain.gain.value = VOL.bgm;
     this.sfxGain.gain.value = VOL.sfx;
+    if(this.bgmSend){this.bgmSend.gain.value = VOL.bgm; this.sfxSend.gain.value = VOL.sfx;}
   },
   ok(){if(VOL.master===0||VOL.sfx===0)return false; this.init(); return !!this.ctx;},
   gate(n,ms){const t=performance.now(); if(this.last[n]&&t-this.last[n]<ms)return false; this.last[n]=t; return true;},
   synth(f, type, peak, dec, slide, delay, att, detune=0, isBgm=false){
     if(!this.ok() && !isBgm)return;
     if(isBgm && (!this.ctx || VOL.master===0 || VOL.bgm===0)) return;
-    
+
     const c=this.ctx, t0=c.currentTime+(delay||0), a=att||.01;
     const o=c.createOscillator(), gn=c.createGain();
     o.type=type; o.frequency.setValueAtTime(f,t0);
@@ -2572,39 +2589,93 @@ const AUDIO={
     gn.gain.setValueAtTime(.0001,t0);
     gn.gain.exponentialRampToValueAtTime(peak,t0+a);
     gn.gain.exponentialRampToValueAtTime(.0001,t0+a+dec);
-    
-    o.connect(gn); 
-    gn.connect(isBgm ? this.bgmGain : this.sfxGain); 
+
+    o.connect(gn);
+    gn.connect(isBgm ? this.bgmGain : this.sfxGain);
     o.start(t0); o.stop(t0+a+dec+.1);
   },
   noise(dur, peak, freq, q, filterType='bandpass', delay=0){
     if(!this.ok())return;
     const c=this.ctx, t0=c.currentTime+(delay||0);
-    const len=Math.max(1,Math.floor(c.sampleRate*dur));
-    const buf=c.createBuffer(1,len,c.sampleRate), d=buf.getChannelData(0);
-    for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
-    const src=c.createBufferSource(); src.buffer=buf;
+    const src=c.createBufferSource(); src.buffer=this.nz; src.loop=true;
     const bp=c.createBiquadFilter(); bp.type=filterType; bp.frequency.value=freq; bp.Q.value=q;
     const gn=c.createGain();
     gn.gain.setValueAtTime(.0001,t0); gn.gain.exponentialRampToValueAtTime(peak,t0+.01);
     gn.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-    
-    src.connect(bp); bp.connect(gn); gn.connect(this.sfxGain); 
-    src.start(t0);
+
+    src.connect(bp); bp.connect(gn); gn.connect(this.sfxGain);
+    src.start(t0,Math.random()*1.5); src.stop(t0+dur+.05);
   },
-  place(){this.noise(.15,.3,400,1.5); this.synth(90,'triangle',.4,.15,40);},
-  buy(){this.synth(523.25,'sine',.2,.3); this.synth(659.25,'sine',.2,.4,null,.05); this.synth(783.99,'triangle',.1,.5,null,.1);},
-  bolt(){if(!this.gate('bolt',70))return; this.synth(800,'square',.06,.15,100); this.noise(.08,.15,4000,1,'highpass');},
+  /* the newer voices (the scores and the effects written with them) are built from three shapes, each an object of what it needs:
+     tone (an oscillator with a struck envelope), hiss (the shared noise through a filter that can sweep) and swell (a held note that
+     opens and closes). t is seconds from now, or at an exact time on the clock; rev is how much of it the echo hears; bgm sends it
+     with the music. */
+  when(o){return o.at||this.ctx.currentTime+(o.t||0);},
+  can(o){if(o.bgm)return !!this.ctx&&VOL.master>0&&VOL.bgm>0; return this.ok();},
+  route(node,o){
+    const c=this.ctx; let n=node;
+    if(o.lp){const f=c.createBiquadFilter(); f.type='lowpass'; f.frequency.value=o.lp; n.connect(f); n=f;}
+    if(o.pan&&c.createStereoPanner){const p=c.createStereoPanner(); p.pan.value=o.pan; n.connect(p); n=p;}
+    n.connect(o.dest||(o.bgm?this.bgmGain:this.sfxGain));
+    if(o.rev){const s=c.createGain(); s.gain.value=o.rev; n.connect(s); s.connect(o.bgm?this.bgmSend:this.sfxSend);}
+  },
+  tone(o){
+    if(!this.can(o))return;
+    const c=this.ctx, t=this.when(o), a=o.a||.008, d=o.d||.3;
+    const os=c.createOscillator(), g=c.createGain(); os.type=o.type||'sine'; os.frequency.setValueAtTime(o.f,t);
+    if(o.to)os.frequency.exponentialRampToValueAtTime(o.to,t+a+d);
+    if(o.det)os.detune.value=o.det;
+    g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(o.peak||.2,t+a); g.gain.exponentialRampToValueAtTime(.0001,t+a+d);
+    os.connect(g); this.route(g,o); os.start(t); os.stop(t+a+d+.05);
+  },
+  hiss(o){
+    if(!this.can(o))return;
+    const c=this.ctx, t=this.when(o), a=o.a||.005, d=o.d||.2;
+    const s=c.createBufferSource(); s.buffer=this.nz; s.loop=true;
+    const f=c.createBiquadFilter(); f.type=o.ft||'bandpass'; f.frequency.setValueAtTime(o.f||1000,t); if(o.to)f.frequency.exponentialRampToValueAtTime(o.to,t+a+d); f.Q.value=o.q||1;
+    const g=c.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(o.peak||.2,t+a); g.gain.exponentialRampToValueAtTime(.0001,t+a+d);
+    s.connect(f); f.connect(g); o.lp=0; this.route(g,o); s.start(t,Math.random()*1.5); s.stop(t+a+d+.05);
+  },
+  swell(o){
+    if(!this.can(o))return;
+    const c=this.ctx, t=this.when(o), a=o.a||.5, h=o.h||.5, r=o.r||1, pk=o.peak||.05, l0=o.lp0||300;
+    const os=c.createOscillator(); os.type=o.type||'sawtooth'; os.frequency.value=o.f; if(o.det)os.detune.value=o.det;
+    const f=c.createBiquadFilter(); f.type='lowpass'; f.Q.value=.7; f.frequency.setValueAtTime(l0,t); f.frequency.linearRampToValueAtTime(o.lp1||900,t+a); f.frequency.linearRampToValueAtTime(l0,t+a+h+r);
+    const g=c.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(pk,t+a); g.gain.setValueAtTime(pk,t+a+h); g.gain.linearRampToValueAtTime(0,t+a+h+r);
+    os.connect(f); f.connect(g); o.lp=0; this.route(g,o); os.start(t); os.stop(t+a+h+r+.05);
+  },
+  /* a small clear bell: a hum below, the note, and three partials that die first */
+  ring(f,o){
+    for(const [m,p,d] of [[.5,.5,1.4],[1,1,1],[2,.45,.7],[2.76,.22,.45],[5.4,.08,.2]])
+      this.tone({f:f*m,peak:(o.peak||.1)*p,d:(o.d||2)*d,a:.004,det:(Math.random()-.5)*8,t:o.t,at:o.at,rev:o.rev,pan:o.pan,dest:o.dest,bgm:o.bgm});
+  },
+  /* the music steps back for a moment (the lamp is struck) */
+  duck(){if(!this.duckG)return; const t=this.ctx.currentTime, g=this.duckG.gain; g.cancelScheduledValues(t); g.setTargetAtTime(.3,t,.03); g.setTargetAtTime(1,t+.5,.5);},
+
+  /* a stone set down, and the grit settling after it. No two are quite alike: nor are the bolts and the deaths below */
+  place(){if(!this.ok())return; const k=ar(.94,1.06); this.tone({f:120*k,to:52,peak:.5,d:.16,rev:.15}); this.hiss({f:420,q:.9,ft:'lowpass',peak:.22,d:.09}); this.tone({f:640*k,type:'triangle',peak:.07,d:.05,t:.012}); this.hiss({f:2600,q:1.5,peak:.05,d:.2,t:.05,rev:.3});},
+  /* an anvil's tick, then two notes climbing */
+  buy(){if(!this.ok())return; this.hiss({f:4200,q:3,peak:.09,d:.03}); this.tone({f:1480,peak:.1,d:.5,rev:.35}); this.tone({f:2974,peak:.03,d:.3,rev:.35}); this.tone({f:587.3,type:'triangle',peak:.1,d:.35,t:.09,rev:.3}); this.tone({f:880,type:'triangle',peak:.1,d:.5,t:.2,rev:.4});},
+  /* a menu's button: a small dry tick. click is the Roster's, a note with it */
+  tap(){if(!this.gate('tap',40)||!this.ok())return; this.tone({f:1900,peak:.045,d:.03}); this.hiss({f:3200,q:2,peak:.05,d:.025});},
+  click(){if(!this.ok())return; this.tone({f:1900,peak:.045,d:.03}); this.tone({f:587.3,type:'triangle',peak:.07,d:.3,rev:.4});},
+  /* a line snapping taut and the whip of the bolt */
+  bolt(){if(!this.gate('bolt',70)||!this.ok())return; const k=ar(.9,1.12); this.tone({f:950*k,to:170*k,type:'sawtooth',peak:.09,d:.09,lp:2400}); this.hiss({f:5200,to:1400,q:1.1,peak:.11,d:.12}); this.tone({f:210*k,type:'triangle',peak:.12,d:.07});},
   chime(){if(!this.gate('chime',120))return; this.synth(880,'sine',.2,1.2); this.synth(1320,'sine',.1,.9); this.synth(1760,'triangle',.05,.6);},
   lob(){if(!this.gate('lob',120))return; this.noise(.2,.15,300,1); this.synth(150,'sine',.2,.2,50);},
   tar(){if(!this.gate('tar',90))return; this.noise(.3,.25,150,0.8,'lowpass'); this.synth(60,'square',.2,.3,30);},
-  kill(){if(!this.gate('kill',55))return; this.noise(.15,.2,800,1.2); this.synth(120,'sawtooth',.1,.15,40);},
+  /* something wet coming apart, and what drips after */
+  kill(){if(!this.gate('kill',55)||!this.ok())return; const k=ar(.85,1.2); this.hiss({f:900*k,to:140,q:.7,ft:'lowpass',peak:.26,d:.24,rev:.2}); this.tone({f:240*k,to:48,type:'sawtooth',peak:.12,d:.22,lp:700}); this.tone({f:70,peak:.25,d:.18});
+    for(let i=0;i<3;i++)this.hiss({f:ar(1800,3800),q:5,peak:.05,d:.04,t:.07+i*ar(.03,.07),pan:ar(-.5,.5)});},
   bite(){if(!this.gate('bite',80))return; this.noise(.1,.2,2000,2); this.synth(100,'square',.1,.1,50);},
   shriek(){this.synth(1200,'sawtooth',.1,.4,2000); this.synth(1220,'square',.1,.4,1950); this.noise(.3,.1,3000,2);},
-  hurt(){this.synth(45,'sawtooth',.4,.6); this.noise(.4,.3,120,.5,'lowpass');},
-  wave(){this.synth(55,'sawtooth',.15,3,null,0,.8, 10); this.synth(55,'sawtooth',.15,3,null,0,.8, -10); this.noise(2,.05,200,1,'lowpass');},
+  /* the lamp is struck: glass, a blow, the flame guttering down; and the music steps back from it */
+  hurt(){if(!this.ok())return; this.hiss({f:6500,q:.8,ft:'highpass',peak:.22,d:.06}); this.tone({f:70,to:38,peak:.6,d:.5,rev:.3}); this.hiss({f:300,to:90,q:.6,ft:'lowpass',peak:.3,d:.6,rev:.3}); this.tone({f:392,to:262,type:'triangle',peak:.08,d:.7,det:-18,rev:.5}); this.duck();},
+  /* Call the dark: a horn from below */
+  wave(){if(!this.ok())return; for(const [f,det,pk] of [[73.42,-7,.07],[73.42,6,.07],[110,-4,.05],[146.83,3,.03]])this.swell({f,det,a:.6,h:.9,r:1.5,lp0:160,lp1:760,peak:pk,rev:.5});
+    this.tone({f:36.71,peak:.3,a:.5,d:2.4}); this.hiss({f:160,q:.5,ft:'lowpass',peak:.12,a:.4,d:2.2,rev:.3});},
   bind(){this.synth(440,'sine',.15,1,880); this.synth(660,'triangle',.1,1.2,1320,.1);},
-  flare(){this.noise(.8,.2,3000,.5); this.synth(440,'sine',.1,1,1760,0,.1);},
+  flare(){if(!this.ok())return; this.hiss({f:2500,to:6500,q:.7,peak:.16,a:.02,d:.7,rev:.4}); this.tone({f:440,to:1320,peak:.07,a:.05,d:.6,rev:.5}); this.tone({f:660,to:1980,peak:.03,a:.05,d:.5,rev:.5});},
   bell(){this.synth(100,'sine',.4,3); this.synth(200,'sine',.2,2.5); this.synth(300,'triangle',.1,2);},
   /* a struck bronze bell: a hum an octave down, the strike note, a minor third, a fifth, the nominal and a few bright
      inharmonic partials that die first, and the knock of the clapper on top */
@@ -2614,7 +2685,7 @@ const AUDIO={
   toll(){if(!this.gate('toll',140))return; this.bronze(196,.16,3.2,.22);},
   peal(){if(!this.gate('peal',140))return; this.bronze(147,.08,2.4,.08);},
   greatbell(){this.bronze(73.4,.24,6,.3); this.bronze(110,.08,4,0); this.noise(.5,.12,180,.6,'lowpass'); this.synth(36.7,'sine',.2,5,0,.05,.3);},
-  /* a line of little bells, jangling out of step */
+  /* a line of little bells, jangling out of step (the Bellringer's Bell Wire) */
   wire(){if(!this.gate('wire',90))return; for(let i=0;i<5;i++){const f=2300+Math.random()*1500; this.synth(f,'sine',.045,.3,0,i*.035,.002); this.synth(f*2.76,'sine',.015,.14,0,i*.035,.002);}},
   /* a bronze bolt head clanging home */
   clapper(){if(!this.gate('clapper',70))return; this.synth(740,'triangle',.08,.35,0,0,.002); this.synth(1830,'sine',.04,.22,0,0,.002); this.noise(.03,.1,3200,1.2);},
@@ -2625,10 +2696,10 @@ const AUDIO={
   blast(){if(!this.gate('blast',80))return; this.noise(.4,.26,300,.6,'lowpass'); this.synth(55,'sine',.25,.6,35,0,.004); this.bronze(520,.03,.6,0);},
   /* the Bellfather's bell: huge, flat and cracked, out of tune with everything */
   bellfather(){this.bronze(58,.2,3.5,.3); this.synth(61.5,'sine',.12,3,0,0,.004); this.noise(.3,.14,240,.6,'lowpass');},
-  /* a lamp snuffed: a soft breath and a hiss of smoke */
   /* Saltmouth (Expansion 4, step 5): a match struck to a wick, and the Keeper Below's trophy shaking on its board (soft: on its own) */
   strike(){this.noise(.12,.16,2600,1.2,'highpass'); this.synth(520,'triangle',.05,.25,260,.05);},
   trophyRumble(soft){if(!this.gate('trophy',600))return; const k=soft?.45:1; this.synth(38,'sawtooth',.14*k,1.8,22,0,.35); this.noise(1.6,.1*k,90,.7,'lowpass');},
+  /* a lamp snuffed: a soft breath and a hiss of smoke */
   snuff(){if(!this.gate('snuff',120))return; this.noise(.35,.12,900,.7,'lowpass'); this.synth(240,'sine',.03,.4,120,0,.02);},
   /* a tuning fork struck: a pure tone and its octave, long and clean */
   fork(){if(!this.gate('fork',200))return; this.synth(440,'sine',.05,1.4,0,0,.005); this.synth(880,'sine',.015,.6,0,0,.005);},
@@ -2638,14 +2709,24 @@ const AUDIO={
   answer(){this.synth(49,'sawtooth',.12,1.6,38,0,.5); this.synth(51.5,'sawtooth',.08,1.6,40,0,.5); this.noise(1.2,.1,400,.8,'lowpass',.2);},
   pillar(){this.noise(.5,.3,600,1); this.synth(800,'square',.08,.2,150); this.synth(150,'sawtooth',.2,.5,50);},
   slip(){this.synth(150,'sawtooth',.15,.8,60); this.synth(155,'sawtooth',.15,.8,62);},
-  win(){[523.25, 659.25, 783.99, 1046.50].forEach((f,i)=>this.synth(f,'sine',.2,1.5,null,i*.15));},
-  lose(){[233, 207.65, 185, 92.5].forEach((f,i)=>this.synth(f,'sawtooth',.15,1.2,null,i*.25));},
+  /* three endings, each its own: a wave broken (two bells, rising), a floor cleared (four, over a low fifth), and the lamp carried
+     to morning (the only bright chord in the game). win() is the floor's, kept for anything that still calls it */
+  waveClear(){if(!this.ok())return; this.ring(587.3,{peak:.07,d:1.6,rev:.6}); this.ring(880,{t:.22,peak:.07,d:2.2,rev:.6});},
+  floorClear(){if(!this.ok())return; [[293.66,0],[440,.28],[587.3,.56],[880,.95]].forEach(([f,d])=>this.ring(f,{t:d,peak:.08,d:3.2,rev:.7})); this.swell({f:73.42,a:.8,h:1.2,r:2.2,lp0:200,lp1:700,peak:.07,rev:.4}); this.swell({f:110,a:.8,h:1.2,r:2.2,lp0:200,lp1:700,peak:.05,rev:.4});},
+  morning(){if(!this.ok())return; [[293.66,0],[369.99,.3],[440,.6],[587.3,.9],[739.99,1.25],[880,1.6],[1174.66,2.1]].forEach(([f,d])=>this.ring(f,{t:d,peak:.085,d:4,rev:.8}));
+    for(const f of [73.42,110,146.83,185])this.swell({f,a:1.4,h:2.2,r:3,lp0:220,lp1:1100,peak:.05,rev:.5});},
+  win(){this.floorClear();},
+  /* the lamp goes out: the flame's last breath, three notes falling flat, and the deep under them */
+  lose(){if(!this.ok())return; this.hiss({f:2400,to:160,q:.6,ft:'lowpass',peak:.3,d:1,rev:.5}); this.tone({f:300,to:60,peak:.12,d:.9}); [[349.2,.5,-20],[293.66,1.2,-30],[233.08,2,-45]].forEach(([f,d,det])=>this.tone({f,peak:.08,d:3,t:d,det,rev:.9})); this.tone({f:36.71,peak:.35,a:.4,d:3.5,t:.4});},
+  /* a heartbeat: the oil is nearly gone */
+  heart(){if(!this.ok())return; this.tone({f:62,to:40,peak:.5,d:.13}); this.tone({f:58,to:38,peak:.32,d:.13,t:.22});},
   trap(){if(!this.gate('trap',80))return; this.noise(.08,.35,2500,2); this.synth(180,'square',.18,.12,60);},
   zap(){if(!this.gate('zap',60))return; this.noise(.18,.22,5200,1.4,'highpass'); this.synth(1600,'sawtooth',.05,.15,300);},
   /* the Galvanist's grid: a crackling bite, the surge of an Overload, a pylon burning out, the lamp's static, an Arc Lamp's
      flare and a rod driven home, all from noise chopped into sparks over a mains buzz */
   crackle(n,spread,peak,delay){for(let i=0;i<n;i++)this.noise(.02+Math.random()*.03,peak*(.6+Math.random()*.4),3500+Math.random()*3500,2.5,'bandpass',(delay||0)+Math.random()*spread);},
-  wire(){if(!this.gate('wire',70))return; this.crackle(4,.09,.24); this.synth(120,'sawtooth',.07,.16,90); this.synth(2400,'square',.025,.06,600);},
+  /* a live wire biting what crosses it. (This was a second wire(), and being the later one it was what the Bell Wire played too.) */
+  spark(){if(!this.gate('spark',70))return; this.crackle(4,.09,.24); this.synth(120,'sawtooth',.07,.16,90); this.synth(2400,'square',.025,.06,600);},
   overload(){this.synth(55,'sawtooth',.3,1.1,520,0,.05); this.synth(57,'square',.18,1.1,500,0,.05,7); this.crackle(18,.9,.32); this.noise(1,.22,6000,.8,'highpass',.05); this.synth(1800,'sawtooth',.06,.5,200,.4);},
   fry(){this.noise(.06,.45,1800,1.5); this.crackle(10,.6,.28,.04); this.noise(1.1,.16,900,.7,'lowpass',.1); this.synth(420,'sawtooth',.12,.7,60,.05);},
   static(){this.noise(.05,.5,7000,1,'highpass'); this.crackle(8,.25,.3); this.synth(90,'square',.22,.35,40); this.noise(.5,.18,2500,.6,'bandpass',.05);},
@@ -2664,55 +2745,172 @@ const AUDIO={
     if(this.humGain){const t=this.ctx.currentTime; this.humGain.gain.cancelScheduledValues(t); this.humGain.gain.setTargetAtTime(Math.max(.0001,level),t,.25);}
   },
   boom(){this.noise(.35,.4,300,.8,'lowpass'); this.synth(90,'square',.28,.3,35);},
-  coin(){if(!this.gate('coin',90))return; this.synth(1568,'sine',.07,.25); this.synth(2093,'sine',.05,.3,null,.04);},
+  /* essence: kills close together ring up a scale, and a pause brings it back down */
+  coinN:0, coinT:0,
+  coin(){if(!this.gate('coin',90)||!this.ok())return; const p=performance.now(); this.coinN=p-this.coinT<900?Math.min(this.coinN+1,7):0; this.coinT=p;
+    const f=1174.66*Math.pow(2,[0,3,5,7,10,12,15,17][this.coinN]/12); this.tone({f,peak:.08,d:.22,rev:.25}); this.tone({f:f*2,peak:.03,d:.3,t:.035,rev:.25});},
   rumble(){this.synth(52,'sawtooth',.3,1.4,30,0,.2); this.noise(1.2,.22,120,.6,'lowpass');},
-  /* a sleeper wakes on The Carry: a low breath drawn in, and something shifting in cloth */
   /* a sconce catches on The Mirror Stair: a soft breath of flame, and a high clear note */
   kindle(){if(!this.gate('kindle',120))return; this.noise(.3,.12,1600,.9,'bandpass'); this.synth(587,'sine',.05,.7,null,0,.03); this.synth(880,'sine',.025,.6,null,.05,.03);},
+  /* a sleeper wakes on The Carry: a low breath drawn in, and something shifting in cloth */
   wake(){if(!this.gate('wake',150))return; this.synth(68,'sawtooth',.13,1.3,44,0,.25); this.noise(.9,.12,320,.8,'lowpass');},
-  roar(){this.synth(74,'sawtooth',.45,2.4,30,0,.35); this.synth(77,'square',.22,2.2,32,0,.4); this.synth(148,'sawtooth',.14,1.8,60,.25,.3); this.noise(2.6,.32,170,.6,'lowpass'); this.noise(.9,.18,900,.8,'bandpass',.3);}
+  /* a boss arrives: a breath drawn in, a cluster of low brass, then the drop and one great bell under it */
+  roar(){if(!this.ok())return; this.hiss({f:500,to:3000,q:.8,peak:.2,a:1.7,d:.15,rev:.5}); for(const [f,d] of [[73.42,0],[77.78,8],[110,-6],[36.71,0]])this.swell({f,det:d,a:1.8,h:.6,r:1.6,lp0:140,lp1:1100,peak:.06,rev:.5});
+    this.tone({f:95,to:27,peak:.7,d:1.4,t:1.8,rev:.4}); this.hiss({f:180,q:.5,ft:'lowpass',peak:.3,d:1.2,t:1.8,rev:.4}); this.ring(73.42,{t:1.85,peak:.16,d:5,rev:.7});}
 };
 
-const BGM = {
-  active: false,
-  init() {
-    if(this.active) return;
-    const c = AUDIO.ctx;
-    if(!c) return;
-    this.active = true;
-    
-    // Deep underwater breathing drone
-    const osc1 = c.createOscillator(); osc1.type = 'sawtooth'; osc1.frequency.value = 45;
-    const osc2 = c.createOscillator(); osc2.type = 'triangle'; osc2.frequency.value = 46; // beat frequency
-    const filter = c.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 120;
-    const gain = c.createGain(); gain.gain.value = 0.4;
-    
-    // LFO to slowly sweep the filter (the "breathing")
-    const lfo = c.createOscillator(); lfo.frequency.value = 0.06; // ~16s cycle
-    const lfoGain = c.createGain(); lfoGain.gain.value = 40;
-    lfo.connect(lfoGain); lfoGain.connect(filter.frequency);
-    
-    osc1.connect(filter); osc2.connect(filter); filter.connect(gain); gain.connect(AUDIO.bgmGain);
-    osc1.start(); osc2.start(); lfo.start();
-    
-    this.loopEerie();
+/* The music. Three scores, chosen by where you stand: the title, Saltmouth, and the stair. Each is a scene: a few things that
+   sound all the time (drones, weather) and a tick that writes the next notes a third of a second ahead. BGM.tick() runs eight times
+   a second off a timer, never off the frame loop, and asks bgmWant() what should be playing.
+   The stair's score is in layers that follow the fight: a drone and a few low notes while you build; a pulse and low strings once a
+   wave is called; drums, brass and a tolling bell while a boss lives. Each floor plays it in its own key with its own colour, and
+   madness leans on it: the drone sags, the strings drift out of tune, and something whispers. All of it is kept low on purpose. */
+const BGM={
+  cur:null, key:'', timer:null, danger:0, mad:0, floor:0, indoor:false, heartT:0,
+  init(){if(this.timer)return; this.timer=setInterval(()=>this.tick(),125);},
+  tick(){
+    const c=AUDIO.ctx; if(!c||c.state!=='running')return;
+    let w=null; try{w=bgmWant();}catch(e){return;}
+    if(w.heart){const t=c.currentTime; if(t>=this.heartT){this.heartT=t+1.05; AUDIO.heart();}}
+    if(VOL.master===0||VOL.bgm===0||!w.name){if(this.cur)this.stop(); return;}
+    this.danger=w.danger; this.mad=w.mad; this.indoor=w.indoor; this.floor=w.floor;
+    const key=w.name+(w.name==='desc'?w.floor:'');
+    if(key!==this.key){this.stop(); this.key=key; try{this.cur=this[w.name]();}catch(e){this.cur=null;}}
+    const S=this.cur; if(!S)return;
+    const t=c.currentTime; if(S.next<t-.25)S.next=t+.05;
+    try{S.tick(t);}catch(e){}
   },
-  loopEerie() {
-    if(!AUDIO.ctx) return;
-    const schedule = () => {
-      if(AUDIO.ctx.state === 'running' && VOL.master > 0 && VOL.bgm > 0) {
-        // Distant whale-like or hollow wind tones
-        const f = pick([150, 200, 220, 250, 300, 330]);
-        AUDIO.synth(f, 'sine', rnd(0.08, 0.15), rnd(3, 5), null, 0, rnd(1.5, 2.5), rnd(-5, 5), true);
-      }
-      setTimeout(schedule, rnd(5000, 12000));
+  stop(){
+    const S=this.cur; this.cur=null; this.key=''; if(!S)return;
+    const t=AUDIO.ctx.currentTime; S.g.gain.cancelScheduledValues(t); S.g.gain.setTargetAtTime(0,t,.3);
+    setTimeout(()=>{for(const n of S.nodes){try{n.stop();}catch(e){}} try{S.g.disconnect();}catch(e){}},2200);
+  },
+  scene(){const c=AUDIO.ctx, g=c.createGain(); g.gain.value=0; g.connect(AUDIO.bgmGain); g.gain.setTargetAtTime(1,c.currentTime,.6); return {g,nodes:[],next:c.currentTime+.15,i:0};},
+  loopN(S,dest,o){const c=AUDIO.ctx, s=c.createBufferSource(); s.buffer=AUDIO.nz; s.loop=true; const f=c.createBiquadFilter(); f.type=o.ft||'bandpass'; f.frequency.value=o.f; f.Q.value=o.q||.7;
+    const g=c.createGain(); g.gain.value=o.g; s.connect(f); f.connect(g); g.connect(dest); s.start(0,Math.random()*1.5); S.nodes.push(s); return {s,f,g};},
+  osc(S,dest,type,f,gain,det){const c=AUDIO.ctx, o=c.createOscillator(), g=c.createGain(); o.type=type; o.frequency.value=f; if(det)o.detune.value=det; g.gain.value=gain; o.connect(g); g.connect(dest); o.start(); S.nodes.push(o); return {o,g};},
+  lfo(S,param,freq,depth){const c=AUDIO.ctx, o=c.createOscillator(), g=c.createGain(); o.frequency.value=freq; g.gain.value=depth; o.connect(g); g.connect(param); o.start(); S.nodes.push(o); return {o,g};},
+
+  /* the title: a low drone, wind in the shaft, a bell that never finishes its phrase, water dripping, and now and then something
+     very large shifting far below */
+  title(){
+    const A=AUDIO, c=A.ctx, S=this.scene(), lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=260; lp.connect(S.g);
+    const a=this.osc(S,lp,'sine',36.71,.3); this.osc(S,lp,'sine',73.6,.16); this.osc(S,lp,'triangle',110,.035); this.lfo(S,a.g.gain,.05,.1);
+    const w=this.loopN(S,S.g,{f:420,q:.6,g:.03}); this.lfo(S,w.g.gain,.08,.02); this.lfo(S,w.f.frequency,.03,160);
+    const PH=[[62,65,63,62],[62,69,67,65],[57,62,63,62],[65,63,58,57],[62,63,62,57]]; let ph=null, pi=0, pn=c.currentTime+1.2, drip=c.currentTime+2, deep=c.currentTime+13;
+    S.tick=t=>{
+      if(pn<t-.5)pn=t+.2;
+      if(t+.3>pn){if(!ph){ph=ap(PH); pi=0;} A.ring(mtof(ph[pi++]),{at:pn,peak:.06,d:3.8,rev:.7,dest:S.g,bgm:true}); if(pi>=ph.length){ph=null; pn+=ar(6.5,10);} else pn+=1.25;}
+      if(t>drip){const f=ar(1300,2700); A.tone({f,to:f*.62,peak:.035,d:.07,pan:ar(-.8,.8),rev:.6,dest:S.g,bgm:true}); drip=t+ar(1.2,4.5);}
+      if(t>deep){A.swell({f:55,a:2,h:.5,r:2.5,lp0:90,lp1:240,peak:.07,dest:S.g,rev:.4,bgm:true}); A.swell({f:58.27,a:2,h:.5,r:2.5,lp0:90,lp1:240,peak:.04,dest:S.g,rev:.4,bgm:true}); deep=t+ar(18,28);}
     };
-    schedule();
+    return S;
+  },
+  /* Saltmouth: a harmonium in a slow 6/8, a plucked tune walked at random over its chords so it never repeats, a buoy bell far out,
+     and the weather kept well under all of it: rain and the sea, hushed again once you are under a roof */
+  town(){
+    const A=AUDIO, c=A.ctx, S=this.scene(), e=60/46/3;
+    const wx=c.createGain(), roof=c.createBiquadFilter(); roof.type='lowpass'; roof.frequency.value=9000; wx.gain.value=1; wx.connect(roof); roof.connect(S.g);
+    this.loopN(S,wx,{f:3200,q:.4,ft:'highpass',g:.008}); this.loopN(S,wx,{f:900,q:.8,g:.005});
+    const sea=this.loopN(S,wx,{f:300,q:.5,ft:'lowpass',g:.018}); this.lfo(S,sea.g.gain,.11,.014);
+    const CH=[[50,57,62,65],[46,53,58,62],[41,53,57,60],[48,52,55,60],[50,57,62,65],[43,55,58,62],[46,53,58,65],[45,52,57,61]];
+    const SC=[57,60,62,64,65,67,69,70,72,74,76,77]; let mi=5, pat=[1,0,0,1,0,1], bell=c.currentTime+ar(6,10);
+    const near=m=>{let b=0,bd=99; for(let k=0;k<SC.length;k++){const d=Math.abs(SC[k]-m); if(d<bd){bd=d;b=k;}} return b;};
+    S.tick=t=>{
+      wx.gain.setTargetAtTime(this.indoor?.45:1,t,.5); roof.frequency.setTargetAtTime(this.indoor?600:9000,t,.5);
+      while(S.next<t+.4){const i=S.i%6, bar=S.i/6|0, ch=CH[bar%8], at=S.next;
+        if(i===0){for(const m of ch)for(const det of [-6,6])A.swell({f:mtof(m),det,at,a:.45,h:e*6-.9,r:.9,lp0:480,lp1:1000,peak:.018,dest:S.g,rev:.3,bgm:true});
+          A.tone({f:mtof(ch[0]-12),type:'triangle',peak:.13,d:1.5,at,dest:S.g,rev:.2,bgm:true}); pat=ap([[1,0,0,1,0,1],[1,0,1,1,0,0],[1,0,0,0,0,1],[0,0,1,1,0,1],[1,0,0,0,0,0]]);}
+        if(i===3)A.tone({f:mtof(ch[1]-12),type:'triangle',peak:.07,d:.9,at,dest:S.g,rev:.2,bgm:true});
+        if(pat[i]&&bar>=1){mi=clamp(mi+ap([-2,-1,-1,1,1,2]),0,SC.length-1); let m=SC[mi];
+          /* on the bar's first beat the tune lands on a note of the chord */
+          if(i===0){let best=m,bd=99; for(let k=-3;k<=3;k++){const q=m+k; let hit=false; for(const x of ch)if(x%12===q%12)hit=true; if(hit&&Math.abs(k)<bd){bd=Math.abs(k);best=q;}} m=best; mi=near(m);}
+          if(bar%8===7&&m%12===0)m+=1;
+          A.tone({f:mtof(m+12),type:'triangle',peak:.06,d:1.1,at:at+Math.random()*.012,dest:S.g,rev:.5,bgm:true}); A.tone({f:mtof(m+24),peak:.015,d:.5,at,dest:S.g,rev:.5,bgm:true});}
+        S.next+=e; S.i++;}
+      if(t>bell){A.ring(440,{peak:.035,d:3.2,pan:.6,rev:.8,dest:S.g,bgm:true}); bell=t+ar(13,22);}
+    };
+    return S;
+  },
+  /* the stair */
+  desc(){
+    const A=AUDIO, c=A.ctx, S=this.scene(), fl=clamp(this.floor|0,0,4), tr=[0,-2,1,-4,-5][fl];
+    const mk=v=>{const g=c.createGain(); g.gain.value=v; g.connect(S.g); return g;};
+    const gC=mk(1), gP=mk(0), gB=mk(0), gW=mk(0);
+    const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=150; lp.connect(gC);
+    const f0=mtof(26+tr), d1=this.osc(S,lp,'sawtooth',f0,.22), d2=this.osc(S,lp,'sawtooth',f0,.2,9); this.osc(S,lp,'sine',f0*2,.25); this.lfo(S,lp.frequency,.07,55);
+    const wob=this.lfo(S,d1.o.detune,.31,0); wob.g.connect(d2.o.detune);
+    const wh=this.loopN(S,gW,{f:1900,q:7,g:.5}); this.lfo(S,wh.f.frequency,4.3,700); this.lfo(S,wh.g.gain,.9,.35);
+    const stepT=60/84/4, OST=[38,0,38,41,0,0,38,0,38,0,38,39,0,0,36,0], CALM=[50,53,51,48,45];
+    const T=o=>{o.bgm=true; A.tone(o);}, H=o=>{o.bgm=true; A.hiss(o);}, W=o=>{o.bgm=true; A.swell(o);};
+    S.tick=t=>{
+      const md=this.mad, dg=this.danger;
+      gP.gain.setTargetAtTime(dg>=1?1:0,t,.45); gB.gain.setTargetAtTime(dg>=2?1:0,t,.45);
+      /* madness, kept under the music: a whisper you could miss, a drone a little flat, strings a little out */
+      gW.gain.setTargetAtTime(md*.04,t,.8); wob.g.gain.setTargetAtTime(md*12,t,.8); d1.o.detune.setTargetAtTime(-md*14,t,1.2); d2.o.detune.setTargetAtTime(9-md*22,t,1.2);
+      const dt=()=>md?(Math.random()*2-1)*md*20:0;
+      while(S.next<t+.35){const i=S.i%16, bar=S.i/16|0, at=S.next;
+        if(i===0&&bar%2===0){const f=mtof(CALM[(bar/2|0)%5]+tr), det=dt();
+          /* each floor strikes the same slow notes on its own instrument */
+          if(fl===1){T({f,peak:.13,d:.55,at,rev:.5,dest:gC,det}); T({f:f*4,peak:.03,d:.08,at,rev:.5,dest:gC});}
+          else if(fl===2){for(const k of [1,1.5])W({f:f*k,at,a:.6,h:1.2,r:1.8,lp0:300,lp1:950,peak:.028,rev:.5,dest:gC,det});}
+          else if(fl===3){T({f:f/2,peak:.16,d:3,at,rev:.5,dest:gC,det});}
+          else if(fl===4){for(const k of [2,2.02,3])T({f:f*k,peak:.03,a:1.2,d:3,at,rev:.8,dest:gC,det});}
+          else{T({f,type:'triangle',peak:.1,d:2.8,at,rev:.6,dest:gC,det}); T({f:f*2,peak:.03,d:1.6,at,rev:.6,dest:gC});}}
+        if(i===10&&bar%4===3)T({f:mtof(ap([62,63,65])+tr),peak:.035,a:.3,d:2.2,at,rev:.8,dest:gC,det:dt()});
+        /* and has a sound of its own: the Cistern drips, the Ossuary rattles, the Throat's pulse never stops, the Heart glints */
+        if(fl===0&&i===5&&Math.random()<.35){const f=ar(1300,2700); T({f,to:f*.62,peak:.03,d:.07,at,pan:ar(-.8,.8),rev:.6,dest:gC});}
+        if(fl===1&&i===12&&bar%2===1)for(let k=0;k<4;k++)H({f:ar(2600,4200),q:6,peak:.035,d:.03,at:at+k*ar(.05,.09),pan:ar(-.6,.6),rev:.4,dest:gC});
+        if(fl===3&&dg<1&&(i===0||i===3))T({f:58,to:36,peak:i?.16:.24,d:.17,at,dest:gC});
+        if(fl===4&&i===8&&Math.random()<.4)T({f:mtof(ap([86,89,91])+tr),peak:.018,d:.5,at,det:ar(-30,30),pan:ar(-.8,.8),rev:.9,dest:gC});
+        if(dg>=1){
+          if(i===0||i===3)T({f:60,to:36,peak:i?.3:.42,d:.17,at,dest:gP});
+          if(OST[i]){const m=OST[i]+tr+(bar%4===3&&i>=10?1:0); T({f:mtof(m),type:'sawtooth',peak:.1,d:.13,at,lp:560,dest:gP,det:dt()});}
+          if(i%4===2)H({f:6500,q:1,ft:'highpass',peak:.02,d:.03,at,dest:gP});
+        }
+        if(dg>=2){
+          T({f:mtof((i%2?50:62)+tr),type:'sawtooth',peak:.04,d:.08,at,lp:1100,dest:gB,det:dt()});
+          if(i===0){T({f:82,to:30,peak:.55,d:.4,at,dest:gB,rev:.25}); H({f:220,q:.6,ft:'lowpass',peak:.2,d:.3,at,dest:gB});
+            for(const m of (bar%4===3?[50,57,51]:[50,57,62]))W({f:mtof(m+tr),at,a:.9,h:.7,r:1.1,lp0:260,lp1:1300,peak:.04,dest:gB,rev:.35,det:ar(-6,6)});
+            if(bar%2===0)A.ring(mtof(50+tr),{at,peak:.09,d:4,rev:.6,dest:gB,bgm:true});}
+          if(i===8)T({f:70,to:32,peak:.35,d:.3,at,dest:gB});
+        }
+        if(i===6&&Math.random()<md*.4)T({f:mtof(ap([74,75,77,80,81])+tr),peak:.02*md,a:1.1,d:1.4,at,det:ar(-40,40),pan:ar(-.8,.8),rev:.9,dest:gC});
+        S.next+=stepT; S.i++;}
+    };
+    return S;
   }
 };
+/* what should be playing, from what is on screen: read by BGM.tick(), eight times a second. One object, reused */
+const BGM_W={name:'',danger:0,mad:0,floor:0,indoor:false,heart:false};
+function bgmWant(){
+  const o=BGM_W; o.name=''; o.danger=0; o.mad=0; o.indoor=false; o.heart=false;
+  if(TWN.on){o.name='town'; o.indoor=!!TWN.inside; return o;}
+  if(!$('#title').hidden){o.name='title'; return o;}
+  if(!F||!run)return o;
+  o.floor=run.floor|0;
+  /* the run is over: the ending's own sound has the room to itself */
+  if(F.phase==='over'||F.phase==='won')return o;
+  o.name='desc';
+  if(DESC.active||MAP_SYS.active)return o;
+  o.mad=[0,.22,.5,.8][madTier()]||0;
+  if(F.phase==='wave'){
+    o.danger=1;
+    if(F.intro)o.danger=2;
+    else for(let i=0,n=F.foes.length;i<n;i++){const e=F.foes[i]; if(e.def.boss&&e.hp>0){o.danger=2; break;}}
+    o.heart=!paused&&run.oil>0&&run.oil<=Math.max(2,Math.ceil((run.oilMax||20)*.15));
+  }
+  return o;
+}
 
 // First click on document initializes audio
 document.addEventListener('pointerdown', () => { AUDIO.init(); }, {passive:true, once:true});
+/* every button in a menu answers a tap with a small tick; the build tray, the rites and the town's tray have sounds of their own */
+document.addEventListener('click', ev => {
+  const b=ev.target&&ev.target.closest&&ev.target.closest('button');
+  if(!b||b.disabled||b.closest('#tray,#rites,#modebar,#townTray'))return;
+  AUDIO.tap();
+}, {passive:true});
 
 /* ---------------- state ---------------- */
 let run=null, F=null, lastSave=store.get(SAVEKEY,null);
@@ -3070,7 +3268,7 @@ function updateGrid(dt){
         if(nd.horror)nd.horror.cd=Math.max(0,(nd.horror.cd||0)-ARC_SHED);}
       cd=e.recharge; F.wireCd.set(e.key,cd);
       F.fx.push({k:'arc',pts:[[e.a.x,e.a.y-.35],[f.x,f.y],[e.b.x,e.b.y-.35]],t:0,dur:.22,seed:Math.random()*99});
-      AUDIO.wire();
+      AUDIO.spark();
     }
   }
 }
@@ -4173,7 +4371,7 @@ function waveCleared(){
   if(tithe){run.ess+=tithe; AUDIO.coin();}
   if(lstat().well)gainOil(1);
   if(F.wave>=F.def.waves.length){floorCleared(); return;}
-  F.phase='build';
+  F.phase='build'; AUDIO.waveClear();
   banner('The wave breaks','','+'+bonus+' essence. '+(gutter?'The Corpse Candles go out':'Build, then call the dark'));
   checkpoint();
   forceUI();
@@ -6721,7 +6919,7 @@ function saveBest(won){
 }
 function summary(){return '<span class="statline">Creatures put down: '+run.kills+' · Horrors bound: '+run.bound+' · Peak madness: '+run.peakMad+'</span>';}
 function victory(){
-  F.phase='won'; paused=true; saveBest(true); const hLine=haulLine(run&&run.haul)+choreLine(run)+soulLine(run); townTrip(); tideRun(true); haulCredit(); clearSave(); AUDIO.win();
+  F.phase='won'; paused=true; saveBest(true); const hLine=haulLine(run&&run.haul)+choreLine(run)+soulLine(run); townTrip(); tideRun(true); haulCredit(); clearSave(); AUDIO.morning();
   F.blocking={kind:'end',title:'Morning',body:'The Primordial is still. Five floors of dark lie quiet over it, and the lamp is still burning. '+summary()+hLine+awardEmbers(true)+seedLine(false),
     actions:[{label:'Descend again',primary:true,fn:()=>{closeModal(); openKitPicker();}},{label:'Title',fn:()=>{closeModal(); showTitle();}}]};
   revealThenShow(F.blocking);
