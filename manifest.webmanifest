@@ -1,0 +1,17 @@
+{
+  "name": "The Last Lamp",
+  "short_name": "Last Lamp",
+  "description": "Tend the last lamp at the bottom of a drowned stair. Things are climbing toward the light.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#08090A",
+  "theme_color": "#08090A",
+  "categories": ["games"],
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
