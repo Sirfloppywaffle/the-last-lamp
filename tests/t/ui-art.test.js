@@ -12,7 +12,7 @@ const {chromium}=require('playwright');
   const art=await p.evaluate(()=>{
     const has=k=>{const i=document.createElement('i'); i.className='ui-ic ui-ic-'+k; document.body.appendChild(i);
       const cs=getComputedStyle(i), r=/^url\(/.test(cs.backgroundImage)&&+cs.getPropertyValue('--uf')>=1; i.remove(); return r;};
-    const T=__t, want=Object.keys(T.RITES).map(k=>'rt-'+k).concat(['oil','ess','mad0','mad1','mad2','mad3','ward','rite','relic','binding','patron','vial','chalice','satchel','bonebag','skull',
+    const T=__t, want=Object.keys(T.RITES).map(k=>'rt-'+k).concat(['oil','ess','mad0','mad1','mad2','mad3','ward','rite','relic','binding','pt-mother','pt-sun','pt-mouths','vial','chalice','satchel','bonebag','skull',
       'trial','descent','omen','die1','die2','die3','die4','die5','die6'].concat(['merchant','shrine','event','rest','reliquary','bones','deep','cage']));
     const root=getComputedStyle(document.documentElement);
     return {missing:want.filter(k=>!has(k)),pieces:['--ui-frame','--ui-frame-low','--ui-card','--ui-tube','--ui-badge','--ui-plaque','--ui-slot','--ui-slot-on','--ui-slot-h','--ui-tablet','--ui-tablet-on'].filter(v=>!/^\s*url\(/.test(root.getPropertyValue(v)))};
@@ -177,6 +177,29 @@ const {chromium}=require('playwright');
       T.run.fume=null; return [...o];});
     ok(still.length===1,'at '+w+'×'+h+' nothing moves as madness climbs through its tiers',still);
   }
+
+  // H: each patron wears its own icon: on its offering cards (a conjunction, the one who pays, with the one who watches in its
+  // corner), on its sign beside the Grimoire and on the Grimoire's Patrons page; the three are told apart, never one for all
+  await p.setViewportSize({width:412,height:860}); await p.waitForTimeout(100);
+  const pat=await p.evaluate(()=>{const T=__t, icOf=e=>e?[...e.classList].find(y=>y.startsWith('ui-ic-')):null, out={cards:{},chips:[],book:[]};
+    T.closeModal(); T.newRun('lamplighter',0); T.setP(false); T.run.att={mother:1,sun:2,mouths:1}; T.forceUI(); T.renderRelics();
+    out.chips=[...document.querySelectorAll('#relChips .relchip.is-patron')].map(c=>[c.dataset.rel,icOf(c.querySelector('.ui-ic')),c.textContent.trim()]);
+    for(const pk of Object.keys(T.PATRONS)){
+      const own=Object.keys(T.OFFERINGS).find(k=>T.OFFERINGS[k].p===pk&&!T.OFFERINGS[k].pair), conj=Object.keys(T.OFFERINGS).find(k=>T.OFFERINGS[k].pair&&T.OFFERINGS[k].pair.includes(pk));
+      T.openOffer([own,conj],pk);
+      const cs=[...document.querySelectorAll('.choice .ch-ics')].map(x=>[...x.querySelectorAll('.ui-ic')].map(icOf));
+      const O=T.OFFERINGS[conj], caller=O.pair.find(q=>cs[1]&&cs[1][0]==='ui-ic-'+T.PATRONS[q].ic);
+      out.cards[pk]={own:cs[0],conj:cs[1],pair:O.pair.slice(),caller:caller||null};
+      T.closeModal();}
+    T.openBook('hud','patrons');
+    out.book=[...document.querySelectorAll('.book-e')].slice(0,3).map(e=>[...e.querySelectorAll('.book-seal .ui-ic')].map(icOf));
+    T.closeModal(); return out;});
+  const IC={mother:'ui-ic-pt-mother',sun:'ui-ic-pt-sun',mouths:'ui-ic-pt-mouths'};
+  ok(pat.chips.length===3&&pat.chips.every(([k,ic,txt])=>ic===IC[k.slice(7)]&&!txt),'each patron sign shows its own icon, and no text symbol',pat.chips);
+  ok(Object.keys(IC).every(k=>pat.cards[k].own&&pat.cards[k].own.join()===IC[k]),'each patron offers under its own icon',pat.cards);
+  ok(Object.keys(IC).every(k=>{const c=pat.cards[k]; if(!c.conj||!c.caller)return false; const w=c.pair.find(q=>q!==c.caller); return c.conj.length===2&&c.conj[1]===IC[w];}),
+    'a conjunction shows the patron who pays, and the one who watches small in its corner',pat.cards);
+  ok(pat.book.map(x=>x.join()).join('|')===[IC.mother,IC.sun,IC.mouths].join('|'),'the Grimoire\'s Patrons page shows each patron\'s icon',pat.book);
 
   ok(!errs.length,'no page errors',errs);
   await b.close();

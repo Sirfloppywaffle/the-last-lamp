@@ -30,7 +30,8 @@ read_png = _p2r.read_png
 
 # name: (how it moves, ms a frame, ms held on the still before it moves). 'still' never moves; 'loop' plays its frames round
 # and round (a flame); 'swing' plays them there and back (a light that fades, so the loop never jumps); 'now' holds the
-# still and then plays its frames once (a blink, a glance), every hold + frames.
+# still and then plays its frames once (a blink, a glance), every hold + frames; 'ebb' holds the still, plays its frames there
+# and back, and rests on the still again (the Wrong Sun's eclipse, whose last frame is far from its first).
 ICONS = {
     # the HUD
     'oil': ('loop', 120, 0), 'ess': ('loop', 110, 0),
@@ -41,8 +42,10 @@ ICONS = {
     'trial': ('loop', 150, 0), 'omen': ('still', 0, 0), 'descent': ('loop', 150, 0),
     # what a card offers
     'relic': ('still', 0, 0), 'ward': ('still', 0, 0), 'rite': ('loop', 110, 0), 'binding': ('loop', 140, 0),
-    'patron': ('now', 120, 2400), 'vial': ('still', 0, 0), 'chalice': ('still', 0, 0), 'satchel': ('still', 0, 0),
+    'vial': ('still', 0, 0), 'chalice': ('still', 0, 0), 'satchel': ('still', 0, 0),
     'lock': ('still', 0, 0), 'bonebag': ('still', 0, 0), 'coin': ('still', 0, 0), 'vortex': ('still', 0, 0),
+    # the patrons, one each (offering cards, their signs by the Grimoire, its Patrons page)
+    'pt-mother': ('now', 120, 2400), 'pt-sun': ('ebb', 140, 2400), 'pt-mouths': ('now', 120, 2400),
     # the boss bar
     'skull': ('still', 0, 0),
     # the rites (RITES): each moves only while it is ready (the game's CSS holds a cooling one on its first frame)
@@ -160,12 +163,15 @@ def die(n):
 
 
 def keyframes(name, n, mode, ms, hold):
-    """steps that hold each frame for its time; 'now' holds frame 0 for hold ms first"""
+    """steps that hold each frame for its time; 'now' and 'ebb' hold frame 0 for hold ms first"""
     if mode == 'loop':
         seq, total = [(i, ms) for i in range(n)], n * ms
     elif mode == 'swing':
         seq = [(i, ms) for i in range(n)] + [(i, ms) for i in range(n - 2, 0, -1)]
         total = len(seq) * ms
+    elif mode == 'ebb':
+        seq = [(0, hold)] + [(i, ms) for i in range(1, n)] + [(i, ms) for i in range(n - 2, 0, -1)] + [(0, 0)]
+        total = hold + (2 * n - 3) * ms
     else:
         seq = [(0, hold)] + [(i, ms) for i in range(1, n)] + [(0, 0)]
         total = hold + (n - 1) * ms
