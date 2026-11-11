@@ -14,8 +14,8 @@
 |---|---|---|---|
 | P0 | The pilot: the Cistern's floor, dais, grates, five creatures, lamplight on water | #168 | done |
 | R | The Roster's five animated portraits | #169 | done |
-| 1 | The five kit lamps | | next |
-| 2 | The ten base wards | | |
+| 1 | The five kit lamps | #172 | done |
+| 2 | The ten base wards | | next |
 | 3 | Kit wards and kit marks on the board (Lamplighter, Whaler) | | |
 | 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | | |
 | 5 | What patrons lay on the floor, and the board's small effects | | |
@@ -78,7 +78,9 @@ All new art is PixelLab (`.mcp.json`; tools named `mcp__pixellab__*`). About 600
 
 **Why first:** the lamp is the centre of every screen and the smoothest thing on a pixel floor.
 
-**Now:** `drawLamp(c,x,y,tm,k,style)` paints it in unit space (about 0.75 units tall); `style` is `kit()`, and each kit's lamp looks different (the Whaler's blubber lamp, the Occultist's, the Galvanist's arc lamp with blue light, the Bellringer's). It is called from `render()` for the board, and elsewhere for icons and the walkthrough. The lamp's branches (`lstat()`) change it too: look at what `drawLamp` reads.
+**Was:** `drawLamp(c,x,y,tm,k,style)` painted it in unit space (about 0.8 units tall); `style` is `kit()`. Only the Galvanist (the arc lamp) and the Bellringer (the bell) had their own painters; the Lamplighter, the Whaler and the Occultist shared one lantern (the Whaler's Blubber Lamp is a ward, step 3). The lamp's branches (`lstat()`) and madness change the light and rings round it in `render()`, not `drawLamp`.
+
+**Done (step 1):** five sheets, `pixLamp()`, `drawLamp(…,board)`; see the code map row `the pixel board (pilot)`.
 
 **Build:** a sheet per kit (a still body and four to six flame frames), drawn by a `pixLamp()` that `drawLamp` hands over to when `pixOn()` and the call is for the board. Madness tiers flicker and shrink the lamp: keep whatever `drawLamp` does for them. Icons elsewhere may stay painted in this step; say so.
 

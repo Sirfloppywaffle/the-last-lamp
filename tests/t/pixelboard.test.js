@@ -34,6 +34,32 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.run.floor=0; T.beginFloor(null); T.boardArtSet('painted'); o.off=T.pixOn(); o.artOff=!!T.artOf('gnasher').pix; o.st=localStorage.getItem('ll-board'); T.setP(false); for(let i=0;i<5;i++)T.render(); return o;});
   ok(!rest.ossuary&&!rest.art,'every other floor is painted, creatures and all',rest);
   ok(!rest.off&&!rest.artOff&&/painted/.test(rest.st||''),'turned off, the paint is back',rest);
+  /* the five kit lamps (pixel stair step 1): on a pixel Cistern the board's lamp is drawn from its kit's sheet, each unlike the others
+     and unlike the paint; icons and the descent map (no board flag) stay painted; another floor, or the painted board, is untouched;
+     the Bellringer's bell swings as it tolls; under Reduce Motion the flame holds one frame */
+  const lampProbe=()=>{const T=__t, cv=document.createElement('canvas'); cv.width=cv.height=120; const c=cv.getContext('2d');
+    window.__lampImg=(k,board,tm)=>{c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,120,120); c.setTransform(60,0,0,60,60,72); T.drawLamp(c,0,0,tm,1,k,board);
+      c.setTransform(1,0,0,1,0,0); const d=c.getImageData(0,0,120,120).data; let h=0, n=0; for(let i=0;i<d.length;i+=4){h=(h*31+d[i]+d[i+1]*3+d[i+2]*7+d[i+3]*11)>>>0; if(d[i+3])n++;} return h+':'+n;};};
+  const kits=['lamplighter','whaler','occultist','galvanist','bellringer'];
+  const lamps=await p.evaluate(([kits,probe])=>{eval('('+probe+')')(); const T=__t, o={px:{},pt:{},ready:{},anim:{}}; T.setMapV(0); T.boardArtSet('pixel');
+    for(const k of kits){T.newRun(k,0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true); T.F.lampRing=0; o.on=T.pixOn(); o.ready[k]=T.LAMP_PX[k].ready;
+      o.px[k]=__lampImg(k,true,1); o.pt[k]=__lampImg(k,false,1); o.anim[k]=new Set([.1,.3,.5,.7,.9].map(tm=>__lampImg(k,true,tm))).size;
+      for(let i=0;i<5;i++)T.render();}
+    T.F.lampRing=1; o.toll=__lampImg('bellringer',true,1.2); T.F.lampRing=0;
+    T.newRun('galvanist',0,{seed:9}); T.run.floor=1; T.beginFloor(null); o.oss=T.pixOn(); o.ossSame=__lampImg('galvanist',true,1)===__lampImg('galvanist',false,1);
+    T.run.floor=0; T.beginFloor(null); T.boardArtSet('painted'); o.offSame=__lampImg('galvanist',true,1)===__lampImg('galvanist',false,1); return o;},[kits,lampProbe.toString()]);
+  ok(lamps.on&&kits.every(k=>lamps.ready[k]),'the five kit lamps load',lamps.ready);
+  ok(new Set(kits.map(k=>lamps.px[k])).size===5,'on a pixel Cistern each kit draws its own lamp',lamps.px);
+  ok(kits.every(k=>lamps.px[k]!==lamps.pt[k]),'the board\'s lamp is the sheet, not the paint; a call without the board flag is painted',lamps);
+  ok(kits.every(k=>lamps.anim[k]>1),'every lamp moves: the flame flickers',lamps.anim);
+  ok(lamps.toll!==lamps.px.bellringer,'the Bellringer\'s bell swings and its crack burns as it tolls',lamps.toll);
+  ok(!lamps.oss&&lamps.ossSame,'another floor draws the painted lamp',lamps);
+  ok(lamps.offSame,'with the painted board chosen, the lamp is painted',lamps);
+  {const p2=await b.newPage({viewport:{width:412,height:860},reducedMotion:'reduce'}); await p2.goto('file://'+process.argv[2]); await p2.waitForTimeout(600);
+    const rm=await p2.evaluate(([kits,probe])=>{eval('('+probe+')')(); const T=__t, o={}; T.boardArtSet('pixel');
+      for(const k of kits){T.newRun(k,0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true); T.F.lampRing=1; o[k]=new Set([.1,.3,.5,.7,.9].map(tm=>__lampImg(k,true,tm))).size;} return o;},[kits,lampProbe.toString()]);
+    ok(kits.every(k=>rm[k]===1),'under Reduce Motion each lamp holds one frame, and the bell does not swing',rm);
+    await p2.close();}
   for(const f of fails)console.log('FAIL '+f);
   if(fails.length)process.exitCode=1; else console.log('pixelboard: all ok');
   await b.close();
