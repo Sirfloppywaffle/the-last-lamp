@@ -15,8 +15,8 @@
 | P0 | The pilot: the Cistern's floor, dais, grates, five creatures, lamplight on water | #168 | done |
 | R | The Roster's five animated portraits | #169 | done |
 | 1 | The five kit lamps | #172 | done |
-| 2 | The ten base wards | | next |
-| 3 | Kit wards and kit marks on the board (Lamplighter, Whaler) | | |
+| 2 | The ten base wards | #PR | done |
+| 3 | Kit wards and kit marks on the board (Lamplighter, Whaler) | | next |
 | 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | | |
 | 5 | What patrons lay on the floor, and the board's small effects | | |
 | 6 | The rest of the creatures, and the horrors | | |
@@ -53,6 +53,8 @@ All new art is PixelLab (`.mcp.json`; tools named `mcp__pixellab__*`). About 600
 
 - **A sprite:** `create_image_pixflux`, 64 by 64 (wards and lamps: 32 by 48 or 48 by 48), `no_background: true`, `view: "low top-down"`, `outline: "selective outline"`, `shading: "detailed shading"`, `detail: "highly detailed"`. One generation. End every prompt with "dark muted palette, eerie, lit by warm lamplight".
 - **Its animation:** `animate_image` with `first_frame_url` set to the sprite's download URL (`https://api.pixellab.ai/mcp/images/<job_id>/download`), `frame_count: 8`. One generation at 64 by 64. Say only what moves. Frame 0 comes back as the input; frames 1 to 8 are new. **Look at every frame**: the generator sometimes turns the subject into something else after a few frames (the Skitterling became a moth; only frames 0 to 2 were kept). Use the frames that hold, and play them forward and back (`seq`) if they do not loop.
+- **When the first try loses the design** (step 2: the effigy came back a teddy, the trap a ring, the ballista diagonal): draw the painted piece alone at the sprite's size in the page (`drawWard(c,t,tm,true)` with a 46 px unit), upload it (`get_upload_url`, one curl) and generate again with `init_image_url` set to it, strength 200 (a real redraw) to 330 (close to the paint). Its geometry carries over, so its anchor and scale are known.
+- **Stable bodies:** an animation may redraw the still parts a little each frame. Keep one frame's body and take only what moves from the rest (step 2's candle: the flame rows).
 - **A floor's tiles:** `create_topdown_tileset`, `tile_size` 32, `transition_size` 0.25, `shape_style: "square"`, `raggedness` 0.1. Lower terrain is the path, upper is the floor, the transition is the kerb between. One generation. Fetch `/mcp/tilesets/<id>/image?inline=true` and `/metadata`; the metadata gives each tile's four corners, which become that floor's row in `PIX_AT` (key: NW 8, NE 4, SW 2, SE 1; upper is 1).
 - **Clean up in Python (PIL), in the scratchpad, never in the repo:** centre each sheet on the middle of everything it covers across all frames; mirror it if it does not face right; remove any ground the generator painted under it. Then base64 the PNG into the game.
 - **Where it goes:** tiles and props in `PIX_SRC`, creature sheets in `PIX_SRC.foes` with a row in `ART_PX` (`n` frames, `seq`, `period`, `ext`, `eye`). `eye(r,g,b)` picks the pixels the dark keeps: test it by looking at the creature in the dark.
@@ -91,9 +93,11 @@ All new art is PixelLab (`.mcp.json`; tools named `mcp__pixellab__*`). About 600
 
 ### Step 2: the ten base wards
 
-**Now:** `drawWard(c,t,tm,icon)` paints all wards, on the board and as tray icons, with their states: dark (cut off from light), firing, a branch capstone (`hasCap(t)`), sealed, sprung. Base wards (`BASE_WARDS`): Candle, Harpoon, Salt, Chime, Trap, Tithe, Effigy, Censer, Coil, Whaling Gun.
+**Was:** `drawWard(c,t,tm,icon)` painted all wards, on the board and as tray icons. "The ten base wards" are `BASE_WARDS` (Candle, Harpoon, Salt, Chime, Trap, Tithe, Effigy) and `GIFT_WARDS` (Chime, Censer, Coil, Whaling Gun `lance`). What it showed: for every ward the capstone's ring (`hasCap(t)`), a shadow away from the lamp (not salt or trap) and a pip per branch level; the candle's flame (redder with the Ember branch) or, cut off, a snuffed wick with smoke; the harpoon and the gun turning to aim (`t.ang`), the gun kicking back (`t.recoil`); salt fading as it dissolves (`t.dur/t.max`) with a twinkle; the chime's bones swaying, hard when it rings (`t.ring`), and its ring spreading; the trap open, or shut with a jolt (`t.snap`) and its reset creeping round (`t.cd`); the tithe's glow and coins when it pays (`t.ping`); the effigy's eyes pulsing; the censer's coals, smoke and sparks; the coil's sphere and its arcs, more when it fires. Every kit builds its own candle except the Bellringer, and every kit trims the harpoon (bolt head and foot). Dark is otherwise drawn in `render()` (a grey ring and slash over the dark), and so is the Sealing Wax's red ring (step 5). The tray's icons are painted by `drawIcon()` through `drawWard(…,icon)`; `art/ui/ward` is one generic icon, not a ward's own.
 
-**Build:** a sprite per ward with the frames its states need (lit and dark at least; an acting frame; a capstone mark). `drawWard` hands over to a `pixWard()` on a pixel floor. Path wards (Salt, Trap) lie flat on the channel: draw them to sit on water. The tray icons already have pixel art (`art/ui/`); leave them.
+**Done (step 2):** ten sheets, `pixWard()`, `WARD_PX`, `WARD_CAP`; see the code map row `the pixel board (pilot)`. A dark ward now holds still, and the candle, effigy, censer and coil show their fire or eyes gone out. The tray's icons stay painted.
+
+**Build:** a sprite per ward with the frames its states need (lit and dark at least; an acting frame; a capstone mark). `drawWard` hands over to a `pixWard()` on a pixel floor. Path wards (Salt, Trap) lie flat on the channel: draw them to sit on water. The tray icons stay painted.
 
 **Test:** each base ward draws from its sheet on a pixel Cistern, shows dark when cut off, and the painted floors are untouched.
 

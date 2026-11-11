@@ -60,6 +60,59 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       for(const k of kits){T.newRun(k,0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true); T.F.lampRing=1; o[k]=new Set([.1,.3,.5,.7,.9].map(tm=>__lampImg(k,true,tm))).size;} return o;},[kits,lampProbe.toString()]);
     ok(kits.every(k=>rm[k]===1),'under Reduce Motion each lamp holds one frame, and the bell does not swing',rm);
     await p2.close();}
+  /* the ten base wards (pixel stair step 2): on a pixel Cistern each draws from its sheet, unlike its paint; cut off from the light it
+     holds still, and the candle, effigy, censer and coil show their dark frame; the trap snaps shut; a capstone lays its ring; the kit
+     candles stay painted (steps 3 and 4) while every kit's harpoon is the pixel ballista; tray icons, other floors and the painted board
+     are untouched; under Reduce Motion each holds one frame */
+  const wardProbe=()=>{const T=__t;
+    /* a fresh canvas each time: the painted wards leave line caps and joins behind them */
+    window.__wardImg=(type,o,tm,icon)=>{const cv=document.createElement('canvas'); cv.width=cv.height=120; const c=cv.getContext('2d'), t=Object.assign({kind:'ward',type,x:0,y:0,c:0,r:0,ang:-.7,dur:1,max:1,ring:0,br:{},cd:0,snap:0,ping:0,recoil:0},o||{});
+      c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,120,120); c.setTransform(90,0,0,90,60,70); T.drawWard(c,t,tm,!!icon);
+      c.setTransform(1,0,0,1,0,0); const d=c.getImageData(0,0,120,120).data; let h=0, n=0; for(let i=0;i<d.length;i+=4){h=(h*31+d[i]+d[i+1]*3+d[i+2]*7+d[i+3]*11)>>>0; if(d[i+3])n++;} return h+':'+n;};};
+  const W10=['candle','harpoon','salt','chime','trap','tithe','effigy','censer','coil','lance'], LOOPS=['candle','chime','tithe','effigy','censer','coil'], DARKS=['candle','effigy','censer','coil'];
+  const wards=await p.evaluate(([W10,LOOPS,DARKS,probe])=>{eval('('+probe+')')(); const T=__t, o={ready:{},px:{},pt:{},icon:{},dark:{},darkStill:{},anim:{}}; T.setMapV(0);
+    const at=(art,kit,floor)=>{T.boardArtSet(art); T.newRun(kit,0,{seed:9}); T.run.floor=floor; T.beginFloor(null); T.setP(true);};
+    at('painted','bellringer',0); for(const w of W10){o.pt[w]=__wardImg(w,null,1); o.icon[w]=__wardImg(w,null,1,true);}
+    o.ptLamp=__wardImg('candle',{kit:'lamplighter'},1); o.ptHarpLamp=__wardImg('harpoon',{kit:'lamplighter'},1);
+    at('pixel','bellringer',0); o.on=T.pixOn(); o.cap=T.WARD_CAP.ready;
+    for(const w of W10){o.ready[w]=T.WARD_PX[w].ready; o.px[w]=__wardImg(w,null,1); o.icon[w]=o.icon[w]===__wardImg(w,null,1,true);
+      o.dark[w]=__wardImg(w,{dark:true},1); o.darkStill[w]=new Set([.1,.3,.5,.7,.9].map(tm=>__wardImg(w,{dark:true},tm))).size;
+      o.anim[w]=new Set([.1,.3,.5,.7,.9,1.3,1.7].map(tm=>__wardImg(w,null,tm))).size;}
+    o.ember=__wardImg('candle',{br:{ember:1}},1)!==o.px.candle; o.capOn=__wardImg('chime',{br:{a:3}},1)!==__wardImg('chime',{br:{a:2}},1);
+    o.sprung=__wardImg('trap',{cd:2},1)!==o.px.trap; o.snap=__wardImg('trap',{cd:2,snap:.3},1)!==__wardImg('trap',{cd:2},1);
+    o.turn=__wardImg('harpoon',{ang:1.2},1)!==o.px.harpoon&&__wardImg('lance',{ang:1.2},1)!==o.px.lance; o.kick=__wardImg('lance',{recoil:.3},1)!==o.px.lance;
+    o.fade=__wardImg('salt',{dur:.3},1)!==o.px.salt; o.ring=__wardImg('chime',{ring:.3},1)!==o.px.chime;
+    o.lampCandle=__wardImg('candle',{kit:'lamplighter'},1)===o.ptLamp; o.lampHarp=__wardImg('harpoon',{kit:'lamplighter'},1)!==o.ptHarpLamp;
+    /* all ten on the board through a stretch of a wave, near the lamp, salt and trap on the channel */
+    for(const type of W10){const it={kind:'ward',type}; let best=null,bd=1e9;
+      for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++){if(T.placeProblem(it,c,r)||T.F.towers.some(t=>t.c===c&&t.r===r))continue; const d=Math.hypot(c+.5-T.F.lx,r+.5-T.F.ly); if(d>1.2&&d<bd){bd=d; best=[c,r];}}
+      if(best){T.run.ess=9999; T.setSel(it); T.tryPlace(best[0],best[1]); T.setSel(null);}}
+    o.placed=W10.filter(w=>T.F.towers.some(t=>t.type===w)).length;
+    T.setP(false); T.F.phase='wave'; T.F.queue=[{t:0,type:'crawler',gate:0},{t:.5,type:'crawler',gate:0}];
+    for(let i=0;i<120;i++){T.update(1/30); T.render();}
+    T.F.towers.length=0; for(let i=0;i<5;i++)T.render();
+    at('pixel','bellringer',1); o.oss=T.pixOn(); o.ossSame=W10.every(w=>__wardImg(w,null,1)===o.pt[w]);
+    at('painted','bellringer',0); o.offSame=W10.every(w=>__wardImg(w,null,1)===o.pt[w]); return o;},[W10,LOOPS,DARKS,wardProbe.toString()]);
+  ok(wards.on&&wards.cap&&W10.every(w=>wards.ready[w]),'the ten base wards load',wards.ready);
+  ok(W10.every(w=>wards.px[w]!==wards.pt[w]),'on a pixel Cistern each base ward draws from its sheet, not its paint',{px:wards.px,pt:wards.pt});
+  ok(W10.every(w=>wards.icon[w]),'the tray\'s icons stay painted',wards.icon);
+  ok(DARKS.every(w=>wards.dark[w]!==wards.px[w]),'cut off from the light, the candle, effigy, censer and coil go out',wards.dark);
+  ok(W10.every(w=>wards.darkStill[w]===1),'a dark ward holds still',wards.darkStill);
+  ok(LOOPS.every(w=>wards.anim[w]>1),'the candle, chime, tithe, effigy, censer and coil move',wards.anim);
+  ok(wards.ember,'an ember candle burns redder',wards.ember);
+  ok(wards.capOn,'a capstone lays its ring under the ward',wards.capOn);
+  ok(wards.sprung&&wards.snap,'the trap shows sprung, and snaps',wards);
+  ok(wards.turn&&wards.kick,'the harpoon and the whaling gun turn to aim; the gun kicks back',wards);
+  ok(wards.fade&&wards.ring,'salt fades as it dissolves; the chime rings',wards);
+  ok(wards.lampCandle&&wards.lampHarp,'a kit\'s own candle stays painted; its harpoon is the pixel ballista with its bolt head',wards);
+  ok(!wards.oss&&wards.ossSame,'another floor draws the painted wards',wards);
+  ok(wards.placed===10,'all ten stand on a pixel Cistern through a wave',wards.placed);
+  ok(wards.offSame,'with the painted board chosen, the wards are painted',wards.offSame);
+  {const p2=await b.newPage({viewport:{width:412,height:860},reducedMotion:'reduce'}); await p2.goto('file://'+process.argv[2]); await p2.waitForTimeout(600);
+    const rm=await p2.evaluate(([LOOPS,probe])=>{eval('('+probe+')')(); const T=__t, o={}; T.boardArtSet('pixel'); T.newRun('bellringer',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true);
+      for(const w of LOOPS)o[w]=new Set([.1,.3,.5,.7,.9,1.3,1.7].map(tm=>__wardImg(w,null,tm))).size; return o;},[LOOPS,wardProbe.toString()]);
+    ok(LOOPS.every(w=>rm[w]===1),'under Reduce Motion each ward holds one frame',rm);
+    await p2.close();}
   for(const f of fails)console.log('FAIL '+f);
   if(fails.length)process.exitCode=1; else console.log('pixelboard: all ok');
   await b.close();
