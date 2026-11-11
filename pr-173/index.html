@@ -10269,55 +10269,57 @@ function pixLamp(c,x,y,tm,k,style){
 function wardBig(A){const up=Math.max(1,Math.ceil(T*DPR*WARD_U));
   if(A.up!==up){const b=document.createElement('canvas'); b.width=A.img.width*up; b.height=A.img.height*up; const g=b.getContext('2d'); g.imageSmoothingEnabled=false; g.drawImage(A.img,0,0,b.width,b.height); A.big=b; A.up=up;}
   return up;}
+/* which frame of a ward's loop plays (sp: how much faster than its period), and one frame of its sheet at a point. Plain functions,
+   not closures, so a frame of the board makes nothing new */
+function wardF(A,tm,sp,still){return still?A.seq[0]:A.seq[Math.floor((tm||0)*sp/A.period*A.seq.length)%A.seq.length];}
+function wardPut(c,A,f,ax,ay){const S=WARD_FS*A.up, W=WARD_FS*WARD_U; c.drawImage(A.big,f*S,0,S,S,ax-A.ox*WARD_U,ay-A.oy*WARD_U,W,W);}
 function pixWard(c,t,tm){
   const A=WARD_PX[t.type]; if(!A||!A.ready)return false;
   const k=t.kit||kit(); if(t.type==='candle'&&KIT_WARDS[k]&&KIT_WARDS[k].candle)return false;
-  const x=t.x, y=t.y, u=WARD_U, S=WARD_FS*wardBig(A), W=WARD_FS*u, out=!!t.dark, still=reduceMotion||out;
-  const loop=sp=>still?A.seq[0]:A.seq[Math.floor((tm||0)*sp/A.period*A.seq.length)%A.seq.length];
-  const put=(f,ax,ay)=>c.drawImage(A.big,f*S,0,S,S,ax-A.ox*u,ay-A.oy*u,W,W);
+  const x=t.x, y=t.y, u=WARD_U, S=WARD_FS*wardBig(A), out=!!t.dark, still=reduceMotion||out;
   c.save(); c.imageSmoothingEnabled=true; c.imageSmoothingQuality='high';
   const C=WARD_CAP; if(hasCap(t)&&C.ready){const s=C.img.width*wardBig(C); c.drawImage(C.big,0,0,s,C.img.height*C.up,x-C.ox*u,y+.12-C.oy*u,C.img.width*u,C.img.height*u);}
   if(t.type!=='salt'&&t.type!=='trap')wardShadow(c,x,y,t.type==='lance'?.38:.3);
   if(t.type==='candle'){
     const ember=t.br&&t.br.ember>0;
-    put(out?A.dark:(ember?A.ember:0)+loop(1),x,y);
+    wardPut(c,A,out?A.dark:(ember?A.ember:0)+wardF(A,tm,1,still),x,y);
     if(out){const wy=y+(A.wick-A.oy)*u; c.strokeStyle='rgba(139,146,148,.6)'; c.lineWidth=.025; c.beginPath(); c.moveTo(x+.01,wy); c.quadraticCurveTo(x+.08,wy-.1,x-.01,wy-.22); c.quadraticCurveTo(x-.07,wy-.3,x+.02,wy-.38); c.stroke();}
     else{const gy=y+(A.fl-A.oy)*u; c.globalCompositeOperation='lighter'; const gl=c.createRadialGradient(x,gy,0,x,gy,.45); gl.addColorStop(0,ember?'rgba(255,120,50,.35)':'rgba(255,190,90,.32)'); gl.addColorStop(1,'rgba(255,150,60,0)'); c.fillStyle=gl; c.beginPath(); c.arc(x,gy,.45,0,TAU2); c.fill(); c.globalCompositeOperation='source-over';}
   }else if(t.type==='harpoon'||t.type==='lance'){
-    put(0,x,y);
+    wardPut(c,A,0,x,y);
     c.save(); c.translate(x,y+A.ty); c.rotate(t.ang||0); c.scale(1,.86); if(t.type==='lance'&&t.recoil>0)c.translate(-t.recoil*.4,0);
     c.drawImage(A.big,A.turret*S,0,S,S,-A.piv[0]*A.tu,-A.piv[1]*A.tu,WARD_FS*A.tu,WARD_FS*A.tu);
     if(t.type==='harpoon')harpoonHead(c,t,tm,false,k);
     c.restore();
     if(t.type==='harpoon')harpoonFoot(c,x,y,t,tm,false,k);
   }else if(t.type==='salt'){
-    const a=clamp(t.dur/t.max,.25,1); c.globalAlpha*=a; put(0,x,y);
+    const a=clamp(t.dur/t.max,.25,1); c.globalAlpha*=a; wardPut(c,A,0,x,y);
     if(!still){const tw=(Math.sin(tm*3+x*5)+1)/2, n=Math.floor(tm*.7+x)%16, ang=n/16*TAU2, sx=x+Math.cos(ang)*.34, sy=y+.04+Math.sin(ang)*.25;
       c.fillStyle='rgba(255,255,255,'+(.8*tw)+')'; c.fillRect(sx-2.5*u,sy-.5*u,5*u,u); c.fillRect(sx-.5*u,sy-2.5*u,u,5*u);}
   }else if(t.type==='chime'){
-    put(loop(t.ring>0?5:1),x,y);
+    wardPut(c,A,wardF(A,tm,t.ring>0?5:1,still),x,y);
     if(t.ring>0){c.strokeStyle='rgba(236,232,222,'+(t.ring*1.5)+')'; c.lineWidth=.02; c.beginPath(); c.arc(x,y-.25,.45+(.3-t.ring),0,TAU2); c.stroke();}
   }else if(t.type==='trap'){
     const armed=!(t.cd>0);
-    if(armed)put(0,x,y);
+    if(armed)wardPut(c,A,0,x,y);
     else{const jit=t.snap>0&&!reduceMotion?Math.sin(tm*90)*.02:0, f=t.snap>0&&!reduceMotion?Math.min(A.shut,1+Math.floor((1-t.snap/.4)*A.shut*1.6)):A.shut;
-      put(f,x+jit,y);
+      wardPut(c,A,f,x+jit,y);
       const pr=1-clamp(t.cd/wstat(t).reset,0,1); c.strokeStyle='rgba(237,180,90,.6)'; c.lineWidth=.025; c.beginPath(); c.arc(x,y+.02,.36,-Math.PI/2,-Math.PI/2+pr*TAU2); c.stroke();}
   }else if(t.type==='tithe'){
-    put(loop(1),x,y);
+    wardPut(c,A,wardF(A,tm,1,still),x,y);
     if(t.ping>0){c.globalCompositeOperation='lighter'; const gl=c.createRadialGradient(x,y-.25,0,x,y-.25,.5); gl.addColorStop(0,'rgba(255,210,110,'+(.5*t.ping)+')'); gl.addColorStop(1,'rgba(255,190,80,0)'); c.fillStyle=gl; c.beginPath(); c.arc(x,y-.25,.5,0,TAU2); c.fill(); c.globalCompositeOperation='source-over';
       for(let j=0;j<3;j++){const pp=1-t.ping/.6; c.fillStyle='rgba(255,230,150,'+t.ping+')'; c.fillRect(x-.15+j*.15,y-.3-pp*.35-j*.05,.03,.03);}}
   }else if(t.type==='effigy'){
-    put(out?A.dark:loop(1),x,y);
+    wardPut(c,A,out?A.dark:wardF(A,tm,1,still),x,y);
     if(!out){const pulse=reduceMotion?1:.75+.25*Math.sin(tm*3+x); c.globalCompositeOperation='lighter';
-      for(const ex of [-.045,.045]){const eg=c.createRadialGradient(x+ex,y-.39,0,x+ex,y-.39,.08); eg.addColorStop(0,'rgba(150,255,110,'+(.55*pulse)+')'); eg.addColorStop(1,'rgba(120,255,90,0)'); c.fillStyle=eg; c.beginPath(); c.arc(x+ex,y-.39,.08,0,TAU2); c.fill();}
+      for(let j=-1;j<=1;j+=2){const ex=.045*j, eg=c.createRadialGradient(x+ex,y-.39,0,x+ex,y-.39,.08); eg.addColorStop(0,'rgba(150,255,110,'+(.55*pulse)+')'); eg.addColorStop(1,'rgba(120,255,90,0)'); c.fillStyle=eg; c.beginPath(); c.arc(x+ex,y-.39,.08,0,TAU2); c.fill();}
       c.globalCompositeOperation='source-over';}
   }else if(t.type==='censer'){
     if(!out){c.globalCompositeOperation='lighter'; const gl=c.createRadialGradient(x,y-.15,0,x,y-.15,.4); gl.addColorStop(0,'rgba(255,120,40,.25)'); gl.addColorStop(1,'rgba(255,90,30,0)'); c.fillStyle=gl; c.beginPath(); c.arc(x,y-.15,.4,0,TAU2); c.fill(); c.globalCompositeOperation='source-over';}
-    put(out?A.dark:loop(1),x,y);
+    wardPut(c,A,out?A.dark:wardF(A,tm,1,still),x,y);
     if(!still)for(let j=0;j<4;j++){const p=(tm*.45+j/4)%1; c.fillStyle='rgba(120,110,104,'+(.32*(1-p))+')'; c.beginPath(); c.arc(x+Math.sin(tm*.9+j*2)*.1*p,y-.35-p*.6,.06+p*.12,0,TAU2); c.fill();}
   }else if(t.type==='coil'){
-    put(out?A.dark:loop(t.ring>0?3:1),x,y);
+    wardPut(c,A,out?A.dark:wardF(A,tm,t.ring>0?3:1,still),x,y);
     if(!out){const on=t.ring>0?1:reduceMotion?.5:.45+.15*Math.sin(tm*20); c.globalCompositeOperation='lighter';
       const gl=c.createRadialGradient(x,y-.5,0,x,y-.5,.42); gl.addColorStop(0,'rgba(150,180,255,'+(.42*on)+')'); gl.addColorStop(1,'rgba(120,140,255,0)'); c.fillStyle=gl; c.beginPath(); c.arc(x,y-.5,.42,0,TAU2); c.fill();
       if(!reduceMotion||t.ring>0){const n=t.ring>0?4:2, sd=Math.floor(tm*14); c.strokeStyle='rgba(210,225,255,'+(.5+.5*on)+')'; c.lineWidth=.014;
