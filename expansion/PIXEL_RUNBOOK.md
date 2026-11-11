@@ -15,7 +15,7 @@
 | P0 | The pilot: the Cistern's floor, dais, grates, five creatures, lamplight on water | #168 | done |
 | R | The Roster's five animated portraits | #169 | done |
 | 1 | The five kit lamps | #172 | done |
-| 2 | The ten base wards | #PR | done |
+| 2 | The ten base wards | #173 | done |
 | 3 | Kit wards and kit marks on the board (Lamplighter, Whaler) | | next |
 | 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | | |
 | 5 | What patrons lay on the floor, and the board's small effects | | |
