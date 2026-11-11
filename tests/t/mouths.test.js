@@ -274,7 +274,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   const teach=await p.evaluate(async()=>{const T=fresh(), out={};
     out.lore=['gibberer','gorger','husk'].every(k=>T.LORE[k]&&T.LORE[k].length>40);
     out.tips=['mouths','dread','husk','feed','phantom','unpaid'].every(k=>T.TIPS[k]);
-    T.takeOffer('openears'); T.renderRelics(); out.seal=[...document.querySelectorAll('#relChips .relchip.is-patron')].map(x=>x.textContent).join('');
+    T.takeOffer('openears'); T.renderRelics(); out.seal=[...document.querySelectorAll('#relChips .relchip.is-patron .ui-ic')].map(x=>[...x.classList].find(c=>c.startsWith('ui-ic-'))).join(',');
     out.rules=document.body.innerHTML.includes('<b>Dread.</b>')&&document.body.innerHTML.includes('the Wrong Sun, and the Many-Mouthed');
     T.run.att={mouths:5}; T.F.towers=[]; ward('harpoon',1,T.F.lx+1,T.F.ly); field('gnasher',0,T.F.lx-1,T.F.ly);
     T.F.queue=[]; T.startWave(); out.husks=T.F.queue.filter(q=>q.type==='husk').length;
@@ -283,7 +283,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     return out;});
   console.log(JSON.stringify(teach));
   ok(teach.lore&&teach.tips,'Grimoire lines and first-time tips for its creatures and gifts',teach);
-  ok(teach.seal==='ᗯ','its seal sits beside the Grimoire',teach.seal);
+  ok(teach.seal==='ui-ic-pt-mouths','its seal, the eye in teeth, sits beside the Grimoire',teach.seal);
   ok(teach.rules,'the rules name it and teach dread',teach);
   ok(teach.husks===1,'Claimed sends a Choir-Husk with the wave',teach);
 
