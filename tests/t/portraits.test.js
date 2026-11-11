@@ -17,6 +17,11 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   await p.evaluate(()=>{document.getElementById('descendBtn').click();}); await p.waitForTimeout(900);
   const shown=await p.evaluate(()=>{const cv=document.querySelector('#rostRow canvas'); if(!cv)return null; const d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data; let n=0; for(let i=0;i<d.length;i+=4)if(d[i]+d[i+1]+d[i+2]>150)n++; return n;});
   ok(shown>500,'the Roster shows them',shown);
+  /* on the Roster itself every Keeper's card moves, Ambrose's and Jonah's too (Criss, on #169: theirs stood still) */
+  const moved=await p.evaluate(async()=>{__t.setDev(true); const sig=cv=>{const d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data; let h=0; for(let i=0;i<d.length;i+=16)h=(h*31+d[i]+d[i+1])|0; return h;};
+    const o={}; for(let n=0;n<16;n++){document.querySelectorAll('#rostRow canvas[data-port]').forEach(cv=>{(o[cv.dataset.port]=o[cv.dataset.port]||new Set()).add(sig(cv));}); await new Promise(r=>setTimeout(r,160));}
+    const out={}; for(const k in o)out[k]=o[k].size; return out;});
+  for(const k of ['lamplighter','whaler','occultist','galvanist','bellringer'])ok(moved[k]>=3,k+': its card on the Roster moves',moved);
   await p.screenshot({path:(process.argv[3]||'.')+'/roster-fold-closed.png'});
   for(const f of fails)console.log('FAIL '+f);
   if(fails.length)process.exitCode=1; else console.log('portraits: all ok');

@@ -3999,7 +3999,8 @@ let rostTimer=0;
 /* the cards that move: the Nameless's eyes drift and glance toward the card you are choosing, Voss's pylons spark, Agathe's bell swings */
 function rosterPaint(pick,f){
   const ks=Object.keys(KITS), look=Math.sign(ks.indexOf(pick)-ks.indexOf('occultist'));
-  document.querySelectorAll('#rostRow canvas[data-port]').forEach(cv=>{const k=cv.dataset.port; if(f!==undefined&&k!=='occultist'&&k!=='galvanist'&&k!=='bellringer')return;
+  document.querySelectorAll('#rostRow canvas[data-port]').forEach(cv=>{const k=cv.dataset.port; /* a pixel portrait moves whoever it is; of the painted ones only these three did */
+    if(f!==undefined&&!(PORT_PX[k]&&PORT_PX[k].img)&&k!=='occultist'&&k!=='galvanist'&&k!=='bellringer')return;
     paintPortrait(cv,k,kitLocked(k),f||0,look);});
 }
 function rosterAnim(getPick){
