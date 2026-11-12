@@ -15,7 +15,7 @@
 | P0 | The pilot: the Cistern's floor, dais, grates, five creatures, lamplight on water | #168 | done |
 | R | The Roster's five animated portraits | #169 | done |
 | 1 | The five kit lamps | #172 | done |
-| 2 | The ten base wards | #173 | done |
+| 2 | The base wards (nine: no kit builds the plain candle) | #173 | done |
 | 3 | Kit wards and kit marks on the board (Lamplighter, Whaler) | | next |
 | 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | | |
 | 5 | What patrons lay on the floor, and the board's small effects | | |
@@ -63,7 +63,7 @@ All new art is PixelLab (`.mcp.json`; tools named `mcp__pixellab__*`). About 600
 
 ## 4. The workflow for every step
 
-1. New branch `claude/<topic>` from `origin/main`. Read the step's prompt and the functions it names.
+1. New branch `claude/<topic>` from `origin/main`. Read the step's prompt and the functions it names. Check that each piece can be built in play before making its art: a kit's `wards`, `KIT_WARDS`, `learnable()` (step 2 made a plain candle no kit can build).
 2. Make the art (§3). Look at it enlarged before using it.
 3. Wire it in behind `pixOn()`. Keep the painted path.
 4. Tests: `cd tests && npm run check`, then the step's own test and `node run.js --only pixelboard`. In Claude's cloud container follow `.claude/skills/test-setup/SKILL.md` (no `npm install`). The full suite takes about 20 minutes; run it once before the PR, in the background. `devices` fails there on one Copy-button width and passes on CI.
@@ -95,7 +95,7 @@ All new art is PixelLab (`.mcp.json`; tools named `mcp__pixellab__*`). About 600
 
 **Was:** `drawWard(c,t,tm,icon)` painted all wards, on the board and as tray icons. "The ten base wards" are `BASE_WARDS` (Candle, Harpoon, Salt, Chime, Trap, Tithe, Effigy) and `GIFT_WARDS` (Chime, Censer, Coil, Whaling Gun `lance`). What it showed: for every ward the capstone's ring (`hasCap(t)`), a shadow away from the lamp (not salt or trap) and a pip per branch level; the candle's flame (redder with the Ember branch) or, cut off, a snuffed wick with smoke; the harpoon and the gun turning to aim (`t.ang`), the gun kicking back (`t.recoil`); salt fading as it dissolves (`t.dur/t.max`) with a twinkle; the chime's bones swaying, hard when it rings (`t.ring`), and its ring spreading; the trap open, or shut with a jolt (`t.snap`) and its reset creeping round (`t.cd`); the tithe's glow and coins when it pays (`t.ping`); the effigy's eyes pulsing; the censer's coals, smoke and sparks; the coil's sphere and its arcs, more when it fires. Every kit builds its own candle except the Bellringer, and every kit trims the harpoon (bolt head and foot). Dark is otherwise drawn in `render()` (a grey ring and slash over the dark), and so is the Sealing Wax's red ring (step 5). The tray's icons are painted by `drawIcon()` through `drawWard(…,icon)`; `art/ui/ward` is one generic icon, not a ward's own.
 
-**Done (step 2):** ten sheets, `pixWard()`, `WARD_PX`, `WARD_CAP`; see the code map row `the pixel board (pilot)`. A dark ward now holds still, and the candle, effigy, censer and coil show their fire or eyes gone out. The tray's icons stay painted.
+**Done (step 2):** nine sheets, `pixWard()`, `WARD_PX`, `WARD_CAP`; see the code map row `the pixel board (pilot)`. A dark ward now holds still, and the effigy, censer and coil show their fire or eyes gone out. The tray's icons stay painted. **No plain candle** (Criss spotted it): every kit that builds candles builds its own, and the Bellringer can't learn one (`learnable()`), so the Candle Ward's tallow pillar is never built. Its pixel art was made and dropped; the kit candles are steps 3 and 4.
 
 **Build:** a sprite per ward with the frames its states need (lit and dark at least; an acting frame; a capstone mark). `drawWard` hands over to a `pixWard()` on a pixel floor. Path wards (Salt, Trap) lie flat on the channel: draw them to sit on water. The tray icons stay painted.
 
