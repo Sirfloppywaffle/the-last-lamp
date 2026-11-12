@@ -17,7 +17,7 @@
 | 1 | The five kit lamps | #172 | done |
 | 2 | The base wards (nine: no kit builds the plain candle) | #173 | done |
 | 3 | Kit wards and kit marks on the board (Lamplighter, Whaler) | #174 | done |
-| 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | (this PR) | done |
+| 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | #177 | done |
 | 5 | What patrons lay on the floor, and the board's small effects | | next |
 | 6 | The rest of the creatures, and the horrors | | |
 | 7 | The Ossuary (floor 2) | | |
