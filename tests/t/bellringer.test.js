@@ -258,6 +258,19 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.offbeat.noise===2&&r.offbeat.max===7,'off the beat it is a plain Toll',r.offbeat);
   ok(r.edges>10,'she hears the path: its edges are traced in the dark',r.edges);
   ok(r.caption,'with Show sounds on, the toll writes itself on the board');
+  /* a Bell Wire built by another kit (one that has learned hers, as dev mode's Unlock does) shows on the board. It drew nothing from
+     #124 until #173: render() only drew Bell Wires in the Bellringer's pass over the dark */
+  const other=await p.evaluate(()=>{const T=__t, o={};
+    const snap=()=>{for(let i=0;i<2;i++)T.render(); const cv=document.getElementById('board'); return cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data;};
+    const diff=(a,c)=>{let n=0; for(let i=0;i<a.length;i+=4)if(Math.abs(a[i]-c[i])+Math.abs(a[i+1]-c[i+1])+Math.abs(a[i+2]-c[i+2])>30)n++; return n;};
+    for(const kit of ['lamplighter','whaler','occultist','galvanist','bellringer']){
+      T.newRun(kit,0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true); T.F.intro=null; T.run.ess=9999; if(!T.run.wards.includes('bellwire'))T.run.wards.push('bellwire');
+      const it={kind:'ward',type:'bellwire'}; let best=null,bd=1e9;
+      for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++){if(T.placeProblem(it,c,r))continue; const d=Math.hypot(c+.5-T.F.lx,r+.5-T.F.ly); if(d>1.2&&d<bd){bd=d; best=[c,r];}}
+      T.F.fx.length=0; const a=snap(); T.setSel(it); T.tryPlace(best[0],best[1]); T.setSel(null); T.F.fx.length=0;
+      o[kit]=T.F.towers.some(t=>t.type==='bellwire')?diff(a,snap()):-1;}
+    T.setP(false); return o;});
+  ok(Object.values(other).every(n=>n>30),'a Bell Wire shows on the board whoever strung it',other);
   ok(!errs.length,'no page errors',errs);
   await b.close();
   if(fails.length){console.log('FAIL\n- '+fails.join('\n- ')); process.exit(1);} console.log('bellringer ok');
