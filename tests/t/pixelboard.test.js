@@ -82,7 +82,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.sprung=__wardImg('trap',{cd:2},1)!==o.px.trap; o.snap=__wardImg('trap',{cd:2,snap:.3},1)!==__wardImg('trap',{cd:2},1);
     o.turn=__wardImg('harpoon',{ang:1.2},1)!==o.px.harpoon&&__wardImg('lance',{ang:1.2},1)!==o.px.lance; o.kick=__wardImg('lance',{recoil:.3},1)!==o.px.lance;
     o.fade=__wardImg('salt',{dur:.3},1)!==o.px.salt; o.ring=__wardImg('chime',{ring:.3},1)!==o.px.chime;
-    o.candles=KITS5.every(k=>__wardImg('candle',{kit:k},1)===o.ptCandle[k]); o.lampHarp=__wardImg('harpoon',{kit:'lamplighter'},1)!==o.ptHarpLamp;
+    o.candles=['occultist','galvanist','bellringer'].every(k=>__wardImg('candle',{kit:k},1)===o.ptCandle[k]); o.lampHarp=__wardImg('harpoon',{kit:'lamplighter'},1)!==o.ptHarpLamp;
     /* all nine on the board through a stretch of a wave, near the lamp, salt and trap on the channel */
     for(const type of W10){const it={kind:'ward',type}; let best=null,bd=1e9;
       for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++){if(T.placeProblem(it,c,r)||T.F.towers.some(t=>t.c===c&&t.r===r))continue; const d=Math.hypot(c+.5-T.F.lx,r+.5-T.F.ly); if(d>1.2&&d<bd){bd=d; best=[c,r];}}
@@ -103,15 +103,63 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(wards.sprung&&wards.snap,'the trap shows sprung, and snaps',wards);
   ok(wards.turn&&wards.kick,'the harpoon and the whaling gun turn to aim; the gun kicks back',wards);
   ok(wards.fade&&wards.ring,'salt fades as it dissolves; the chime rings',wards);
-  ok(wards.candles&&wards.lampHarp,'every kit\'s candle stays painted; its harpoon is the pixel ballista with its bolt head',wards);
+  ok(wards.candles&&wards.lampHarp,'the Occultist\'s, Galvanist\'s and Bellringer\'s candles stay painted (step 4); every harpoon is the pixel ballista',wards);
   ok(!wards.oss&&wards.ossSame,'another floor draws the painted wards',wards);
   ok(wards.placed===9,'all nine stand on a pixel Cistern through a wave',wards.placed);
   ok(wards.offSame,'with the painted board chosen, the wards are painted',wards.offSame);
   {const p2=await b.newPage({viewport:{width:412,height:860},reducedMotion:'reduce'}); await p2.goto('file://'+process.argv[2]); await p2.waitForTimeout(600);
     const rm=await p2.evaluate(([LOOPS,probe])=>{eval('('+probe+')')(); const T=__t, o={}; T.boardArtSet('pixel'); T.newRun('bellringer',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true);
-      for(const w of LOOPS)o[w]=new Set([.1,.3,.5,.7,.9,1.3,1.7].map(tm=>__wardImg(w,null,tm))).size; return o;},[LOOPS,wardProbe.toString()]);
-    ok(LOOPS.every(w=>rm[w]===1),'under Reduce Motion each ward holds one frame',rm);
+      for(const w of LOOPS)o[w]=new Set([.1,.3,.5,.7,.9,1.3,1.7].map(tm=>__wardImg(w,null,tm))).size;
+      for(const [n,w,x] of [['sig','candle',{kit:'lamplighter'}],['blub','candle',{kit:'whaler'}],['pot','trypot',{meas:2}],['mirror','mirror',{}]])o[n]=new Set([.1,.3,.5,.7,.9].map(tm=>__wardImg(w,x,tm))).size;
+      return o;},[LOOPS,wardProbe.toString()]);
+    ok(Object.values(rm).every(n=>n===1),'under Reduce Motion each ward holds one frame, the kit wards too',rm);
     await p2.close();}
+  /* the Lamplighter's and the Whaler's own wards and marks (pixel stair step 3): the Signal Candle (redder with the Burner) and the
+     Blubber Lamp from their sheets, snuffed when cut off; each kit's harpoon with its own bolt head and foot; the Signal Mirror turning, its
+     glass gone dark, its ring dimmed in a wave; the Try-pot's fire, its oil by the measure; and on the board the beam, the threads, the
+     line, the net, the tangle and a Kindled creature's flames in art pixels, all without a hitch through a wave */
+  const kitw=await p.evaluate(([probe])=>{eval('('+probe+')')(); const T=__t, o={}; T.setMapV(0);
+    const at=(art,kit)=>{T.boardArtSet(art); T.newRun(kit,0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true); T.F.phase='build';};
+    const cases={sig:['candle',{kit:'lamplighter'}],blub:['candle',{kit:'whaler'}],mirror:['mirror',{rot:.4}],pot:['trypot',{meas:2}],
+      hLamp:['harpoon',{kit:'lamplighter'}],hWhale:['harpoon',{kit:'whaler'}],hOcc:['harpoon',{kit:'occultist'}]};
+    at('painted','lamplighter'); const pt={}; for(const k in cases)pt[k]=__wardImg(cases[k][0],cases[k][1],1);
+    at('pixel','lamplighter'); o.ready=['candle:lamplighter','candle:whaler','mirror','trypot'].every(k=>T.WARD_PX[k].ready)&&T.MARK_PX.net.ready&&T.MARK_PX.tangle.ready;
+    const px={}; for(const k in cases)px[k]=__wardImg(cases[k][0],cases[k][1],1);
+    o.fromSheet=Object.keys(cases).filter(k=>px[k]===pt[k]);
+    o.harps=new Set([px.hLamp,px.hWhale,px.hOcc]).size;
+    const D=(k,extra)=>__wardImg(cases[k][0],Object.assign({},cases[k][1],extra),1);
+    o.dark={sig:D('sig',{dark:true})!==px.sig,blub:D('blub',{dark:true})!==px.blub,mirror:D('mirror',{dark:true})!==px.mirror,pot:D('pot',{dark:true})!==px.pot};
+    o.darkStill=['sig','blub','pot'].map(k=>new Set([.1,.3,.5,.7].map(tm=>__wardImg(cases[k][0],Object.assign({dark:true},cases[k][1]),tm))).size);
+    o.anim=['sig','blub','pot'].map(k=>new Set([.1,.3,.5,.7,.9].map(tm=>__wardImg(cases[k][0],cases[k][1],tm))).size);
+    o.burner=D('sig',{br:{ember:1}})!==px.sig;
+    o.turn=D('mirror',{rot:1.3})!==px.mirror; T.F.phase='wave'; o.lock=D('mirror',{})!==px.mirror; T.F.phase='build';
+    o.oil=new Set([0,1,2,3,4].map(m=>D('pot',{meas:m}))).size;
+    /* the marks, drawn on a probe canvas */
+    const cv=document.createElement('canvas'); cv.width=cv.height=160; const c=cv.getContext('2d');
+    const ink=fn=>{c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,160,160); c.setTransform(40,0,0,40,80,80); const r=fn(); c.setTransform(1,0,0,1,0,0); const d=c.getImageData(0,0,160,160).data; let n=0; for(let i=3;i<d.length;i+=4)if(d[i])n++; return [r,n];};
+    o.net=ink(()=>T.pixNet(c,{x:0,y:0,r:1.6},.5)); o.tangle=ink(()=>T.pixTangle(c,0,0,.3,.9)); o.rope=ink(()=>{T.pixRope(c,-1,-1,0,.3,1,1,true); return true;}); o.kindle=ink(()=>{T.pixKindle(c,0,0,.3,1); return true;});
+    /* on the board through a wave: a beam, threads (one burning), a line, a net and a tangle and a Kindled creature */
+    T.setP(false); T.F.phase='wave'; T.F.queue=[{t:1e9,type:'crawler',gate:0}];
+    const L=T.F.paths[0], e=T.spawnFoe('crawler',0,L.len*.3); e.hp=e.max=1e6; e.kindleT=5; e.tangleT=2;
+    const A={x:T.F.lx+1,y:T.F.ly,br:{signal:3}}, B={x:T.F.lx+1,y:T.F.ly+3,br:{}};
+    let errs=0;
+    /* update() works the beams and threads out afresh, so they are laid after it, as a mirror and two Signal Candles would lay them */
+    const lay=()=>{T.F.beams=[{x0:T.F.lx+.5,y0:T.F.ly,x1:T.F.lx+4,y1:T.F.ly+2}]; T.F.links=[[A,B]]; T.F.threads=[[A,B]];};
+    for(let i=0;i<30;i++){
+      if(i===2)T.F.fx.push({k:'net',x:e.x,y:e.y,r:1.6,t:0,dur:1.1}); if(i===3)T.F.fx.push({k:'hline',x:A.x,y:A.y,e,t:0,dur:.5});
+      try{T.update(1/30); lay(); T.render();}catch(err){errs++; o.err=String(err);}}
+    o.errs=errs; o.beam=!!T.BEAM.cv&&T.BEAM.cv.width===T.COLS*32; const cvB=T.BEAM.cv, k0=T.BEAM.k.slice(); lay(); T.render(); o.beamCached=T.BEAM.cv===cvB&&T.BEAM.k.length===8&&T.BEAM.k.every((v,i)=>v===k0[i]);
+    return o;},[wardProbe.toString()]);
+  ok(kitw.ready,'the kit wards and marks load',kitw);
+  ok(!kitw.fromSheet.length,'on a pixel Cistern the Signal Candle, Blubber Lamp, Signal Mirror, Try-pot and every kit harpoon draw from their sheets, not the paint',kitw.fromSheet);
+  ok(kitw.harps===3,'the Lamplighter\'s and the Whaler\'s harpoons carry their own bolt head and foot; the other kits keep theirs',kitw.harps);
+  ok(Object.values(kitw.dark).every(Boolean)&&kitw.darkStill.every(n=>n===1),'cut off from the light, each goes dark and holds still',kitw);
+  ok(kitw.anim.every(n=>n>1),'the two kit candles flicker and the Try-pot\'s fire licks',kitw.anim);
+  ok(kitw.burner,'the Burner turns the Signal Candle\'s flame red',kitw.burner);
+  ok(kitw.turn&&kitw.lock,'the Signal Mirror turns, and its ring dims while a wave holds it',kitw);
+  ok(kitw.oil===5,'the Try-pot shows its oil by the measure',kitw.oil);
+  ok(kitw.net[0]&&kitw.net[1]>200&&kitw.tangle[0]&&kitw.tangle[1]>50&&kitw.rope[1]>30&&kitw.kindle[1]>4,'the net, the tangle, the line and Kindle\'s flames draw in art pixels',kitw);
+  ok(!kitw.errs&&kitw.beam&&kitw.beamCached,'beam, threads, line, net, tangle and flames on the board through a wave; the beam is built once and reused',kitw);
   for(const f of fails)console.log('FAIL '+f);
   if(fails.length)process.exitCode=1; else console.log('pixelboard: all ok');
   await b.close();
