@@ -26,6 +26,14 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const tgt=[m.x-inc[1]*3+inc[0]*.5, m.y+inc[0]*3+inc[1]*.5]; T.aimMirror(m,tgt[0],tgt[1]); T.update(.001);
     const want=[(tgt[0]-m.x),(tgt[1]-m.y)], wl=Math.hypot(...want); out.aimed=+(B().ux*want[0]/wl+B().uy*want[1]/wl).toFixed(3);
     out.straight=T.aimMirror(m,m.x+inc[0]*3,m.y+inc[1]*3);
+    /* nor can the turn buttons: a full turn either way, a step at a time, never leaves the beam within 10° of straight on, and the
+       smallest bend aiming allows is 10°. A mirror left edge-on (an older save) throws no beam */
+    const bend=()=>{T.update(.001); const b=T.F.beams.find(q=>q.t===m); return b?Math.acos(Math.max(-1,Math.min(1,b.ux*b.ix+b.uy*b.iy)))*180/Math.PI:null;};
+    out.turnBends=[]; for(const dir of [1,-1])for(let k=0;k<26;k++){T.turnMirror(m,dir*Math.PI/12); out.turnBends.push(bend());}
+    const ia=Math.atan2(inc[1],inc[0]), aimAt=deg=>T.aimMirror(m,m.x+Math.cos(ia+deg*Math.PI/180)*3,m.y+Math.sin(ia+deg*Math.PI/180)*3);
+    out.aim9=aimAt(9); out.aim11=aimAt(11); out.aim11Bend=bend();
+    m.rot=Math.atan2(inc[1],inc[0]); out.edgeOn=bend();
+    T.aimMirror(m,tgt[0],tgt[1]); T.update(.001);
     /* the dark locks it */
     T.F.phase='wave'; const r0=m.rot; T.turnMirror(m,1); const aimedInWave=T.aimMirror(m,tgt[0]+1,tgt[1]); out.locked=m.rot===r0&&!aimedInWave; T.F.phase='build';
     /* a tile the beam lights, past the lamp's own light */
@@ -60,6 +68,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.near,'a Mirror can stand in the lamp’s light');
   ok(r.beams===1&&!r.mdark,'it throws one beam',r);
   ok(r.reflects,'it reflects the lamp at an angle, not straight on',r);
+  ok(!r.straight&&r.aim9===false&&r.aim11===true&&Math.abs(r.aim11Bend-11)<.5,'aiming refuses a bend under 10°, and allows one just over',r);
+  ok(r.turnBends.length===52&&r.turnBends.every(a=>a!==null&&a>=10),'the turn buttons, a whole turn either way, never send the light straight on',r.turnBends);
+  ok(r.edgeOn===null,'a mirror left edge-on to the light throws no beam',r.edgeOn);
   ok(Math.abs(r.turned-30)<.5,'a 15° turn of the glass turns the beam 30°',r.turned);
   ok(r.aimed>.99&&r.straight===false,'aiming sends the beam where you tap; it won’t pass the light straight on',r);
   ok(r.locked,'it is locked while a wave comes',r);

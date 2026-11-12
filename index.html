@@ -3204,14 +3204,17 @@ function connectedLights(exclude){
   return {conn,src,links,beams};
 }
 /* turning a Signal Mirror: by a step, or toward a tapped point. Only between waves; the dark locks it */
-const MIRROR_STEP=Math.PI/12;
-function turnMirror(t,da){if(F.phase==='wave')return; t.rot=(t.rot||0)+da; F.L=lightsNow(); forceUI();}
+const MIRROR_STEP=Math.PI/12, MIRROR_STRAIGHT=.985;
+/* would the glass, turned to rot, send the lamp's light straight on? It stands edge-on to the light then, and a mirror can't */
+function mirrorStraight(t,rot){const dx=t.x-F.lx, dy=t.y-F.ly, l=Math.hypot(dx,dy)||1, ix=dx/l, iy=dy/l, o=mirrorOut(ix,iy,rot); return ix*o[0]+iy*o[1]>MIRROR_STRAIGHT;}
+/* a step that would leave it edge-on turns it a step further, so the buttons can't do what aiming refuses */
+function turnMirror(t,da){if(F.phase==='wave')return; t.rot=(t.rot||0)+da; if(mirrorStraight(t,t.rot))t.rot+=da; F.L=lightsNow(); forceUI();}
 function aimMirror(t,x,y){
   if(F.phase==='wave'){hint('The mirror is locked until the wave ends.'); return false;}
   const dx=t.x-F.lx, dy=t.y-F.ly, l=Math.hypot(dx,dy)||1, ix=dx/l, iy=dy/l, ox0=x-t.x, oy0=y-t.y, lo=Math.hypot(ox0,oy0);
   if(lo<.3)return false;
   const ox=ox0/lo, oy=oy0/lo;
-  if(ix*ox+iy*oy>.985){hint('A mirror can’t send the light straight on. Aim it to one side.'); return false;}
+  if(ix*ox+iy*oy>MIRROR_STRAIGHT){hint('A mirror can’t send the light straight on. Aim it to one side.'); return false;}
   t.rot=mirrorTurn(ix,iy,ox,oy); F.L=lightsNow(); return true;
 }
 /* a mirror turned to rot sends light arriving along (ix,iy) away along r = d - 2(d·n)n, n being the mirror's normal; and the
@@ -3599,6 +3602,8 @@ function mirrorBeams(ex){
     /* the lamp's light strikes the glass and leaves it reflected (mirrorOut) */
     const dx=t.x-F.lx, dy=t.y-F.ly, l=Math.hypot(dx,dy)||1, ix=dx/l, iy=dy/l, rot=t.rot!=null?t.rot:Math.atan2(iy,ix)+Math.PI/4;
     const r=mirrorOut(ix,iy,rot), ux=r[0], uy=r[1], pts=[];
+    /* edge-on to the light (a save from before the turn buttons skipped it) the glass catches none: no beam */
+    if(ix*ux+iy*uy>MIRROR_STRAIGHT)continue;
     let end=MIRROR_LEN;
     for(let s2=.5;s2<=MIRROR_LEN+1e-6;s2+=.7){const x=t.x+ux*s2, y=t.y+uy*s2; if(x<0||y<0||x>COLS||y>ROWS){end=s2; break;} pts.push([x,y]);}
     out.push({t,ux,uy,ix,iy,x0:t.x,y0:t.y,x1:t.x+ux*end,y1:t.y+uy*end,pts});}
