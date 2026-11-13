@@ -90,13 +90,20 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const [g3,d3]=T.run.spots.tiles[0];
     const r=T.spawnFoe('crawler',g3,d3); T.lampToll('peal'); out.peal=r.stunT>0; T.lampToll('toll'); out.toll=r.stunT>0&&r.heardT>0; r.dead=true; T.update(.01);
     T.newRun('lamplighter',0); out.spectrum=T.wstat({type:'candle',br:{},x:0,y:0}).burn;
-    T.takeOffer('aliencandle'); out.spectrum2=T.wstat({type:'candle',br:{},x:0,y:0}).burn;
+    T.takeOffer('aliencandle'); out.spectrum2=T.wstat({type:'candle',br:{},x:0,y:0}).burn; out.alien=T.wstat({type:'candle',br:{},x:0,y:0}).alien;
+    /* the sear does not stack: a creature in the light of three candles takes what it takes in one */
+    const sear=n=>{T.beginFloor(null); T.setP(false); const F=T.F; F.phase='wave'; F.queue=[{t:1e9,type:'crawler',gate:0}]; F.towers.length=0;
+      const e=T.spawnFoe('behemoth',0,F.paths[0].len-1.5); e.hp=e.max=1e6; e.spd=0; e.def=Object.assign({},e.def,{spd:0});
+      for(let i=0;i<n;i++)F.towers.push({kind:'ward',type:'candle',id:900+i,c:Math.floor(e.x),r:Math.floor(e.y),x:e.x+i*.05,y:e.y,br:{},cd:0,ang:0,ring:0,echo:0});
+      const h0=e.hp; for(let i=0;i<20;i++)T.update(.05); const d=(h0-e.hp)/1; e.dead=true; T.update(.01); return +d.toFixed(2);};
+    out.sear1=sear(1); out.sear3=sear(3);
     return out;});
   console.log(JSON.stringify(offs));
   ok(offs.glare>=20,'Solar Glare: Flare bursts every spot for 20',offs.glare);
   ok(Math.abs(offs.tether-15)<.1&&Math.abs(offs.free-10)<.1,'Solar Tether: half again on the line in a spot, nothing off it',offs);
   ok(!offs.peal&&offs.toll,'Resonant Glare: a Toll stuns and hears what stands in a spot; a Peal beat does not',offs);
-  ok(offs.spectrum2-offs.spectrum===6,'Alien Spectrum: candles sear 6 a second more',offs);
+  ok(offs.spectrum2===offs.spectrum&&offs.alien,'Alien Spectrum: candles sear (its own, not their branch burn)',offs);
+  ok(offs.sear1>=3.5&&Math.abs(offs.sear3-offs.sear1)<.3,'Alien Spectrum: about 4 a second, once, however many candles reach it',[offs.sear1,offs.sear3]);
 
   /* Disorienting Flare: an Arc Lamp's flare makes a stunned creature walk back for 2s, once each, never a boss or a Herald */
   const arc=type=>p.evaluate(type=>{const T=__t, out={};
