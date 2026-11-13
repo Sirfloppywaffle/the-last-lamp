@@ -76,7 +76,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.locked,'it is locked while a wave comes',r);
   ok(r.probe&&r.probeBefore===false&&r.probeAfter===true,'the beam lights ground past the lamp, to build on',r);
   ok(r.cut===1,'a ward standing in the beam is cut if the Mirror goes',r.cut);
-  ok(r.burn>=4.5,'the beam burns what crosses it, 5 a second',r.burn);
+  ok(r.burn>=9,'the beam burns what crosses it, 10 a second',r.burn);
   /* a second mirror (Criss, 13 Nov 2026): built in a beam outside the lamp's own light, it catches the beam and throws it on once more,
      burning half as hard; a third catches nothing; take the first away and the second goes dark */
   const bo=await p.evaluate(()=>{const T=__t, o={}; window.devNoDark=false; T.newRun('lamplighter',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true); T.run.ess=99999;
@@ -119,7 +119,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(bo.m2dark===false&&bo.stops&&bo.bounce===1&&bo.n===2,'it catches the beam (which stops at its glass) and throws it on',bo);
   ok(Math.abs(bo.bend-90)<2,'built, it turns the beam a quarter, as a first mirror does',bo.bend);
   ok(bo.straight2===false&&bo.turns.every(a=>a===null||a>=10),'it can\'t send the beam straight on either, aimed or turned',bo);
-  ok(bo.burn2!=null&&bo.burn2>=2&&bo.burn2<=3.2,'the bounced beam burns half as hard, 2.5 a second',bo.burn2);
+  ok(bo.burn2!=null&&bo.burn2>=4&&bo.burn2<=6.4,'the bounced beam burns half as hard, 5 a second',bo.burn2);
   ok(/bounces only twice/.test(bo.third||''),'a third mirror in the bounced beam catches nothing',bo.third);
   ok(bo.cut&&bo.darkAfter===true&&bo.beamsAfter===0,'take the first away and the second goes dark',bo);
   ok(r.whalerHas.join()==='haul,bell'&&r.haulMode,'Haul Away asks where to cast',r);
