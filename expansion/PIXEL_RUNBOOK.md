@@ -18,8 +18,8 @@
 | 2 | The base wards (nine: no kit builds the plain candle) | #173 | done |
 | 3 | Kit wards and kit marks on the board (Lamplighter, Whaler) | #174 | done |
 | 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | #177 | done |
-| 5 | What patrons lay on the floor, and the board's small effects | | next |
-| 6 | The rest of the creatures, and the horrors | | |
+| 5 | What patrons lay on the floor, and the board's small effects | #179 | done |
+| 6 | The rest of the creatures, and the horrors | | next |
 | 7 | The Ossuary (floor 2) | | |
 | 8 | The Drowned Nave (floor 3) | | |
 | 9 | The Throat (floor 4) and the Keeper Below | | |
@@ -123,6 +123,8 @@ Many of these are drawn over the dark in `render()` on purpose (wires glow, bone
 ### Step 5: what patrons lay on the floor, and small effects
 
 The Drowned Mother's water (`drawWater()`), the Wrong Sun's bright spots, the Many-Mouthed's rings (Choir-Husk veil, Gibberer chatter). Also: salt bridges, burning pitch pools, wax seals, the Hallowed Ground's chalk, hex and stun rings, shots in flight (bolts, lances, pitch). Water must sit on pixel flagstones and on the channel alike.
+
+**Done (step 5):** `render()` walked top to bottom. Converted, each behind `pxb` with its paint kept: her water (`pixFlood()`: a body and a sheet over the dark built into layers of art pixels by `waterLayers()` only when `F.waterLines` or the board's size changes, a Phosphor layer a stretch, `waterGlow()`; the current's lanes stepped by `pixLane()`; glints), her wake (`pixWake()`), the Wrong Sun's spots and Violet Husking (`pixSpots()`), burning pitch (`pixPools()`), salt bridges, Tallow's rim, wax seals, the selected ward's reach and the lamp's ring of fire (`pixGroundMarks()`), the husk's and Gibberer's rings and a slowed ward's, the effigy's reach, every mark on a creature and its health bar (`pixFoeMarks()`), shots in flight (`pixShot()`), the effects under and over the dark (`pixFxLow()`, `pixFxHigh()`), a soul to bind (`pixSoul()`), the Hallowed Ground's chalk (`pixHallow()`), the Bellfather's daze, a ward cut off, the madness's eyes, the motes, and the selection and placing outlines (`pixBox()`). Helpers: `pixEll()`, `pixRing()` (a turned ellipse), `pixDot()`, and `glowPx()`/`glowPut()`: a glow that is the mark itself (her water, a spot, pitch, a pitch shot) is the paint's own gradient sampled in a few bands, Bayer-dithered where they meet, built once a size into `GLOW_PX` and stamped on the grid. **No PixelLab art:** every one of these is a line, ring or glow in its paint; drawn on the grid they keep its shape and colours exactly. **Left as they were:** the dark and every light (pools of light, the lamp's bloom, `glowCv`), the fog, the madness's vignette and the hurt flash (washes over the whole screen), the floating numbers (text), creatures' ground shadows and Unbind's charge and the phantom (step 6), the Tithe-taker's sack, the rift's swirl and its red warning ring, the boss reveal (step 11), and the fork's chevrons and the Wisp, which no Cistern has (step 11).
 
 **Prompt:**
 > Read `expansion/PIXEL_RUNBOOK.md` and `AGENTS.md`. Do step 5: everything patrons and effects lay on the board, in pixel art, one PR off `main`. Walk `render()` top to bottom and list every thing it draws that is not a tile, a ward, the lamp or a creature; convert those.

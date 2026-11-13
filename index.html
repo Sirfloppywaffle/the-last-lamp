@@ -10731,6 +10731,198 @@ function pixFry(f,p){g.save(); g.globalCompositeOperation='lighter';
   g.globalCompositeOperation='source-over';
   for(let k=0;k<4;k++){const u=Math.max(0,p-k*.1); g.fillStyle='rgba(60,58,56,'+(.35*(1-u))+')'; pixDisc(g,f.x+(hash(k,f.x,2)-.5)*.3,f.y-u*1.1,.12+u*.25);}
   g.restore();}
+/* what patrons and effects lay on a pixel floor (pixel stair step 5), by steps 3 and 4's rule: art pixels on the floor's own grid
+   (PXU), each mark keeping its paint's shape, colours and motion, nothing made per frame. A glow that is the mark itself (her water,
+   the Wrong Sun's spots, burning pitch, a pitch shot in flight) is built once into a layer of art pixels, banded and dithered as pixel
+   art bands a gradient, and stamped; the lights of the lamp and the wards stay gradients */
+/* a filled ellipse, a row of art pixels at a time */
+function pixEll(c,x,y,rx,ry,q){q=q||PXU; const R=Math.max(1,Math.round(ry/q)), cx=Math.round(x/q), cy=Math.round(y/q), W=rx/q;
+  for(let j=-R;j<R;j++){const v=(j+.5)/R, w=Math.round(W*Math.sqrt(Math.max(0,1-v*v))); if(w>0)c.fillRect((cx-w)*q,(cy+j)*q,2*w*q,q);}}
+/* a ring of an ellipse turned by rot (the stunned halo tumbles), each pixel once, dashed on/off from a0 */
+function pixRing(c,x,y,rx,ry,rot,a0,on,off){const n=Math.ceil(Math.max(rx,ry)*TAU/PXU*1.2)+1, cr=Math.cos(rot), sr=Math.sin(rot), p=on+off; let lx=1e9, ly=1e9, j=0;
+  for(let i=0;i<n;i++){const a=a0+TAU*i/n, ex=Math.cos(a)*rx, ey=Math.sin(a)*ry, px=Math.floor((x+ex*cr-ey*sr)/PXU), py=Math.floor((y+ex*sr+ey*cr)/PXU); if(px===lx&&py===ly)continue; lx=px; ly=py;
+    if(off&&(j++)%p>=on)continue; c.fillRect(px*PXU,py*PXU,PXU,PXU);}}
+/* a square of art pixels, n across, on the grid (a drop, a mote, a shard) */
+function pixDot(c,x,y,n){const s=(n||1)*PXU; c.fillRect(Math.round(x/PXU-(n||1)/2)*PXU,Math.round(y/PXU-(n||1)/2)*PXU,s,s);}
+/* a glow in art pixels: the paint's own gradient (stops: t,r,g,b,a, ...) sampled in n bands, Bayer-dithered where one band meets the
+   next, R art pixels from the middle to the rim and ry of that down. Built once for each size and kept (a few sizes each) */
+const GLOW_PX=new Map();
+function glowPx(key,R,ry,stops,n){R=Math.max(2,R); let M=GLOW_PX.get(key); if(!M)GLOW_PX.set(key,M=new Map()); let cv=M.get(R); if(cv)return cv;
+  if(M.size>48)M.clear();
+  const W=2*R, H=Math.max(2,2*Math.round(R*ry)); cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const x=cv.getContext('2d'), d=x.createImageData(W,H), q=d.data, S=stops.length/5;
+  for(let j=0;j<H;j++)for(let i=0;i<W;i++){const dx=(i+.5-R)/R, dy=(j+.5-H/2)/(H/2), t0=Math.hypot(dx,dy); if(t0>=1)continue;
+    const t=Math.min(1,Math.floor(t0*n+BAYER[(j&3)*4+(i&3)]/16)/n); let s=0; while(s<S-2&&stops[(s+1)*5]<t)s++;
+    const a=s*5, b=a+5, f=clamp((t-stops[a])/((stops[b]-stops[a])||1),0,1), o=(j*W+i)*4;
+    for(let m=1;m<5;m++){const v=stops[a+m]+(stops[b+m]-stops[a+m])*f; q[o+m-1]=m<4?Math.round(v):Math.round(v*255);}}
+  x.putImageData(d,0,0); M.set(R,cv); return cv;}
+/* stamp a glow on the grid, its middle at x,y */
+function glowPut(c,cv,x,y){c.imageSmoothingEnabled=false; c.drawImage(cv,Math.round(x/PXU-cv.width/2)*PXU,Math.round(y/PXU-cv.height/2)*PXU,cv.width*PXU,cv.height*PXU); c.imageSmoothingEnabled=true;}
+const SPOT_STOPS=[0,246,236,255,.95, .28,196,150,255,.72, .6,132,78,220,.3, 1,90,40,170,0];
+const PITCH_STOPS=[0,255,200,90,.45, .5,224,90,30,.32, 1,120,30,10,0];
+const TAR_STOPS=[0,255,220,140,.9, .4,240,110,40,.6, 1,200,60,20,0];
+
+/* the Drowned Mother's water on a pixel floor: the body poured along the path (its four banks, the paint's four strokes laid one on the
+   other), the faint sheet that shows over the dark, and each stretch's Phosphor glow, built into layers of art pixels when her water
+   moves and stamped each frame; the current's streaks and the glints riding it are stepped a pixel at a time along their lanes */
+const WATER_PX={lines:null,c:0,r:0,body:null,top:null,glow:new Map()};
+const WATER_BANDS=(()=>{const L=[[.52,6,18,20,.42],[.45,20,52,56,.78],[.33,34,86,88,.62],[.15,64,132,128,.22]], out=[]; let r=0, gg=0, b=0, a=0;
+  for(const [w,R,G,B,A] of L){const na=A+a*(1-A); r=(R*A+r*a*(1-A))/na; gg=(G*A+gg*a*(1-A))/na; b=(B*A+b*a*(1-A))/na; a=na; out.push([w,Math.round(r),Math.round(gg),Math.round(b),a]);}
+  return out;})();
+/* the distance from a point to a line of points (x,y pairs) */
+function polyDist(px,py,P){let best=1e9; for(let i=2;i<P.length;i+=2){const ax=P[i-2], ay=P[i-1], dx=P[i]-ax, dy=P[i+1]-ay, L=dx*dx+dy*dy||1, t=clamp(((px-ax)*dx+(py-ay)*dy)/L,0,1), ex=ax+dx*t-px, ey=ay+dy*t-py, d=ex*ex+ey*ey; if(d<best)best=d;} return Math.sqrt(best);}
+function waterLayers(){
+  const WP=WATER_PX; if(WP.lines===F.waterLines&&WP.c===COLS&&WP.r===ROWS&&WP.body)return WP;
+  WP.lines=F.waterLines; WP.c=COLS; WP.r=ROWS; WP.glow.clear();
+  const W=COLS*32, Hh=ROWS*32, D=new Float32Array(W*Hh).fill(9);
+  const box=(P,m,fn)=>{let x0=1e9, y0=1e9, x1=-1e9, y1=-1e9; for(let i=0;i<P.length;i+=2){x0=Math.min(x0,P[i]); x1=Math.max(x1,P[i]); y0=Math.min(y0,P[i+1]); y1=Math.max(y1,P[i+1]);}
+    const i0=Math.max(0,Math.floor((x0-m)*32)), i1=Math.min(W-1,Math.ceil((x1+m)*32)), j0=Math.max(0,Math.floor((y0-m)*32)), j1=Math.min(Hh-1,Math.ceil((y1+m)*32));
+    for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++)fn(i,j,polyDist((i+.5)/32,(j+.5)/32,P)); return [i0,j0,i1,j1];};
+  for(const L of F.waterLines)box(L.c,.56,(i,j,d)=>{const o=j*W+i; if(d<D[o])D[o]=d;});
+  const mk=()=>{const cv=document.createElement('canvas'); cv.width=W; cv.height=Hh; return cv;};
+  WP.body=WP.body||mk(); WP.top=WP.top||mk(); WP.body.width=WP.top.width=W; WP.body.height=WP.top.height=Hh;
+  const bx=WP.body.getContext('2d'), tx=WP.top.getContext('2d'), bd=bx.createImageData(W,Hh), td=tx.createImageData(W,Hh), bq=bd.data, tq=td.data;
+  for(let j=0;j<Hh;j++)for(let i=0;i<W;i++){const o=j*W+i; if(D[o]>=1)continue; const d=D[o]+(BAYER[(j&3)*4+(i&3)]/16-.5)*PXU*2, p=o*4;
+    let k=-1; for(let m=WATER_BANDS.length-1;m>=0;m--)if(d<=WATER_BANDS[m][0]){k=m; break;}
+    if(k>=0){const B=WATER_BANDS[k]; bq[p]=B[1]; bq[p+1]=B[2]; bq[p+2]=B[3]; bq[p+3]=Math.round(B[4]*255);}
+    if(d<=.41){tq[p]=60; tq[p+1]=130; tq[p+2]=130; tq[p+3]=18;}}
+  bx.putImageData(bd,0,0); tx.putImageData(td,0,0); return WP;
+}
+/* a stretch's Phosphor glow, the two strokes added as 'lighter' adds them, in a layer the size of the stretch */
+function waterGlow(L){let G=WATER_PX.glow.get(L); if(G)return G;
+  let x0=1e9, y0=1e9, x1=-1e9, y1=-1e9; const P=L.c; for(let i=0;i<P.length;i+=2){x0=Math.min(x0,P[i]); x1=Math.max(x1,P[i]); y0=Math.min(y0,P[i+1]); y1=Math.max(y1,P[i+1]);}
+  const i0=Math.floor((x0-.5)*32), j0=Math.floor((y0-.5)*32), W=Math.ceil((x1+.5)*32)-i0, H=Math.ceil((y1+.5)*32)-j0, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const x=cv.getContext('2d'), d=x.createImageData(W,H), q=d.data;
+  for(let j=0;j<H;j++)for(let i=0;i<W;i++){const dd=polyDist((i0+i+.5)/32,(j0+j+.5)/32,P)+(BAYER[(j&3)*4+(i&3)]/16-.5)*PXU*2, o=(j*W+i)*4;
+    if(dd<=.2){q[o]=166; q[o+1]=116; q[o+2]=238; q[o+3]=242;} else if(dd<=.43){q[o]=132; q[o+1]=78; q[o+2]=220; q[o+3]=115;}}
+  x.putImageData(d,0,0); G={cv,x:i0*PXU,y:j0*PXU}; WATER_PX.glow.set(L,G); return G;}
+/* a dashed lane of the current, a pixel at a time: dash is the paint's [on,off,on,off] in board units, off its dash offset */
+function pixLane(c,P,dash,off){const per=dash[0]+dash[1]+dash[2]+dash[3], e1=dash[0], e2=dash[0]+dash[1], e3=e2+dash[2]; let s=off, lx=1e9, ly=1e9;
+  for(let i=2;i<P.length;i+=2){const ax=P[i-2], ay=P[i-1], dx=P[i]-ax, dy=P[i+1]-ay, L=Math.hypot(dx,dy), n=Math.max(1,Math.ceil(L/PXU));
+    for(let k=0;k<n;k++,s+=L/n){const u=((s%per)+per)%per; if(!(u<e1||(u>=e2&&u<e3)))continue;
+      const px=Math.floor((ax+dx*k/n)/PXU), py=Math.floor((ay+dy*k/n)/PXU); if(px===lx&&py===ly)continue; lx=px; ly=py; c.fillRect(px*PXU,py*PXU,PXU,PXU);}}}
+const WATER_LANES=[['l',.55,.5,[.07,.41,.13,.66]],['c',.8,0,[.15,.52,.05,.38]],['r',.65,.33,[.1,.7,.08,.29]]];
+function pixFlood(tm,top){
+  const WP=waterLayers(), flow=reduceMotion?0:tm;
+  g.save(); g.imageSmoothingEnabled=false; g.drawImage(top?WP.top:WP.body,0,0,COLS,ROWS);
+  for(const W of F.waterLines){
+    const gl=F.glowT&&F.glowT[W.si];
+    if(gl>0&&!top){const G=waterGlow(W); g.globalCompositeOperation='lighter'; g.globalAlpha=Math.min(1,gl)*(.55+(reduceMotion?0:.12*Math.sin(tm*4)));
+      g.drawImage(G.cv,G.x,G.y,G.cv.width*PXU,G.cv.height*PXU); g.globalAlpha=1; g.globalCompositeOperation='source-over';}
+    for(let li=0;li<3;li++){const LN=WATER_LANES[li], k=LN[0], sp=LN[1], ph=LN[2], dash=LN[3]; g.fillStyle='rgba(170,226,214,'+((top?.2:.36)+(top?.06:.12)*Math.sin(flow*1.7+ph*6))+')'; pixLane(g,W[k],dash,-(flow*sp+ph*1.1+W.seed));}
+    if(!top)for(let k=0;k<W.n;k++){const u=((flow*.18+hash(k,W.seed,3))%1), i=Math.min(W.c.length-2,2*Math.floor(u*(W.c.length/2)));
+      g.fillStyle='rgba(210,240,232,'+(.35*Math.sin(u*Math.PI))+')'; const gx=W.c[i]+(hash(k,W.seed,7)-.5)*.5, gy=W.c[i+1]+(hash(W.seed,k,9)-.5)*.5;
+      g.fillRect(Math.round(gx/PXU-1)*PXU,Math.round(gy/PXU)*PXU,3*PXU,PXU);}
+  }
+  g.restore();
+}
+/* gone under: two ripples of pixels spreading from where it swims */
+function pixWake(e,tm){const a=.45+.2*Math.sin(tm*5+e.wob);
+  for(let k=0;k<2;k++){const f=reduceMotion?k*.5:((tm*1.2+k*.5+e.wob)%1), r=.12+f*.35; g.fillStyle='rgba(150,210,200,'+(a*(1-f))+')'; pixArc(g,e.x,e.y+.05,r,r*.45,0,TAU,1,0,1);}}
+/* the Wrong Sun's spots and Violet Husking's burning bodies: its violet glare in banded pixels, a pixel wider or narrower as it pulses */
+function pixSpots(tm){
+  const s=F.spotPts, L=F.hlights, pulse=reduceMotion?0:Math.sin(tm*2.3)*.05, wide=patTier('sun')>=2;
+  g.save(); g.globalCompositeOperation='lighter';
+  if(s){const sp=glowPx('spot',Math.round((.62+pulse)/PXU),1,SPOT_STOPS,5), gl=wide?glowPx('spot',Math.round(SPOT_GLARE/PXU),1,SPOT_STOPS,5):null;
+    for(let i=0;i<s.length;i+=2){if(gl){g.globalAlpha=.22; glowPut(g,gl,s[i],s[i+1]);} g.globalAlpha=.85; glowPut(g,sp,s[i],s[i+1]);}}
+  if(L)for(let i=0;i<L.length;i++){const h=L[i], a=Math.min(1,h.t/1.5);
+    g.globalAlpha=.7*a; glowPut(g,glowPx('spot',Math.round((HUSKL_R*.8+pulse)*(.7+.3*a)/PXU),1,SPOT_STOPS,5),h.x,h.y);
+    g.globalAlpha=.5*a; g.fillStyle='rgb(196,150,255)'; const r0=reduceMotion?0:tm*.5/HUSKL_R; pixArc(g,h.x,h.y,HUSKL_R,HUSKL_R,r0,r0+TAU,3,4,1);}
+  g.restore();
+}
+/* burning pitch: its glow in banded pixels, a few embers flaring on it (not in Lite; still under Reduce Motion) */
+function pixPools(tm){
+  const tick=reduceMotion?0:Math.floor(tm*8);
+  for(const p of F.pools){const a=clamp(p.t/p.max,0,1), fl=reduceMotion?1:.85+.15*Math.sin(tm*12+p.x*3);
+    g.globalAlpha=a*fl; glowPut(g,glowPx('pitch',Math.round(p.r/PXU),.8,PITCH_STOPS,4),p.x,p.y);
+    if(!gfxLite){const n=3+Math.round(p.r*6); for(let k=0;k<n;k++){const h=hash(k,tick,p.x+p.y); if(h<.45)continue;
+      const an=hash(p.x,k,7)*TAU, rr=Math.sqrt(hash(k,p.y,5))*p.r*.75; g.fillStyle=h>.8?'rgba(255,236,170,.9)':'rgba(255,150,60,.8)'; pixDot(g,p.x+Math.cos(an)*rr,p.y+Math.sin(an)*rr*.8,1);}}}
+  g.globalAlpha=1;
+}
+/* the Salt Flats' crust between two bridged circles, Tallow of Saints' blessed rim, Sealing Wax's red seal, the lamp's ring of fire */
+function pixGroundMarks(tm,ls){
+  if(F.bridgePairs&&F.bridgePairs.length)for(const [a,b] of F.bridgePairs){if(a.dead||b.dead)continue;
+    g.fillStyle='rgba(236,232,222,.16)'; pixSeg(g,a.x,a.y,b.x,b.y,1,0,11); g.fillStyle='rgba(236,232,222,.4)'; pixSeg(g,a.x,a.y,b.x,b.y,2,3,1);}
+  if(has('tallow')){const R=lampRadius(); g.fillStyle='rgba(255,214,140,.2)'; pixArc(g,F.lx,F.ly,R,R,0,TAU,1,0,1); const r=Math.max(.2,R-TALLOW_RIM); pixArc(g,F.lx,F.ly,r,r,0,TAU,1,0,1);}
+  if(has('wax')){g.fillStyle='rgba(170,40,40,.75)'; for(const t of F.towers)if(t.sealed&&!t.dead)pixArc(g,t.x,t.y+.22,.36,.17,0,TAU,1,0,2);}
+  if(selTower){const R=towerRange(selTower); if(R){g.fillStyle='rgba(237,180,90,.55)'; pixArc(g,selTower.x,selTower.y,R,R,0,TAU,4,3,1);}}
+  if(ls.fire){g.fillStyle='rgba(224,102,46,'+(.35+.15*Math.sin(tm*9))+')'; pixArc(g,F.lx,F.ly,ls.fire.r,ls.fire.r,0,TAU,3,4,2);}
+}
+/* the marks on a creature: hexed, bleeding, pinned, flensed, named, poisoned, stunned, its health */
+function pixFoeMarks(e,yy,drawR,tm,stage){const r=e.def.r, rm=reduceMotion;
+  if(stage===0){if(e.hex){g.fillStyle='rgba(150,230,120,.6)'; const a=rm?0:tm*1.5; pixArc(g,e.x,e.y+drawR*.55,drawR*.95,drawR*.4,a,a+TAU,2,2,1);} return;}
+  if(stage===1){
+    if(e.bleedT>0){g.fillStyle='#b81e1e'; for(let k=0;k<2;k++)pixDot(g,e.x-.08+k*.16,yy+r*.2+(rm?k*.5:(tm*1.6+k*.5)%1)*.25,2);}
+    if(e.pinT>0){g.fillStyle='rgba(200,190,170,.85)'; pixSeg(g,e.x-.2,e.y+r*.7,e.x+.12,e.y-r*.2,1,0,1);}
+    if(e.flenseT>0){g.fillStyle='rgba(218,90,75,.7)'; for(let k=0;k<3;k++)pixSeg(g,e.x-.12+k*.1,yy-r*.3,e.x-.06+k*.1,yy+r*.1,1,0,1);}
+    return;}
+  if(F.named===e.type){g.fillStyle='rgba(106,169,159,.8)'; pixArc(g,e.x,e.y+r*.55,r+.12,(r+.12)*.45,0,TAU,1,0,1);}
+  if(e.poisonT>0){g.fillStyle='#9BC23E'; for(let k=0;k<3;k++)pixDot(g,e.x-.15+k*.15,yy-r-.05-(rm?k*.3:(tm*2+k*.3)%1)*.2,2);}
+  if(e.stunT>0){g.fillStyle='rgba(236,232,222,.75)'; pixRing(g,e.x,yy-r-.08,r*.6,.08,rm?0:tm*2,0,2,2);}
+  if(e.hp<e.max){const w=Math.max(.4,r*2), n=Math.round(w/PXU), bx=Math.round((e.x-w/2)/PXU)*PXU, by=Math.round((yy-r*1.15-.2)/PXU)*PXU;
+    g.fillStyle='rgba(0,0,0,.65)'; g.fillRect(bx-PXU,by-PXU,(n+2)*PXU,4*PXU);
+    g.fillStyle=e.def.boss||e.def.elite?'#DA5A4B':'#E4DDCC'; g.fillRect(bx,by,Math.round(n*clamp(e.hp/e.max,0,1))*PXU,2*PXU);}
+}
+/* a square's outline in art pixels (a selected ward, a free square while placing) */
+function pixBox(c,x,y,w,n){const q=PXU, x0=Math.round(x/q)*q, y0=Math.round(y/q)*q, W=Math.round(w/q)*q, k=(n||1)*q; c.fillRect(x0,y0,W,k); c.fillRect(x0,y0+W-k,W,k); c.fillRect(x0,y0,k,W); c.fillRect(x0+W-k,y0,k,W);}
+/* shots in flight: a harpoon's bolt (a pale-headed piercing one), the whaling gun's lance on its line, spit, a ball of burning pitch */
+const SHT={x:0,y:0,c:1,s:0};
+function shX(u,v){return SHT.x+u*SHT.c-v*SHT.s;}
+function shY(u,v){return SHT.y+u*SHT.s+v*SHT.c;}
+function pixShot(sh){
+  if(sh.k==='bolt'||sh.k==='pierce'||sh.k==='lance'){SHT.x=sh.x; SHT.y=sh.y; SHT.c=Math.cos(sh.ang||0); SHT.s=Math.sin(sh.ang||0);
+    if(sh.k==='lance'){g.fillStyle='rgba(200,180,140,.7)'; pixQuad(g,sh.sx,sh.sy,(sh.sx+sh.x)/2,(sh.sy+sh.y)/2+.25,sh.x,sh.y,1);
+      g.fillStyle='#5a4028'; pixSeg(g,shX(-.42,0),shY(-.42,0),shX(0,0),shY(0,0),1,0,2);
+      g.fillStyle='#ece6d8'; pixTri(g,shX(0,-.09),shY(0,-.09),shX(.22,0),shY(.22,0),shX(.05,0),shY(.05,0)); pixTri(g,shX(0,.09),shY(0,.09),shX(.22,0),shY(.22,0),shX(.05,0),shY(.05,0)); return;}
+    g.fillStyle='rgba(230,220,200,.25)'; pixSeg(g,shX(-.5,0),shY(-.5,0),shX(-.15,0),shY(-.15,0),1,0,1);
+    g.fillStyle='#6a4a2c'; pixSeg(g,shX(-.2,0),shY(-.2,0),shX(.1,0),shY(.1,0),1,0,1);
+    g.fillStyle=sh.k==='pierce'?'#fff4d0':'#d8d2c4'; pixTri(g,shX(.08,-.07),shY(.08,-.07),shX(.24,0),shY(.24,0),shX(.12,0),shY(.12,0)); pixTri(g,shX(.08,.07),shY(.08,.07),shX(.24,0),shY(.24,0),shX(.12,0),shY(.12,0));
+    g.fillRect(Math.floor(shX(.2,0)/PXU)*PXU,Math.floor(shY(.2,0)/PXU)*PXU,PXU,PXU); return;}
+  if(sh.k==='spit'){g.fillStyle='#4a6a10'; pixDisc(g,sh.x,sh.y,.08); g.fillStyle='#8fb83a'; pixDisc(g,sh.x-.015,sh.y-.015,.05); g.fillStyle='#e8ff9a'; pixDot(g,sh.x-.03,sh.y-.03,1); return;}
+  if(sh.k==='tar'&&sh.t>=0){const p=clamp(sh.t/sh.dur,0,1), x=sh.sx+(sh.tx-sh.sx)*p, y=sh.sy+(sh.ty-sh.sy)*p-Math.sin(p*Math.PI)*.9;
+    g.save(); g.globalCompositeOperation='lighter'; glowPut(g,glowPx('tar',Math.round(.24/PXU),1,TAR_STOPS,4),x,y); g.restore();}
+}
+/* the effects laid under the dark: a splash, a bite, a beam, a snuffed candle's smoke, a shattering, a burst of ichor */
+function pixFxLow(f,p){
+  if(f.k==='splash'){g.fillStyle='rgba(224,102,46,'+(.45*(1-p))+')'; pixDisc(g,f.x,f.y,f.r*(.6+.4*p)); return true;}
+  if(f.k==='bite'){g.fillStyle='rgba(239,230,210,'+(1-p)+')'; pixArc(g,f.x,f.y-.1+p*.1,.25,.25,.2,Math.PI-.2,1,0,2); pixArc(g,f.x,f.y+.1-p*.1,.25,.25,Math.PI+.2,TAU-.2,1,0,2); return true;}
+  if(f.k==='beam'){g.fillStyle='rgba(201,185,140,'+(.8*(1-p))+')'; pixSeg(g,f.x,f.y,f.tx,f.ty,1,0,2); return true;}
+  if(f.k==='snuff'){for(let k=0;k<3;k++){const q=clamp(p*1.2-k*.12,0,1); if(q<=0)continue; g.fillStyle='rgba(150,150,150,'+(.5*(1-q))+')'; pixQuad(g,f.x,f.y,f.x+.12*Math.sin(k+q*4),f.y-.25*q,f.x-.05+.1*k,f.y-.6*q,1);} return true;}
+  if(f.k==='shatter'){g.save(); g.globalCompositeOperation='lighter';
+    for(let k=0;k<10;k++){const a=k/10*TAU+f.seed, d=p*(f.r+.5)*(.6+hash(k,f.seed,3)*.6), sx=f.x+Math.cos(a)*d, sy=f.y+Math.sin(a)*d*.85-Math.sin(p*Math.PI)*.12, n=Math.max(1,Math.round(.1*(1-p*.5)/PXU)), par=Math.floor(a+p*6)&1;
+      g.fillStyle=k%3?'rgba(214,228,236,'+(.85*(1-p))+')':'rgba(255,214,140,'+(.8*(1-p))+')'; g.fillRect(Math.round(sx/PXU)*PXU,Math.round(sy/PXU)*PXU,(par?n+1:n)*PXU,(par?n:n+1)*PXU);}
+    g.restore(); return true;}
+  if(f.k==='burst'){const A=lit(hexRGB(f.col.length===7?f.col:'#B8433A'),-.2);
+    for(let k=0;k<9;k++){const a=k/9*TAU+f.x*3, d=p*(.35+f.r*.9)*(.6+.4*((k*7)%3)/2); g.fillStyle=rgba(k%3?A:lit(A,.35),.85*(1-p)); pixDisc(g,f.x+Math.cos(a)*d,f.y+Math.sin(a)*d*.8-Math.sin(p*Math.PI)*.15,Math.max(PXU,f.r*.16*(1-p*.6)));}
+    return true;}
+  return false;
+}
+/* the effects laid over the dark: a ring, the Keeper's beam, a tongue, a hex's link, a Pillar of Salt */
+function pixFxHigh(f,p){
+  if(f.k==='ring'){g.fillStyle='rgba('+f.col+','+(.75*(1-p))+')'; const r=f.r0+(f.r1-f.r0)*p; pixArc(g,f.x,f.y,r,r,0,TAU,1,0,2); return true;}
+  if(f.k==='kbeam'){g.save(); g.globalCompositeOperation='lighter';
+    g.fillStyle='rgba(200,40,40,'+(.3*(1-p))+')'; pixSeg(g,f.x,f.y,f.tx,f.ty,1,0,7); g.fillStyle='rgba(255,90,70,'+(.75*(1-p))+')'; pixSeg(g,f.x,f.y,f.tx,f.ty,1,0,3); g.fillStyle='rgba(255,220,200,'+(1-p)+')'; pixSeg(g,f.x,f.y,f.tx,f.ty,1,0,1);
+    g.restore(); return true;}
+  if(f.k==='tongue'){const reach=p<.4?p/.4:1-(p-.4)/.6, tx=f.x+(f.tx-f.x)*reach, ty=f.y+(f.ty-f.y)*reach, mx=(f.x+tx)/2, my=(f.y+ty)/2-.25*reach;
+    g.fillStyle=f.dark?'rgba(4,2,4,.75)':'rgba(40,10,18,.6)'; pixQuad(g,f.x,f.y-.1,mx,my,tx,ty,3);
+    g.fillStyle=f.dark?'rgba(60,20,30,.9)':'rgba(176,82,96,.95)'; pixQuad(g,f.x,f.y-.1,mx,my,tx,ty,2);
+    g.fillStyle=f.dark?'rgba(90,30,40,.9)':'rgba(210,120,130,.95)'; pixDisc(g,tx,ty,.05); return true;}
+  if(f.k==='hexlink'){g.save(); g.globalCompositeOperation='lighter'; g.fillStyle='rgba(150,230,120,'+(.8*(1-p))+')'; pixSeg(g,f.x,f.y,f.tx,f.ty,2,2,1); g.restore(); return true;}
+  if(f.k==='pillar'){g.fillStyle='rgba(236,232,222,'+(.6*(1-p))+')'; const h=1.4*(1-p*.3); g.fillRect(Math.round((f.x-.18)/PXU)*PXU,Math.round((f.y-h)/PXU)*PXU,Math.round(.36/PXU)*PXU,Math.round((h+.1)/PXU)*PXU); return true;}
+  return false;
+}
+/* a soul to bind: a turning star of violet pixels, its ring shrinking with the time left, a faint disc round it */
+function pixSoul(so,tm){const a=so.t<1.5?(.4+.6*Math.abs(Math.sin(tm*10))):1, k=so.big?1.5:1, rot=reduceMotion?0:tm*2;
+  g.fillStyle='rgba(169,124,226,'+a+')';
+  for(let i=0;i<5;i++){const a0=rot-Math.PI/2+i*4*Math.PI/5, a1=a0+4*Math.PI/5; pixSeg(g,so.x+Math.cos(a0)*.3*k,so.y+Math.sin(a0)*.3*k,so.x+Math.cos(a1)*.3*k,so.y+Math.sin(a1)*.3*k,1,0,1);}
+  const r=(.4*(so.t/so.max)+.05)*k; pixArc(g,so.x,so.y,r,r,0,TAU,1,0,2);
+  g.fillStyle='rgba(169,124,226,'+(.15*a)+')'; pixDisc(g,so.x,so.y,.45);}
+/* the Hallowed Ground: its patches' chalk in dashes of pixels, a circle and a cross on each free square */
+function pixHallow(tm){const H=F.hallowG, pul=reduceMotion?.5:.5+.5*Math.sin(tm*1.5);
+  g.fillStyle='rgba(232,220,190,'+(.05+.03*pul)+')'; for(const p of H.tiles)g.fillRect(p[0],p[1],1,1);
+  g.fillStyle='rgba(232,220,190,'+(.34+.16*pul)+')'; for(const e of H.edges)pixSeg(g,e[0],e[1],e[2],e[3],4,3,1);
+  g.fillStyle='rgba(232,220,190,'+(.24+.14*pul)+')';
+  for(const p of H.tiles){if(towerAt(p[0],p[1]))continue; const x=p[0]+.5, y=p[1]+.5; pixArc(g,x,y,.17,.17,0,TAU,1,0,1); pixSeg(g,x,y-.27,x,y+.24,1,0,1); pixSeg(g,x-.13,y-.08,x+.13,y-.08,1,0,1);}}
 function paintFloor(){
   const s=T*DPR, land=ORIENT==='land', theme=run.floor%THEMES.length;
   const glow=[];
@@ -11122,7 +11314,7 @@ function render(){
 
   const pxb=pixOn();
   if(PIX.water&&!gfxLite&&!reduceMotion&&pxb)pixWater(g,tm);
-  if(F.water&&F.water.size)drawWater(tm,false);
+  if(F.water&&F.water.size){if(pxb)pixFlood(tm,false); else drawWater(tm,false);}
   /* a Signal Mirror's beam, laid along the ground (on a pixel floor, a layer of art pixels) */
   if(F.beams&&F.beams.length&&pxb)pixBeams(g,tm);
   else if(F.beams&&F.beams.length){g.save(); g.globalCompositeOperation='lighter'; g.lineCap='round';
@@ -11133,7 +11325,8 @@ function render(){
       g.strokeStyle='rgba(255,240,200,'+(.22+.1*Math.sin(tm*7+b.x0))+')'; g.lineWidth=.09; g.beginPath(); g.moveTo(b.x0,b.y0); g.lineTo(b.x1,b.y1); g.stroke();}
     g.restore();}
   /* burning pitch */
-  for(const p of F.pools){
+  if(pxb)pixPools(tm);
+  else for(const p of F.pools){
     const a=clamp(p.t/p.max,0,1), fl=.85+.15*Math.sin(tm*12+p.x*3);
     const pg=g.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
     pg.addColorStop(0,'rgba(255,200,90,'+(.45*a*fl)+')'); pg.addColorStop(.5,'rgba(224,90,30,'+(.32*a)+')'); pg.addColorStop(1,'rgba(120,30,10,0)');
@@ -11141,6 +11334,9 @@ function render(){
   }
   /* Salt Flats: a pale crust between two bridged circles. Tallow of Saints: the blessed edge of the lamp's light.
      Sealing Wax: a red seal under each sealed ward */
+  const ls=lstat();
+  if(pxb)pixGroundMarks(tm,ls);
+  else{
   if(F.bridgePairs&&F.bridgePairs.length){g.save(); g.lineCap='round';
     for(const [a,b] of F.bridgePairs){if(a.dead||b.dead)continue;
       g.strokeStyle='rgba(236,232,222,.16)'; g.lineWidth=.34; g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke();
@@ -11153,10 +11349,10 @@ function render(){
     const R=towerRange(selTower);
     if(R){g.strokeStyle='rgba(237,180,90,.55)'; g.lineWidth=.035; g.setLineDash([.12,.1]); g.beginPath(); g.arc(selTower.x,selTower.y,R,0,TAU); g.stroke(); g.setLineDash([]);}
   }
-  const ls=lstat();
   if(ls.fire){
     g.strokeStyle='rgba(224,102,46,'+(.35+.15*Math.sin(tm*9))+')'; g.lineWidth=.05; g.setLineDash([.08,.12]);
     g.beginPath(); g.arc(F.lx,F.ly,ls.fire.r,0,TAU); g.stroke(); g.setLineDash([]);
+  }
   }
 
   /* everything standing on the floor is drawn back to front, so nearer things overlap farther ones */
@@ -11169,10 +11365,14 @@ function render(){
   }
   for(const e of seen)drawGroundShadow(g,e.x,e.y,e.def.r*foeScale(e),F.lx,F.ly,e.def.fly);
   /* the Many-Mouthed's own, when seen: the reach of a Choir-Husk's veil, and of a Gibberer's chatter */
+  if(pxb){const rm=reduceMotion;
+    for(const h of F.husks)if(seen.has(h)){g.fillStyle='rgba(150,160,140,'+(.22+.08*Math.sin(tm*2+h.wob))+')'; const a=rm?0:tm*.25; pixArc(g,h.x,h.y+.05,HUSK_R,HUSK_R*.62,a,a+TAU,3,4,1);}
+    for(const gb of F.gibs)if(seen.has(gb)){g.fillStyle='rgba(214,150,136,'+(.32+.1*Math.sin(tm*9+gb.wob))+')'; const a=rm?0:tm*.3; pixArc(g,gb.x,gb.y+.04,GIB_R,GIB_R*.62,a,a+TAU,3,4,1);}}
+  else{
   for(const h of F.husks)if(seen.has(h)){g.strokeStyle='rgba(150,160,140,'+(.22+.08*Math.sin(tm*2+h.wob))+')'; g.lineWidth=.035; g.setLineDash([.09,.13]);
     g.beginPath(); g.ellipse(h.x,h.y+.05,HUSK_R,HUSK_R*.62,0,tm*.25,tm*.25+TAU); g.stroke(); g.setLineDash([]);}
   for(const gb of F.gibs)if(seen.has(gb)){g.strokeStyle='rgba(214,150,136,'+(.32+.1*Math.sin(tm*9+gb.wob))+')'; g.lineWidth=.03; g.setLineDash([.09,.13]);
-    g.beginPath(); g.ellipse(gb.x,gb.y+.04,GIB_R,GIB_R*.62,0,tm*.3,tm*.3+TAU); g.stroke(); g.setLineDash([]);}
+    g.beginPath(); g.ellipse(gb.x,gb.y+.04,GIB_R,GIB_R*.62,0,tm*.3,tm*.3+TAU); g.stroke(); g.setLineDash([]);}}
   const ts=R_TS; ts.length=0; for(let i=0,n=F.towers.length;i<n;i++)ts.push(F.towers[i]); ts.sort(rByY);
   const items=R_ITEMS; items.length=0; R_N=0;
   for(const t of ts){
@@ -11180,7 +11380,8 @@ function render(){
     /* a Bell Wire lies across the path like salt. The Bellringer's are drawn over the dark instead, with the path she hears; any other
        kit's (one that has learned hers) is drawn here, or it would not show at all */
     if(t.type==='bellwire'){if(!bellKit())drawWard(g,t,tm,false); continue;}
-    if(t.kind==='ward'&&t.type==='effigy'&&!t.dark){g.strokeStyle='rgba(150,230,120,'+(.16+.06*Math.sin(tm*2))+')'; g.lineWidth=.03; g.setLineDash([.16,.12]); g.beginPath(); g.arc(t.x,t.y,wstat(t).range,tm*.1,tm*.1+TAU); g.stroke(); g.setLineDash([]);}
+    if(t.kind==='ward'&&t.type==='effigy'&&!t.dark&&pxb){g.fillStyle='rgba(150,230,120,'+(.16+.06*Math.sin(tm*2))+')'; const a=reduceMotion?0:tm*.1, R=wstat(t).range; pixArc(g,t.x,t.y,R,R,a,a+TAU,5,4,1);}
+    else if(t.kind==='ward'&&t.type==='effigy'&&!t.dark){g.strokeStyle='rgba(150,230,120,'+(.16+.06*Math.sin(tm*2))+')'; g.lineWidth=.03; g.setLineDash([.16,.12]); g.beginPath(); g.arc(t.x,t.y,wstat(t).range,tm*.1,tm*.1+TAU); g.stroke(); g.setLineDash([]);}
     items.push(rItem(t.y+.05,0,t));
   }
   items.push(rItem(F.ly+.05,1,null));
@@ -11189,7 +11390,8 @@ function render(){
   for(const it of items){
     if(it.k===0){const t=it.o; if(t.kind==='ward'){drawWard(g,t,tm,false); if(t.ph)drawPhantom(t,tm);
         /* a ward a seen Gibberer is slowing is ringed in pink */
-        for(const gb of F.gibs)if(seen.has(gb)&&dst(t.x,t.y,gb.x,gb.y)<=GIB_R){g.strokeStyle='rgba(224,140,124,'+(.7+.2*Math.sin(tm*6))+')'; g.lineWidth=.035; g.setLineDash([.07,.06]); g.beginPath(); g.ellipse(t.x,t.y+.1,.34,.2,0,-tm,-tm+TAU); g.stroke(); g.setLineDash([]); break;}}
+        for(const gb of F.gibs)if(seen.has(gb)&&dst(t.x,t.y,gb.x,gb.y)<=GIB_R&&pxb){g.fillStyle='rgba(224,140,124,'+(.7+.2*Math.sin(tm*6))+')'; const a=reduceMotion?0:-tm; pixArc(g,t.x,t.y+.1,.34,.2,a,a+TAU,2,2,1); break;}
+        else if(seen.has(gb)&&dst(t.x,t.y,gb.x,gb.y)<=GIB_R){g.strokeStyle='rgba(224,140,124,'+(.7+.2*Math.sin(tm*6))+')'; g.lineWidth=.035; g.setLineDash([.07,.06]); g.beginPath(); g.ellipse(t.x,t.y+.1,.34,.2,0,-tm,-tm+TAU); g.stroke(); g.setLineDash([]); break;}}
         else drawHorror(g,t,tm);}
     else if(it.k===1){drawLamp(g,F.lx,F.ly,tm,1,kit(),true);}
     else{
@@ -11205,13 +11407,17 @@ function render(){
       const lx=F.lx-e.x, ly=F.ly-e.y, ld=Math.hypot(lx,ly)||1;
       drawCreature(g,e.type,e.x,yy,drawR,tm,{ph:e.wob,face:e.face||1,rim,look:[lx/ld,ly/ld],flash:e.hitT*3});
       if(e.sack>0){const sr=Math.min(.32,.08+e.sack*.004); g.fillStyle='rgba(214,176,90,.85)'; g.beginPath(); g.ellipse(e.x-(e.face||1)*drawR*1.3,yy+drawR*.7,sr,sr*.8,0,0,TAU); g.fill(); g.fillStyle='rgba(255,236,170,.9)'; g.font='bold .22px sans-serif'; g.textAlign='center'; g.fillText(e.sack,e.x-(e.face||1)*drawR*1.3,yy+drawR*.7+.07);}
-      if(e.hex){g.strokeStyle='rgba(150,230,120,.6)'; g.lineWidth=.025; g.setLineDash([.06,.05]); g.beginPath(); g.ellipse(e.x,e.y+drawR*.55,drawR*.95,drawR*.4,0,tm*1.5,tm*1.5+TAU); g.stroke(); g.setLineDash([]);}
+      if(pxb)pixFoeMarks(e,yy,drawR,tm,0);
+      else if(e.hex){g.strokeStyle='rgba(150,230,120,.6)'; g.lineWidth=.025; g.setLineDash([.06,.05]); g.beginPath(); g.ellipse(e.x,e.y+drawR*.55,drawR*.95,drawR*.4,0,tm*1.5,tm*1.5+TAU); g.stroke(); g.setLineDash([]);}
       if(e.kindleT>0&&pxb)pixKindle(g,e.x,yy,drawR,tm);
       else if(e.kindleT>0){for(let k=0;k<3;k++){const f=(tm*2.6+k*.37)%1, fx=e.x+(k-1)*drawR*.45, fy=yy-drawR*(.3+f*.9);
         g.fillStyle='rgba('+(k===1?'255,214,140':'255,130,50')+','+(.85*(1-f))+')'; g.beginPath(); g.arc(fx,fy,drawR*.2*(1-f*.6),0,TAU); g.fill();}}
+      if(pxb)pixFoeMarks(e,yy,drawR,tm,1);
+      else{
       if(e.bleedT>0){g.fillStyle='#b81e1e'; for(let k=0;k<2;k++){g.beginPath(); g.arc(e.x-.08+k*.16,yy+e.def.r*.2+((tm*1.6+k*.5)%1)*.25,.025,0,TAU); g.fill();}}
       if(e.pinT>0){g.strokeStyle='rgba(200,190,170,.85)'; g.lineWidth=.03; g.beginPath(); g.moveTo(e.x-.2,e.y+e.def.r*.7); g.lineTo(e.x+.12,e.y-e.def.r*.2); g.stroke();}
       if(e.flenseT>0){g.strokeStyle='rgba(218,90,75,.7)'; g.lineWidth=.02; for(let k=0;k<3;k++){g.beginPath(); g.moveTo(e.x-.12+k*.1,yy-e.def.r*.3); g.lineTo(e.x-.06+k*.1,yy+e.def.r*.1); g.stroke();}}
+      }
       /* tangled in a whaling net */
       if(e.tangleT>0&&pxb&&pixTangle(g,e.x,yy,drawR,Math.min(.9,e.tangleT))){}
       else if(e.tangleT>0){const R=drawR, al=Math.min(.9,e.tangleT); g.save(); g.lineCap='round';
@@ -11221,6 +11427,8 @@ function render(){
           g.beginPath(); g.moveTo(e.x-R*.8,yy+R*.5); g.quadraticCurveTo(e.x,yy-R*.2,e.x+R*.8,yy+R*.45); g.stroke();}
         g.fillStyle='rgba(120,92,56,'+al+')'; for(const [kx,ky] of [[.35,.18],[-.4,-.15],[.05,-.32]]){g.beginPath(); g.arc(e.x+kx*R,yy+ky*R,.03,0,TAU); g.fill();}
         g.restore();}
+      if(pxb)pixFoeMarks(e,yy,drawR,tm,2);
+      else{
       if(F.named===e.type){g.strokeStyle='rgba(106,169,159,.8)'; g.lineWidth=.03; g.beginPath(); g.ellipse(e.x,e.y+e.def.r*.55,e.def.r+.12,(e.def.r+.12)*.45,0,0,TAU); g.stroke();}
       if(e.poisonT>0){g.fillStyle='#9BC23E'; for(let k=0;k<3;k++){g.beginPath(); g.arc(e.x-.15+k*.15,yy-e.def.r-.05-((tm*2+k*.3)%1)*.2,.03,0,TAU); g.fill();}}
       if(e.stunT>0){g.strokeStyle='rgba(236,232,222,.75)'; g.lineWidth=.025; g.setLineDash([.05,.05]); g.beginPath(); g.ellipse(e.x,yy-e.def.r-.08,e.def.r*.6,.08,tm*2,0,TAU); g.stroke(); g.setLineDash([]);}
@@ -11229,12 +11437,15 @@ function render(){
         g.fillStyle='rgba(0,0,0,.65)'; g.fillRect(bx-.01,by-.01,w+.02,.085);
         g.fillStyle=e.def.boss||e.def.elite?'#DA5A4B':'#E4DDCC'; g.fillRect(bx,by,w*clamp(e.hp/e.max,0,1),.065);
       }
+      }
     }
   }
-  if(selTower===F.lamp){g.strokeStyle='rgba(237,180,90,.7)'; g.lineWidth=.04; g.strokeRect(F.lampC+.05,F.lampR+.05,.9,.9);}
+  if(pxb&&selTower){g.fillStyle='rgba(237,180,90,.7)'; const sc=selTower===F.lamp; pixBox(g,(sc?F.lampC:selTower.c)+.0625,(sc?F.lampR:selTower.r)+.0625,.875,1);}
+  else if(selTower===F.lamp){g.strokeStyle='rgba(237,180,90,.7)'; g.lineWidth=.04; g.strokeRect(F.lampC+.05,F.lampR+.05,.9,.9);}
   else if(selTower){g.strokeStyle='rgba(237,180,90,.7)'; g.lineWidth=.04; g.strokeRect(selTower.c+.05,selTower.r+.05,.9,.9);}
 
   for(const sh of F.shots){
+    if(pxb){pixShot(sh); continue;}
     if(sh.k==='bolt'||sh.k==='pierce'){
       g.save(); g.translate(sh.x,sh.y); g.rotate(sh.ang||0);
       g.strokeStyle='rgba(230,220,200,.25)'; g.lineWidth=.03; g.beginPath(); g.moveTo(-.5,0); g.lineTo(-.15,0); g.stroke();
@@ -11259,6 +11470,7 @@ function render(){
   }
   for(const f of F.fx){
     const p=f.t/f.dur;
+    if(pxb&&pixFxLow(f,p))continue;
     if(f.k==='splash'){g.fillStyle='rgba(224,102,46,'+(.45*(1-p))+')'; g.beginPath(); g.arc(f.x,f.y,f.r*(.6+.4*p),0,TAU); g.fill();}
     else if(f.k==='bite'){g.strokeStyle='rgba(239,230,210,'+(1-p)+')'; g.lineWidth=.06; g.beginPath(); g.arc(f.x,f.y-.1+p*.1,.25,.2,Math.PI-.2); g.stroke(); g.beginPath(); g.arc(f.x,f.y+.1-p*.1,.25,Math.PI+.2,-.2); g.stroke();}
     else if(f.k==='beam'){g.strokeStyle='rgba(201,185,140,'+(.8*(1-p))+')'; g.lineWidth=.05; g.beginPath(); g.moveTo(f.x,f.y); g.lineTo(f.tx,f.ty); g.stroke();}
@@ -11296,7 +11508,7 @@ function render(){
     for(const m of MOTES){
       const x=((m.x*COLS+tm*.06*m.s+Math.sin(tm*.3+m.ph)*.4)%COLS+COLS)%COLS, y=((m.y*ROWS-tm*.04*m.s+Math.cos(tm*.25+m.ph)*.3)%ROWS+ROWS)%ROWS;
       const tw=.35+.65*Math.max(0,Math.sin(tm*1.3+m.ph));
-      g.fillStyle='rgba(255,214,150,'+(.5*tw*m.z)+')'; g.fillRect(x,y,.025*m.z,.025*m.z);
+      g.fillStyle='rgba(255,214,150,'+(.5*tw*m.z)+')'; if(pxb)g.fillRect(Math.floor(x/PXU)*PXU,Math.floor(y/PXU)*PXU,PXU,PXU); else g.fillRect(x,y,.025*m.z,.025*m.z);
     }
     g.globalCompositeOperation='source-over';
   }
@@ -11350,15 +11562,16 @@ function render(){
       if(litAt(ex,ey))continue;
       const ph=(tm/4.5+i*.37)%1, open=Math.max(0,Math.sin(ph*Math.PI))*.9;
       if(open<.05)continue;
+      if(pxb){for(const o of [-.09,.09]){g.fillStyle='rgba(255,90,40,'+(.18*open)+')'; pixEll(g,ex+o,ey,.12,.08*open); g.fillStyle='rgba(255,140,70,'+open+')'; pixEll(g,ex+o,ey,.035,Math.max(PXU/2,.03*open));} continue;}
       for(const o of [-.09,.09]){g.fillStyle='rgba(255,90,40,'+(.18*open)+')'; g.beginPath(); g.ellipse(ex+o,ey,.12,.08*open,0,0,TAU); g.fill(); g.fillStyle='rgba(255,140,70,'+open+')'; g.beginPath(); g.ellipse(ex+o,ey,.035,.03*open,0,0,TAU); g.fill();}
     }
   }
   g.setTransform(s,0,0,s,sx,sy);
 
   /* her water shows through the dark too, faintly, so you can plan around it */
-  if(F.water&&F.water.size)drawWater(tm,true);
+  if(F.water&&F.water.size){if(pxb)pixFlood(tm,true); else drawWater(tm,true);}
   /* the Wrong Sun's spots are light: they burn through the dark */
-  if((F.spots&&F.spots.size)||(F.hlights&&F.hlights.length))drawSpots(tm);
+  if((F.spots&&F.spots.size)||(F.hlights&&F.hlights.length)){if(pxb)pixSpots(tm); else drawSpots(tm);}
   /* the Occultist sees its dead: pale bones on the path, drawn over the dark so the candles can find them */
   if(corpseKit()&&F.bodies&&F.bodies.size&&!(pxb&&pixBodies(tm)))drawBodies(tm);
   /* the Galvanist's grid: rods, wires and their arcs, drawn over the dark because live current glows */
@@ -11374,7 +11587,7 @@ function render(){
   for(const e of fs){
     if(seen.has(e))continue;
     /* gone under: only its wake shows */
-    if(F.under&&inWater(e)){drawWake(e,tm); continue;}
+    if(F.under&&inWater(e)){if(pxb)pixWake(e,tm); else drawWake(e,tm); continue;}
     if(e.def.veiled){
       if(litAt(e.x,e.y))drawCreature(g,e.type,e.x,e.y,e.def.r*foeScale(e),tm,{ph:e.wob,face:e.face||1,alpha:.16+.08*Math.sin(tm*6+e.wob)});
       continue;
@@ -11386,9 +11599,12 @@ function render(){
   if(F.tolls.length){if(pxb)pixTolls(tm); else drawTolls(tm);}
   if(bellKit()){if(pxb){pixCracks(tm,seen); pixShells(tm); if(F.phase==='wave'&&lstat().peal)pixBeat(tm);} else{drawCracks(tm,seen); drawShells(tm); if(F.phase==='wave'&&lstat().peal)drawBeat(tm);}}
   /* wards reeling from the Bellfather's toll: a wobbling ring of bronze dashes */
-  for(const t of F.towers){if(!(t.dazeT>0))continue; g.save(); g.strokeStyle='rgba(226,170,110,'+Math.min(.9,t.dazeT)+')'; g.lineWidth=.035; g.setLineDash([.07,.09]); g.beginPath(); g.ellipse(t.x,t.y-.45,.26,.09,0,tm*5,tm*5+TAU); g.stroke(); g.restore();}
+  for(const t of F.towers){if(!(t.dazeT>0))continue;
+    if(pxb){g.fillStyle='rgba(226,170,110,'+Math.min(.9,t.dazeT)+')'; const a=reduceMotion?0:tm*5; pixArc(g,t.x,t.y-.45,.26,.09,a,a+TAU,2,3,1); continue;}
+    g.save(); g.strokeStyle='rgba(226,170,110,'+Math.min(.9,t.dazeT)+')'; g.lineWidth=.035; g.setLineDash([.07,.09]); g.beginPath(); g.ellipse(t.x,t.y-.45,.26,.09,0,tm*5,tm*5+TAU); g.stroke(); g.restore();}
   for(const t of F.towers){
     if(!t.dark)continue;
+    if(pxb){g.fillStyle='rgba(139,146,148,.6)'; pixArc(g,t.x,t.y,.38,.38,0,TAU,3,3,1); pixSeg(g,t.x-.12,t.y-.12,t.x+.12,t.y+.12,1,0,1); continue;}
     g.strokeStyle='rgba(139,146,148,.6)'; g.lineWidth=.035; g.setLineDash([.08,.08]);
     g.beginPath(); g.arc(t.x,t.y,.38,0,TAU); g.stroke(); g.setLineDash([]);
     g.beginPath(); g.moveTo(t.x-.12,t.y-.12); g.lineTo(t.x+.12,t.y+.12); g.stroke();
@@ -11435,7 +11651,8 @@ function render(){
   }
   /* the Hallowed Ground: chalk round each patch and a cross scratched on each free tile, drawn over the dark so you can
      see where you may build before any light reaches it */
-  if(F.hallowG){const H=F.hallowG, pul=reduceMotion?.5:.5+.5*Math.sin(tm*1.5);
+  if(F.hallowG&&pxb)pixHallow(tm);
+  else if(F.hallowG){const H=F.hallowG, pul=reduceMotion?.5:.5+.5*Math.sin(tm*1.5);
     g.fillStyle='rgba(232,220,190,'+(.05+.03*pul)+')';
     for(const p of H.tiles)g.fillRect(p[0],p[1],1,1);
     g.strokeStyle='rgba(232,220,190,'+(.34+.16*pul)+')'; g.lineWidth=.035; g.setLineDash([.14,.09]); g.beginPath();
@@ -11452,6 +11669,7 @@ function render(){
      g.fillStyle='rgba(218,90,75,.95)'; g.font='bold .38px Georgia,serif'; g.textAlign='center'; g.fillText(R.boss?'!!':'!',x,y-.72*s);}
   for(const so of F.souls){
     if(so.cage||so.core){if(pxb)pixCage(so,tm); else drawCage(so,tm); continue;}
+    if(pxb){pixSoul(so,tm); continue;}
     const a=so.t<1.5?(.4+.6*Math.abs(Math.sin(tm*10))):1;
     g.save(); g.translate(so.x,so.y); g.rotate(tm*2); if(so.big)g.scale(1.5,1.5);
     g.strokeStyle='rgba(169,124,226,'+a+')'; g.lineWidth=.05;
@@ -11480,10 +11698,12 @@ function render(){
   }
   if(sel&&!mode){
     g.strokeStyle='rgba(237,180,90,.32)'; g.lineWidth=.03;
-    for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){if(!placeProblem(sel,c,r))g.strokeRect(c+.08,r+.08,.84,.84);}
+    if(pxb){g.fillStyle='rgba(237,180,90,.32)'; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){if(!placeProblem(sel,c,r))pixBox(g,c+.09375,r+.09375,.8125,1);}}
+    else for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){if(!placeProblem(sel,c,r))g.strokeRect(c+.08,r+.08,.84,.84);}
   }
   for(const f of F.fx){
     const p=f.t/f.dur;
+    if(pxb&&pixFxHigh(f,p))continue;
     if(f.k==='ring'){g.strokeStyle='rgba('+f.col+','+(.75*(1-p))+')'; g.lineWidth=.05; g.beginPath(); g.arc(f.x,f.y,f.r0+(f.r1-f.r0)*p,0,TAU); g.stroke();}
     else if(f.k==='arc'&&pxb)pixArcFx(f,p);
     else if(f.k==='arc'){
