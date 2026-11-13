@@ -227,6 +227,65 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       return o;},[wardProbe.toString()]);
     ok(Object.values(rm).every(n=>n===1),'under Reduce Motion each step 4 ward holds one frame',rm);
     await p2.close();}
+
+  /* what patrons and effects lay on the floor (pixel stair step 5): on a pixel Cistern the Drowned Mother's water is a layer of art
+     pixels built once (and again only when her water moves), banded from the paint's four strokes, its Phosphor glow and its sheet over
+     the dark; the Wrong Sun's spots and burning pitch are banded glows; each of the rest (rings, marks on creatures, shots, effects,
+     souls, the Hallowed Ground's chalk, the madness's eyes) changes the frame; all of it through a wave with no hitch; another floor and
+     the painted board build none of it; under Reduce Motion the spots hold one size */
+  const s5=await p.evaluate(()=>{const T=__t, o={}; T.setMapV(0);
+    const at=(art,floor)=>{T.boardArtSet(art); T.newRun('lamplighter',0,{seed:9}); T.run.floor=floor; T.run.trial='hallowed'; T.run.hallow=null; T.beginFloor(null); T.setP(true); T.F.phase='build';
+      const F=T.F; T.floodSeed(); T.run.spots={floor:T.run.floor,tiles:[[0,5],[0,9]]}; T.spotSync(); F.glowT=F.glowT||{}; F.glowT[0]=2; F.shake=0;
+      for(const k of ['tallow','wax'])if(!T.run.relics.includes(k))T.run.relics.push(k);};
+    const hash=()=>{const cv=document.getElementById('board'), d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data; let h=0; for(let i=0;i<d.length;i+=16)h=(h*31+d[i]+d[i+1]*3+d[i+2]*7)>>>0; return h;};
+    at('pixel',0); const F=T.F; o.on=T.pixOn(); o.water=F.waterLines.length; o.spots=F.spotPts.length/2; o.hallow=!!F.hallowG;
+    F.time=3.3; T.render(); const WP=T.WATER_PX, body=WP.body; o.built=WP.lines===F.waterLines&&!!body&&body.width===T.COLS*32;
+    /* the body: dark water where her channel runs, nothing on dry stone far from it */
+    const W0=F.waterLines[0], bd=body.getContext('2d'), px=(x,y)=>bd.getImageData(Math.floor(x*32),Math.floor(y*32),1,1).data;
+    const mid=px(W0.c[4],W0.c[5]); o.mid=[...mid]; o.dry=px(.2,.2)[3];
+    o.glow=WP.glow.size>0; T.render(); o.cached=WP.body===body&&WP.lines===F.waterLines;
+    /* a glow is banded: a handful of alphas, not a smooth ramp */
+    const sp=T.glowPx('spot',20,1,[0,246,236,255,.95, .28,196,150,255,.72, .6,132,78,220,.3, 1,90,40,170,0],5), sd=sp.getContext('2d').getImageData(0,0,sp.width,sp.height).data, al=new Set();
+    for(let i=3;i<sd.length;i+=4)if(sd[i])al.add(sd[i]); o.bands=al.size; o.spotKeys=(T.GLOW_PX.get('spot')||new Map()).size;
+    /* each mark changes the frame */
+    const base=hash(), ch={};
+    const tryIt=(n,add,undo)=>{add(); T.render(); ch[n]=hash()!==base; undo(); T.render();};
+    const e=T.spawnFoe('crawler',0,F.paths[0].len*.6); e.hp=e.max=1e6; e.x=F.lx+1.1; e.y=F.ly+.2; T.render(); const b0=hash();
+    const mark=(n,k,v)=>{e[k]=v; T.render(); ch[n]=hash()!==b0; e[k]=0; T.render();};
+    mark('hex','hex',1); mark('bleed','bleedT',3); mark('pin','pinT',3); mark('flense','flenseT',3); mark('poison','poisonT',3); mark('stun','stunT',3); e.hp=e.max/2; T.render(); ch.hp=hash()!==b0; e.hp=e.max; e.dead=true; F.foes.length=0; T.render();
+    const nb=hash(), tryN=(n,add,undo)=>{add(); T.render(); ch[n]=hash()!==nb; undo(); T.render();};
+    tryN('pool',()=>F.pools.push({x:F.lx-1,y:F.ly+1,r:.6,t:3,max:4}),()=>F.pools.length=0);
+    for(const sh of [{k:'bolt',x:F.lx+1,y:F.ly-.8,ang:-.5},{k:'lance',sx:F.lx,sy:F.ly,x:F.lx-1,y:F.ly-1.2,ang:-2.2},{k:'spit',x:F.lx+.6,y:F.ly+1},{k:'tar',sx:F.lx,sy:F.ly,tx:F.lx+2,ty:F.ly+2,t:.5,dur:1}])tryN('shot:'+sh.k,()=>F.shots.push(sh),()=>F.shots.length=0);
+    for(const f of [{k:'splash',x:F.lx+1,y:F.ly,r:.5},{k:'bite',x:F.lx-1,y:F.ly},{k:'beam',x:F.lx,y:F.ly,tx:F.lx+2,ty:F.ly-1},{k:'snuff',x:F.lx+1,y:F.ly},{k:'shatter',x:F.lx,y:F.ly+1,r:.3,seed:2},{k:'burst',x:F.lx+1,y:F.ly-1,r:.3,col:'#B8433A'},
+      {k:'ring',x:F.lx,y:F.ly+1.5,r0:.2,r1:1,col:'214,228,236'},{k:'kbeam',x:F.lx-2,y:F.ly-1,tx:F.lx+1,ty:F.ly-1.5},{k:'tongue',x:F.lx+2,y:F.ly,tx:F.lx+.8,ty:F.ly+.2},{k:'hexlink',x:F.lx,y:F.ly,tx:F.lx+2,ty:F.ly+1},{k:'pillar',x:F.lx-1.5,y:F.ly+.5}])
+      tryN('fx:'+f.k,()=>F.fx.push(Object.assign({t:.25,dur:1},f)),()=>F.fx.length=0);
+    tryN('soul',()=>F.souls.push({x:F.lx-1.5,y:F.ly-1,type:'crawler',t:3,max:5.5}),()=>F.souls.length=0);
+    const hg=F.hallowG; F.hallowG=null; T.render(); ch.chalk=hash()!==nb; F.hallowG=hg; T.render();
+    o.unchanged=Object.keys(ch).filter(k=>!ch[k]);
+    /* through a wave with all of it at once: under the water, husks and gibberers' rings, wards cut off, a soul, every shot and effect */
+    T.setP(false); F.phase='wave'; F.queue=[{t:1e9,type:'crawler',gate:0}]; F.under=true; let errs=0;
+    const L=F.paths[0]; ['crawler','gnasher','skitter','watcher'].forEach((k,i)=>{const f=T.spawnFoe(k,0,L.len*(.2+.15*i)); f.hp=f.max=1e6; f.hex=1; f.bleedT=f.pinT=f.flenseT=f.poisonT=f.stunT=9;}); F.named='gnasher';
+    F.hlights=[{x:F.lx+2,y:F.ly-2,t:3}];
+    for(let i=0;i<40;i++){if(i%10===1){F.pools.push({x:F.lx-1,y:F.ly+1,r:.6,t:3,max:4}); F.shots.push({k:'bolt',x:F.lx+1,y:F.ly-.8,ang:-.5,tx:F.lx+3,ty:F.ly}); F.fx.push({k:'ring',x:F.lx,y:F.ly,r0:.2,r1:1,col:'214,228,236',t:0,dur:.5},{k:'shatter',x:F.lx,y:F.ly+1,r:.3,seed:2,t:0,dur:.5});}
+      try{T.update(1/30); T.render();}catch(err){errs++; o.err=String(err);}}
+    o.errs=errs; o.cachedWave=T.WATER_PX.body===body;
+    /* another floor, and the painted board, build no water of their own */
+    at('pixel',1); T.render(); o.oss=T.pixOn(); o.ossNone=T.WATER_PX.lines!==T.F.waterLines;
+    at('painted',0); T.render(); o.offNone=T.WATER_PX.lines!==T.F.waterLines;
+    return o;});
+  ok(s5.on&&s5.water>0&&s5.spots>0&&s5.hallow,'a pixel Cistern with her water, the Wrong Sun\'s spots and the Hallowed Ground',s5);
+  ok(s5.built&&s5.cached&&s5.cachedWave,'her water is a layer of art pixels, built once and kept through a wave',s5);
+  ok(s5.mid[3]>150&&s5.mid[2]>s5.mid[0]&&!s5.dry,'the layer is dark water along her channel, and nothing on dry stone',s5);
+  ok(s5.glow,'a lit stretch builds its Phosphor glow',s5.glow);
+  ok(s5.bands<=7&&s5.bands>=3&&s5.spotKeys>=1,'a glow is laid in bands of art pixels, not a smooth ramp',s5);
+  ok(!s5.unchanged.length,'each mark, shot and effect draws on a pixel floor',s5.unchanged);
+  ok(!s5.errs,'all of it at once through a wave, with no hitch',s5);
+  ok(!s5.oss&&s5.ossNone&&s5.offNone,'another floor and the painted board build no pixel water',s5);
+  {const p2=await b.newPage({viewport:{width:412,height:860},reducedMotion:'reduce'}); await p2.goto('file://'+process.argv[2]); await p2.waitForTimeout(600);
+    const rm=await p2.evaluate(()=>{const T=__t; T.boardArtSet('pixel'); T.newRun('lamplighter',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true);
+      T.run.spots={floor:0,tiles:[[0,5]]}; T.spotSync(); T.GLOW_PX.clear(); for(let i=0;i<12;i++){T.F.time=i*.37; T.render();} return (T.GLOW_PX.get('spot')||new Map()).size;});
+    ok(rm===1,'under Reduce Motion a spot holds one size',rm);
+    await p2.close();}
   for(const f of fails)console.log('FAIL '+f);
   if(fails.length)process.exitCode=1; else console.log('pixelboard: all ok');
   await b.close();
