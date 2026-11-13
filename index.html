@@ -3647,7 +3647,7 @@ function supported(t,C){
 function lightsNow(){
   const C=connectedLights(null);
   const L=[{x:F.lx,y:F.ly,r:lampRadius(),reveal:lstat().sun,lamp:true}];
-  for(const t of C.conn)L.push({x:t.x,y:t.y,r:towerLightR(t),reveal:true,gaze:t.type==='watcher'});
+  for(const t of C.conn)L.push({x:t.x,y:t.y,r:towerLightR(t),reveal:true,gaze:t.type==='watcher',alien:t.type==='candle'&&hasOff('aliencandle')});
   /* passing lights: they show what is there, but you can't build in them and they never steer the crowd at a fork */
   for(const e of F.foes)if(e.kindleT>0&&!e.dead)L.push({x:e.x,y:e.y,r:KINDLE_R,reveal:true,temp:true,kindle:true});
   /* the Last Keeper's own lamp: you can see it coming, and what walks with it */
@@ -11539,8 +11539,8 @@ function render(){
   for(const L of F.L){
     const px=L.x*s+sx, py=L.y*s+sy, R=L.r*s*(L.lamp?1:.75);
     const gr=g.createRadialGradient(px,py,0,px,py,R);
-    gr.addColorStop(0,L.gaze?'rgba(169,124,226,.12)':L.kindle?'rgba(255,120,40,.24)':L.glint?'rgba(255,226,170,.2)':'rgba(255,170,80,'+(L.lamp?.2:.11)+')');
-    gr.addColorStop(.5,L.gaze?'rgba(169,124,226,.04)':L.kindle?'rgba(230,90,30,.08)':'rgba(237,140,60,'+(L.lamp?.07:.04)+')');
+    gr.addColorStop(0,L.gaze?'rgba(169,124,226,.12)':L.alien?'rgba(190,150,255,.3)':L.kindle?'rgba(255,120,40,.24)':L.glint?'rgba(255,226,170,.2)':'rgba(255,170,80,'+(L.lamp?.2:.11)+')');
+    gr.addColorStop(.5,L.gaze?'rgba(169,124,226,.04)':L.alien?'rgba(132,90,226,.11)':L.kindle?'rgba(230,90,30,.08)':'rgba(237,140,60,'+(L.lamp?.07:.04)+')');
     gr.addColorStop(1,'rgba(0,0,0,0)');
     g.fillStyle=gr; g.beginPath(); g.arc(px,py,R,0,TAU); g.fill();
   }
