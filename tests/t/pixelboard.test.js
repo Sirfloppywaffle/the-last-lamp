@@ -82,7 +82,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.sprung=__wardImg('trap',{cd:2},1)!==o.px.trap; o.snap=__wardImg('trap',{cd:2,snap:.3},1)!==__wardImg('trap',{cd:2},1);
     o.turn=__wardImg('harpoon',{ang:1.2},1)!==o.px.harpoon&&__wardImg('lance',{ang:1.2},1)!==o.px.lance; o.kick=__wardImg('lance',{recoil:.3},1)!==o.px.lance;
     o.fade=__wardImg('salt',{dur:.3},1)!==o.px.salt; o.ring=__wardImg('chime',{ring:.3},1)!==o.px.chime;
-    o.candles=['occultist','galvanist','bellringer'].every(k=>__wardImg('candle',{kit:k},1)===o.ptCandle[k]); o.lampHarp=__wardImg('harpoon',{kit:'lamplighter'},1)!==o.ptHarpLamp;
+    o.candles=__wardImg('candle',{kit:'bellringer'},1)===o.ptCandle.bellringer&&['occultist','galvanist'].every(k=>__wardImg('candle',{kit:k},1)!==o.ptCandle[k]); o.lampHarp=__wardImg('harpoon',{kit:'lamplighter'},1)!==o.ptHarpLamp;
     /* all nine on the board through a stretch of a wave, near the lamp, salt and trap on the channel */
     for(const type of W10){const it={kind:'ward',type}; let best=null,bd=1e9;
       for(let r=0;r<T.ROWS;r++)for(let c=0;c<T.COLS;c++){if(T.placeProblem(it,c,r)||T.F.towers.some(t=>t.c===c&&t.r===r))continue; const d=Math.hypot(c+.5-T.F.lx,r+.5-T.F.ly); if(d>1.2&&d<bd){bd=d; best=[c,r];}}
@@ -103,7 +103,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(wards.sprung&&wards.snap,'the trap shows sprung, and snaps',wards);
   ok(wards.turn&&wards.kick,'the harpoon and the whaling gun turn to aim; the gun kicks back',wards);
   ok(wards.fade&&wards.ring,'salt fades as it dissolves; the chime rings',wards);
-  ok(wards.candles&&wards.lampHarp,'the Occultist\'s, Galvanist\'s and Bellringer\'s candles stay painted (step 4); every harpoon is the pixel ballista',wards);
+  ok(wards.candles&&wards.lampHarp,'the Corpse Candle and the Arc Lamp are pixel (step 4); a plain candle, which no kit builds, stays painted; every harpoon is the pixel ballista',wards);
   ok(!wards.oss&&wards.ossSame,'another floor draws the painted wards',wards);
   ok(wards.placed===9,'all nine stand on a pixel Cistern through a wave',wards.placed);
   ok(wards.offSame,'with the painted board chosen, the wards are painted',wards.offSame);
@@ -152,7 +152,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     return o;},[wardProbe.toString()]);
   ok(kitw.ready,'the kit wards and marks load',kitw);
   ok(!kitw.fromSheet.length,'on a pixel Cistern the Signal Candle, Blubber Lamp, Signal Mirror, Try-pot and every kit harpoon draw from their sheets, not the paint',kitw.fromSheet);
-  ok(kitw.harps===3,'the Lamplighter\'s and the Whaler\'s harpoons carry their own bolt head and foot; the other kits keep theirs',kitw.harps);
+  ok(kitw.harps===3,'the Lamplighter\'s, the Whaler\'s and the Occultist\'s harpoons each carry their own bolt head and foot',kitw.harps);
   ok(Object.values(kitw.dark).every(Boolean)&&kitw.darkStill.every(n=>n===1),'cut off from the light, each goes dark and holds still',kitw);
   ok(kitw.anim.every(n=>n>1),'the two kit candles flicker and the Try-pot\'s fire licks',kitw.anim);
   ok(kitw.burner,'the Burner turns the Signal Candle\'s flame red',kitw.burner);
@@ -160,6 +160,73 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(kitw.oil===5,'the Try-pot shows its oil by the measure',kitw.oil);
   ok(kitw.net[0]&&kitw.net[1]>200&&kitw.tangle[0]&&kitw.tangle[1]>50&&kitw.rope[1]>30&&kitw.kindle[1]>4,'the net, the tangle, the line and Kindle\'s flames draw in art pixels',kitw);
   ok(!kitw.errs&&kitw.beam&&kitw.beamCached,'beam, threads, line, net, tangle and flames on the board through a wave; the beam is built once and reused',kitw);
+
+  /* the Occultist's, the Galvanist's and the Bellringer's own wards and marks (pixel stair step 4): the Corpse Candle and the Arc Lamp
+     (grey while it flickers out), the Pylon, the Risen, the Grasping Dead, the Tuning Fork, the Tocsin, the Bell Wire and each kit's
+     harpoon from their sheets, unlike the paint; dark when cut off and still; what each does when it acts; and on the board the bones,
+     the grid (rods, the Anchor and its cage, wires, arcs, Overload, Static, a pylon frying), a caught specimen's cage, the path she
+     hears, the hums, tolls, cracks, shells and the beat in art pixels, through a wave for each kit with no hitch */
+  const k4=await p.evaluate(([probe])=>{eval('('+probe+')')(); const T=__t, o={}; T.setMapV(0);
+    const at=(art,kit)=>{T.boardArtSet(art); T.newRun(kit,0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true); T.F.phase='build';};
+    const cases={corpse:['candle',{kit:'occultist'}],arc:['candle',{kit:'galvanist'}],pylon:['pylon',{}],risen:['risen',{}],grasp:['grasp',{grips:6}],
+      fork:['fork',{}],tocsin:['tocsin',{ammo:1}],wire:['bellwire',{wireAng:0}],hOcc:['harpoon',{kit:'occultist'}],hGal:['harpoon',{kit:'galvanist'}],hBell:['harpoon',{kit:'bellringer'}]};
+    at('painted','galvanist'); const pt={}; for(const k in cases)pt[k]=__wardImg(cases[k][0],cases[k][1],1);
+    at('pixel','galvanist'); o.ready=['candle:occultist','candle:galvanist','pylon','risen','grasp','fork','tocsin','tocsin:bell','galv:rod','galv:anchor','occ:bones'].filter(k=>!T.WARD_PX[k].ready);
+    const px={}; for(const k in cases)px[k]=__wardImg(cases[k][0],cases[k][1],1);
+    o.fromPaint=Object.keys(cases).filter(k=>px[k]===pt[k]);
+    o.harps=new Set(['lamplighter','whaler','occultist','galvanist','bellringer'].map(k=>__wardImg('harpoon',{kit:k},1))).size;
+    const D=(k,extra,tm)=>__wardImg(cases[k][0],Object.assign({},cases[k][1],extra),tm===undefined?1:tm);
+    o.dark=['corpse','arc','pylon','fork'].filter(k=>D(k,{dark:true})===px[k]);
+    o.darkStill=['corpse','arc','pylon','fork'].filter(k=>new Set([.1,.3,.5,.7].map(tm=>D(k,{dark:true},tm))).size!==1);
+    o.anim=['corpse','arc','risen','grasp','pylon'].filter(k=>new Set([.1,.3,.5,.7,.9,1.3,1.7].map(tm=>D(k,{},tm))).size<2);
+    /* the Arc Lamp in a wave: at a moment it flickers out its bulb is grey, at another it burns */
+    T.F.phase='wave'; const arcT={kind:'ward',type:'candle',kit:'galvanist',id:77,br:{}}; let off=null, on=null;
+    for(let i=0;i<400&&(off===null||on===null);i++){T.F.time=i*.05; if(T.arcOff(arcT)){if(off===null)off=D('arc',{id:77});} else if(on===null)on=D('arc',{id:77});}
+    o.arcFlicker=off!==null&&on!==null&&off===D('arc',{dark:true})&&on!==off; T.F.phase='build';
+    o.acts={fork:D('fork',{ring:.3})!==px.fork, tocsinTurn:D('tocsin',{ang:0})!==px.tocsin, tocsinKick:D('tocsin',{recoil:.4})!==px.tocsin, reload:D('tocsin',{ammo:0,cd:1})!==px.tocsin,
+      clench:D('grasp',{snap:.3})!==px.grasp, grips:D('grasp',{grips:2})!==px.grasp, lunge:D('risen',{snap:.3,ang:0})!==px.risen,
+      wireRing:D('wire',{ring:.4})!==px.wire, wireCut:D('wire',{cut:true})!==px.wire, clapper:D('hBell',{recoil:.3},1.01)!==px.hBell};
+    /* the marks on a probe canvas */
+    const cv=document.createElement('canvas'); cv.width=cv.height=160; const c=cv.getContext('2d');
+    const ink=fn=>{c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,160,160); c.setTransform(40,0,0,40,80,80); c.fillStyle='#fff'; fn(); c.setTransform(1,0,0,1,0,0); const d=c.getImageData(0,0,160,160).data; let n=0; for(let i=3;i<d.length;i+=4)if(d[i])n++; return n;};
+    o.ink={seg:ink(()=>T.pixSeg(c,-1,-1,1,1,1,0,3)),arc:ink(()=>T.pixArc(c,0,0,1,.6,0,6.3,2,2,1)),quad:ink(()=>T.pixQuad(c,-1,0,0,1,1,0,1)),disc:ink(()=>T.pixDisc(c,0,0,.5)),bolt:ink(()=>T.pixBolt(c,-1,0,1,0,3,.2,1))};
+    /* each kit on the board through a wave, every mark it lays */
+    o.errs=[]; o.drawn={};
+    for(const kit of ['occultist','galvanist','bellringer']){at('pixel',kit); const F=T.F, L=F.paths[0]; T.setP(false); F.phase='wave'; F.queue=[{t:1e9,type:'crawler',gate:0}];
+      const free=[]; for(let r=0;r<T.ROWS;r++)for(let cc=0;cc<T.COLS;cc++){const d=Math.hypot(cc+.5-F.lx,r+.5-F.ly); if(d>1&&d<3.5&&!F.pathTiles.has(cc+','+r))free.push([d,cc,r]);} free.sort((a,b)=>a[0]-b[0]);
+      let id=500; const put=(type,x)=>{const q=free.shift(); F.towers.push(Object.assign({kind:'ward',type,id:++id,c:q[1],r:q[2],x:q[1]+.5,y:q[2]+.5,br:{},tgt:'first',invested:0,fresh:0,cd:0,ang:-.7,ring:0,echo:0},x||{}));};
+      const e=T.spawnFoe('crawler',0,L.len*.5); e.hp=e.max=1e6;
+      if(kit==='occultist'){put('candle'); put('risen'); put('harpoon');
+        const P=[...F.pathTiles].slice(0,3); P.forEach((k,i)=>{const [cx,cy]=k.split(',').map(Number); F.bodies.set(k,{x:cx+.5,y:cy+.5,n:i+1,ref:[0,0],typed:i?null:'gnasher'});});
+        const [gx,gy]=[...F.pathTiles][5].split(',').map(Number); F.towers.push({kind:'ward',type:'grasp',id:++id,c:gx,r:gy,x:gx+.5,y:gy+.5,br:{},grips:6,cd:0,ang:0,ring:0,echo:0});}
+      if(kit==='galvanist'){put('candle'); put('pylon'); put('pylon'); put('pylon'); put('harpoon'); F.rods.push({id:-1,x:F.lx+1,y:F.ly+1,t:3,max:3});}
+      if(kit==='bellringer'){put('fork'); put('fork'); put('tocsin',{ammo:1}); put('harpoon'); const [wx,wy]=[...F.pathTiles][4].split(',').map(Number); F.towers.push({kind:'ward',type:'bellwire',id:++id,c:wx,r:wy,x:wx+.5,y:wy+.5,br:{},cd:0,ang:0,ring:0,echo:0});
+        e.cracks=2; F.shots.push({k:'tocsin',sx:F.lx+1,sy:F.ly,tx:F.lx-2,ty:F.ly+1,t:.2,dur:2,r:.8});}
+      for(let i=0;i<45;i++){
+        if(kit==='galvanist'&&i===5){F.anchor={x:F.lx-1,y:F.ly+1,t:6,max:8}; F.souls.push({x:F.lx+1.5,y:F.ly-1,type:'crawler',t:5,max:6,cage:true});
+          F.fx.push({k:'arc',pts:[[F.lx,F.ly],[F.lx+1,F.ly+1],[F.lx+2,F.ly]],t:0,dur:.5,seed:3,big:true},{k:'surge',segs:[[F.lx,F.ly,F.lx+2,F.ly+1]],t:0,dur:.7,seed:4},{k:'static',x:F.lx,y:F.ly,r:2,t:0,dur:.6,seed:5},{k:'fry',x:F.lx+1,y:F.ly,t:0,dur:1.1});}
+        if(kit==='bellringer'&&i%15===2)F.tolls.push({id:i,x:F.lx,y:F.ly,r:0,max:7,spd:3,hear:1,veil:true,stun:0,relay:false,big:i>20,gold:i>30,echo:false,cracks:0,hit:new Set()});
+        try{T.update(1/30); if(kit==='bellringer')e.cracks=2; T.render();}catch(err){o.errs.push(kit+': '+String(err));}}
+      if(kit==='occultist')o.drawn.bones=T.pixBodies(T.F.time);
+      if(kit==='galvanist'){F.anchor={x:F.lx-1,y:F.ly+1,t:6,max:8}; o.drawn.grid=T.pixGrid(T.F.time)&&!!T.F.grid;}
+      T.setP(true);}
+    return o;},[wardProbe.toString()]);
+  ok(!k4.ready.length,'the step 4 sheets load',k4.ready);
+  ok(!k4.fromPaint.length,'on a pixel Cistern the Corpse Candle, Arc Lamp, Pylon, Risen, Grasping Dead, Tuning Fork, Tocsin, Bell Wire and the three kits\' harpoons draw from their sheets, not the paint',k4.fromPaint);
+  ok(k4.harps===5,'each of the five kits\' harpoons carries its own bolt head and foot',k4.harps);
+  ok(!k4.dark.length&&!k4.darkStill.length,'cut off, the Corpse Candle snuffs, the Arc Lamp and Pylon go cold, the fork goes dull, and each holds still',k4);
+  ok(!k4.anim.length,'the Corpse Candle, the Arc Lamp, the Risen, the Grasping Dead and the Pylon move',k4.anim);
+  ok(k4.arcFlicker,'in a wave the Arc Lamp\'s bulb goes grey while it flickers out',k4.arcFlicker);
+  ok(Object.values(k4.acts).every(Boolean),'the fork rings, the Tocsin turns, kicks and reloads, the arms close and thin out, the Risen lunges, the Bell Wire rings and hangs cut, the Clapper\'s bell swings',k4.acts);
+  ok(Object.values(k4.ink).every(n=>n>10),'lines, arcs, curves, discs and bolts draw in art pixels',k4.ink);
+  ok(!k4.errs.length&&k4.drawn.bones&&k4.drawn.grid,'each kit\'s marks on the board through a wave: bones, grid, cage, Anchor, arcs, surge, static, fry, the path she hears, hums, tolls, cracks, shells',k4);
+  {const p2=await b.newPage({viewport:{width:412,height:860},reducedMotion:'reduce'}); await p2.goto('file://'+process.argv[2]); await p2.waitForTimeout(600);
+    const rm=await p2.evaluate(([probe])=>{eval('('+probe+')')(); const T=__t, o={}; T.boardArtSet('pixel'); T.newRun('galvanist',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true);
+      for(const [n,w,x] of [['corpse','candle',{kit:'occultist'}],['arc','candle',{kit:'galvanist'}],['pylon','pylon',{}],['risen','risen',{}],['grasp','grasp',{grips:6}],['fork','fork',{ring:.3}],['wire','bellwire',{wireAng:0,ring:.4}]])
+        o[n]=new Set([.1,.3,.5,.7,.9,1.3].map(tm=>__wardImg(w,x,tm))).size;
+      return o;},[wardProbe.toString()]);
+    ok(Object.values(rm).every(n=>n===1),'under Reduce Motion each step 4 ward holds one frame',rm);
+    await p2.close();}
   for(const f of fails)console.log('FAIL '+f);
   if(fails.length)process.exitCode=1; else console.log('pixelboard: all ok');
   await b.close();

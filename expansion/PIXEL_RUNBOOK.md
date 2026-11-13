@@ -17,8 +17,8 @@
 | 1 | The five kit lamps | #172 | done |
 | 2 | The base wards (nine: no kit builds the plain candle) | #173 | done |
 | 3 | Kit wards and kit marks on the board (Lamplighter, Whaler) | #174 | done |
-| 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | | next |
-| 5 | What patrons lay on the floor, and the board's small effects | | |
+| 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | #177 | done |
+| 5 | What patrons lay on the floor, and the board's small effects | | next |
 | 6 | The rest of the creatures, and the horrors | | |
 | 7 | The Ossuary (floor 2) | | |
 | 8 | The Drowned Nave (floor 3) | | |
@@ -114,6 +114,8 @@ Each kit builds its own versions of some wards and lays its own marks on the boa
 Many of these are drawn over the dark in `render()` on purpose (wires glow, bones show for the candles). Keep that order.
 
 **Done (step 3):** the Signal Candle and Blubber Lamp (`WARD_PX['candle:<kit>']`, 56 px frames), the Signal Mirror, the Try-pot, each of the two kits' harpoon head and foot (`WARD_PX.harpoon.kits`), and on the board the mirror's beam, the threads and Fire Threads, the Tether line and the haul's line, the net, the tangle and Kindle's flames; see the code map row `the pixel board (pilot)`. What it found: the kit candles are taller than a 48 px frame, so a ward row may carry `fh`; the Blubber and Try-pot animations redrew their fat and oil and threw fire into the pot's mouth, so only the flame and fire rows were taken (§3, stable bodies); the net came back a solid disc from text alone and held its mesh only from the painted net's own geometry (strength 350). The mirror's glass is cut from its stand so it can turn. Flare bolts' strikes and Starshell are lights (gradients in the dark) and stay so. For step 4: the Corpse Candle and Arc Lamp have no `WARD_PX` row yet and fall back to paint by kit; the other three kits' harpoons still call `harpoonHead`/`harpoonFoot`.
+
+**Done (step 4):** the Corpse Candle, the Arc Lamp, the Pylon, the Risen, the Grasping Dead, the Tuning Fork, the Tocsin and the Bell Wire, each of the three kits' harpoon head and foot, and on the board the bones, the grid (planted rods, the Grounding Anchor's spike and cage, wires live, recharging and snapped), a caught specimen's cage, the coil's and the wires' arcs, Overload, the Static Burst, a pylon frying, the path she hears, the hums, footsteps, tolls, cracks, shells and the beat; see the code map row `the pixel board (pilot)`. What it found: wide lines of art pixels laid as overlapping squares add up under `lighter` (the toll's ring came out twice as bright), so `pixSeg` and `pixArc` lay each pixel once; and a frame of thousands of `fillRect`s costs (five toll rings at once, three Overloads), so runs on one row are one rect and the toll's soft wake stays a stroke. The Pylon's animation moved its glow into the mast and the arm's lost its fingers after three frames: the jar pulses in code, the fingers are pixelled on, and the Grasping Dead is one arm drawn once for every grip and a half left, as the paint draws it. The fork came back without its plinth; it stands on the Arc Lamp's. The Arc Lamp now shows its bulb grey while it flickers out in a wave (`arcOff`), which the paint never did. Echoes and ghosts of what she hears already come from each creature's sheet (`artSprite`). Unbind's charge and Borrowed Flesh's phantom are creatures (step 6).
 
 **Prompt (step 3; change the names for step 4):**
 > Read `expansion/PIXEL_RUNBOOK.md` and `AGENTS.md`. Do step 3: the Lamplighter's and the Whaler's own wards and marks in pixel art, one PR off `main`. Find every one from `WARDS` (`kit:`), `wdef()` and `render()` before making art, and list them in the PR.
