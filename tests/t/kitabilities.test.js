@@ -77,6 +77,51 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.probe&&r.probeBefore===false&&r.probeAfter===true,'the beam lights ground past the lamp, to build on',r);
   ok(r.cut===1,'a ward standing in the beam is cut if the Mirror goes',r.cut);
   ok(r.burn>=4.5,'the beam burns what crosses it, 5 a second',r.burn);
+  /* a second mirror (Criss, 13 Nov 2026): built in a beam outside the lamp's own light, it catches the beam and throws it on once more,
+     burning half as hard; a third catches nothing; take the first away and the second goes dark */
+  const bo=await p.evaluate(()=>{const T=__t, o={}; window.devNoDark=false; T.newRun('lamplighter',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true); T.run.ess=99999;
+    const F=T.F, R=T.lampBase(), MI={kind:'ward',type:'mirror'}, place=(c,r)=>{T.setSel(MI); T.tryPlace(c,r); T.setSel(null); T.update(.001); return F.towers.find(t=>t.type==='mirror'&&t.c===c&&t.r===r);};
+    const free=(c,r)=>T.placeProblem(MI,c,r)==='';
+    /* the first mirror, in the lamp's light; aimed round until its beam runs out past the light onto a tile a mirror can take */
+    let m1=null, spot=null;
+    for(let r=0;r<T.ROWS&&!m1;r++)for(let c=0;c<T.COLS&&!m1;c++){const d=Math.hypot(c+.5-F.lx,r+.5-F.ly); if(d>1&&d<R-.6&&free(c,r))m1=place(c,r);}
+    o.m1=!!m1;
+    for(let a=0;a<72&&!spot;a++){const ang=a*5*Math.PI/180; if(!T.aimMirror(m1,m1.x+Math.cos(ang)*4,m1.y+Math.sin(ang)*4))continue; T.update(.001);
+      const b=F.beams.find(q=>q.t===m1); if(!b)continue;
+      /* the farthest spot first: glass at the very tip of a beam catches it too */
+      for(let s2=5;s2>=1&&!spot;s2-=.25){const x=b.x0+b.ux*s2, y=b.y0+b.uy*s2, c=Math.floor(x), r=Math.floor(y); if(c<0||r<0||c>=T.COLS||r>=T.ROWS)continue;
+        if(Math.hypot(c+.5-F.lx,r+.5-F.ly)>R+.3&&T.segDist(c+.5,r+.5,b.x0,b.y0,b.x1,b.y1)<=.35&&free(c,r))spot=[c,r];}}
+    o.spot=spot; if(!spot)return o;
+    const inc=(()=>{const b=F.beams.find(q=>q.t===m1); return [b.ux,b.uy];})();
+    const m2=place(spot[0],spot[1]); o.m2=!!m2; o.m2dark=m2.dark;
+    const b1=F.beams.find(q=>q.t===m1), b2=F.beams.find(q=>q.t===m2);
+    o.stops=!!b1&&b1.hit===m2&&Math.hypot(b1.x1-m2.x,b1.y1-m2.y)<.5; o.bounce=b2?b2.bounce:null; o.n=F.beams.length;
+    o.bend=b2?+(Math.acos(Math.max(-1,Math.min(1,b2.ux*inc[0]+b2.uy*inc[1])))*180/Math.PI).toFixed(1):null;
+    /* it turns and aims by the beam it catches: straight on along that beam is refused */
+    o.straight2=T.aimMirror(m2,m2.x+inc[0]*3,m2.y+inc[1]*3);
+    o.turns=[]; for(let k=0;k<24;k++){T.turnMirror(m2,Math.PI/12); T.update(.001); const q=F.beams.find(x=>x.t===m2); o.turns.push(q?Math.acos(Math.max(-1,Math.min(1,q.ux*inc[0]+q.uy*inc[1])))*180/Math.PI:null);}
+    /* half the burn: a creature held where only the bounced beam crosses the path */
+    const P=F.paths[0]; let fd=null;
+    for(let a=0;a<72&&fd==null;a++){const ang=a*5*Math.PI/180; if(!T.aimMirror(m2,m2.x+Math.cos(ang)*4,m2.y+Math.sin(ang)*4))continue; T.update(.001);
+      const q2=F.beams.find(x=>x.t===m2), q1=F.beams.find(x=>x.t===m1); if(!q2)continue;
+      for(let d=0;d<P.len;d+=.25){const z=T.posAt(P,d); if(T.segDist(z[0],z[1],q2.x0,q2.y0,q2.x1,q2.y1)<.3&&T.segDist(z[0],z[1],q1.x0,q1.y0,q1.x1,q1.y1)>.8){fd=d; break;}}}
+    if(fd!=null){T.setP(false); F.phase='wave'; F.queue=[{t:1e9,type:'crawler',gate:0}]; const e=T.spawnFoe('behemoth',0,fd); e.def=Object.assign({},e.def,{spd:0}); T.update(.001); const hp=e.hp; for(let i=0;i<10;i++)T.update(.1); o.burn2=+(hp-e.hp).toFixed(2); e.dead=true; T.update(.01); F.phase='build'; T.setP(true);}
+    /* a third mirror in the bounced beam catches nothing */
+    o.third=null;
+    for(let a=0;a<72&&o.third==null;a++){const ang=a*5*Math.PI/180; if(!T.aimMirror(m2,m2.x+Math.cos(ang)*4,m2.y+Math.sin(ang)*4))continue; T.update(.001);
+     const q2=F.beams.find(x=>x.t===m2); if(q2)for(let s2=1;s2<=4.6&&o.third==null;s2+=.25){const x=q2.x0+q2.ux*s2, y=q2.y0+q2.uy*s2, c=Math.floor(x), r=Math.floor(y); if(c<0||r<0||c>=T.COLS||r>=T.ROWS)break;
+      if(Math.hypot(c+.5-F.lx,r+.5-F.ly)>R+.3&&T.segDist(c+.5,r+.5,q2.x0,q2.y0,q2.x1,q2.y1)<=.35&&!F.towers.some(t=>t.c===c&&t.r===r)&&T.buildLit(c,r)&&!F.pathTiles.has(c+','+r))o.third=T.placeProblem(MI,c,r);}}
+    /* without the first, the second catches nothing and goes dark */
+    o.cut=T.cutVictims(m1).includes(m2);
+    F.towers=F.towers.filter(t=>t!==m1); T.update(.001); o.darkAfter=m2.dark; o.beamsAfter=F.beams.length;
+    return o;});
+  ok(bo.m1&&bo.spot&&bo.m2,'a second mirror can be built in a beam, outside the lamp\'s own light',bo);
+  ok(bo.m2dark===false&&bo.stops&&bo.bounce===1&&bo.n===2,'it catches the beam (which stops at its glass) and throws it on',bo);
+  ok(Math.abs(bo.bend-90)<2,'built, it turns the beam a quarter, as a first mirror does',bo.bend);
+  ok(bo.straight2===false&&bo.turns.every(a=>a===null||a>=10),'it can\'t send the beam straight on either, aimed or turned',bo);
+  ok(bo.burn2!=null&&bo.burn2>=2&&bo.burn2<=3.2,'the bounced beam burns half as hard, 2.5 a second',bo.burn2);
+  ok(/bounces only twice/.test(bo.third||''),'a third mirror in the bounced beam catches nothing',bo.third);
+  ok(bo.cut&&bo.darkAfter===true&&bo.beamsAfter===0,'take the first away and the second goes dark',bo);
   ok(r.whalerHas.join()==='haul,bell'&&r.haulMode,'Haul Away asks where to cast',r);
   const hb=r.haul.back; ok(Math.abs(hb[0]-3)<.05&&Math.abs(hb[1]-3)<.05&&Math.abs(hb[2]-1)<.05&&hb[3]===0&&Math.abs(hb[4]-3)<.05,'the net hauls a crowd 3 back (a Behemoth 1, a boss not at all), and what is on a line too',hb);
   ok(r.haul.tangled.every(Boolean)&&r.haul.cd>23,'everything it caught is tangled',r.haul);
