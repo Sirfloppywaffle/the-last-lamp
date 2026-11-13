@@ -144,11 +144,11 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const A={x:T.F.lx+1,y:T.F.ly,br:{signal:3}}, B={x:T.F.lx+1,y:T.F.ly+3,br:{}};
     let errs=0;
     /* update() works the beams and threads out afresh, so they are laid after it, as a mirror and two Signal Candles would lay them */
-    const lay=()=>{T.F.beams=[{x0:T.F.lx+.5,y0:T.F.ly,x1:T.F.lx+4,y1:T.F.ly+2}]; T.F.links=[[A,B]]; T.F.threads=[[A,B]];};
+    const lay=()=>{T.F.beams=[{x0:T.F.lx+.5,y0:T.F.ly,x1:T.F.lx+4,y1:T.F.ly+2,ux:.87,uy:.5,bounce:0}]; T.F.links=[[A,B]]; T.F.threads=[[A,B]];};
     for(let i=0;i<30;i++){
       if(i===2)T.F.fx.push({k:'net',x:e.x,y:e.y,r:1.6,t:0,dur:1.1}); if(i===3)T.F.fx.push({k:'hline',x:A.x,y:A.y,e,t:0,dur:.5});
       try{T.update(1/30); lay(); T.render();}catch(err){errs++; o.err=String(err);}}
-    o.errs=errs; o.beam=!!T.BEAM.cv&&T.BEAM.cv.width===T.COLS*32; const cvB=T.BEAM.cv, k0=T.BEAM.k.slice(); lay(); T.render(); o.beamCached=T.BEAM.cv===cvB&&T.BEAM.k.length===8&&T.BEAM.k.every((v,i)=>v===k0[i]);
+    o.errs=errs; o.beam=!!T.BEAM.cv&&T.BEAM.cv.width===T.COLS*32; const cvB=T.BEAM.cv, k0=T.BEAM.k.slice(); lay(); T.render(); o.beamCached=T.BEAM.cv===cvB&&T.BEAM.k.length===9&&T.BEAM.k.every((v,i)=>v===k0[i]);
     return o;},[wardProbe.toString()]);
   ok(kitw.ready,'the kit wards and marks load',kitw);
   ok(!kitw.fromSheet.length,'on a pixel Cistern the Signal Candle, Blubber Lamp, Signal Mirror, Try-pot and every kit harpoon draw from their sheets, not the paint',kitw.fromSheet);
