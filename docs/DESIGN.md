@@ -650,7 +650,7 @@ Water numbers: current **×1.3**; a floor floods **2** stretches of **3** tiles;
 | `graves` | Wet Graves | mother | occultist | A Corpse Candle that stands beside water does not go out when the wave ends. |
 | `souls` | Drowned Souls | mother | occultist | Whatever dies in water leaves its sigil, if its kind can be bound. |
 | `fat` | Her Fat | mother | whaler | A Blubber Lamp that stands beside water drinks from it as a wave begins, not from your pots or your lamp. |
-| `aliencandle` | Alien Spectrum | sun |  | Your candles burn the wrong colour. Whatever walks in their light is seared, 6 a second, but your wards that stand in it fire 20% slower. |
+| `aliencandle` | Alien Spectrum | sun |  | Your candles burn the wrong colour. Whatever walks in their light is seared, 4 a second however many candles reach it, but your wards that stand in it fire 20% slower. |
 | `solarflare` | Solar Glare | sun |  | When you cast Flare, every bright spot bursts: 20 to everything within a tile of it. An Arc Lamp’s flare bursts the spots in its light. |
 | `sunbeam` | Searing Rays | sun |  | Whatever stands in a bright spot is seared, 3 a second, from the start. Doubled once it has Watched you. |
 | `solartrap` | Blinded Prey | sun |  | Whatever stands in a bright spot is dazzled and walks 20% slower. A Stalker dazzled there never sights the lamp. |
