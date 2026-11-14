@@ -20,6 +20,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       F.foes.length=0; F.queue.length=0; T.waveCleared();
       return (T.run.trophies||[]).includes('stub');};
     o.candles=wave(['candle','candle']);
+    {const b=document.getElementById('trophyBanner'); o.banner=[b.classList.contains('is-show'),getComputedStyle(b).pointerEvents,document.getElementById('trophyBannerS').textContent,document.getElementById('trophyBannerArt').width];}
     o.trophyRun=(T.run.trophies||[]).join();
     o.none=wave([]);
     o.harpoon=wave(['candle','harpoon']);
@@ -36,6 +37,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     localStorage.removeItem('ll-town'); T.townReset(); T.setDev(true); wave(['candle']); T.haulCredit(T.run); o.dev=localStorage.getItem('ll-town'); T.setDev(false);
     return o;});
   ok(r.candles&&r.trophyRun==='stub','a wave cleared with two candles and nothing else earns the Stub That Held',r);
+  ok(r.banner[0]&&r.banner[1]==='none'&&r.banner[2]==='The Stub That Held'&&r.banner[3]===16,'its banner shows its art and its name, and takes no taps',r.banner);
   ok(!r.none,'no candle standing: no trophy',r.none);
   ok(!r.harpoon&&!r.builtMid,'another ward standing, or built during the wave: no trophy',r);
   ok(!r.rite,'a rite cast in the wave: no trophy',r.rite);
@@ -44,6 +46,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.town==='stub'&&r.saved==='stub','it comes up with the haul into the town',r);
   ok(/Clear a wave with nothing but candles/.test(r.lock||'')&&/Earned: Clear a wave/.test(r.card)&&/pewter dish/.test(r.card),'its lock and its card say the deed',r);
   ok(r.dev===null,'developer mode writes no town',r.dev);
+  await p.waitForTimeout(5300);
+  ok(!(await p.evaluate(()=>document.getElementById('trophyBanner').classList.contains('is-show'))),'the banner is gone after five seconds');
   ok(!errs.length,'no page errors',errs);
   for(const f of fails)console.log('FAIL '+f);
   if(fails.length)process.exitCode=1; else console.log('candletrophy: all ok');
