@@ -82,6 +82,12 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .chip canvas{width:22px;height:22px}
 .banner{position:absolute;left:50%;top:44px;z-index:4;transform:translateX(-50%);max-width:88%;width:max-content;padding:8px 16px 9px;border-radius:6px;background:var(--veil);text-align:center;opacity:0;transition:opacity .35s;pointer-events:none}
 .banner.show{opacity:1}
+/* a trophy earned on the stair (the Stub That Held): its own banner below the wave's, its art beside it, for five seconds */
+.trophy-banner{position:absolute;left:50%;top:112px;z-index:4;transform:translateX(-50%);display:flex;align-items:center;gap:10px;max-width:88%;width:max-content;padding:7px 16px 7px 10px;border-radius:6px;background:var(--veil);border:1px solid var(--tallow);box-shadow:0 0 14px rgba(237,180,90,.35);opacity:0;transition:opacity .35s;pointer-events:none}
+.trophy-banner.is-show{opacity:1}
+.trophy-banner canvas{width:32px;height:50px;image-rendering:pixelated;flex:none}
+.trophy-banner b{display:block;font-family:var(--f-display);font-weight:700;font-size:1.25rem;line-height:1.05;color:var(--tallow)}
+.trophy-banner small{display:block;margin-top:3px;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bone)}
 .banner b{display:block;font-family:var(--f-display);font-weight:700;font-size:1.5rem;line-height:1;color:var(--tallow);text-wrap:balance}
 .banner span{display:block;margin-top:4px;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ash)}
 .banner.is-mad b{color:var(--madness)}
@@ -407,7 +413,7 @@ input[type=range]::-moz-range-track {
   .pausebtn .pl{display:none}
   .calls .btn.call{min-width:0}
 }
-@media (prefers-reduced-motion:reduce){.banner,.hint,.meter i,.meter b{transition:none}}
+@media (prefers-reduced-motion:reduce){.banner,.trophy-banner,.hint,.meter i,.meter b{transition:none}}
 #app.side{display:grid;grid-template-columns:minmax(128px,168px) minmax(0,1fr) minmax(178px,224px);grid-template-rows:minmax(0,1fr);gap:0 10px;max-width:none;
   padding:max(6px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(6px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
 .side .hud{flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;gap:9px;min-height:0;overflow-y:auto;border-bottom:0;border-right:1px solid var(--seam);padding:2px 10px 2px 0}
@@ -839,6 +845,7 @@ body.is-lite .titem.on,body.is-lite .rite.armed{animation:none}
     <div class="preview" id="preview"></div>
     <div class="banner" id="banner"><b id="bannerB"></b><span id="bannerS"></span></div>
     <div class="hint" id="hint"></div>
+    <div class="trophy-banner" id="trophyBanner" role="status"><canvas id="trophyBannerArt" width="16" height="25" aria-hidden="true"></canvas><span><b id="trophyBannerB">A trophy for the Lodge</b><small id="trophyBannerS"></small></span></div>
     <div class="bosscard" id="bossCard" hidden><b></b><span></span></div>
     <div class="bossbar" id="bossBar" hidden><b></b><div class="bb"><i></i></div><i class="ui-ic ui-ic-skull bb-skull" aria-hidden="true"></i></div>
     <div class="sheet" id="sheet" hidden></div>
@@ -13937,7 +13944,18 @@ function candWatchEnd(){
   if(!ok)return;
   const first=!trophiesFix(run.trophies).includes('stub')&&!trophyEarned('stub');
   trophyEarn('stub');
-  if(first)F.fx.push({k:'float',x:F.lx,y:F.ly-.9,txt:'a trophy for the Lodge',col:PAL.tallow,t:0,dur:2.2,size:.26});
+  if(first)trophyBanner('stub');
+}
+/* the trophy's banner: its art and its name under the wave's banner, for five seconds of real time; nothing under it is covered
+   from a tap (pointer-events: none) and nothing moves when it shows */
+let trophyBannerT=0;
+function trophyBanner(id){
+  const I=LODGE_ITEMS[id], rows=LODGE_ROWS[id]&&LODGE_ROWS[id][0]; if(!I)return;
+  const cv=$('#trophyBannerArt'), c=cv.getContext('2d'); c.clearRect(0,0,cv.width,cv.height);
+  if(rows){cv.width=rows[0].length; cv.height=rows.length; tRows(c,rows,0,0);}
+  $('#trophyBannerS').textContent=I.n;
+  const b=$('#trophyBanner'); b.classList.add('is-show'); AUDIO.coin();
+  clearTimeout(trophyBannerT); trophyBannerT=setTimeout(()=>b.classList.remove('is-show'),5000);
 }
 /* where a trophy is now: placed in a room, or in Storage (null: nowhere, so it can be set down) */
 function trophyWhere(id,T){
