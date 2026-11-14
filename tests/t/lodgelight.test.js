@@ -30,14 +30,14 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.foot=[0,2,4,6].map(f=>{const P=T.pieceFoot(I.hearth,f); return P.w+'x'+P.h;}).join();
     const F=T.LODGE_FIRE.hearth, rows=T.LODGE_ROWS.hearth[0]; o.still=F.f[0].every((r,i)=>rows[F.y+i].slice(F.x,F.x+r.length)===r);
     o.trophies=T.TROPHY_KEYS.map(k=>[k,I[k].k,I[k].set,I[k].foe,!!I[k].mount,Object.keys(I[k].cost).length]);
-    o.foes=T.TROPHY_KEYS.every(k=>T.LORE[I[k].foe]&&T.TROPHY_TEXT[k]);
+    o.foes=T.TROPHY_KEYS.every(k=>(I[k].foe?T.LORE[I[k].foe]:I[k].deed)&&T.TROPHY_TEXT[k]);
     o.letters=T.TROPHY_KEYS.concat(['hearth']).every(k=>T.LODGE_ROWS[k][0].every(r=>[...r].every(ch=>ch==='.'||T.PX[ch])));
     o.size=T.TROPHY_KEYS.concat(['hearth']).map(k=>[k,T.LODGE_ROWS[k][0][0].length,T.LODGE_ROWS[k][0].length]);
     o.rooms=Object.keys(T.LODGE_ROOMS).map(m=>{const R=T.LODGE_ROOMS[m]; return R.night>R.dim&&R.night<.83;});
     return o;});
   ok(d.hearth&&d.hearth.join()==='furn,rooms,52,2,true,5'&&d.still,'the Stone Fireplace: two tiles, the brightest light, its fire a loop whose first frame is its still',d);
   ok(d.turns.join()==='4,0,2,4,13,30,28,30,30'&&d.foot==='2x1,1x2,2x1,1x2','the fireplace turns: front, side and back drawn, 1 by 2 on its side, every view as tall as the front',d);
-  ok(d.trophies.map(x=>x.join()).join(';')==='keeper,trophy,trophy,boss,true,0;primordial,trophy,trophy,boss2,false,0'&&d.foes,'two trophies of one kind (k: trophy): the Keeper Below’s on the wall, the Primordial’s on a plinth, each free and each with a Grimoire line',d.trophies);
+  ok(d.trophies.map(x=>x.join()).join(';')==='keeper,trophy,trophy,boss,true,0;primordial,trophy,trophy,boss2,false,0;stub,trophy,trophy,,false,0'&&d.foes,'trophies of one kind (k: trophy): the Keeper Below’s on the wall, the Primordial’s on a plinth, each free with a Grimoire line; the Stub That Held, earned by a deed, says its deed',d.trophies);
   ok(d.letters&&d.size.every(([k,w,h])=>w<=(k==='hearth'?32:16)&&h<=32),'every pixel a PX letter, 16 wide a tile',d.size);
   ok(d.rooms.every(Boolean),'every room is darker unlit than lit, and lighter than the square’s night (0.83)',d.rooms);
 
@@ -138,7 +138,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.twice=T.haulCredit(T.run);
     return o;})()`);
   ok(tr.none[0]===false&&/Slay the Keeper Below/.test(tr.none[1])&&tr.none[2]===tr.none[1]&&/Primordial/.test(tr.none[3]),'not yet earned: it can’t be set down, and says what earns it',tr.none);
-  ok(tr.chips[0]==='keeper,primordial'&&tr.chips[1]&&tr.chips[2]===2&&/Slay/.test(tr.say)&&tr.pick===null,'the tray’s trophy page shows them shut, padlocked',tr);
+  ok(tr.chips[0]==='keeper,primordial,stub'&&tr.chips[1]&&tr.chips[2]===3&&/Slay/.test(tr.say)&&tr.pick===null,'the tray’s trophy page shows them shut, padlocked',tr);
   ok(tr.herald==='','a Herald earns no trophy',tr.herald);
   ok(tr.run==='keeper'&&tr.town==='keeper'&&tr.left===''&&tr.twice===false,'the Keeper Below put down earns its trophy, carried up with the haul once',tr);
 

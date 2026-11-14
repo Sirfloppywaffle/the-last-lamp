@@ -196,7 +196,7 @@ const DEV=[
     await p.waitForTimeout(100);
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-locked-'+nm+'.png'});
     await p.evaluate(()=>{__t.townBuildSet(false); __t.setDev(true); __t.townReset(); __t.townKeepers();});
-    if(!(cat.sets.length===7&&cat.sets.every(x=>x[2]&&x[3]&&x[4])&&cat.sets.map(x=>x[1]).join()==='7,8,10,8,7,7,2'&&cat.lift&&cat.liftOk))console.log('FAIL '+nm+': the catalogue’s tray on this screen',JSON.stringify(cat));
+    if(!(cat.sets.length===7&&cat.sets.every(x=>x[2]&&x[3]&&x[4])&&cat.sets.map(x=>x[1]).join()==='7,8,10,8,7,7,3'&&cat.lift&&cat.liftOk))console.log('FAIL '+nm+': the catalogue’s tray on this screen',JSON.stringify(cat));
     if(!(locked.n===8&&locked.locks===8&&locked.locked&&locked.thumbs&&/Peddler/.test(locked.say)&&locked.pick===null))console.log('FAIL '+nm+': a set not yet bought, on this screen',JSON.stringify(locked));
     /* Expansion 4, step 5: light and dark, in developer mode so nothing is written. The same room dark (every light out, the
        sconces cold) and lit (the fireplace, a sconce, a candle): darker without; standing under a sconce, the button offers to light
