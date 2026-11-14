@@ -81,10 +81,11 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .chip canvas{width:22px;height:22px}
 .banner{position:absolute;left:50%;top:44px;z-index:4;transform:translateX(-50%);max-width:88%;width:max-content;padding:8px 16px 9px;border-radius:6px;background:var(--veil);text-align:center;opacity:0;transition:opacity .35s;pointer-events:none}
 .banner.show{opacity:1}
-/* a trophy earned on the stair (the Stub That Held): its own banner below the wave's, its art beside it, for five seconds */
-.trophy-banner{position:absolute;left:50%;top:112px;z-index:4;transform:translateX(-50%);display:flex;align-items:center;gap:10px;max-width:88%;width:max-content;padding:7px 16px 7px 10px;border-radius:6px;background:var(--veil);border:1px solid var(--tallow);box-shadow:0 0 14px rgba(237,180,90,.35);opacity:0;transition:opacity .35s;pointer-events:none}
+/* a trophy earned on the stair (any, the first time): its own banner below the wave's, its art beside it, for five seconds. Fixed and
+   over the modals, so the landing or the morning that follows a boss does not hide it; placed from the stage when it shows */
+.trophy-banner{position:fixed;left:50%;top:112px;z-index:60;transform:translateX(-50%);display:flex;align-items:center;gap:10px;max-width:88%;width:max-content;padding:7px 16px 7px 10px;border-radius:6px;background:var(--veil);border:1px solid var(--tallow);box-shadow:0 0 14px rgba(237,180,90,.35);opacity:0;transition:opacity .35s;pointer-events:none}
 .trophy-banner.is-show{opacity:1}
-.trophy-banner canvas{width:32px;height:50px;image-rendering:pixelated;flex:none}
+.trophy-banner canvas{width:32px;height:50px;image-rendering:pixelated;flex:none} /* each trophy's art at twice its size, set as it shows */
 .trophy-banner b{display:block;font-family:var(--f-display);font-weight:700;font-size:1.25rem;line-height:1.05;color:var(--tallow)}
 .trophy-banner small{display:block;margin-top:3px;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bone)}
 .banner b{display:block;font-family:var(--f-display);font-weight:700;font-size:1.5rem;line-height:1;color:var(--tallow);text-wrap:balance}
@@ -844,7 +845,6 @@ body.is-lite .titem.on,body.is-lite .rite.armed{animation:none}
     <div class="preview" id="preview"></div>
     <div class="banner" id="banner"><b id="bannerB"></b><span id="bannerS"></span></div>
     <div class="hint" id="hint"></div>
-    <div class="trophy-banner" id="trophyBanner" role="status"><canvas id="trophyBannerArt" width="16" height="25" aria-hidden="true"></canvas><span><b id="trophyBannerB">A trophy for the Lodge</b><small id="trophyBannerS"></small></span></div>
     <div class="bosscard" id="bossCard" hidden><b></b><span></span></div>
     <div class="bossbar" id="bossBar" hidden><b></b><div class="bb"><i></i></div><i class="ui-ic ui-ic-skull bb-skull" aria-hidden="true"></i></div>
     <div class="sheet" id="sheet" hidden></div>
@@ -965,6 +965,7 @@ body.is-lite .titem.on,body.is-lite .rite.armed{animation:none}
   <div class="coach-acts" id="coachActs"></div>
 </div>
 
+<div class="trophy-banner" id="trophyBanner" role="status"><canvas id="trophyBannerArt" width="16" height="25" aria-hidden="true"></canvas><span><b id="trophyBannerB">A trophy for the Lodge</b><small id="trophyBannerS"></small></span></div>
 <div class="modal" id="modal" hidden>
   <div class="box" role="dialog" aria-modal="true" aria-labelledby="mTitle">
     <h2 id="mTitle"></h2>
@@ -13924,7 +13925,8 @@ function trophySeed(){
 }
 function trophyEarned(id,T){if(devOn)return true; T=T||townData(); return Array.isArray(T.trophies)&&T.trophies.includes(id);}
 /* earned on this descent, to go up with the haul; a creature's death earns its own (Expansion 5 earns others by its deeds) */
-function trophyEarn(k){if(!run||!TROPHY_KEYS.includes(k))return; run.trophies=trophiesFix(run.trophies); if(!run.trophies.includes(k))run.trophies.push(k);}
+function trophyEarn(k){if(!run||!TROPHY_KEYS.includes(k))return; run.trophies=trophiesFix(run.trophies); if(run.trophies.includes(k))return;
+  const fresh=!trophyEarned(k); run.trophies.push(k); if(fresh)trophyBanner(k);}
 function trophyFoe(type){for(const k of TROPHY_KEYS)if(LODGE_ITEMS[k].foe===type)trophyEarn(k);}
 /* The Stub That Held (Criss, 13 Nov 2026): a wave cleared with nothing but candles. From the wave's call to its break nothing
    stood on the board but your candles (no other ward, no horror), you cast no rite, and nothing reached the lamp; the lamp's own
@@ -13941,19 +13943,19 @@ function candWatchEnd(){
   const ok=F.candOnly&&!run.replay&&F.towers.some(t=>t.kind==='ward'&&t.type==='candle'&&!t.dead);
   F.candOnly=false;
   if(!ok)return;
-  const first=!trophiesFix(run.trophies).includes('stub')&&!trophyEarned('stub');
   trophyEarn('stub');
-  if(first)trophyBanner('stub');
 }
-/* the trophy's banner: its art and its name under the wave's banner, for five seconds of real time; nothing under it is covered
-   from a tap (pointer-events: none) and nothing moves when it shows */
+/* a trophy's banner, the first time it is earned (trophyEarn): its art and its name under the wave's banner, for five seconds of
+   real time; nothing under it is covered from a tap (pointer-events: none) and nothing moves when it shows */
 let trophyBannerT=0;
 function trophyBanner(id){
   const I=LODGE_ITEMS[id], rows=LODGE_ROWS[id]&&LODGE_ROWS[id][0]; if(!I)return;
   const cv=$('#trophyBannerArt'), c=cv.getContext('2d'); c.clearRect(0,0,cv.width,cv.height);
-  if(rows){cv.width=rows[0].length; cv.height=rows.length; tRows(c,rows,0,0);}
+  if(rows){cv.width=rows[0].length; cv.height=rows.length; cv.style.width=cv.width*2+'px'; cv.style.height=cv.height*2+'px'; tRows(c,rows,0,0);}
   $('#trophyBannerS').textContent=I.n;
-  const b=$('#trophyBanner'); b.classList.add('is-show'); AUDIO.coin();
+  const b=$('#trophyBanner'), st=$('#stage').getBoundingClientRect();
+  if(st.width){b.style.left=Math.round(st.left+st.width/2)+'px'; b.style.top=Math.round(st.top+112)+'px';}
+  b.classList.add('is-show'); AUDIO.coin();
   clearTimeout(trophyBannerT); trophyBannerT=setTimeout(()=>b.classList.remove('is-show'),5000);
 }
 /* where a trophy is now: placed in a room, or in Storage (null: nowhere, so it can be set down) */

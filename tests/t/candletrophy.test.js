@@ -1,7 +1,8 @@
 // The Stub That Held (Criss, 13 Nov 2026): a trophy for a wave cleared with nothing but candles. From the wave's call to its break
 // nothing stands but candles (no other ward, no horror), no rite is cast, nothing reaches the lamp, and at least one candle stands.
 // It is earned into run.trophies and carried up with the haul like the boss trophies; never on a replayed stair; its Lodge card and
-// its lock say the deed (it has no creature); developer mode writes nothing.
+// its lock say the deed (it has no creature); developer mode writes nothing. Every trophy, boss ones too, shows one banner the
+// first time it is earned (Criss: unify them).
 const {chromium}=require('playwright');
 const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.stringify(d).slice(0,500):''));};
 (async()=>{
@@ -33,6 +34,15 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* its lock and its card say the deed, not a creature */
     localStorage.removeItem('ll-town'); T.townReset(); o.lock=T.lodgeLockWhy('stub');
     T.lodgeTrophyCard({id:'stub'}); o.card=document.getElementById('mBody')?document.getElementById('mBody').textContent:''; T.closeModal();
+    /* every trophy shows the same banner the first time: the Keeper Below put down, over the screens that follow */
+    localStorage.removeItem('ll-town'); T.townReset(); T.newRun('lamplighter',0);
+    const bn=document.getElementById('trophyBanner'); bn.classList.remove('is-show');
+    T.killFoe({dead:false,hp:0,x:2,y:2,gate:0,d:1,type:'boss',def:{n:'The Keeper Below',boss:true,ess:10,oil:1,r:.3,col:'200,180,120'}});
+    o.boss=[bn.classList.contains('is-show'),document.getElementById('trophyBannerS').textContent,+getComputedStyle(bn).zIndex>+getComputedStyle(document.getElementById('modal')).zIndex];
+    /* not again for one already earned */
+    T.haulCredit(T.run); T.newRun('lamplighter',0); bn.classList.remove('is-show');
+    T.killFoe({dead:false,hp:0,x:2,y:2,gate:0,d:1,type:'boss',def:{n:'The Keeper Below',boss:true,ess:10,oil:1,r:.3,col:'200,180,120'}});
+    o.bossAgain=bn.classList.contains('is-show');
     /* developer mode: earned on the descent, but the town is never written */
     localStorage.removeItem('ll-town'); T.townReset(); T.setDev(true); wave(['candle']); T.haulCredit(T.run); o.dev=localStorage.getItem('ll-town'); T.setDev(false);
     return o;});
@@ -40,6 +50,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(r.banner[0]&&r.banner[1]==='none'&&r.banner[2]==='The Stub That Held'&&r.banner[3]===16,'its banner shows its art and its name, and takes no taps',r.banner);
   ok(!r.none,'no candle standing: no trophy',r.none);
   ok(!r.harpoon&&!r.builtMid,'another ward standing, or built during the wave: no trophy',r);
+  ok(r.boss[0]&&r.boss[1]==='The Keeper Below’s Maw'&&r.boss[2],'a boss trophy shows the same banner, over the screens that follow',r.boss);
+  ok(!r.bossAgain,'a trophy already in the Lodge shows no banner',r.bossAgain);
   ok(!r.rite,'a rite cast in the wave: no trophy',r.rite);
   ok(!r.hit,'something reaching the lamp: no trophy',r.hit);
   ok(!r.replay,'a replayed stair earns none',r.replay);
