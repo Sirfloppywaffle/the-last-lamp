@@ -1316,7 +1316,7 @@ const CURRENT=1.3, FLOOD_N=2, FLOOD_LEN=3, FLOOD_MAX=14, NEAR_WATER=1.5, PATRON_
    how much faster a sighted Stalker runs, and for how long; how much slower a ward in the glare fires (cooldown ×);
    Solar Glare's burst. 3 a second: measured with no wards, 8 let three spots take 25 of a floor-one Crawler's 30 health and
    twelve kill anything before a ward fired (Gemini's first 15 was worse). At 3, three spots take about a third, and a floor has too few waves to reach eight */
-const SPOT_N=3, SPOT_MAX=8, SPOT_GLARE=1.5, SUN_DPS=3, SIGHT_RUN=1.4, SIGHT_T=3, SUN_SLOW=1/.75, SPEC_SLOW=1/.8, GLARE_DMG=20, GLARE_R=.9, ALIEN_BURN=6;
+const SPOT_N=3, SPOT_MAX=8, SPOT_GLARE=1.5, SUN_DPS=3, SIGHT_RUN=1.4, SIGHT_T=3, SUN_SLOW=1/.75, SPEC_SLOW=1/.8, GLARE_DMG=20, GLARE_R=.9, ALIEN_BURN=4, ASH_BURN=6;
 /* the Many-Mouthed. Dread: Watched's 3, 2 for each Gibberer alive (6 at most). A Gibberer's chatter reaches 1.6 tiles, and a ward
    there waits a quarter longer between shots. A Gorger lashes its tongue 2 tiles at a horror (1.8 at a candle or fork once
    Watched) every 4.5 seconds: 2 seconds dazed or snuffed, 8 health back; horrors hurt it 35% less. A Choir-Husk veils what walks
@@ -1352,7 +1352,7 @@ const OFFERINGS={
   souls:{p:'mother',kit:'occultist',n:'Drowned Souls',d:'Whatever dies in water leaves its sigil, if its kind can be bound.'},
   fat:{p:'mother',kit:'whaler',n:'Her Fat',d:'A Blubber Lamp that stands beside water drinks from it as a wave begins, not from your pots or your lamp.'},
   /* The Wrong Sun offerings */
-  aliencandle:{p:'sun',n:'Alien Spectrum',need:()=>run.wards.includes('candle'),d:'Your candles burn the wrong colour. Whatever walks in their light is seared, 6 a second, but your wards that stand in it fire 20% slower.'},
+  aliencandle:{p:'sun',n:'Alien Spectrum',need:()=>run.wards.includes('candle'),d:'Your candles burn the wrong colour. Whatever walks in their light is seared, 4 a second however many candles reach it, but your wards that stand in it fire 20% slower.'},
   solarflare:{p:'sun',n:'Solar Glare',d:'When you cast Flare, every bright spot bursts: 20 to everything within a tile of it. An Arc Lamp’s flare bursts the spots in its light.'},
   sunbeam:{p:'sun',n:'Searing Rays',d:'Whatever stands in a bright spot is seared, 3 a second, from the start. Doubled once it has Watched you.'},
   solartrap:{p:'sun',n:'Blinded Prey',d:'Whatever stands in a bright spot is dazzled and walks 20% slower. A Stalker dazzled there never sights the lamp.'},
@@ -2979,7 +2979,7 @@ function wstat(t){
   const b=t.br||{};
   if(t.type==='harpoon')return {range:2.6+.4*m2(b.sight),dmg:(10+(b.strength>=1?6:0)+(b.strength>=2?8:0))*spearMul(b),spear:kit()==='occultist',soul:b.dread>=3,
     tether:kit()==='whaler',tMax:b.line>=1?.55:TETHER_MAX,clap:kit()==='bellringer'?{hear:CLAP_HEAR+(b.ring>=1?1:0),knock:CLAP_KNOCK+(b.ring>=2?.25:0),peal:b.ring>=3}:null,rod:kit()==='galvanist',rodT:ROD_T+(b.charge>=1?2:0),rodMax:ROD_MAX+(b.charge>=2?1:0),thunder:b.charge>=3,leash:b.line>=2?2:1,haul:b.line>=3,rate:1.1*Math.pow(1.25,m2(b.speed)),twin:b.speed>=3,pierce:b.strength>=3,deep:b.sight>=3,flare:kit()==='lamplighter',flareR:GLINT_R+(b.flare>=1?.5:0),flareT:GLINT_T+(b.flare>=2?1:0),star:b.flare>=3};
-  if(t.type==='candle')return {arc:kit()==='galvanist',flare:ARC_DMG+4*m2(b.spark),steady:b.spark>=3,light:(2.3+(ashLit(t)?1:0)+.5*m2(b.glow)+(kit()==='whaler'?BLUBBER_LIGHT:0)+(kit()==='galvanist'?ARC_LIGHT:0)-(F&&F.omen==='thickdark'?.5:0))*(trialOn('night')?NIGHT_DIM:1)*(reckonDim(t)?RECKON_CORPSE:1),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)]+(hasOff('aliencandle')?ALIEN_BURN:0)+(ashLit(t)?ALIEN_BURN:0),beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3,reek:b.reek>=2?4:b.reek>=1?2:0,lure:b.reek>=3};
+  if(t.type==='candle')return {arc:kit()==='galvanist',flare:ARC_DMG+4*m2(b.spark),steady:b.spark>=3,light:(2.3+(ashLit(t)?1:0)+.5*m2(b.glow)+(kit()==='whaler'?BLUBBER_LIGHT:0)+(kit()==='galvanist'?ARC_LIGHT:0)-(F&&F.omen==='thickdark'?.5:0))*(trialOn('night')?NIGHT_DIM:1)*(reckonDim(t)?RECKON_CORPSE:1),slow:[.2,.3,.4][m2(b.wax)],burn:[0,3,6][m2(b.ember)]+(ashLit(t)?ASH_BURN:0),alien:hasOff('aliencandle'),beacon:b.glow>=3,snare:b.wax>=3,pyre:b.ember>=3,thread:b.signal>=3,reek:b.reek>=2?4:b.reek>=1?2:0,lure:b.reek>=3};
   if(t.type==='chime')return {range:1.8+.25*m2(b.res),dmg:14+(b.marrow>=1?6:0)+(b.marrow>=2?8:0),stun:.6+.3*m2(b.toll),period:2,twice:b.res>=3,knell:b.toll>=3,shatter:b.marrow>=3};
   if(t.type==='censer')return {range:3.2,dmg:16,rate:.45*Math.pow(1.25,m2(b.swing)),splash:1+.25*m2(b.spread),volley:b.swing>=3,cluster:b.spread>=3,
     pool:b.pitch>=3?{dps:10,dur:4,r:1.4}:b.pitch>=1?{dps:b.pitch>=2?7:4,dur:b.pitch>=2?2.5:2,r:1}:null};
@@ -3647,7 +3647,7 @@ function supported(t,C){
 function lightsNow(){
   const C=connectedLights(null);
   const L=[{x:F.lx,y:F.ly,r:lampRadius(),reveal:lstat().sun,lamp:true}];
-  for(const t of C.conn)L.push({x:t.x,y:t.y,r:towerLightR(t),reveal:true,gaze:t.type==='watcher'});
+  for(const t of C.conn)L.push({x:t.x,y:t.y,r:towerLightR(t),reveal:true,gaze:t.type==='watcher',alien:t.type==='candle'&&hasOff('aliencandle')});
   /* passing lights: they show what is there, but you can't build in them and they never steer the crowd at a fork */
   for(const e of F.foes)if(e.kindleT>0&&!e.dead)L.push({x:e.x,y:e.y,r:KINDLE_R,reveal:true,temp:true,kindle:true});
   /* the Last Keeper's own lamp: you can see it coming, and what walks with it */
@@ -7615,19 +7615,22 @@ function updateFoes(dt){
       if(e.spawnT<=0){e.spawnT=5; spawnFoe('skitter',e.gate,Math.max(0,e.d-.3)); spawnFoe('skitter',e.gate,Math.max(0,e.d-.6));}
     }
     if(e.type==='gorger')gorgerLatch(e,dt);
-    let slow=0, inCand=false, cIn=null;
+    let slow=0, inCand=false, cIn=null, sear=false;
     for(const c of F.cands){
       const cs=c.st;
       if(dst(e.x,e.y,c.x,c.y)>cs.light)continue;
       slow=Math.max(slow,cs.slow); inCand=true; if(!cIn)cIn=c;
       if(cs.reek){e.reekT=cs.reek; e.reekS=Math.max(e.reekS||0,cs.slow);}
       if(cs.burn)hurt(e,cs.burn*dt);
+      if(cs.alien)sear=true;
       if(hasOff('sun_signal')&&e.type==='stalker')sighted(e);
       if(cs.snare){
         e.snared=e.snared||[];
         if(!e.snared.includes(c.id)){e.snared.push(c.id); e.stunT=Math.max(e.stunT,e.def.boss?.4:1);}
       }
     }
+    /* Alien Spectrum sears once, however many candles' light it stands in (it stacked, and a field of plain candles cleared waves) */
+    if(sear&&!e.dead)hurt(e,ALIEN_BURN*dt);
     if(e.dead)continue;
     /* The Dark Bites First: it walked out of a candle's light, and the candle still burns (not hauled, not snuffed, not cut off) */
     if(hasOff('first_bite')){
@@ -11536,8 +11539,8 @@ function render(){
   for(const L of F.L){
     const px=L.x*s+sx, py=L.y*s+sy, R=L.r*s*(L.lamp?1:.75);
     const gr=g.createRadialGradient(px,py,0,px,py,R);
-    gr.addColorStop(0,L.gaze?'rgba(169,124,226,.12)':L.kindle?'rgba(255,120,40,.24)':L.glint?'rgba(255,226,170,.2)':'rgba(255,170,80,'+(L.lamp?.2:.11)+')');
-    gr.addColorStop(.5,L.gaze?'rgba(169,124,226,.04)':L.kindle?'rgba(230,90,30,.08)':'rgba(237,140,60,'+(L.lamp?.07:.04)+')');
+    gr.addColorStop(0,L.gaze?'rgba(169,124,226,.12)':L.alien?'rgba(190,150,255,.3)':L.kindle?'rgba(255,120,40,.24)':L.glint?'rgba(255,226,170,.2)':'rgba(255,170,80,'+(L.lamp?.2:.11)+')');
+    gr.addColorStop(.5,L.gaze?'rgba(169,124,226,.04)':L.alien?'rgba(132,90,226,.11)':L.kindle?'rgba(230,90,30,.08)':'rgba(237,140,60,'+(L.lamp?.07:.04)+')');
     gr.addColorStop(1,'rgba(0,0,0,0)');
     g.fillStyle=gr; g.beginPath(); g.arc(px,py,R,0,TAU); g.fill();
   }
@@ -12671,7 +12674,7 @@ function statLine(o){
     return 'Slows <b>35%</b> · <b>6 damage</b> per second · Range <b>'+H.range+'</b>';
   }
   const st=wstat(o);
-  if(o.type==='candle')return 'Light <b>'+st.light.toFixed(1)+'</b> · Slows <b>'+Math.round(st.slow*100)+'%</b>'+(st.burn?' · Burns <b>'+st.burn+' damage/s</b>':'')+(o.corpse?(hasOff('graves')&&nearWater(o.x,o.y)?' · Beside water: it stays lit':' · Goes out when this wave ends'):'');
+  if(o.type==='candle')return 'Light <b>'+st.light.toFixed(1)+'</b> · Slows <b>'+Math.round(st.slow*100)+'%</b>'+(st.burn||st.alien?' · Burns <b>'+(st.burn+(st.alien?ALIEN_BURN:0))+' damage/s</b>':'')+(o.corpse?(hasOff('graves')&&nearWater(o.x,o.y)?' · Beside water: it stays lit':' · Goes out when this wave ends'):'');
   if(o.type==='harpoon')return 'Damage <b>'+Math.round(st.dmg)+'</b> · Range <b>'+st.range.toFixed(1)+'</b> · <b>'+st.rate.toFixed(2)+'</b>/s'+(st.twin?' · Twin':'')+(st.pierce?' · Pierce':'')+(st.deep?' · Sees in the dark':'')+(st.spear?' · Madness <b>+'+Math.round((spearMul(o.br||{})-1)*100)+'%</b>':'')+(st.soul?' · Its kills leave sigils':'')+(st.tether?' · Line slows up to <b>'+Math.round(st.tMax*100)+'%</b>'+(st.haul?' · Reels in':''):'');
   if(o.type==='trypot'){const d=blubberDue();
     return 'Holds <b>'+(o.meas||0)+' of '+st.max+'</b> measures · the next is <b>'+Math.round((o.render||0)/st.every*100)+'%</b> rendered'
