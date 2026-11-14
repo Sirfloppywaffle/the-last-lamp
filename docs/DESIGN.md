@@ -75,7 +75,7 @@ The Lodge's pieces come in five themed sets, plus its own floors, walls and fire
 | Drowned Chapel | 8: Chapel Pew, Holy-Water Font, Chapel Lectern, Drowned Saint, Ship’s Bell, Votive Rack, Candelabra, Pilgrim’s Skull | blueprint |
 | Brass Observatory | 7: Brass Telescope, Orrery, Chart Table, Stopped Clock, Star Chart, Brass Wall Lamp, Brass Hourglass | blueprint |
 | Deep-One Coral | 7: Coral Cluster, Brine Urn, Coral Table, Coral Fan, Pearl-Eyed Mask, Glow-Anemone, Conch Shell | blueprint |
-| Trophies | 2: The Keeper Below’s Maw, The Primordial’s Eye | earned on the stair, one of each |
+| Trophies | 3: The Keeper Below’s Maw, The Primordial’s Eye, The Stub That Held | earned on the stair, one of each |
 
 | Dye | Swaps |
 |---|---|
@@ -210,6 +210,7 @@ A freed Keeper with no chore waits at their post 6 to 14 s, walks (1.6 tiles a s
 | Conch Shell | Coral | Small thing | 2 tallow | 1×1 |  | 1 | 3 |
 | The Keeper Below’s Maw | Trophies | Trophy (wall mount, The Keeper Below) | free | 1×2 |  | 1 | 1 |
 | The Primordial’s Eye | Trophies | Trophy (plinth, The Primordial) | free | 1×1 |  | 1 | 1 |
+| The Stub That Held | Trophies | Trophy (plinth, a deed) | free | 1×1 |  | 1 | 1 |
 
 ## Creatures
 

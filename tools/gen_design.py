@@ -95,7 +95,7 @@ if 'LODGE_ITEMS' in D:
     w("| Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |\n|---|---|---|---|---|---|---|---|")
     for v in D['LODGE_ITEMS'].values():
         piece=v['k'] in ('furn','trophy')
-        kind='Floor' if v['k']=='floor' else 'Wall' if v['k']=='wall' else ('Trophy (%s, %s)'%('wall mount' if v.get('mount') else 'plinth',D['FOES'][v['foe']]['n'] if 'FOES' in D else v['foe'])) if v['k']=='trophy' else 'Wall mount' if v.get('mount') else 'Small thing' if v.get('small') else 'Surface (%d slots)'%v['top'] if v.get('top') else 'Furniture'
+        kind='Floor' if v['k']=='floor' else 'Wall' if v['k']=='wall' else ('Trophy (%s, %s)'%('wall mount' if v.get('mount') else 'plinth',(D['FOES'][v['foe']]['n'] if 'FOES' in D else v['foe']) if 'foe' in v else 'a deed')) if v['k']=='trophy' else 'Wall mount' if v.get('mount') else 'Small thing' if v.get('small') else 'Surface (%d slots)'%v['top'] if v.get('top') else 'Furniture'
         w("| %s | %s | %s | %s | %s | %s | %s | %s |"%(v['n'],D['LODGE_SETS'][v['set']]['s'] if 'LODGE_SETS' in D else '',kind,nm(v['cost']),('%d×%d'%(v.get('w',1),v.get('h',1))+(' (walked over)' if v.get('flat') else '')) if piece else 'the room',('%s%s'%(v['light'],' (green)' if v.get('green') else '')) if v.get('light') else '',v.get('faces',1) if piece else '',1+len(v.get('dyes',[])) if piece else ''))
     w("")
 

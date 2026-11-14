@@ -185,6 +185,7 @@ Devices: the tab on all 14 sizes.
   4. **the six eyes:** six glass eyes in a shadow box, one per horror kind (the Nameless's hood);
   5. **the depth-5 morning:** a shard of the stair's stone, still wet, under a bell jar.
 - An old town gets no Herald trophies it can't prove; they're earned from now.
+- *Since written:* a sixth, deed-earned trophy is already in (the Stub That Held, a wave held with nothing but candles; Criss, 13 Nov 2026). It has no `foe` but a `deed` line, and `lodgeTrophyCard()` and `lodgeLockWhy()` already show a deed for a trophy without a `foe`: the feat trophies can use the same field.
 
 **Teach:** the Ledger tip names trophies; the rules line grows a clause.
 
