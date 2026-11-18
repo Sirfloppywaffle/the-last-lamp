@@ -4,7 +4,9 @@ module.exports.paint=`(prev)=>function(c,o){
   const C=window.__cand||{}, I=window.__candImg||{};
   const TH=THEMES[o.theme]||THEMES[0], img=PIX.tiles[TH.deco], AT=PIX_AT[TH.deco]; if(!img||!AT)return false;
   const {cols,rows,s}=o, P=o.path, TS=PIX.TS, lx=o.lamp[0], ly=o.lamp[1];
-  const up=(x,y)=>!P.has(clamp(x,0,cols-1)+','+clamp(y,0,rows-1));
+  /* invert (mockup): the path is the raised stone, everything else the water */
+  const up=C.invert?(x,y)=>P.has(clamp(x,0,cols-1)+','+clamp(y,0,rows-1)):(x,y)=>!P.has(clamp(x,0,cols-1)+','+clamp(y,0,rows-1));
+  const bld=(x,y)=>!P.has(clamp(x,0,cols-1)+','+clamp(y,0,rows-1));
   const H=(x,y,k)=>{const q=o.canon?o.canon(x,y):[x,y]; return srand(q[0]*31.7+q[1]*17.3+k*7.13,o.seed);};
   const b=document.createElement('canvas'); b.width=cols*TS; b.height=rows*TS; const g=b.getContext('2d'); g.imageSmoothingEnabled=false;
   const pick0=(arr,h)=>arr[Math.min(arr.length-1,Math.floor(h*arr.length))];
@@ -53,6 +55,25 @@ module.exports.paint=`(prev)=>function(c,o){
       drawAt(im,cx,cy,h3,L.flip!==false,L.rot); used.add(k);
     }
   }
+  /* the flooded hall (mockup): a thin film of still water over the stone */
+  if(C.film){g.fillStyle=C.film; for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(up(x,y))g.fillRect(x*TS,y*TS,TS,TS);}
+  /* the colonnade (mockup): columns on the grid's corners, each with a long shadow away from the lamp and its reflection in the water */
+  const CO=C.cols, ci=CO&&I[CO.img]&&I[CO.img];
+  if(ci&&ci.length){const list=[];
+    for(let vy=1;vy<rows;vy++)for(let vx=1;vx<cols;vx++){
+      if((vx-(CO.ox||0))%CO.step||(vy-(CO.oy||0))%CO.step)continue;
+      if(Math.hypot(vx-lx,vy-ly)<(CO.clear||1.6))continue;
+      const nP=(!bld(vx-1,vy-1))+(!bld(vx,vy-1))+(!bld(vx-1,vy))+(!bld(vx,vy)); if(CO.dry&&nP)continue; if(CO.noPath&&nP)continue;
+      list.push([vx,vy,nP]);}
+    for(const [vx,vy] of list){const dx=vx-lx, dy=vy-ly, d=Math.hypot(dx,dy)||1, ux=dx/d, uy=dy/d, L=Math.min(CO.shLen||7,1.5+d*.9), w=(CO.shW||.22);
+      if(CO.shadow!==false){const x0=vx*TS, y0=vy*TS, px=-uy*w*TS, py=ux*w*TS, x1=x0+ux*L*TS, y1=y0+uy*L*TS;
+        const gr=g.createLinearGradient(x0,y0,x1,y1); gr.addColorStop(0,'rgba(0,0,0,'+(CO.shA||.55)+')'); gr.addColorStop(1,'rgba(0,0,0,0)');
+        g.fillStyle=gr; g.beginPath(); g.moveTo(x0+px,y0+py); g.lineTo(x1+px*1.8,y1+py*1.8); g.lineTo(x1-px*1.8,y1-py*1.8); g.lineTo(x0-px,y0-py); g.closePath(); g.fill();}}
+    for(const [vx,vy] of list){const im=pick0(ci,H(vx,vy,21)), ax=CO.ax!==undefined?CO.ax:im.width/2, ay=CO.ay!==undefined?CO.ay:im.height-2;
+      const X=Math.round(vx*TS-ax), Y=Math.round(vy*TS-ay);
+      if(CO.refl){g.save(); g.globalAlpha=CO.refl; g.translate(X,Math.round(vy*TS)*2-Y); g.scale(1,-1); g.drawImage(im,0,0); g.restore();}
+      g.drawImage(im,X,Y);}
+    PIX.cols=list;}
   PIX.water=[]; for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(!up(x,y))PIX.water.push(x,y,H(x,y,3),H(x,y,4));
   const da=(I.dais&&I.dais[0])||PIX.props.dais; if(da)g.drawImage(da,Math.round(lx*TS-da.width/2),Math.round(ly*TS-da.height/2+(C.daisDy!==undefined?C.daisDy:2)));
   c.setTransform(1,0,0,1,0,0);
