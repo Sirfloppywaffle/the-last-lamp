@@ -1,0 +1,126 @@
+{
+ "note": "Step 6c candidates (expansion/PIXEL_RUNBOOK.md). Numbers here are the 1-based numbers on the sheets; raw/props/<family>-<n>.png. PixelLab job ids let a later step fetch the originals.",
+ "tile_size": 64,
+ "tilesets": {
+  "A": {
+   "tool": "create_topdown_tileset",
+   "mode": "pro",
+   "view": "high top-down",
+   "transition": 0.25,
+   "id": "7ce7c415-c824-4f91-a554-649c1d1b2c1c",
+   "cost": 25,
+   "verdict": "olive scale paving, mirror patterns when flipped"
+  },
+  "B": {
+   "tool": "create_tiles_pro",
+   "feature": "tileset",
+   "elevation": 8,
+   "id": "ed37d75b-c271-47b6-b287-2fa06dbf2980",
+   "cost": 15,
+   "verdict": "warm lamp spots baked into the stone (\"lit by warm lamplight\" in the prompt); plain water"
+  },
+  "C": {
+   "tool": "create_topdown_tileset",
+   "mode": "pro",
+   "view": "high top-down",
+   "transition": 0.25,
+   "id": "855d8c29-c6f5-4880-bd39-3706d0ea46dc",
+   "cost": 25,
+   "verdict": "grey-blue irregular stones (floor 3, graded darker, unflipped); its own water repeats star specks"
+  },
+  "D": {
+   "tool": "create_topdown_tileset",
+   "mode": "pro",
+   "view": "low top-down",
+   "transition": 0.25,
+   "id": "ed15d9a8-8591-4db3-b3ce-c62c8e03cdd2",
+   "cost": 25,
+   "verdict": "floor 1 as it came; its water and trench wall are the channel of all three floors (raw/tiles/set-D-channel.png: the floor cut away)"
+  }
+ },
+ "slabs": {
+  "tool": "create_tiles_pro",
+  "style": "D plain floor tile",
+  "id": "5ddf467f-938b-4238-97f4-3261578db51a",
+  "cost": 15,
+  "used_in": "floor 2, graded to D (hue kept), 5, 6, 8, 9 dropped (puddle, splat, sigil, shine); weights: 1 x3, 2 x2, 7 x2, 13 x3, the rest x1"
+ },
+ "props": {
+  "dais": {
+   "id": "729c3877-12ad-4cdf-95b5-4b7f865ab749",
+   "size": 96,
+   "cost": 10,
+   "on_floors": [
+    2
+   ]
+  },
+  "rift": {
+   "id": "76f213dc-2b6b-4382-b292-99abed2a5dd5",
+   "size": 96,
+   "cost": 10,
+   "on_floors": [
+    1
+   ],
+   "cleanup": "see-through hole filled black to faint violet in bands, cut to a ragged round"
+  },
+  "grate": {
+   "id": "5b69eb49-3a67-4c4d-9ce7-0128d42a46b9",
+   "size": 64,
+   "cost": 10,
+   "on_floors": [
+    1,
+    5,
+    8,
+    9
+   ]
+  },
+  "bones": {
+   "id": "2ae13a2f-a773-465b-998f-dbe0912940db",
+   "size": 48,
+   "cost": 10,
+   "on_floors": [
+    14,
+    17,
+    23,
+    4,
+    11
+   ]
+  },
+  "chain": {
+   "id": "f080f244-9f0e-4b4e-af39-bf85a232cfd3",
+   "size": 48,
+   "cost": 10,
+   "on_floors": [
+    3,
+    4,
+    7,
+    14,
+    20,
+    5
+   ]
+  },
+  "candle": {
+   "id": "583ecf2b-c95e-42c7-958a-2b8e2f7e31a4",
+   "size": 48,
+   "cost": 10,
+   "on_floors": [
+    1,
+    5,
+    10,
+    13,
+    20,
+    21,
+    11
+   ],
+   "cleanup": "wax shifted from mould green to old ivory"
+  },
+  "candle_top_down": {
+   "id": "6123e1b1-73cf-4d71-9997-4fb15322c500",
+   "size": 48,
+   "cost": 10,
+   "verdict": "straight from above they read as pale bubbles; not used"
+  }
+ },
+ "placement": "per square by the floor hash, as the grates are today: grates 8% of squares with floor all round; bones 6%, chains 4% (both turned by quarter turns), candles 4.5%; never beside the dais; one prop a square",
+ "generations": 175
+}
