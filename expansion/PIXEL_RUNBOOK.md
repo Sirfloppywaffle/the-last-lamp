@@ -20,7 +20,7 @@
 | 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | #177 | done |
 | 5 | What patrons lay on the floor, and the board's small effects | #179 | done |
 | 6 | The rest of the creatures, and the horrors (wiring, binding, tests; first art) | #182 | open |
-| 6b | The creature redesign: Lovecraftian, from a brief (§5) | #182 | next |
+| 6b | The creature redesign: Lovecraftian, from a brief (§5) | #182 | candidates posted; waiting on Criss's picks |
 | 7 | The Ossuary (floor 2) | | |
 | 8 | The Drowned Nave (floor 3) | | |
 | 9 | The Throat (floor 4) and the Keeper Below | | |
@@ -153,7 +153,7 @@ Done: Crawler, Skitterling (redo: only three frames held), Gnasher, Watcher, Sha
 - **it must show when reached through dev mode's floor jump.** Today nothing on floor 4 is pixel, because `pixOn()` asks that the floor have tiles and only the Cistern does. **Decision (recommended, Criss may overrule):** with Pixel chosen, creatures, horrors and bosses draw from their sheets on **every** floor (`artOf()` asks for the art and the setting, not the floor's tiles); tiles, wards and marks stay per floor (steps 7 to 10). Otherwise none of the redesign is seen until those steps. Rule 2 changes to match for creatures only, and `pixelboard.test.js`'s "every other floor is painted" check becomes "every other floor's tiles and wards are painted".
 
 **Keep what play needs** (the redesign is free otherwise):
-- **Silhouette and size**: each still reads at its board size (a creature is about one tile, 40 to 60 CSS px on a folded Fold) and is told from the others at a glance. Its radius (`FOES[type].r`) does not change; `ext` sets how its box stands on that.
+- **Silhouette and size**: each still reads at its board size and is told from the others at a glance. A tile is 31 CSS px on a folded Fold (28 sideways, 45 open; the board's canvas is at most 2 device px a CSS px), so a creature's art stands from about 14 CSS px (the Gibberer) to 66 (the Keeper). Its radius (`FOES[type].r`) does not change; `ext` sets how its box stands on that.
 - **Colour key**: `FOES[type].col` is its colour in the wave preview, the Grimoire and the tray; keep the creature in that family (or change `col` and say so).
 - **Eyes**: the dark keeps only the `eye()` pixels, so every design has eyes (or lights) that read in the dark, in colours nothing else on it uses.
 - **What the lore says it looks like** (`LORE`): the Gibberer "small, pale and round, covered in mouths"; the Gorger "big and purple, with a gaping mouth and a long tongue; not the red, round Gnasher"; the Choir-Husk "tall, grey and hollow, with a column of black mouths". Change the lore with the look if Criss agrees, never one without the other.
@@ -173,8 +173,10 @@ Done: Crawler, Skitterling (redo: only three frames held), Gnasher, Watcher, Sha
 **How** (§3 still holds; what is new):
 1. **Show Criss designs before animating anything.** For each creature, three or more candidates (text-first `create_image_pixflux`, or `create_image_pro` where it gives more detail), on a 128 px canvas for the look; pick the strongest, put them on one contact sheet beside the current sheet and post it on #182 for Criss. Animate only what he picks.
 2. **Board size is the real test**: shrink the pick to its board size on a pixel Cistern (`drawCreature` at its `r`) and check it still reads, lit and in the dark, before animating.
-3. **Sheets**: 64 px frames as now (the board never shows more), or 96 if a design loses too much; `animate_image` from the chosen frame, start the sheet at frame 1 (§3), hand-fix what an animation tears (step 6's notes).
+3. **Sheets**: 64 px frames as now for the small ones (their box is 38 to 66 canvas px on a folded Fold). The Behemoth, the Choirmaster and the Keeper stand 113 to 148 canvas px folded and 165 to 215 open, where a 64 px sheet is blocky (see the Keeper in the lineup), so give them 128 px frames (a frame size on their `ART_PX` row; `pixFrame` reads 64 today); `animate_image` from the chosen frame, start the sheet at frame 1 (§3), hand-fix what an animation tears (step 6's notes).
 4. **Lore and Grimoire** follow any look that changes (rule 23 does not apply: nothing about play changes).
+
+**Candidates (posted on #182, 18 Nov 2026; waiting on Criss's picks):** 44 designs, four or five a creature and four for the Keeper, one sheet a creature with the current sheet as card 0, and a lineup of the roster at real size. The sheets and every raw 128 px design are on the orphan branch `claude/shots-creature-redesign`: `creature-redesign/cand/<creature>-<n>.png`, numbered as on the sheets, and `picks.json` (each one's PixelLab job and index, and whether it was mirrored to face right). What it found: `create_image_pro` at 128 px (10 generations for four) far outdid `create_image_pixflux`, which came back tame, faced the wrong way and dropped the eye cluster and the mouth. A second, bolder prompt (the Skitterling as a hand, the Wretch as a drowned corpse, the Choirmaster as a bishop, a more human Gibberer, the Gorger's maw in its belly) gave several of the best. **Eyes are the hard part:** they are 2 or 3 px at 128 and vanish when halved, and the dark keeps only them, so set them by hand on each pick, big enough to survive the board's shrink, before the dark check. `pixFrame` shrinks by nearest when a sprite is under 64 px (every small creature on a folded Fold), which drops thin legs and lone eye pixels; consider drawing smoothed when it shrinks. Beside the new designs the pilot's four (Crawler, Gnasher, Watcher, Shade) look cartoony; Criss was asked whether to redo them. 153 generations.
 
 **Prompt (6b):**
 > Read `expansion/PIXEL_RUNBOOK.md` and `AGENTS.md`. Do step 6b, the creature redesign, on #182's branch. Read the brief in §5 first. Show me candidates on #182 before animating anything.
