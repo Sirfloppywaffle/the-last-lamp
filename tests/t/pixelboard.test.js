@@ -294,8 +294,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
      unlike its paint, and moves; in the dark only its shape and a few eye pixels are left; a creature that faces you is not mirrored as
      it walks left; a horror stands on its sheet inside the binding laid in art pixels, its runes turning, and still under Reduce Motion;
      the tray's horror icon and the painted board are untouched. Step 6b redesigned them, gave the Keeper Below the Bound Keeper's
-     drawing in red (a sheet with 128 px frames, like the Choirmaster's and the Behemoth's), and brought them to every floor */
-  const NEW6=['wretch','shrieker','elite','stalker','behemoth','gibberer','gorger','husk','keeper','skitter','boss'];
+     drawing in red (a sheet with 128 px frames, like the Choirmaster's and the Behemoth's), redid the pilot's four the same way, and
+     brought them all to every floor */
+  const NEW6=['wretch','shrieker','elite','stalker','behemoth','gibberer','gorger','husk','keeper','skitter','boss','crawler','gnasher','watcher','shade'];
   const foeProbe=()=>{const T=__t;
     window.__img=(fn)=>{const cv=document.createElement('canvas'); cv.width=cv.height=160; const c=cv.getContext('2d'); c.setTransform(100,0,0,100,80,90); fn(c);
       c.setTransform(1,0,0,1,0,0); const d=c.getImageData(0,0,160,160).data; let h=0, n=0, lit=0, dark=0;
@@ -328,7 +329,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(NEW6.every(k=>s6.px[k]!==s6.pt[k]),'on a pixel Cistern each creature draws from its sheet, not its paint',s6);
   ok(NEW6.every(k=>s6.anim[k]>=3),'every creature moves: its sheet plays',s6.anim);
   ok(NEW6.every(k=>s6.sil[k][0]>0&&s6.sil[k][0]*8<s6.sil[k][1]),'in the dark each is a shape with a few eye pixels left',s6.sil);
-  ok(['shrieker','elite','husk','keeper','boss'].every(k=>!s6.mirror[k])&&['wretch','stalker','gorger','skitter','behemoth','gibberer'].every(k=>s6.mirror[k]),'one that faces you is not mirrored as it walks left; the others turn',s6.mirror);
+  ok(['shrieker','elite','husk','keeper','boss','watcher'].every(k=>!s6.mirror[k])&&['wretch','stalker','gorger','skitter','behemoth','gibberer','crawler','gnasher','shade'].every(k=>s6.mirror[k]),'one that faces you is not mirrored as it walks left; the others turn',s6.mirror);
   ok(s6.kb[0]!==s6.kb[1],'the Bound Keeper and the Keeper Below are one drawing in their own colours',s6.kb);
   ok(s6.hBoard!==s6.hIcon,'a horror on the pixel board stands in a binding of art pixels; the tray\'s icon keeps the painted ring',s6);
   ok(s6.hTurn>1,'the binding\'s runes turn',s6.hTurn);
@@ -356,6 +357,23 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   }
   ok(rev.pixel.intro&&rev.pixel.pix&&!rev.pixel.tiles&&rev.pixel.lit>500,'with Pixel on, the Keeper Below rises from its sheet on a floor with no pixel tiles yet',rev);
   ok(rev.painted.intro&&!rev.painted.pix&&rev.pixel.hs!==rev.painted.hs,'painted, the reveal is the paint',rev);
+  /* the creature icons (Criss, 18 Nov 2026: "replace icons with new"): with Pixel chosen, the icons of the wave preview, the Grimoire and
+     the lesson cards come from the sheets, run or no run, sized among themselves as the paint's were; a creature not yet met is its
+     shape and its eyes; one with no sheet (the Primordial) stays painted; turning Pixel off puts the painted icons back */
+  const ic=await p.evaluate(()=>{const T=__t, o={};
+    const icon=(type,sil)=>{const cv=document.createElement('canvas'); cv.width=cv.height=44; const c=cv.getContext('2d');
+      if(sil){c.setTransform(44,0,0,44,0,0); T.foeShape(c,type,.5,.5,.33,.4,true);} else T.drawIcon(cv,{kind:'foe',type});
+      const d=c.getImageData(0,0,44,44).data; let h=0, lit=0, n=0;
+      for(let i=0;i<d.length;i+=4){h=(h*31+d[i]+d[i+1]*3+d[i+2]*7+d[i+3]*11)>>>0; if(d[i+3]>200){n++; if(d[i]+d[i+1]+d[i+2]>240)lit++;}} return {h,lit,n};};
+    const kinds=['crawler','gnasher','watcher','shade','gorger','husk','behemoth','skitter','keeper'];
+    T.boardArtSet('painted'); o.pt=kinds.map(k=>icon(k).h); o.p2=icon('boss2').h; const a0=T.artIcon('foe','gorger');
+    T.boardArtSet('pixel'); o.px=kinds.map(k=>icon(k).h); o.n=kinds.map(k=>icon(k).n); o.sil=icon('gorger',true); o.full=icon('gorger',false);
+    o.x2=icon('boss2').h; const a1=T.artIcon('foe','gorger'); o.fresh=a0!==a1;
+    T.boardArtSet('painted'); o.back=kinds.map(k=>icon(k).h); return o;});
+  ok(ic.px.every((h,i)=>h!==ic.pt[i])&&ic.n.every(n=>n>150),'with Pixel chosen each creature\'s icon is drawn from its sheet',ic);
+  ok(ic.sil.lit>0&&ic.sil.lit*4<ic.full.lit,'an icon for a creature not yet met is its shape and its eyes',[ic.sil,ic.full]);
+  ok(ic.x2===ic.p2,'a creature with no sheet keeps its painted icon',ic);
+  ok(ic.fresh&&ic.back.every((h,i)=>h===ic.pt[i]),'switching the board art redraws the icons, and painted puts the paint back',ic);
   {const p2=await b.newPage({viewport:{width:412,height:860},reducedMotion:'reduce'}); await p2.goto('file://'+process.argv[2]); await p2.waitForTimeout(600);
     const rm=await p2.evaluate((probe)=>{eval('('+probe+')')(); const T=__t; T.boardArtSet('pixel'); T.newRun('occultist',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true);
       /* the creature itself is drawn the same at every moment in this probe's frame (tm fixed for it); the binding must not turn */
