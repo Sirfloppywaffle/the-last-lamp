@@ -1,0 +1,330 @@
+{
+ "skitter": {
+  "1": {
+   "file": "cand/skitter-1.png",
+   "label": "spined louse",
+   "mirror": false,
+   "job": "43fa5c2e-3e95-48d2-8b61-71c4f480b8a2",
+   "index": 2
+  },
+  "2": {
+   "file": "cand/skitter-2.png",
+   "label": "louse, hands for forelegs",
+   "mirror": false,
+   "job": "43fa5c2e-3e95-48d2-8b61-71c4f480b8a2",
+   "index": 1
+  },
+  "3": {
+   "file": "cand/skitter-3.png",
+   "label": "pale louse",
+   "mirror": false,
+   "job": "43fa5c2e-3e95-48d2-8b61-71c4f480b8a2",
+   "index": 0
+  },
+  "4": {
+   "file": "cand/skitter-4.png",
+   "label": "bold: a hand that runs on its fingers",
+   "mirror": false,
+   "job": "6015e879-7940-4e40-9d5c-125cf7978ad2",
+   "index": 1
+  },
+  "5": {
+   "file": "cand/skitter-5.png",
+   "label": "bold: hand-thing with a mouth",
+   "mirror": false,
+   "job": "6015e879-7940-4e40-9d5c-125cf7978ad2",
+   "index": 2
+  }
+ },
+ "wretch": {
+  "1": {
+   "file": "cand/wretch-1.png",
+   "label": "drowned corpse, egg-sac belly",
+   "mirror": false,
+   "job": "1b728273-1926-4c2e-b68f-85c2fe80bd9e",
+   "index": 0
+  },
+  "2": {
+   "file": "cand/wretch-2.png",
+   "label": "corpse, bright sac",
+   "mirror": false,
+   "job": "1b728273-1926-4c2e-b68f-85c2fe80bd9e",
+   "index": 3
+  },
+  "3": {
+   "file": "cand/wretch-3.png",
+   "label": "green corpse",
+   "mirror": false,
+   "job": "1b728273-1926-4c2e-b68f-85c2fe80bd9e",
+   "index": 2
+  },
+  "4": {
+   "file": "cand/wretch-4.png",
+   "label": "ichor sac, grin",
+   "mirror": false,
+   "job": "fa818656-2a55-4e3e-8abd-cca5c4aae9cc",
+   "index": 2
+  },
+  "5": {
+   "file": "cand/wretch-5.png",
+   "label": "ichor sac, loose eyes",
+   "mirror": false,
+   "job": "fa818656-2a55-4e3e-8abd-cca5c4aae9cc",
+   "index": 0
+  }
+ },
+ "shrieker": {
+  "1": {
+   "file": "cand/shrieker-1.png",
+   "label": "lamprey throat, wide ruff",
+   "mirror": false,
+   "job": "b3045b61-bb50-407a-9083-0417d42a0bb6",
+   "index": 1
+  },
+  "2": {
+   "file": "cand/shrieker-2.png",
+   "label": "lamprey throat, reaching",
+   "mirror": false,
+   "job": "b3045b61-bb50-407a-9083-0417d42a0bb6",
+   "index": 2
+  },
+  "3": {
+   "file": "cand/shrieker-3.png",
+   "label": "arms raised",
+   "mirror": false,
+   "job": "b3045b61-bb50-407a-9083-0417d42a0bb6",
+   "index": 0
+  },
+  "4": {
+   "file": "cand/shrieker-4.png",
+   "label": "twisted stalk",
+   "mirror": false,
+   "job": "b3045b61-bb50-407a-9083-0417d42a0bb6",
+   "index": 3
+  }
+ },
+ "elite": {
+  "1": {
+   "file": "cand/elite-1.png",
+   "label": "cephalopod priest, baton",
+   "mirror": false,
+   "job": "40ac0b23-77f8-427c-9444-af76baf3a7b3",
+   "index": 0
+  },
+  "2": {
+   "file": "cand/elite-2.png",
+   "label": "cephalopod, open ribs",
+   "mirror": false,
+   "job": "40ac0b23-77f8-427c-9444-af76baf3a7b3",
+   "index": 1
+  },
+  "3": {
+   "file": "cand/elite-3.png",
+   "label": "crowned cephalopod",
+   "mirror": false,
+   "job": "40ac0b23-77f8-427c-9444-af76baf3a7b3",
+   "index": 2
+  },
+  "4": {
+   "file": "cand/elite-4.png",
+   "label": "bold: drowned bishop, halo of heads",
+   "mirror": false,
+   "job": "58207d7a-2854-40a4-81c4-73c996a2b21c",
+   "index": 0
+  },
+  "5": {
+   "file": "cand/elite-5.png",
+   "label": "bold: bishop, coral mitre",
+   "mirror": false,
+   "job": "58207d7a-2854-40a4-81c4-73c996a2b21c",
+   "index": 2
+  }
+ },
+ "stalker": {
+  "1": {
+   "file": "cand/stalker-1.png",
+   "label": "long and low",
+   "mirror": false,
+   "job": "097b739f-d5e7-44ea-82df-5800f959b82b",
+   "index": 3
+  },
+  "2": {
+   "file": "cand/stalker-2.png",
+   "label": "coiled",
+   "mirror": false,
+   "job": "097b739f-d5e7-44ea-82df-5800f959b82b",
+   "index": 1
+  },
+  "3": {
+   "file": "cand/stalker-3.png",
+   "label": "finned, coiled",
+   "mirror": false,
+   "job": "097b739f-d5e7-44ea-82df-5800f959b82b",
+   "index": 0
+  },
+  "4": {
+   "file": "cand/stalker-4.png",
+   "label": "rearing",
+   "mirror": false,
+   "job": "097b739f-d5e7-44ea-82df-5800f959b82b",
+   "index": 2
+  }
+ },
+ "behemoth": {
+  "1": {
+   "file": "cand/behemoth-1.png",
+   "label": "spined, pale face",
+   "mirror": false,
+   "job": "2022abdb-db3f-4548-9a3a-b9fdca573575",
+   "index": 1
+  },
+  "2": {
+   "file": "cand/behemoth-2.png",
+   "label": "moss-crusted",
+   "mirror": false,
+   "job": "2022abdb-db3f-4548-9a3a-b9fdca573575",
+   "index": 3
+  },
+  "3": {
+   "file": "cand/behemoth-3.png",
+   "label": "barnacled",
+   "mirror": false,
+   "job": "2022abdb-db3f-4548-9a3a-b9fdca573575",
+   "index": 0
+  },
+  "4": {
+   "file": "cand/behemoth-4.png",
+   "label": "horned helm",
+   "mirror": false,
+   "job": "2022abdb-db3f-4548-9a3a-b9fdca573575",
+   "index": 2
+  }
+ },
+ "gibberer": {
+  "1": {
+   "file": "cand/gibberer-1.png",
+   "label": "a head, all mouths",
+   "mirror": false,
+   "job": "32bb3874-d4e3-465a-90ec-7fb5e0d27058",
+   "index": 1
+  },
+  "2": {
+   "file": "cand/gibberer-2.png",
+   "label": "ball of mouths",
+   "mirror": false,
+   "job": "32bb3874-d4e3-465a-90ec-7fb5e0d27058",
+   "index": 0
+  },
+  "3": {
+   "file": "cand/gibberer-3.png",
+   "label": "more mouths",
+   "mirror": false,
+   "job": "32bb3874-d4e3-465a-90ec-7fb5e0d27058",
+   "index": 2
+  },
+  "4": {
+   "file": "cand/gibberer-4.png",
+   "label": "round, big eye",
+   "mirror": false,
+   "job": "8598f5aa-8148-4e47-ad76-35733dbb439e",
+   "index": 2
+  }
+ },
+ "gorger": {
+  "1": {
+   "file": "cand/gorger-1.png",
+   "label": "belly maw, tongue",
+   "mirror": false,
+   "job": "7e2eae72-0de5-48b8-88b9-0757ed720c74",
+   "index": 1
+  },
+  "2": {
+   "file": "cand/gorger-2.png",
+   "label": "belly maw, tall",
+   "mirror": false,
+   "job": "7e2eae72-0de5-48b8-88b9-0757ed720c74",
+   "index": 3
+  },
+  "3": {
+   "file": "cand/gorger-3.png",
+   "label": "belly maw, squat",
+   "mirror": false,
+   "job": "7e2eae72-0de5-48b8-88b9-0757ed720c74",
+   "index": 0
+  },
+  "4": {
+   "file": "cand/gorger-4.png",
+   "label": "head maw (toad)",
+   "mirror": true,
+   "job": "ea925a94-4ce8-4994-a923-e8eeaf116b0e",
+   "index": 1
+  },
+  "5": {
+   "file": "cand/gorger-5.png",
+   "label": "head maw, gut",
+   "mirror": false,
+   "job": "ea925a94-4ce8-4994-a923-e8eeaf116b0e",
+   "index": 2
+  }
+ },
+ "husk": {
+  "1": {
+   "file": "cand/husk-1.png",
+   "label": "hooded, arms raised",
+   "mirror": false,
+   "job": "1641d801-b3dd-4e14-abcc-a0f03079ee5b",
+   "index": 2
+  },
+  "2": {
+   "file": "cand/husk-2.png",
+   "label": "stooped skeleton",
+   "mirror": false,
+   "job": "1641d801-b3dd-4e14-abcc-a0f03079ee5b",
+   "index": 1
+  },
+  "3": {
+   "file": "cand/husk-3.png",
+   "label": "praying",
+   "mirror": false,
+   "job": "1641d801-b3dd-4e14-abcc-a0f03079ee5b",
+   "index": 0
+  },
+  "4": {
+   "file": "cand/husk-4.png",
+   "label": "arms folded",
+   "mirror": false,
+   "job": "1641d801-b3dd-4e14-abcc-a0f03079ee5b",
+   "index": 3
+  }
+ },
+ "keeper": {
+  "1": {
+   "file": "cand/keeper-1.png",
+   "label": "horned, big eyes",
+   "mirror": false,
+   "job": "5426e480-a2e2-428e-aeb6-05de6723b2d1",
+   "index": 1
+  },
+  "2": {
+   "file": "cand/keeper-2.png",
+   "label": "split orb",
+   "mirror": false,
+   "job": "5426e480-a2e2-428e-aeb6-05de6723b2d1",
+   "index": 0
+  },
+  "3": {
+   "file": "cand/keeper-3.png",
+   "label": "two maws",
+   "mirror": false,
+   "job": "5426e480-a2e2-428e-aeb6-05de6723b2d1",
+   "index": 2
+  },
+  "4": {
+   "file": "cand/keeper-4.png",
+   "label": "crown of spikes",
+   "mirror": false,
+   "job": "5426e480-a2e2-428e-aeb6-05de6723b2d1",
+   "index": 3
+  }
+ }
+}
