@@ -374,6 +374,21 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(ic.sil.lit>0&&ic.sil.lit*4<ic.full.lit,'an icon for a creature not yet met is its shape and its eyes',[ic.sil,ic.full]);
   ok(ic.x2===ic.p2,'a creature with no sheet keeps its painted icon',ic);
   ok(ic.fresh&&ic.back.every((h,i)=>h===ic.pt[i]),'switching the board art redraws the icons, and painted puts the paint back',ic);
+  /* walking (Criss, 18 Nov 2026: legs that step, not a glide): a creature with legs walks by the ground it covers, a cycle every stride
+     tiles whatever the clock says, so one held still stops mid-stride; the robed, the flying and the Shrieker on its stalk glide on their
+     loops as before (and a horror, standing on the board, plays its loop: it is never given a walk) */
+  const WALK=['crawler','skitter','gnasher','shade','wretch','behemoth','gibberer','gorger','stalker','boss'], GLIDE=['watcher','shrieker','elite','husk','keeper'];
+  const wk=await p.evaluate(([WALK,GLIDE,probe])=>{eval('('+probe+')')(); const T=__t, o={steps:{},still:{},glide:{},wseq:{}};
+    T.boardArtSet('pixel'); T.newRun('occultist',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true);
+    const one=(k,tm,walk)=>__img(c=>T.drawCreature(c,k,0,0,.3,tm,{walk})).h;
+    for(const k of WALK){const A=T.ART_PX[k]; o.wseq[k]=!!(A.wseq&&A.stride>0&&A.wseq.every(f=>f<A.n));
+      o.steps[k]=new Set([0,.25,.5,.75].map(f=>one(k,.3,A.stride*f))).size;
+      o.still[k]=new Set([.1,.7,1.3,2.9].map(tm=>one(k,tm,1.234))).size;}
+    for(const k of GLIDE)o.glide[k]=!T.ART_PX[k].wseq;
+    return o;},[WALK,GLIDE,foeProbe.toString()]);
+  ok(WALK.every(k=>wk.wseq[k]&&wk.steps[k]>=3),'every creature with legs has a walk, and it steps as it covers ground',wk);
+  ok(WALK.every(k=>wk.still[k]===1),'a walker that covers no ground does not step, whatever the clock',wk.still);
+  ok(GLIDE.every(k=>wk.glide[k]),'the robed, the flying and the Shrieker glide on their loops, as before',wk.glide);
   {const p2=await b.newPage({viewport:{width:412,height:860},reducedMotion:'reduce'}); await p2.goto('file://'+process.argv[2]); await p2.waitForTimeout(600);
     const rm=await p2.evaluate((probe)=>{eval('('+probe+')')(); const T=__t; T.boardArtSet('pixel'); T.newRun('occultist',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true);
       /* the creature itself is drawn the same at every moment in this probe's frame (tm fixed for it); the binding must not turn */
