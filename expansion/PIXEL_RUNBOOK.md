@@ -19,8 +19,9 @@
 | 3 | Kit wards and kit marks on the board (Lamplighter, Whaler) | #174 | done |
 | 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | #177 | done |
 | 5 | What patrons lay on the floor, and the board's small effects | #179 | done |
-| 6 | The rest of the creatures, and the horrors | #182 | done |
-| 7 | The Ossuary (floor 2) | | next |
+| 6 | The rest of the creatures, and the horrors (wiring, binding, tests; first art) | #182 | open |
+| 6b | The creature redesign: Lovecraftian, from a brief (§5) | #182 | next |
+| 7 | The Ossuary (floor 2) | | |
 | 8 | The Drowned Nave (floor 3) | | |
 | 9 | The Throat (floor 4) and the Keeper Below | | |
 | 10 | The Abyssal Heart (floor 5) and the Primordial | | |
@@ -38,7 +39,7 @@
 2. **Pixel only where `pixOn()` says so.** Every new drawing path asks `pixOn()` (pixel chosen in Settings, art loaded, this floor has tiles) and falls back to the painted code. Painted stays the default until step 13. Never delete a painted painter before step 13.
 3. **Everything that adds to the map or changes a look needs its pixel form** before a floor is called done. The list is in `AGENTS.md`, code-map row `the pixel board (pilot)`, under "What the pixel conversion must not forget". Each PR lists which of those the floor still paints.
 4. **Layouts are data.** Tiles are laid from the path's own squares (`paintBoardPixel`). Never draw a map as one picture. Every map variant of a floor, and any map added later, must draw with no new art. `pixelboard.test.js` checks three maps; extend it for each floor.
-5. **Keep each design.** A pixel creature or ward is the same creature or ward: same shape, colours, eyes, and what it shows of its state (a ward gone dark, a branch capstone, a trap sprung). Describe the painted one to PixelLab; do not invent a new look.
+5. **Keep each design, except the creatures.** A pixel ward or lamp is the same ward or lamp: same shape, colours, and what it shows of its state (a ward gone dark, a branch capstone, a trap sprung). Describe the painted one to PixelLab; do not invent a new look. **Creatures are the exception** (Criss, 18 Nov 2026: the paint "were placeholders"; make them "more terrifying" and "more Lovecraftian"): step 6b redesigns them, keeping only what play needs (§5, step 6b).
 6. **Animate.** Criss asked for it by name: creatures that blink, look about, chomp, scuttle. Every creature gets a sheet of frames (`animate_image`), not one still. Wards move when they act (fire, ring, flicker).
 7. **Lite and Reduce Motion.** Anything drawn every frame is left out under `gfxLite`, and anything that moves holds its first frame under `reduceMotion` (rule 18).
 8. **No per-frame garbage** (rule 17). Sprites are cached; a per-frame painter walks flat arrays and makes no objects. `getImageData` only when building a cached sprite, never in `render()`.
@@ -53,7 +54,7 @@ All new art is PixelLab (`.mcp.json`; tools named `mcp__pixellab__*`). About 600
 
 - **A sprite:** `create_image_pixflux`, 64 by 64 (wards and lamps: 32 by 48 or 48 by 48), `no_background: true`, `view: "low top-down"`, `outline: "selective outline"`, `shading: "detailed shading"`, `detail: "highly detailed"`. One generation. End every prompt with "dark muted palette, eerie, lit by warm lamplight".
 - **Its animation:** `animate_image` with `first_frame_url` set to the sprite's download URL (`https://api.pixellab.ai/mcp/images/<job_id>/download`), `frame_count: 8`. One generation at 64 by 64. Say only what moves. Frame 0 comes back as the input; frames 1 to 8 are new. **Look at every frame**: the generator sometimes turns the subject into something else after a few frames (the Skitterling became a moth; only frames 0 to 2 were kept). Use the frames that hold, and play them forward and back (`seq`) if they do not loop.
-- **A creature starts from its paint** (step 6): draw it alone by `ART[type].draw` in its own box, shrink to 64 and give it as `init_image` at strength 250 (330 when a feature goes). Its anchor and size carry over, so `ext` is the box. Then animate from the result, and start the sheet at frame 1 (frame 0 is the input and pops).
+- **A piece that keeps its paint's design starts from its paint** (step 6 did this for creatures; step 6b redesigns them instead, and a ward or lamp can still use it): draw it alone by `ART[type].draw` in its own box, shrink to 64 and give it as `init_image` at strength 250 (330 when a feature goes). Its anchor and size carry over, so `ext` is the box. Then animate from the result, and start the sheet at frame 1 (frame 0 is the input and pops).
 - **When the first try loses the design** (step 2: the effigy came back a teddy, the trap a ring, the ballista diagonal): draw the painted piece alone at the sprite's size in the page (`drawWard(c,t,tm,true)` with a 46 px unit), upload it (`get_upload_url`, one curl) and generate again with `init_image_url` set to it, strength 200 (a real redraw) to 330 (close to the paint). Its geometry carries over, so its anchor and scale are known.
 - **Stable bodies:** an animation may redraw the still parts a little each frame. Keep one frame's body and take only what moves from the rest (step 2's candle: the flame rows).
 - **A floor's tiles:** `create_topdown_tileset`, `tile_size` 32, `transition_size` 0.25, `shape_style: "square"`, `raggedness` 0.1. Lower terrain is the path, upper is the floor, the transition is the kerb between. One generation. Fetch `/mcp/tilesets/<id>/image?inline=true` and `/metadata`; the metadata gives each tile's four corners, which become that floor's row in `PIX_AT` (key: NW 8, NE 4, SW 2, SE 1; upper is 1).
@@ -138,6 +139,45 @@ Done: Crawler, Skitterling (redo: only three frames held), Gnasher, Watcher, Sha
 
 **Prompt:**
 > Read `expansion/PIXEL_RUNBOOK.md` and `AGENTS.md`. Do step 6: every remaining creature as an animated sheet through `ART_PX` and `artOf()`, and the horrors, one PR off `main`. Look at each painted creature (draw it large with `drawCreature`) before prompting, and keep its design.
+
+### Step 6b: the creature redesign (Criss, 18 Nov 2026)
+
+**Why.** Criss looked at #182: the Bound Keeper "looks good", the rest of the step's creatures "need a full rework in design". The painted creatures were placeholders; he wants them **more terrifying and more Lovecraftian**, with the detail of the Roster's portraits (`PORT_SRC`, Fable 5.2's work). Usage is no concern this cycle (Criss: a full reset to spend before the 20th; PixelLab refills on the 29th).
+
+**Scope.** The ten sheets of #182: the Ichor Wretch, Shrieker, Drowned Choirmaster, Abyssal Stalker, Trench Behemoth, Gibberer, Gorger, Choir-Husk and Skitterling get new designs; **the Bound Keeper stays** (the design that worked). The pilot's five (Crawler, Gnasher, Watcher, Shade; the Skitterling is above) only if Criss asks. Work on #182's branch (`claude/jolly-dirac-zum88f`); its wiring (`ART_PX`, `artOf`, `pixBound`, `drawHorror(…,board)`) and `pixelboard.test.js` carry over: a new sheet is a new `PIX_SRC.foes` entry and its `ART_PX` row (`ext`, `eye`, `seq`).
+
+**Also in 6b: the Keeper Below.** Criss likes the Bound Keeper. Make the boss (`boss`, floor 4) that same design, and pixel where he sees it:
+- its sheet, large enough for its size (`FOES.boss.r` .6; it paints live today, `A.live`), drawn through `artOf()`;
+- its reveal as it rises from the rift (`render()`, "the reveal": it reads `ART[e.type]` directly; make it read `artOf()` and draw the sheet);
+- what it calls up: Skitterlings every 5 seconds (`update()`, `def.spawner`), so the new Skitterling;
+- **it must show when reached through dev mode's floor jump.** Today nothing on floor 4 is pixel, because `pixOn()` asks that the floor have tiles and only the Cistern does. **Decision (recommended, Criss may overrule):** with Pixel chosen, creatures, horrors and bosses draw from their sheets on **every** floor (`artOf()` asks for the art and the setting, not the floor's tiles); tiles, wards and marks stay per floor (steps 7 to 10). Otherwise none of the redesign is seen until those steps. Rule 2 changes to match for creatures only, and `pixelboard.test.js`'s "every other floor is painted" check becomes "every other floor's tiles and wards are painted".
+
+**Keep what play needs** (the redesign is free otherwise):
+- **Silhouette and size**: each still reads at its board size (a creature is about one tile, 40 to 60 CSS px on a folded Fold) and is told from the others at a glance. Its radius (`FOES[type].r`) does not change; `ext` sets how its box stands on that.
+- **Colour key**: `FOES[type].col` is its colour in the wave preview, the Grimoire and the tray; keep the creature in that family (or change `col` and say so).
+- **Eyes**: the dark keeps only the `eye()` pixels, so every design has eyes (or lights) that read in the dark, in colours nothing else on it uses.
+- **What the lore says it looks like** (`LORE`): the Gibberer "small, pale and round, covered in mouths"; the Gorger "big and purple, with a gaping mouth and a long tongue; not the red, round Gnasher"; the Choir-Husk "tall, grey and hollow, with a column of black mouths". Change the lore with the look if Criss agrees, never one without the other.
+- **Facing**: side-on creatures face right (mirrored walking left); front-facing ones get `flip:false`.
+
+**Direction, a starting point per creature** (pitch something bolder if you have it; Criss prefers bold):
+- **Skitterling** (a swarm, small and quick; the Wretch bursts into two; the Keeper Below calls them): a pale louse the size of a hand, too many jointed legs like finger bones, a cluster of red eyes, a small human mouth under them.
+- **Ichor Wretch** (bursts into two Skitterlings): a sagging translucent sac of green ichor on stumps, two Skitterlings curled inside and visibly moving, eyes floating loose in the fluid, a split grin leaking.
+- **Shrieker** (its cry hastens all near it): a skinned, throat-shaped thing; the whole front a ringed lamprey mouth, a ruff of torn membrane that flares when it screams, a crown of small red eyes.
+- **Drowned Choirmaster** (an elite; its hymn hastens): a towering drowned priest, robes heavy with barnacles and weed, a cephalopod head whose tentacles hang over an open ribcage where small drowned faces mouth the hymn, both arms raised conducting, cyan eyes.
+- **Abyssal Stalker** (veiled, fast): a gaunt deep-sea eel with a human jaw of long needle teeth; its lure is a tiny lantern, a false lamp, the one warm light on it.
+- **Trench Behemoth** (heavy, unstoppable): a huge armoured isopod, plates crusted with barnacles and bone, a face half-sunk in its head plate, many slow legs, small black eyes.
+- **Gibberer** (the Many-Mouthed's; small, pale, round): a pale bald head on spider legs of fingers, covered in human mouths with human teeth that chatter out of time, one red eye.
+- **Gorger** (big, purple, a gaping mouth, a long tongue): a bloated bruise-purple gut on short legs, the whole belly a vertical maw of crooked teeth, a long prehensile tongue that tastes the air, small yellow eyes.
+- **Choir-Husk** (tall, grey, hollow, a column of black mouths): a flayed chorister's shell stood upright, hollow through the ribs, a column of black mouths singing down its front, a tatter of surplice, two pale points of eye.
+
+**How** (§3 still holds; what is new):
+1. **Show Criss designs before animating anything.** For each creature, three or more candidates (text-first `create_image_pixflux`, or `create_image_pro` where it gives more detail), on a 128 px canvas for the look; pick the strongest, put them on one contact sheet beside the current sheet and post it on #182 for Criss. Animate only what he picks.
+2. **Board size is the real test**: shrink the pick to its board size on a pixel Cistern (`drawCreature` at its `r`) and check it still reads, lit and in the dark, before animating.
+3. **Sheets**: 64 px frames as now (the board never shows more), or 96 if a design loses too much; `animate_image` from the chosen frame, start the sheet at frame 1 (§3), hand-fix what an animation tears (step 6's notes).
+4. **Lore and Grimoire** follow any look that changes (rule 23 does not apply: nothing about play changes).
+
+**Prompt (6b):**
+> Read `expansion/PIXEL_RUNBOOK.md` and `AGENTS.md`. Do step 6b, the creature redesign, on #182's branch. Read the brief in §5 first. Show me candidates on #182 before animating anything.
 
 ### Steps 7 to 10: the other four floors
 

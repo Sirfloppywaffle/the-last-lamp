@@ -31,7 +31,7 @@
 - The game should be **hard**. He found early versions too easy, then essence too plentiful. Difficulty went up in v9 and v10, and he called v10 "better balanced". His recent runs end on the floor 4 boss or the floor 5 boss.
 - **No keyboard-only features.** He plays by touch; an `F` shortcut patch was scrapped for this reason.
 - The art direction is "**3D in the 2D sense**": painted canvas volumes, glossy eyes, silhouettes in the dark, eerie but readable.
-- **Saltmouth, the town above the stair (Expansion 3), is pixel art.** The stair was to stay painted (Criss, #116). **He reopened that on 10 Nov 2026:** the stair is to follow the town into pixel art, a floor at a time, piloted on the Cistern behind Settings, Board art (painted stays the default until he says). New stair art is pixel; keep each creature's design. The town was finished in v19.0.0; Expansion 4 (v20.0.0) made it customizable and is done too.
+- **Saltmouth, the town above the stair (Expansion 3), is pixel art.** The stair was to stay painted (Criss, #116). **He reopened that on 10 Nov 2026:** the stair is to follow the town into pixel art, a floor at a time, piloted on the Cistern behind Settings, Board art (painted stays the default until he says). New stair art is pixel; keep each ward's and lamp's design. **Creatures are redesigned** (Criss, 18 Nov 2026: the painted ones "were placeholders"; make them "more terrifying" and "more Lovecraftian"), keeping what play needs: `expansion/PIXEL_RUNBOOK.md` step 6b. The town was finished in v19.0.0; Expansion 4 (v20.0.0) made it customizable and is done too.
 
 ---
 
