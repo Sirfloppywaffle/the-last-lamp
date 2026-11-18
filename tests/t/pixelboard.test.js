@@ -1,6 +1,7 @@
 // The pixel board (pilot): Settings turns it on and keeps it; on the Cistern the floor is laid in pixel tiles from the path (every
 // map of the floor: a channel square is water, a floor square is stone) and the five piloted creatures come from their sheets,
-// lit, dark and as echoes; every other floor and every other creature is painted as before; turning it off puts the paint back.
+// lit, dark and as echoes (every creature but the Heralds and the Primordial, steps 6 and 6b); every other floor keeps its painted tiles,
+// wards and marks, and its creatures come from their sheets too (step 6b); turning it off puts the paint back.
 const {chromium}=require('playwright');
 const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.stringify(d):''));};
 (async()=>{
@@ -19,20 +20,23 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
         if(isP(x,y)&&n>=2&&!water&&Math.hypot(x+.5-T.F.lx,y+.5-T.F.ly)>2)water=at(x,y);
         if(!isP(x,y)&&n===0&&!stone&&!isP(x+1,y+1)&&!isP(x-1,y-1)&&!isP(x+1,y-1)&&!isP(x-1,y+1)&&Math.hypot(x+.5-T.F.lx,y+.5-T.F.ly)>2)stone=at(x,y);}
       o.water=water; o.stone=stone; o.n=T.PIX.water?T.PIX.water.length/4:0; o.paths=P.size;
-      const kinds=['crawler','skitter','gnasher','watcher','shade']; o.px=kinds.every(k=>T.artOf(k).pix); o.other=!T.artOf('wretch').pix&&!T.artOf('boss').pix;
-      const L=T.F.paths[0]; kinds.concat(['wretch']).forEach((k,i)=>{const e=T.spawnFoe(k,0,L.len*(.1+.13*i)); e.hp=e.max=1e6;});
+      /* every creature and the Keeper Below is a sheet (pixel stair steps 6 and 6b); the Primordial and the Heralds stay painted until
+         steps 10 and 11 */
+      const kinds=['crawler','skitter','gnasher','watcher','shade','wretch','shrieker','elite','stalker','behemoth','gibberer','gorger','husk','keeper'];
+      o.px=kinds.every(k=>T.artOf(k).pix)&&!!T.artOf('boss').pix; o.other=['boss2','lastkeeper','tithetaker','bellfather'].every(k=>!T.artOf(k).pix);
+      const L=T.F.paths[0]; kinds.filter(k=>k!=='keeper').forEach((k,i)=>{const e=T.spawnFoe(k,0,L.len*(.05+.065*i)); e.hp=e.max=1e6;});
       for(let i=0;i<40;i++){T.update(1/30); T.render();} o.sprites=T.nSprites;
       return o;},mv);
     ok(r.pix,'map '+mv+': the Cistern is a pixel floor',r);
     ok(r.water&&r.water[2]>r.water[0]&&r.water[0]<60,'map '+mv+': a square of the channel is dark water',r.water);
     ok(r.stone&&r.stone[0]>r.water[0]+8&&Math.abs(r.stone[0]-r.stone[2])<60,'map '+mv+': a square of the floor is stone',r.stone);
     ok(r.n===r.paths&&r.n>10,'map '+mv+': the water under the lamplight is the path, square for square',[r.n,r.paths]);
-    ok(r.px&&r.other,'map '+mv+': the five piloted creatures come from their sheets, the rest are painted',r);
+    ok(r.px&&r.other,'map '+mv+': every creature and the Keeper Below come from their sheets; the Primordial and the Heralds are painted',r);
     ok(r.sprites>0,'map '+mv+': they draw, lit and dark',r.sprites);
   }
   const rest=await p.evaluate(()=>{const T=__t, o={}; T.setMapV(0); T.newRun('lamplighter',0,{seed:9}); T.run.floor=1; T.beginFloor(null); o.ossuary=T.pixOn(); o.art=!!T.artOf('gnasher').pix;
     T.run.floor=0; T.beginFloor(null); T.boardArtSet('painted'); o.off=T.pixOn(); o.artOff=!!T.artOf('gnasher').pix; o.st=localStorage.getItem('ll-board'); T.setP(false); for(let i=0;i<5;i++)T.render(); return o;});
-  ok(!rest.ossuary&&!rest.art,'every other floor is painted, creatures and all',rest);
+  ok(!rest.ossuary&&rest.art,'every other floor keeps its painted tiles; its creatures come from their sheets (step 6b)',rest);
   ok(!rest.off&&!rest.artOff&&/painted/.test(rest.st||''),'turned off, the paint is back',rest);
   /* the five kit lamps (pixel stair step 1): on a pixel Cistern the board's lamp is drawn from its kit's sheet, each unlike the others
      and unlike the paint; icons and the descent map (no board flag) stay painted; another floor, or the painted board, is untouched;
@@ -285,6 +289,111 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const rm=await p2.evaluate(()=>{const T=__t; T.boardArtSet('pixel'); T.newRun('lamplighter',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true);
       T.run.spots={floor:0,tiles:[[0,5]]}; T.spotSync(); T.GLOW_PX.clear(); for(let i=0;i<12;i++){T.F.time=i*.37; T.render();} return (T.GLOW_PX.get('spot')||new Map()).size;});
     ok(rm===1,'under Reduce Motion a spot holds one size',rm);
+    await p2.close();}
+  /* the rest of the creatures, and the horrors (pixel stair step 6): each new sheet loads whole; on a pixel Cistern each draws from it,
+     unlike its paint, and moves; in the dark only its shape and a few eye pixels are left; a creature that faces you is not mirrored as
+     it walks left; a horror stands on its sheet inside the binding laid in art pixels, its runes turning, and still under Reduce Motion;
+     the tray's horror icon and the painted board are untouched. Step 6b redesigned them, gave the Keeper Below the Bound Keeper's
+     drawing in red (a sheet with 128 px frames, like the Choirmaster's and the Behemoth's), redid the pilot's four the same way, and
+     brought them all to every floor */
+  const NEW6=['wretch','shrieker','elite','stalker','behemoth','gibberer','gorger','husk','keeper','skitter','boss','crawler','gnasher','watcher','shade'];
+  const foeProbe=()=>{const T=__t;
+    window.__img=(fn)=>{const cv=document.createElement('canvas'); cv.width=cv.height=160; const c=cv.getContext('2d'); c.setTransform(100,0,0,100,80,90); fn(c);
+      c.setTransform(1,0,0,1,0,0); const d=c.getImageData(0,0,160,160).data; let h=0, n=0, lit=0, dark=0;
+      for(let i=0;i<d.length;i+=4){h=(h*31+d[i]+d[i+1]*3+d[i+2]*7+d[i+3]*11)>>>0; if(d[i+3]){n++; if(d[i]+d[i+1]+d[i+2]>150)lit++; else dark++;}} return {h:h+':'+n,n,lit,dark};};};
+  const s6=await p.evaluate(([NEW6,probe])=>{eval('('+probe+')')(); const T=__t, o={ready:{},whole:{},px:{},pt:{},anim:{},sil:{},mirror:{}};
+    const at=(art,floor)=>{T.boardArtSet(art); T.newRun('occultist',0,{seed:9}); T.run.floor=floor; T.beginFloor(null); T.setP(true);};
+    const one=(k,tm,o2)=>__img(c=>T.drawCreature(c,k,0,0,.3,tm,o2||{}));
+    at('painted',0); for(const k of NEW6)o.pt[k]=one(k,.3).h;
+    at('pixel',0); o.on=T.pixOn();
+    for(const k of NEW6){const A=T.ART_PX[k], fs=A.fs||64; o.ready[k]=A.ready; o.whole[k]=A.ready&&A.img.width===A.n*fs&&A.img.height===fs&&Math.max(...A.seq)<A.n;
+      o.px[k]=one(k,.3).h; o.anim[k]=new Set([.05,.25,.45,.65,.85,1.05,1.45,1.95].map(tm=>one(k,tm).h)).size;
+      const sl=one(k,.3,{sil:true}); o.sil[k]=[sl.lit,sl.dark];
+      o.mirror[k]=one(k,.3,{face:-1}).h!==one(k,.3,{face:1}).h;}
+    /* a horror on the board: its binding in art pixels, unlike the painted ring a tray icon keeps (its creature is the sheet either way) */
+    const hor=(type,tm,board)=>__img(c=>T.drawHorror(c,{type,x:0,y:0,id:3},tm,board));
+    o.hBoard=hor('keeper',.3,true).h; o.hIcon=hor('keeper',.3,false).h;
+    o.hTurn=new Set([.1,.9,1.7,2.5].map(tm=>__img(c=>{c.save(); T.drawHorror(c,{type:'keeper',x:0,y:0},tm,true); c.restore();}).h)).size;
+    /* every horror's kind draws on the pixel board through a wave, with Unbind's charge and a phantom over a Corpse Candle */
+    let errs=0; T.setP(false); T.F.phase='wave'; T.F.queue=[{t:1e9,type:'crawler',gate:0}];
+    const H=Object.keys(T.HORRORS); H.forEach((k,i)=>T.F.towers.push({kind:'horror',type:k,x:T.F.lx-3+i,y:T.F.ly+2,id:90+i,c:0,r:0,br:{}}));
+    T.F.charges.push({type:'gnasher',gate:0,d:1,x:T.F.lx,y:T.F.ly-1,dmg:1,hit:[]});
+    for(let i=0;i<30;i++){try{T.update(1/30); T.render();}catch(err){errs++; o.err=String(err);}}
+    o.errs=errs;
+    /* one drawing for the Keeper: red as the Keeper Below, magenta once bound */
+    o.kb=[one('keeper',.3).h,one('boss',.3).h];
+    at('pixel',1); o.oss=T.pixOn(); o.ossArt=NEW6.every(k=>T.artOf(k).pix);
+    at('painted',0); o.offArt=NEW6.some(k=>T.artOf(k).pix);
+    return o;},[NEW6,foeProbe.toString()]);
+  ok(s6.on&&NEW6.every(k=>s6.ready[k]&&s6.whole[k]),'every new sheet loads, its frames all there',s6.whole);
+  ok(NEW6.every(k=>s6.px[k]!==s6.pt[k]),'on a pixel Cistern each creature draws from its sheet, not its paint',s6);
+  ok(NEW6.every(k=>s6.anim[k]>=3),'every creature moves: its sheet plays',s6.anim);
+  ok(NEW6.every(k=>s6.sil[k][0]>0&&s6.sil[k][0]*8<s6.sil[k][1]),'in the dark each is a shape with a few eye pixels left',s6.sil);
+  ok(['shrieker','elite','husk','keeper','boss','watcher'].every(k=>!s6.mirror[k])&&['wretch','stalker','gorger','skitter','behemoth','gibberer','crawler','gnasher','shade'].every(k=>s6.mirror[k]),'one that faces you is not mirrored as it walks left; the others turn',s6.mirror);
+  ok(s6.kb[0]!==s6.kb[1],'the Bound Keeper and the Keeper Below are one drawing in their own colours',s6.kb);
+  ok(s6.hBoard!==s6.hIcon,'a horror on the pixel board stands in a binding of art pixels; the tray\'s icon keeps the painted ring',s6);
+  ok(s6.hTurn>1,'the binding\'s runes turn',s6.hTurn);
+  ok(!s6.errs,'every horror, a charge and the new creatures through a wave on a pixel floor, with no hitch',s6);
+  ok(!s6.oss&&s6.ossArt&&!s6.offArt,'another floor keeps its painted tiles and draws these creatures from their sheets; the painted board keeps the painted ones',s6);
+  /* the Abyssal Stalker's lure (step 6b): a bare lantern on its sheet, its glow laid as light over the dark, as much as the Stalker is
+     seen: seen in the dark, the board round the lantern is brighter than with Lite (no glow); veiled in the dark, nothing is there */
+  const lure=await p.evaluate(()=>{const T=__t, o={}; T.boardArtSet('pixel'); T.setMapV(0); T.newRun('lamplighter',0,{seed:9}); T.run.floor=0; T.beginFloor(null);
+    T.setP(true); T.F.phase='wave'; const L=T.F.paths[0], e=T.spawnFoe('stalker',0,L.len*.12); e.hp=e.max=1e6; const A=T.ART_PX.stalker, cv=document.getElementById('board'), c=cv.getContext('2d');
+    o.dark=!T.F.L.some(l=>Math.hypot(l.x-e.x,l.y-e.y)<l.r+.5); o.lure=!!A.lure&&A.lure.length===A.n;
+    const probe=()=>{T.render(); const s=cv.width/T.COLS, E=e.def.r*A.ext, fs=A.fs||64, face=(e.face||1)<0?-1:1, x=(e.x+face*(A.lure[0][0]/fs*2-1)*E)*s, y=(e.y+(A.lure[0][1]/fs*2-1)*E)*s; let t=0;
+      for(const [dx,dy] of [[.15,0],[-.15,0],[0,.15],[0,-.15]]){const d=c.getImageData(Math.round(x+dx*s),Math.round(y+dy*s),1,1).data; t+=d[0]+d[1]+d[2];} return t/4;};
+    e.hex={unmask:true,t:99}; T.setLite(false); o.seen=probe(); T.setLite(true); o.lite=probe(); T.setLite(false); e.hex=null; o.veiled=probe(); return o;});
+  ok(lure.dark&&lure.lure,'the Stalker stands in the dark, and its sheet says where its lantern hangs in every frame',lure);
+  ok(lure.seen>lure.lite+10&&lure.veiled<lure.seen-10,'its lantern glows when it is seen, not under Lite, and not at all while it is veiled in the dark',lure);
+  /* the Keeper Below's reveal (step 6b): with Pixel on, floor 4 has no pixel tiles yet but the boss rises from its own sheet, drawn
+     pixel for pixel at the reveal's size; painted, it is the paint */
+  const rev={};
+  for(const art of ['painted','pixel']){
+    await p.evaluate((art)=>{const T=__t; T.boardArtSet(art); T.newRun('lamplighter',0,{seed:9}); T.run.floor=3; T.beginFloor(null); T.run.oil=T.run.oilMax=999; T.F.wave=T.F.def.waves.length-1; T.setP(false); T.callWave();},art);
+    await p.waitForTimeout(1300);
+    rev[art]=await p.evaluate(()=>{const T=__t, cv=document.getElementById('board'), c=cv.getContext('2d'); T.setP(true); if(T.F.intro)T.F.intro.t=1.9; T.render();
+      const w=cv.width, h=cv.height, d=c.getImageData(Math.round(w*.25),Math.round(h*.15),Math.round(w*.5),Math.round(h*.4)).data; let hs=0, lit=0;
+      for(let i=0;i<d.length;i+=4){hs=(hs*31+d[i]+d[i+1]*3+d[i+2]*7)>>>0; if(d[i]+d[i+1]+d[i+2]>120)lit++;} return {intro:!!T.F.intro,pix:!!T.artOf('boss').pix,tiles:T.pixOn(),hs,lit};});
+  }
+  ok(rev.pixel.intro&&rev.pixel.pix&&!rev.pixel.tiles&&rev.pixel.lit>500,'with Pixel on, the Keeper Below rises from its sheet on a floor with no pixel tiles yet',rev);
+  ok(rev.painted.intro&&!rev.painted.pix&&rev.pixel.hs!==rev.painted.hs,'painted, the reveal is the paint',rev);
+  /* the creature icons (Criss, 18 Nov 2026: "replace icons with new"): with Pixel chosen, the icons of the wave preview, the Grimoire and
+     the lesson cards come from the sheets, run or no run, sized among themselves as the paint's were; a creature not yet met is its
+     shape and its eyes; one with no sheet (the Primordial) stays painted; turning Pixel off puts the painted icons back */
+  const ic=await p.evaluate(()=>{const T=__t, o={};
+    const icon=(type,sil)=>{const cv=document.createElement('canvas'); cv.width=cv.height=44; const c=cv.getContext('2d');
+      if(sil){c.setTransform(44,0,0,44,0,0); T.foeShape(c,type,.5,.5,.33,.4,true);} else T.drawIcon(cv,{kind:'foe',type});
+      const d=c.getImageData(0,0,44,44).data; let h=0, lit=0, n=0;
+      for(let i=0;i<d.length;i+=4){h=(h*31+d[i]+d[i+1]*3+d[i+2]*7+d[i+3]*11)>>>0; if(d[i+3]>200){n++; if(d[i]+d[i+1]+d[i+2]>240)lit++;}} return {h,lit,n};};
+    const kinds=['crawler','gnasher','watcher','shade','gorger','husk','behemoth','skitter','keeper'];
+    T.boardArtSet('painted'); o.pt=kinds.map(k=>icon(k).h); o.p2=icon('boss2').h; const a0=T.artIcon('foe','gorger');
+    T.boardArtSet('pixel'); o.px=kinds.map(k=>icon(k).h); o.n=kinds.map(k=>icon(k).n); o.sil=icon('gorger',true); o.full=icon('gorger',false);
+    o.x2=icon('boss2').h; const a1=T.artIcon('foe','gorger'); o.fresh=a0!==a1;
+    T.boardArtSet('painted'); o.back=kinds.map(k=>icon(k).h); return o;});
+  ok(ic.px.every((h,i)=>h!==ic.pt[i])&&ic.n.every(n=>n>150),'with Pixel chosen each creature\'s icon is drawn from its sheet',ic);
+  ok(ic.sil.lit>0&&ic.sil.lit*4<ic.full.lit,'an icon for a creature not yet met is its shape and its eyes',[ic.sil,ic.full]);
+  ok(ic.x2===ic.p2,'a creature with no sheet keeps its painted icon',ic);
+  ok(ic.fresh&&ic.back.every((h,i)=>h===ic.pt[i]),'switching the board art redraws the icons, and painted puts the paint back',ic);
+  /* walking (Criss, 18 Nov 2026: legs that step, not a glide): a creature with legs walks by the ground it covers, a cycle every stride
+     tiles whatever the clock says, so one held still stops mid-stride; the robed, the flying and the Shrieker on its stalk glide on their
+     loops as before (and a horror, standing on the board, plays its loop: it is never given a walk) */
+  const WALK=['crawler','skitter','gnasher','shade','wretch','behemoth','gibberer','gorger','stalker','boss'], GLIDE=['watcher','shrieker','elite','husk','keeper'];
+  const wk=await p.evaluate(([WALK,GLIDE,probe])=>{eval('('+probe+')')(); const T=__t, o={steps:{},still:{},glide:{},wseq:{}};
+    T.boardArtSet('pixel'); T.newRun('occultist',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true);
+    const one=(k,tm,walk)=>__img(c=>T.drawCreature(c,k,0,0,.3,tm,{walk})).h;
+    for(const k of WALK){const A=T.ART_PX[k]; o.wseq[k]=!!(A.wseq&&A.stride>0&&A.wseq.every(f=>f<A.n));
+      o.steps[k]=new Set([0,.25,.5,.75].map(f=>one(k,.3,A.stride*f))).size;
+      o.still[k]=new Set([.1,.7,1.3,2.9].map(tm=>one(k,tm,1.234))).size;}
+    for(const k of GLIDE)o.glide[k]=!T.ART_PX[k].wseq;
+    return o;},[WALK,GLIDE,foeProbe.toString()]);
+  ok(WALK.every(k=>wk.wseq[k]&&wk.steps[k]>=3),'every creature with legs has a walk, and it steps as it covers ground',wk);
+  ok(WALK.every(k=>wk.still[k]===1),'a walker that covers no ground does not step, whatever the clock',wk.still);
+  ok(GLIDE.every(k=>wk.glide[k]),'the robed, the flying and the Shrieker glide on their loops, as before',wk.glide);
+  {const p2=await b.newPage({viewport:{width:412,height:860},reducedMotion:'reduce'}); await p2.goto('file://'+process.argv[2]); await p2.waitForTimeout(600);
+    const rm=await p2.evaluate((probe)=>{eval('('+probe+')')(); const T=__t; T.boardArtSet('pixel'); T.newRun('occultist',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true);
+      /* the creature itself is drawn the same at every moment in this probe's frame (tm fixed for it); the binding must not turn */
+      return new Set([.1,.9,1.7,2.5].map(tm=>__img(c=>{T.ART_PX.keeper.period=1e9; T.drawHorror(c,{type:'keeper',x:0,y:0},tm,true);}).h)).size;},foeProbe.toString());
+    ok(rm===1,'under Reduce Motion the binding\'s runes hold still',rm);
     await p2.close();}
   for(const f of fails)console.log('FAIL '+f);
   if(fails.length)process.exitCode=1; else console.log('pixelboard: all ok');
