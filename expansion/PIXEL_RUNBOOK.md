@@ -19,8 +19,8 @@
 | 3 | Kit wards and kit marks on the board (Lamplighter, Whaler) | #174 | done |
 | 4 | Kit wards and kit marks (Occultist, Galvanist, Bellringer) | #177 | done |
 | 5 | What patrons lay on the floor, and the board's small effects | #179 | done |
-| 6 | The rest of the creatures, and the horrors | | next |
-| 7 | The Ossuary (floor 2) | | |
+| 6 | The rest of the creatures, and the horrors | #PRNUM | done |
+| 7 | The Ossuary (floor 2) | | next |
 | 8 | The Drowned Nave (floor 3) | | |
 | 9 | The Throat (floor 4) and the Keeper Below | | |
 | 10 | The Abyssal Heart (floor 5) and the Primordial | | |
@@ -53,6 +53,7 @@ All new art is PixelLab (`.mcp.json`; tools named `mcp__pixellab__*`). About 600
 
 - **A sprite:** `create_image_pixflux`, 64 by 64 (wards and lamps: 32 by 48 or 48 by 48), `no_background: true`, `view: "low top-down"`, `outline: "selective outline"`, `shading: "detailed shading"`, `detail: "highly detailed"`. One generation. End every prompt with "dark muted palette, eerie, lit by warm lamplight".
 - **Its animation:** `animate_image` with `first_frame_url` set to the sprite's download URL (`https://api.pixellab.ai/mcp/images/<job_id>/download`), `frame_count: 8`. One generation at 64 by 64. Say only what moves. Frame 0 comes back as the input; frames 1 to 8 are new. **Look at every frame**: the generator sometimes turns the subject into something else after a few frames (the Skitterling became a moth; only frames 0 to 2 were kept). Use the frames that hold, and play them forward and back (`seq`) if they do not loop.
+- **A creature starts from its paint** (step 6): draw it alone by `ART[type].draw` in its own box, shrink to 64 and give it as `init_image` at strength 250 (330 when a feature goes). Its anchor and size carry over, so `ext` is the box. Then animate from the result, and start the sheet at frame 1 (frame 0 is the input and pops).
 - **When the first try loses the design** (step 2: the effigy came back a teddy, the trap a ring, the ballista diagonal): draw the painted piece alone at the sprite's size in the page (`drawWard(c,t,tm,true)` with a 46 px unit), upload it (`get_upload_url`, one curl) and generate again with `init_image_url` set to it, strength 200 (a real redraw) to 330 (close to the paint). Its geometry carries over, so its anchor and scale are known.
 - **Stable bodies:** an animation may redraw the still parts a little each frame. Keep one frame's body and take only what moves from the rest (step 2's candle: the flame rows).
 - **A floor's tiles:** `create_topdown_tileset`, `tile_size` 32, `transition_size` 0.25, `shape_style: "square"`, `raggedness` 0.1. Lower terrain is the path, upper is the floor, the transition is the kerb between. One generation. Fetch `/mcp/tilesets/<id>/image?inline=true` and `/metadata`; the metadata gives each tile's four corners, which become that floor's row in `PIX_AT` (key: NW 8, NE 4, SW 2, SE 1; upper is 1).
@@ -132,6 +133,8 @@ The Drowned Mother's water (`drawWater()`), the Wrong Sun's bright spots, the Ma
 ### Step 6: the rest of the creatures, and the horrors
 
 Done: Crawler, Skitterling (redo: only three frames held), Gnasher, Watcher, Shade. To do: Ichor Wretch (and its split), Shrieker, Drowned Choirmaster, Abyssal Stalker, Trench Behemoth, Gibberer, Gorger, Choir-Husk, the Bound Keeper. Horrors (`HORRORS`, `drawHorror()`) are bound creatures you field: give each its creature's sheet with a bound mark, as the painted ones do.
+
+**Done (step 6):** ten sheets (the nine above and the Skitterling again), `ART_PX` rows, `pixBound()` and `drawHorror(…,board)`; see the code map row `the pixel board (pilot)`. 25 generations. What it found: **start a creature from its paint.** Each was drawn alone by its own `ART[type].draw` at 512 px, cropped round its anchor so it fills about nine tenths of the box, shrunk to 64 and given as `init_image` at strength 250; the box it was drawn in is its `ext`, so its size and anchor carry over with no measuring. Six held at 250; the Stalker (its long body), the Behemoth (its eyes), the Choir-Husk (its column of mouths) and the Gorger (its fangs) needed 330. **An animation's frame 0 is the input**, crisper and in other colours than the frames drawn from it, so it pops once a loop: the sheets start at frame 1. Small things the generator lost were put back by hand, frame by frame, as step 4 did the fingers: the Behemoth's eyes, the Gibberer's red eye (and its pale bump, which came back yellow), the Husk's two eyes, the Gorger's yellow eyes (so the dark keeps them and not its fangs), the Keeper's white fangs and slit pupils, and the Gorger's tongue (its animation tore it off after one frame). Horrors already drew their creature through `drawCreature`, so they, Unbind's charge and Borrowed Flesh's phantom follow the sheets with nothing more; only the binding's rings and runes were paint. Still painted on a pixel Cistern: the Heralds (step 11) and the bosses (steps 9 and 10); small creature icons (`foeShape`: the tray and the wave preview, painted everywhere). Creatures animate under Reduce Motion, painted or pixel, as before; the binding's runes hold.
 
 **Prompt:**
 > Read `expansion/PIXEL_RUNBOOK.md` and `AGENTS.md`. Do step 6: every remaining creature as an animated sheet through `ART_PX` and `artOf()`, and the horrors, one PR off `main`. Look at each painted creature (draw it large with `drawCreature`) before prompting, and keep its design.
