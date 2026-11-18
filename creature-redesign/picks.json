@@ -326,5 +326,144 @@
    "job": "5426e480-a2e2-428e-aeb6-05de6723b2d1",
    "index": 3
   }
+ },
+ "crawler": {
+  "1": {
+   "file": "cand/crawler-1.png",
+   "label": "toothy, eyes on stalks",
+   "mirror": false,
+   "job": "6c336d1f-68fe-4ca3-b459-dd2dedb18bce",
+   "index": 1
+  },
+  "2": {
+   "file": "cand/crawler-2.png",
+   "label": "long, many fingers",
+   "mirror": false,
+   "job": "6c336d1f-68fe-4ca3-b459-dd2dedb18bce",
+   "index": 3
+  },
+  "3": {
+   "file": "cand/crawler-3.png",
+   "label": "puckered mouth",
+   "mirror": false,
+   "job": "6c336d1f-68fe-4ca3-b459-dd2dedb18bce",
+   "index": 0
+  },
+  "4": {
+   "file": "cand/crawler-4.png",
+   "label": "swollen",
+   "mirror": false,
+   "job": "6c336d1f-68fe-4ca3-b459-dd2dedb18bce",
+   "index": 2
+  }
+ },
+ "gnasher": {
+  "1": {
+   "file": "cand/gnasher-1.png",
+   "label": "round, gaping",
+   "mirror": false,
+   "job": "c05e156c-236e-42f1-93a9-965ab21d230b",
+   "index": 1
+  },
+  "2": {
+   "file": "cand/gnasher-2.png",
+   "label": "round, horned",
+   "mirror": false,
+   "job": "c05e156c-236e-42f1-93a9-965ab21d230b",
+   "index": 3
+  },
+  "3": {
+   "file": "cand/gnasher-3.png",
+   "label": "round, grinding teeth",
+   "mirror": false,
+   "job": "c05e156c-236e-42f1-93a9-965ab21d230b",
+   "index": 0
+  },
+  "4": {
+   "file": "cand/gnasher-4.png",
+   "label": "all jaw, knuckling",
+   "mirror": false,
+   "job": "be842e01-dab5-4d36-9735-41d57330bacf",
+   "index": 0
+  },
+  "5": {
+   "file": "cand/gnasher-5.png",
+   "label": "all jaw, rearing",
+   "mirror": true,
+   "job": "be842e01-dab5-4d36-9735-41d57330bacf",
+   "index": 1
+  }
+ },
+ "watcher": {
+  "1": {
+   "file": "cand/watcher-1.png",
+   "label": "slit pupil, torn lids",
+   "mirror": false,
+   "job": "d60a0b1f-301b-41d8-a182-8abcfed7c504",
+   "index": 1
+  },
+  "2": {
+   "file": "cand/watcher-2.png",
+   "label": "slit pupil, veined",
+   "mirror": false,
+   "job": "d60a0b1f-301b-41d8-a182-8abcfed7c504",
+   "index": 3
+  },
+  "3": {
+   "file": "cand/watcher-3.png",
+   "label": "ring of small eyes",
+   "mirror": false,
+   "job": "d60a0b1f-301b-41d8-a182-8abcfed7c504",
+   "index": 0
+  },
+  "4": {
+   "file": "cand/watcher-4.png",
+   "label": "spined lids",
+   "mirror": false,
+   "job": "d60a0b1f-301b-41d8-a182-8abcfed7c504",
+   "index": 2
+  }
+ },
+ "shade": {
+  "1": {
+   "file": "cand/shade-1.png",
+   "label": "hunched, grinning",
+   "mirror": false,
+   "job": "84ee6881-2cbe-47fe-8e4d-c43a0e26f69c",
+   "index": 0
+  },
+  "2": {
+   "file": "cand/shade-2.png",
+   "label": "smoke trailing",
+   "mirror": false,
+   "job": "84ee6881-2cbe-47fe-8e4d-c43a0e26f69c",
+   "index": 1
+  },
+  "3": {
+   "file": "cand/shade-3.png",
+   "label": "skull-faced",
+   "mirror": false,
+   "job": "84ee6881-2cbe-47fe-8e4d-c43a0e26f69c",
+   "index": 2
+  },
+  "4": {
+   "file": "cand/shade-4.png",
+   "label": "dissolving",
+   "mirror": false,
+   "job": "84ee6881-2cbe-47fe-8e4d-c43a0e26f69c",
+   "index": 3
+  }
+ },
+ "_chosen": {
+  "skitter": 1,
+  "wretch": 2,
+  "shrieker": 1,
+  "elite": 2,
+  "stalker": 1,
+  "behemoth": 1,
+  "gibberer": 2,
+  "gorger": 1,
+  "husk": 1,
+  "keeper": 1
  }
 }
