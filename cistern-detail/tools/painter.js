@@ -5,7 +5,9 @@ module.exports.paint=`(prev)=>function(c,o){
   const TH=THEMES[o.theme]||THEMES[0], img=PIX.tiles[TH.deco], AT=PIX_AT[TH.deco]; if(!img||!AT)return false;
   const {cols,rows,s}=o, P=o.path, TS=PIX.TS, lx=o.lamp[0], ly=o.lamp[1];
   /* invert (mockup): the path is the raised stone, everything else the water */
-  const up=C.invert?(x,y)=>P.has(clamp(x,0,cols-1)+','+clamp(y,0,rows-1)):(x,y)=>!P.has(clamp(x,0,cols-1)+','+clamp(y,0,rows-1));
+  /* piers (mockup): with the floor turned inside out, every ward stands on its own square of raised stone, joined to its neighbours */
+  const TW=new Set(); if(C.piers&&F&&F.towers)for(const t of F.towers)if(!t.dead)TW.add(t.c+','+t.r);
+  const up=C.invert?(x,y)=>{const k=clamp(x,0,cols-1)+','+clamp(y,0,rows-1); return P.has(k)||TW.has(k);}:(x,y)=>!P.has(clamp(x,0,cols-1)+','+clamp(y,0,rows-1));
   const bld=(x,y)=>!P.has(clamp(x,0,cols-1)+','+clamp(y,0,rows-1));
   const H=(x,y,k)=>{const q=o.canon?o.canon(x,y):[x,y]; return srand(q[0]*31.7+q[1]*17.3+k*7.13,o.seed);};
   const b=document.createElement('canvas'); b.width=cols*TS; b.height=rows*TS; const g=b.getContext('2d'); g.imageSmoothingEnabled=false;

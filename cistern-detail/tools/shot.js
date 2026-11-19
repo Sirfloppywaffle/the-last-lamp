@@ -26,14 +26,17 @@ const toURI=f=>f.startsWith('data:')?f:'data:image/png;base64,'+fs.readFileSync(
     },[c2,imgs,{paint:PNT.paint,rift:PNT.rift}]);}
   for(const mv of (process.env.MAPS||'0,1,2').split(',').map(Number)){
     for(const lit of (process.env.LIT||'1,0').split(',').map(v=>v==='1')){
+      await p.evaluate((n)=>{window.__nWards=n;},+(process.env.WARDS||3));
       const uri=await p.evaluate(([mv,lit,kinds])=>{const T=__t; window.devNoDark=lit; T.boardArtSet('pixel'); T.setMapV(mv); T.newRun('lamplighter',0,{seed:9}); T.run.floor=0; T.beginFloor(null);
         T.setP(false);
         if(window.__wards!==false){T.run.ess=9999; const R=__x.help.lampRadius(), P=T.F.pathTiles, isP=(x,y)=>P.has(x+','+y), spots=[];
           for(let y=0;y<T.ROWS;y++)for(let x=0;x<T.COLS;x++){if(isP(x,y))continue; const d=Math.hypot(x+.5-T.F.lx,y+.5-T.F.ly); if(d>R-.7||d<1.2)continue;
             if(isP(x+1,y)||isP(x-1,y)||isP(x,y+1)||isP(x,y-1))spots.push([x,y,d]);}
           spots.sort((a,b)=>b[2]-a[2]); const put=[];
-          for(const [x,y] of spots){if(put.length>=3)break; if(put.some(([a,b])=>Math.abs(a-x)+Math.abs(b-y)<3))continue; T.setSel({kind:'ward',type:put.length===1?'harpoon':'candle'}); T.tryPlace(x,y); T.setSel(null); put.push([x,y]);}
-          for(let i=0;i<3;i++)T.update(1/30);}
+          const NW=+(window.__nWards||3), kinds=['candle','harpoon','candle','salt','chime','candle','harpoon','tithe'];
+          for(const [x,y] of spots){if(put.length>=NW)break; if(NW<=3&&put.some(([a,b])=>Math.abs(a-x)+Math.abs(b-y)<3))continue; T.setSel({kind:'ward',type:kinds[put.length%kinds.length]}); T.tryPlace(x,y); T.setSel(null); put.push([x,y]);}
+          for(let i=0;i<3;i++)T.update(1/30);
+          if(window.__cand&&window.__cand.piers)__x.paintFloor();}
         T.F.phase='wave'; T.F.queue=[{t:1e9,type:'crawler',gate:0}];
         const roots=T.F.nRoots;
         kinds.forEach((k,i)=>{const L=T.F.paths[i%roots]; const e=T.spawnFoe(k,i%roots,L.len*(.08+.84*(i/kinds.length))); e.hp=e.max=1e6;});
