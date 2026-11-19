@@ -1,8 +1,9 @@
 // The pixel board (pilot): Settings turns it on and keeps it; on the Cistern the floor is laid in pixel tiles from the path (every
 // map of the floor; since step 6c turned inside out: a path square is the causeway's stone, every other square the flooded hall's water,
 // with columns standing in it and a pier rising under each ward built there) and the five piloted creatures come from their sheets,
-// lit, dark and as echoes (every creature but the Heralds and the Primordial, steps 6 and 6b); every other floor keeps its painted tiles,
-// wards and marks, and its creatures come from their sheets too (step 6b); turning it off puts the paint back.
+// lit, dark and as echoes (every creature but the Heralds and the Primordial, steps 6 and 6b); the Ossuary is laid too (step 7: slabs a
+// square, a sunken aisle, its forks); every floor not yet drawn keeps its painted tiles, wards and marks, and its creatures come from their
+// sheets too (step 6b); turning it off puts the paint back.
 const {chromium}=require('playwright');
 const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.stringify(d):''));};
 (async()=>{
@@ -76,9 +77,35 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
         if(L){o.left++; if(f!==-1)o.bad.push([mv,x,y,'L',f]);} else{o.right++; if(f!==1)o.bad.push([mv,x,y,'R',f]);}}}
     return o;});
   ok(hf.left>3&&hf.right>3&&!hf.bad.length,'a horror faces the path beside it, left or right, on every map',hf);
-  const rest=await p.evaluate(()=>{const T=__t, o={}; T.setMapV(0); T.newRun('lamplighter',0,{seed:9}); T.run.floor=1; T.beginFloor(null); o.ossuary=T.pixOn(); o.art=!!T.artOf('gnasher').pix;
+  /* the Ossuary (pixel stair step 7), on all three maps: limestone slabs, one a square with its joints on the square's edges (the set
+     drew them ten pixels off, so its floor is cut away and a slab laid under each square); the path a sunken aisle of dust and bone
+     between walls packed with skulls, and every fork's detour the same aisle; the painted floor's props on its squares, bone chips in
+     the aisle; and no lamplight glinting on the aisle, which is dry. Read at each square's middle, so a prop here and there is allowed */
+  for(const mv of [0,1,2]){
+    const r=await p.evaluate((mv)=>{const T=__t; T.setMapV(mv); T.newRun('lamplighter',0,{seed:9}); T.run.floor=1; T.beginFloor(null); T.setP(false);
+      const o={pix:T.pixOn()}, g=T.floorPx, s=g.canvas.width/T.COLS, P=T.F.pathTiles, isP=(x,y)=>P.has(x+','+y);
+      const Lu=(x,y,w,h)=>{const d=g.getImageData(Math.floor(x),Math.floor(y),Math.max(1,Math.round(w)),Math.max(1,Math.round(h))).data; let t=0; for(let i=0;i<d.length;i+=4)t+=d[i]*.299+d[i+1]*.587+d[i+2]*.114; return t/(d.length/4);};
+      const mid=(x,y)=>Lu((x+.3)*s,(y+.3)*s,.4*s,.4*s), ps=[], fs=[];
+      for(let y=0;y<T.ROWS;y++)for(let x=0;x<T.COLS;x++)(isP(x,y)?ps:fs).push(mid(x,y));
+      const med=a=>a.slice().sort((u,v)=>u-v)[a.length>>1]; o.medP=med(ps); o.medF=med(fs); o.aisle=ps.filter(v=>v<o.medF-15).length/ps.length;
+      o.forks=T.F.forks.length; o.fork=0; o.forkLit=0;
+      for(let k=T.F.nRoots;k<T.F.paths.length;k++){const Q=T.F.paths[k];
+        for(let d=0;d<Q.len;d+=.25){const q=T.posAt(Q,d), x=Math.floor(q[0]), y=Math.floor(q[1]); if(x<0||y<0||x>=T.COLS||y>=T.ROWS)continue; o.fork++; if(mid(x,y)>=o.medF-15)o.forkLit++;}}
+      let n=0, j=0; for(let y=1;y<T.ROWS-1;y++)for(let x=1;x<T.COLS-1;x++){if(isP(x,y)||isP(x-1,y)||isP(x+1,y)||isP(x,y-1)||isP(x,y+1))continue; n++;
+        const m=mid(x,y), top=Math.min(Lu((x+.2)*s,y*s,.6*s,1),Lu((x+.2)*s,y*s+1,.6*s,1)), left=Math.min(Lu(x*s,(y+.2)*s,1,.6*s),Lu(x*s+1,(y+.2)*s,1,.6*s));
+        if(top<m-8&&left<m-8)j++;}
+      o.slabs=n; o.joints=n?j/n:0; o.water=T.PIX.water?T.PIX.water.length:-1; o.laid=T.PIX.laid;
+      return o;},mv);
+    ok(r.pix,'map '+mv+': the Ossuary is a pixel floor',r);
+    ok(r.aisle>=.8&&r.medP<r.medF-20,'map '+mv+': the path is the sunken aisle, darker than the slabs',r);
+    ok(r.forks>=1&&r.fork>10&&r.forkLit<=r.fork*.1,'map '+mv+': every fork\'s detour is the aisle too',r);
+    ok(r.slabs>=5&&r.joints>=.8,'map '+mv+': a slab to a square, its joints on the square\'s edges',r);
+    ok(r.water===0,'map '+mv+': the aisle is dry, with no lamplight glinting on it',r.water);
+    ok(r.laid>=8,'map '+mv+': the painted floor\'s props lie on its squares, and bone chips in the aisle',r.laid);
+  }
+  const rest=await p.evaluate(()=>{const T=__t, o={}; T.setMapV(0); T.newRun('lamplighter',0,{seed:9}); T.run.floor=2; T.beginFloor(null); o.nave=T.pixOn(); o.art=!!T.artOf('gnasher').pix;
     T.run.floor=0; T.beginFloor(null); T.boardArtSet('painted'); o.off=T.pixOn(); o.artOff=!!T.artOf('gnasher').pix; o.st=localStorage.getItem('ll-board'); T.setP(false); for(let i=0;i<5;i++)T.render(); return o;});
-  ok(!rest.ossuary&&rest.art,'every other floor keeps its painted tiles; its creatures come from their sheets (step 6b)',rest);
+  ok(!rest.nave&&rest.art,'a floor not yet drawn (the Drowned Nave) keeps its painted tiles; its creatures come from their sheets (step 6b)',rest);
   ok(!rest.off&&!rest.artOff&&/painted/.test(rest.st||''),'turned off, the paint is back',rest);
   /* the five kit lamps (pixel stair step 1): on a pixel Cistern the board's lamp is drawn from its kit's sheet, each unlike the others
      and unlike the paint; icons and the descent map (no board flag) stay painted; another floor, or the painted board, is untouched;
@@ -92,7 +119,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       o.px[k]=__lampImg(k,true,1); o.pt[k]=__lampImg(k,false,1); o.anim[k]=new Set([.1,.3,.5,.7,.9].map(tm=>__lampImg(k,true,tm))).size;
       for(let i=0;i<5;i++)T.render();}
     T.F.lampRing=1; o.toll=__lampImg('bellringer',true,1.2); T.F.lampRing=0;
-    T.newRun('galvanist',0,{seed:9}); T.run.floor=1; T.beginFloor(null); o.oss=T.pixOn(); o.ossSame=__lampImg('galvanist',true,1)===__lampImg('galvanist',false,1);
+    T.newRun('galvanist',0,{seed:9}); T.run.floor=2; T.beginFloor(null); o.oss=T.pixOn(); o.ossSame=__lampImg('galvanist',true,1)===__lampImg('galvanist',false,1);
     T.run.floor=0; T.beginFloor(null); T.boardArtSet('painted'); o.offSame=__lampImg('galvanist',true,1)===__lampImg('galvanist',false,1); return o;},[kits,lampProbe.toString()]);
   ok(lamps.on&&kits.every(k=>lamps.ready[k]),'the five kit lamps load',lamps.ready);
   ok(new Set(kits.map(k=>lamps.px[k])).size===5,'on a pixel Cistern each kit draws its own lamp',lamps.px);
@@ -137,7 +164,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.setP(false); T.F.phase='wave'; T.F.queue=[{t:0,type:'crawler',gate:0},{t:.5,type:'crawler',gate:0}];
     for(let i=0;i<120;i++){T.update(1/30); T.render();}
     T.F.towers.length=0; for(let i=0;i<5;i++)T.render();
-    at('pixel','bellringer',1); o.oss=T.pixOn(); o.ossSame=W10.every(w=>__wardImg(w,null,1)===o.pt[w]);
+    at('pixel','bellringer',2); o.oss=T.pixOn(); o.ossSame=W10.every(w=>__wardImg(w,null,1)===o.pt[w]);
     at('painted','bellringer',0); o.offSame=W10.every(w=>__wardImg(w,null,1)===o.pt[w]); return o;},[W10,LOOPS,DARKS,KITS5,wardProbe.toString()]);
   ok(wards.on&&wards.cap&&W10.every(w=>wards.ready[w]),'the nine base wards load',wards.ready);
   ok(W10.every(w=>wards.px[w]!==wards.pt[w]),'on a pixel Cistern each base ward draws from its sheet, not its paint',{px:wards.px,pt:wards.pt});
@@ -316,7 +343,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       try{T.update(1/30); T.render();}catch(err){errs++; o.err=String(err);}}
     o.errs=errs; o.cachedWave=T.WATER_PX.body===body;
     /* another floor, and the painted board, build no water of their own */
-    at('pixel',1); T.render(); o.oss=T.pixOn(); o.ossNone=T.WATER_PX.lines!==T.F.waterLines;
+    at('pixel',2); T.render(); o.oss=T.pixOn(); o.ossNone=T.WATER_PX.lines!==T.F.waterLines;
     at('painted',0); T.render(); o.offNone=T.WATER_PX.lines!==T.F.waterLines;
     return o;});
   ok(s5.on&&s5.water>0&&s5.spots>0&&s5.hallow,'a pixel Cistern with her water, the Wrong Sun\'s spots and the Hallowed Ground',s5);
@@ -364,7 +391,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.errs=errs;
     /* one drawing for the Keeper: red as the Keeper Below, magenta once bound */
     o.kb=[one('keeper',.3).h,one('boss',.3).h];
-    at('pixel',1); o.oss=T.pixOn(); o.ossArt=NEW6.every(k=>T.artOf(k).pix);
+    at('pixel',2); o.oss=T.pixOn(); o.ossArt=NEW6.every(k=>T.artOf(k).pix);
     at('painted',0); o.offArt=NEW6.some(k=>T.artOf(k).pix);
     return o;},[NEW6,foeProbe.toString()]);
   ok(s6.on&&NEW6.every(k=>s6.ready[k]&&s6.whole[k]),'every new sheet loads, its frames all there',s6.whole);
