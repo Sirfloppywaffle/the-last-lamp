@@ -10201,13 +10201,15 @@ const PIX_AT={cistern:[[128,64],[192,64],[128,128],[64,128],[128,0],[192,128],[0
    at, the rects of its props in PIX_SRC.props[deco] (an atlas); props, laid on squares of the path by the floor's own numbers (p, the
    share of squares; rot, turned by quarter turns), never on a rift or beside the dais; cols, a column on every second corner of the
    grid that touches no square of the path (the lattice's offset is the one that stands the most), ay the art pixel row its plinth
-   stands on the corner by, its shadow cast away from the lamp and its reflection in the water below it */
+   stands on the corner by, its shadow cast away from the lamp and its reflection in the water below it; with something built on a
+   square its shaft rises through, only its broken base stands, stump art pixels of it (Criss, 19 Nov 2026: a column beside a ward
+   "seems to overlap anything that's placed next to it") */
 const PIX_FLOOR={cistern:{ts:64,inv:true,
   at:{col:[[0,0,48,128],[48,0,48,128],[96,0,48,128],[144,0,48,128]],grate:[[192,128,64,64],[0,224,64,64],[64,224,64,64],[128,224,64,64]],
     bones:[[192,224,48,48],[0,288,48,48],[48,288,48,48],[96,288,48,48],[144,288,48,48]],chain:[[192,288,48,48],[0,336,48,48],[48,336,48,48],[96,336,48,48],[144,336,48,48],[192,336,48,48]],
     cand:[[0,384,48,48],[48,384,48,48],[96,384,48,48],[144,384,48,48],[192,384,48,48],[0,432,48,48],[48,432,48,48]],dais:[[0,128,96,96]],rift:[[96,128,96,96]]},
   props:[{k:'grate',p:.08,salt:80},{k:'bones',p:.06,salt:86,rot:1,jit:.25},{k:'chain',p:.04,salt:87,rot:1,jit:.2},{k:'cand',p:.045,salt:88,jit:.25}],
-  cols:{step:2,clear:1.6,ay:114,refl:.22,shA:.38,shW:.3,shLen:7}}};
+  cols:{step:2,clear:1.6,ay:114,stump:40,refl:.22,shA:.38,shW:.3,shLen:7}}};
 /* the creatures: a sheet of frames (64 px, or fs), the order they play in, how long a loop takes, how big the frame's box stands on the
    board (ext, in the creature's own radius, like ART's), and which of its pixels are eyes: those are what the dark keeps. flip:false
    keeps a creature that faces you from being mirrored as it walks left, as the paint does.
@@ -10388,7 +10390,17 @@ function paintBoardPixel(c,o){
         if(Math.hypot(vx-lx,vy-ly)<CO.clear||nearRift(vx,vy,1.5))continue; L.push(vx,vy);}
       if(L.length>best){best=L.length; CL.length=0; for(const v of L)CL.push(v);}}}
   PIX.cols=CL;
-  const colR=(vx,vy)=>CR[Math.floor(H(vx,vy,21)*CR.length)%CR.length];
+  const colI=(vx,vy)=>Math.floor(H(vx,vy,21)*CR.length)%CR.length, colR=(vx,vy)=>CR[colI(vx,vy)];
+  /* a column with something built on a square its shaft rises through (the two above its corner, and the two above those) shows only its
+     broken base, so it never stands up among the wards; it is whole again when they are gone */
+  const stumpy=(vx,vy)=>D.inv&&(piers.has((vx-1)+','+(vy-1))||piers.has(vx+','+(vy-1))||piers.has((vx-1)+','+(vy-2))||piers.has(vx+','+(vy-2)));
+  /* what laying again round a square (x,y) must cover: the squares round it, and every column it can turn whole or broken, with that
+     column's reflection and its longest shadow */
+  PIX.dirtyFor=(x,y)=>{let x0=x-1, y0=y-1, x1=x+2, y1=y+2;
+    for(let i=0;i<CL.length;i+=2){const vx=CL[i], vy=CL[i+1]; if(!((vx===x||vx===x+1)&&(vy===y+1||vy===y+2)))continue;
+      const dx=vx-lx, dy=vy-ly, d=Math.hypot(dx,dy)||1, L=Math.min(CO.shLen,1.5+d*.9)+CO.shW*2;
+      x0=Math.min(x0,vx-1,vx+dx/d*L-1); x1=Math.max(x1,vx+1,vx+dx/d*L+1); y0=Math.min(y0,vy-2,vy+dy/d*L-1); y1=Math.max(y1,vy+2,vy+dy/d*L+1);}
+    return [Math.floor(x0),Math.floor(y0),Math.ceil(x1),Math.ceil(y1)];};
   const put=(r,cx,cy,q,fl)=>{g.save(); g.translate(Math.round(cx),Math.round(cy)); if(q)g.rotate(q*Math.PI/2); if(fl)g.scale(-1,1); g.drawImage(at,r[0],r[1],r[2],r[3],-(r[2]>>1),-(r[3]>>1),r[2],r[3]); g.restore();};
   /* lay the floor, all of it or (x0,y0,x1,y1, in squares) only that much of it: the tiles there, then everything over them, clipped */
   const lay=(x0,y0,x1,y1)=>{
@@ -10413,13 +10425,14 @@ function paintBoardPixel(c,o){
     }
     if(CL.length){
       /* each column's reflection, upside down in the water under it, only on the squares there that are water */
-      for(let i=0;i<CL.length;i+=2){const vx=CL[i], vy=CL[i+1], r=colR(vx,vy), foot=vy*TS+(r[3]-CO.ay);
+      for(let i=0;i<CL.length;i+=2){const vx=CL[i], vy=CL[i+1], r=colR(vx,vy), foot=vy*TS+(r[3]-CO.ay), st=stumpy(vx,vy)&&stumpOf(at,r,CO.stump,colI(vx,vy));
         g.save(); g.beginPath(); let any=false;
         for(let yy=vy;yy<vy+2;yy++)for(let xx=vx-1;xx<=vx;xx++)if(!up(xx,yy)){g.rect(xx*TS,yy*TS,TS,TS); any=true;}
-        if(any){g.clip(); g.globalAlpha=CO.refl; g.translate(vx*TS-(r[2]>>1),foot*2); g.scale(1,-1); g.drawImage(at,r[0],r[1],r[2],r[3],0,foot-r[3],r[2],r[3]);}
+        if(any){g.clip(); g.globalAlpha=CO.refl; g.translate(vx*TS-(r[2]>>1),foot*2); g.scale(1,-1);
+          if(st)g.drawImage(st,0,foot-st.height); else g.drawImage(at,r[0],r[1],r[2],r[3],0,foot-r[3],r[2],r[3]);}
         g.restore();}
       /* and its shadow, thrown away from the lamp */
-      for(let i=0;i<CL.length;i+=2){const vx=CL[i], vy=CL[i+1], dx=vx-lx, dy=vy-ly, d=Math.hypot(dx,dy)||1, ux=dx/d, uy=dy/d, L=Math.min(CO.shLen,1.5+d*.9), w=CO.shW;
+      for(let i=0;i<CL.length;i+=2){const vx=CL[i], vy=CL[i+1], dx=vx-lx, dy=vy-ly, d=Math.hypot(dx,dy)||1, ux=dx/d, uy=dy/d, L=Math.min(CO.shLen,1.5+d*.9)*(stumpy(vx,vy)?.3:1), w=CO.shW;
         const ax=vx*TS, ay=vy*TS, px=-uy*w*TS, py=ux*w*TS, bx=ax+ux*L*TS, by=ay+uy*L*TS, gr=g.createLinearGradient(ax,ay,bx,by);
         gr.addColorStop(0,'rgba(0,0,0,'+CO.shA+')'); gr.addColorStop(1,'rgba(0,0,0,0)'); g.fillStyle=gr;
         g.beginPath(); g.moveTo(ax+px,ay+py); g.lineTo(bx+px*1.8,by+py*1.8); g.lineTo(bx-px*1.8,by-py*1.8); g.lineTo(ax-px,ay-py); g.closePath(); g.fill();}
@@ -10427,7 +10440,10 @@ function paintBoardPixel(c,o){
     /* the lamp's dais */
     const dr=A.dais&&A.dais[0]; if(at&&dr)g.drawImage(at,dr[0],dr[1],dr[2],dr[3],Math.round(lx*TS-dr[2]/2),Math.round(ly*TS-dr[3]/2+2),dr[2],dr[3]);
     /* the columns themselves, the nearer over the farther, their tops lost in the dark */
-    for(let i=0;i<CL.length;i+=2){const vx=CL[i], vy=CL[i+1], r=colR(vx,vy); g.drawImage(at,r[0],r[1],r[2],r[3],vx*TS-(r[2]>>1),vy*TS-CO.ay,r[2],r[3]);}
+    for(let i=0;i<CL.length;i+=2){const vx=CL[i], vy=CL[i+1], r=colR(vx,vy);
+      if(stumpy(vx,vy)){const st=stumpOf(at,r,CO.stump,colI(vx,vy)); g.drawImage(st,vx*TS-(r[2]>>1),vy*TS-CO.ay+r[3]-st.height);}
+      else g.drawImage(at,r[0],r[1],r[2],r[3],vx*TS-(r[2]>>1),vy*TS-CO.ay,r[2],r[3]);}
+    PIX.stumps=0; for(let i=0;i<CL.length;i+=2)if(stumpy(CL[i],CL[i+1]))PIX.stumps++;
     g.restore();
   };
   lay();
@@ -10462,7 +10478,7 @@ function pixPiers(){
   if(!PIX.lay||!PIX.fb||PIX.fb.width!==COLS*PIX.TS||PIX.fb.height!==ROWS*PIX.TS){floorAgain(); return;}
   const now=PIX_PIERS_NOW; now.clear(); for(let i=0,n=F.towers.length;i<n;i++){const t=F.towers[i]; if(!t.dead)now.add(t.c+','+t.r);}
   let x0=1e9, y0=1e9, x1=-1e9, y1=-1e9;
-  const grow=k=>{const i=k.indexOf(','), x=+k.slice(0,i), y=+k.slice(i+1); x0=Math.min(x0,x-1); y0=Math.min(y0,y-1); x1=Math.max(x1,x+2); y1=Math.max(y1,y+2);};
+  const grow=k=>{const i=k.indexOf(','), d=PIX.dirtyFor(+k.slice(0,i),+k.slice(i+1)); x0=Math.min(x0,d[0]); y0=Math.min(y0,d[1]); x1=Math.max(x1,d[2]); y1=Math.max(y1,d[3]);};
   for(const k of PIX.piers)if(!now.has(k))grow(k);
   for(const k of now)if(!PIX.piers.has(k))grow(k);
   PIX.piers.clear(); for(const k of now)PIX.piers.add(k); PIX.pierSig=pierSig();
@@ -10476,6 +10492,17 @@ function pixPiers(){
   floorRifts(true); stainsAgain(); fg.restore();
 }
 const PIX_PIERS_NOW=new Set();
+/* a column's broken base (its bottom h art pixels, the top snapped off in a jagged line, its edge catching a little light), cut from the
+   floor's atlas once and kept */
+const PIX_STUMPS=new Map();
+function stumpOf(at,r,h,i){
+  const k=r.join(',')+':'+h; let c=PIX_STUMPS.get(k); if(c)return c;
+  c=document.createElement('canvas'); c.width=r[2]; c.height=h; const g=c.getContext('2d'); g.drawImage(at,r[0],r[1]+r[3]-h,r[2],h,0,0,r[2],h);
+  const d=g.getImageData(0,0,r[2],h), q=d.data;
+  for(let x=0;x<r[2];x++){const cut=Math.round(3+3*Math.sin(x*.9+i*1.7)+2*Math.sin(x*2.3+i)), top=Math.max(0,cut);
+    for(let y=0;y<top;y++)q[(y*r[2]+x)*4+3]=0;
+    const j=(top*r[2]+x)*4; if(q[j+3]){q[j]=Math.min(255,q[j]+40); q[j+1]=Math.min(255,q[j+1]+40); q[j+2]=Math.min(255,q[j+2]+40);}}
+  g.putImageData(d,0,0); PIX_STUMPS.set(k,c); return c;}
 /* what stands on the board, as one number. On a floor turned inside out, render() lays the floor again when it changes, so a pier rises
    under what was built and sinks where it was taken down; whatever built it (a ward, a horror, the Risen), the floor follows */
 function pierSig(){let h=7; for(let i=0,n=F.towers.length;i<n;i++){const t=F.towers[i]; if(!t.dead)h=(Math.imul(h,31)+t.c*977+t.r*131+1)|0;} return h;}
