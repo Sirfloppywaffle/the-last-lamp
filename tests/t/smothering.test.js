@@ -253,11 +253,17 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
   ok(g.R*2>=48&&g.xs[0]-g.R>=24&&g.w-g.xs[3]-g.R>=24,'targets 48 px or more, 24 px clear of the edges (folded)',g);
 
   /* the walk ends after the third plume; the card comes 600 ms after the last lift and goes on click */
-  /* timed on the page's own clock, from the lift itself: a stopwatch started in Node after the call returns loses the round
-     trip, and on a loaded runner that was enough to read 577 for a card shown 600 ms after the lift */
-  await p.evaluate(()=>{const T=__t, C=T.DESC; for(let k=0;k<4;k++)C.lit[k]=false; C.lit[0]=true; C.i=2; C.pl[2].rise=999; T.smotherSnuff(0); window.__liftT=performance.now();});
+  /* timed from where the descent's own clock stands at the lift: it moves only on animation frames (frame() adds the time since the
+     last one), so its 600 ms run from the last frame before the lift. The stopwatch starts at that frame's timestamp, kept by a
+     requestAnimationFrame of the test's own, which runs on the same frames with the same timestamps. A stopwatch started at the lift
+     (performance.now() after the call) begins up to a frame late, and on a loaded runner, with frames over 20 ms, that read 577 and
+     578 for a card the game held its full 600 ms */
+  await p.evaluate(()=>{window.__rafT=0; const f=t=>{window.__rafT=t; if(!window.__rafStop)requestAnimationFrame(f);}; requestAnimationFrame(f);});
+  await p.waitForTimeout(80);
+  await p.evaluate(()=>{const T=__t, C=T.DESC; for(let k=0;k<4;k++)C.lit[k]=false; C.lit[0]=true; C.i=2; C.pl[2].rise=999; T.smotherSnuff(0); window.__liftT=window.__rafT;});
   const shown=await (await p.waitForFunction(()=>!document.getElementById('dscCardWrap').hidden&&performance.now()-window.__liftT,null,{timeout:4000})).jsonValue();
-  ok(shown>=580,'the result card shows 600 ms or more after the walk ends',Math.round(shown));
+  await p.evaluate(()=>{window.__rafStop=true;});
+  ok(shown>=598,'the result card shows 600 ms or more after the walk ends',Math.round(shown));
   await shot('smother-card');
   const card=await p.evaluate(()=>({text:document.getElementById('dscCard').textContent,phase:__t.DESC.phase}));
   ok(card.phase==='card'&&/plume/.test(card.text)&&/Tap to go down to/.test(card.text),'the card says what came of the plumes',card);
