@@ -65,6 +65,17 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.sellTower(T.F.towers[T.F.towers.length-1],true); T.render(); o.s2=T.PIX.stumps;
     return o;});
   ok(st.free&&st.built&&st.s1===st.s0+1&&st.s2===st.s0,'a column beside a ward shows only its broken base, and stands whole again when the ward is gone',st);
+  /* a horror faces the path it guards: with the path beside it on the left it faces left, on the right it faces right (Criss, 19 Nov
+     2026: a bound Gnasher only ever faced one way), on every map */
+  const hf=await p.evaluate(()=>{const T=__t, o={left:0,right:0,bad:[]};
+    for(const mv of [0,1,2]){T.setMapV(mv); T.newRun('lamplighter',0,{seed:9}); T.run.floor=0; T.beginFloor(null);
+      const P=T.F.pathTiles, isP=(x,y)=>P.has(x+','+y);
+      for(let y=1;y<T.ROWS-1;y++)for(let x=1;x<T.COLS-1;x++){if(isP(x,y))continue;
+        const L=isP(x-1,y)&&!isP(x+1,y)&&!isP(x,y-1)&&!isP(x,y+1), R=isP(x+1,y)&&!isP(x-1,y)&&!isP(x,y-1)&&!isP(x,y+1); if(!L&&!R)continue;
+        const f=T.horrorFace({kind:'horror',type:'gnasher',c:x,r:y,x:x+.5,y:y+.5});
+        if(L){o.left++; if(f!==-1)o.bad.push([mv,x,y,'L',f]);} else{o.right++; if(f!==1)o.bad.push([mv,x,y,'R',f]);}}}
+    return o;});
+  ok(hf.left>3&&hf.right>3&&!hf.bad.length,'a horror faces the path beside it, left or right, on every map',hf);
   const rest=await p.evaluate(()=>{const T=__t, o={}; T.setMapV(0); T.newRun('lamplighter',0,{seed:9}); T.run.floor=1; T.beginFloor(null); o.ossuary=T.pixOn(); o.art=!!T.artOf('gnasher').pix;
     T.run.floor=0; T.beginFloor(null); T.boardArtSet('painted'); o.off=T.pixOn(); o.artOff=!!T.artOf('gnasher').pix; o.st=localStorage.getItem('ll-board'); T.setP(false); for(let i=0;i<5;i++)T.render(); return o;});
   ok(!rest.ossuary&&rest.art,'every other floor keeps its painted tiles; its creatures come from their sheets (step 6b)',rest);
