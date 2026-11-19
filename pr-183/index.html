@@ -10044,8 +10044,19 @@ function drawHorror(c,t,tm,board){
   c.restore();
   c.fillStyle='rgba(169,124,226,.1)'; c.beginPath(); c.ellipse(t.x,ry,.42,.26,0,0,TAU2); c.fill();
   }
-  const r=Math.min(.3,FOES[t.type].r*.8), face=(typeof F!=='undefined'&&F&&t.x<F.lx)?-1:1;
+  const r=Math.min(.3,FOES[t.type].r*.8), face=horrorFace(t);
   drawCreature(c,t.type,t.x,t.y-.04,r,tm,{ph:(t.id||0)*.37,face,look:[face,0]});
+}
+/* a horror on the board faces the path it guards (Criss, 19 Nov 2026: a bound Gnasher only ever faced one way): toward the side the
+   nearest point of any path lies on, worked out once a horror and kept in HORROR_FACE (a WeakMap, so nothing of it is saved); with the
+   path straight above or below it, away from the lamp, as every horror faced before. A tray icon (no square) faces as it always did */
+const HORROR_FACE=new WeakMap();
+function horrorFace(t){
+  const away=(typeof F!=='undefined'&&F&&t.x<F.lx)?-1:1;
+  if(t.c===undefined||typeof F==='undefined'||!F||!F.paths||!F.paths.length)return away;
+  let f=HORROR_FACE.get(t); if(f!==undefined)return f;
+  const n=nearestPathPoint(t.x,t.y), q=posAt(F.paths[n.gate],n.d), dx=q[0]-t.x;
+  f=Math.abs(dx)>.05?(dx<0?-1:1):away; HORROR_FACE.set(t,f); return f;
 }
 /* a horror's binding on a pixel floor, on the floor's own grid (PXU): the paint's rings (.42 and .33 across, squashed to .62), each rune
    a cross of five art pixels where the paint's bar and crossbar were */
