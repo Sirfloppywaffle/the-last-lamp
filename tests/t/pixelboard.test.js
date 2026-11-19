@@ -1,5 +1,6 @@
 // The pixel board (pilot): Settings turns it on and keeps it; on the Cistern the floor is laid in pixel tiles from the path (every
-// map of the floor: a channel square is water, a floor square is stone) and the five piloted creatures come from their sheets,
+// map of the floor; since step 6c turned inside out: a path square is the causeway's stone, every other square the flooded hall's water,
+// with columns standing in it and a pier rising under each ward built there) and the five piloted creatures come from their sheets,
 // lit, dark and as echoes (every creature but the Heralds and the Primordial, steps 6 and 6b); every other floor keeps its painted tiles,
 // wards and marks, and its creatures come from their sheets too (step 6b); turning it off puts the paint back.
 const {chromium}=require('playwright');
@@ -14,12 +15,16 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const r=await p.evaluate((mv)=>{const T=__t; T.setMapV(mv); T.newRun('lamplighter',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(false); T.F.phase='wave'; T.F.queue=[{t:1e9,type:'crawler',gate:0}];
       const o={pix:T.pixOn()}, cv=T.floorPx.canvas, g=T.floorPx, s=cv.width/T.COLS;
       const at=(x,y)=>{const d=g.getImageData(Math.round((x+.5)*s),Math.round((y+.5)*s),1,1).data; return [d[0],d[1],d[2]];};
-      /* a square of the channel well away from its banks, and a square of floor with floor all round it */
-      const P=T.F.pathTiles, isP=(x,y)=>P.has(x+','+y); let water=null, stone=null;
-      for(let y=1;y<T.ROWS-1;y++)for(let x=1;x<T.COLS-1;x++){const n=[[1,0],[-1,0],[0,1],[0,-1]].filter(([a,c])=>isP(x+a,y+c)).length;
-        if(isP(x,y)&&n>=2&&!water&&Math.hypot(x+.5-T.F.lx,y+.5-T.F.ly)>2)water=at(x,y);
-        if(!isP(x,y)&&n===0&&!stone&&!isP(x+1,y+1)&&!isP(x-1,y-1)&&!isP(x+1,y-1)&&!isP(x-1,y+1)&&Math.hypot(x+.5-T.F.lx,y+.5-T.F.ly)>2)stone=at(x,y);}
-      o.water=water; o.stone=stone; o.n=T.PIX.water?T.PIX.water.length/4:0; o.paths=P.size;
+      /* turned inside out (pixel stair step 6c): the path is the causeway's stone, every other square the hall's dark water. Read at each
+         square's middle, so a prop or a joint here and there is allowed for */
+      const P=T.F.pathTiles, Lu=c=>c[0]*.299+c[1]*.587+c[2]*.114, ps=[], ws=[];
+      for(let y=0;y<T.ROWS;y++)for(let x=0;x<T.COLS;x++){const c=at(x,y); (P.has(x+','+y)?ps:ws).push(c);}
+      const med=a=>a.map(Lu).sort((u,v)=>u-v)[a.length>>1];
+      o.pathStone=ps.filter(c=>Lu(c)>20).length/ps.length; o.hallWater=ws.filter(c=>c[2]>=c[0]&&Lu(c)<=26).length/ws.length; o.medP=med(ps); o.medW=med(ws);
+      o.n=T.PIX.water?T.PIX.water.length/4:0; o.paths=P.size; o.squares=T.COLS*T.ROWS;
+      /* a hall of columns on the grid's corners, none touching the path */
+      const C=T.PIX.cols||[]; o.cols=C.length/2; o.colOnPath=0;
+      for(let i=0;i<C.length;i+=2){const x=C[i], y=C[i+1]; if(P.has((x-1)+','+(y-1))||P.has(x+','+(y-1))||P.has((x-1)+','+y)||P.has(x+','+y))o.colOnPath++;}
       /* every creature and the Keeper Below is a sheet (pixel stair steps 6 and 6b); the Primordial and the Heralds stay painted until
          steps 10 and 11 */
       const kinds=['crawler','skitter','gnasher','watcher','shade','wretch','shrieker','elite','stalker','behemoth','gibberer','gorger','husk','keeper'];
@@ -28,12 +33,28 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       for(let i=0;i<40;i++){T.update(1/30); T.render();} o.sprites=T.nSprites;
       return o;},mv);
     ok(r.pix,'map '+mv+': the Cistern is a pixel floor',r);
-    ok(r.water&&r.water[2]>r.water[0]&&r.water[0]<60,'map '+mv+': a square of the channel is dark water',r.water);
-    ok(r.stone&&r.stone[0]>r.water[0]+8&&Math.abs(r.stone[0]-r.stone[2])<60,'map '+mv+': a square of the floor is stone',r.stone);
-    ok(r.n===r.paths&&r.n>10,'map '+mv+': the water under the lamplight is the path, square for square',[r.n,r.paths]);
+    ok(r.pathStone>=.75&&r.medP>=r.medW+10,'map '+mv+': the path is the causeway\'s stone',r);
+    ok(r.hallWater>=.9,'map '+mv+': every other square is the hall\'s dark water',r);
+    ok(r.n===r.squares-r.paths&&r.n>10,'map '+mv+': the lamplight on the water falls on every square but the path',[r.n,r.squares,r.paths]);
+    ok(r.cols>=10&&!r.colOnPath,'map '+mv+': a hall of columns stands in the water, none on the path',[r.cols,r.colOnPath]);
     ok(r.px&&r.other,'map '+mv+': every creature and the Keeper Below come from their sheets; the Primordial and the Heralds are painted',r);
     ok(r.sprites>0,'map '+mv+': they draw, lit and dark',r.sprites);
   }
+  /* piers (pixel stair step 6c): building in the hall raises a square of the causeway's stone under the ward, laid again only round it;
+     the floor laid a pier at a time is the floor laid whole; taken down, the square floods again */
+  const pr=await p.evaluate(()=>{const T=__t, o={}; T.setMapV(0); T.newRun('lamplighter',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true); T.run.ess=9999; T.render();
+    const g=T.floorPx, s=g.canvas.width/T.COLS, P=T.F.pathTiles, L=(x,y)=>{const d=g.getImageData(Math.round((x+.5)*s),Math.round((y+.5)*s),1,1).data; return d[0]*.299+d[1]*.587+d[2]*.114;};
+    let spot=null; for(let y=0;y<T.ROWS&&!spot;y++)for(let x=0;x<T.COLS;x++){if(P.has(x+','+y))continue; const d=Math.hypot(x+.5-T.F.lx,y+.5-T.F.ly); if(d>1.6&&d<3){spot=[x,y]; break;}}
+    o.spot=spot; o.before=L(spot[0],spot[1]); o.water0=T.PIX.water.length/4;
+    T.setSel({kind:'ward',type:'harpoon'}); T.tryPlace(spot[0],spot[1]); T.setSel(null); o.built=T.F.towers.length; T.render();
+    o.after=L(spot[0],spot[1]); o.pier=T.PIX.piers.has(spot.join(',')); o.water1=T.PIX.water.length/4;
+    const W=g.canvas.width, H=g.canvas.height, a=g.getImageData(0,0,W,H).data.slice(); T.boardArtSet('pixel'); const c=g.getImageData(0,0,W,H).data;
+    let n=0; for(let i=0;i<a.length;i++)if(Math.abs(a[i]-c[i])>4)n++; o.diff=n;
+    T.sellTower(T.F.towers[T.F.towers.length-1],true); T.render(); o.sold=L(spot[0],spot[1]); o.pier2=T.PIX.piers.has(spot.join(','));
+    return o;});
+  ok(pr.built&&pr.pier&&pr.after>pr.before+8&&pr.water1===pr.water0-1,'a ward built in the hall stands on a pier of stone, and the lamplight leaves its square',pr);
+  ok(pr.diff<50,'the floor laid round a pier is the floor laid whole',pr.diff);
+  ok(!pr.pier2&&pr.sold<pr.after-8,'taken down, its square floods again',pr);
   const rest=await p.evaluate(()=>{const T=__t, o={}; T.setMapV(0); T.newRun('lamplighter',0,{seed:9}); T.run.floor=1; T.beginFloor(null); o.ossuary=T.pixOn(); o.art=!!T.artOf('gnasher').pix;
     T.run.floor=0; T.beginFloor(null); T.boardArtSet('painted'); o.off=T.pixOn(); o.artOff=!!T.artOf('gnasher').pix; o.st=localStorage.getItem('ll-board'); T.setP(false); for(let i=0;i<5;i++)T.render(); return o;});
   ok(!rest.ossuary&&rest.art,'every other floor keeps its painted tiles; its creatures come from their sheets (step 6b)',rest);
