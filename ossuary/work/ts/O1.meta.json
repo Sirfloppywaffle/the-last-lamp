@@ -1,0 +1,845 @@
+{
+ "id": "cd2895e0-dfa2-4c17-b82f-76e3f47c54e8",
+ "name": "a sunken dry aisle of packed dark grey-brown \u2197 the floor of an ancient underground ossuary",
+ "lower_description": "a sunken dry aisle of packed dark grey-brown earth and fine bone dust, scattered with small bone chips, knuckle bones and a few loose teeth, scuffed and footworn, low contrast, dark muted palette, eerie",
+ "upper_description": "the floor of an ancient underground ossuary crypt: large square flagstones of dull yellowed limestone laid in a regular grid, worn smooth, hairline cracks and chipped corners, thin dark joints filled with grey bone dust, low contrast, dark muted palette, eerie",
+ "transition_description": "the aisle's low side walls, built of yellowed human skulls stacked in tight rows between the round knobbed ends of long bones, like the packed niches of an ossuary, dusty",
+ "tile_size": {
+  "width": 64,
+  "height": 64
+ },
+ "transition_size": 0.25,
+ "view": "high top-down",
+ "style_settings": {
+  "detail": null,
+  "outline": null,
+  "shading": null
+ },
+ "generation_parameters": {
+  "mode": "pro",
+  "spread_x": 0.5,
+  "slope_size": 0.0,
+  "tile_strength": 1.0,
+  "tileset_adherence": 100.0,
+  "text_guidance_scale": 8.0,
+  "requested_transition_size": 0.25,
+  "tileset_adherence_freedom": 500
+ },
+ "base_tile_ids": {
+  "lower": "f0909381-c7fc-4748-9f32-9eb5fcb20b1b",
+  "upper": "87e738f7-241c-48bb-bc0b-8a547e07ab8f"
+ },
+ "tileset_data": {
+  "tiles": [
+   {
+    "id": "13",
+    "name": "wang_13",
+    "corners": {
+     "NE": "upper",
+     "NW": "upper",
+     "SE": "upper",
+     "SW": "lower"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      1,
+      1,
+      255
+     ],
+     "row_2": [
+      255,
+      0,
+      1,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 2,
+     "row": 4
+    },
+    "bounding_box": {
+     "x": 0,
+     "y": 0,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "10",
+    "name": "wang_10",
+    "corners": {
+     "NE": "lower",
+     "NW": "upper",
+     "SE": "lower",
+     "SW": "upper"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      1,
+      0,
+      255
+     ],
+     "row_2": [
+      255,
+      1,
+      0,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 6,
+     "row": 2
+    },
+    "bounding_box": {
+     "x": 64,
+     "y": 0,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "4",
+    "name": "wang_4",
+    "corners": {
+     "NE": "upper",
+     "NW": "lower",
+     "SE": "lower",
+     "SW": "lower"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      0,
+      1,
+      255
+     ],
+     "row_2": [
+      255,
+      0,
+      0,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 1,
+     "row": 4
+    },
+    "bounding_box": {
+     "x": 128,
+     "y": 0,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "12",
+    "name": "wang_12",
+    "corners": {
+     "NE": "upper",
+     "NW": "upper",
+     "SE": "lower",
+     "SW": "lower"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      1,
+      1,
+      255
+     ],
+     "row_2": [
+      255,
+      0,
+      0,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 5,
+     "row": 3
+    },
+    "bounding_box": {
+     "x": 192,
+     "y": 0,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "6",
+    "name": "wang_6",
+    "corners": {
+     "NE": "upper",
+     "NW": "lower",
+     "SE": "lower",
+     "SW": "upper"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      0,
+      1,
+      255
+     ],
+     "row_2": [
+      255,
+      1,
+      0,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 2,
+     "row": 5
+    },
+    "bounding_box": {
+     "x": 0,
+     "y": 64,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "8",
+    "name": "wang_8",
+    "corners": {
+     "NE": "lower",
+     "NW": "upper",
+     "SE": "lower",
+     "SW": "lower"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      1,
+      0,
+      255
+     ],
+     "row_2": [
+      255,
+      0,
+      0,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 6,
+     "row": 3
+    },
+    "bounding_box": {
+     "x": 64,
+     "y": 64,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "f0909381-c7fc-4748-9f32-9eb5fcb20b1b",
+    "name": "wang_0",
+    "corners": {
+     "NE": "lower",
+     "NW": "lower",
+     "SE": "lower",
+     "SW": "lower"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      0,
+      0,
+      255
+     ],
+     "row_2": [
+      255,
+      0,
+      0,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 3,
+     "row": 6
+    },
+    "bounding_box": {
+     "x": 128,
+     "y": 64,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "1",
+    "name": "wang_1",
+    "corners": {
+     "NE": "lower",
+     "NW": "lower",
+     "SE": "upper",
+     "SW": "lower"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      0,
+      0,
+      255
+     ],
+     "row_2": [
+      255,
+      0,
+      1,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 1,
+     "row": 1
+    },
+    "bounding_box": {
+     "x": 192,
+     "y": 64,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "11",
+    "name": "wang_11",
+    "corners": {
+     "NE": "lower",
+     "NW": "upper",
+     "SE": "upper",
+     "SW": "upper"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      1,
+      0,
+      255
+     ],
+     "row_2": [
+      255,
+      1,
+      1,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 3,
+     "row": 2
+    },
+    "bounding_box": {
+     "x": 0,
+     "y": 128,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "3",
+    "name": "wang_3",
+    "corners": {
+     "NE": "lower",
+     "NW": "lower",
+     "SE": "upper",
+     "SW": "upper"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      0,
+      0,
+      255
+     ],
+     "row_2": [
+      255,
+      1,
+      1,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 2,
+     "row": 1
+    },
+    "bounding_box": {
+     "x": 64,
+     "y": 128,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "2",
+    "name": "wang_2",
+    "corners": {
+     "NE": "lower",
+     "NW": "lower",
+     "SE": "lower",
+     "SW": "upper"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      0,
+      0,
+      255
+     ],
+     "row_2": [
+      255,
+      1,
+      0,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 3,
+     "row": 1
+    },
+    "bounding_box": {
+     "x": 128,
+     "y": 128,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "5",
+    "name": "wang_5",
+    "corners": {
+     "NE": "upper",
+     "NW": "lower",
+     "SE": "upper",
+     "SW": "lower"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      0,
+      1,
+      255
+     ],
+     "row_2": [
+      255,
+      0,
+      1,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 1,
+     "row": 2
+    },
+    "bounding_box": {
+     "x": 192,
+     "y": 128,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "87e738f7-241c-48bb-bc0b-8a547e07ab8f",
+    "name": "wang_15",
+    "corners": {
+     "NE": "upper",
+     "NW": "upper",
+     "SE": "upper",
+     "SW": "upper"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      1,
+      1,
+      255
+     ],
+     "row_2": [
+      255,
+      1,
+      1,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 2,
+     "row": 2
+    },
+    "bounding_box": {
+     "x": 0,
+     "y": 192,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "14",
+    "name": "wang_14",
+    "corners": {
+     "NE": "upper",
+     "NW": "upper",
+     "SE": "lower",
+     "SW": "upper"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      1,
+      1,
+      255
+     ],
+     "row_2": [
+      255,
+      1,
+      0,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 4,
+     "row": 3
+    },
+    "bounding_box": {
+     "x": 64,
+     "y": 192,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "9",
+    "name": "wang_9",
+    "corners": {
+     "NE": "lower",
+     "NW": "upper",
+     "SE": "upper",
+     "SW": "lower"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      1,
+      0,
+      255
+     ],
+     "row_2": [
+      255,
+      0,
+      1,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 4,
+     "row": 4
+    },
+    "bounding_box": {
+     "x": 128,
+     "y": 192,
+     "width": 64,
+     "height": 64
+    }
+   },
+   {
+    "id": "7",
+    "name": "wang_7",
+    "corners": {
+     "NE": "upper",
+     "NW": "lower",
+     "SE": "upper",
+     "SW": "upper"
+    },
+    "pattern_4x4": {
+     "row_0": [
+      255,
+      255,
+      255,
+      255
+     ],
+     "row_1": [
+      255,
+      0,
+      1,
+      255
+     ],
+     "row_2": [
+      255,
+      1,
+      1,
+      255
+     ],
+     "row_3": [
+      255,
+      255,
+      255,
+      255
+     ]
+    },
+    "original_position": {
+     "col": 4,
+     "row": 2
+    },
+    "bounding_box": {
+     "x": 192,
+     "y": 192,
+     "width": 64,
+     "height": 64
+    }
+   }
+  ],
+  "tile_size": {
+   "width": 64,
+   "height": 64
+  },
+  "total_tiles": 16,
+  "terrain_types": [
+   "lower",
+   "upper"
+  ],
+  "spritesheet_url": "https://backblaze.pixellab.ai/file/pixellab-tiles/b8576c86-e591-4d94-a05e-83110a462954/cd2895e0-dfa2-4c17-b82f-76e3f47c54e8/spritesheet.png",
+  "spritesheet_grid": {
+   "cols": 4,
+   "rows": 4
+  },
+  "terrain_walkable": {
+   "87e738f7-241c-48bb-bc0b-8a547e07ab8f": true,
+   "f0909381-c7fc-4748-9f32-9eb5fcb20b1b": true
+  },
+  "spritesheet_layout": "tileset15_4x4"
+ },
+ "metadata": {
+  "terrain_prompts": {
+   "lower": "a sunken dry aisle of packed dark grey-brown earth and fine bone dust, scattered with small bone chips, knuckle bones and a few loose teeth, scuffed and footworn, low contrast, dark muted palette, eerie",
+   "upper": "the floor of an ancient underground ossuary crypt: large square flagstones of dull yellowed limestone laid in a regular grid, worn smooth, hairline cracks and chipped corners, thin dark joints filled with grey bone dust, low contrast, dark muted palette, eerie",
+   "transition": "the aisle's low side walls, built of yellowed human skulls stacked in tight rows between the round knobbed ends of long bones, like the packed niches of an ossuary, dusty"
+  }
+ },
+ "created_at": "2026-11-19T07:33:36.302681+00:00",
+ "format": "tileset15",
+ "layout": {
+  "type": "tileset15",
+  "description": "4x4 grid of 16 unique Wang tiles",
+  "grid_size": {
+   "width": 4,
+   "height": 4
+  },
+  "tile_count": 16
+ },
+ "pattern_system": {
+  "type": "4x4_wildcard",
+  "description": "4\u00d74 patterns with wildcards for flexible tile matching",
+  "wildcard_value": 255,
+  "pattern_layout": {
+   "description": "4\u00d74 grid where center 2\u00d72 matches tile corners, outer ring uses wildcards",
+   "example": {
+    "row_0": "All wildcards (*)",
+    "row_1": "Wildcard + NW corner + NE corner + Wildcard",
+    "row_2": "Wildcard + SW corner + SE corner + Wildcard",
+    "row_3": "All wildcards (*)"
+   }
+  },
+  "terrain_encoding": {
+   "lower": 0,
+   "upper": 1,
+   "transition": 2,
+   "wildcard": 255
+  },
+  "usage": {
+   "description": "Sample 4\u00d74 terrain around tile position, encode as pattern key, lookup in cache",
+   "benefits": [
+    "O(1) lookup performance",
+    "Flexible edge matching",
+    "Unified pattern system"
+   ]
+  }
+ },
+ "tileset_image": {
+  "filename": "a_sunken_dry_aisle_of_packed_dark_grey-brown__the_floor_of_an_ancient_underground_ossuary_tileset.png",
+  "format": "PNG",
+  "dimensions": {
+   "width": 256,
+   "height": 256
+  }
+ }
+}
