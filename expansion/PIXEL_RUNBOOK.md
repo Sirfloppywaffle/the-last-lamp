@@ -22,7 +22,7 @@
 | 6 | The rest of the creatures, and the horrors (wiring, binding, tests; first art) | #182 | done, with 6b |
 | 6b | The creature redesign: Lovecraftian, from a brief (§5); creatures on every floor; icons from the sheets | #182 | done (all fourteen from his picks) |
 | 6c | The Cistern redone in detail, to match the creatures (Criss, 18 Nov 2026): a flooded hall | #183 | done (B: a causeway, piers, columns) |
-| 7 | The Ossuary (floor 2) | | next |
+| 7 | The Ossuary (floor 2) | #185 | candidates up; waiting on Criss's picks |
 | 8 | The Drowned Nave (floor 3) | | |
 | 9 | The Throat (floor 4) and the Keeper Below | | |
 | 10 | The Abyssal Heart (floor 5) and the Primordial | | |
@@ -209,6 +209,7 @@ Done: Crawler, Skitterling (redo: only three frames held), Gnasher, Watcher, Sha
 For each: a tileset (path and floor in that floor's own materials), its props where the painted floor has them (`decoProp`, by the same squares and numbers), its glow marks (`paintGlow`: the Throat's veins, the Heart's fissures and eyes), a row in `PIX_AT`, and a look at all its maps. Floors 2 and 3 have **forks**; floors 4 and 5 have a **boss** (bosses paint live today, `A.live`: give each a sheet large enough for its size, or keep it painted and say so).
 
 - **7. The Ossuary:** bone-packed niches, a dry aisle of bone and dust for the path, skulls, a chalk circle.
+  **Candidates (posted on #185, 19 Nov 2026; waiting on Criss's picks).** With 27.5 generations left until the 29th, Criss agreed to one PixelLab tileset and props drawn by hand or recoloured, two or three candidates each. The set (pro, 64 px, 25 generations): worn limestone slabs, a sunken aisle of dust and bone grit, and walls packed with rows of skulls on their south faces and bones on their west. Its slabs came ten pixels off the board's squares, so the plain floor is cut away to each wall's own band (north 2 px, south 1, west 8, east 2) and `at.slab` lays one slab a square under the sheet: eight variants, the slab's middle turned and flipped, its joints and bevels kept. The aisle's two loud features (a knob, a long bone) were painted out wherever the plain aisle is pasted, so it does not repeat a square at a time; the palette was graded darker and warmer to the painted Ossuary (luminance L to L/2+8, hue drawn toward 34°). The props are drawn with a small Python kit (masks, dome shading from a distance field, a selective outline) or recoloured from 6c's spare bones by luminance; the dais and the rift are the Cistern's, recoloured. The sheets, the raw set (job `cd2895e0-dfa2-4c17-b82f-76e3f47c54e8`) and the scripts are on the orphan branch `claude/shots-ossuary` (`ossuary/work/`).
 - **8. The Drowned Nave:** flooded tiles, an aisle of deeper water, pews and weed, coloured light.
 - **9. The Throat:** flesh and cartilage, a wet red gullet for the path, teeth, pulsing veins. The Keeper Below.
 - **10. The Abyssal Heart:** black glass with violet veins, closed eyes in the floor, fissures that glow. The Primordial.
