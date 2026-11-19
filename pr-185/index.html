@@ -10203,7 +10203,7 @@ PIX_SRC.lamps={"lamplighter":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbAA
    They come in through artOf(): the sprite cache, the dark silhouettes with their eyes, the rim light and the echo outlines are all
    made from whatever artOf() hands back. */
 let boardArt=store.get('ll-board','painted')==='pixel'?'pixel':'painted';
-const PIX={ready:false,n:0,tiles:{},props:{},TS:32,piers:new Set(),pierSig:0,inv:false};
+const PIX={ready:false,n:0,tiles:{},props:{},TS:32,piers:new Set(),pierSig:0,inv:false,laid:0};
 /* the Wang sheet: a tile for each way its four corners can be stone (1) or water (0), keyed NW 8, NE 4, SW 2, SE 1 */
 const PIX_AT={cistern:[[128,64],[192,64],[128,128],[64,128],[128,0],[192,128],[0,64],[192,192],[64,64],[128,192],[64,0],[0,128],[192,0],[0,0],[64,192],[0,192]]};
 /* how each pixel floor is laid (pixel stair step 6c, Criss, 18 Nov 2026: the Cistern in detail, "go with B"): ts, its tiles' size (64 px:
@@ -10214,7 +10214,12 @@ const PIX_AT={cistern:[[128,64],[192,64],[128,128],[64,128],[128,0],[192,128],[0
    grid that touches no square of the path (the lattice's offset is the one that stands the most), ay the art pixel row its plinth
    stands on the corner by, its shadow cast away from the lamp and its reflection in the water below it; with something built on a
    square its shaft rises through, only its broken base stands, stump art pixels of it (Criss, 19 Nov 2026: a column beside a ward
-   "seems to overlap anything that's placed next to it") */
+   "seems to overlap anything that's placed next to it").
+   Since step 7 (the Ossuary): at.slab, a floor of slabs, one a square under the sheet with its joints on the square's edges, a variant
+   by the square's own number (the Ossuary's set drew its slabs ten pixels off the board's squares, so its floor is cut away to its walls
+   and laid again a slab at a time); tint, the slabs' darker and lighter patches ([r,g,b,strength] each); dry, no lamplight glinting on
+   the path; and a prop may lie on the path (path) or share one draw with others (pick: [salt,n,i], the square's number in n ways is i),
+   so the Ossuary's skulls, bones and chalk circles lie on the very squares the painted floor's do (decoProp: one square in six) */
 const PIX_FLOOR={cistern:{ts:64,inv:true,
   at:{col:[[0,0,48,128],[48,0,48,128],[96,0,48,128],[144,0,48,128]],grate:[[192,128,64,64],[0,224,64,64],[64,224,64,64],[128,224,64,64]],
     bones:[[192,224,48,48],[0,288,48,48],[48,288,48,48],[96,288,48,48],[144,288,48,48]],chain:[[192,288,48,48],[0,336,48,48],[48,336,48,48],[96,336,48,48],[144,336,48,48],[192,336,48,48]],
@@ -10434,14 +10439,16 @@ function paintBoardPixel(c,o){
     /* the floor's props, one a square at most, by the square's own numbers: on the floor (the causeway when the floor is turned inside
        out), or on the path when the prop says so; pick [salt,n,i] keeps a prop to the squares whose number in n ways is i, so props can
        share one draw as the painted floor's do (decoProp: one in six squares, then which of three) */
+    let nl=0;
     if(at&&D.props)for(let y=Math.max(0,Math.floor(y0)-1);y<Math.min(rows,Math.ceil(y1)+1);y++)for(let x=Math.max(0,Math.floor(x0)-1);x<Math.min(cols,Math.ceil(x1)+1);x++){
       const fl=D.inv?onP(x,y):up(x,y), pa=onP(x,y);
       if(Math.abs(x+.5-lx)<1.1&&Math.abs(y+.5-ly)<1.1)continue; if(nearRift(x+.5,y+.5,1.2))continue;
       for(const L of D.props){const R=A[L.k]; if(!R||!(L.path?pa:fl)||H(x,y,L.salt)>L.p)continue; if(L.pick&&Math.floor(H(x,y,L.pick[0])*L.pick[1])!==L.pick[2])continue;
         const h1=H(x,y,L.salt+1), h2=H(x,y,L.salt+2), h3=H(x,y,L.salt+3), j=L.jit||0;
         put(R[Math.min(R.length-1,Math.floor(h1*R.length))],(x+.5+(h2-.5)*j)*TS,(y+.5+(h3-.5)*j)*TS,L.rot?Math.floor(h2*4)%4:0,h3<.5);
-        break;}
+        nl++; break;}
     }
+    PIX.laid=nl;
     if(CL.length){
       /* each column's reflection, upside down in the water under it, only on the squares there that are water */
       for(let i=0;i<CL.length;i+=2){const vx=CL[i], vy=CL[i+1], r=colR(vx,vy), foot=vy*TS+(r[3]-CO.ay), st=stumpy(vx,vy)&&stumpOf(at,r,CO.stump,colI(vx,vy));
@@ -10467,7 +10474,8 @@ function paintBoardPixel(c,o){
   };
   lay();
   PIX.lay=lay; PIX.fo=o;
-  pixWaterList(up,H,cols,rows);
+  /* a dry floor (the Ossuary's aisle is dust, not water) has no lamplight glinting on its path */
+  pixWaterList(D.dry?()=>true:up,H,cols,rows);
   /* up to the board's own size: by a whole number first, so every art pixel is the same size, then the small step down */
   pixToBoard(c,0,0,cols,rows,s);
   return true;
