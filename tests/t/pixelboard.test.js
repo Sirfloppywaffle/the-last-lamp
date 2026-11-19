@@ -55,6 +55,16 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(pr.built&&pr.pier&&pr.after>pr.before+8&&pr.water1===pr.water0-1,'a ward built in the hall stands on a pier of stone, and the lamplight leaves its square',pr);
   ok(pr.diff<50,'the floor laid round a pier is the floor laid whole',pr.diff);
   ok(!pr.pier2&&pr.sold<pr.after-8,'taken down, its square floods again',pr);
+  /* a column with a ward on a square its shaft rises through shows only its broken base, and stands whole again when the ward is gone
+     (Criss, 19 Nov 2026: a column "seems to overlap anything that's placed next to it") */
+  const st=await p.evaluate(()=>{const T=__t, o={}; T.setMapV(0); T.newRun('lamplighter',0,{seed:9}); T.run.floor=0; T.beginFloor(null); T.setP(true); T.run.ess=9999; T.render();
+    const C=T.PIX.cols, P=T.F.pathTiles; o.s0=T.PIX.stumps;
+    let best=null; for(let i=0;i<C.length;i+=2){const d=Math.hypot(C[i]-T.F.lx,C[i+1]-T.F.ly); if(!best||d<best[2])best=[C[i],C[i+1],d];}
+    const q=[best[0],best[1]-1]; o.q=q; o.free=!P.has(q.join(','));
+    T.setSel({kind:'ward',type:'harpoon'}); T.tryPlace(q[0],q[1]); T.setSel(null); T.render(); o.s1=T.PIX.stumps; o.built=T.F.towers.length;
+    T.sellTower(T.F.towers[T.F.towers.length-1],true); T.render(); o.s2=T.PIX.stumps;
+    return o;});
+  ok(st.free&&st.built&&st.s1===st.s0+1&&st.s2===st.s0,'a column beside a ward shows only its broken base, and stands whole again when the ward is gone',st);
   const rest=await p.evaluate(()=>{const T=__t, o={}; T.setMapV(0); T.newRun('lamplighter',0,{seed:9}); T.run.floor=1; T.beginFloor(null); o.ossuary=T.pixOn(); o.art=!!T.artOf('gnasher').pix;
     T.run.floor=0; T.beginFloor(null); T.boardArtSet('painted'); o.off=T.pixOn(); o.artOff=!!T.artOf('gnasher').pix; o.st=localStorage.getItem('ll-board'); T.setP(false); for(let i=0;i<5;i++)T.render(); return o;});
   ok(!rest.ossuary&&rest.art,'every other floor keeps its painted tiles; its creatures come from their sheets (step 6b)',rest);
