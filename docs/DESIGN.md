@@ -192,6 +192,36 @@ A lectern in the Lodge, one of a kind like the Grimoire. A feat is fulfilled whe
 | Saltmouth | Raise the Hearth Beacon to its height | 30 iron | ll-meta, ll-town, ll-codex |
 | Saltmouth | Carve five headstones | 20 iron | ll-meta, ll-town, ll-codex |
 
+### The Ledger's bounties (Expansion 5, step 2)
+
+Up to 3 at a time, each done within one descent: none until the Grimoire holds 10 things (creatures met plus relics found), then one; two at 20, three at 30. Drawn (`Math.random`) only for creatures met, for the Keeper carried. One done is fulfilled when the haul comes up and claimed by hand at the lectern; its place is drawn again as the haul comes up. Tear one up once a visit for 5 tallow. A replayed stair counts none. Pay is shape only.
+
+| Bounty | Pays | Drawn when |
+|---|---|---|
+| Slay 60 Crawlers | 10 timber | that creature met |
+| Slay 40 Skitterlings | 10 timber | that creature met |
+| Slay 8 Gnashers | 15 iron | that creature met |
+| Slay 6 Watchers | 15 tallow | that creature met |
+| Slay 15 Shades | 15 tallow | that creature met |
+| Slay 10 Ichor Wretches | 15 iron | that creature met |
+| Slay 5 Shriekers | 20 tallow | that creature met |
+| Slay 20 Abyssal Stalkers | 20 iron | that creature met |
+| Slay 3 Trench Behemoths | 25 iron | that creature met |
+| Slay a Drowned Choirmaster | 25 tallow | that creature met |
+| Clear a floor with 4 wards or fewer | 25 timber | always |
+| Clear a floor with 5 wards or fewer | 20 timber | always |
+| Clear a floor with 6 wards or fewer | 15 timber | always |
+| Break a wave at Slipping madness or deeper | 15 tallow | for every other Keeper |
+| Break a wave at Leaning madness | 20 tallow | for the Occultist |
+| Bind a Gnasher | 15 tallow | its creature met (the Galvanist captures) |
+| Bind a Watcher | 15 tallow | its creature met (the Galvanist captures) |
+| Bind an Ichor Wretch | 15 tallow | its creature met (the Galvanist captures) |
+| Bind a Shrieker | 20 tallow | its creature met (the Galvanist captures) |
+| Bind a Drowned Choirmaster | 25 tallow | its creature met (the Galvanist captures) |
+| Bind the Keeper Below | 25 iron | its creature met (the Galvanist captures) |
+| Clear a floor without calling a wave early | 10 iron | always |
+| Walk a descent | 15 iron | always |
+
 ### Every piece
 
 | Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |

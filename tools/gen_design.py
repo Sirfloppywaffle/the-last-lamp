@@ -98,6 +98,14 @@ if 'LODGE_ITEMS' in D:
         for f in D['LEDGER_FEATS']:
             w("| %s | %s | %s | %s |"%(D['LEDGER_GROUPS'][f['g']],esc(f['n']),nm(f['pay']),'the run' if f.get('run') else 'll-meta, ll-town, ll-codex'))
         w("")
+    if 'BTY_ROWS' in D:
+        w("### The Ledger's bounties (Expansion 5, step 2)\n")
+        g=D['BTY_GATES']; more=', '.join('%s at %s'%(['one','two','three','four','five'][i],n) for i,n in enumerate(g) if i)
+        w("Up to %d at a time, each done within one descent: none until the Grimoire holds %s things (creatures met plus relics found), then one; %s. Drawn (`Math.random`) only for creatures met, for the Keeper carried. One done is fulfilled when the haul comes up and claimed by hand at the lectern; its place is drawn again as the haul comes up. Tear one up once a visit for %s. A replayed stair counts none. Pay is shape only.\n"%(len(g),g[0],more,nm(D['BTY_TEAR'])))
+        w("| Bounty | Pays | Drawn when |\n|---|---|---|")
+        for r in D['BTY_ROWS']:
+            w("| %s | %s | %s |"%(esc(r['n']),nm(r['pay']),r['when']))
+        w("")
     w("### Every piece\n")
     w("| Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |\n|---|---|---|---|---|---|---|---|")
     for v in D['LODGE_ITEMS'].values():

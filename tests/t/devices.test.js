@@ -209,7 +209,9 @@ const DEV=[
       const D=__t.townData(), T=__t.TWN; if(!T.inside)__t.lodgeEnter(); if(__t.lodgeCur()!=='main')__t.lodgeGo('main');
       const tw=document.getElementById('townCardWrap'); while(!tw.hidden)document.getElementById('townCard').click();
       D.lodge.floor='planks'; D.lodge.wall='damp'; 
-      D.ledger={done:{cistern:'2026-11-20',keeper:'2026-11-21',lodge:'2026-11-21',untouched:'2026-11-22',h_bellfather:'2026-11-22'}};
+      D.ledger={done:{cistern:'2026-11-20',keeper:'2026-11-21',lodge:'2026-11-21',untouched:'2026-11-22',h_bellfather:'2026-11-22'},
+        /* Expansion 5, step 2: two bounties fulfilled, to claim; developer mode's full Grimoire posts three more */
+        bty:[{id:1,k:'kill',arg:'gnasher',done:'2026-11-22'},{id:2,k:'calm',arg:0,done:'2026-11-22'}],btyN:2};
       D.lodge.furn=[{id:'grimoire',c:4,r:2,free:true},{id:'ledger',c:5,r:2,free:true},{id:'sconce',c:1,r:0,free:true,out:true},{id:'hearth',c:6,r:3,out:true},{id:'chair',c:3,r:5,f:1},{id:'desk',c:6,r:6,on:[{id:'candle',s:1,out:true}]},{id:'keeper',c:6,r:0},{id:'primordial',c:1,r:4}];
       __t.lodgeSync(); T.p.x=5; T.p.y=8.4; T.path=null; T.cx=null; __t.townFrame(1/30); document.getElementById('trophyBanner').classList.remove('is-show');
       const o={dark:__t.lodgeArt().dark};
@@ -253,7 +255,7 @@ const DEV=[
     /* Expansion 5, step 1: the Keeper's Ledger's card (developer mode, so nothing is written): both tabs and Close inside the box,
        side by side with nothing scrolling sideways, Close a thumb; a screenshot of each tab */
     const ledg=[];
-    for(const tab of ['feats','keepers']){
+    for(const tab of ['feats','bounties','keepers']){
       ledg.push(await p.evaluate(([ins,tab])=>{
         ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
         const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
@@ -262,14 +264,17 @@ const DEV=[
         /* the feats waiting to be claimed: each Claim (and Claim all) a thumb inside the box */
         const claims=[...document.querySelectorAll('[data-claim]')].map(q);
         const inBox=r=>!!r&&r[0]>=bx[0]-1&&r[2]<=bx[2]+1;
-        return {tab,n:tabs.length,tabs:tabs.every(inBox)&&tabs.every(r=>r[3]-r[1]>=30),row:tabs.length===2&&tabs[0][1]===tabs[1][1],close:cl.length===1&&cl[0][3]-cl[0][1]>=40&&inBox(cl[0]),
+        /* Expansion 5, step 2: a bounty's Tear it up, a thumb inside the box */
+        const tears=[...document.querySelectorAll('[data-tear]')].map(q);
+        return {tab,n:tabs.length,tabs:tabs.every(inBox)&&tabs.every(r=>r[3]-r[1]>=30),row:tabs.length===3&&tabs.every(r=>r[1]===tabs[0][1]),
+          tears:tab!=='bounties'||tears.length===3&&tears.every(r=>inBox(r)&&r[3]-r[1]>=44),close:cl.length===1&&cl[0][3]-cl[0][1]>=40&&inBox(cl[0]),
           inside:bx[0]>=ins.left-1&&bx[2]<=innerWidth-ins.right+1,sideways:box.scrollWidth>box.clientWidth+1,list:document.querySelectorAll('#mChoices .book-e').length,
           claims:tab==='keepers'?true:claims.length>=2&&claims.every(r=>inBox(r)&&r[3]-r[1]>=44)};},[ins,tab]));
       await p.waitForTimeout(120);
       await p.screenshot({path:(process.argv[3]||'.')+'/ledger-'+tab+'-'+nm+'.png'});
     }
     await p.evaluate(()=>__t.closeModal());
-    if(!ledg.every(l=>l.n===2&&l.tabs&&l.row&&l.close&&l.inside&&!l.sideways&&l.list>=5&&l.claims))console.log('FAIL '+nm+': the Keeper’s Ledger’s card on this screen',JSON.stringify(ledg));
+    if(!ledg.every(l=>l.n===3&&l.tabs&&l.row&&l.tears&&l.close&&l.inside&&!l.sideways&&l.list>=(l.tab==='bounties'?3:5)&&l.claims))console.log('FAIL '+nm+': the Keeper’s Ledger’s card on this screen',JSON.stringify(ledg));
     await p.evaluate(()=>{__t.lodgeLeave(); __t.setDev(false); __t.townKeepers();});
     if(!(lodge.enter&&lodge.label==='Leave the Lodge'&&lodge.act&&lodge.cover&&lodge.n===7&&lodge.chips&&lodge.still))console.log('FAIL '+nm+': the Lodge on this screen',JSON.stringify(lodge));
     /* Expansion 4, step 1: the build tools, in developer mode so nothing is written. The tool bar (Pieces, Storage, Grid, Free,
