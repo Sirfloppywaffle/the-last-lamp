@@ -109,7 +109,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
 
   /* 7. the new trophies hang and stand in the Lodge: mounts on the wall, the lamp and the jar on the floor */
   const hang=await p.evaluate(()=>{const T=__t; __clean(); T.setDev(true); const D=T.townData(); D.lodge.built=true; T.townOpen(); T.lodgeEnter();
-    const o={sack:T.lodgeCanPlace('sack',3,0),clapper:T.lodgeCanPlace('clapper',4,0),sixeyes:T.lodgeCanPlace('sixeyes',5,0),snuffed:T.lodgeCanPlace('snuffed',2,6),shard:T.lodgeCanPlace('shard',8,6)};
+    const o={sack:T.lodgeCanPlace('sack',3,0),clapper:T.lodgeCanPlace('clapper',8,0),sixeyes:T.lodgeCanPlace('sixeyes',5,0),snuffed:T.lodgeCanPlace('snuffed',2,6),shard:T.lodgeCanPlace('shard',8,6)};
     T.townClose(); T.setDev(false); return o;});
   ok(Object.values(hang).every(v=>v===''),'each can be set down in the Lodge (developer mode)',hang);
 

@@ -214,7 +214,7 @@ const DEV=[
         bty:[{id:1,k:'kill',arg:'gnasher',done:'2026-11-22'},{id:2,k:'calm',arg:0,done:'2026-11-22'}],btyN:2};
       D.lodge.furn=[{id:'grimoire',c:4,r:2,free:true},{id:'ledger',c:5,r:2,free:true},{id:'sconce',c:1,r:0,free:true,out:true},{id:'hearth',c:6,r:3,out:true},{id:'chair',c:3,r:5,f:1},{id:'desk',c:6,r:6,on:[{id:'candle',s:1,out:true}]},{id:'keeper',c:6,r:0},{id:'primordial',c:1,r:4},
         /* Expansion 5, step 3: the Ledger's trophies, hung and standing, for the shots */
-        {id:'sack',c:3,r:0},{id:'sixeyes',c:4,r:0},{id:'clapper',c:5,r:0},{id:'snuffed',c:2,r:7},{id:'shard',c:8,r:7}];
+        {id:'sack',c:3,r:0},{id:'sixeyes',c:4,r:0},{id:'clapper',c:8,r:0},{id:'snuffed',c:2,r:7},{id:'shard',c:8,r:7}];
       __t.lodgeSync(); T.p.x=5; T.p.y=8.4; T.path=null; T.cx=null; __t.townFrame(1/30); document.getElementById('trophyBanner').classList.remove('is-show');
       const o={dark:__t.lodgeArt().dark};
       return o;},ins);
