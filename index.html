@@ -133,6 +133,14 @@ button:focus-visible{outline:2px solid var(--tallow);outline-offset:2px}
 .book-e.is-locked{opacity:.55}
 .book-e.is-locked .book-seal{border-color:var(--seam);color:var(--ash)}
 .book-e.is-held{border-color:var(--tallow)}
+.statline.ledger-end{color:var(--tallow)} /* Expansion 5: the Ledger's feats on the death and morning screens, in gold */
+.statline.ledger-endh{font-family:var(--f-display);font-size:1.08rem;letter-spacing:.04em}
+.book-e.ledger-ready{border-color:var(--tallow);background:linear-gradient(180deg,rgba(237,180,90,.16),rgba(237,180,90,.05));box-shadow:0 0 10px rgba(237,180,90,.25)}
+.book-h.ledger-wait{color:var(--tallow)}
+.ledger-all{margin:4px 0 8px}
+.btn.ledger-claim{margin-top:6px;min-height:44px;padding:8px 14px;font-size:.9rem;align-self:flex-start}
+.ledger-said{color:var(--tallow)}
+.trophy-banner.is-ledger{box-shadow:0 0 22px rgba(237,180,90,.55)}
 .coach{position:fixed;z-index:30;padding:10px 12px 10px;border-radius:10px;background:var(--stone);border:1px solid var(--tallow);box-shadow:0 8px 26px var(--shadow);pointer-events:none;color:var(--bone)}
 .coach-step{margin:0 0 2px;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tallow)}
 .coach b{display:block;font-family:var(--f-display);font-size:1.12rem;font-weight:400;color:var(--bone)}
@@ -913,7 +921,7 @@ body.is-lite .titem.on,body.is-lite .rite.armed{animation:none}
         <li><b>Combinations.</b> Lightning does double to anything standing in salt. Once a Chime reaches Deathknell, anything stunned, held or pinned takes 30% more. Traps catch Shades and Stalkers without light, and so do the Occultist's Grasping Dead. Effigies make every other ward hit harder, and Unmasking shows what the dark hides. The Whaling Gun does double damage to Behemoths, elites and bosses.</li>
         <li><b>Kits.</b> Every descent starts with a kit. Each kit builds its own version of some wards and casts its own rites: the Lamplighter's Signal Candles pass light across the dark, its Flare Harpoons light what they strike, Kindle sets a creature burning and running, lighting the dark around it, and its Signal Mirror, built in the lamp's own light, reflects it in a 5-tile beam you aim between waves (it locks while the dark comes); you can build in the beam, and it burns what crosses it. A second mirror standing in the beam bounces it once more, at half the burn; the light bounces no further. The Galvanist builds a power grid: Pylons string live wires that shock, stun and light what crosses them, if a pylon stands in the lamp's own light to power the rest; his Arc Lamps burn bright but flicker; his Lightning Rods plant where they strike and join the grid; Overload fires every wire at once for 2 oil, and run hot it fries his pylons; he binds nothing by ritual: his Grounding Anchor forces nearby pylons to link to it, and a bindable creature that dies inside one of its triangles is caught in a cage to tap (the Keeper's core waits 15 seconds for a cage, and its fall readies the Anchor), each capture drawing 2 Heat out of the grid; his lamp's Dynamo branch ends in a Static Burst. The Occultist's Corpse Candles are free and need no lamp, but stand only beside bones from this floor (a pile holds three, and the floor keeps the freshest twelve) and go out when the wave ends; a full pile of three can rise as the Grasping Dead, arms that hold each creature crossing them for 2 seconds, six times; its Bone Spears and its horrors hit harder with every tier of madness, Raise the Dead stands a pile of bones up as a Risen that bites until the wave breaks, and Unbind sends a horror charging down the stair for good. The Bellringer, Agathe Vell, sees by sound: her Toll rings the lamp, and whatever its ring touches is heard for 1.5 seconds, outlined in the dark, veiled or not, and every ward can strike it, until its echo fades to a ghost; each Toll makes 1 Noise (it fades 1 every 8 seconds), and at 5 the dark answers with two Abyssal Stalkers; the Great Bell is heard across the whole floor for 3 Noise; her Bell Wires can be strung anywhere on the path, even in the dark, and hear what crosses them; she builds no candles: her Tuning Forks give no light but hum, standing within 5 tiles of the lamp or 3.5 of another fork, and she can build inside a hum even in the dark, though wards there strike only what is heard; a toll that reaches a fork rings again from it; a toll from the lamp echoes back off the walls of the floor; heavy things leave red footsteps where they tread unseen, but Shades, Stalkers and fliers make none; her Clapper Harpoons ring what they strike and knock it back, and the path's edges show for her even where it is dark; her lamp's Peal branch makes it toll on its own, with no Noise, but that heartbeat finds only the ordinary dark; tap Toll on the beat (a ring closes on the lamp, and the button glows) for a Perfect Toll that reaches half again as far and rings out faster, though it makes as much Noise as any toll; her Tolls, Great Bell, Bell Wires, Clapper bolts and Tocsin shells crack what they strike, and three cracks shatter it, hurting and cracking what stands beside it (bosses take 8, Behemoths and elites 5); her Tocsin shells any Bell Wire that jangles, however far away. The Whaler's Blubber Lamps burn wider but drink the lamp's oil unless its Try-pot renders oil from the dead, and its Tether Harpoons hold what they hit on a line that slows it; Haul Away casts a whaling net that hauls everything under it, and everything on its lines, 3 tiles back and tangles it. Every Blubber Lamp drinks as a wave begins: a measure from a Try-pot, which renders the dead into whale oil, or 1 oil from the lamp. What is left in the pots when a floor ends pours into the lamp. You start with the Lamplighter; other kits are earned by deeds down the stair or in the Ember Hall. Wards outside your kit can be found as gifts, in merchants, or off the stair.</li>
         <li><b>The Roster.</b> Five went down the stair the night Saltmouth drowned: Ambrose Fenn the lamplighter, Jonah Tolland the harpooner, the Nameless, Dr. Lucan Voss and Agathe Vell. Each carries the lamp their own way. Some are earned by a deed on the stair, some in the Ember Hall. Every kind of horror you bind or capture, on any descent, adds its eyes to the Nameless’s hood, for good: there are six to find.</li>
-        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. The town climbs the cliff in two shelves: the square, the lane and the shore below, and up either stair the Rise, with the cemetery, the Keeper's Lodge and the Cracked Belfry. Four overgrown plots, the north acre under the cemetery, the black wood on the Rise, the net-lofts and the drowned strand on the shore, stay shut until you open each one's gate once with the haul; inside, nothing clears itself: in Build, tap a piece of debris to see what clearing it costs or gives back, clear only what you like, and build only on ground you have cleared. Nothing grows back. At the shore a ruined dock runs out into the sea with a boat tied at its end; the haul restores it, and you can walk out to the boat. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it about the town: cobbles, boardwalk, street-lamps, braziers, fences and trees. Tap a piece you built to lift it and set it down elsewhere; ⟳, or a tap on the lifted piece, turns it an eighth at a time (paths and fences a quarter), and holding turns it back; Store puts it away whole, to set down again for nothing, and Salvage in Storage gives back all it cost; Undo takes back your last ten deeds. Grid sets pieces on the tiles, Free wherever your thumb puts them. Nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy. The Keepers you have freed stand about the town, in the square and on the Rise, each at their own footing; a dark footing is one you have not freed, and a tap on it says what frees them. Talk to a Keeper to carry the lamp down as them, or to set them to a chore: while you are down they put timber, iron, tallow or curios by for every floor you clear, and the haul brings it up. Never embers, nothing on the stair. Nothing built may stand on a Keeper's place or wall one in. The tray's first chip turns to the next group of pieces (paths, lights, benches, plants, stones, fences and the Keepers' huts): a path you lay meets the earth with a rim of its own; a variant with a padlock waits for a pack from the Peddler; a Keeper's hut opens once they are freed, one each, and they stand at its door (a tile kept clear like their footing) when they are not at work. Paint repaints a building that stands in one of three muted colourways for 4 tallow, paid back when it goes to its own colours. Five ruined workshops stand about the town — the Ember Brazier and the Galvanic Smithy on the lane west of the square, the Ossuary Menagerie east of it, the Try-Works on the shore and the Cracked Belfry on the Rise — and the haul restores them, then lights their windows. Each restored workshop offers a town gift at its door: you may carry one town gift down per descent, and each one exacts a price on the stair; it is off on a replayed stair and on any floor under a Trial. Some landings after floors 2, 3 and 4 hang a cage behind one door, at most once a descent: pay the lock and whoever is in it climbs to Saltmouth with your haul, even if your lamp goes out. The Croupier lights the Drowned Oar again and plays knucklebones for timber or tallow, and the Loaded Bone is his. The Toothmonger opens her stall: she trades materials at fixed rates, and for 25 tallow, paid at once, she pawns a relic you name so that nothing on your next descent offers it; it holds your one town gift until you go down. The Peddler opens his barrow beside the Head-frame: three of his wares at a time, a blueprint for a set of the Lodge's furniture for curios or a rare dye for tallow, and a new three once a descent has ended; what you buy is yours for good. Three graves in the cemetery have been opened to the Drowned Mother, the Wrong Sun and the Many-Mouthed: raise one with iron, tallow and curios and its black candle is a town gift. Its patron's Attention starts at 1, so its first tier is on from floor 1 (and is the price), and it reaches out at the first break. Three tide-pools on the south shore hold a little timber, iron, tallow or a curio, and now and then a bottle; they fill again after each descent. Restore the Keeper's Lodge on the Rise, up either stair from the square, with timber and iron, and step inside: one room to lay a floor and a wall in and set furniture down, lifted, stored and salvaged as in the square, and a Grimoire on its podium, glowing for every creature met and relic found; tap it to read the book. The Grimoire floats over a podium and opens as you come near: lift it, turn it, set it down elsewhere or store it, but it can never be salvaged. Salvage on a lifted piece breaks it up at once. The two sconces on the back wall are yours to move or store as well, and furniture stands on a rug. A hatch in its floor opens on the Flooded Cellar, a ladder by its shelf climbs to the Attic: open each with the haul, and each is a room of its own to lay a floor and a wall in and furnish, its pieces turned, stored and salvaged as below. The Lodge’s pieces come in five sets, Fisherman’s and the Old Library from the start and the Drowned Chapel, the Brass Observatory and the Deep-One Coral by a blueprint from the Peddler's barrow; the set chip on the tray shows the next. Some hang on the back wall, and small things stand on a desk, a chest, a shelf or a table and go wherever it goes. Dye gives a lifted piece another colourway for tallow, and the Peddler's rare dyes join every piece they change. Its rooms are dark until you light them: tap a sconce, a lamp, a candle or a fireplace to light it or put it out, and every light throws the shadows of what stands near it. Each boss you put down on the stair leaves a trophy for the Lodge, and so does a wave held with nothing but candles (no other ward, no horror, no rite, and nothing reaching the lamp; not on a replayed stair), one of each, carried up with the haul; tap it to read its Grimoire line, or what earned it. With the Lodge standing, two Keepers can work at chores at once. The Hearth Beacon stands cold below the Head-frame, at the head of the south lane: feed it tallow and curios, five times in all, and each time the rain thins and the dark lifts a little further round it, and more of what is carved in the stone under the square shows. It changes nothing on the stair. Mist lies along the shore and over the cemetery, thinner where the Hearth burns, and the plots lie darker than the square until something you build in them burns; neither changes anything you do, only what you see. A Keeper with no chore walks to a bench, to the Hearth once it burns, or into the Lodge to a stove, a fireplace or an armchair, and back; each has a favourite set, stays longer near it and says so, and the first time one of their favourites stands near their post they leave a note in chalk there, once: tap it to read. The cellar's brine rises a step each time a lamp goes out below and drains when you win the stair, and what it reached keeps its kelp and barnacles until the win after.</li>
+        <li><b>Saltmouth.</b> Walk Saltmouth from the title to stand in the drowned port above the stair. Tap the ground to walk there, or hold and drag to steer. The Head-frame over the shaft in the square takes you down: it asks who carries the lamp, as Descend does. The town climbs the cliff in two shelves: the square, the lane and the shore below, and up either stair the Rise, with the cemetery, the Keeper's Lodge and the Cracked Belfry. Four overgrown plots, the north acre under the cemetery, the black wood on the Rise, the net-lofts and the drowned strand on the shore, stay shut until you open each one's gate once with the haul; inside, nothing clears itself: in Build, tap a piece of debris to see what clearing it costs or gives back, clear only what you like, and build only on ground you have cleared. Nothing grows back. At the shore a ruined dock runs out into the sea with a boat tied at its end; the haul restores it, and you can walk out to the boat. In Settings, Start in Saltmouth opens the game there instead of on the title. Every descent hauls up timber, iron, tallow and curios from cleared floors, slain Heralds and bosses, and the stair's toll renders tallow for the town. Build spends it about the town: cobbles, boardwalk, street-lamps, braziers, fences and trees. Tap a piece you built to lift it and set it down elsewhere; ⟳, or a tap on the lifted piece, turns it an eighth at a time (paths and fences a quarter), and holding turns it back; Store puts it away whole, to set down again for nothing, and Salvage in Storage gives back all it cost; Undo takes back your last ten deeds. Grid sets pieces on the tiles, Free wherever your thumb puts them. Nothing may wall off the Head-frame. Each lamp that goes out below leaves a name waiting, and a Mossy Headstone carves it: tap the stone to read where it went out, with its stair's code to copy. The Keepers you have freed stand about the town, in the square and on the Rise, each at their own footing; a dark footing is one you have not freed, and a tap on it says what frees them. Talk to a Keeper to carry the lamp down as them, or to set them to a chore: while you are down they put timber, iron, tallow or curios by for every floor you clear, and the haul brings it up. Never embers, nothing on the stair. Nothing built may stand on a Keeper's place or wall one in. The tray's first chip turns to the next group of pieces (paths, lights, benches, plants, stones, fences and the Keepers' huts): a path you lay meets the earth with a rim of its own; a variant with a padlock waits for a pack from the Peddler; a Keeper's hut opens once they are freed, one each, and they stand at its door (a tile kept clear like their footing) when they are not at work. Paint repaints a building that stands in one of three muted colourways for 4 tallow, paid back when it goes to its own colours. Five ruined workshops stand about the town — the Ember Brazier and the Galvanic Smithy on the lane west of the square, the Ossuary Menagerie east of it, the Try-Works on the shore and the Cracked Belfry on the Rise — and the haul restores them, then lights their windows. Each restored workshop offers a town gift at its door: you may carry one town gift down per descent, and each one exacts a price on the stair; it is off on a replayed stair and on any floor under a Trial. Some landings after floors 2, 3 and 4 hang a cage behind one door, at most once a descent: pay the lock and whoever is in it climbs to Saltmouth with your haul, even if your lamp goes out. The Croupier lights the Drowned Oar again and plays knucklebones for timber or tallow, and the Loaded Bone is his. The Toothmonger opens her stall: she trades materials at fixed rates, and for 25 tallow, paid at once, she pawns a relic you name so that nothing on your next descent offers it; it holds your one town gift until you go down. The Peddler opens his barrow beside the Head-frame: three of his wares at a time, a blueprint for a set of the Lodge's furniture for curios or a rare dye for tallow, and a new three once a descent has ended; what you buy is yours for good. Three graves in the cemetery have been opened to the Drowned Mother, the Wrong Sun and the Many-Mouthed: raise one with iron, tallow and curios and its black candle is a town gift. Its patron's Attention starts at 1, so its first tier is on from floor 1 (and is the price), and it reaches out at the first break. Three tide-pools on the south shore hold a little timber, iron, tallow or a curio, and now and then a bottle; they fill again after each descent. Restore the Keeper's Lodge on the Rise, up either stair from the square, with timber and iron, and step inside: one room to lay a floor and a wall in and set furniture down, lifted, stored and salvaged as in the square, and a Grimoire on its podium, glowing for every creature met and relic found; tap it to read the book. Beside it stands the Keeper’s Ledger on its lectern: it lists feats done below and in the town; a feat done is fulfilled (a gold banner between waves, a line on the death and morning screens), and the lectern glows until you claim its timber, iron, tallow or curios there, once (never on a replayed stair, and never anything for the stair), with a gold mote in its candle’s glow for each claimed; its Keepers page counts the floors cleared with each Keeper. Like the Grimoire it moves and stores but is never salvaged. The Grimoire floats over a podium and opens as you come near: lift it, turn it, set it down elsewhere or store it, but it can never be salvaged. Salvage on a lifted piece breaks it up at once. The two sconces on the back wall are yours to move or store as well, and furniture stands on a rug. A hatch in its floor opens on the Flooded Cellar, a ladder by its shelf climbs to the Attic: open each with the haul, and each is a room of its own to lay a floor and a wall in and furnish, its pieces turned, stored and salvaged as below. The Lodge’s pieces come in five sets, Fisherman’s and the Old Library from the start and the Drowned Chapel, the Brass Observatory and the Deep-One Coral by a blueprint from the Peddler's barrow; the set chip on the tray shows the next. Some hang on the back wall, and small things stand on a desk, a chest, a shelf or a table and go wherever it goes. Dye gives a lifted piece another colourway for tallow, and the Peddler's rare dyes join every piece they change. Its rooms are dark until you light them: tap a sconce, a lamp, a candle or a fireplace to light it or put it out, and every light throws the shadows of what stands near it. Each boss you put down on the stair leaves a trophy for the Lodge, and so does a wave held with nothing but candles (no other ward, no horror, no rite, and nothing reaching the lamp; not on a replayed stair), one of each, carried up with the haul; tap it to read its Grimoire line, or what earned it. With the Lodge standing, two Keepers can work at chores at once. The Hearth Beacon stands cold below the Head-frame, at the head of the south lane: feed it tallow and curios, five times in all, and each time the rain thins and the dark lifts a little further round it, and more of what is carved in the stone under the square shows. It changes nothing on the stair. Mist lies along the shore and over the cemetery, thinner where the Hearth burns, and the plots lie darker than the square until something you build in them burns; neither changes anything you do, only what you see. A Keeper with no chore walks to a bench, to the Hearth once it burns, or into the Lodge to a stove, a fireplace or an armchair, and back; each has a favourite set, stays longer near it and says so, and the first time one of their favourites stands near their post they leave a note in chalk there, once: tap it to read. The cellar's brine rises a step each time a lamp goes out below and drains when you win the stair, and what it reached keeps its kelp and barnacles until the win after.</li>
         <li><b>The stair.</b> After each floor you take a gift, then choose one of three doors: a Merchant, a Shrine with pacts, something unknown, a quiet place to rest, a Reliquary with another gift, the Knucklebones (a game of bones against the hooded thing, for essence the stair would burn), or the Deep Stair straight down to an elite floor that pays a relic.</li>
         <li><b>The toll.</b> Your salvage from a floor is safe, but 70% of any other essence burns away when you take the stair. Spend it, or lose it. Bounties also thin out the deeper you go.</li>
         <li><b>The shifting stair.</b> The first three floors each have three maps and the last two have two; one is drawn as you reach the floor: where they climb out, how the road winds, where it forks, sometimes where the lamp stands. Its name sits beside the floor's. The waves are the same on every map. The stair's name decides which, and a saved floor keeps its own.</li>
@@ -992,7 +1000,7 @@ const pick=a=>a[Math.floor(RNG()*a.length)];
 const dst=(ax,ay,bx,by)=>Math.hypot(ax-bx,ay-by);
 const TAU=Math.PI*2;
 /* shown on the title screen, so it's always clear which build is being played (bump it with each release) */
-const GAME_VERSION='20.0.0';
+const GAME_VERSION='20.1.0';
 const IS_IPHONE=/iPhone|iPod/.test(navigator.userAgent);
 const reduceMotion=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const PAL={tallow:'#EDB45A',brine:'#6AA99F',mad:'#A97CE2',wound:'#DA5A4B',bone:'#E4DDCC'};
@@ -1589,7 +1597,12 @@ const HALL=[
 ];
 const DEPTHS=['','Creatures have 15% more health.','Every floor carries an omen.','Each floor starts with 25% less essence.','Bosses have 30% more health.','The lamp holds 5 less oil.'];
 
-function meta(){const m=store.get('ll-meta',null)||{}; return {embers:m.embers||0,unlocked:m.unlocked||[],depth:m.depth||0,runs:m.runs||0,wins:m.wins||0,lastDepth:m.lastDepth||0,lastKit:m.lastKit||'lamplighter',deeds:m.deeds||0};}
+/* Expansion 5, step 1 (the Keeper's Ledger): trialsPassed and descentsWalked, the kinds ever passed and walked, and mastery,
+   {kit: floors cleared} (mastLast: the run and floor last counted) */
+function meta(){const m=store.get('ll-meta',null)||{}, ls=(v,T)=>Array.isArray(v)?[...new Set(v.filter(k=>typeof k==='string'&&T[k]))]:[], ms={};
+  if(m.mastery&&typeof m.mastery==='object')for(const k in m.mastery)if(KITS[k]&&(m.mastery[k]|0)>0)ms[k]=m.mastery[k]|0;
+  return {embers:m.embers||0,unlocked:m.unlocked||[],depth:m.depth||0,runs:m.runs||0,wins:m.wins||0,lastDepth:m.lastDepth||0,lastKit:m.lastKit||'lamplighter',deeds:m.deeds||0,
+    trialsPassed:ls(m.trialsPassed,TRIALS),descentsWalked:ls(m.descentsWalked,DESCENTS),mastery:ms,mastLast:typeof m.mastLast==='string'?m.mastLast:''};}
 /* the deeds' version: 2 is when the Occultist's deed got harder (binding three horrors was too easy, Criss). Every save stamps it */
 const DEEDS_V=2;
 function saveMeta(m){m.deeds=DEEDS_V; store.set('ll-meta',m);}
@@ -3767,7 +3780,7 @@ function checkpoint(){
   store.set(SAVEKEY,lastSave);
 }
 function clearSave(){lastSave=null; store.set(SAVEKEY,null);}
-function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(run.replay||!run.gift||!TOWN_GIFTS[run.gift])run.gift=null; run.haul=haulFix(run.haul); run.rescued=Array.isArray(run.rescued)?run.rescued.filter(k=>TOWN_SOULS[k]):[]; reserveMigrate(); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; if(run.leech>=LEECH_N)run.leech=LEECH_N-1; if(run.kit==='occultist'&&!run.wards.includes('grasp'))run.wards.splice(2,0,'grasp'); updateOilMax();
+function resumeFrom(s){run=JSON.parse(JSON.stringify(s.run)); if(typeof run.hurtOn!=='number')run.hurtOn=run.floor; if(!Array.isArray(run.ledgerSeen))run.ledgerSeen=ledgerDue(run).map(f=>f.id); if(run.replay||!run.gift||!TOWN_GIFTS[run.gift])run.gift=null; run.haul=haulFix(run.haul); run.rescued=Array.isArray(run.rescued)?run.rescued.filter(k=>TOWN_SOULS[k]):[]; reserveMigrate(); if(!run.kit){run.wards=BASE_WARDS.concat(run.wards.filter(w=>!BASE_WARDS.includes(w)&&WARDS[w])); run.kit='legacy';} run.seenEvents=run.seenEvents||[]; if(run.leech>=LEECH_N)run.leech=LEECH_N-1; if(run.kit==='occultist'&&!run.wards.includes('grasp'))run.wards.splice(2,0,'grasp'); updateOilMax();
   descentStop();
   /* saved at the start of a descent: the toll is paid and the floor counted, so it plays again from the top, then the floor
      begins fresh (a descent this build doesn't know is skipped) */
@@ -3999,7 +4012,10 @@ function newRun(k,depth,o){
   o=o||{};
   run={floor:0,oil:20,oilMax:20,baseOilMax:20,spillV:1,ess:0,kit:k,depth:depth||0,wards:K.wards.slice(),rites:K.rites.slice(),relics:[],roster:Object.assign({},K.roster),
     bound:0,kills:0,peakMad:0,omen:null,elite:false,trial:null,next:null,bosses:0,elites:0,seenEvents:[],madPen:0,lampBonus:0,bonusStipend:0,
-    seed:typeof o.seed==='number'?o.seed>>>0:freshSeed(),haul:{timber:0,iron:0,tallow:0,curios:0},rescued:[]};
+    seed:typeof o.seed==='number'?o.seed>>>0:freshSeed(),haul:{timber:0,iron:0,tallow:0,curios:0},rescued:[],
+    /* Expansion 5, step 1 (the Ledger): floors cleared, the floor the lamp last lost oil on (-1: none yet; an old save has no
+       field), floors cleared untouched, Herald kinds slain, a wave broken at Leaning, and morning seen */
+    floorsClr:0,hurtOn:-1,untouched:0,heraldKinds:[],leaned:false};
   if(typeof o==='object'&&o&&o.trial&&TRIALS[o.trial])run.trial=o.trial;
   run.gift=!o.replay&&townData().gift&&TOWN_GIFTS[townData().gift]?townData().gift:null;
   if(run.gift==='tether'){run.roster.watcher=(run.roster.watcher||0)+1; run.tetherWatcher=true;}
@@ -4012,6 +4028,8 @@ function newRun(k,depth,o){
     if(pawnOK(T.pawn)){run.pawn=T.pawn; T.pawn=null; T.gift=null; townSave();} else run.gift=null;}
   /* the Keeper left at a chore in Saltmouth works while you are down (Expansion 3, step 5); one you carry does not */
   run.chore=townChore(k); run.chore2=townChore2(k);
+  /* the Ledger's feats already fulfilled before this descent are not told again on it (ledgerWatch()) */
+  run.ledgerSeen=ledgerDue(null).map(f=>f.id);
   /* a stair walked again (Descend the same stair, or a code pasted in developer mode) leaves no embers (pillar 2) */
   if(o.replay)run.replay=true;
   /* Saltmouth closes as a descent begins, whichever door it began from (Expansion 3) */
@@ -4250,6 +4268,8 @@ function beginFloor(snap){
     const tollMsg = MAP_SYS.pendingMsg;
     if(tollMsg)setTimeout(()=>hint(tollMsg, 4600), (F.omen?5200:1400)+tl);
     MAP_SYS.pendingMsg = '';
+    /* a feat fulfilled by reaching this floor (the Ledger, Expansion 5): its banner, while the floor is still quiet */
+    setTimeout(()=>{if(F&&F.phase==='build')ledgerWatch();},2200+tl);
   };
   if(!MAP_SYS.active) F.showHints();
 }
@@ -4416,6 +4436,8 @@ function gainOil(n){
 }
 function waveCleared(){
   checkOccultistDeed(true);
+  /* the Ledger (Expansion 5): a wave broken at Leaning madness */
+  if(madTier()>=3)run.leaned=true;
   candWatchEnd();
   /* the light (or the dark) the sconces of The Mirror Stair sent down lasts the floor's first wave */
   if(run.glow){const gl=sconceGlow(); run.glow=null; if(gl){F.L=lightsNow(); hint(gl>0?'The sconces’ light leaves the lamp. It burns as it did.':'The dark from the shaft lets go of the lamp.');}}
@@ -4434,6 +4456,8 @@ function waveCleared(){
   if(lstat().well)gainOil(1);
   if(F.wave>=F.def.waves.length){floorCleared(); return;}
   F.phase='build'; AUDIO.waveClear();
+  /* a feat fulfilled during the wave (a Herald or the Keeper Below slain, Leaning held) is told now it has broken, never mid-wave */
+  ledgerWatch();
   banner('The wave breaks','','+'+bonus+' essence. '+(gutter?'The Corpse Candles go out':'Build, then call the dark'));
   checkpoint();
   forceUI();
@@ -4443,6 +4467,13 @@ function floorCleared(){
   F.phase='cleared';
   if(F.elite)run.elites=(run.elites||0)+1;
   haulAdd(HAUL.floor); choreWork();
+  /* the Ledger (Expansion 5, step 1): a floor cleared, untouched if the lamp lost no oil to anything on it; a Trial passed; and the
+     Keeper's mastery */
+  run.floorsClr=runClr(run)+1;
+  if(run.hurtOn!==run.floor)run.untouched=(run.untouched|0)+1;
+  if(F.trial)metaListAdd('trialsPassed',F.trial);
+  masteryCount();
+  ledgerWatch();
   selTower=null; sel=null; mode=null;
   if(run.floor>=FLOORS.length-1){setTimeout(victory,1400); return;}
   let salvage=0;
@@ -5412,6 +5443,7 @@ function descentFinish(o){
   descentStop();
   if(C.practice){openDevMode(DESCENTS[k].n+', practised. '+G.line(r,true)+' Nothing was kept.'); return;}
   G.pay(r);
+  metaListAdd('descentsWalked',k);
   const m=[run.descent&&run.descent.msg,G.line(r,false)].filter(Boolean).join(' ');
   run.descent=null;
   MAP_SYS.pendingMsg=m;
@@ -6981,14 +7013,14 @@ function saveBest(won){
 }
 function summary(){return '<span class="statline">Creatures put down: '+run.kills+' · Horrors bound: '+run.bound+' · Peak madness: '+run.peakMad+'</span>';}
 function victory(){
-  F.phase='won'; paused=true; saveBest(true); const hLine=haulLine(run&&run.haul)+choreLine(run)+soulLine(run); townTrip(); tideRun(true); haulCredit(); clearSave(); AUDIO.morning();
+  F.phase='won'; paused=true; saveBest(true); run.morning=true; const hLine=haulLine(run&&run.haul)+choreLine(run)+soulLine(run)+ledgerLine(run); townTrip(); tideRun(true); haulCredit(); clearSave(); AUDIO.morning();
   F.blocking={kind:'end',title:'Morning',body:'The Primordial is still. Five floors of dark lie quiet over it, and the lamp is still burning. '+summary()+hLine+awardEmbers(true)+seedLine(false),
     actions:[{label:'Descend again',primary:true,fn:()=>{closeModal(); openKitPicker();}},{label:'Title',fn:()=>{closeModal(); showTitle();}}]};
   revealThenShow(F.blocking);
 }
 function defeat(){
   if(F.phase==='over')return;
-  F.phase='over'; saveBest(false); const hLine=haulLine(run&&run.haul)+choreLine(run)+soulLine(run); townTrip(); tideRun(false); haulCredit(); graveAdd(); clearSave(); AUDIO.lose();
+  F.phase='over'; saveBest(false); const hLine=haulLine(run&&run.haul)+choreLine(run)+soulLine(run)+ledgerLine(run); townTrip(); tideRun(false); haulCredit(); graveAdd(); clearSave(); AUDIO.lose();
   const embers=awardEmbers(false);
   selTower=null; sel=null; mode=null;
   const here=F;
@@ -7274,7 +7306,7 @@ function killFoe(e){
   if(e.def.boss){run.bosses=(run.bosses||0)+1; haulAdd(HAUL.boss); trophyFoe(e.type);}
   /* a Herald slain pays a relic */
   if(e.def.herald&&e.hp<=0&&e.sack){const back=Math.round(e.sack*TITHE_BACK); run.ess+=back; F.fx.push({k:'float',x:e.x,y:e.y-.5,txt:'+'+back+' back',col:PAL.tallow,t:0,dur:1.4,size:.3}); AUDIO.coin(); e.sack=0;}
-  if(e.def.herald&&e.hp<=0){run.heralds=(run.heralds||0)+1; haulAdd(HAUL.herald); const pool=unpawn(relicPool(false)), k=pool.length?pick(pool):null;
+  if(e.def.herald&&e.hp<=0){run.heralds=(run.heralds||0)+1; run.heraldKinds=Array.isArray(run.heraldKinds)?run.heraldKinds:[]; if(!run.heraldKinds.includes(e.type))run.heraldKinds.push(e.type); haulAdd(HAUL.herald); const pool=unpawn(relicPool(false)), k=pool.length?pick(pool):null;
     if(k){addRelic(k); setTimeout(()=>banner(e.def.n+' falls','rite','You take '+RELICS[k].n),300);} else{run.ess+=60; setTimeout(()=>banner(e.def.n+' falls','rite','+60 essence'),300);}
     F.fx.push({k:'ring',x:e.x,y:e.y,r0:.2,r1:1.6,t:0,dur:.7,col:'237,180,90'});}
   if(has('leech')&&leechFed(e)){run.leech=(run.leech||0)+1; if(run.leech>=LEECH_N){run.leech=0; leechBurst();}}
@@ -7355,6 +7387,8 @@ function lampHit(e){
     AUDIO.bite(); F.shake=Math.max(F.shake,.15); return;}
   const oil=e.def.oil+(teeth&&F.ate&&!e.def.boss?1:0);
   run.oil-=oil;
+  /* the Ledger: this floor is no longer untouched */
+  run.hurtOn=run.floor;
   F.hurtFlash=.6; F.shake=.35;
   AUDIO.hurt();
   F.fx.push({k:'float',x:F.lx,y:F.ly-.65,txt:'−'+Math.min(oil,99)+' oil',col:PAL.wound,t:0,dur:1,size:.3});
@@ -12572,6 +12606,7 @@ const TIPS={
   lodgedark:{where:'town',when:()=>false,title:'Dark until you light it',text:'The Lodge’s sconces have been cold since the harbour went under. Tap one, or a lamp, a candle, the stove or a fireplace, and walk up to light it or put it out. Each light you set burning pushes the room’s dark back a little, and throws the shadows of what stands near it across the floor. The sconces on the wall cost nothing and are yours to move: in Build, lift one and hang it elsewhere, or store it. Furniture stands on a rug as well as beside it.'},
   lodgetrophy:{where:'town',when:()=>false,title:'Trophies',text:'Each boss you put down on the stair leaves a trophy, and so does a wave you hold with nothing but candles (no other ward, no horror, no rite, nothing reaching the lamp), carried up with the haul even if your lamp goes out after. One of each, for nothing: hang it, set it on its plinth, lift and store it like any piece. Tap it in the room to read what the Grimoire says of what it came from.'},
   lodgeshelf:{where:'town',when:()=>false,title:'The Grimoire',text:'The book floats over its podium and opens when you stand near it. A faint light gathers round it for every creature you have met and every relic you have found, on any descent. Tap it to read the Grimoire; close it and you are back in the Lodge. In Build you can lift the podium, turn it, set it down elsewhere, or put it away in Storage, but it cannot be salvaged.'},
+  ledger:{where:'town',when:()=>false,title:'The Keeper’s Ledger',text:'The Ledger keeps the feats you have done below: floors cleared, Heralds and bosses slain, morning seen with each Keeper and in the Deeper Dark, the Grimoire filled, every Trial passed and every descent walked, and what you have raised in Saltmouth. A feat done is fulfilled: a gold banner says so between waves, and the lectern glows until you come and claim it. Tap Claim and its timber, iron, tallow or curios are yours, once, and a gold mote hangs over the book. Nothing in it helps you on the stair, and a replayed stair counts for nothing. A feat you cannot see yet reads ??? until something beside it is done. Its Keepers page counts the floors you have cleared with each. Like the Grimoire, the lectern can be lifted, turned and stored, but never salvaged.'},
   townpools:{where:'town',when:()=>false,title:'The tide-pools',text:'Three pools on the south shore. The tide leaves a little timber, iron, tallow or, rarely, a curio in them, and now and then a bottle. Gather what is there; each fills again after you come back up from a descent.'},
   gift:{where:'town',when:()=>false,title:'Workshops and the town gift',text:'Spend the haul at a ruined workshop’s door to restore it, and again to light its windows. Each restored workshop offers one gift for the next descent, and every gift carries a price on the stair. You may carry only one town gift down at a time; it is off on a replayed stair and on any floor under a Trial.'},
   gift_dip:{when:()=>!!(run&&!run.replay&&run.gift==='dip'&&!(F&&F.trial)&&run.floor===0&&F.phase==='build'),title:'The Chandler’s Dip',text:'Your first Candle Ward on floor 1 costs no essence, but the lamp burns 0.5 smaller until floor 2.',target:()=>coachEl('#relChips [data-rel="gift:dip"]')},
@@ -14072,7 +14107,11 @@ const LODGE_ITEMS={
   /* the Grimoire: the Lodge has one, from the day it stands, a book floating over a podium. book: its podium is drawn by
      lodgeBookFA() and the book itself by townDraw() (it opens as you come near; an aura for every creature met and relic found),
      it is never on the tray, may be lifted, turned, moved and stored but never salvaged, and there is only ever one */
-  grimoire:{k:'furn',set:'rooms',n:'Grimoire',s:'Grimoire',cost:{},w:1,faces:4,book:true},
+  grimoire:{k:'furn',set:'rooms',n:'Grimoire',s:'Grimoire',cost:{},w:1,faces:4,book:true,one:true},
+  /* Expansion 5, step 1: the Keeper's Ledger, a lectern with the ledger open on it. one: a piece of one of a kind, as the Grimoire
+     is (never on the tray, never salvaged, never walled in, only ever one; lifted, turned, moved and stored like any piece), whose
+     every message names it. Its candle stub glows, and a gold mote hangs in that glow for each feat done (ledgerMotes()) */
+  ledger:{k:'furn',set:'rooms',n:'Keeper’s Ledger',s:'Ledger',cost:{},w:1,faces:4,glow:'ab',one:true},
   /* Expansion 4, step 5: the Lodge's own hearth, the brightest light it takes */
   hearth:{k:'furn',set:'rooms',n:'Stone Fireplace',s:'Fireplace',cost:{iron:12,timber:4,tallow:3},w:2,light:52,glow:'9abc',faces:4,dyes:['ash']},
   /* Fisherman's (open from the start) */
@@ -14297,8 +14336,8 @@ function trophyBanner(id){
   const I=LODGE_ITEMS[id], rows=LODGE_ROWS[id]&&LODGE_ROWS[id][0]; if(!I)return;
   const cv=$('#trophyBannerArt'), c=cv.getContext('2d'); c.clearRect(0,0,cv.width,cv.height);
   if(rows){cv.width=rows[0].length; cv.height=rows.length; cv.style.width=cv.width*2+'px'; cv.style.height=cv.height*2+'px'; tRows(c,rows,0,0);}
-  $('#trophyBannerS').textContent=I.n;
-  const b=$('#trophyBanner'), st=$('#stage').getBoundingClientRect();
+  $('#trophyBannerS').textContent=I.n; $('#trophyBannerB').textContent='A trophy for the Lodge';
+  const b=$('#trophyBanner'), st=$('#stage').getBoundingClientRect(); b.classList.remove('is-ledger');
   if(st.width){b.style.left=Math.round(st.left+st.width/2)+'px'; b.style.top=Math.round(st.top+112)+'px';}
   b.classList.add('is-show'); AUDIO.coin();
   clearTimeout(trophyBannerT); trophyBannerT=setTimeout(()=>b.classList.remove('is-show'),5000);
@@ -14311,11 +14350,13 @@ function trophyWhere(id,T){
 }
 /* a saved town: a trophy not earned is let go, and only the first of each is kept (it cost nothing, so nothing pays back) */
 function trophyTidy(o){
-  const ok=new Set(o.trophies), seen=new Set(), one=id=>LODGE_ITEMS[id].k==='trophy'||LODGE_ITEMS[id].book,
+  const ok=new Set(o.trophies), seen=new Set(), one=id=>LODGE_ITEMS[id].k==='trophy'||LODGE_ITEMS[id].one,
     keep=id=>{if(LODGE_ITEMS[id].k==='trophy'&&!devOn&&!ok.has(id))return false; if(seen.has(id))return false; seen.add(id); return true;};
   for(const L of [o.lodge,...LODGE_ROOM_KEYS.map(m=>o.lodge.rooms[m])])L.furn=L.furn.filter(d=>!one(d.id)||keep(d.id));
   o.store=o.store.filter(e=>e.s!=='lodge'||!one(e.id)||keep(e.id));
 }
+/* a piece of one of a kind by name, for the lines that say what it may not do: "The Grimoire", "the Keeper's Ledger" */
+function oneName(id,low){const n=LODGE_ITEMS[id].n.replace(/^The /,''); return (low?'the ':'The ')+n;}
 /* the Lodge always has its Grimoire, in a room or in Storage: one that is nowhere (a Lodge just restored, a save from before it
    could be moved, or one whose place was taken) stands where the shelf always stood, or waits in Storage if that is taken */
 function grimoireEnsure(o){
@@ -14323,6 +14364,224 @@ function grimoireEnsure(o){
   const F=o.lodge.furn, mask=lodgeTiles('grimoire',4,2,0);
   if(F.some(d=>lodgeTiles(d.id,d.c,d.r,d.f).some(([x,y])=>mask.some(m=>m[0]===x&&m[1]===y)&&!LODGE_ITEMS[d.id].flat&&!LODGE_ITEMS[d.id].mount)))o.store.push({s:'lodge',id:'grimoire',cost:haulFix({})});
   else F.unshift({id:'grimoire',c:4,r:2,free:true});
+}
+/* Expansion 5, step 1: the Lodge always has its Ledger too. One that is nowhere (the first time the Lodge is opened after the Ledger
+   came, a Lodge just restored, or one whose place was lost) stands in the main room on the free tile nearest the Grimoire (or where
+   the Grimoire's shelf stood, if the book is elsewhere): floor, kept clear of nothing, and leaving the door, the ways and both books
+   in reach. With no such tile it waits in Storage */
+function ledgerEnsure(o){
+  if(!o.lodge.built||trophyWhere('ledger',o))return;
+  const F=o.lodge.furn, g=F.find(d=>d.id==='grimoire'), gx=g?g.c:4, gy=g?g.r:2, solid=F.filter(d=>!LODGE_ITEMS[d.id].flat&&!LODGE_ITEMS[d.id].mount);
+  const used=new Set(); for(const d of solid)for(const [x,y] of lodgeTiles(d.id,d.c,d.r,d.f))used.add(y*LODGE_W+x);
+  const spots=[]; for(let y=0;y<LODGE_H;y++)for(let x=0;x<LODGE_W;x++)if(lodgeCh(x,y,'main')==='.'&&!lodgeKept(x,y,'main')&&!used.has(y*LODGE_W+x))spots.push([x,y]);
+  /* nearest first, along the back wall before out into the room, and to the Grimoire's right (the ladder and the hatch are on the left) */
+  const far=([x,y])=>Math.abs(x-gx)+Math.abs(y-gy)*1.5+(x<gx?.5:0);
+  spots.sort((a,b)=>far(a)-far(b)||a[1]-b[1]||a[0]-b[0]);
+  for(const [x,y] of spots){const d={id:'ledger',c:x,r:y,f:0,free:true}; if(lodgeKeepOK(solid.concat([d]),'main')){F.push(d); return;}}
+  o.store.push({s:'lodge',id:'ledger',cost:haulFix({})});
+}
+/* ---- Expansion 5, step 1: the Keeper's Ledger (expansion/EXPANSION5_PROGRESSION.md §1). Feats done below, each paid once in
+   town materials when the haul comes up, never anything on the stair. A run feat is worked out at the run's end from what the run
+   kept (r: the run being credited); the rest are lifetime feats, read from ll-meta, ll-codex and ll-town whenever the Ledger is
+   opened or a haul comes up. A replayed stair counts no run feat. Pay: shape, for playtest (20 to 60 of one or two materials by
+   how hard it is; curios only for the hardest four) ---- */
+const LEDGER_GROUPS={stair:'The stair',keepers:'Keepers',deep:'The Deeper Dark',book:'The Grimoire',trials:'Trials and descents',town:'Saltmouth'};
+/* floors a run has cleared (an old save without the count: the floors below the one it stands on) */
+function runClr(r){return r.floorsClr!=null?r.floorsClr|0:r.floor|0;}
+function runHas(a,k){return Array.isArray(a)&&a.includes(k);}
+const LEDGER_FEATS=[
+  {id:'cistern',g:'stair',n:'Clear the Cistern',pay:{timber:20},run:true,test:r=>runClr(r)>=1},
+  {id:'throat',g:'stair',n:'Reach the Throat',pay:{iron:30},run:true,test:r=>(r.floor|0)>=3},
+  {id:'heart',g:'stair',n:'Reach the Abyssal Heart',pay:{timber:30,iron:20},run:true,test:r=>(r.floor|0)>=4},
+  {id:'keeper',g:'stair',n:'Slay the Keeper Below',pay:{iron:40},run:true,test:r=>(r.bosses|0)>=1},
+  {id:'morning',g:'stair',n:'See morning',pay:{tallow:40,timber:20},run:true,test:r=>!!r.morning},
+  ...['lastkeeper','tithetaker','bellfather'].map(k=>({id:'h_'+k,g:'stair',n:'Slay '+FOES[k].n.replace(/^The /,'the '),pay:{iron:25},run:true,test:r=>runHas(r.heraldKinds,k)})),
+  {id:'untouched',g:'stair',n:'Clear a floor with the lamp untouched',pay:{tallow:25},run:true,test:r=>(r.untouched|0)>0},
+  {id:'leaning',g:'stair',n:'Break a wave at Leaning madness',pay:{tallow:30},run:true,test:r=>!!r.leaned},
+  ...Object.keys(KITS).map(k=>({id:'k_'+k,g:'keepers',n:'See morning with '+(KITS[k].who||KITS[k].n),pay:{timber:30,tallow:20},run:true,test:r=>!!r.morning&&r.kit===k})),
+  ...[1,3,5].map(d=>({id:'d'+d,g:'deep',n:'See morning at depth '+d+(d<5?' or deeper':''),pay:d<5?{iron:40,tallow:d>1?20:0}:{tallow:40,iron:20,curios:2},run:true,test:r=>!!r.morning&&(r.depth|0)>=d})),
+  {id:'foes',g:'book',n:'Meet every creature',pay:{timber:30,curios:1},test:(r,T,M,C)=>Object.keys(FOES).every(k=>FOES[k].bound||C.foes.has(k))},
+  {id:'relics',g:'book',n:'Find every relic',pay:{tallow:30,curios:2},test:(r,T,M,C)=>Object.keys(RELICS).every(k=>resting(k)||C.relics.has(k))},
+  {id:'horrors',g:'book',n:'Bind every kind of horror',pay:{iron:30,curios:1},test:(r,T,M,C)=>HOOD_EYES.every(k=>C.bound.has(k))},
+  {id:'trials',g:'trials',n:'Pass every kind of Trial',pay:{iron:30,tallow:20},test:(r,T,M)=>Object.keys(TRIALS).every(k=>M.trialsPassed.includes(k))},
+  {id:'descents',g:'trials',n:'Walk every descent',pay:{timber:30,tallow:20},test:(r,T,M)=>Object.keys(DESCENTS).every(k=>M.descentsWalked.includes(k))},
+  {id:'lodge',g:'town',n:'Restore the Keeper’s Lodge',pay:{timber:20},test:(r,T)=>lodgeBuilt(T)},
+  {id:'workshops',g:'town',n:'Restore every workshop',pay:{iron:40},test:(r,T)=>{const b=buildingsFix(T.buildings); return TOWN_BUILDING_KEYS.every(k=>b[k]>0);}},
+  {id:'shrines',g:'town',n:'Raise all three shrines',pay:{tallow:30},test:(r,T)=>Object.keys(TOWN_SHRINES).every(k=>townShrineBuilt(k,T))},
+  /* a soul freed on this descent comes up with this very haul, so it counts already */
+  {id:'souls',g:'town',n:'Free every soul from the cages',pay:{timber:30},test:(r,T)=>Object.keys(TOWN_SOULS).every(k=>townRescued(k,T)||(r&&runHas(r.rescued,k)))},
+  {id:'hearth',g:'town',n:'Raise the Hearth Beacon to its height',pay:{iron:30},test:(r,T)=>hearthLv(T)>=HEARTH_MAX},
+  {id:'graves',g:'town',n:'Carve five headstones',pay:{iron:20},test:(r,T)=>(Array.isArray(T.decos)?T.decos:[]).filter(d=>d&&d.id==='stone').length>=5}];
+for(const f of LEDGER_FEATS)for(const k in f.pay)if(!f.pay[k])delete f.pay[k];
+const LEDGER_ID=new Set(LEDGER_FEATS.map(f=>f.id));
+/* ll-town.ledger: {done: {id: date}, claimed: {id: date}}. done: the feat is fulfilled (marked when the haul comes up, or, for a
+   feat of the town or the Grimoire, as soon as the town sees it); claimed: its pay taken at the lectern, by hand, as Hades' Fated
+   List is (Criss, 26 Nov 2026). A feat no longer in the table is dropped; a claim without its feat done is dropped. Step 2 adds the
+   bounties */
+function ledgerFix(l){
+  l=l&&typeof l==='object'?l:{}; const done={}, claimed={}, d=l.done&&typeof l.done==='object'?l.done:{}, c=l.claimed&&typeof l.claimed==='object'?l.claimed:{};
+  for(const k in d)if(LEDGER_ID.has(k))done[k]=typeof d[k]==='string'?d[k].slice(0,10):'';
+  for(const k in c)if(done[k]!=null)claimed[k]=typeof c[k]==='string'?c[k].slice(0,10):'';
+  return {done,claimed};
+}
+function ledgerDone(T){T=T||townData(); return T.ledger&&T.ledger.done?T.ledger.done:{};}
+function ledgerClaimed(T){T=T||townData(); return T.ledger&&T.ledger.claimed?T.ledger.claimed:{};}
+/* claimed feats (the motes), and the feats fulfilled and waiting to be claimed */
+function ledgerCount(T){const C=ledgerClaimed(T); let n=0; for(const f of LEDGER_FEATS)if(C[f.id]!=null)n++; return n;}
+function ledgerWaiting(T){const D=ledgerDone(T), C=ledgerClaimed(T); return LEDGER_FEATS.filter(f=>D[f.id]!=null&&C[f.id]==null);}
+/* the feats fulfilled now and not yet marked: the run's own (r, unless it is a replayed stair), and every lifetime feat done */
+function ledgerDue(r){
+  const T=townData(), M=meta(), C=codex(), D=ledgerDone(T), mine=r&&!r.replay;
+  return LEDGER_FEATS.filter(f=>D[f.id]==null&&(f.run?mine&&f.test(r,T,M,C):f.test(r||null,T,M,C)));
+}
+/* today, for the Ledger's lines */
+function ledgerDate(){const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+/* mark what is fulfilled, with the date, in the town object the caller then saves. Nothing is paid until it is claimed */
+function ledgerMark(T,due){
+  if(!due.length)return due;
+  T.ledger=ledgerFix(T.ledger); const day=ledgerDate();
+  for(const f of due)T.ledger.done[f.id]=day;
+  LODGE_STALE=true;
+  return due;
+}
+/* a feat of the town or the Grimoire fulfilled while you are in Saltmouth (from townHud(), after anything is spent or built): marked
+   at once, with its banner. Never per frame */
+function ledgerTownCheck(){
+  if(!TWN.on)return;
+  const T=townData(), due=ledgerMark(T,ledgerDue(null)); if(!due.length)return;
+  townSave(); ledgerBanner(due); TWN.ledgerSaid=false; townShowTip();
+}
+/* take a feat's pay (id), or every one waiting (null), into the haul; returns the feats claimed */
+function ledgerClaim(id){
+  const T=townData(), w=ledgerWaiting(T).filter(f=>!id||f.id===id); if(!w.length)return [];
+  T.ledger=ledgerFix(T.ledger); T.res=haulFix(T.res); const day=ledgerDate();
+  for(const f of w){for(const k in f.pay)T.res[k]+=f.pay[k]; T.ledger.claimed[f.id]=day;}
+  townSave(); townHud(); LODGE_STALE=true; AUDIO.coin();
+  return w;
+}
+const NUM_WORD=['no','one','two','three','four','five','six','seven','eight','nine','ten'];
+/* the death and morning screens: a gold block, one line a feat (three at most, then how many more), and where to claim them */
+function ledgerLine(r){
+  const due=ledgerDue(r); if(!due.length)return '';
+  let h='<br><span class="statline haul-line ledger-end ledger-endh">✦ Feats fulfilled</span>';
+  for(let i=0;i<Math.min(3,due.length);i++)h+='<br><span class="statline haul-line ledger-end">'+due[i].n+'. '+haulWords(due[i].pay)+'.</span>';
+  if(due.length>3)h+='<br><span class="statline haul-line ledger-end">And '+(NUM_WORD[due.length-3]||due.length-3)+' more in the Ledger.</span>';
+  return h+'<br><span class="statline haul-line ledger-end">Claim '+(due.length>1?'them':'it')+' at the Ledger, in the Lodge.</span>';
+}
+/* the moment a feat is fulfilled on the stair: a gold banner (the trophy's), shown only between waves, never mid-wave. Called at
+   each wave's break, a floor cleared and a floor begun. run.ledgerSeen: feats already told this run (those fulfilled before it
+   began are in it from newRun()); a replayed stair tells none */
+function ledgerWatch(){
+  if(!run||run.replay||(F&&F.phase==='wave'))return;
+  const seen=Array.isArray(run.ledgerSeen)?run.ledgerSeen:(run.ledgerSeen=[]), fresh=ledgerDue(run).filter(f=>!seen.includes(f.id));
+  if(!fresh.length)return;
+  for(const f of fresh)seen.push(f.id);
+  ledgerBanner(fresh);
+}
+function ledgerBanner(fs){
+  const rows=LODGE_ROWS.ledger[0], cv=$('#trophyBannerArt'), c=cv.getContext('2d');
+  cv.width=rows[0].length; cv.height=rows.length; cv.style.width=cv.width*2+'px'; cv.style.height=cv.height*2+'px'; c.clearRect(0,0,cv.width,cv.height); tRows(c,rows,0,0);
+  $('#trophyBannerB').textContent=fs.length>1?(NUM_WORD[fs.length]||fs.length)[0].toUpperCase()+(NUM_WORD[fs.length]||String(fs.length)).slice(1)+' feats fulfilled':'A feat fulfilled';
+  $('#trophyBannerS').textContent=fs[0].n+(fs.length>1?', and more':'');
+  const b=$('#trophyBanner'), st=$('#stage').getBoundingClientRect();
+  b.classList.add('is-ledger');
+  if(st.width){b.style.left=Math.round(st.left+st.width/2)+'px'; b.style.top=Math.round(st.top+112)+'px';} else{b.style.left=''; b.style.top='';}
+  b.classList.add('is-show'); AUDIO.coin();
+  clearTimeout(trophyBannerT); trophyBannerT=setTimeout(()=>b.classList.remove('is-show'),5000);
+}
+/* Mastery, counted from now for step 5's Marks: ll-meta.mastery is {kit: floors cleared}. One a floor cleared, never on a replayed
+   stair or in developer mode; mastLast keeps a floor from counting twice if the page is reloaded before the landing saves */
+function masteryCount(){
+  if(!run||run.replay||devOn||!KITS[run.kit])return;
+  const m=meta(), key=run.seed+':'+run.floor; if(m.mastLast===key)return;
+  m.mastery[run.kit]=(m.mastery[run.kit]|0)+1; m.mastLast=key; saveMeta(m);
+}
+/* a lifetime list in ll-meta (trialsPassed, descentsWalked) gains k: never on a replayed stair or in developer mode */
+function metaListAdd(list,k){
+  if(!run||run.replay||devOn||!k)return;
+  const m=meta(); if(m[list].includes(k))return; m[list].push(k); saveMeta(m);
+}
+/* ---- the Ledger's card: tap the lectern outside Build. Tabs: the feats (done with the date and what each paid; to come, as ???
+   until something in its group is done, as the Grimoire keeps what you have not met), and the Keepers (floors cleared with each,
+   which step 5's Marks will read). Step 2 adds the bounties as a third tab. Developer mode shows every feat and writes nothing ---- */
+const LEDGER={tab:'feats'};
+function ledgerCard(tab,said){
+  if(tab)LEDGER.tab=tab;
+  TWN.path=null; TWN.goal=null; TWN.ptr=null;
+  /* anything fulfilled in the town since is marked first */
+  {const T0=townData(), due=ledgerMark(T0,ledgerDue(null)); if(due.length)townSave();}
+  const T=townData(), D=ledgerDone(T), CL=ledgerClaimed(T), wait=ledgerWaiting(T), t=LEDGER.tab;
+  const nd=LEDGER_FEATS.filter(f=>D[f.id]!=null).length;
+  const tabs=[['feats','Feats'+(wait.length?' ✦'+wait.length:'')],['keepers','Keepers']];
+  let intro='', list='';
+  if(t==='keepers'){
+    const M=meta().mastery;
+    intro='Floors cleared with each Keeper, on any descent but a replayed one.';
+    list='<div class="book-list">'+Object.keys(KITS).map(k=>{const K=KITS[k], f=M[k]|0, shut=kitLocked(k);
+      return bookEntry(bookSeal(shut?'?':String(f)),shut?'???':(K.who||K.n),shut?'':K.n,shut?'Not yet freed.':f+(f===1?' floor':' floors')+' cleared with them.',shut?'is-locked':'');}).join('')+'</div>';
+  }else{
+    intro='Feats fulfilled: <b>'+nd+' of '+LEDGER_FEATS.length+'</b>. Each pays once, when you claim it here.'+(said?' <b class="ledger-said">'+said+'</b>':'');
+    /* what waits to be claimed comes first, each with its own button, and one for all of them */
+    if(wait.length)list+='<div class="book-h ledger-h ledger-wait">✦ Fulfilled, waiting to be claimed</div>'
+      +(wait.length>1?'<div class="ledger-all"><button class="btn call ledger-claim" data-claim="all">Claim all ('+wait.length+')</button></div>':'')
+      +'<div class="book-list">'+wait.map(f=>bookEntry(bookSeal('✦'),f.n,'Fulfilled '+(D[f.id]||''),'<button class="btn call ledger-claim" data-claim="'+f.id+'">Claim '+haulWords(f.pay)+'</button>','is-held ledger-ready')).join('')+'</div>';
+    for(const g in LEDGER_GROUPS){
+      const fs=LEDGER_FEATS.filter(f=>f.g===g), seen=devOn||fs.some(f=>D[f.id]!=null);
+      list+='<div class="book-h ledger-h">'+LEDGER_GROUPS[g]+'</div><div class="book-list">'+fs.map(f=>{
+        if(CL[f.id]!=null)return bookEntry(bookSeal('✦'),f.n,'Claimed'+(CL[f.id]?' '+CL[f.id]:''),'Paid '+haulWords(f.pay)+'.','is-held');
+        if(D[f.id]!=null)return bookEntry(bookSeal('✦'),f.n,'Fulfilled','Claim '+haulWords(f.pay)+' above.','is-held ledger-ready');
+        if(!seen)return bookEntry(bookSeal('?'),'???','','Nothing in this part of the Ledger is done yet.','is-locked');
+        return bookEntry(bookSeal('·'),f.n,'To come','Pays '+haulWords(f.pay)+'.','is-locked');}).join('')+'</div>';
+    }
+  }
+  const html='<div class="book-tabs">'+tabs.map(([k,nm])=>'<button class="btn'+(k===t?' call':'')+'" data-ledger="'+k+'" aria-pressed="'+(k===t)+'">'+nm+'</button>').join('')+'</div>'
+    +'<p class="book-intro">'+intro+'</p>'+list;
+  const top=$('#modal .box').scrollTop, again=!$('#modal').hidden&&$('#mTitle').textContent==='The Keeper’s Ledger';
+  showModal({kind:'ledger',wide:true,title:'The Keeper’s Ledger',body:'',html,actions:[{label:'Close',primary:true,fn:closeModal}]});
+  townCardTop(); if(again&&!tab)$('#modal .box').scrollTop=top;
+  TWN.ledgerSaid=true; TWN.tipFor='ledger'; townShowTip();
+}
+$('#mChoices').addEventListener('click',ev=>{
+  const c=ev.target.closest('[data-claim]');
+  if(c){const got=ledgerClaim(c.dataset.claim==='all'?null:c.dataset.claim), sum={};
+    for(const f of got)for(const k in f.pay)sum[k]=(sum[k]|0)+f.pay[k];
+    ledgerCard(null,got.length?'You take '+haulWords(sum)+' from the Ledger.':''); return;}
+  const b=ev.target.closest('[data-ledger]'); if(!b)return; ledgerCard(b.dataset.ledger);});
+/* the motes in the Ledger's glow: one gold mote for each feat claimed, ten at most, hung over the open book. Each is a small cross
+   of light with a bright heart, big enough to count on a folded phone (Criss: the first ones were barely noticeable). Made once a
+   count (two frames that twinkle in turn), drawn in the glow layer; never per frame */
+const LEDGER_MOTE_W=34, LEDGER_MOTE_H=20, LEDGER_MOTES=new Map();
+function ledgerMotes(n){
+  n=Math.min(10,n|0); if(!n)return null;
+  let fr=LEDGER_MOTES.get(n); if(fr)return fr;
+  fr=[0,1].map(k=>{const [cv,c]=tCanvas(LEDGER_MOTE_W,LEDGER_MOTE_H);
+    for(let i=0;i<n;i++){const an=i/n*6.283+thash(i,7,166)*.5, rr=.62+thash(i,8,167)*.38, x=Math.round(LEDGER_MOTE_W/2+Math.cos(an)*rr*(LEDGER_MOTE_W/2-3)), y=Math.round(LEDGER_MOTE_H/2+Math.sin(an)*rr*(LEDGER_MOTE_H/2-3)), on=(i+k)&1;
+      tp(c,x-1,y,'rgba(245,194,107,'+(on?.75:.45)+')',3,1); tp(c,x,y-1,'rgba(245,194,107,'+(on?.75:.45)+')',1,3);
+      tp(c,x,y,on?'rgba(255,240,194,1)':'rgba(255,240,194,.8)');}
+    return cv;});
+  fr=[fr[0],fr[0],fr[0],fr[0],fr[1],fr[1],fr[1],fr[1]];
+  LEDGER_MOTES.set(n,fr); return fr;
+}
+/* while a feat waits to be claimed, the lectern calls you over: a gold glow that swells and fades round it, sparks rising off the
+   page, and a star over it that pulses. Sixteen frames, made once; frame 0 (Lite, Reduce Motion) is the glow and the star, still */
+const LEDGER_CALL_W=40, LEDGER_CALL_H=50;
+let LEDGER_CALL=null;
+function ledgerCall(){
+  if(LEDGER_CALL)return LEDGER_CALL;
+  const N=16, W=LEDGER_CALL_W, H=LEDGER_CALL_H, cx=W/2, cy=H-20;
+  LEDGER_CALL=[];
+  for(let k=0;k<N;k++){const [cv,c]=tCanvas(W,H), pulse=.5-.5*Math.cos(k/N*6.283);
+    /* the glow: an oval round the desk, stepped and dithered like every pool of light */
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){const d=Math.hypot((x-cx)/(W/2-1),(y-cy)/17); if(d>=1)continue;
+      const a=(d<.5?.26:d<.8?.15:(x+y)&1?.08:0)*(.55+.45*pulse); if(a>0)tp(c,x,y,'rgba(245,194,107,'+a.toFixed(3)+')');}
+    /* sparks rising from the page, each on its own phase */
+    for(let i=0;i<5;i++){const ph=(k/N+i/5)%1, sx=Math.round(cx-9+i*4.5+Math.sin((ph+i)*6.283)*1.5), sy=Math.round(cy-6-ph*26);
+      tp(c,sx,sy,'rgba(255,240,194,'+(1-ph).toFixed(2)+')'); if(ph<.5)tp(c,sx,sy+1,'rgba(245,194,107,'+(.6-ph).toFixed(2)+')');}
+    /* the star over it */
+    const sy=4+Math.round(pulse), r=pulse>.5?3:2;
+    tp(c,cx-r,sy,'rgba(245,194,107,.9)',r*2+1,1); tp(c,cx,sy-r,'rgba(245,194,107,.9)',1,r*2+1); tp(c,cx,sy,'#fff0c2');
+    LEDGER_CALL.push(cv);}
+  return LEDGER_CALL;
 }
 /* a room just built gets the sconces it is built with: free pieces, cold, on the wall columns its own lists (lodgeFix() gives an
    old Lodge the ones it had, lit as they were). Skipped where something already hangs */
@@ -14391,10 +14650,10 @@ function lodgeKeepOK(pieces,m){
     for(let k=0;k<8;k++){const dx=DX[k], dy=DY[k], nx=x+dx, ny=y+dy;
       if(solid(nx,ny)||(dx&&dy&&(solid(x+dx,y)||solid(x,y+dy))))continue;
       const j=ny*W+nx; if(!seen[j]){seen[j]=1; q.push(j);}}}
-  return RM.keep.every(([x,y])=>seen[y*W+x])&&pieces.every(d=>!LODGE_ITEMS[d.id].book||lodgeRingSeen(lodgeTiles(d.id,d.c,d.r,d.f),(x,y)=>seen[y*W+x]));
+  return RM.keep.every(([x,y])=>seen[y*W+x])&&pieces.every(d=>!LODGE_ITEMS[d.id].one||lodgeRingSeen(lodgeTiles(d.id,d.c,d.r,d.f),(x,y)=>seen[y*W+x]));
 }
-/* can someone reach the tiles around a piece (a tile beside its footprint, diagonals too, that seen() says is walkable): the
-   Grimoire has to be readable wherever it stands */
+/* can someone reach the tiles around a piece (a tile beside its footprint, diagonals too, that seen() says is walkable): a piece
+   of one of a kind (the Grimoire, the Ledger) has to be readable wherever it stands */
 function lodgeRingSeen(tiles,seen){
   const mine=new Set(tiles.map(([x,y])=>y*LODGE_W+x));
   for(const [x,y] of tiles)for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const nx=x+dx, ny=y+dy; if(nx<0||ny<0||nx>=LODGE_W||ny>=LODGE_H||mine.has(ny*LODGE_W+nx))continue; if(seen(nx,ny))return true;}
@@ -14442,7 +14701,7 @@ function lodgeRoomFix(l,m,res,built){
   /* oldest first, every solid piece that still leaves the door, the shelf and the ways between the rooms in reach stays */
   const solid=o.furn.filter(d=>!LODGE_ITEMS[d.id].flat&&!LODGE_ITEMS[d.id].mount);
   if(solid.length&&!lodgeKeepOK(solid,m)){const keep=[];
-    for(const d of solid.slice().sort((a,b)=>!!LODGE_ITEMS[b.id].book-!!LODGE_ITEMS[a.id].book)){if(lodgeKeepOK(keep.concat([d]),m))keep.push(d); else pay(lodgeCostOf(d));}
+    for(const d of solid.slice().sort((a,b)=>!!LODGE_ITEMS[b.id].one-!!LODGE_ITEMS[a.id].one)){if(lodgeKeepOK(keep.concat([d]),m))keep.push(d); else pay(lodgeCostOf(d));}
     o.furn=o.furn.filter(d=>LODGE_ITEMS[d.id].flat||LODGE_ITEMS[d.id].mount||keep.indexOf(d)>=0);}
   for(const k in l)if(!(k in o)&&k!=='rooms'&&k!=='sconces'&&k!=='own')o[k]=l[k];
   /* the sconces a room is built with are pieces (free ones): a Lodge from before keeps the ones it had, lit as they were. Once
@@ -14907,6 +15166,8 @@ function choreText(k){
 }
 function haulCredit(r){
   const t=r||run; if(!t||t.haulPaid)return false;
+  /* the Ledger's feats (Expansion 5, step 1), worked out before anything of this run is moved, as the death screen's line was */
+  const due=ledgerDue(t);
   const h=haulFix(t.haul), sv=Array.isArray(t.rescued)?t.rescued.filter(k=>TOWN_SOULS[k]):[];
   const tr=trophiesFix(t.trophies);
   t.haulPaid=true; t.haul={timber:0,iron:0,tallow:0,curios:0}; t.rescued=[]; t.trophies=[];
@@ -14918,6 +15179,8 @@ function haulCredit(r){
   poolsRefill(T);
   /* and the trophies earned on it come up too (Expansion 4, step 5) */
   T.trophies=trophiesFix((Array.isArray(T.trophies)?T.trophies:[]).concat(tr));
+  /* and every feat fulfilled is marked, once, in the same write: its pay waits at the Ledger to be claimed */
+  ledgerMark(T,due);
   townSave();
   if(t===run&&F)checkpoint();
   else if(lastSave&&lastSave.run===t)store.set(SAVEKEY,lastSave);
@@ -15055,6 +15318,8 @@ function townHud(){
   $('#townResIron').textContent=R.iron;
   $('#townResTallow').textContent=R.tallow;
   $('#townResCurios').textContent=R.curios;
+  /* the Ledger (Expansion 5): whatever was just spent, built or raised may have fulfilled a feat of the town */
+  if(TWN.on)ledgerTownCheck();
 }
 let TOWN=null, TOWN_DEV=null, TOWN_NOTE=[];
 const TWN={on:false,k:0,dpr:1,W:0,H:0,vw:0,vh:0,cx:0,cy:0,p:{x:18,y:23,face:'u',moving:false,wt:0},path:null,goal:null,ptr:null,
@@ -15124,10 +15389,12 @@ function townFix(t){
   o.chalk=chalkFix(t.chalk); o.tide=tideFix(t.tide);
   /* Expansion 4, step 5: the trophies earned (an old town is given what ll-best shows it did) */
   o.trophies=Array.isArray(t.trophies)?trophiesFix(t.trophies):trophySeed();
+  /* Expansion 5, step 1: the Keeper's Ledger, the feats done and when */
+  o.ledger=ledgerFix(t.ledger);
   /* step 9: the Lodge, and its second chore slot (a Keeper of its own, never the first slot's) */
   o.lodge=lodgeFix(t.lodge,o.res);
   trophyTidy(o);
-  grimoireEnsure(o);
+  grimoireEnsure(o); ledgerEnsure(o);
   o.chore2=o.lodge.built&&KITS[t.chore2]&&TOWN_CHORES[t.chore2]&&t.chore2!==o.chore?t.chore2:null;
   if(o.gift&&!townGiftOpen(o.gift,o))o.gift=null;
   townMapSync(o);
@@ -18547,6 +18814,11 @@ const LODGE_CHAIR=[
    expansion/ART_UPGRADE.md §3): on the town's palette (no new letters), its edge taken a shade up from pure dark to its own darkest
    (--outline), straight facings 16 wide a tile. Keyed by the facing drawn (0 S, 2 W, 4 N; a piece drawn one way has only 0) ---- */
 const LODGE_ROWS={
+  /* Expansion 5, step 1: the Keeper's Ledger, PixelLab "Keeper's Ledger lectern" (8 directions, 34 px, low top-down), south, west
+     and north through tools/png2rows.py --width 16 --outline 5 (EXPANSION4_RUNBOOK.md §3), every colour on a PX letter */
+  ledger:{0:['............5a..','............5b5.','.............c5.','.555555555555d5.','5oooooooooo77d65','57o000000000o7o5','570cccdj8ddd07o5','5odcdddjjdccp7o5','5odcccdjjdddp7o5','57dcdddjjdccd775','5odcccdkjdccd7o5','5odcdddkjdccp7o5','5odcccdkjdccp775','5opdpdpkjpdpp7o5','5777777kj7777775','5oooooo7kjooooo5','56266666jj666665','.5500000jj000555','...562710j275...','..567612207o75..','..56o727761o75..','..56o777771oo5..','..5oo566666oo5..','..577555555665..','...55......555..'],
+    2:['..........55.55.','........55c75ao5','......55dcd70bo5','.....5dcckj70c75','...55cck8cp70d75','..5ocjjcp770o7o5','..5ojcp7700o6665','55kjc7700o66055.','5kj0700o66005...','5j000o6600665...','5j0oo60016265...','5j066061617o5...','5j555661661o5...','.5...o1676lo5...','.....o1777lo5...','.....ol777lo5...','...55ol777lo5...','...50ol772lo5...','....576322175...','...5oooooooo75..','...56666666765..','....555555555...'],
+    4:['...a............','...b5555555.....','..5c0pppppp55...','..7d0777777775..','.500000000000055','5oooooooooooooo5','5666666666666665','.50000000000225.','..5622767l7025..','..52177175705...','..5277121775....','..5271271675....','..5271671675....','..5271761675....','..52717216705...','..o6717616o0o5..','..o6716216o0o5..','..o6716216o5o5..','..o2716216o1o5..','..o11l66l011o5..','..777555517775..','..555....5555...']},
   /* Expansion 4, step 5: the Stone Fireplace ("Lodge fireplace", candidate 40, 28 by 30 on its two tiles; edge 1; its side from
      "Lodge fireplace (turns)", 13 by 30, turned from candidate 40; its back is its front with the firebox walled up in its own
      courses, since the model's back came out smaller than the front), the Keeper
@@ -18982,7 +19254,7 @@ function lodgeArt(){
   LODGE_STALE=false;
   /* Expansion 4, step 9: the Cellar's brine stands as high as its tide, and what the tide reached wears kelp and barnacles */
   const T=townData(), m=lodgeCur(), RM=LODGE_ROOMS[m], L=lodgeRoom(T,m), S=lodgeSpines(), wet=m==='cellar'?tideBrine(T):RM.brine|0, kelp=m==='cellar'?tideKelp(T):0;
-  const sig=m+'|'+LODGE_ROOM_KEYS.map(k=>lodgeRoom(T,k).built?1:0).join('')+'|'+L.floor+'|'+L.wall+'|'+L.furn.map(d=>d===BLD_SKIP?'':d.id+d.c+','+d.r+'/'+(d.f|0)+(d.x!=null?'@'+d.x+','+d.y:'')+(d.dye?'~'+d.dye:'')+(d.out?'!':'')+(d.on?'['+d.on.map(o=>o===BLD_SKIP?'':o.id+o.s+(o.dye||'')+(o.out?'!':'')).join(',')+']':'')).join(';')+'|'+S.n+'/'+S.cap+'|'+wet+'/'+kelp;
+  const sig=m+'|'+LODGE_ROOM_KEYS.map(k=>lodgeRoom(T,k).built?1:0).join('')+'|'+L.floor+'|'+L.wall+'|'+L.furn.map(d=>d===BLD_SKIP?'':d.id+d.c+','+d.r+'/'+(d.f|0)+(d.x!=null?'@'+d.x+','+d.y:'')+(d.dye?'~'+d.dye:'')+(d.out?'!':'')+(d.on?'['+d.on.map(o=>o===BLD_SKIP?'':o.id+o.s+(o.dye||'')+(o.out?'!':'')).join(',')+']':'')).join(';')+'|'+S.n+'/'+S.cap+'|'+wet+'/'+kelp+'|'+ledgerCount(T)+'/'+ledgerWaiting(T).length;
   if(LODGE_ART&&LODGE_ART.sig===sig)return LODGE_ART;
   const TA=townArt(), props=[], lights=[], em=[], solids=[], acts=[];
   /* what a tap outside Build acts on (step 5): a light to light or put out, a trophy to look at. n is the button's offer (kept
@@ -19025,6 +19297,11 @@ function lodgeArt(){
       em.push({book:true,g,n:S.n,c:bk,x:x-BOOK_PAD[0],y:by-BOOK_PAD[1],base:base+.2});
       bookAt={cx,gx:R.x+8,gy:R.y+R.h-8};
       act('shelf',R.x/16,R.y/16,(R.x+R.w)/16,(R.y+R.h)/16,x,by,16,y+a.dy+22-by,base);}
+    /* the Keeper's Ledger (Expansion 5, step 1): tapped, its card; over the open book, a gold mote for each feat done */
+    if(d.id==='ledger'){act('ledger',R.x/16,R.y/16,(R.x+R.w)/16,(R.y+R.h)/16,x,y+a.dy,a.cv.width,a.cv.height,base);
+      const mf=ledgerMotes(ledgerCount(T)); if(mf)em.push({c:mf[0],fl:mf,ph,x:x+8-(LEDGER_MOTE_W>>1),y:y+a.dy-8,base:base+.2});
+      /* a feat waiting to be claimed: the lectern calls you over */
+      if(ledgerWaiting(T).length){const lc=ledgerCall(); em.push({c:lc[0],fl:lc,ph:0,x:x+8-(LEDGER_CALL_W>>1),y:y+a.dy+a.cv.height-LEDGER_CALL_H+6,base:base+.3});}}
     if(I.light||I.k==='trophy')act(lodgeActOf(d),R.x/16,I.mount?2:R.y/16,(R.x+R.w)/16,I.mount?2:(R.y+R.h)/16,x,y+a.dy,a.cv.width,a.cv.height,base);
     /* what stands on the floor throws a shadow away from each light, and stands dark against one behind it (step 5) */
     const sol=!I.mount&&!a.flat?{cv:dry.cv,x,y:y+a.dy,base:y+R.h}:null; if(sol)solids.push(sol);
@@ -19129,7 +19406,7 @@ function townOpen(){
   TWN.lite=gfxLite; TWN.cx=null; TWN.rain=null; TWN.splash=null; townPuffClear();
   T.visits=(T.visits|0)+1;
   /* the tide-pools have never been filled: they are, once (developer mode fills its own copy and keeps nothing) */
-  TWN.tipFor=null;
+  TWN.tipFor=null; TWN.ledgerSaid=false;
   if(!Array.isArray(T.pools))poolsRefill(T);
   townSave(); townArt();
   $('#townOverlay').hidden=false; $('#townAct').hidden=true;
@@ -19146,18 +19423,21 @@ function townShowTip(){
   /* each of the other rooms (Expansion 4, step 3) has its own card, the first time you stand in it */
   const rt=TWN.inside&&LODGE_ROOMS[lodgeCur()].tip;
   const tide=TWN.inside&&lodgeCur()==='cellar'&&tideKelp(T)>0;
-  const k=TWN.inside?(tipFresh('lodge')?'lodge':rt&&tipFresh(rt)?rt:tide&&tipFresh('lodgetide')&&!b?'lodgetide':tipFresh('lodgedark')&&!b?'lodgedark':b?bldTip():TWN.tipFor&&tipFresh(TWN.tipFor)?TWN.tipFor:null)
+  /* the Ledger (Expansion 5): feats fulfilled and not yet claimed are told once a visit, after any tip that teaches */
+  const lw=!b&&!TWN.ledgerSaid&&ledgerWaiting(T).length>0;
+  const k=TWN.inside?(tipFresh('lodge')?'lodge':rt&&tipFresh(rt)?rt:tide&&tipFresh('lodgetide')&&!b?'lodgetide':tipFresh('lodgedark')&&!b?'lodgedark':b?bldTip():TWN.tipFor&&tipFresh(TWN.tipFor)?TWN.tipFor:lw?'ledgerwait':null)
     :grew?'grew':moved?'moved':tipFresh('town')?'town':haulTotal(T.res)>0&&tipFresh('townhaul')?'townhaul':b?bldTip()
     :standing&&tipFresh('townkeepers')?'townkeepers':TWN.crowd.some(e=>e.work)&&tipFresh('townchore')?'townchore'
     :townRescued('croupier',T)&&tipFresh('croupier')?'croupier':townRescued('toothmonger',T)&&tipFresh('toothmonger')?'toothmonger'
     :townRescued('peddler',T)&&tipFresh('townpeddler')?'townpeddler'
     :(Object.values(T.buildings||{}).some(v=>v>0)||T.gift)&&tipFresh('gift')?'gift'
-    :TWN.tipFor&&tipFresh(TWN.tipFor)&&!TWN.build?TWN.tipFor:null;
+    :TWN.tipFor&&tipFresh(TWN.tipFor)&&!TWN.build?TWN.tipFor:lw?'ledgerwait':null;
   TWN.card=k;
   $('#townCardWrap').hidden=!k;
   if(!k)return;
-  const title=k==='grew'?'The town grew':k==='moved'?'Taken up':TIPS[k].title,
-    text=k==='grew'?'Saltmouth climbs the cliff in two shelves now. The square went down to the lower one whole, with what you built on it; up either stair, the Rise holds the cemetery, the Keeper’s Lodge and the Cracked Belfry. Nobody has cleared the overgrown ground behind the fences.'+(T.grew.length?' What stood where a building or a stair stands now waits in Storage, whole: '+[...new Set(T.grew)].join(', ')+'.':''):k==='moved'?'Something you built stood where a Keeper keeps their place. It comes up, and you are paid back: '+[...new Set(TOWN_NOTE)].join(', ')+'.':TIPS[k].text;
+  const nw=k==='ledgerwait'?ledgerWaiting(T).length:0;
+  const title=k==='ledgerwait'?(nw>1?(NUM_WORD[nw]||String(nw)).replace(/^./,c=>c.toUpperCase())+' feats wait in the Ledger':'A feat waits in the Ledger'):k==='grew'?'The town grew':k==='moved'?'Taken up':TIPS[k].title,
+    text=k==='ledgerwait'?(!lodgeBuilt(T)?'Restore the Keeper’s Lodge on the Rise, and claim '+(nw>1?'their':'its')+' pay at the lectern inside.':TWN.inside?'The lectern glows until you claim '+(nw>1?'them':'it')+'. Walk up to it and tap the Ledger.':'Claim '+(nw>1?'their':'its')+' pay at the lectern in the Keeper’s Lodge, up on the Rise. It glows until you do.'):k==='grew'?'Saltmouth climbs the cliff in two shelves now. The square went down to the lower one whole, with what you built on it; up either stair, the Rise holds the cemetery, the Keeper’s Lodge and the Cracked Belfry. Nobody has cleared the overgrown ground behind the fences.'+(T.grew.length?' What stood where a building or a stair stands now waits in Storage, whole: '+[...new Set(T.grew)].join(', ')+'.':''):k==='moved'?'Something you built stood where a Keeper keeps their place. It comes up, and you are paid back: '+[...new Set(TOWN_NOTE)].join(', ')+'.':TIPS[k].text;
   $('#townCard').innerHTML='<span class="town-ctag">Saltmouth</span><b>'+title+'</b><span>'+text+'</span>'+(k==='town'?'<i>Tap to walk out into the rain</i>':'');
 }
 /* where you stood is kept for next time */
@@ -19478,7 +19758,7 @@ function townTrayBuild(){
     const st=document.createElement('span'); st.textContent=S.s; const sn=document.createElement('b'); sn.textContent=(LODGE_SET_KEYS.indexOf(set)+1)+'/'+LODGE_SET_KEYS.length;
     sb.append(sim,st,sn); row.appendChild(sb);
     for(const id in LODGE_ITEMS){
-      const I=LODGE_ITEMS[id]; if(I.set!==set||I.book)continue;
+      const I=LODGE_ITEMS[id]; if(I.set!==set||I.one)continue;
       /* a trophy not yet earned (Expansion 4, step 5) shows shut like a set not bought */
       const shut=!!lodgeLockWhy(id), b=document.createElement('button'); b.type='button'; b.className='town-chip'+(shut?' locked':''); b.dataset.lodge=id;
       b.setAttribute('aria-label',I.n+(!shut?'':open?', locked: not yet earned':', locked: ask the Peddler'));
@@ -19531,7 +19811,7 @@ function townTrayUI(){
     for(const b of $('#townTools').querySelectorAll('[data-tab]'))b.setAttribute('aria-pressed',b.dataset.tab===(TWN.tab||'pieces')?'true':'false');
     for(const b of $('#townTools').querySelectorAll('[data-snap]'))b.setAttribute('aria-pressed',(b.dataset.snap==='free')===(T.free===true)?'true':'false');
     $('#townUndo').disabled=!U.length||U[U.length-1].s!==bldScene();
-    $('#townScrap').disabled=!!(L&&TWN.inside&&LODGE_ITEMS[L.id]&&LODGE_ITEMS[L.id].book);
+    $('#townScrap').disabled=!!(L&&TWN.inside&&LODGE_ITEMS[L.id]&&LODGE_ITEMS[L.id].one);
     for(const b of $('#townTrow').querySelectorAll('[data-stored]')){const on=TWN.tab==='store'&&TWN.pick===b.dataset.stored; b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false');}
     const sv=$('#townSalvage'); if(sv)sv.classList.toggle('poor',!(TWN.tab==='store'&&TWN.pick));
   }
@@ -19806,11 +20086,11 @@ function bldStow(){
   return true;
 }
 /* Salvage from the lifted piece, in one tap: Store and Salvage together. It is gone and all it cost is back in the haul; Undo takes
-   it back for what it cost. The Grimoire is never broken up */
+   it back for what it cost. A piece of one of a kind (the Grimoire, the Ledger) is never broken up */
 function bldScrap(){
   const L=TWN.lift; if(!L)return false;
   const I=bldTab()[L.id];
-  if(TWN.inside&&I.book){townSay('The Grimoire is not yours to break up. Store it, or set it down where you like.'); return false;}
+  if(TWN.inside&&I.one){townSay(oneName(L.id)+' is not yours to break up. Store it, or set it down where you like.'); return false;}
   const T=townData(), U=TWN.undo||(TWN.undo=[]);
   if(!bldStow())return false;
   const st=T.store.pop(), d=U.pop(); if(!st||!d)return false;
@@ -19822,7 +20102,7 @@ function bldScrap(){
 }
 /* Salvage, in Storage: a stored piece gives back all it cost (the old take-up), and a headstone's name waits again */
 function bldSalvage(id){
-  if(TWN.inside&&LODGE_ITEMS[id]&&LODGE_ITEMS[id].book){townSay('The Grimoire is not yours to break up. Set it down where you like.'); return false;}
+  if(TWN.inside&&LODGE_ITEMS[id]&&LODGE_ITEMS[id].one){townSay(oneName(id)+' is not yours to break up. Set it down where you like.'); return false;}
   const T=townData(), s=bldScene(), i=T.store.findIndex(e=>e.s===s&&e.id===id); if(i<0)return false;
   const st=T.store[i]; T.store.splice(i,1); T.res=haulFix(T.res); for(const k of HAUL_KEYS)T.res[k]+=st.cost[k];
   bldDid({a:'salvage',st,i});
@@ -20218,7 +20498,7 @@ function townRestoreLodge(){
   const T=townData(); T.res=haulFix(T.res);
   if(lodgeBuilt(T)||!townCanAfford(LODGE_COST,T.res))return false;
   for(const k of HAUL_KEYS)if(LODGE_COST[k])T.res[k]-=LODGE_COST[k];
-  T.lodge.built=true; lodgeSeed(T.lodge,'main'); grimoireEnsure(T); townSave(); townArt(); townHud(); townShowTip();
+  T.lodge.built=true; lodgeSeed(T.lodge,'main'); grimoireEnsure(T); ledgerEnsure(T); townSave(); townArt(); townHud(); townShowTip();
   return true;
 }
 /* step through the door: the room takes the square's place in the same renderer, you stand just inside the door */
@@ -20366,7 +20646,7 @@ function lodgeTapTile(tx,ty){
   /* Expansion 4, step 3: the ladder or the hatch, walked to and taken (or, not yet bought, what opens it) */
   else if(W){goal=W; gx=W.at[0]; gy=W.at[1];}
   if(goal){
-    if(townNearAct()===goal){TWN.path=null; TWN.goal=null; if(goal==='door')lodgeLeave(); else if(goal==='shelf')lodgeShelf(); else if(goal.lact)lodgeActOn(goal); else lodgeWay(goal); return;}
+    if(townNearAct()===goal){TWN.path=null; TWN.goal=null; if(goal==='door')lodgeLeave(); else if(goal==='shelf')lodgeShelf(); else if(goal==='ledger')ledgerCard(); else if(goal.lact)lodgeActOn(goal); else lodgeWay(goal); return;}
     TWN.goal=goal; TWN.path=townPathTo(gx,gy);
   }else{TWN.goal=null; TWN.path=townPathTo(tx,ty);}
   if(TWN.path&&TWN.path.length){const e=TWN.path[TWN.path.length-1]; TWN.mark=.6; TWN.mx=e.x; TWN.my=e.y;} else if(goal)TWN.goal=null;
@@ -20376,9 +20656,9 @@ function lodgeAnchor(id,tx,ty,f){const F=pieceFoot(LODGE_ITEMS[id],f); return {c
 /* can someone standing on (sx, sy) in the room walk to the door and the shelf? */
 function lodgeReaches(sx,sy,extra){
   const prev=townBFS(sx,sy), ok=(x,y)=>prev[y*TOWN_W+x]>=0;
-  /* and the Grimoire, wherever it stands (extra: the tiles of one being set down now) */
+  /* and each piece of one of a kind, wherever it stands (extra: the tiles of one being set down now) */
   return LODGE_ROOMS[lodgeCur()].keep.every(([x,y])=>ok(x,y))&&(!extra||lodgeRingSeen(extra,ok))
-    &&lodgeRoom().furn.every(d=>d===BLD_SKIP||!LODGE_ITEMS[d.id].book||lodgeRingSeen(lodgeTiles(d.id,d.c,d.r,d.f),ok));
+    &&lodgeRoom().furn.every(d=>d===BLD_SKIP||!LODGE_ITEMS[d.id].one||lodgeRingSeen(lodgeTiles(d.id,d.c,d.r,d.f),ok));
 }
 /* what the haul is short of for this floor, wall or piece: a floor or a wall gives back the one it replaces */
 function lodgeShort(id,T){
@@ -20415,18 +20695,24 @@ function lodgeFits(id,c,r,x,y,f){
   if(!I.flat){
     for(const [x,y] of tiles)LODGE_BLOCK.add(y*LODGE_W+x);
     const P=TWN.p, onYou=!townFree(P.x,P.y);
-    const IN=LODGE_ROOMS[lodgeCur()].in, cut=!onYou&&(!lodgeReaches(Math.floor(IN.x),Math.floor(IN.y),I.book&&tiles)||!lodgeReaches(clamp(Math.floor(P.x),0,LODGE_W-1),clamp(Math.floor(P.y),0,LODGE_H-1),I.book&&tiles));
+    const IN=LODGE_ROOMS[lodgeCur()].in, cut=!onYou&&(!lodgeReaches(Math.floor(IN.x),Math.floor(IN.y),I.one&&tiles)||!lodgeReaches(clamp(Math.floor(P.x),0,LODGE_W-1),clamp(Math.floor(P.y),0,LODGE_H-1),I.one&&tiles));
+    /* what it would cut off, by name: the way out, or a piece of one of a kind (the Grimoire, the Ledger) */
+    let lost=null;
+    if(cut){const prev=townBFS(Math.floor(IN.x),Math.floor(IN.y)), okT=(x,y)=>prev[y*TOWN_W+x]>=0;
+      lost=(I.one?[[id,tiles]]:[]).concat(lodgeRoom().furn.filter(d=>d!==BLD_SKIP&&LODGE_ITEMS[d.id].one).map(d=>[d.id,lodgeTiles(d.id,d.c,d.r,d.f)]))
+        .filter(([,t])=>!lodgeRingSeen(t,okT)).map(([k])=>oneName(k,true));
+      if(!LODGE_ROOMS[lodgeCur()].keep.every(([x,y])=>okT(x,y))||!lost.length)lost.unshift(lodgeCur()==='main'?'the door':'the way back');}
     for(const [x,y] of tiles)LODGE_BLOCK.delete(y*LODGE_W+x);
     if(onYou)return 'You are standing there.';
-    if(cut){const bk=I.book||lodgeRoom().furn.some(d=>LODGE_ITEMS[d.id].book); return 'That would wall off '+(lodgeCur()==='main'?'the door':'the way back')+(bk?' or the Grimoire.':'.');}
+    if(cut)return 'That would wall off '+lost.join(' or ')+'.';
   }
   return '';
 }
 function lodgeCanPlace(id,c,r,x,y){
   const lock=lodgeLockWhy(id); if(lock)return lock;
   /* one of each trophy (Expansion 4, step 5): a second waits where the first is */
-  const I=LODGE_ITEMS[id], at=(I.k==='trophy'||I.book)&&trophyWhere(id);
-  if(at)return 'The '+I.n+(at==='store'?' waits in Storage.':at===lodgeCur()?' is here already.':' is in '+LODGE_ROOMS[at].n.replace(/^The /,'the ')+'.');
+  const I=LODGE_ITEMS[id], at=(I.k==='trophy'||I.one)&&trophyWhere(id);
+  if(at)return oneName(id)+(at==='store'?' waits in Storage.':at===lodgeCur()?' is here already.':' is in '+LODGE_ROOMS[at].n.replace(/^The /,'the ')+'.');
   const why=lodgeFits(id,c,r,x,y); if(why)return why;
   const short=lodgeShort(id,townData()); if(short)return 'You need '+short+'.';
   return '';
@@ -20441,7 +20727,7 @@ function lodgePlace(id,c,r,x,y){
 }
 /* a piece taken straight up, and all it cost comes back */
 function lodgeTakeUp(d){
-  const T=townData(), L=lodgeRoom(T), i=d?L.furn.indexOf(d):-1; if(i<0||LODGE_ITEMS[d.id].book)return false;
+  const T=townData(), L=lodgeRoom(T), i=d?L.furn.indexOf(d):-1; if(i<0||LODGE_ITEMS[d.id].one)return false;
   const I=LODGE_ITEMS[d.id], back=lodgeCostOf(d); L.furn.splice(i,1); for(const k in back)T.res[k]+=back[k];
   townSave(); lodgeSync(); townHud(); townTrayUI();
   townSay('You take up the '+I.n+(townCostText(back)?': '+townCostText(back)+' back.':'.'));
@@ -20608,7 +20894,7 @@ function townEndChore(k){
   if(!T.chore&&T.chore2){T.chore=T.chore2; T.chore2=null;}
   townSave(); townKeepers(); townShowTip();
 }
-function townActLabel(n){return n&&n.lact?lodgeActLabel(n):n&&n.chalk?'Read the chalk':n==='frame'?'Descend the stair':n==='lodge'?(lodgeBuilt()?'Enter the Lodge':'The Keeper’s Lodge'):n==='door'?'Leave the Lodge':n==='hearth'?'The Hearth Beacon':n==='dock'?'The dock':n.plot?TOWN_PLOTS[n.plot].n:n==='shelf'?'The Grimoire':n.way?lodgeWayLabel(n):n.w?TOWN_WORKSHOPS[n.w].n:n.s?TOWN_SOULS[n.s].act:n.sh?TOWN_SHRINES[n.sh].short:n.pool!=null?'The tide-pool':n.k?(n.shade?'Who stood here?':n.soul?'Talk to '+TOWN_SOULS[n.k].who:'Talk to '+(KITS[n.k].who||KITS[n.k].n)):'Read the headstone';}
+function townActLabel(n){return n&&n.lact?lodgeActLabel(n):n&&n.chalk?'Read the chalk':n==='frame'?'Descend the stair':n==='lodge'?(lodgeBuilt()?'Enter the Lodge':'The Keeper’s Lodge'):n==='door'?'Leave the Lodge':n==='hearth'?'The Hearth Beacon':n==='dock'?'The dock':n.plot?TOWN_PLOTS[n.plot].n:n==='shelf'?'The Grimoire':n==='ledger'?'The Keeper’s Ledger':n.way?lodgeWayLabel(n):n.w?TOWN_WORKSHOPS[n.w].n:n.s?TOWN_SOULS[n.s].act:n.sh?TOWN_SHRINES[n.sh].short:n.pool!=null?'The tide-pool':n.k?(n.shade?'Who stood here?':n.soul?'Talk to '+TOWN_SOULS[n.k].who:'Talk to '+(KITS[n.k].who||KITS[n.k].n)):'Read the headstone';}
 /* what the button at the bottom offers where you stand: the Head-frame's deck, a Keeper (or the footing of one not freed), or a
    headstone within reach, whichever is nearest. Nothing while you build */
 function townNearAct(){
@@ -20687,6 +20973,7 @@ function townStep(dt){
   if(TWN.goal&&TWN.goal.plot&&!TWN.path&&!R){const k=TWN.goal.plot; TWN.goal=null; if(near===TOWN_PLOTS[k].act)townGate(k);}
   if(TWN.goal==='door'&&!TWN.path&&!R){TWN.goal=null; if(near==='door')lodgeLeave();}
   if(TWN.goal==='shelf'&&!TWN.path&&!R){TWN.goal=null; if(near==='shelf')lodgeShelf();}
+  if(TWN.goal==='ledger'&&!TWN.path&&!R){TWN.goal=null; if(near==='ledger')ledgerCard();}
   if(TWN.goal&&TWN.goal.way&&!TWN.path&&!R){const W=TWN.goal; TWN.goal=null; if(near===W)lodgeWay(W);}
   if(TWN.goal&&TWN.goal.lact&&!TWN.path&&!R){const G=TWN.goal; TWN.goal=null; if(near===G)lodgeActOn(G);}
   /* the Keeper Below's trophy (Expansion 4, step 5), hung in this room, shakes now and then */
@@ -20973,12 +21260,12 @@ $('#townCv').addEventListener('pointerup',townLift); $('#townCv').addEventListen
 $('#townOverlay').addEventListener('contextmenu',ev=>ev.preventDefault());
 window.addEventListener('blur',()=>{TWN.ptr=null;});
 /* rule 5: the card, the back button and the Head-frame's button all go on click */
-$('#townCard').addEventListener('click',()=>{if(!TWN.card)return; const k=TWN.card; TWN.card=null; if(k==='moved')TOWN_NOTE=[]; else if(k==='grew'){townData().grew=null; townSave();} else tipSeen(k); townShowTip();});
+$('#townCard').addEventListener('click',()=>{if(!TWN.card)return; const k=TWN.card; TWN.card=null; if(k==='ledgerwait')TWN.ledgerSaid=true; else if(k==='moved')TOWN_NOTE=[]; else if(k==='grew'){townData().grew=null; townSave();} else tipSeen(k); townShowTip();});
 $('#townBack').addEventListener('click',()=>{townClose(); showTitle();});
 $('#townAct').addEventListener('click',()=>{if(!TWN.on||!TWN.near||TWN.build)return; const n=TWN.near;
   if(n.lact){lodgeActOn(n); return;}
   if(n.chalk){townChalk(n.chalk); return;}
-  if(n==='frame')townDescend(); else if(n==='lodge')townLodgeDoor(); else if(n==='door')lodgeLeave(); else if(n==='hearth')townHearth(); else if(n==='dock')townDock(); else if(n.plot)townGate(n.plot); else if(n==='shelf')lodgeShelf(); else if(n.way)lodgeWay(n); else if(n.w)townWorkshop(n.w); else if(n.s)townSoulCard(n.s); else if(n.sh)townShrine(n.sh); else if(n.pool!=null)townPoolCard(n.pool); else if(n.k){if(n.shade)townShadeCard(n.k); else townMeet(n);} else townEpitaph(n);});
+  if(n==='frame')townDescend(); else if(n==='lodge')townLodgeDoor(); else if(n==='door')lodgeLeave(); else if(n==='hearth')townHearth(); else if(n==='dock')townDock(); else if(n.plot)townGate(n.plot); else if(n==='shelf')lodgeShelf(); else if(n==='ledger')ledgerCard(); else if(n.way)lodgeWay(n); else if(n.w)townWorkshop(n.w); else if(n.s)townSoulCard(n.s); else if(n.sh)townShrine(n.sh); else if(n.pool!=null)townPoolCard(n.pool); else if(n.k){if(n.shade)townShadeCard(n.k); else townMeet(n);} else townEpitaph(n);});
 $('#townBuild').addEventListener('click',()=>{if(TWN.on)townBuildSet(!TWN.build);});
 /* the build tools (Expansion 4, step 1), on click (rule 5): Pieces or Storage, Grid or Free, Undo; and while a piece is lifted,
    Place, Cancel and Store */
