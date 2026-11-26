@@ -86,7 +86,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     out.keepOK=T.lodgeKeepOK(td.lodge.furn.filter(d=>!T.LODGE_ITEMS[d.id].flat));
     out.saved=JSON.parse(localStorage.getItem('ll-town')).lodge.furn.length===td.lodge.furn.length;
     for(const d of td.lodge.furn.slice())T.lodgeTakeUp(d);
-    out.empty=td.lodge.furn.every(d=>d.id==='grimoire')&&!T.townSolid(1,3);
+    out.empty=td.lodge.furn.every(d=>d.id==='grimoire'||d.id==='ledger')&&!T.townSolid(1,3);
     out.refund=JSON.stringify(td.res)===R0;
     out.poorWhy=(td.res={timber:0,iron:0,tallow:0,curios:0},T.lodgeCanPlace('desk',1,3));
     td.res=JSON.parse(R0);
@@ -124,7 +124,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(g.dev===g.cap,'developer mode, which opens the whole book, fills the shelf',g);
   ok(g.label==='The Grimoire'&&g.book==='The Grimoire'&&g.from==='town','at the shelf the button opens the Grimoire',g);
   ok(g.closed&&g.still,'closing the book leaves you in the Lodge, not on the title',g);
-  ok(g.tip==='lodgeshelf'||g.tip===null,'the shelf has its own tip',g.tip);
+  /* (Expansion 5: restoring the Lodge fulfils a Ledger feat, so with tips off its card may be the one that shows) */
+  ok(g.tip==='lodgeshelf'||g.tip===null||g.tip==='ledgerwait','the shelf has its own tip',g.tip);
 
   /* 5. a second chore with the Lodge standing; one without it */
   const c=await p.evaluate(()=>{const T=__t, td=T.townData(), out={};
@@ -162,7 +163,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(c.wage[0]&&c.wage[0].timber===5&&c.wage[1]&&c.wage[1].iron===8&&/Agathe/.test(c.line)&&/Voss/.test(c.line),'each Keeper’s pay is shown on its own line',c);
   ok(c.one[0]==='whaler'&&c.one[1]===null&&c.chore2NoLodge===null,'without the Lodge, one slot',c);
   ok(c.old.join()==='false,planks,damp,0,whaler,','an old town has a ruined Lodge and no second chore',c.old);
-  ok(c.bad[0]==='planks'&&c.bad[1]==='brass'&&c.bad[2]==='grimoire,chair,rug,sconce,sconce'&&c.bad[3]===10&&c.bad[4]===2,'a broken Lodge keeps what fits and pays back what does not',c.bad);
+  ok(c.bad[0]==='planks'&&c.bad[1]==='brass'&&c.bad[2]==='grimoire,chair,rug,sconce,sconce,ledger'&&c.bad[3]===10&&c.bad[4]===2,'a broken Lodge keeps what fits and pays back what does not',c.bad);
 
   /* 6. developer mode never writes ll-town */
   const d=await p.evaluate(()=>{const T=__t, out={};

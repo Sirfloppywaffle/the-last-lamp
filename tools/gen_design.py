@@ -91,6 +91,13 @@ if 'LODGE_ITEMS' in D:
         w("### The Keepers react (Expansion 4, step 9)\n")
         w("A freed Keeper with no chore waits at their post %s to %s s, walks (%s tiles a second) to a waypoint (a bench, the Hearth Beacon once lit, or in the Lodge: %s), stays %s to %s s (%s times as long with a favourite of theirs within %s tiles, and 2 s more a Hearth level), and walks home. The first wait after the square opens is %s to %s s. A favourite of theirs in the square within **%s** tiles of their post makes them leave a note in chalk, once (`ll-town.chalk`). The cellar's brine rises **%s** art pixels a step for each lamp gone out below, up to **%s** steps, and drains on a win; its kelp stays until the win after (`ll-town.tide`). Nothing on the stair changes.\n"%(
             D['KEEPER_HOME'][0],D['KEEPER_HOME'][0]+D['KEEPER_HOME'][1],D['KEEPER_SPEED'],', '.join(D['LODGE_ITEMS'][k]['n'] for k in D['KEEPER_LODGE']),D['KEEPER_STAY'][0],D['KEEPER_STAY'][0]+D['KEEPER_STAY'][1],D['KEEPER_LINGER'],D['KEEPER_FAV_R'],D['KEEPER_FIRST'][0],D['KEEPER_FIRST'][0]+D['KEEPER_FIRST'][1],D['CHALK_R'],D['TIDE_PX'],D['TIDE_MAX']))
+    if 'LEDGER_FEATS' in D:
+        w("### The Keeper's Ledger (Expansion 5, step 1)\n")
+        w("A lectern in the Lodge, one of a kind like the Grimoire. A feat is fulfilled when the haul comes up (a feat of the town or the Grimoire, as soon as the town sees it) and pays once, in town materials, when it is claimed at the lectern. A run feat counts nothing on a replayed stair. Pay is shape only.\n")
+        w("| Group | Feat | Pays | Read from |\n|---|---|---|---|")
+        for f in D['LEDGER_FEATS']:
+            w("| %s | %s | %s | %s |"%(D['LEDGER_GROUPS'][f['g']],esc(f['n']),nm(f['pay']),'the run' if f.get('run') else 'll-meta, ll-town, ll-codex'))
+        w("")
     w("### Every piece\n")
     w("| Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |\n|---|---|---|---|---|---|---|---|")
     for v in D['LODGE_ITEMS'].values():

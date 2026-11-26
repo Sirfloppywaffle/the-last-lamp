@@ -86,7 +86,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(rg.stove===''&&rg.under==='','and a rug goes down under a stove that stands already',rg);
   ok(rg.at==='chair'&&rg.atRug==='desk,rug','a tile answers with what stands on the rug, and with the rug where nothing does',rg);
   ok(rg.pickChair==='chair'&&rg.pickRug==='rug','a tap lifts the chair before the rug, and the rug where nothing stands',rg);
-  ok(rg.saved==='grimoire,sconce,sconce,rug,chair,desk,stove,rug','a chair on a rug is still there after a reload',rg.saved);
+  ok(rg.saved==='grimoire,sconce,sconce,ledger,rug,chair,desk,stove,rug','a chair on a rug is still there after a reload',rg.saved);
 
   /* 3. the Grimoire shelf */
   const gr=await p.evaluate(`(()=>{const T=__t, D=(${setup})(), o={}, L=()=>T.lodgeRoom(), W=T.TWN;
@@ -146,7 +146,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const two=T.townFix({v:1,lodge:{built:true,furn:[{id:'grimoire',c:1,r:3},{id:'grimoire',c:6,r:5}]}}); o.two=two.lodge.furn.filter(d=>d.id==='grimoire').length;
     return o;})()`);
   ok(wl.reach,'whatever is placed leaves the Grimoire reachable',wl);
-  ok(wl.tries.slice(0,4).every(t=>t==='ok')&&/wall off the door or the Grimoire/.test(wl.tries[4]),'the piece that would shut the Grimoire in is refused',wl.tries);
+  ok(wl.tries.slice(0,4).every(t=>t==='ok')&&wl.tries[4]==='That would wall off the Grimoire.','the piece that would shut the Grimoire in is refused, and the line names it',wl.tries);
   ok(wl.ensure[0]===false&&wl.ensure[1]===1&&wl.noLodge.join()==='0,0'&&wl.two===1,'a Lodge always has its Grimoire (in Storage when its place is taken), only one, and none before the Lodge stands',wl);
 
   /* 4. the lantern behind the armchair: Ambrose's glow is cut by what stands in front of his feet */

@@ -41,7 +41,7 @@ Everything in `EXPANSION3_RUNBOOK.md` §2 still applies.
 
 **Goal:** a reason to go back down that never touches the stair. A ledger in the Lodge lists feats done below. Each pays once, in town materials and something you can see in the Lodge. Three bounties beside it repeat and pay a little.
 
-### 1.1 The feat list (proposal, 30 feats)
+### 1.1 The feat list (29 feats; built in step 1)
 Each feat is read from data the game already keeps: run fields (`run.floor`, `run.bosses`, `run.elites`, `run.bound`, `run.peakMad`, `run.kit`, `run.depth`, `run.descents`, `run.rescued`), `ll-meta` (`wins`, `depth`, `unlocked`), `ll-codex` (`foes`, `relics`, `bound`) and `ll-town`. The four marked **new hook** need one counter added where the game already notices the moment.
 
 | Group | Feat | Read from |

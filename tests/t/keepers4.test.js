@@ -188,7 +188,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* the cellar's art: deeper brine, the wade deeper too, and kelp on a piece */
     const D=T.townData(); D.lodge.built=true; D.lodge.rooms=D.lodge.rooms||{}; D.lodge.rooms.cellar={built:true,floor:'flags',wall:'damp',furn:[{id:'chest',c:3,r:4,f:0}]}; T.townSave();
     T.townOpen(); T.lodgeEnter(); T.lodgeGo('cellar'); const A=T.townArt&&T.LODGE_ART||null; const L=T.lodgeArt();
-    o.wade=L.wade&&L.wade.height; o.sig=/\|7\/7$/.test(L.sig);
+    o.wade=L.wade&&L.wade.height; o.sig=/\|7\/7(\||$)/.test(L.sig);
     /* kelp sits only on the piece's own pixels, within its band */
     const [cv,c]=(()=>{const cv=document.createElement('canvas'); cv.width=20; cv.height=20; const c=cv.getContext('2d'); c.fillStyle='#4f3829'; c.fillRect(2,4,16,16); return [cv,c];})();
     const k=T.lodgeKelp(cv,7,11), d0=c.getImageData(0,0,20,20).data, d1=k.getContext('2d').getImageData(0,0,20,20).data; let ch=0, out=0, high=0;

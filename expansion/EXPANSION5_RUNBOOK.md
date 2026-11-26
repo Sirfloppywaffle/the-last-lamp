@@ -10,8 +10,8 @@
 
 | Step | What | PR | State | Version |
 |---|---|---|---|---|
-| 0 | Design (`EXPANSION5_PROGRESSION.md`) and this runbook | #135, this PR | | — |
-| 1 | The Keeper's Ledger: feats, the lectern, rewards, mastery counted | | | 20.1.0 |
+| 0 | Design (`EXPANSION5_PROGRESSION.md`) and this runbook | #135, #162 | done | — |
+| 1 | The Keeper's Ledger: feats, the lectern, rewards, mastery counted | #187 | open | 20.1.0 |
 | 2 | The Ledger's bounties | | | 20.2.0 |
 | 3 | The Ledger's trophies | | | 20.3.0 |
 | — | **Criss plays steps 1 to 3.** Steps 4 to 10 are specified here only after that. | | | |
@@ -79,11 +79,11 @@ Numbers marked *shape* are for playtest.
   - A `ledgerEnsure()` like `grimoireEnsure()` stands it in the main room, on a free tile near the Grimoire, the first time the Lodge is entered after this ships.
   - It moves, turns (`faces: 4`) and stores like any piece, and glows faintly through the dark.
   - Art: one PixelLab object (§3): "a slanted wooden lectern with a heavy ledger open on it, a ribbon marker, a candle stub", 16 wide, about 26 tall.
-- **The feats,** a named table `LEDGER_FEATS`, one row each: `{id, g (group), n, pay, test}`. Use the list in design §1.1 (30 feats, Saltmouth row as updated there). `pay` is materials (*shape*: 20 to 60 by how hard), curios only for the hardest four.
+- **The feats,** a named table `LEDGER_FEATS`, one row each: `{id, g (group), n, pay, test}`. Use the list in design §1.1 (29 feats: the table there lists 29, though it once said 30; Saltmouth row as updated there). `pay` is materials (*shape*: 20 to 60 by how hard), curios only for the hardest four.
 - **Where each is read:**
   - **Run feats** are worked out at the run's end from run fields, and from three new run flags, each set where the game already notices the moment:
-    - `run.heralds` (kinds slain, in `killFoe()`, beside the Herald haul);
-    - `run.untouched` (a floor cleared without `lampHit()` taking oil: a per-floor flag cleared in `lampHit()`, read in `floorCleared()`);
+    - `run.heraldKinds` (kinds slain, in `killFoe()`, beside the Herald haul; *as built:* `run.heralds` was already a count of Heralds slain, so the kinds are a field of their own);
+    - `run.untouched` (a floor cleared without `lampHit()` taking oil: a per-floor flag cleared in `lampHit()`, read in `floorCleared()`; *as built:* the flag is `run.hurtOn`, the floor the lamp last lost oil on, kept in the run so a reload from a wave's break remembers it);
     - `run.leaned` (a wave broken at Leaning, in `waveCleared()` like the Occultist's deed).
   - **Lifetime lists** in `ll-meta`, with defaults in `meta()`: `trialsPassed` (added where a floor under `F.trial` is cleared) and `descentsWalked` (in `descentFinish()`).
   - **Town and Grimoire feats** are read from `ll-town` and `ll-codex`, whenever the Ledger is opened or a haul comes up.
@@ -115,6 +115,8 @@ Numbers marked *shape* are for playtest.
 - developer mode writes nothing.
 
 Extend `devices.test.js`: the card's tabs and buttons on all 14 sizes; the death screen's Ledger line fits.
+
+*As built (#187), after Criss's playtest:* a feat is **fulfilled** when the haul comes up (or, for a feat of the town or the Grimoire, as soon as the town sees it) and **claimed** by hand at the lectern (Claim, or Claim all), as Hades' Fated List; `ll-town.ledger` is `{done, claimed}`. It is told by a gold banner between waves (never mid-wave), a gold block on the death and morning screens, a card in Saltmouth once a visit while any waits, and the lectern's glow until all are claimed; a mote is a feat claimed. One-of-a-kind is `one: true` (the Grimoire keeps `book` for its floating book only). Run feats also read `run.floorsClr` (floors cleared) and `run.morning` (set in `victory()`), and `mastLast` in `ll-meta` keeps a floor's mastery from counting twice across a reload. `ledgerEnsure()` runs in `townFix()` (as `grimoireEnsure()` does), so the Ledger is there whenever the Lodge stands, not only on entering. The death and morning screens' fourth line is "And two more in the Ledger." Hooks, card and saves: `AGENTS.md` §5, the Saltmouth row.
 
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION5_RUNBOOK.md (§2 to §4, and §5 step 1) and expansion/EXPANSION5_PROGRESSION.md (§0, the Resolved note, §1). Build Expansion 5, step 1 exactly as the runbook says, following its §4 workflow. Make the lectern in PixelLab (§3); if it can't be reached, draw a stand-in in rows and say so. Tick the status table (step 0 is this runbook's PR). End with the prompt for step 2.
