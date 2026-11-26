@@ -124,7 +124,8 @@ const fails=[]; const ok=(cond,msg,detail)=>{if(!cond)fails.push(msg+(detail!==u
     const cardTitle=document.querySelector('#townCard b')?document.querySelector('#townCard b').textContent:'';
     const cardHidden=document.getElementById('townCardWrap').hidden;
     document.getElementById('townCard').click();
-    const cardHiddenAfter=document.getElementById('townCardWrap').hidden;
+    /* dismissed: it goes, though the Ledger's card may follow it (Expansion 5: the feats this run fulfilled wait there) */
+    const cardHiddenAfter=document.getElementById('townCardWrap').hidden||__t.TWN.card==='ledgerwait';
     const seen=JSON.parse(localStorage.getItem('ll-tut')||'{}').seen||[];
     const hud={
       timber:document.getElementById('townResTimber').textContent,

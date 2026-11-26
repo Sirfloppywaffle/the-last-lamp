@@ -258,14 +258,17 @@ const DEV=[
         const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
         __t.ledgerCard(tab);
         const box=document.querySelector('#modal .box'), bx=q(box), tabs=[...document.querySelectorAll('[data-ledger]')].map(q), cl=[...document.querySelectorAll('#mActions button')].map(q);
+        /* the feats waiting to be claimed: each Claim (and Claim all) a thumb inside the box */
+        const claims=[...document.querySelectorAll('[data-claim]')].map(q);
         const inBox=r=>!!r&&r[0]>=bx[0]-1&&r[2]<=bx[2]+1;
         return {tab,n:tabs.length,tabs:tabs.every(inBox)&&tabs.every(r=>r[3]-r[1]>=30),row:tabs.length===2&&tabs[0][1]===tabs[1][1],close:cl.length===1&&cl[0][3]-cl[0][1]>=40&&inBox(cl[0]),
-          inside:bx[0]>=ins.left-1&&bx[2]<=innerWidth-ins.right+1,sideways:box.scrollWidth>box.clientWidth+1,list:document.querySelectorAll('#mChoices .book-e').length};},[ins,tab]));
+          inside:bx[0]>=ins.left-1&&bx[2]<=innerWidth-ins.right+1,sideways:box.scrollWidth>box.clientWidth+1,list:document.querySelectorAll('#mChoices .book-e').length,
+          claims:tab==='keepers'?true:claims.length>=2&&claims.every(r=>inBox(r)&&r[3]-r[1]>=44)};},[ins,tab]));
       await p.waitForTimeout(120);
       await p.screenshot({path:(process.argv[3]||'.')+'/ledger-'+tab+'-'+nm+'.png'});
     }
     await p.evaluate(()=>__t.closeModal());
-    if(!ledg.every(l=>l.n===2&&l.tabs&&l.row&&l.close&&l.inside&&!l.sideways&&l.list>=5))console.log('FAIL '+nm+': the Keeper’s Ledger’s card on this screen',JSON.stringify(ledg));
+    if(!ledg.every(l=>l.n===2&&l.tabs&&l.row&&l.close&&l.inside&&!l.sideways&&l.list>=5&&l.claims))console.log('FAIL '+nm+': the Keeper’s Ledger’s card on this screen',JSON.stringify(ledg));
     await p.evaluate(()=>{__t.lodgeLeave(); __t.setDev(false); __t.townKeepers();});
     if(!(lodge.enter&&lodge.label==='Leave the Lodge'&&lodge.act&&lodge.cover&&lodge.n===7&&lodge.chips&&lodge.still))console.log('FAIL '+nm+': the Lodge on this screen',JSON.stringify(lodge));
     /* Expansion 4, step 1: the build tools, in developer mode so nothing is written. The tool bar (Pieces, Storage, Grid, Free,
@@ -455,9 +458,9 @@ const DEV=[
     await p.evaluate(()=>{const r=__t.run; __t.townData().ledger={done:{}}; r.floorsClr=1; r.untouched=1; r.heraldKinds=['bellfather','tithetaker']; __t.defeat();}); await p.waitForTimeout(1600);
     const sd=await seedChk();
     const sdl=await p.evaluate(ins=>{ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
-      const bx=document.querySelector('#modal .box').getBoundingClientRect(), ls=[...document.querySelectorAll('#mBody .haul-line')].filter(x=>/Ledger/.test(x.textContent));
+      const bx=document.querySelector('#modal .box').getBoundingClientRect(), ls=[...document.querySelectorAll('#mBody .ledger-end')];
       return {n:ls.length,fit:ls.every(x=>{const r=x.getBoundingClientRect(); return r.left>=bx.left-1&&r.right<=bx.right+1&&r.right<=innerWidth-ins.right+1;}),more:ls.some(x=>/more in the Ledger/.test(x.textContent))};},ins);
-    if(!(sdl.n===4&&sdl.fit&&sdl.more))console.log('FAIL '+nm+': the death screen’s Ledger lines',JSON.stringify(sdl));
+    if(!(sdl.n===6&&sdl.fit&&sdl.more))console.log('FAIL '+nm+': the death screen’s Ledger lines',JSON.stringify(sdl));
     await p.screenshot({path:(process.argv[3]||'.')+'/seed-death-'+nm+'.png'});
     const seedOk=sp.copyIn&&sp.codeIn&&sp.thumb&&!sp.sideways&&sd.copyIn&&sd.codeIn&&sd.sameIn===true&&sd.thumb&&!sd.sideways&&JSON.stringify(b0)===JSON.stringify(b1);
     if(!seedOk)console.log('FAIL '+nm+': the stair’s name and code on the pause and death screens',JSON.stringify({sp,sd,b0,b1}));

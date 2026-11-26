@@ -284,7 +284,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.store=b.store.map(e=>e.id+(e.dye||'-')+(e.on?e.on.length:0)).join();
     return o;});
   console.log(JSON.stringify(old));
-  ok(old.furn==='grimoire4,2/0 desk2,4/0 stove5,5/2 rug5,6/0 chair2,7/5 shelf8,3/0 sconce1,0/0 sconce7,0/0 ledger3,2/0'&&old.bp.length===0,'a Lodge from before the catalogue loads exactly as it was (and gains the Keeper’s Ledger beside its Grimoire, Expansion 5)',old);
+  ok(old.furn==='grimoire4,2/0 desk2,4/0 stove5,5/2 rug5,6/0 chair2,7/5 shelf8,3/0 sconce1,0/0 sconce7,0/0 ledger5,2/0'&&old.bp.length===0,'a Lodge from before the catalogue loads exactly as it was (and gains the Keeper’s Ledger beside its Grimoire, Expansion 5)',old);
   ok(old.b[0]==='coral'&&old.b[1]==='-'&&old.b[2]==='candle1bleach,ink0'&&old.b[3]==='tar','a dye or a slot that is not valid is dropped; one that is stays',old.b);
   ok(old.b[4]===3+6&&old.b[5]===0&&old.b[6]===1&&old.b[7]===2,'what comes up pays back: a book in a slot taken, a candle past the top, a wheel that is no small thing',old.b);
   const junk=await p.evaluate(()=>{const res={timber:0,iron:0,tallow:0,curios:0}; let err=null, f=null;

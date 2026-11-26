@@ -93,7 +93,7 @@ if 'LODGE_ITEMS' in D:
             D['KEEPER_HOME'][0],D['KEEPER_HOME'][0]+D['KEEPER_HOME'][1],D['KEEPER_SPEED'],', '.join(D['LODGE_ITEMS'][k]['n'] for k in D['KEEPER_LODGE']),D['KEEPER_STAY'][0],D['KEEPER_STAY'][0]+D['KEEPER_STAY'][1],D['KEEPER_LINGER'],D['KEEPER_FAV_R'],D['KEEPER_FIRST'][0],D['KEEPER_FIRST'][0]+D['KEEPER_FIRST'][1],D['CHALK_R'],D['TIDE_PX'],D['TIDE_MAX']))
     if 'LEDGER_FEATS' in D:
         w("### The Keeper's Ledger (Expansion 5, step 1)\n")
-        w("A lectern in the Lodge, one of a kind like the Grimoire. Each feat pays once, in town materials, when the haul comes up (a feat of the town or the Grimoire done in the square is paid when the Ledger opens). A run feat counts nothing on a replayed stair. Pay is shape only.\n")
+        w("A lectern in the Lodge, one of a kind like the Grimoire. A feat is fulfilled when the haul comes up (a feat of the town or the Grimoire, as soon as the town sees it) and pays once, in town materials, when it is claimed at the lectern. A run feat counts nothing on a replayed stair. Pay is shape only.\n")
         w("| Group | Feat | Pays | Read from |\n|---|---|---|---|")
         for f in D['LEDGER_FEATS']:
             w("| %s | %s | %s | %s |"%(D['LEDGER_GROUPS'][f['g']],esc(f['n']),nm(f['pay']),'the run' if f.get('run') else 'll-meta, ll-town, ll-codex'))

@@ -1,5 +1,6 @@
 // The Keeper's Ledger (Expansion 5, step 1; expansion/EXPANSION5_RUNBOOK.md §5): a lectern in the Lodge, one of a kind like the
-// Grimoire, whose feats each pay once in town materials when the haul comes up. Each feat fires from its source (a Herald slain, a
+// Grimoire. A feat done is fulfilled when the haul comes up (or, for the town's and the Grimoire's, as soon as the town sees it), told
+// by a gold banner between waves, and paid once when it is claimed at the lectern, as Hades' Fated List (Criss, 26 Nov 2026). Each feat fires from its source (a Herald slain, a
 // floor cleared with the lamp untouched, a wave broken at Leaning, a Trial passed, a descent walked, the Grimoire and the town);
 // each pays once, across a reload of the death screen; a replayed stair pays no run feat; mastery counts floors per Keeper and not
 // on a replay; the lectern can't be salvaged, can be stored, and is put back if missing; an old ll-town, ll-meta and save load;
@@ -69,7 +70,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(src.book,'the Grimoire filled makes its three feats',src.book);
   ok(src.town==='graves,hearth,lodge,shrines,souls,workshops'&&src.townNoRun==='graves,hearth,lodge,shrines,workshops','the town feats read ll-town; a soul freed on this descent counts with its haul',src);
 
-  /* 2. paid once, in the same write; the death screen says it; a reload of the death screen pays nothing more */
+  /* 2. fulfilled once, in the haul's own write; the death screen says it in gold; nothing is paid until it is claimed at the
+     lectern, once; a reload of the death screen fulfils nothing more */
   const pay=await p.evaluate(()=>{const T=__t, o={}; __clean();
     __fresh(); T.floorCleared(); T.killFoe({dead:false,hp:0,x:2,y:2,gate:0,d:1,type:'tithetaker',def:Object.assign({},T.FOES.tithetaker)});
     T.F.phase='wave'; T.F.wave=1; T.checkpoint();
@@ -77,22 +79,57 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     const res0=JSON.stringify(T.townData().res);
     T.run.oil=0; T.defeat();
     const D=JSON.parse(localStorage.getItem('ll-town')||'{}');
-    o.done=Object.keys((D.ledger||{}).done||{}).sort().join(); o.res=D.res; o.res0=res0;
+    o.done=Object.keys((D.ledger||{}).done||{}).sort().join(); o.claimed0=Object.keys((D.ledger||{}).claimed||{}).length; o.res=D.res;
     o.day=/^\d{4}-\d\d-\d\d$/.test(((D.ledger||{}).done||{}).cistern||'');
     o.save=localStorage.getItem('ll-save-v2');
-    /* a reload: the town is read again; nothing in it is paid twice */
-    T.townReset(); const again=T.ledgerDue(null).length, r2=JSON.stringify(T.townData().res); o.again=[again,r2===JSON.stringify(D.res)];
-    /* and crediting the same run again pays nothing */
-    o.twice=T.haulCredit(T.run);
+    /* a reload: the town is read again; nothing is fulfilled twice, and crediting the run again does nothing */
+    T.townReset(); o.again=T.ledgerDue(null).length; o.twice=T.haulCredit(T.run);
+    o.waiting=T.ledgerWaiting().map(f=>f.id).sort().join();
+    /* claimed one at a time, then the rest at once; each pays once */
+    const r0=Object.assign({},T.townData().res);
+    o.c1=T.ledgerClaim('cistern').map(f=>f.id).join(); o.c1b=T.ledgerClaim('cistern').length;
+    o.t1=T.townData().res.timber-r0.timber;
+    o.call=T.ledgerClaim(null).map(f=>f.id).sort().join(); o.call2=T.ledgerClaim(null).length;
+    const r1=T.townData().res; o.paid=[r1.timber-r0.timber,r1.iron-r0.iron,r1.tallow-r0.tallow];
+    T.townReset(); o.saved=Object.keys(T.townData().ledger.claimed).sort().join(); o.waitAfter=T.ledgerWaiting().length;
     /* four feats or more: three lines, then how many more */
     __fresh('lamplighter',4); T.run.bosses=2; T.run.morning=true; T.run.untouched=1; o.many=T.ledgerLine(T.run);
     return o;});
-  ok(/The Ledger: Clear the Cistern\. 20 timber\./.test(pay.line)&&/Slay the Tithe-taker\. 25 iron/.test(pay.line),'the death screen\'s line names each feat and its pay',pay.line);
-  ok(pay.done==='cistern,h_tithetaker,untouched'&&pay.day,'the feats are marked done, with the date',pay);
-  ok(pay.res&&pay.res.timber>=20&&pay.res.iron>=25+5+8&&pay.res.tallow>=25,'what they pay is in the town with the haul',pay.res);
+  ok(/Feats fulfilled/.test(pay.line)&&/The Ledger: Clear the Cistern\. 20 timber\./.test(pay.line)&&/Slay the Tithe-taker\. 25 iron/.test(pay.line)&&/Claim them at the Ledger/.test(pay.line)&&/ledger-end/.test(pay.line),'the death screen names each feat in gold, and where to claim it',pay.line);
+  ok(pay.done==='cistern,h_tithetaker,untouched'&&pay.day&&pay.claimed0===0,'the feats are marked fulfilled, with the date, and nothing is claimed',pay);
+  ok(pay.res&&pay.res.timber===8&&pay.res.iron===13,'the haul pays only the haul: a feat waits to be claimed',pay.res);
   ok(!JSON.parse(pay.save),'the run is gone after the death screen',pay.save);
-  ok(pay.again[0]===0&&pay.again[1]&&pay.twice===false,'a reload owes nothing, and the run is never credited twice',pay);
+  ok(pay.again===0&&pay.twice===false,'a reload fulfils nothing again, and the run is never credited twice',pay);
+  ok(pay.waiting==='cistern,h_tithetaker,untouched','all three wait at the Ledger',pay.waiting);
+  ok(pay.c1==='cistern'&&pay.c1b===0&&pay.t1===20,'claimed one at a time: its pay, once',pay);
+  ok(pay.call==='h_tithetaker,untouched'&&pay.call2===0&&pay.paid.join()==='20,25,25','Claim all takes the rest, once',pay);
+  ok(pay.saved==='cistern,h_tithetaker,untouched'&&pay.waitAfter===0,'what is claimed is saved',pay);
   ok((pay.many.match(/The Ledger:/g)||[]).length===3&&/And (two|three|four|five|six) more in the Ledger\./.test(pay.many),'more than three: three lines, then how many more',pay.many);
+
+  /* 2b. the moment: a gold banner between waves, never mid-wave; once a feat a run; none for what was fulfilled before the run;
+     none on a replayed stair. A feat of the town is fulfilled, with its banner, as soon as the town sees it */
+  const ban=await p.evaluate(()=>{const T=__t, o={}; __clean();
+    const b=document.getElementById('trophyBanner'), shown=()=>{const v=b.classList.contains('is-show')&&b.classList.contains('is-ledger')?document.getElementById('trophyBannerS').textContent:''; b.classList.remove('is-show','is-ledger'); return v;};
+    __fresh(); shown(); T.F.phase='wave'; T.F.wave=1;
+    T.killFoe({dead:false,hp:0,x:2,y:2,gate:0,d:1,type:'bellfather',def:Object.assign({},T.FOES.bellfather)});
+    T.ledgerWatch(); o.mid=shown();
+    T.F.foes.length=0; T.F.queue=[]; T.waveCleared(); o.brk=[shown(),document.getElementById('trophyBannerB').textContent];
+    T.F.phase='build'; T.ledgerWatch(); o.again=shown();
+    /* what was fulfilled before the run began is not told again */
+    T.townData().ledger={done:{},claimed:{}}; const C=T.codex(); for(const k of ['keeper','watcher','gnasher','wretch','shrieker','elite'])C.bound.add(k);
+    __fresh(); o.seenAtStart=T.run.ledgerSeen.includes('horrors'); T.F.phase='build'; T.ledgerWatch(); o.old=shown(); C.bound.clear();
+    __fresh('lamplighter',0,{replay:true}); T.floorCleared(); o.replay=shown();
+    /* the town: the Hearth raised to its height in the square */
+    __clean(); T.townOpen(); const D=T.townData(); D.hearth={lv:T.HEARTH_MAX}; T.townHud(); o.town=[shown(),T.townData().ledger.done.hearth!=null];
+    T.townShowTip(); o.card=[T.TWN.card,document.getElementById('townCard').textContent];
+    T.townClose();
+    return o;});
+  ok(ban.mid==='','no banner mid-wave',ban.mid);
+  ok(ban.brk[0]==='Slay the Bellfather'&&ban.brk[1]==='A feat fulfilled'&&ban.again==='','as the wave breaks, a gold banner names the feat, once',ban);
+  ok(ban.seenAtStart&&ban.old==='','a feat fulfilled before the run began is not told on it',ban);
+  ok(ban.replay==='','a replayed stair tells none',ban.replay);
+  ok(ban.town[0]==='Raise the Hearth Beacon to its height'&&ban.town[1],'a feat of the town is fulfilled the moment it is done, with its banner',ban.town);
+  ok(ban.card[0]==='ledgerwait'&&/A feat waits in the Ledger/.test(ban.card[1]),'Saltmouth\'s card says a feat waits in the Ledger',ban.card);
 
   /* 3. a replayed stair counts no run feat (lifetime ones still pay), and no mastery or lifetime list */
   const rep=await p.evaluate(()=>{const T=__t, o={}; __clean();
@@ -140,18 +177,25 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.wall=(()=>{const D=T.townData(); D.store=D.store.filter(e=>e.id!=='ledger'); D.lodge.furn=[{id:'grimoire',c:4,r:2},{id:'ledger',c:8,r:2},{id:'shelf',c:7,r:2},{id:'shelf',c:8,r:3}]; T.lodgeSync(); T.TWN.p.x=5; T.TWN.p.y=8.4;
       const w=T.lodgeFits('shelf',7,3,null,null,0); D.lodge.furn=[{id:'grimoire',c:4,r:2},{id:'ledger',c:5,r:2}]; T.lodgeSync(); return w;})();
     /* the card: tap it outside Build; its tabs; feats to come as ??? until their group has one done */
-    const D=T.townData(); D.ledger={done:{cistern:'2026-11-20'}}; T.lodgeSync(); T.TWN.p.x=5.5; T.TWN.p.y=3.6; T.lodgeArt();
+    const D=T.townData(); D.ledger={done:{cistern:'2026-11-20',keeper:'2026-11-21'},claimed:{cistern:'2026-11-21'}}; T.lodgeSync(); T.TWN.p.x=5.5; T.TWN.p.y=3.6; T.lodgeArt();
+    o.calls=T.LODGE_ART.em.some(e=>e.fl&&e.fl[0]===T.ledgerCall()[0]);
     o.near=T.townNearAct(); o.label=T.townActLabel(o.near);
     document.getElementById('townAct').hidden=false; T.townStep(0.016); document.getElementById('townAct').click();
     o.title=document.getElementById('mTitle').textContent; o.tabs=[...document.querySelectorAll('[data-ledger]')].map(b=>b.textContent).join();
-    const txt=document.getElementById('mChoices').textContent; o.cistern=/Clear the Cistern/.test(txt)&&/Done 2026-11-20/.test(txt)&&/Paid 20 timber/.test(txt);
+    const txt=document.getElementById('mChoices').textContent; o.cistern=/Clear the Cistern/.test(txt)&&/Claimed 2026-11-21/.test(txt)&&/Paid 20 timber/.test(txt);
+    o.tabs=[...document.querySelectorAll('[data-ledger]')].map(b=>b.textContent).join();
+    /* waiting to be claimed: the Keeper Below, and the Lodge fulfilled as the card opened; each its button, and one for all */
+    o.wait=[...document.querySelectorAll('[data-claim]')].map(b=>b.dataset.claim).sort().join();
+    const iron0=T.townData().res.iron; document.querySelector('[data-claim="keeper"]').click();
+    o.claim=[T.townData().res.iron-iron0,/You take 40 iron from the Ledger/.test(document.getElementById('mChoices').textContent),document.querySelectorAll('[data-claim]').length];
+    document.querySelector('[data-claim="lodge"]').click(); o.noneLeft=document.querySelectorAll('[data-claim]').length;
+    T.lodgeArt(); o.quiet=!T.LODGE_ART.em.some(e=>e.fl&&e.fl[0]===T.ledgerCall()[0]);
     o.throat=/Reach the Throat/.test(txt); o.hidden=/\?\?\?/.test(txt)&&!/Meet every creature/.test(txt);
-    o.newly=/Newly entered/.test(txt)&&/Restore the Keeper’s Lodge/.test(txt)&&T.townData().ledger.done.lodge!=null;
     document.querySelector('[data-ledger="keepers"]').click(); o.keepers=/Ambrose Fenn/.test(document.getElementById('mChoices').textContent)&&/floors? cleared/.test(document.getElementById('mChoices').textContent);
     o.tip=T.TWN.tipFor; T.closeModal(); T.lodgeArt();
     /* the motes: one a feat, ten at most, made once a count */
     o.motes=[T.ledgerMotes(0),T.ledgerMotes(3)===T.ledgerMotes(3),T.ledgerMotes(12)===T.ledgerMotes(10)];
-    o.em=T.LODGE_ART.em.some(e=>e.fl&&e.fl[0]===T.ledgerMotes(2)[0]);
+    o.em=T.LODGE_ART.em.some(e=>e.fl&&e.fl[0]===T.ledgerMotes(3)[0]);
     return o;});
   ok(lec.one&&lec.placed&&Math.abs(lec.placed[0]-4)+Math.abs(lec.placed[1]-2)===1,'the Ledger stands beside the Grimoire the first time',lec.placed);
   ok(!lec.chip,'it is never on the tray',lec.chip);
@@ -163,12 +207,13 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(lec.noLodge===0,'no Lodge, no Ledger',lec.noLodge);
   ok(lec.wall==='That would wall off the Keeper’s Ledger.','walling off is refused, and the line names the book cut off',lec.wall);
   ok(lec.near==='ledger'&&lec.label==='The Keeper’s Ledger','beside it, the button offers the Ledger',lec);
-  ok(lec.title==='The Keeper’s Ledger'&&lec.tabs==='Feats,Keepers','the button opens its card, with its two tabs',lec);
+  ok(lec.title==='The Keeper’s Ledger'&&lec.tabs==='Feats ✦2,Keepers','the button opens its card, with its two tabs (Feats counts what waits)',lec);
+  ok(lec.calls&&lec.quiet,'the lectern calls you over while a feat waits, and is quiet once all are claimed',lec);
+  ok(lec.wait==='all,keeper,lodge'&&lec.claim[0]===40&&lec.claim[1]&&lec.claim[2]===1&&lec.noneLeft===0,'each waiting feat has its Claim, and Claim all; a claim pays and says so',lec);
   ok(lec.cistern&&lec.throat&&lec.hidden,'a feat done shows its date and pay; one beside it shows; a group with none done is ???',lec);
-  ok(lec.newly,'a town feat done in the square is paid as the Ledger opens',lec.newly);
   ok(lec.keepers,'the Keepers tab counts floors cleared with each',lec.keepers);
   ok(lec.tip==='ledger','its tip is the one shown on first opening it',lec.tip);
-  ok(lec.motes[0]===null&&lec.motes[1]&&lec.motes[2]&&lec.em,'a gold mote a feat, ten at most, made once a count',lec);
+  ok(lec.motes[0]===null&&lec.motes[1]&&lec.motes[2]&&lec.em,'a gold mote a feat claimed, ten at most, made once a count',lec);
 
   /* 6. old saves load: a town, a meta and a run from before the Ledger */
   const old=await p.evaluate(()=>{const T=__t, o={}; __clean();
