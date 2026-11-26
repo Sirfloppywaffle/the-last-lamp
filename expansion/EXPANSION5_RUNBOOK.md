@@ -11,7 +11,7 @@
 | Step | What | PR | State | Version |
 |---|---|---|---|---|
 | 0 | Design (`EXPANSION5_PROGRESSION.md`) and this runbook | #135, #162 | done | — |
-| 1 | The Keeper's Ledger: feats, the lectern, rewards, mastery counted | #PRNUM | open | 20.1.0 |
+| 1 | The Keeper's Ledger: feats, the lectern, rewards, mastery counted | #187 | open | 20.1.0 |
 | 2 | The Ledger's bounties | | | 20.2.0 |
 | 3 | The Ledger's trophies | | | 20.3.0 |
 | — | **Criss plays steps 1 to 3.** Steps 4 to 10 are specified here only after that. | | | |
@@ -116,7 +116,7 @@ Numbers marked *shape* are for playtest.
 
 Extend `devices.test.js`: the card's tabs and buttons on all 14 sizes; the death screen's Ledger line fits.
 
-*As built (#PRNUM):* one-of-a-kind is `one: true` (the Grimoire keeps `book` for its floating book only). Run feats also read `run.floorsClr` (floors cleared) and `run.morning` (set in `victory()`), and `mastLast` in `ll-meta` keeps a floor's mastery from counting twice across a reload. `ledgerEnsure()` runs in `townFix()` (as `grimoireEnsure()` does), so the Ledger is there whenever the Lodge stands, not only on entering. The death and morning screens' fourth line is "And two more in the Ledger." Hooks, card and saves: `AGENTS.md` §5, the Saltmouth row.
+*As built (#187):* one-of-a-kind is `one: true` (the Grimoire keeps `book` for its floating book only). Run feats also read `run.floorsClr` (floors cleared) and `run.morning` (set in `victory()`), and `mastLast` in `ll-meta` keeps a floor's mastery from counting twice across a reload. `ledgerEnsure()` runs in `townFix()` (as `grimoireEnsure()` does), so the Ledger is there whenever the Lodge stands, not only on entering. The death and morning screens' fourth line is "And two more in the Ledger." Hooks, card and saves: `AGENTS.md` §5, the Saltmouth row.
 
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION5_RUNBOOK.md (§2 to §4, and §5 step 1) and expansion/EXPANSION5_PROGRESSION.md (§0, the Resolved note, §1). Build Expansion 5, step 1 exactly as the runbook says, following its §4 workflow. Make the lectern in PixelLab (§3); if it can't be reached, draw a stand-in in rows and say so. Tick the status table (step 0 is this runbook's PR). End with the prompt for step 2.
