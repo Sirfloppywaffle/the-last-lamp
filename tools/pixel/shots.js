@@ -2,7 +2,7 @@
 // A floor laid by the game itself with candidate art swapped in, before any of it goes into index.html (pixel stair steps 6c and 7):
 // each of the floor's maps, lit everywhere (window.devNoDark) and as played, with wards built beside the path and every creature on it.
 // cand.json: {"deco":"ossuary","floor":1,"tiles":"cut.png","at":[16 x [x,y]],"row":{a PIX_FLOOR row},"atlas":"atlas.png"}, paths relative
-// to it. Env: MAPS (0,1,2), LIT (1,0), VPS (fold, open, land), WARDS (4), KINDS (the creatures). Writes <vp>-m<map>-<lit|dark>.png, and the
+// to it; with no tiles ({"floor":1}), the floor as index.html has it. Env: MAPS (0,1,2), LIT (1,0), VPS (fold, open, land), WARDS (4), KINDS (the creatures). Writes <vp>-m<map>-<lit|dark>.png, and the
 // hooked copy of the game it ran (game.x.html). Uses tests/hook.js, so run it from the repo; it needs Playwright as the tests do.
 const {chromium}=require('playwright'); const fs=require('fs'), path=require('path');
 const out=path.resolve(process.argv[2]); fs.mkdirSync(out,{recursive:true});
@@ -20,10 +20,10 @@ const uri=f=>'data:image/png;base64,'+fs.readFileSync(rel(f)).toString('base64')
     const p=await b.newPage({viewport:VP[vk],deviceScaleFactor:2,hasTouch:true});
     p.on('pageerror',e=>console.log('PAGEERR',e.message));
     await p.goto('file://'+game); await p.waitForTimeout(800);
-    await p.evaluate(async([deco,tiles,at,row,atlas])=>{
+    if(cand.tiles)await p.evaluate(async([deco,tiles,at,row,atlas])=>{
       const ld=src=>new Promise(r=>{const im=new Image(); im.onload=()=>r(im); im.onerror=()=>r(null); im.src=src;});
       const P=__t.PIX; P.tiles[deco]=await ld(tiles); __x.PIX_AT[deco]=at; __x.PIX_FLOOR[deco]=row; if(atlas)P.props[deco]=await ld(atlas);
-    },[cand.deco,uri(cand.tiles),cand.at,cand.row,cand.atlas?uri(cand.atlas):null]);
+    },[cand.deco,uri(cand.tiles),cand.at,cand.row,cand.atlas?uri(cand.atlas):null]);   // no tiles: the game's own art, as wired
     for(const mv of (process.env.MAPS||'0,1,2').split(',').map(Number))for(const lit of (process.env.LIT||'1,0').split(',').map(v=>v==='1')){
       const png=await p.evaluate(([mv,lit,floor,nw,kinds])=>{const T=__t; window.devNoDark=lit; T.boardArtSet('pixel'); T.setMapV(mv);
         T.newRun('lamplighter',0,{seed:9}); T.run.floor=floor; T.beginFloor(null); T.setP(false); T.run.ess=9999;
