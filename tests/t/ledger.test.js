@@ -95,7 +95,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* four feats or more: three lines, then how many more */
     __fresh('lamplighter',4); T.run.bosses=2; T.run.morning=true; T.run.untouched=1; o.many=T.ledgerLine(T.run);
     return o;});
-  ok(/Feats fulfilled/.test(pay.line)&&/The Ledger: Clear the Cistern\. 20 timber\./.test(pay.line)&&/Slay the Tithe-taker\. 25 iron/.test(pay.line)&&/Claim them at the Ledger/.test(pay.line)&&/ledger-end/.test(pay.line),'the death screen names each feat in gold, and where to claim it',pay.line);
+  ok(/Feats fulfilled/.test(pay.line)&&/>Clear the Cistern\. 20 timber\./.test(pay.line)&&/Slay the Tithe-taker\. 25 iron/.test(pay.line)&&/Claim them at the Ledger/.test(pay.line)&&/ledger-end/.test(pay.line),'the death screen names each feat in gold, and where to claim it',pay.line);
   ok(pay.done==='cistern,h_tithetaker,untouched'&&pay.day&&pay.claimed0===0,'the feats are marked fulfilled, with the date, and nothing is claimed',pay);
   ok(pay.res&&pay.res.timber===8&&pay.res.iron===13,'the haul pays only the haul: a feat waits to be claimed',pay.res);
   ok(!JSON.parse(pay.save),'the run is gone after the death screen',pay.save);
@@ -104,7 +104,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(pay.c1==='cistern'&&pay.c1b===0&&pay.t1===20,'claimed one at a time: its pay, once',pay);
   ok(pay.call==='h_tithetaker,untouched'&&pay.call2===0&&pay.paid.join()==='20,25,25','Claim all takes the rest, once',pay);
   ok(pay.saved==='cistern,h_tithetaker,untouched'&&pay.waitAfter===0,'what is claimed is saved',pay);
-  ok((pay.many.match(/The Ledger:/g)||[]).length===3&&/And (two|three|four|five|six) more in the Ledger\./.test(pay.many),'more than three: three lines, then how many more',pay.many);
+  ok((pay.many.match(/ledger-end">[^<]*\. \d+ [a-z]/g)||[]).length===3&&/And (two|three|four|five|six) more in the Ledger\./.test(pay.many),'more than three: three lines, then how many more',pay.many);
 
   /* 2b. the moment: a gold banner between waves, never mid-wave; once a feat a run; none for what was fulfilled before the run;
      none on a replayed stair. A feat of the town is fulfilled, with its banner, as soon as the town sees it */

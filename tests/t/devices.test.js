@@ -211,7 +211,7 @@ const DEV=[
       D.lodge.floor='planks'; D.lodge.wall='damp'; 
       D.ledger={done:{cistern:'2026-11-20',keeper:'2026-11-21',lodge:'2026-11-21',untouched:'2026-11-22',h_bellfather:'2026-11-22'}};
       D.lodge.furn=[{id:'grimoire',c:4,r:2,free:true},{id:'ledger',c:5,r:2,free:true},{id:'sconce',c:1,r:0,free:true,out:true},{id:'hearth',c:6,r:3,out:true},{id:'chair',c:3,r:5,f:1},{id:'desk',c:6,r:6,on:[{id:'candle',s:1,out:true}]},{id:'keeper',c:6,r:0},{id:'primordial',c:1,r:4}];
-      __t.lodgeSync(); T.p.x=5; T.p.y=8.4; T.path=null; T.cx=null; __t.townFrame(1/30);
+      __t.lodgeSync(); T.p.x=5; T.p.y=8.4; T.path=null; T.cx=null; __t.townFrame(1/30); document.getElementById('trophyBanner').classList.remove('is-show');
       const o={dark:__t.lodgeArt().dark};
       return o;},ins);
     await p.waitForTimeout(100);
@@ -222,6 +222,7 @@ const DEV=[
       const inside=r=>!!r&&r[0]>=ins.left-1&&r[2]<=innerWidth-ins.right+1&&r[1]>=ins.top-1&&r[3]<=innerHeight-ins.bottom+1;
       const thumb=r=>!!r&&r[3]-r[1]>=44&&r[2]-r[0]>=44;
       const T=__t.TWN, L=__t.lodgeRoom(), o={};
+      document.getElementById('trophyBanner').classList.remove('is-show');
       for(const d of L.furn)if(d.out&&d.id!=='sconce')__t.lodgeToggle(__t.lodgeActOf(d));
       const dk=L.furn.find(d=>d.id==='desk'); __t.lodgeToggle(__t.lodgeActOf(dk.on[0],dk));
       /* stand under the left-hand sconce: the button offers to light it */
@@ -256,7 +257,7 @@ const DEV=[
       ledg.push(await p.evaluate(([ins,tab])=>{
         ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
         const q=x=>{if(!x||x.hidden)return null; const r=x.getBoundingClientRect(); return [r.left,r.top,r.right,r.bottom].map(Math.round);};
-        __t.ledgerCard(tab);
+        __t.ledgerCard(tab); document.getElementById('trophyBanner').classList.remove('is-show');
         const box=document.querySelector('#modal .box'), bx=q(box), tabs=[...document.querySelectorAll('[data-ledger]')].map(q), cl=[...document.querySelectorAll('#mActions button')].map(q);
         /* the feats waiting to be claimed: each Claim (and Claim all) a thumb inside the box */
         const claims=[...document.querySelectorAll('[data-claim]')].map(q);

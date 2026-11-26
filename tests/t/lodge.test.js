@@ -124,7 +124,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(g.dev===g.cap,'developer mode, which opens the whole book, fills the shelf',g);
   ok(g.label==='The Grimoire'&&g.book==='The Grimoire'&&g.from==='town','at the shelf the button opens the Grimoire',g);
   ok(g.closed&&g.still,'closing the book leaves you in the Lodge, not on the title',g);
-  ok(g.tip==='lodgeshelf'||g.tip===null,'the shelf has its own tip',g.tip);
+  /* (Expansion 5: restoring the Lodge fulfils a Ledger feat, so with tips off its card may be the one that shows) */
+  ok(g.tip==='lodgeshelf'||g.tip===null||g.tip==='ledgerwait','the shelf has its own tip',g.tip);
 
   /* 5. a second chore with the Lodge standing; one without it */
   const c=await p.evaluate(()=>{const T=__t, td=T.townData(), out={};
