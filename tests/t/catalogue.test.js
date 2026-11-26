@@ -14,7 +14,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
 
   /* 1. the data: about thirty pieces in five sets, something in each for the floor, the wall and a surface; two to four colourways
      each; art for every piece on the town's palette, 16 pixels a tile */
-  const d=await p.evaluate(()=>{const T=__t, I=T.LODGE_ITEMS, out={}, furn=Object.keys(I).filter(k=>I[k].k==='furn'&&!I[k].book), cat=furn.filter(k=>I[k].set!=='rooms');
+  const d=await p.evaluate(()=>{const T=__t, I=T.LODGE_ITEMS, out={}, furn=Object.keys(I).filter(k=>I[k].k==='furn'&&!I[k].one), cat=furn.filter(k=>I[k].set!=='rooms');
     out.n=cat.length; out.sets=Object.keys(T.LODGE_SETS);
     out.parts=out.sets.filter(s=>s!=='rooms'&&s!=='trophy').map(s=>{const f=furn.filter(k=>I[k].set===s); return [s,f.filter(k=>!I[k].mount&&!I[k].small).length,f.filter(k=>I[k].mount).length,f.filter(k=>I[k].small).length,f.filter(k=>I[k].top).length];});
     out.dyes=furn.filter(k=>{const n=(I[k].dyes||[]).length+1; return n<2||n>4||!(I[k].dyes||[]).every(y=>T.LODGE_DYES[y]);});
@@ -45,6 +45,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   /* the room, as every test below finds it: the Lodge restored, both rooms open, the haul full, Build closed */
   const setup=`(room)=>{localStorage.removeItem('ll-town'); __t.townReset(); __t.setDev(false); __t.townOpen();
     const D=__t.townData(); D.res={timber:900,iron:900,tallow:900,curios:90}; __t.townRestoreLodge(); D.res={timber:900,iron:900,tallow:900,curios:90};
+    /* the Keeper's Ledger (Expansion 5) stands beside the Grimoire once the Lodge is restored: taken out, so the room is as these tests lay it */
+    D.lodge.furn=D.lodge.furn.filter(d=>d.id!=='ledger');
     D.lodge.rooms.cellar.built=true; D.lodge.rooms.attic.built=true; D.free=false; __t.lodgeEnter(); if(room&&room!=='main')__t.lodgeGo(room);
     while(!document.getElementById('townCardWrap').hidden)document.getElementById('townCard').click(); __t.TWN.p.x=5; __t.TWN.p.y=8.4; return D;}`;
 
@@ -282,7 +284,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.store=b.store.map(e=>e.id+(e.dye||'-')+(e.on?e.on.length:0)).join();
     return o;});
   console.log(JSON.stringify(old));
-  ok(old.furn==='grimoire4,2/0 desk2,4/0 stove5,5/2 rug5,6/0 chair2,7/5 shelf8,3/0 sconce1,0/0 sconce7,0/0'&&old.bp.length===0,'a Lodge from before the catalogue loads exactly as it was',old);
+  ok(old.furn==='grimoire4,2/0 desk2,4/0 stove5,5/2 rug5,6/0 chair2,7/5 shelf8,3/0 sconce1,0/0 sconce7,0/0 ledger3,2/0'&&old.bp.length===0,'a Lodge from before the catalogue loads exactly as it was (and gains the Keeper’s Ledger beside its Grimoire, Expansion 5)',old);
   ok(old.b[0]==='coral'&&old.b[1]==='-'&&old.b[2]==='candle1bleach,ink0'&&old.b[3]==='tar','a dye or a slot that is not valid is dropped; one that is stays',old.b);
   ok(old.b[4]===3+6&&old.b[5]===0&&old.b[6]===1&&old.b[7]===2,'what comes up pays back: a book in a slot taken, a candle past the top, a wheel that is no small thing',old.b);
   const junk=await p.evaluate(()=>{const res={timber:0,iron:0,tallow:0,curios:0}; let err=null, f=null;

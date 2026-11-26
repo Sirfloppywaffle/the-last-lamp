@@ -69,7 +69,7 @@ The Lodge's pieces come in five themed sets, plus its own floors, walls and fire
 
 | Set | Pieces | Open |
 |---|---|---|
-| The Lodge’s own | 8: Rotted Ship-Planks, Diamond Parquet, Cistern Flagstones, Damp Stone, Mahogany Library, Brass-Ribbed Bulkhead, Grimoire, Stone Fireplace | from the start |
+| The Lodge’s own | 9: Rotted Ship-Planks, Diamond Parquet, Cistern Flagstones, Damp Stone, Mahogany Library, Brass-Ribbed Bulkhead, Grimoire, Keeper’s Ledger, Stone Fireplace | from the start |
 | Fisherman’s | 8: Cast-Iron Stove, Sea Chest, Ship’s Wheel, Barometer, Ship’s Lantern, Rusted Anchor, Hurricane Lantern, Ship in a Bottle | from the start |
 | Old Library | 10: Armchair, Banker’s Desk, Bookshelf, Ritual Rug, Drowned Portrait, Candle Sconce, Standing Lamp, Candle in a Saucer, Stack of Books, Inkwell and Quill | from the start |
 | Drowned Chapel | 8: Chapel Pew, Holy-Water Font, Chapel Lectern, Drowned Saint, Ship’s Bell, Votive Rack, Candelabra, Pilgrim’s Skull | blueprint |
@@ -156,6 +156,42 @@ Four plots, shut until their gate is opened once with the haul, saved as `ll-tow
 
 A freed Keeper with no chore waits at their post 6 to 14 s, walks (1.6 tiles a second) to a waypoint (a bench, the Hearth Beacon once lit, or in the Lodge: Cast-Iron Stove, Stone Fireplace, Armchair), stays 10 to 18 s (1.8 times as long with a favourite of theirs within 4 tiles, and 2 s more a Hearth level), and walks home. The first wait after the square opens is 1.5 to 4.5 s. A favourite of theirs in the square within **3** tiles of their post makes them leave a note in chalk, once (`ll-town.chalk`). The cellar's brine rises **2** art pixels a step for each lamp gone out below, up to **4** steps, and drains on a win; its kelp stays until the win after (`ll-town.tide`). Nothing on the stair changes.
 
+### The Keeper's Ledger (Expansion 5, step 1)
+
+A lectern in the Lodge, one of a kind like the Grimoire. Each feat pays once, in town materials, when the haul comes up (a feat of the town or the Grimoire done in the square is paid when the Ledger opens). A run feat counts nothing on a replayed stair. Pay is shape only.
+
+| Group | Feat | Pays | Read from |
+|---|---|---|---|
+| The stair | Clear the Cistern | 20 timber | the run |
+| The stair | Reach the Throat | 30 iron | the run |
+| The stair | Reach the Abyssal Heart | 30 timber, 20 iron | the run |
+| The stair | Slay the Keeper Below | 40 iron | the run |
+| The stair | See morning | 40 tallow, 20 timber | the run |
+| The stair | Slay the Last Keeper | 25 iron | the run |
+| The stair | Slay the Tithe-taker | 25 iron | the run |
+| The stair | Slay the Bellfather | 25 iron | the run |
+| The stair | Clear a floor with the lamp untouched | 25 tallow | the run |
+| The stair | Break a wave at Leaning madness | 30 tallow | the run |
+| Keepers | See morning with Ambrose Fenn | 30 timber, 20 tallow | the run |
+| Keepers | See morning with Jonah Tolland | 30 timber, 20 tallow | the run |
+| Keepers | See morning with The Nameless | 30 timber, 20 tallow | the run |
+| Keepers | See morning with Dr. Lucan Voss | 30 timber, 20 tallow | the run |
+| Keepers | See morning with Agathe Vell | 30 timber, 20 tallow | the run |
+| The Deeper Dark | See morning at depth 1 or deeper | 40 iron | the run |
+| The Deeper Dark | See morning at depth 3 or deeper | 40 iron, 20 tallow | the run |
+| The Deeper Dark | See morning at depth 5 | 40 tallow, 20 iron, 2 curios | the run |
+| The Grimoire | Meet every creature | 30 timber, 1 curio | ll-meta, ll-town, ll-codex |
+| The Grimoire | Find every relic | 30 tallow, 2 curios | ll-meta, ll-town, ll-codex |
+| The Grimoire | Bind every kind of horror | 30 iron, 1 curio | ll-meta, ll-town, ll-codex |
+| Trials and descents | Pass every kind of Trial | 30 iron, 20 tallow | ll-meta, ll-town, ll-codex |
+| Trials and descents | Walk every descent | 30 timber, 20 tallow | ll-meta, ll-town, ll-codex |
+| Saltmouth | Restore the Keeper’s Lodge | 20 timber | ll-meta, ll-town, ll-codex |
+| Saltmouth | Restore every workshop | 40 iron | ll-meta, ll-town, ll-codex |
+| Saltmouth | Raise all three shrines | 30 tallow | ll-meta, ll-town, ll-codex |
+| Saltmouth | Free every soul from the cages | 30 timber | ll-meta, ll-town, ll-codex |
+| Saltmouth | Raise the Hearth Beacon to its height | 30 iron | ll-meta, ll-town, ll-codex |
+| Saltmouth | Carve five headstones | 20 iron | ll-meta, ll-town, ll-codex |
+
 ### Every piece
 
 | Piece | Set | Kind | Cost | Footprint | Light | Facings drawn | Colourways |
@@ -167,6 +203,7 @@ A freed Keeper with no chore waits at their post 6 to 14 s, walks (1.6 tiles a s
 | Mahogany Library | Lodge | Wall | 30 timber | the room |  |  |  |
 | Brass-Ribbed Bulkhead | Lodge | Wall | 30 iron | the room |  |  |  |
 | Grimoire | Lodge | Furniture | free | 1×1 |  | 4 | 1 |
+| Keeper’s Ledger | Lodge | Furniture | free | 1×1 |  | 4 | 1 |
 | Stone Fireplace | Lodge | Furniture | 12 iron, 4 timber, 3 tallow | 2×1 | 52 | 4 | 2 |
 | Cast-Iron Stove | Fisher | Furniture | 10 iron, 2 tallow | 1×1 | 36 | 4 | 2 |
 | Sea Chest | Fisher | Surface (4 slots) | 10 timber, 3 iron | 2×1 |  | 4 | 4 |

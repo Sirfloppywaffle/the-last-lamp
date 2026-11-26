@@ -86,7 +86,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     return o;})()`);
   ok(sv.fresh[0]===undefined&&sv.fresh[1]===',','a new piece comes down lit',sv.fresh);
   ok(sv.saved.join('|')==='1|0||true|candle,candle!','which sconces are lit in each room, a fireplace put out and a candle put out are saved',sv.saved);
-  ok(sv.old.join('|')==='grimoire,floorlamp,chair,sconce!,sconce!','an old Lodge loads with its sconces cold and its lamp lit; out only on what burns',sv.old);
+  ok(sv.old.join('|')==='grimoire,floorlamp,chair,sconce!,sconce!,ledger','an old Lodge loads with its sconces cold and its lamp lit; out only on what burns',sv.old);
   ok(sv.legacy.join()==='1,true,true'&&sv.gone===0,'a Lodge from before keeps the sconces it had lit, as pieces; one taken away does not come back',sv);
 
   /* 4. tap a light outside Build: you walk to it, the button offers it, and a tap on the button lights it */
@@ -157,8 +157,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(one.place===''&&one.free,'a trophy earned hangs for nothing',one);
   ok(/here already/.test(one.again)&&/is in the Keeper’s Lodge/.test(one.attic),'one of each: a second says where the first is',one);
   ok(one.stored===1&&/waits in Storage/.test(one.waits)&&one.back==='','it stores like any piece, and comes back from Storage',one);
-  ok(one.plinth===''&&one.where.join()==='main,main'&&one.saved==='grimoire,sconce,sconce,keeper,primordial','the Primordial’s stands on its plinth; both are saved',one);
-  ok(one.tidy==='grimoire,sconce,sconce,primordial','loading, a trophy not earned and a second copy are let go',one.tidy);
+  ok(one.plinth===''&&one.where.join()==='main,main'&&one.saved==='grimoire,sconce,sconce,ledger,keeper,primordial','the Primordial’s stands on its plinth; both are saved',one);
+  ok(one.tidy==='grimoire,sconce,sconce,ledger,primordial','loading, a trophy not earned and a second copy are let go',one.tidy);
 
   /* 8. an old town: no trophies field. ll-best past the fourth floor gives the Keeper Below's; a win both; nothing, none */
   const seed=await p.evaluate(()=>{const T=__t, o={};
@@ -197,7 +197,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.same=localStorage.getItem('ll-town')===s0&&localStorage.getItem('ll-codex')===c0;
     T.setDev(false); T.townReset(); o.real=T.townData().lodge.furn.map(d=>d.id).join();
     return o;})()`);
-  ok(dev.earned&&dev.place===''&&dev.same&&dev.real==='grimoire,sconce,sconce','developer mode shows every trophy and lights the room, and writes nothing',dev);
+  ok(dev.earned&&dev.place===''&&dev.same&&dev.real==='grimoire,sconce,sconce,ledger','developer mode shows every trophy and lights the room, and writes nothing',dev);
 
   ok(!errs.length,'no page errors',errs);
   await b.close();
