@@ -11,8 +11,8 @@
 | Step | What | PR | State | Version |
 |---|---|---|---|---|
 | 0 | Design (`EXPANSION5_PROGRESSION.md`) and this runbook | #135, #162 | done | — |
-| 1 | The Keeper's Ledger: feats, the lectern, rewards, mastery counted | #187 | open | 20.1.0 |
-| 2 | The Ledger's bounties | | | 20.2.0 |
+| 1 | The Keeper's Ledger: feats, the lectern, rewards, mastery counted | #187 | done | 20.1.0 |
+| 2 | The Ledger's bounties | #188 | open | 20.2.0 |
 | 3 | The Ledger's trophies | | | 20.3.0 |
 | — | **Criss plays steps 1 to 3.** Steps 4 to 10 are specified here only after that. | | | |
 | 4 | Tonight's Stair | | provisional | 20.4.0 |
@@ -166,6 +166,8 @@ Extend `devices.test.js`: the card's tabs and buttons on all 14 sizes; the death
 
 Devices: the tab on all 14 sizes.
 
+*As built (#188), with Criss's change from his playtest of step 1 (#187):* like a feat, a bounty done is **fulfilled** when the haul comes up and **claimed** by hand at the Ledger (its own Claim, and Claim all on the Bounties page), never paid by itself; it is told by the gold banner between waves (`ledgerWatch()`; `run.bty[i].told` keeps it across a reload), the death and morning screens' gold block (feats first, "Bounty: …" when both), Saltmouth's `ledgerwait` card and the lectern's glow (`ledgerWaitN()`). Its place is drawn again as the haul comes up (`btyFill()` in `haulCredit()`), so the fulfilled one waits beside three live ones; claimed, it leaves the Ledger. Saves: `ll-town.ledger.bty` is `[{id, k, arg, n, kit, done}]` (`id` so a run's copy finds its bounty even after a tear-up; `kit`, the Keeper it was drawn for; `done`, the date fulfilled), with `btyN` (the last id), `btyPaid` (how many claimed) and `torn` (the visit, `ll-town.visits`, of the last tear-up, -1 for never). Drawn for the Keeper: none of the six kinds names a ward or rite, so the fit is in the kinds: the ward cap never counts the Keeper's light (`TRIAL_SPARE`) and counts only wards beside the path (as Rationed does, `rationCounts()`); the Galvanist is asked to capture, not bind; the Occultist's madness bounty is Leaning, not Slipping. Clear a floor without calling a wave early is `run.earlyOn`, the floor last called early, set in `callWave()`. Posted in Saltmouth (`ledgerTownCheck()`), on opening the Ledger, and at the haul, never at `newRun()`. Code, saves and hooks: `AGENTS.md` §5, the Saltmouth row; every bounty and its pay: `docs/DESIGN.md`.
+
 **Prompt:**
 > Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION5_RUNBOOK.md (§2 to §4, and §5 step 2) and expansion/EXPANSION5_PROGRESSION.md (§0, §1.3). Build Expansion 5, step 2 exactly as the runbook says, following its §4 workflow. Tick the status table. End with the prompt for step 3.
 
@@ -201,7 +203,7 @@ Devices: the tab on all 14 sizes.
 Shots: the trophies hung, lit and dark.
 
 **Prompt:**
-> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION5_RUNBOOK.md (§2 to §4, and §5 step 3) and expansion/EXPANSION5_PROGRESSION.md (§1.2). Build Expansion 5, step 3 exactly as the runbook says, following its §4 workflow. Make the five trophies in PixelLab (§3); if it can't be reached, hand-drawn stand-ins, said so in the PR. Tick the status table. End by asking Criss to play steps 1 to 3 with the playtest checklist in EXPANSION5_PROGRESSION.md §1.8, and tell him the next step is to specify steps 4 to 10.
+> Repo Sirfloppywaffle/the-last-lamp. Read AGENTS.md, CLAUDE.md, expansion/EXPANSION5_RUNBOOK.md (§2 to §4, §5 step 1's and step 2's as-built notes, and §5 step 3) and expansion/EXPANSION5_PROGRESSION.md (§1.2). Build Expansion 5, step 3 exactly as the runbook says, following its §4 workflow. Make the five trophies in PixelLab (§3); if it can't be reached, hand-drawn stand-ins, said so in the PR. Tick the status table. End by asking Criss to play steps 1 to 3 with the playtest checklist in EXPANSION5_PROGRESSION.md §1.8, and tell him the next step is to specify steps 4 to 10.
 
 ### Criss plays steps 1 to 3
 

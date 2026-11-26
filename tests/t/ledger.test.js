@@ -207,7 +207,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(lec.noLodge===0,'no Lodge, no Ledger',lec.noLodge);
   ok(lec.wall==='That would wall off the Keeper’s Ledger.','walling off is refused, and the line names the book cut off',lec.wall);
   ok(lec.near==='ledger'&&lec.label==='The Keeper’s Ledger','beside it, the button offers the Ledger',lec);
-  ok(lec.title==='The Keeper’s Ledger'&&lec.tabs==='Feats ✦2,Keepers','the button opens its card, with its two tabs (Feats counts what waits)',lec);
+  ok(lec.title==='The Keeper’s Ledger'&&lec.tabs==='Feats ✦2,Bounties,Keepers','the button opens its card, with its three tabs (Feats counts what waits; step 2 added Bounties)',lec);
   ok(lec.calls&&lec.quiet,'the lectern calls you over while a feat waits, and is quiet once all are claimed',lec);
   ok(lec.wait==='all,keeper,lodge'&&lec.claim[0]===40&&lec.claim[1]&&lec.claim[2]===1&&lec.noneLeft===0,'each waiting feat has its Claim, and Claim all; a claim pays and says so',lec);
   ok(lec.cistern&&lec.throat&&lec.hidden,'a feat done shows its date and pay; one beside it shows; a group with none done is ???',lec);
