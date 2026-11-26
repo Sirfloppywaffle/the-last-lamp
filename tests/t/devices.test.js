@@ -219,6 +219,8 @@ const DEV=[
       const o={dark:__t.lodgeArt().dark};
       return o;},ins);
     await p.waitForTimeout(100);
+    /* the Ledger's banner from setting the scene up would cover the wall */
+    await p.evaluate(()=>document.getElementById('trophyBanner').classList.remove('is-show'));
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-dark-'+nm+'.png'});
     const lit2=await p.evaluate(ins=>{
       ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);
