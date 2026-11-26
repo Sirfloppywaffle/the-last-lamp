@@ -65,7 +65,7 @@ Restoring the Lodge costs **30 timber, 15 iron**. Inside, one floor and one wall
 
 ### The catalogue (Expansion 4, step 4)
 
-The Lodge's pieces come in five themed sets, plus its own floors, walls and fireplace, and the trophies (step 5: one per boss put down on the stair, free, one of each). A set is **open** from the start or **bought as a blueprint** from the Peddler (step 6), until then shown locked on the tray. A **wall mount** hangs on the back wall (wall tiles, never floor, 1 tile wide). A **small thing** stands on a surface (a piece with slots on its top, half a tile apart) and goes wherever its host goes. Every piece has two to four **colourways**: its own, and a dye of 2 tallow each, a swap of palette letters (going back to its own colours gives the tallow back). Costs are shape only.
+The Lodge's pieces come in five themed sets, plus its own floors, walls and fireplace, and the trophies (step 5: one per boss put down on the stair, free, one of each; Expansion 5, step 3: one per Herald, and two for the Ledger's feats, earned when claimed). A set is **open** from the start or **bought as a blueprint** from the Peddler (step 6), until then shown locked on the tray. A **wall mount** hangs on the back wall (wall tiles, never floor, 1 tile wide). A **small thing** stands on a surface (a piece with slots on its top, half a tile apart) and goes wherever its host goes. Every piece has two to four **colourways**: its own, and a dye of 2 tallow each, a swap of palette letters (going back to its own colours gives the tallow back). Costs are shape only.
 
 | Set | Pieces | Open |
 |---|---|---|
@@ -75,7 +75,7 @@ The Lodge's pieces come in five themed sets, plus its own floors, walls and fire
 | Drowned Chapel | 8: Chapel Pew, Holy-Water Font, Chapel Lectern, Drowned Saint, Ship’s Bell, Votive Rack, Candelabra, Pilgrim’s Skull | blueprint |
 | Brass Observatory | 7: Brass Telescope, Orrery, Chart Table, Stopped Clock, Star Chart, Brass Wall Lamp, Brass Hourglass | blueprint |
 | Deep-One Coral | 7: Coral Cluster, Brine Urn, Coral Table, Coral Fan, Pearl-Eyed Mask, Glow-Anemone, Conch Shell | blueprint |
-| Trophies | 3: The Keeper Below’s Maw, The Primordial’s Eye, The Stub That Held | earned on the stair, one of each |
+| Trophies | 8: The Keeper Below’s Maw, The Primordial’s Eye, The Stub That Held, The Tithe-taker’s Sack, The Bellfather’s Clapper, The Last Keeper’s Lamp, The Six Eyes, The Morning Shard | earned on the stair or in the Ledger, one of each |
 
 | Dye | Swaps |
 |---|---|
@@ -278,6 +278,11 @@ Up to 3 at a time, each done within one descent: none until the Grimoire holds 1
 | The Keeper Below’s Maw | Trophies | Trophy (wall mount, The Keeper Below) | free | 1×2 |  | 1 | 1 |
 | The Primordial’s Eye | Trophies | Trophy (plinth, The Primordial) | free | 1×1 |  | 1 | 1 |
 | The Stub That Held | Trophies | Trophy (plinth, a deed) | free | 1×1 |  | 1 | 1 |
+| The Tithe-taker’s Sack | Trophies | Trophy (wall mount, The Tithe-taker) | free | 1×2 |  | 1 | 1 |
+| The Bellfather’s Clapper | Trophies | Trophy (wall mount, The Bellfather) | free | 1×2 |  | 1 | 1 |
+| The Last Keeper’s Lamp | Trophies | Trophy (plinth, The Last Keeper) | free | 1×1 |  | 1 | 1 |
+| The Six Eyes | Trophies | Trophy (wall mount, the Ledger: Bind every kind of horror) | free | 1×2 |  | 1 | 1 |
+| The Morning Shard | Trophies | Trophy (plinth, the Ledger: See morning at depth 5) | free | 1×1 |  | 1 | 1 |
 
 ## Creatures
 
