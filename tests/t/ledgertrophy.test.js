@@ -66,7 +66,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.before=(T.townData().trophies||[]).join(); o.lock=T.lodgeLockWhy('sixeyes');
     o.cistern=T.ledgerClaim('cistern').map(g=>g.trophy||'').join(); o.afterCistern=(T.townData().trophies||[]).join();
     const bn=document.getElementById('trophyBanner'); bn.classList.remove('is-show');
-    const got=T.ledgerClaim('feats'); o.got=got.map(g=>g.id+':'+(g.trophy||'')).sort().join();
+    const r0=Object.assign({},T.townData().res);
+    const got=T.ledgerClaim('feats'); const r1=T.townData().res; o.paid=['timber','iron','tallow','curios'].map(k=>r1[k]-r0[k]).join(); o.got=got.map(g=>g.id+':'+(g.trophy||'')).sort().join();
     o.town=(T.townData().trophies||[]).slice().sort().join(); o.saved=__saved(); o.banner=[bn.classList.contains('is-show'),document.getElementById('trophyBannerB').textContent];
     o.lock2=T.lodgeLockWhy('sixeyes');
     /* the card says so after a claim */
@@ -76,6 +77,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(feat.before===''&&/^Bind every kind of horror, and claim it at the Ledger/.test(feat.lock),'fulfilled, not claimed: no trophy yet, and its lock says what earns it',feat);
   ok(/See morning at depth 5\. .*and a trophy for the Lodge/.test(feat.line),'the morning screen names the trophy',feat.line);
   ok(feat.cistern===''&&feat.afterCistern==='','a feat without one gives none',feat);
+  ok(feat.paid==='0,50,40,3','the claim pays the two feats\' materials once (30 iron and a curio; 40 tallow, 20 iron, 2 curios)',feat.paid);
   ok(feat.got==='d5:shard,horrors:sixeyes'&&feat.town==='shard,sixeyes'&&feat.saved==='shard,sixeyes','claimed, each gives its trophy, saved',feat);
   ok(feat.banner[0]&&feat.banner[1]==='A trophy for the Lodge','claiming shows the trophy banner in Saltmouth',feat.banner);
   ok(feat.lock2==='','claimed, it is no longer locked',feat.lock2);

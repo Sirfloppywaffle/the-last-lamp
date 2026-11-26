@@ -14523,7 +14523,7 @@ function ledgerClaim(id){
   const won=[];
   for(const f of w){for(const k in f.pay)T.res[k]+=f.pay[k]; T.ledger.claimed[f.id]=day; const tk=featTrophy(f); if(tk&&trophyGrant(T,tk))won.push(tk);}
   const got=w.map(f=>({id:f.id,n:f.n,pay:f.pay,trophy:featTrophy(f)})).concat(bw.map(b=>({id:'b'+b.id,n:btyName(b),pay:btyPay(b),bty:true})));
-  for(const g of got)for(const k in g.pay)T.res[k]+=g.pay[k];
+  for(const b of bw){const pay=btyPay(b); for(const k in pay)T.res[k]+=pay[k];}
   T.ledger.bty=T.ledger.bty.filter(b=>!bw.includes(b)); T.ledger.btyPaid+=bw.length;
   townSave(); townHud(); LODGE_STALE=true; AUDIO.coin();
   if(won.length)trophyBanner(won[0]);
@@ -14557,7 +14557,8 @@ function ledgerWatch(){
   for(const f of fresh)seen.push(f.id);
   for(const b of bs)b.told=true;
   ledgerBanner(fresh.map(f=>({n:f.n})).concat(bs.map(b=>({n:btyName(b),bty:true}))));
-  if(tk){const said=$('#trophyBannerB').textContent; trophyBanner(tk); $('#trophyBannerB').textContent='A trophy for the Lodge, and '+said.charAt(0).toLowerCase()+said.slice(1);}
+  /* a Herald's trophy with it: the trophy's art and name, in the Ledger's gold, saying both */
+  if(tk){const said=$('#trophyBannerB').textContent; trophyBanner(tk); $('#trophyBanner').classList.add('is-ledger'); $('#trophyBannerB').textContent='A trophy for the Lodge, and '+said.charAt(0).toLowerCase()+said.slice(1);}
 }
 /* the banner: fs is what was fulfilled, each {n, bty} (a feat from LEDGER_FEATS has no bty) */
 function ledgerBanner(fs){

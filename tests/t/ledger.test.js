@@ -125,7 +125,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.townClose();
     return o;});
   ok(ban.mid==='','no banner mid-wave',ban.mid);
-  ok(ban.brk[0]==='Slay the Bellfather'&&ban.brk[1]==='A feat fulfilled'&&ban.again==='','as the wave breaks, a gold banner names the feat, once',ban);
+  /* since Expansion 5, step 3 the Bellfather also leaves its trophy: the break's gold banner shows the clapper and says both */
+  ok(ban.brk[0]==='The Bellfather’s Clapper'&&ban.brk[1]==='A trophy for the Lodge, and a feat fulfilled'&&ban.again==='','as the wave breaks, a gold banner tells the feat (and the Herald\'s trophy), once',ban);
   ok(ban.seenAtStart&&ban.old==='','a feat fulfilled before the run began is not told on it',ban);
   ok(ban.replay==='','a replayed stair tells none',ban.replay);
   ok(ban.town[0]==='Raise the Hearth Beacon to its height'&&ban.town[1],'a feat of the town is fulfilled the moment it is done, with its banner',ban.town);
