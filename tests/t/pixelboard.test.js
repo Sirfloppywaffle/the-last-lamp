@@ -77,10 +77,11 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
         if(L){o.left++; if(f!==-1)o.bad.push([mv,x,y,'L',f]);} else{o.right++; if(f!==1)o.bad.push([mv,x,y,'R',f]);}}}
     return o;});
   ok(hf.left>3&&hf.right>3&&!hf.bad.length,'a horror faces the path beside it, left or right, on every map',hf);
-  /* the Ossuary (pixel stair step 7), on all three maps: limestone slabs, one a square with its joints on the square's edges (the set
-     drew them ten pixels off, so its floor is cut away and a slab laid under each square); the path a sunken aisle of dust and bone
-     between walls packed with skulls, and every fork's detour the same aisle; the painted floor's props on its squares, bone chips in
-     the aisle; and no lamplight glinting on the aisle, which is dry. Read at each square's middle, so a prop here and there is allowed */
+  /* the Ossuary (pixel stair step 7), on all three maps: dark slabs inlaid with bone, one a square with its joints on the square's
+     edges (the set drew them ten pixels off, so its floor is cut away and a slab laid under each square); the path a sunken aisle of dust
+     and bone between walls packed with skulls, and every fork's detour the same aisle; skulls and crossed bones along every side of the
+     floor that meets the aisle (Criss, 26 Nov 2026: "mix 1's border with the mosaic design"); bone chips in the aisle; and no lamplight
+     glinting on it, as it is dry. Read at each square's middle, so a prop or an inlay here and there is allowed */
   for(const mv of [0,1,2]){
     const r=await p.evaluate((mv)=>{const T=__t; T.setMapV(mv); T.newRun('lamplighter',0,{seed:9}); T.run.floor=1; T.beginFloor(null); T.setP(false);
       const o={pix:T.pixOn()}, g=T.floorPx, s=g.canvas.width/T.COLS, P=T.F.pathTiles, isP=(x,y)=>P.has(x+','+y);
@@ -94,14 +95,16 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
       let n=0, j=0; for(let y=1;y<T.ROWS-1;y++)for(let x=1;x<T.COLS-1;x++){if(isP(x,y)||isP(x-1,y)||isP(x+1,y)||isP(x,y-1)||isP(x,y+1))continue; n++;
         const m=mid(x,y), top=Math.min(Lu((x+.2)*s,y*s,.6*s,1),Lu((x+.2)*s,y*s+1,.6*s,1)), left=Math.min(Lu(x*s,(y+.2)*s,1,.6*s),Lu(x*s+1,(y+.2)*s,1,.6*s));
         if(top<m-8&&left<m-8)j++;}
-      o.slabs=n; o.joints=n?j/n:0; o.water=T.PIX.water?T.PIX.water.length:-1; o.laid=T.PIX.laid;
+      o.slabs=n; o.joints=n?j/n:0; o.water=T.PIX.water?T.PIX.water.length:-1; o.laid=T.PIX.laid; o.edged=T.PIX.edged;
+      o.sides=0; for(let y=0;y<T.ROWS;y++)for(let x=0;x<T.COLS;x++){if(isP(x,y))continue; for(const [dx,dy] of [[0,-1],[0,1],[-1,0],[1,0]]){const X=x+dx, Y=y+dy; if(X>=0&&Y>=0&&X<T.COLS&&Y<T.ROWS&&isP(X,Y))o.sides++;}}
       return o;},mv);
     ok(r.pix,'map '+mv+': the Ossuary is a pixel floor',r);
     ok(r.aisle>=.8&&r.medP<r.medF-20,'map '+mv+': the path is the sunken aisle, darker than the slabs',r);
     ok(r.forks>=1&&r.fork>10&&r.forkLit<=r.fork*.1,'map '+mv+': every fork\'s detour is the aisle too',r);
     ok(r.slabs>=5&&r.joints>=.8,'map '+mv+': a slab to a square, its joints on the square\'s edges',r);
     ok(r.water===0,'map '+mv+': the aisle is dry, with no lamplight glinting on it',r.water);
-    ok(r.laid>=8,'map '+mv+': the painted floor\'s props lie on its squares, and bone chips in the aisle',r.laid);
+    ok(r.edged>=r.sides&&r.sides>20,'map '+mv+': skulls and crossed bones line every side of the floor that meets the aisle',[r.edged,r.sides]);
+    ok(r.laid>=2,'map '+mv+': bone chips lie in the aisle',r.laid);
   }
   const rest=await p.evaluate(()=>{const T=__t, o={}; T.setMapV(0); T.newRun('lamplighter',0,{seed:9}); T.run.floor=2; T.beginFloor(null); o.nave=T.pixOn(); o.art=!!T.artOf('gnasher').pix;
     T.run.floor=0; T.beginFloor(null); T.boardArtSet('painted'); o.off=T.pixOn(); o.artOff=!!T.artOf('gnasher').pix; o.st=localStorage.getItem('ll-board'); T.setP(false); for(let i=0;i<5;i++)T.render(); return o;});
