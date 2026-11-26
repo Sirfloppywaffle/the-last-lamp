@@ -21,6 +21,7 @@ Gemini and Jules are paused (`AGENTS.md` §1), so Claude reviews its own PRs. Be
 - [ ] **Saves** (rule 15): new `ll-town` fields have defaults in `townFix()`; new `run` fields have a default for an old save (`resumeFrom()`); nothing renamed or removed.
 - [ ] **Teach it** (rule 23): tip, `#rulesList` line, Grimoire entry if needed.
 - [ ] **Balance** (rule 22): every new or changed number listed in the PR, old → new.
+- [ ] **Version** (`AGENTS.md` §3): does the diff change play (a number, a rule, something new to find, earn or build)? Then `GAME_VERSION` moved in this PR by the rules, and the PR's Version line says old → new. Unchanged only for tests, docs, tools and art behind the pixel pilot.
 - [ ] The rest of §6 the diff touches: deferred reads (10), `F.foes` loops (12), `dt` ≤ 0.05 and real time for overlays (14), unit space and `DPR` (19, 20), prefixed CSS classes (7), the `hidden` attribute (8), voice (21).
 
 ## 2. Post this as a PR comment

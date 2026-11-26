@@ -29,7 +29,7 @@ You're the engineer and QA on this project. Gemini, working through Jules, is yo
 - Open an issue with the **Task for Jules** template, or add the `jules` label. Write the goal, the constraints that matter (cite `AGENTS.md` rules), and how it'll be judged.
 
 ## Releases
-- **Version numbers** (details in `AGENTS.md` §3): three numbers, always. Last = bug fixes and small tweaks. Middle = a new part of an ongoing feature (last resets to 0). First = a finished arc or a big change (others reset to 0). Bump once per release; the biggest change in the batch wins.
+- **Version numbers** (details in `AGENTS.md` §3): three numbers, always. Last = bug fixes and small tweaks. Middle = a new part of an ongoing feature (last resets to 0). First = a finished arc or a big change (others reset to 0). Bump once per release; the biggest change in the batch wins. **Any PR that changes play bumps `GAME_VERSION` in that PR** (Criss, 26 Nov 2026; `AGENTS.md` §3); only tests, docs, tools and art behind the pixel pilot leave it. The PR template's **Version** line says which.
 - **Artifact mirroring is paused until Criss says otherwise.** Skip the mirror step below.
 - When Criss merges, mirror `index.html` to the claude.ai artifact (`python3 tools/build-artifact.py` writes the artifact body to `tests/.build/artifact.html`; publish it to https://claude.ai/artifact/PP2gyEZiPauEoEpbuM5Se7), then move the Unreleased notes in `docs/HISTORY.md` under a new version. During Expansion 4 they wait under Unreleased for step 10's v20.0.0 (`expansion/EXPANSION4_RUNBOOK.md` §5), even though `GAME_VERSION` moves each step.
 

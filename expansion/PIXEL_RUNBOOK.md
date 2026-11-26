@@ -46,6 +46,7 @@
 8. **No per-frame garbage** (rule 17). Sprites are cached; a per-frame painter walks flat arrays and makes no objects. `getImageData` only when building a cached sprite, never in `render()`.
 9. **One step, one PR, off `main`.** Do not stack PRs. If you must, set the next PR's base to `main` only after the first is merged, and tell Criss to delete merged branches: #166 and #167 merged into their stacked bases and never reached `main` until #168 carried them.
 10. **Size.** `index.html` is about 2.15 MB. Each step says in its PR how many KB of art it adds. Keep sheets as palette PNGs (`Image.quantize`) where that loses nothing.
+11. **Versions** (Criss, 26 Nov 2026). A step here changes no play (rule 1), so it leaves `GAME_VERSION` alone; its HISTORY line waits under Unreleased and ships with the next version. A step that does change play bumps it like any PR (`AGENTS.md` §3). Step 13, pixel by default, is a big change, so it bumps the first number and the others reset: v20.5.2 becomes v21.0.0, never v21.5.2. If it lands in the same release as Expansion 5's v21.0.0, they share that one bump (the biggest change in the batch wins). If it lands first, Expansion 5's later steps shift up by one (21.x, then v22.0.0): fix that runbook's version column in step 13's PR.
 
 ---
 
@@ -229,7 +230,7 @@ The mini-games between floors (the Carry, the Mirror Stair, the Binding, the Cas
 
 ### Step 13: pixel becomes the default
 
-When every floor is whole: `ll-board` defaults to pixel, the Settings note stops calling it a pilot, and the painted painters that nothing reaches are removed in their own PR. Ask Criss before deleting anything.
+When every floor is whole: `ll-board` defaults to pixel (the first number goes up, §2 rule 11), the Settings note stops calling it a pilot, and the painted painters that nothing reaches are removed in their own PR. Ask Criss before deleting anything.
 
 ---
 
