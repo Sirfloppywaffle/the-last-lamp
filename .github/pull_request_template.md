@@ -10,4 +10,8 @@
 ## Balance changes
 <!-- Every changed number, old → new. Or "none". -->
 
+## Version
+<!-- GAME_VERSION old → new, by AGENTS.md §3: any change to play (a number, a rule, something new) bumps it in this PR.
+     Or "unchanged" and why: tests, docs, tools, or art behind the pixel pilot. -->
+
 Closes #

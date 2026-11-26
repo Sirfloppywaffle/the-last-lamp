@@ -102,6 +102,7 @@ Three numbers, always (`17.1.1`, `18.0.0`; never `17.1`).
 - **Middle** = a new part of an ongoing feature. The last number resets to 0.
 - **First** = a finished arc or a big change. The other two reset to 0.
 - Bump **once per release**. The biggest change in the batch wins.
+- **Every PR that changes play bumps `GAME_VERSION` in that PR** (Criss, 26 Nov 2026: "anytime there is a gameplay change it has to follow the rules of the version updates"). That means a number, a rule, or something new to find, earn or build, inside an expansion or not: a balance fix is the last number, a new trophy or ward the middle. Only a PR that changes nothing a player meets leaves the version alone: tests, docs, tools, or art behind a switch that changes no play (the pixel pilot). The PR's **Version** line says which, and every self-review checks it. Three gameplay changes after v20.0.0 (the Alien Spectrum's sear, the Signal Mirror's second bounce, the Stub That Held) went out without a bump. They ship with the next version.
 
 ---
 

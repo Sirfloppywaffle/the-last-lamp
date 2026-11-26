@@ -17,6 +17,7 @@ Source: `AGENTS.md` §1 (paused reviewers), §3 (workflow) and `CLAUDE.md`. Cris
   - **How it was tested:** commands and results; the screenshots (`shots` skill).
   - **Risks.**
   - **Balance changes:** every new or changed number, `old → new`, or "none" (rule 22).
+  - **Version:** `GAME_VERSION` old → new, or "unchanged" and why. Any change to play bumps it in this PR (`AGENTS.md` §3, Criss, 26 Nov 2026); only tests, docs, tools and art behind the pixel pilot leave it.
   - Link the issue (`Closes #n`) when there is one.
 - [ ] Keep it short. Criss reads on his phone: lead with what changed and what to try; no walls of text, no tables he has to scroll sideways.
 
