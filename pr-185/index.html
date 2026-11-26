@@ -10445,6 +10445,17 @@ function paintBoardPixel(c,o){
     /* the floor's props, one a square at most, by the square's own numbers: on the floor (the causeway when the floor is turned inside
        out), or on the path when the prop says so; pick [salt,n,i] keeps a prop to the squares whose number in n ways is i, so props can
        share one draw as the painted floor's do (decoProp: one in six squares, then which of three) */
+    /* a floor's borders: along each side of a floor square that meets the path, a strip (edges: h for its top and bottom, v for its
+       sides, set in from that side's wall by inset [N,S,W,E]); and the face of the path's wall under a floor square, dressed (walls) */
+    const EG=D.edges, WL=D.walls;
+    if(at&&(EG||WL))for(let y=Math.max(0,Math.floor(y0)-1);y<Math.min(rows,Math.ceil(y1)+1);y++)for(let x=Math.max(0,Math.floor(x0)-1);x<Math.min(cols,Math.ceil(x1)+1);x++){
+      if(EG&&up(x,y)){const h=A[EG.h]&&A[EG.h][0], v=A[EG.v]&&A[EG.v][0], n=EG.inset||[2,2,2,2], X=x*TS, Y=y*TS;
+        if(h&&onP(x,y-1))g.drawImage(at,h[0],h[1],h[2],h[3],X+(TS-h[2]>>1),Y+n[0],h[2],h[3]);
+        if(h&&onP(x,y+1))g.drawImage(at,h[0],h[1],h[2],h[3],X+(TS-h[2]>>1),Y+TS-h[3]-n[1],h[2],h[3]);
+        if(v&&onP(x-1,y))g.drawImage(at,v[0],v[1],v[2],v[3],X+n[2],Y+(TS-v[3]>>1),v[2],v[3]);
+        if(v&&onP(x+1,y))g.drawImage(at,v[0],v[1],v[2],v[3],X+TS-v[2]-n[3],Y+(TS-v[3]>>1),v[2],v[3]);}
+      if(WL&&onP(x,y)&&up(x,y-1)){const R=A[WL.k], r=R[Math.floor(H(x,y,WL.salt||95)*R.length)%R.length]; g.drawImage(at,r[0],r[1],r[2],r[3],x*TS+(TS-r[2]>>1),y*TS+(WL.dy||0),r[2],r[3]);}
+    }
     let nl=0;
     if(at&&D.props)for(let y=Math.max(0,Math.floor(y0)-1);y<Math.min(rows,Math.ceil(y1)+1);y++)for(let x=Math.max(0,Math.floor(x0)-1);x<Math.min(cols,Math.ceil(x1)+1);x++){
       const fl=D.inv?onP(x,y):up(x,y), pa=onP(x,y);
