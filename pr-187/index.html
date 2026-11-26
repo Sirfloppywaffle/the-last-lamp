@@ -14465,7 +14465,7 @@ const NUM_WORD=['no','one','two','three','four','five','six','seven','eight','ni
 function ledgerLine(r){
   const due=ledgerDue(r); if(!due.length)return '';
   let h='<br><span class="statline haul-line ledger-end ledger-endh">✦ Feats fulfilled</span>';
-  for(let i=0;i<Math.min(3,due.length);i++)h+='<br><span class="statline haul-line ledger-end">The Ledger: '+due[i].n+'. '+haulWords(due[i].pay)+'.</span>';
+  for(let i=0;i<Math.min(3,due.length);i++)h+='<br><span class="statline haul-line ledger-end">'+due[i].n+'. '+haulWords(due[i].pay)+'.</span>';
   if(due.length>3)h+='<br><span class="statline haul-line ledger-end">And '+(NUM_WORD[due.length-3]||due.length-3)+' more in the Ledger.</span>';
   return h+'<br><span class="statline haul-line ledger-end">Claim '+(due.length>1?'them':'it')+' at the Ledger, in the Lodge.</span>';
 }
@@ -14524,7 +14524,7 @@ function ledgerCard(tab,said){
     intro='Feats fulfilled: <b>'+nd+' of '+LEDGER_FEATS.length+'</b>. Each pays once, when you claim it here.'+(said?' <b class="ledger-said">'+said+'</b>':'');
     /* what waits to be claimed comes first, each with its own button, and one for all of them */
     if(wait.length)list+='<div class="book-h ledger-h ledger-wait">✦ Fulfilled, waiting to be claimed</div>'
-      +(wait.length>1?'<div class="ledger-all"><button class="btn call" data-claim="all">Claim all ('+wait.length+')</button></div>':'')
+      +(wait.length>1?'<div class="ledger-all"><button class="btn call ledger-claim" data-claim="all">Claim all ('+wait.length+')</button></div>':'')
       +'<div class="book-list">'+wait.map(f=>bookEntry(bookSeal('✦'),f.n,'Fulfilled '+(D[f.id]||''),'<button class="btn call ledger-claim" data-claim="'+f.id+'">Claim '+haulWords(f.pay)+'</button>','is-held ledger-ready')).join('')+'</div>';
     for(const g in LEDGER_GROUPS){
       const fs=LEDGER_FEATS.filter(f=>f.g===g), seen=devOn||fs.some(f=>D[f.id]!=null);
@@ -19424,15 +19424,15 @@ function townShowTip(){
   /* each of the other rooms (Expansion 4, step 3) has its own card, the first time you stand in it */
   const rt=TWN.inside&&LODGE_ROOMS[lodgeCur()].tip;
   const tide=TWN.inside&&lodgeCur()==='cellar'&&tideKelp(T)>0;
-  /* the Ledger (Expansion 5): feats fulfilled and not yet claimed are told once a visit, before any tip */
+  /* the Ledger (Expansion 5): feats fulfilled and not yet claimed are told once a visit, after any tip that teaches */
   const lw=!b&&!TWN.ledgerSaid&&ledgerWaiting(T).length>0;
-  const k=TWN.inside?(lw?'ledgerwait':tipFresh('lodge')?'lodge':rt&&tipFresh(rt)?rt:tide&&tipFresh('lodgetide')&&!b?'lodgetide':tipFresh('lodgedark')&&!b?'lodgedark':b?bldTip():TWN.tipFor&&tipFresh(TWN.tipFor)?TWN.tipFor:null)
-    :grew?'grew':moved?'moved':tipFresh('town')?'town':haulTotal(T.res)>0&&tipFresh('townhaul')?'townhaul':lw?'ledgerwait':b?bldTip()
+  const k=TWN.inside?(tipFresh('lodge')?'lodge':rt&&tipFresh(rt)?rt:tide&&tipFresh('lodgetide')&&!b?'lodgetide':tipFresh('lodgedark')&&!b?'lodgedark':b?bldTip():TWN.tipFor&&tipFresh(TWN.tipFor)?TWN.tipFor:lw?'ledgerwait':null)
+    :grew?'grew':moved?'moved':tipFresh('town')?'town':haulTotal(T.res)>0&&tipFresh('townhaul')?'townhaul':b?bldTip()
     :standing&&tipFresh('townkeepers')?'townkeepers':TWN.crowd.some(e=>e.work)&&tipFresh('townchore')?'townchore'
     :townRescued('croupier',T)&&tipFresh('croupier')?'croupier':townRescued('toothmonger',T)&&tipFresh('toothmonger')?'toothmonger'
     :townRescued('peddler',T)&&tipFresh('townpeddler')?'townpeddler'
     :(Object.values(T.buildings||{}).some(v=>v>0)||T.gift)&&tipFresh('gift')?'gift'
-    :TWN.tipFor&&tipFresh(TWN.tipFor)&&!TWN.build?TWN.tipFor:null;
+    :TWN.tipFor&&tipFresh(TWN.tipFor)&&!TWN.build?TWN.tipFor:lw?'ledgerwait':null;
   TWN.card=k;
   $('#townCardWrap').hidden=!k;
   if(!k)return;
