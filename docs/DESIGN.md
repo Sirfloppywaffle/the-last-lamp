@@ -164,14 +164,14 @@ A lectern in the Lodge, one of a kind like the Grimoire. A feat is fulfilled whe
 |---|---|---|---|
 | The stair | Clear the Cistern | 20 timber | the run |
 | The stair | Reach the Throat | 30 iron | the run |
+| The stair | Clear a floor with the lamp untouched | 25 tallow | the run |
 | The stair | Reach the Abyssal Heart | 30 timber, 20 iron | the run |
-| The stair | Slay the Keeper Below | 40 iron | the run |
-| The stair | See morning | 40 tallow, 20 timber | the run |
 | The stair | Slay the Last Keeper | 25 iron | the run |
 | The stair | Slay the Tithe-taker | 25 iron | the run |
 | The stair | Slay the Bellfather | 25 iron | the run |
-| The stair | Clear a floor with the lamp untouched | 25 tallow | the run |
+| The stair | Slay the Keeper Below | 40 iron | the run |
 | The stair | Break a wave at Leaning madness | 30 tallow | the run |
+| The stair | See morning | 40 tallow, 20 timber | the run |
 | Keepers | See morning with Ambrose Fenn | 30 timber, 20 tallow | the run |
 | Keepers | See morning with Jonah Tolland | 30 timber, 20 tallow | the run |
 | Keepers | See morning with The Nameless | 30 timber, 20 tallow | the run |
