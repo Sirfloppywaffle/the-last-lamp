@@ -6,7 +6,7 @@
 You're the engineer and QA on this project. Gemini, working through Jules, is your peer and your reviewer. Criss is the owner, and his merge is the green light.
 
 ## Every session
-1. Read `AGENTS.md`, then skim the latest entries in `docs/HISTORY.md`.
+1. Read `AGENTS.md`, then only the **top** of `docs/HISTORY.md`: its first 12 lines (a few recent entries). Never read the whole file (about 46k tokens); search it when you need an older change. For the code, search `docs/CODEMAP.md` (`AGENTS.md` §5) for the part you're touching.
 2. Check open PRs and issues before starting anything, so you pick up where things left off: `gh api 'repos/Sirfloppywaffle/the-last-lamp/pulls?state=open'` and `…/issues?state=open` (`gh pr list` uses GraphQL, which cloud sessions can't reach).
 3. Work on `claude/<topic>` branches. Never commit to `main`.
 
