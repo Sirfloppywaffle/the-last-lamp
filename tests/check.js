@@ -41,7 +41,7 @@ if(kb>600)warnings.push(`index.html is ${kb} KB: consider whether something can 
 // (Windows has no python3: its python.exe is called python, and "python3" there is the Store's stand-in, which only fails)
 {const py=process.platform==='win32'?'python':'python3';
   const r=require('child_process').spawnSync(py,[path.join(__dirname,'..','tools','ui-art.py'),'--check'],{encoding:'utf8'});
-  if(r.error)warnings.push(py+' not found: the ui-art block was not checked');
+  if(r.error||/Python was not found/.test(r.stdout+r.stderr))warnings.push(py+' not found: the ui-art block was not checked');
   else if(r.status!==0)problems.push('the ui-art block in index.html is out of date or edited by hand: run '+py+' tools/ui-art.py ('+(r.stdout+r.stderr).trim()+')');}
 
 for(const w of warnings)console.log('warn  '+w);
