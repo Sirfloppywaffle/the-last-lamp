@@ -10,6 +10,9 @@ grey in every variant, so squares always meet), pyr0.png to pyr2.png (pyramids o
 on the floor's corners as the Cistern's columns do, and break to their base beside a ward), friezeH.png and friezeV.png (skulls and crossed
 bones in turn, as over Sedlec's door, laid along each side of the floor that meets the aisle) and dais.png (the lamp's dais: a chandelier
 seen from above, a sunburst of bones ringed with skulls). Pack them with pack.py.
+
+The pyramids in the game no longer come from here: since 28 Nov 2026 they are modelled in Blender (tools/blender/ossuary_pyramid.py,
+then tools/pixel/blender_pixels.py, laid into props.ossuary by pack.py put). Repacking this file's pyr0 to pyr2 brings the old ones back.
 """
 import sys, os, json, math, colorsys, random, numpy as np
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
