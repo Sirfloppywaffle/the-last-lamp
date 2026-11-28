@@ -196,7 +196,7 @@ const DEV=[
     await p.waitForTimeout(100);
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-locked-'+nm+'.png'});
     await p.evaluate(()=>{__t.townBuildSet(false); __t.setDev(true); __t.townReset(); __t.townKeepers();});
-    if(!(cat.sets.length===7&&cat.sets.every(x=>x[2]&&x[3]&&x[4])&&cat.sets.map(x=>x[1]).join()==='7,8,10,8,7,7,3'&&cat.lift&&cat.liftOk))console.log('FAIL '+nm+': the catalogue’s tray on this screen',JSON.stringify(cat));
+    if(!(cat.sets.length===7&&cat.sets.every(x=>x[2]&&x[3]&&x[4])&&cat.sets.map(x=>x[1]).join()==='7,8,10,8,7,7,8'&&cat.lift&&cat.liftOk))console.log('FAIL '+nm+': the catalogue’s tray on this screen',JSON.stringify(cat));
     if(!(locked.n===8&&locked.locks===8&&locked.locked&&locked.thumbs&&/Peddler/.test(locked.say)&&locked.pick===null))console.log('FAIL '+nm+': a set not yet bought, on this screen',JSON.stringify(locked));
     /* Expansion 4, step 5: light and dark, in developer mode so nothing is written. The same room dark (every light out, the
        sconces cold) and lit (the fireplace, a sconce, a candle): darker without; standing under a sconce, the button offers to light
@@ -212,11 +212,15 @@ const DEV=[
       D.ledger={done:{cistern:'2026-11-20',keeper:'2026-11-21',lodge:'2026-11-21',untouched:'2026-11-22',h_bellfather:'2026-11-22'},
         /* Expansion 5, step 2: two bounties fulfilled, to claim; developer mode's full Grimoire posts three more */
         bty:[{id:1,k:'kill',arg:'gnasher',done:'2026-11-22'},{id:2,k:'calm',arg:0,done:'2026-11-22'}],btyN:2};
-      D.lodge.furn=[{id:'grimoire',c:4,r:2,free:true},{id:'ledger',c:5,r:2,free:true},{id:'sconce',c:1,r:0,free:true,out:true},{id:'hearth',c:6,r:3,out:true},{id:'chair',c:3,r:5,f:1},{id:'desk',c:6,r:6,on:[{id:'candle',s:1,out:true}]},{id:'keeper',c:6,r:0},{id:'primordial',c:1,r:4}];
+      D.lodge.furn=[{id:'grimoire',c:4,r:2,free:true},{id:'ledger',c:5,r:2,free:true},{id:'sconce',c:1,r:0,free:true,out:true},{id:'hearth',c:6,r:3,out:true},{id:'chair',c:3,r:5,f:1},{id:'desk',c:6,r:6,on:[{id:'candle',s:1,out:true}]},{id:'keeper',c:6,r:0},{id:'primordial',c:1,r:4},
+        /* Expansion 5, step 3: the Ledger's trophies, hung and standing, for the shots */
+        {id:'sack',c:3,r:0},{id:'sixeyes',c:4,r:0},{id:'clapper',c:8,r:0},{id:'snuffed',c:2,r:7},{id:'shard',c:8,r:7}];
       __t.lodgeSync(); T.p.x=5; T.p.y=8.4; T.path=null; T.cx=null; __t.townFrame(1/30); document.getElementById('trophyBanner').classList.remove('is-show');
       const o={dark:__t.lodgeArt().dark};
       return o;},ins);
     await p.waitForTimeout(100);
+    /* the Ledger's banner from setting the scene up would cover the wall */
+    await p.evaluate(()=>document.getElementById('trophyBanner').classList.remove('is-show'));
     await p.screenshot({path:(process.argv[3]||'.')+'/lodge-dark-'+nm+'.png'});
     const lit2=await p.evaluate(ins=>{
       ins=Object.assign({top:0,bottom:0,left:0,right:0},ins);

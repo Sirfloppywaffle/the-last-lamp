@@ -24,6 +24,8 @@ const HOOK=`window.__t={get run(){return run},get F(){return F},get sel(){return
  plotsFix,dockFix,plotOpen,dockBuilt,townMapSync,townDebrisAt,townGateAt,townDockAt,townOpenPlot,townClearDebris,townRestoreDock,townGate,townDebrisCard,townDock,townRowsArt,townCh,get TOWN_MAP0(){return TOWN_MAP0},get TOWN_DEBRIS(){return TOWN_DEBRIS},get TOWN_DEBRIS_ROWS(){return TOWN_DEBRIS_ROWS},get TOWN_GATE_ROWS(){return TOWN_GATE_ROWS},get TOWN_DOCK(){return TOWN_DOCK},get TOWN_DOCK_ROWS(){return TOWN_DOCK_ROWS},get PLOT_KEYS(){return PLOT_KEYS},
  /* Expansion 5, step 1: the Keeper's Ledger */
  get LEDGER_FEATS(){return LEDGER_FEATS},get FOES(){return FOES},get LEDGER_GROUPS(){return LEDGER_GROUPS},ledgerFix,ledgerDue,ledgerMark,ledgerClaim,ledgerWaiting,get BOUNTIES(){return BOUNTIES},get BTY_KILL(){return BTY_KILL},get BTY_BIND(){return BTY_BIND},get BTY_GATES(){return BTY_GATES},btyList,btyLive,btyWaiting,btyGate,btyDraw,btyFill,btyTick,btyWards,btyDue,btyMark,btyTear,btyTearWhy,btyName,btyPay,ledgerWaitN,lodgeSpines,carriedKit,townShowTip,ledgerWatch,ledgerTownCheck,ledgerCall,ledgerLine,ledgerCard,ledgerCount,ledgerEnsure,ledgerMotes,grimoireEnsure,saveMeta,masteryCount,waveCleared,lampHit,killFoe,haulCredit,victory,defeat,lodgeEnter,lodgeArt,lodgeSync,townNearAct,townActLabel,bldScrap,lodgeCanPlace,lodgeFits,lodgeTakeUp,lodgeRoom,lodgeTapTile,checkpoint,resumeFrom,get lastSave(){return lastSave},
+ /* Expansion 5, step 3: the Ledger's trophies */
+ trophyGrant,trophyLedger,featTrophy,featPay,ledgerOpen,ledgerRead,get LEDGER_OPEN(){return LEDGER_OPEN},setLedgerGate(v){LEDGER_GATE=v},
  /* Expansion 4, step 9: the Keepers react: waypoints, lore chalk, the cellar's tide */
  keeperStep,keeperWaypoints,keeperPick,keeperGo,keepersSettle,keepersInside,keeperSays,townKeeperOn,chalkFix,chalkCheck,chalkSpot,chalkArt,townChalk,townChalkAt,keeperPost,tideFix,tideRun,tideBrine,tideKelp,lodgeKelp,lodgeWade,get CHALK_ACT(){return CHALK_ACT},get KEEPER_FAV(){return KEEPER_FAV},get KEEPER_CHALK(){return KEEPER_CHALK},get KEEPER_LODGE(){return KEEPER_LODGE},get CHALK_R(){return CHALK_R},get TIDE_MAX(){return TIDE_MAX},get TIDE_PX(){return TIDE_PX},get KELP_ROWS(){return KELP_ROWS},get CHALK_ROWS(){return CHALK_ROWS},
  /* map expansion, M3: the fog and the outer dark */
@@ -42,6 +44,9 @@ store.set('ll-tut',{walk:'done',seen:[],off:true});
 /* descents (Expansion 2) settle at once in tests, as if walked cleanly, so a walk through the landings never waits on one;
    descents.test.js and devices.test.js turn this off with __t.setDescentAuto(null) to play them */
 DESCENT_AUTO={woke:0,spilt:0};
+/* the Ledger opens every feat in tests, so each can be shown firing from its source; ledger.test.js turns the gate on to test it
+   (Criss's playtest of Expansion 5, steps 1 to 3) */
+LEDGER_GATE=false;
 /* tests play map 0 of every floor unless they pick another with __t.setMapV(); maps.test.js walks them all.
    LL_MAPV=1 node run.js … runs a whole test on another map */
 MAPV_FORCE=${JSON.stringify(+(process.env.LL_MAPV||0))};

@@ -110,6 +110,13 @@ Each feat is read from data the game already keeps: run fields (`run.floor`, `ru
 4. Do the trophies make the Lodge feel like yours?
 5. Did you go down once more than you meant to?
 
+**Criss's answers (27 Nov 2026, one run on #189's preview):**
+1. Too much at once: one run fulfilled nine feats, about half the Ledger. He asked for most to stay locked until you have opened the Lodge and looked at the Ledger (the Lodge's own feat before, which lights the lectern). Done on #189: a few open at a time (`EXPANSION5_RUNBOOK.md`, step 3's note).
+2. Answered by 1.
+3. Bounties that are chores are fine as long as they don't repeat too much: they give players who struggle tasks of other difficulty.
+4. The trophies are good, "a tangible experience made physical". Locked ones should be greyed out, since not everyone reads the line over the tray: done on #189.
+5. Only one run so far; more to come.
+
 ---
 
 ## 2. Tonight's Stair (provisional)

@@ -125,7 +125,8 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     T.townClose();
     return o;});
   ok(ban.mid==='','no banner mid-wave',ban.mid);
-  ok(ban.brk[0]==='Slay the Bellfather'&&ban.brk[1]==='A feat fulfilled'&&ban.again==='','as the wave breaks, a gold banner names the feat, once',ban);
+  /* since Expansion 5, step 3 the Bellfather also leaves its trophy: the break's gold banner shows the clapper and says both */
+  ok(ban.brk[0]==='The Bellfather’s Clapper'&&ban.brk[1]==='A trophy for the Lodge, and a feat fulfilled'&&ban.again==='','as the wave breaks, a gold banner tells the feat (and the Herald\'s trophy), once',ban);
   ok(ban.seenAtStart&&ban.old==='','a feat fulfilled before the run began is not told on it',ban);
   ok(ban.replay==='','a replayed stair tells none',ban.replay);
   ok(ban.town[0]==='Raise the Hearth Beacon to its height'&&ban.town[1],'a feat of the town is fulfilled the moment it is done, with its banner',ban.town);
@@ -176,8 +177,9 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     /* walled off: refused, and the line names the book it would cut off (the Ledger in the corner, two shelves beside it) */
     o.wall=(()=>{const D=T.townData(); D.store=D.store.filter(e=>e.id!=='ledger'); D.lodge.furn=[{id:'grimoire',c:4,r:2},{id:'ledger',c:8,r:2},{id:'shelf',c:7,r:2},{id:'shelf',c:8,r:3}]; T.lodgeSync(); T.TWN.p.x=5; T.TWN.p.y=8.4;
       const w=T.lodgeFits('shelf',7,3,null,null,0); D.lodge.furn=[{id:'grimoire',c:4,r:2},{id:'ledger',c:5,r:2}]; T.lodgeSync(); return w;})();
-    /* the card: tap it outside Build; its tabs; feats to come as ??? until their group has one done */
-    const D=T.townData(); D.ledger={done:{cistern:'2026-11-20',keeper:'2026-11-21'},claimed:{cistern:'2026-11-21'}}; T.lodgeSync(); T.TWN.p.x=5.5; T.TWN.p.y=3.6; T.lodgeArt();
+    /* the card: tap it outside Build; its tabs; feats to come as ??? until their group has one done. With the Ledger's gate on
+       (Criss's playtest of steps 1 to 3), as in the game: an open feat is named even in a group with none done */
+    T.setLedgerGate(true); const D=T.townData(); D.ledger={done:{cistern:'2026-11-20',keeper:'2026-11-21'},claimed:{cistern:'2026-11-21'}}; T.lodgeSync(); T.TWN.p.x=5.5; T.TWN.p.y=3.6; T.lodgeArt();
     o.calls=T.LODGE_ART.em.some(e=>e.fl&&e.fl[0]===T.ledgerCall()[0]);
     o.near=T.townNearAct(); o.label=T.townActLabel(o.near);
     document.getElementById('townAct').hidden=false; T.townStep(0.016); document.getElementById('townAct').click();
@@ -190,7 +192,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
     o.claim=[T.townData().res.iron-iron0,/You take 40 iron from the Ledger/.test(document.getElementById('mChoices').textContent),document.querySelectorAll('[data-claim]').length];
     document.querySelector('[data-claim="lodge"]').click(); o.noneLeft=document.querySelectorAll('[data-claim]').length;
     T.lodgeArt(); o.quiet=!T.LODGE_ART.em.some(e=>e.fl&&e.fl[0]===T.ledgerCall()[0]);
-    o.throat=/Reach the Throat/.test(txt); o.hidden=/\?\?\?/.test(txt)&&!/Meet every creature/.test(txt);
+    o.throat=/Reach the Throat/.test(txt); o.hidden=/\?\?\?/.test(txt)&&/Meet every creature/.test(txt)&&!/Find every relic/.test(txt); T.setLedgerGate(false);
     document.querySelector('[data-ledger="keepers"]').click(); o.keepers=/Ambrose Fenn/.test(document.getElementById('mChoices').textContent)&&/floors? cleared/.test(document.getElementById('mChoices').textContent);
     o.tip=T.TWN.tipFor; T.closeModal(); T.lodgeArt();
     /* the motes: one a feat, ten at most, made once a count */
@@ -210,7 +212,7 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(lec.title==='The Keeper’s Ledger'&&lec.tabs==='Feats ✦2,Bounties,Keepers','the button opens its card, with its three tabs (Feats counts what waits; step 2 added Bounties)',lec);
   ok(lec.calls&&lec.quiet,'the lectern calls you over while a feat waits, and is quiet once all are claimed',lec);
   ok(lec.wait==='all,keeper,lodge'&&lec.claim[0]===40&&lec.claim[1]&&lec.claim[2]===1&&lec.noneLeft===0,'each waiting feat has its Claim, and Claim all; a claim pays and says so',lec);
-  ok(lec.cistern&&lec.throat&&lec.hidden,'a feat done shows its date and pay; one beside it shows; a group with none done is ???',lec);
+  ok(lec.cistern&&lec.throat&&lec.hidden,'a feat done shows its date and pay; one beside it shows; in a group with none done, the open one is named and the rest are ???',lec);
   ok(lec.keepers,'the Keepers tab counts floors cleared with each',lec.keepers);
   ok(lec.tip==='ledger','its tip is the one shown on first opening it',lec.tip);
   ok(lec.motes[0]===null&&lec.motes[1]&&lec.motes[2]&&lec.em,'a gold mote a feat claimed, ten at most, made once a count',lec);
@@ -240,6 +242,37 @@ const fails=[]; const ok=(c,m,d)=>{if(!c)fails.push(m+(d!==undefined?' '+JSON.st
   ok(dev.all,'developer mode shows every feat',dev.all);
   ok(dev.town===null&&dev.meta===null,'developer mode writes no town and no meta',dev);
 
+  /* 9. the Ledger opens a few feats at a time (Criss's playtest of steps 1 to 3: one run fulfilled nine). Until it is first opened
+     only Saltmouth's feats count; then each group opens LEDGER_OPEN of them in order, and claiming one opens the next */
+  const gate=await p.evaluate(()=>{const T=__t, o={}; __clean(); T.setLedgerGate(true);
+    const D=T.townData(); D.lodge.built=true; T.townSave();
+    /* a run that did everything a run can: every floor, every Herald, untouched, Leaning, morning at depth 5 */
+    const big=()=>{__fresh('lamplighter',4,{depth:5}); Object.assign(T.run,{floorsClr:5,bosses:2,morning:true,untouched:1,leaned:true,heraldKinds:['lastkeeper','tithetaker','bellfather']});};
+    big(); o.before=[T.ledgerRead(),__ids(T.ledgerDue(T.run))];
+    /* opening the card reads it; the town's feats it saw are marked as it opens */
+    T.ledgerCard('feats'); o.read=[T.ledgerRead(),!!JSON.parse(localStorage.getItem('ll-town')).ledger.read]; T.closeModal();
+    big(); const due=T.ledgerDue(T.run); o.after=__ids(due); o.run=due.filter(f=>f.run).length;
+    o.card=document.getElementById('mBody')?'':'';
+    /* the haul marks them; claiming the Cistern opens the next of the stair's */
+    T.haulCredit(T.run); o.marked=Object.keys(T.townData().ledger.done).sort().join();
+    o.openBefore=T.ledgerOpen().has('untouched'); T.ledgerClaim('cistern'); o.openAfter=T.ledgerOpen().has('untouched');
+    /* a feat fulfilled holds its place until claimed: the stair's third is still shut while the Throat waits */
+    o.heartShut=!T.ledgerOpen().has('heart');
+    /* the card names an open feat and a shut one */
+    T.ledgerCard('feats'); const body=document.getElementById('modal').textContent; o.words=[/Opens when you claim one above/.test(body),/A few are open at a time/.test(body)]; T.closeModal();
+    /* an old town that has claimed anything has read the Ledger */
+    o.old=T.ledgerFix({done:{cistern:'2026-11-20'},claimed:{cistern:'2026-11-21'}}).read; o.oldNone=T.ledgerFix({done:{cistern:'2026-11-20'}}).read;
+    /* developer mode: opening the card writes nothing */
+    __clean(); T.setLedgerGate(true); localStorage.setItem('ll-town',JSON.stringify({v:2,lodge:{built:true}})); T.townReset(); T.setDev(true); T.ledgerCard('feats'); T.closeModal();
+    o.dev=!!(JSON.parse(localStorage.getItem('ll-town')).ledger||{}).read; T.setDev(false);
+    T.setLedgerGate(false); return o;});
+  ok(gate.before[0]===false&&gate.before[1]==='lodge','before the Ledger is opened, only Saltmouth’s feats count (the Lodge restored)',gate.before);
+  ok(gate.read[0]&&gate.read[1],'opening the Ledger reads it, saved',gate.read);
+  ok(gate.run===4&&/cistern/.test(gate.after)&&/throat/.test(gate.after)&&/k_lamplighter/.test(gate.after)&&/d1/.test(gate.after)&&!/heart|keeper|morning|d3|d5|h_/.test(gate.after),'then a run that did everything fulfils four: two of the stair, its Keeper, one depth',gate.after);
+  ok(gate.marked.split(',').includes('cistern')&&!gate.openBefore&&gate.openAfter&&gate.heartShut,'claiming one opens the next; a fulfilled one holds its place until claimed',gate);
+  ok(gate.words.every(Boolean),'the card says a few are open and how the rest open',gate.words);
+  ok(gate.old===true&&gate.oldNone===false,'an old town that has claimed anything has read it',gate);
+  ok(gate.dev===false,'developer mode opening the card writes nothing',gate.dev);
   ok(!errs.length,'no page errors',errs);
   await b.close();
   if(fails.length){fails.forEach(f=>console.log('FAIL '+f)); process.exit(1);}
