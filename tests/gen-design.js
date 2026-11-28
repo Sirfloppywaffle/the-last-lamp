@@ -17,6 +17,6 @@ const NAMES='RESERVE_OIL SPILL_MAX SPILL_DRAIN SPILL_DPS SPILL_T TALLOW_RIM TALL
   const json=await p.evaluate(()=>JSON.stringify({d:window.__d},(k,v)=>typeof v==='function'?'fn:'+v.toString().slice(0,400):v));
   await b.close();
   fs.writeFileSync(path.join(dir,'data.json'),json);
-  const r=spawnSync('python3',[path.join(__dirname,'..','tools','gen_design.py'),path.join(dir,'data.json'),path.join(__dirname,'..','docs','DESIGN.md')],{stdio:'inherit'});
+  const r=spawnSync(process.platform==='win32'?'python':'python3',[path.join(__dirname,'..','tools','gen_design.py'),path.join(dir,'data.json'),path.join(__dirname,'..','docs','DESIGN.md')],{stdio:'inherit'});
   process.exit(r.status||0);
 })();
