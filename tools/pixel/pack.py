@@ -11,6 +11,9 @@
       to the spec's folder.
   python3 pack.py uri <png>
       the data URI to paste into PIX_SRC (tiles.<deco> or props.<deco>), and its size.
+  python3 pack.py put <index.html> <key.path> <png> <x> <y> [<png> <x> <y> ...]
+      lay new art over an atlas already in PIX_SRC, each PNG at its rect's corner (its rect cleared first, so the same size as the
+      old piece), and write the atlas back into index.html in place: e.g. the Ossuary's pyramids, props.ossuary, at its col rects.
 
 Needs numpy and Pillow.
 """
@@ -61,10 +64,24 @@ def atlas(a):
 def uri(a):
     b=open(a.png,'rb').read(); u='data:image/png;base64,'+base64.b64encode(b).decode(); print(u); print(len(u),'chars',file=__import__('sys').stderr)
 
+def put(a):
+    s=open(a.html,encoding='utf8').read(); m=re.search(r'const PIX_SRC=(\{.*?\});\n',s); src=json.loads(m.group(1)); node=src
+    for k in a.path.split('.'): node=node[k]
+    A=Image.open(io.BytesIO(base64.b64decode(node.split(',',1)[1]))).convert('RGBA')
+    args=a.items
+    if len(args)%3: raise SystemExit('put: give each PNG with its x and y')
+    for i in range(0,len(args),3):
+        im=Image.open(args[i]).convert('RGBA'); x,y=int(args[i+1]),int(args[i+2])
+        A.paste((0,0,0,0),(x,y,x+im.width,y+im.height)); A.alpha_composite(im,(x,y)); print('  put',args[i],'at',x,y,im.size)
+    new='data:image/png;base64,'+base64.b64encode(png_bytes(quant(A,255))).decode()
+    if s.count(node)!=1: raise SystemExit('put: the old atlas is not in index.html exactly once')
+    open(a.html,'w',encoding='utf8',newline='\n').write(s.replace(node,new)); print('atlas',A.size,len(node),'->',len(new),'chars')
+
 if __name__=='__main__':
     ap=argparse.ArgumentParser(); sp=ap.add_subparsers(dest='cmd',required=True)
     e=sp.add_parser('extract'); e.add_argument('html'); e.add_argument('path'); e.add_argument('out'); e.set_defaults(fn=extract)
     s=sp.add_parser('sheet'); s.add_argument('src'); s.add_argument('out'); s.add_argument('--colors',type=int,default=64); s.set_defaults(fn=sheet)
     t=sp.add_parser('atlas'); t.add_argument('spec'); t.add_argument('out'); t.set_defaults(fn=atlas)
     u=sp.add_parser('uri'); u.add_argument('png'); u.set_defaults(fn=uri)
+    p=sp.add_parser('put'); p.add_argument('html'); p.add_argument('path'); p.add_argument('items',nargs='+'); p.set_defaults(fn=put)
     a=ap.parse_args(); a.fn(a)
