@@ -14,6 +14,7 @@ You're the engineer and QA on this project. Gemini, working through Jules, is yo
 - `cd tests && npm test` (on your own machine, `npm install && npx playwright install chromium` first; in the cloud container, don't: see the `test-setup` skill). The suite covers UI flows, mechanics, the roguelike walkthrough, the descent map, touch behaviour and 14 device sizes.
 - For UI changes, also look at the device screenshots that `npm run shots` writes to `tests/.build/shots/`, and post the relevant ones in the PR. Criss reads PRs on his phone.
 - After changing any data table, run `npm run design` and commit the regenerated `docs/DESIGN.md`.
+- **On Criss's Windows laptop** (a local clone, not the cloud container): the command is `python`, not `python3`. Four tests can fail there for reasons of the machine, not the game: `loops` and `town`'s frame-time budgets (slower on battery), `devices`' Copy-button width (Windows fonts measure it 55 px, the test asks 56) and, now and then, `cast`'s timing. If only those fail, say so in the PR and let CI on Linux decide.
 
 ## Reviewing Jules's PRs
 - Review with the shape in `AGENTS.md` §2. Run the suite against the PR branch, and check the mobile layouts yourself.

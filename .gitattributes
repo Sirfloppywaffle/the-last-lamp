@@ -1,0 +1,4 @@
+# Every text file is stored and checked out with LF line endings, on Windows too, so a checkout there never shows
+# index.html (or anything else) as changed throughout. Images and other binaries are left alone.
+* text=auto eol=lf
+*.png binary

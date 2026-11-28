@@ -1,6 +1,6 @@
 import json,re
 import sys
-D=json.load(open(sys.argv[1]))['d']
+D=json.load(open(sys.argv[1],encoding='utf-8'))['d']
 L=[]
 w=L.append
 def esc(s): return str(s).replace('|','\\|')
@@ -254,5 +254,5 @@ for i,f in enumerate(D['FLOORS']):
             if k in c['at']: w("  - or *%s*: %s"%(c['n'],grp(c['w'])))
     w("")
 w("Boss entrances: %s.\n"%('; '.join('%s (%s): “%s”'%(v['name'],k,v['sub']) for k,v in D['BOSS_INTRO'].items())))
-open(sys.argv[2],'w').write('\n'.join(L)+'\n')
+open(sys.argv[2],'w',encoding='utf-8',newline='\n').write('\n'.join(L)+'\n')
 print('wrote',sys.argv[2])

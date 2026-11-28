@@ -238,6 +238,7 @@ In Claude's cloud container, skip both install lines: Playwright and Chromium ar
 
 - **CI runs `npm test` on every PR** (`.github/workflows/checks.yml`). A red check blocks the merge.
 - If a browser can't be installed in your environment, run `npm run check`, say so in the PR, and rely on CI for the rest.
+- On Windows, call Python as `python` (the `python3` there is only the Microsoft Store's stand-in); the tests and tools already do. The frame-time budgets in `loops` and `town` and the Copy button's width in `devices` depend on the machine and its fonts and can fail on a Windows laptop when CI passes; CI on Linux decides.
 - `tests/t/devices.test.js` checks 14 screen sizes. With a ward selected, it confirms that nothing overlaps the board, nothing shifts, and no control sits in a notch zone. If you add UI, extend it.
 - Tests play **map 0** of every floor (`tests/hook.js` pins it); `maps.test.js` and `forks.test.js` walk every map. `LL_MAPV=2 node run.js --only <name>` runs any test on another map.
 - Add a test for every bug you fix, and for every new mechanic (e.g., spawn a creature, run `__t.update(1/30)` a few hundred times, assert the effect). Tests live in `tests/t/*.test.js`; a test fails by printing a line starting with `FAIL` or exiting non-zero, and any page error or `console.error` fails it automatically. `tests/t/mechanics.test.js` is the model to copy.

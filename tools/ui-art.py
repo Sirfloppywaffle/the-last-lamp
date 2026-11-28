@@ -3,6 +3,8 @@
 
     python3 tools/ui-art.py            # rewrite the block between the ui-art markers in index.html
     python3 tools/ui-art.py --check    # exit 1 if the block in index.html is not what the sources make
+(On Windows the command is python, not python3.) The check compares the images' pixels, not their compressed bytes: Python
+on Windows ships zlib-ng, which packs the same pixels into different bytes, so a block written there or on Linux passes on both.
 
 Sources live in art/ui/: one folder per icon (base.png, the still PixelLab drew, and f000.png … the frames of its
 animation, when it has one; rt-<rite> for each rite), plus frame.png (the landing's iron frame), pieces.png (the stone card,
@@ -16,7 +18,7 @@ What it writes, all CSS (the game's own rules for these classes sit by the HUD a
                   (badge, plaque).
 Every PNG is written indexed (a palette and tRNS), which is what keeps this small. Standard library only.
 """
-import os, struct, sys, zlib, base64, importlib.util
+import os, re, struct, sys, zlib, base64, importlib.util
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, 'art', 'ui')
@@ -224,6 +226,19 @@ def build():
     return '\n'.join(css)
 
 
+def pixels_only(block):
+    """the block with each PNG's compressed IDAT swapped for the pixels it holds, so two zlibs that pack the same image into
+    different bytes compare equal, while any change to a pixel, the palette, the size or the CSS still shows"""
+    def one(m):
+        b, p, head, idat = base64.b64decode(m.group(1)), 8, [], b''
+        while p < len(b):
+            n = struct.unpack('>I', b[p:p + 4])[0]; kind = b[p + 4:p + 8]; body = b[p + 8:p + 8 + n]; p += 12 + n
+            if kind == b'IDAT': idat += body
+            elif kind != b'IEND': head.append(kind + body)
+        return 'base64,' + base64.b64encode(b''.join(head) + zlib.decompress(idat)).decode()
+    return re.sub(r'base64,([A-Za-z0-9+/=]+)', one, block)
+
+
 def main():
     src = open(HTML, encoding='utf8').read()
     i, j = src.find(BEGIN), src.find(END)
@@ -231,11 +246,12 @@ def main():
         sys.exit('index.html: the ui-art markers are missing (put "%s" and "%s" inside the <style>)' % (BEGIN, END))
     block = build()
     if '--check' in sys.argv:
-        ok = src[i:j + len(END)] == block
+        old = src[i:j + len(END)]
+        ok = old == block or pixels_only(old) == pixels_only(block)
         print('ui-art: ' + ('up to date' if ok else 'out of date, run python3 tools/ui-art.py'))
         sys.exit(0 if ok else 1)
     out = src[:i] + block + src[j + len(END):]
-    open(HTML, 'w', encoding='utf8').write(out)
+    open(HTML, 'w', encoding='utf8', newline='\n').write(out)
     print('ui-art: %d bytes written' % len(block))
 
 
