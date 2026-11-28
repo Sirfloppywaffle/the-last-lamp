@@ -17,7 +17,7 @@ The workflow is `expansion/EXPANSION3_RUNBOOK.md` §4; the rules are its §2 and
   - [ ] a Grimoire entry for any new creature, ward, rite, relic, kit or patron.
 - [ ] **HISTORY:** one line under `## Unreleased` in `docs/HISTORY.md`, in the shape of the lines already there.
 - [ ] **`GAME_VERSION`** (top of the script in `index.html`) set to the version in the status table (`AGENTS.md` §3, Version numbers).
-- [ ] **`AGENTS.md` §5:** the Saltmouth row names every new function, table and field; **Storage keys** lists any new `ll-town` field.
+- [ ] **`docs/CODEMAP.md`** (the code map, `AGENTS.md` §5): the Saltmouth row names every new function, table and field; **Storage keys** lists any new `ll-town` field.
 - [ ] **Runbook §1:** tick the status table (PR number, state, version). Fix anything else in the runbook the step proved wrong (§6).
 - [ ] **Test** (setup: the `test-setup` skill): the step's new test file, `devices.test.js` extended for any new button or panel, then `cd tests && npm test`. Changed a data table? `npm run design` and commit `docs/DESIGN.md`.
 - [ ] **Screenshots:** the `shots` skill.

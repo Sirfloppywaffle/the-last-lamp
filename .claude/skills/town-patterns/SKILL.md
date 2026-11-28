@@ -5,7 +5,7 @@ description: How to add things to Saltmouth (the town in index.html) as the code
 
 # Adding to Saltmouth
 
-Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` §5 (every name since). Rules: runbook §2. The code wins over all of these; search `index.html` for each name below before trusting it.
+Background: runbook §3 (the step 2 code) and the Saltmouth row of the code map, `docs/CODEMAP.md` (every name since). Rules: runbook §2. The code wins over all of these; search `index.html` for each name below before trusting it.
 
 ## Something tappable (a person, a door, a stone)
 
@@ -27,7 +27,7 @@ Background: runbook §3 (the step 2 code) and the Saltmouth row of `AGENTS.md` �
 
 ## Saved state
 
-- [ ] **`ll-town` fields:** a default in `townFix()`, validated from whatever is stored (a `…Fix()` helper per field, like `shrinesFix`, `lodgeFix`). Never rename or remove a field (rule 15). Read and write only through `townData()`/`townSave()` (rule 24). Add it to `AGENTS.md` §5's storage keys.
+- [ ] **`ll-town` fields:** a default in `townFix()`, validated from whatever is stored (a `…Fix()` helper per field, like `shrinesFix`, `lodgeFix`). Never rename or remove a field (rule 15). Read and write only through `townData()`/`townSave()` (rule 24). Add it to the storage keys in `docs/CODEMAP.md`.
 - [ ] **`run` fields:** a default for an old save in `resumeFrom()` (like `run.haul=haulFix(run.haul)`), or make every reader treat a missing field as the default (like `run.chore2`, `run.candleSeen`).
 - [ ] **Per-visit state** goes on `TWN` and is reset in `townOpen()` (and in `lodgeEnter()`/`lodgeLeave()` if it is per scene). Never saved.
 
